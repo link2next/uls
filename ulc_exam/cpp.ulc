@@ -1,0 +1,52 @@
+﻿#@ulc-2.3:ansi_c
+#
+#  ULC for C++
+#
+DOMAIN: uls.link2next.io://season-1
+
+COMMENT_TYPE: // \n
+
+%%
+
+ASM              asm              95
+AND              and
+AND_EQ           and_eq
+BITAND           bitand
+BITOR            bitor
+BOOL             bool
+CATCH            catch
+CLASS            class
+COMPL            compl
+CONST_CAST       const_cast
+DELETE           delete
+DYNAMIC_CAST     dynamic_cast
+EXPLICIT         explicit
+EXPORT           export
+FALSE            false
+FRIEND           friend
+INLINE           inline
+MUTABLE          mutable
+NAMESPACE        namespace
+NEW              new
+NOT              not
+NOT_EQ           not_eq
+OPERATOR         operator
+OR_EQ            or_eq
+PRIVATE          private
+PROTECTED        protected
+PUBLIC           public
+REINTERPRET_CAST reinterpret_cast
+STATIC_CAST      static_cast
+
+TEMPLATE         template   128
+THIS             this
+THROW            throw
+TRUE             true
+TRY              try
+TYPEID           typeid
+TYPENAME         typename
+USING            using
+VIRTUAL          virtual
+WCHAR_T          wchar_t
+XOR              xor
+XOR_EQ           xor_eq

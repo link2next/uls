@@ -1,0 +1,22 @@
+
+main()
+{
+   AAA = 1UL;
+   -BBB-CCC = 0;
+
+	VERY_VERY_LONG_IDENTIFIER1_IS_OK = -1;
+
+	if (AAA && BBB || EEE) {
+		AAA = 0;
+		EEE = 0x00fffe;
+	}
+
+	XXX = -31415.926e-8;
+	XXX = -3.1415926e-4f;
+	BBB =  -7094;
+	AAA =  0644;
+	XXX =  0.;
+	YYY =  .3;
+	XXX = 3.1415926535897932384;
+}
+

@@ -1,0 +1,27 @@
+	  2 	[     ID] main
+	  2 	[       ] (
+	  2 	[       ] )
+	  3 	[       ] {
+	  4 	[    INT] int
+	  4 	[     ID] AAA
+	  4 	[       ] ,
+	  4 	[     ID] BBB
+	  4 	[       ] ,
+	  4 	[     ID] EEE
+	  4 	[       ] ;
+	  6 	[     ID] AAA
+	  6 	[       ] =
+	  6 	[ NUMBER] 0x1
+	  6 	[       ] ;
+	  8 	[     ID] WWW
+		  1[     ID] WWW1
+		  2[     ID] WWW2
+		  3[     ID] WWW3
+	  8 	[       ] =
+	  8 	[ NUMBER] 0.0
+	  8 	[       ] ;
+	  9 	[     ID] YYY
+	  9 	[       ] =
+	  9 	[ NUMBER] 0.3
+	  9 	[       ] ;
+	 10 	[       ] }

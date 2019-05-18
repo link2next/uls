@@ -1,0 +1,81 @@
+﻿#@ulc-2.3:ansi_c
+#  ULC for GCC
+#
+DOMAIN: uls.link2next.io://season-1
+
+NUMBER_PREFIXES: 0x:16 0X:16 0:8 0b:2
+
+COMMENT_TYPE: // \n 
+QUOTE_TYPE: options=asymmetric,right_exclusive token=256,WCOORD \n#  \n verbatim1
+LINEFEED_GUARD: true
+
+%%
+
+# The gnu-extension
+EXTENSION   __extension__   128
+
+RESTRICT      restrict
+
+BOOL         _Bool
+
+ASM           asm
+ASM          _asm
+ASM         __asm
+ASM         __asm__
+
+INLINE        inline
+INLINE      __inline
+INLINE      __inline__
+
+RESTRICT    __restrict
+RESTRICT    __restrict__
+
+COMPLEX      _Complex
+COMPLEX     __complex
+COMPLEX     __complex__
+
+IMAGINARY    _Imaginary
+IMAGINARY   __imag
+IMAGINARY   __imag__
+
+REAL        __real
+REAL        __real__
+
+DECIMAL32    _Decimal32
+DECIMAL64    _Decimal64
+DECIMAL128   _Decimal128
+
+FUNC        __FUNCTION__
+FUNC        __func__
+PRETTY_FUNC __PRETTY_FUNCTION__
+
+ALIGNOF     __alignof
+ALIGNOF     __alignof__
+
+TYPEOF      __typeof
+TYPEOF      __typeof__
+
+ATTR        __attribute
+ATTR        __attribute__
+
+BLTN_CHOOSE_EXPR    __builtin_choose_expr
+BLTN_OFFSETOF       __builtin_offsetof
+BLTN_TYPES_COMPAT_P __builtin_types_compatible_p
+BLTN_VA_ARG         __builtin_va_arg
+
+LABEL       __label__
+
+PRIV_EXTERN __private_extern__
+
+THREAD      __thread
+
+VOLATILE    __volatile
+VOLATILE    __volatile__
+
+SIGNED      __signed
+SIGNED      __signed__
+
+CONST       __const
+CONST       __const__
+
+EOL          \n  3 

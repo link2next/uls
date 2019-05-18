@@ -1,0 +1,13 @@
+	xdefs[0] = 42
+	xdefs[1] = 43
+	xdefs[2] = 47
+	xdefs[3] = 38
+	xdefs[4] = 94
+	[     ID] C
+	[   INCR] ++
+	[       ] * prec=27 node_id=1
+	[     ID] hello
+	[       ] / prec=25 node_id=3
+	[       ] & prec=24 node_id=4
+	[     ID] world
+	[       ] ^ prec=23 node_id=5

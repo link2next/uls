@@ -1,0 +1,114 @@
+﻿#@ulc-2.3
+#
+#  ULC: Unified Lexical Configuration
+#
+DOMAIN: uls.link2next.io://season-1
+
+ID_FIRST_CHARS: _ a-z A-Z
+ID_CHARS: _ 0-9 a-z A-Z 
+
+DECIMAL_SEPARATOR: _ 
+NUMBER_PREFIXES: 0x:16 0:8 0b:2
+NUMBER_SUFFIXES: l f d
+
+COMMENT_TYPE: /* */
+COMMENT_TYPE: // \n
+
+QUOTE_TYPE: token=DQUOTE "
+QUOTE_TYPE: token=SQUOTE '
+
+RENAME: EOF ENDFILE
+
+%%
+
+# token-name  keyword  token-id
+NONE          <NONE>    -5
+TMPL          <TMPL>    -4
+LINENUM       <LNO>     -3
+ERR           <ERR>     -2
+ENDFILE       <EOF>     -1
+EOI           <EOI>      0
+ID            <ID>       1
+NUMBER        <NUMBER>   2
+
+AND           &&         128
+OR            ||
+EQ            ==
+LEQ           <=
+GEQ           >=
+NEQ           !=
+INCL          ++
+DECL          --
+
+LSHIFT        <<
+RSHIFT        >>
+RRSHIFT       >>>
+
+ADD_ASGN      +=
+SUB_ASGN      -=
+MUL_ASGN      *=
+DIV_ASGN      /=
+MOD_ASGN      %=
+BITAND_ASGN   &=
+BITOR_ASGN    |=
+BITXOR_ASGN   ^=
+LSHIFT_ASGN   <<=
+RSHIFT_ASGN   >>=
+RSHIFT_ASGN_U >>>=
+
+ABSTRACT     abstract 256
+ASSERT       assert
+BOOLEAN      boolean
+BREAK        break
+BYTE         byte
+
+CASE         case
+CATCH        catch
+CHAR         char
+CLASS        class
+CONTINUE     continue
+DEFAULT      default
+DO           do
+DOUBLE       double
+
+ELSE         else  
+ENUM         enum
+EXTENDS      extends
+FALSE        false
+FINAL        final
+FINALLY      finally
+FLOAT        float
+FOR          for       
+IF           if
+IMPLEMENTS   implements
+IMPORT       import
+INSTANCEOF   instanceof
+INT          int
+INTERFACE    interface
+
+LONG         long
+NATIVE       native
+NEW          new
+ZERO         null
+PACKAGE      package
+PRIVATE      private
+PROTECTED    protected
+PUBLIC       public
+
+RETURN       return    
+SHORT        short
+STATIC       static
+STRICTFP     strictfp
+SUPER        super
+SWITCH       switch
+SYNCHRONIZED synchronized
+
+THIS         this
+THROWS       throws
+TRANSIENT    transient
+TRUE         true
+TRY          try
+VOID         void
+VOLATILE     volatile
+WHILE        while
+

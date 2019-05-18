@@ -1,0 +1,120 @@
+ULS_STREAM(V2.6.0),(1)                              User Commands                              ULS_STREAM(V2.6.0),(1)
+
+NAME
+       uls_stream(v2.6.0), - uls_stream
+
+SYNOPSIS
+       uls_stream [options] [name1=value1 ...] <file|dir>
+
+DESCRIPTION
+              uls_stream generates token sequence file from (plain text) input files.
+
+              uls_stream  <uls-file|(*.uls)>  uls_stream  -L  <ulc-file>  [-b] [-o <output-file>] <text-file|(*.uls)>
+              uls_stream [-L <ulc-file>] -C <listing-of-files> <target-dir>  uls_stream  [-L  <ulc-file>]  -C  <list‐
+              ing-of-files> -f 'filter-path' <target-dir>
+
+       -L, --lang=<ulc-spec>
+              Specify lexical-configuration(*.ulc) for your own language.
+
+       -o, --output=<filepath>
+              specify the output filepath.
+
+       -b, --binary
+              The output file will be binary file.
+
+       -C, --conglomerate=<listfile> This outputs a conglomerate file from the multiple input-files.
+
+       -f, --filter=<cmdline>
+              Specify the filter for the input files with the -C-option.
+
+       -v, --verbose
+              verbose mode.
+
+       -V, --version
+              Print the version information.
+
+       -h, --help
+              Display a short help.
+
+       The  'uls_stream'  reads source code files or lexical stream files(*.uls) as input files.  It displays or con‐
+       verts and save it again into  uls-format-file.   It's  necessary  to  specify  a  lexical  configuration  from
+       ulc-file(*.ulc)  with  -L-option.   The  created lexical analyzer from the ulc-file will read the input-files.
+       The output file is an uls-file, which contains a token sequence file.  Below is illustrated a  token  sequence
+       with its lexeme.
+
+       [      ID]  DDD
+
+       [      <=]  <=
+
+       [      ID]  EEE
+
+       [      {]  {
+
+       [      ID]  YYY
+
+       [      =]
+
+       You can use the uls-file as an input file to 'uls_stream.
+
+       If  you  specify  -C-option  with list of files, you can get a conglomerate all the input files into one file.
+       The list file is just a simple list of file paths that you want to process.  The each line in the file  repre‐
+       sents the filepath which starts from <target-dir>.  Let a listing-file 'a.list' be as follows.
+
+              # Comment here # A filepath per line input1.c src/input2.c srclib/input3.c
+
+       You can use -C-option as below.
+
+              uls_stream -C a.list /package/home/target-dir
+
+       The output file is specified with -o-option. The default output-file in binary mode('-b') is the 'a.uls'.  The
+       -f-option can be used with -C-option to filter the files before the input to be passed  to  lexical  analyzer.
+       The  argument  of  -f-option  should be a command line which inputs from stdin and outputs to stdout like 'gcc
+       -E'.
+
+       To read ULS-file,
+
+              uls_stream -L sample.ulc input1.txt uls_stream -L sample.ulc input1.uls  uls_stream  -L  sample.ulc  -o
+              a.txt input1.uls
+
+       You can use the -t-option to specify the format of output file.
+
+              uls_stream -L sample.ulc -t bin-be input1.uls
+
+              This generates the binary file of big-endian type.
+
+              uls_stream -L sample.ulc -t bin-le input1.uls
+
+              This generates the binary file of little-endian type.
+
+              uls_stream -L sample.ulc input1.uls
+
+              This generates the binary file of host-type.
+
+              uls_stream -L sample.ulc -t txt input1.uls
+
+              This save a text formatted file from 'input1.uls'.
+
+       To get the conglomerate ULS-file,
+
+              uls_stream -b -C ./a.list /package/home uls_stream -b -C ./a.list -f 'gcc -E' ../package/home
+
+       To make a template-uls file from a source file tmpl_ex.cc,
+
+              uls_stream  -L  sample.ulc  -b  -o  tmpl_ex.uls  -TT1  tmpl_ex.cc  This  make  the  identifier  'T1' in
+              'tmpl_ex.cc' a template variable.
+
+       To make a uls file from the 'tmpl_ex.uls' with the template variables substituted,
+
+              uls_stream -L sample.ulc T1='unsigned int' tmpl_ex.uls
+
+              is provided under The MIT License (MIT).
+
+SEE ALSO
+       The full documentation  for  uls_stream(v2.6.0),  is  maintained  as  a  Texinfo  manual.   If  the  info  and
+       uls_stream(v2.6.0), programs are properly installed at your site, the command
+
+              info uls_stream(v2.6.0),
+
+       should give you access to the complete manual.
+
+uls_stream(v2.6.0), written by Stanley Hong (link2next@gmail.com) May 2019,   ULS_STREAM(V2.6.0),(1)

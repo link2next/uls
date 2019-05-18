@@ -1,0 +1,413 @@
+
+  v1.8
+  -----------
+    o The format of ulc-file is upgraded.
+      a) Decimal separator is supported for number token. 
+         The separator may be one character.
+         For example, you can specify the separator in ulc-file.
+            DECIMAL_SEPARATOR: _
+      b) To specify the radix of number, you can use attribute NUMBER_PREFIXES in ulc-file. 
+            NUMBER_PREFIXES: 0:8 0x16 0b:2 0o:8
+         This is the list of pairs where the item is number prefix and radix. 
+      c) The format of the attribute 'QUOTE_TYPE:' of ulc-file is largely changed.
+
+      The upgrade_ulc.py in the directory 'tools' will convert the previous format to v2.3.
+      You can use it as following examples:   
+         i) upgrade_ulc.py -o new_sample.ulc sample.ulc 
+            This will convert input file 'sample.ulc' to output file 'new_sample.ulc'.
+        ii) upgrade_ulc.py sample1.ulc sample2.ulc 
+            This will convert two file 'sample1.ulc' and 'sample2.ulc'.
+            The original files will be preserved as files prefixed by '.bak'. 
+      You can give it the input ulc-file of version v2.1 or v2.2.
+
+    o The format of uls-file has been changed.
+      The header size of the file fixed.
+    o Text file format of uls-file is added as well as binary format.
+      The binary format is 'bin-le' or 'bin-be'.
+      You can save token stream of input as text format
+          by the -t-option of the commmand 'uls_stream' like this:
+          uls_stream -L <ulc-file> -t txt <input-file>
+      The command in tools/uls_stream,
+          uls_stream -L sample.ulc -t txt input1.txt 
+      will save the token stream in the file 'a.uls'.
+
+    o The admin-directory of ULS is changed from '/etc/uls' to '/usr/local/etc/uls'.
+      The default installation directory is '/usr/local' as before. 
+    o You can also change the admin-directory using the option of 'configure'
+      For instance, if you want it to be '/opt/uls_1_8/etc',
+           run 'configure' like this:
+           ./configure --with-etc-dir='/opt/uls_1_8/etc'
+      To change the installation directory, combine it with prefix-option:
+           ./configure --with-etc-dir=/opt/uls_1_8/etc --prefix=/opt/uls_1_8
+
+    o Building the uls package on macOS is supported.
+      On version 'mohave' of macOS, the testing has been executed.
+      It's scheduled to support for 'brew install' via github site. 
+      You can build it with terminal as in Linux.
+
+    o The license of ULS has been changed from 'Apache 2.0' to 'MIT.
+       We're re-licensing ULS(v1.8.0) under the MIT license.
+
+  v1.7.3
+  -----------
+    o Fixed Numbering of lines of literal string occupying multiple lines. 
+        The starting line number is to be reported instead of ending line.
+    o The conversion specification of '%s' of null-pointer should be displayed as '<null>'
+         instead of '<nilptr>' 
+    o A few bug-fixes in ulscpp, ulscompat
+
+  v1.7.2
+  -----------
+    o Supports for missing or special cases of number format.
+      The following instances of the number format can be used.
+        a) 0Xabc 0XABC
+        b) 0775. -0775.0
+        c) 314E-2 314.E2 314.E+2
+        d) 0E-2 0.E-2
+
+    o JNI support for Java is introduced.
+        Refer to README.txt in the directory 'uls_jni' for more information. 
+        a) The command 'java' to run examples can be use in Linux. 
+        b) There also exist Eclipse project files for 'uls_jni'.
+
+    o UlsJava is adjusted to support for new version 4.5.2 of JNA.
+        The package file can be found as uls_jna-1.7.2.tar.xz in the site.
+
+  v1.7.1
+  -----------
+    o Supports the UNICODE charset build mode of ulscpp library in Windows.
+      Some of examples is built with '_UNICODE'(ULS_USE_WSTR on Linux) turned on.
+      Refer to the user-guide in doc/uls_ug-0.7.1.pdf about the revised APIs.
+    o Added the line-end char converter of text-file.
+      It converts the characters '\r\n', '\n\r', and '\r' at EOL in the input
+        to '\n' uniformly. It can be applied by using uls_create_crlf2lf() 
+          instead of uls_create() and the following APIs is provided:
+          a) uls_create_crlf2lf()
+          b) uls_push_line_crlf2lf()
+          c) uls_set_line_crlf2lf()
+      To catch the line-end('\n') as token, you must add a token-definition line like:
+          TOK_LF    '\n'  10
+    o Fixed the bug that can be occurred when reading binary uls file.
+    o Added '--dump' option in ulc2class that enables to look into
+      the internal layout of lexical configuration.
+    o Added an example showing an use of ulc to demonstrate tokenizing natural languages.
+      Refer to the directory 'examples/Natural' at the top of the distribution.
+
+  v1.7
+  -----------
+    o All the header files in C/C++ except for uls.h have been moved
+        to the subdirectory 'uls'.
+        So, it's necessary to use '#include' as follows.
+           #include <uls.h>
+           #include <uls/uls_lex.h>
+           #include <uls/UlsLex.h>
+
+    o The format version of ulc has been upgraded to '2.1'.
+        The attributes of ulc-file now rule out the digit characters for 'ID_CHARS:'.
+        In case the language you intend to implement, like almost languages,
+          allows the trailing digit characters for identifiers,
+          add digit character group '0-9' in the line of attiribute 'ID_CHARS:'.
+      The attributes in the ulc-file have to be changed to adapt to new version. For example,
+          FILE_VERSION: 2.1
+          ID_CHARS: _  0-9
+      The alphabet character group is by default included in the 'ID_CHARS:'.
+
+    o New options of 'ulc2class', -f, -d, have been devised
+        to enhance the generation process of uld files.
+
+    o The supported version of .NET  has been upgraded to v4.7.
+      The library UlsDotNet.dll has been reformed to operate onto the .NET framework.
+
+    o Some of command names in Windows have been changed
+        to coincide with the ones in Linux.
+      The names of tools UlfGen.exe, UlsStream.exe have been renamed
+        to ulf_gen.exe, uls_stream.exe.
+
+    o Some (qualified) package paths in class libraries have been changed. 
+        a) ULS.Crux ==> uls.crux in C++
+        b) uls.nemesis ==> uls.polaris in Java 
+
+
+  v1.6.4
+  -----------
+    o deintialization of the lock of UlsCpp::vlog(). 
+    o Fixed the bug in examples/DumpToks related to the template vars.
+
+  v1.6.3
+  -----------
+    o Fixed a critical bug causing memory overflow.
+
+  v1.6.2
+  -----------
+    o The version of VisualStudio solution/project files has been upgraded to that of vs2015.
+    o Tested on Windows 7 & 10.
+
+  v1.6.1
+  -----------
+    o Fixed the bug that long(>=64) ulc-file path won't be loaded. 
+    o The encoding of Windows MBCS might work incorrectly for European Code Pages.
+       The length of the mbcs string is now counted correctly.
+
+  v1.6
+  -----------
+    o The API for maninpulating uls-file has been amended to a great extent.
+        In particular, the procedures to add individual token-record are provided.
+    o The class API have been largely upgraded in C++, C#, and Java.
+    o More examples are provided.
+      For usage of the uls-file maninpulation,
+        refer to the example examples/tokseq on Linux or TokSeq on Windows.
+      To see the the wide string manipulation in ULS,
+        refer to the example examples/wdump_toks.
+    o Now the printf functions in uls logging framework will correctly manipulate
+       the ANSI encoding on Windows.
+    o A configuration file format using indirectly the ulc database is newly introduced.
+       It's suffixed by 'uld' and embed an ulc file in the ulc-database.
+       Its major function is to remap the pairs <token-name,token-id>.
+       Refer to the example in 'examples/tokseq' for its usage.
+    o A lot of bugs fiexd!
+
+
+ v1.5.6
+  -----------
+    o Fixed the bug occurred in the converters between utf-8 ansi Windows ANSI strings.
+      The bug might have been only in the C/C++ libraries on Windows
+      as the ANSI strings is not used in Linux.
+    o No need to logout/login to flush the environment variable 'PATH'
+      after the installation in Windows.
+
+ v1.5.5
+  -----------
+    o Fixed the bug caused by misuse of memory-allocation.
+    o Added a few of ulc examples, objective_c.ulc, go.ulc, visual-basic.ulc.
+
+v1.5.4
+  -----------
+    o Checked the compatibility with dash in installing ULS from source code.
+    o Fixed an install error occurring in Windows because of missing MSVCR110.dll
+         by statically linking program with it.
+    o For Debian users, deb-files is provided as follows
+      - uls_1.5.4_amd64.deb: for 64-bit mach(x86_64, amd64)
+      - uls_1.5.4_i386.deb: for 32-bit mach
+    o For Windows users, A zip-file is provided.
+      - UlsWin_1.5.4.zip contains both 32-bit and 64-bit binaries.
+    o You can download the above installation file on the site,
+         http://www.sourceforge.net/projects/uls.
+
+ v1.5.3
+  -----------
+    o Fixed a memory leak bug in loading ulc file.
+    o The ulc files {css3,html5,shell,mkf}.ulc in ulc_exam is moved to the examples directory.
+    o The script file for uninstalling ULS on Windows is provided.
+    o A few of bugs related to the setup.bat are fixed.
+
+  v1.5.2
+  -----------
+    o Fixed a critical bug, which causes the first character of token string to be missed.
+    o The current <tok-id,tok-str> shouldn't be changed by calling uls_peek_ch(). Fixed this.
+    o A bug in uls_skip_white_spaces() fixed.
+    o Notice that the ulc files in ulc_exam/{css3,html5,shell,mkf}.ulc are for demo only.
+
+  v1.5.1
+  -----------
+    o The prototype of the third parameter of uls_getopts(), uls_optproc_t, has been changed.
+      If it returns non-zero, the processing of parsing arguments will be exited and returned.
+    o To print the name of current token, use conversion specification %t in uls_log().
+    o On linux, a new executable 'uninstall_uls' is supported to remove ULS from your system.
+
+  v1.5
+  -----------
+    o New language bindings of UlsLex class for Java and C# are introduced.
+      There're explanation of installation and usage in INSTALL.txt.
+      For detailed description of usage, refer to the class source file(UlsLex.java, UlsLex.cs).
+    o The return value of the character manipulating APIs is changed.
+      Those are uls_get_ch(), uls_peek_ch(), UlsLex.getCh(), UlsLex.peekCh().
+      Refer to the document 'ULS-ug.txt' in 'doc' for detail.
+    o [BUG-FIX] It occurrs a 'make' error in case the linux install directory,
+        which is specified at configuration time by the --prefix option,
+        contains non-ascii, multibytes string. Fixed this.
+        It's necessary to insert the setlocale() at the beginning of program
+           to print utf-string with uls_snprintf().
+    o [BUG-FIX] It displays nil strings corresponding to the conversion specifiers %k, %w
+        in the C++ class. Fixed this.
+
+  v1.4.2
+  -----------
+    o Fixed the miss of consraint that the maximum number
+         of literal-string types is eight per uls-spec(*.ulc).
+      At most four literal-string types are permitted in the previous releases.
+    o tested on various Linux OSs as follows.
+      Centos(6.3)
+      openSUSE(13.1)
+      debian(7.2.0)
+      ubuntu(13.10-server)
+      Mageia(3)
+      linuxmint(16)
+
+  v1.4.1
+  -----------
+    o Support MBCS entirely in Windows.
+       Uls tools(Ulc2Class.exe, UlsStream.exe, UlfGen.exe) will recognize the ANSI-encoded command arguments correctly.
+       The ANSI encoded files without (UTF) BOM will be properly processed.
+       In the APIs having string(char *) type parameters, those parameters will be ANSI-encoded or utf8 string
+          according to the platform, Windows or Linux.
+    o _T(or TEXT) macro for wide string parameters can be used in Windows.
+      _T(str) expands the 'str' into (ANSI encoded) multbyte string or wide string
+            depending on the existence of the macro _UNICODE.
+    o A few bug fixes, especially in *wprintf().
+
+  v1.4
+  -----------
+    o Support UTF-16, UTF-32 input file as well as UTF-8. Use only file or string as input source.
+      Use uls_{set,push}_file() or uls_{set,push}_uline() to tokenize UTF-16(LE,BE), UTF32(LE,BE) files.
+      ULS will recognize BOM at the beginning of UTF file.
+      The file void of BOM is, by default, UTF-8(or ASCII) input stream.
+      Refer to tests/id_stat as an example processing UTF-16 file.
+    o Revised the APIs manipulating ULS streams. Refer to the document 'ULS-ug.txt' in 'doc'.
+    o Introduce a concept of 'TemplateULS', a token sequence with template variables.
+      This is mostly planed to be used as intermediate files for 'template classes'.
+    o Support the representation of binary-numbers, like 0b0, 0b1, 0b1100, 0b1101.
+    o More ulc-file examples in the 'ulc_exam', iso_c.ulc, cpp.ulc, csharp.ulc, ...
+      Used 'INHERIT:' directive to inherit existing lexical specification.
+    o Changed the order of search path for ulc-files and the name of environment variable for it as 'ULC_PATH'.
+      Refer to the document 'ULS-ug.txt' in 'doc' for detail.
+    o You don't have to specify unicode range in ID_CHARS, ID_FIRST_CHARS attributes in ulc-file
+      to your country's letters for ID. By default, nearly all the letters over the world have been registered
+      as characters consisting of ID. If there are additional unicode letters for ID, use the ID_CHARS, ID_FIRST_CHARS
+      attributes in the ulc-file.
+    o In Windows, provides a mechanism to change the default installation folder(C:\Program files\AbxWin)
+       to what you want.
+
+  v1.3.6
+  -----------
+    o Fixed the bug that causes Ulc2Class.exe to generate incorrect C header file
+    	when the specified output file is not in the current folder.
+    o After the installation of binary files,
+        The setup.bat make Ulc2Class.exe generate the (c,c++) header files of the ulc-files.
+
+  v1.3.5
+  -----------
+    o Fixed the problem that it recognizes the right quotation mark as left mark
+       and so emits incorrect message.
+    o Missed the minus sign of octal number in the token string.
+
+  v1.3.4
+  -----------
+    o Fixed a problem related to version check routine.
+       ULS might have emitted incorrect messages like "unsupported version(ulc): 0".
+    o Reinforced the function that makes temporary files, which is used in 'uls_stream.'.
+
+  v1.3.3
+  -----------
+    o Added -p-option to specify the prefix of token name in the ulc file.
+      You can specify -p option like
+          ulc2class -p TOK_  <ulc-file.ulc>
+      The token names of reserved tokens, TOK_ID, TOK_NUMBER, TOK_EOF, ..., are also changed
+          into ID, NUMBER, EOF ...
+      If you are using the 'RENAME:' attribute like,
+             RENAME: TOK_ID IDENT
+         change the above like this
+             RENAME: ID IDENT
+      If there is a collision with token-name, especially for EOF when using the C-library,
+          the name must be changed properly using the -p-option or 'RENAME:' attribute.
+      For example, you may add the following line into ulc-file.
+          RENAME: EOF EndOfFile
+    o Can use size specifications for keyword(%k) and coordinate (%w) conversion specification,
+          like %9k and %-16w.
+    o Add an overloaded method UlsCpp::Keyword() to retreive the keyword string of current token.
+    o Gives you the accurate position of the error in the message when it reads ulc-file.
+    o Fixed a malfunction of case-insensitivity process of keywords.
+    o a few bug fixes. 
+
+  v1.3.2
+  -----------
+     o The problem in recognizing number token in num2stdfmt() is resolved.
+
+  v1.3.1
+  -----------
+    o Fixed uls_tok2keyw() for getting the keyword of token.
+       The %k is using uls_tok2keyw(), so it's also fixed.
+    o Added new methods UlsLex::Keyword(), UlsLex::Keyword(tok_id) in UlsLex.
+    o Made the minus sign of number included into number-token(TOK_NUMBER).
+       The procedures uls_lexeme_{int,uint,long,ulong,longlong,ulonglong} are added.
+       These should be used for getting the (binary) values of current lexeme.
+
+  v1.3
+  -----------
+    o Added New methods of UlsLex, setExtraTokdef, getExtraTokdef.
+    	setExtraTokdef is for hooking user-defined data up to token number.
+    	getExtraTokdef is for getting the hooked user-defined data from token number.
+    o Use ULS_WANT_EOFTOK, ULS_UNWANT_EOFTOK flag instead of ULS_EOF_CARRIER when setting input stream.
+    o There's a brief user-manual for C-users in doc, named user_manual(c-api).txt.
+    o The procedures related to uls_stream_t used (FILE*) for input/output, not file-descriptor.
+
+  v1.2
+  -----------
+    o Added examples scanning the 'css3', 'html5', 'shell-script', 'Makefile' and dumping tokens.
+      The program tests/yacc is moved to 'examples'. You can see there how to link with 'yacc/bison'.
+      After installation of ULS(by 'make install'), go into the directories below 'examples',
+         try to run the programs after building('make').
+      In Windows, to build the programs run the solution file 'UlsExamples.sln' in UlsExamples
+ 
+    o The unget APIs(uls_ungetch, uls_ungettok) have been reinforced and diversified.
+      Use uls_unget_ch, uls_unget_tok, uls_unget_str, uls_unget_lexeme for C users and
+         ungetCh, ungetTok, ungetStr, ungetLexeme for C++ users.
+      The compiler using ULS library can see unlimited look ahead tokens by virtue of uls_unget_lexeme().
+
+    o A few of new classes are added in the namespace.
+      The qualified names of the classes in ulscpp library are updated as follows.
+         ULS::Crux::IPrintf
+         ULS::Crux::Loggable
+         ULS::Crux::UlsLex
+         ULS::Collection::DumpToks
+         ULS::Collection::Css3Lex
+         ULS::Collection::Html5Lex
+         ULS::Collection::ShellLex
+         ULS::Collection::MkfLex
+ 
+    o The literal string analyzing function sophisticatedly defined and given to user.
+        For further details, refer to 'uls_litstr_analyzer_t' in uls_type.h, 
+        default_litstr_analyzer() and MkfLex::tabblk_analyzer() in examples/MkfLex.cpp.
+
+    o The version of ULC-file is upgraded to v1.0.1.
+      The v1.0.0 is compatible to v1.0, which means the format of v1.0 is contained in v1.0.1.
+
+  v1.1
+  -----------
+    o Successfully tested on 64bits arch, x64_86.
+	    On Windows(XP,7), you can use the following configurations in VS2010 (Express),
+             Win32/Release, Win32/Debug
+             x64/Release, x64/Debug
+        The UlsWin\Setup.bat lets you choose install-mode including uninstalling.
+    o Added a demo program, DumpToks, for C++ users,
+        DumpToks dumps token stream from any text files, even from binary.
+        usage: DumpToks <input-filepath>
+        The C-version of DumpToks is in the 'tests/dump_toks'.
+        The program in examples/test_uls is used in order to check 
+             that ULS is correctly installed. 
+        After installing ULS by 'make install', you can build it.
+    o Added functions that get number-value from the current lexeme.
+        uls_lexeme_int(), uls_lexeme_uint()
+        uls_lexeme_long(), uls_lexeme_ulong()
+        uls_lexeme_longlong(), uls_lexeme_ulonglong()
+        uls_lexeme_double(), uls_lexeme_float()
+    o The retval type of uls_lexeme_text() should be 'const char *'.
+    o The public member of UlsLex, LexemeInt, is now of type 'unsigned long long'
+
+  v1.0.2
+  -----------
+    o For windows(XP, maybe Windows7) users, a simple installer is provided.
+    o get the binary package without build from sources
+        Win32-Release version built in WindowsXp
+        Refer to 'INSTALL' for detail.
+
+  v1.0.1
+  -----------
+    o The number in ULS, which is represented by TOK_NUMBER is now nonnegative.
+      The sign of number-token(TOK_NUMBER) should be determined 
+      at the semantic stage.
+    o Added a function uls_is_zero() that checks if the current token is 
+		number(integer or real) 0.
+
+  v1.0
+ -----------
+    o The first version, which was initiated on 2011-12-10

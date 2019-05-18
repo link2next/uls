@@ -1,0 +1,224 @@
+﻿#@ulc-2.3
+#
+#  Visual Basic
+#
+DOMAIN: uls.link2next.io://season-1
+
+ID_FIRST_CHARS: _ a-z A-Z
+ID_CHARS: _ 0-9 a-z A-Z
+CASE_SENSITIVE: false
+ID_MAX_LENGTH: 255
+
+NUMBER_PREFIXES: 0x:16 0:8
+
+COMMENT_TYPE: ' \n
+COMMENT_TYPE: REM  \n
+COMMENT_TYPE: Rem  \n
+COMMENT_TYPE: rem  \n
+
+QUOTE_TYPE: token=128 " verbatim1
+
+%%
+
+RUNE_LITSTR        128
+
+CONDDIR_CONST   #Const
+CONDDIR_IF      #If
+CONDDIR_ELSE    #Else
+CONDDIR_ELSEIF  #ElseIf
+CONDDIR_END     #End
+
+ASGN         :=
+BANDASGN     &=
+MULASGN      *=
+DIVASGN      /=
+RSLASHASGN   \=
+BXORASGN     ^=
+ADDASGN      +=
+SUBASGN      -=
+BLSHASGN     <<=
+BRSHASGN     >>=
+
+
+ADDHANDLER   AddHandler
+ADDRESSOF    AddressOf
+ALIAS        Alias
+AND          And
+ANDALSO      AndAlso
+
+AS           As
+BOOLEAN      Boolean
+BYREF        ByRef
+BYTE         Byte
+BYVAL        ByVal
+
+CALL         Call
+CASE         Case
+CATCH        Catch
+CBOOL        CBool
+CBYTE        CByte
+
+CCHAR        CChar
+CDATE        CDate
+CDEC         CDec
+CDBL         CDbl
+CHAR         Char
+
+CINT         CInt
+CLASS        Class
+CLNG         CLng
+COBJ         CObj
+CONST        Const
+
+CONTINUE     Continue
+CSBYTE       CSByte
+CSHORT       CShort
+CSNG         CSng
+CSTR         CStr
+
+CTYPE        CType
+CUINT        CUInt
+CULNG        CULng
+CUSHORT      CUShort
+DATE         Date
+
+DECIMAL      Decimal
+DECLARE      Declare
+DEFAULT      Default
+DELEGATE     Delegate
+DIM          Dim
+
+DIRECTCAST   DirectCast
+DO           Do
+DOUBLE       Double
+EACH         Each
+ELSE         Else
+
+ELSEIF       ElseIf
+END          End
+ENDIF        EndIf
+ENUM         Enum
+ERASE        Erase
+
+ERROR        Error
+EVENT        Event
+EXIT         Exit
+FALSE        False
+FINALLY      Finally
+
+FOR          For
+FRIEND       Friend
+FUNCTION     Function
+GET          Get
+GETTYPE      GetType
+
+GETXMLNAMESPACE GetXMLNamespace
+GLOBAL       Global
+GOSUB        GoSub
+GOTO         GoTo
+HANDLES      Handles
+
+IF           If
+IMPLEMENTS   Implements
+IMPORTS      Imports
+IN           In
+INHERITS     Inherits
+
+INTEGER      Integer
+INTERFACE    Interface
+IS           Is
+ISNOT        IsNot
+LET          Let
+
+LIB          Lib
+LIKE         Like
+LONG         Long
+LOOP         Loop
+ME           Me
+
+MOD          Mod
+MODULE       Module
+MUSTINHERIT  MustInherit
+MUSTOVERRIDE MustOverride
+MYBASE       MyBase
+
+MYCLASS      MyClass
+NAMESPACE    Namespace
+NARROWING    Narrowing
+NEW          New
+NEXT         Next
+
+NOT          Not
+NOTHING      Nothing
+NOTINHERITABLE NotInheritable
+NOTOVERRIDABLE NotOverridable
+OBJECT       Object
+
+OF           Of
+ON           On
+OPERATOR     Operator
+OPTION       Option
+OPTIONAL     Optional
+
+OR           Or
+ORELSE       OrElse
+OVERLOADS    Overloads
+OVERRIDABLE  Overridable
+OVERRIDES    Overrides
+
+PARAMARRAY   ParamArray
+PARTIAL      Partial
+PRIVATE      Private
+PROPERTY     Property
+PROTECTED    Protected
+
+PUBLIC       Public
+RAISEEVENT   RaiseEvent
+READONLY     ReadOnly
+REDIM        ReDim
+REMOVEHANDLER RemoveHandler
+
+RESUME       Resume
+RETURN       Return
+SBYTE        SByte
+SELECT       Select
+SET          Set
+
+SHADOWS      Shadows
+SHARED       Shared
+SHORT        Short
+SINGLE       Single
+STATIC       Static
+
+STEP         Step
+STOP         Stop
+STRING       String
+STRUCTURE    Structure
+SUB          Sub
+
+SYNCLOCK     SyncLock
+THEN         Then
+THROW        Throw
+TO           To
+TRUE         True
+
+TRY          Try
+TRYCAST      TryCast
+TYPEOF       TypeOf
+UINTEGER     UInteger
+ULONG        ULong
+
+USHORT       UShort
+USING        Using
+VARIANT      Variant
+WEND         Wend
+WHEN         When
+
+WHILE        While
+WIDENING     Widening
+WITH         With
+WITHEVENTS   WithEvents
+WRITEONLY    WriteOnly
+
+XOR          Xor
+

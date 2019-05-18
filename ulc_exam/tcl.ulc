@@ -1,0 +1,106 @@
+﻿#@ulc-2.3
+#
+#  ULC for TCL
+#
+DOMAIN: uls.link2next.io://season-1
+
+ID_FIRST_CHARS: _ a-z A-Z
+ID_CHARS: _ 0-9 a-z A-Z
+CASE_SENSITIVE: true
+
+NUMBER_PREFIXES: 0x:16 0:8
+
+COMMENT_TYPE: # \n 
+
+QUOTE_TYPE: token=DQUOTE "
+QUOTE_TYPE: options=nothing token=SQUOTE \\\n
+
+%%
+
+EOL              \n
+RSHIFT           >>   4
+LSHIFT           <<
+LEQ              <=
+GEQ              >=
+EQL              ==
+NEQ              !=
+AND              &&   11
+OR               ||
+
+AFTER            after      128
+APPEND           append
+ARRAY            array
+BINARY           binary
+BREAK            break
+CATCH            catch
+CD               cd
+CLOCK            clock
+CLOSE            close
+CONCAT           concat
+CONSOLE          console
+CONTINUE         continue
+ERROR            error
+EOF              eof
+EVAL             eval
+EXEC             exec
+EXIT             exit
+EXPR             expr
+FBLOCKED         fblocked
+FCONFIGURE       fconfigure
+FCOPY            fcopy
+FILE             file
+FILEEVENT        fileevent
+FLUSH            flush
+FOR              for
+FOREACH          foreach
+FORMAT           format
+GETS             gets
+GLOB             glob
+GLOBAL           global
+HISTORY          history
+IF               if
+INCR             incr
+INFO             info
+INTERP           interp
+JOIN             join
+LAPPEND          lappend
+LINDEX           lindex
+LINSERT          linsert
+LIST             list
+LLENGTH          llength
+LOAD             load
+LRANGE           lrange
+LREPLACE         lreplace
+LSEARCH          lsearch
+LSORT            lsort
+NAMESPACE        namespace
+OPEN             open
+PACKAGE          package
+PID              pid
+PROC             proc
+PUTS             puts
+PWD              pwd
+READ             read
+REGEXP           regexp
+REGSUB           regsub
+RENAME           rename
+RETURN           return
+SCAN             scan
+SEEK             seek
+SET              set
+SOCKET           socket
+SOURCE           source
+SPLIT            split
+STRING           string
+SUBST            subst
+SWITCH           switch
+TELL             tell
+TIME             time
+TRACE            trace
+UNKNOWN          unknown
+UNSET            unset
+UPLEVEL          uplevel
+UPVAR            upvar
+VARIABLE         variable
+VWAIT            vwait
+WHILE            while

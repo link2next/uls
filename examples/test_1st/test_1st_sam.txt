@@ -1,0 +1,29 @@
+
+main()
+{
+   AAA = 1;
+   BBB = 0;
+
+	IDENTIFIER = 1;
+
+	if (AAA && BBB || EEE) {
+		AAA = 0;
+		EEE = 755;
+	}
+
+	XXX = -31415.926e-8;
+	XXX = -3.1415926e-4;
+	BBB =  -7094;
+	AAA =  644;
+	XXX =  0.;
+	YYY =  .3;
+	XXX = 3.14159265358979323E-1025;
+
+	while (DDD <=EEE) {
+		YYY =  .3;
+	}
+
+	AAA = .0;
+	BBB = -AAA;
+}
+

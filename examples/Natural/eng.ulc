@@ -1,0 +1,44 @@
+﻿#@ulc-2.3
+#
+#  ULC: Unified Lexical Configuration
+#
+DOMAIN: uls.link2next.io://season-1
+
+ID_FIRST_CHARS: a-z A-Z
+ID_CHARS: - a-z A-Z
+
+CASE_SENSITIVE: false
+
+QUOTE_TYPE: token=DQUOTE " verbatim1
+
+RENAME: ID      WORD
+RENAME: NUMBER  NUM
+RENAME: EOF     ENDFILE
+
+%%
+THAT    that  1
+WE      we
+OR      or
+ELSE    else
+AND     and
+BE      be
+THE     the
+IS      is
+WHICH   which
+EOL     \n    10 
+NO      no    11
+THERE   there
+A       a
+AN      an
+WHERE   where
+BEFORE  before 
+FROM    FROM 
+HIS     his 
+TO      to 
+IN      in 
+
+I_M     I'm
+YOU_RE  You're 
+
+I_LL    I'll
+

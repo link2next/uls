@@ -1,0 +1,71 @@
+﻿#@ulc-2.3
+#
+#  ULC: Unified Lexical Configuration
+#
+DOMAIN: uls.link2next.io://season-1
+
+ID_FIRST_CHARS: _ a-z A-Z
+ID_CHARS: _ 0-9 a-z A-Z
+NUMBER_PREFIXES: 0x:16 0:8
+
+COMMENT_TYPE: /* */
+COMMENT_TYPE: // \n
+
+QUOTE_TYPE: token=DQUOTE "
+QUOTE_TYPE: token=SQUOTE ' verbatim1
+
+%%
+#
+# Token Definition List
+# There are basically 3 columns per line, <token-name> <keyword> <token-id>.
+# The third column can be omitted if you intend it to be the successor of previous one.
+#
+TOK_AND      &&        128
+TOK_OR       ||
+TOK_EQ       ==
+TOK_LEQ      <=
+TOK_GEQ      >=
+TOK_NEQ      !=
+
+TOK_OR       or    
+
+TOK_ASM      asm       150
+TOK_DEFAULT  default
+TOK_AUTO     auto
+TOK_DO       do
+TOK_DOUBLE   double
+
+TOK_ELSE     else      160
+TOK_ENUM     enum
+
+TOK_GOTO     goto      165
+TOK_IF       if
+TOK_BREAK    break
+TOK_CASE     case
+TOK_SWITCH   switch
+TOK_TYPEDEF  typedef   170
+TOK_UNION    union
+TOK_CHAR     char
+TOK_EXTERN   extern
+TOK_FLOAT    float
+TOK_FOR      for       175
+TOK_CONTINUE continue
+TOK_CONST    const
+TOK_INT      int
+TOK_LONG     long
+TOK_REGISTER register  180
+
+# Tok-id remapping of 1-char tokens.
+TOK_BEGIN    {       300
+TOK_END      }
+
+TOK_RETURN   return    185
+TOK_SHORT    short
+TOK_SIGNED   signed
+TOK_SIZEOF   sizeof
+TOK_STATIC   static
+TOK_STRUCT   struct    190
+TOK_UNSIGNED unsigned
+TOK_VOID     void
+TOK_VOLATILE volatile
+TOK_WHILE    while

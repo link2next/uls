@@ -1,0 +1,105 @@
+﻿#@ulc-2.3
+#
+# Unified Lexical Configuration
+#
+DOMAIN: uls.link2next.io://season-1
+
+ID_FIRST_CHARS: $ a-z A-Z
+ID_CHARS: _ 0-9 a-z A-Z
+CASE_SENSITIVE: false
+
+NUMBER_PREFIXES: 0x:16 0:8
+
+COMMENT_TYPE: /* */
+COMMENT_TYPE: // \n
+
+QUOTE_TYPE: token=DQUOTE "
+QUOTE_TYPE: token=SQUOTE '
+
+RENAME: EOF ENDFILE
+
+%%
+
+# token-name  keyword  token-id
+NONE     <NONE>    -5
+TMPL     <TMPL>    -4
+LINENUM  <LNO>     -3
+ERR      <ERR>     -2
+ENDFILE  <EOF>     -1
+EOI      <EOI>      0
+ID       <ID>       1
+NUMBER   <NUMBER>   2
+
+AND         &&      256
+OR          ||
+EQ          ==
+EQ2         ===
+LEQ         <=
+GEQ         >=
+NEQ         !=
+NEQ2        !==
+INCL        ++
+DECL        --
+
+ABSTRACT     abstract 300
+AND2         and
+AS           as
+BREAK        break
+
+CASE         case
+CATCH        catch
+CLASS        class
+CLONE        clone
+CONST        const
+CONTINUE     continue
+
+DECLARE      declare
+DEFAULT      default
+DO           do
+DOUBLE       double
+
+ELSE         else  
+ELSEIF       elseif
+ENDDECLARE   enddeclare
+ENDFOR       endfor
+ENDFOREACH   endforeach
+ENDIF        endif
+ENDSWITCH    endswitch
+ENDWHILE     endwhile
+EXTENDS      extends
+
+FINAL        final
+FOR          for  
+FOREACH      foreach
+FUNCTION     function
+GLOBAL       global
+GOTO         goto
+
+IF           if
+IMPLEMENTS   implements
+INSTANCEOF   instanceof
+INTERFACE    interface
+
+NAMESPACE    namespace
+NEW          new
+
+OR2          or
+PRIVATE      private
+PROTECTED    protected
+PUBLIC       public
+
+STATIC       static
+THROW        throw
+TRY          try
+
+USE          use
+VAR          var
+WHILE        while
+XOR          xor
+
+__CLASS__     __CLASS__
+__DIR__       __DIR__
+__FILE__      __FILE__
+__FUNCTION__  __FUNCTION__
+__METHOD__    __METHOD__
+__NAMESPACE__ __NAMESPACE__

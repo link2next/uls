@@ -1,0 +1,215 @@
+	[     LF]
+	[     LF]
+	[   WORD] dstdir=/tmp/v
+	[     LF]
+	[   WORD] n_relvers=0x18
+	[     LF]
+	[     LF]
+	[   WORD] zbin_target
+	[       ] (
+	[       ] )
+	[     LF]
+	[       ] {
+	[     LF]
+	[   WORD] ver=$0x1
+	[     LF]
+	[     LF]
+	[     IF] if
+	[       ] [
+	[   WORD] !
+	[   WORD] -d
+	[   WORD] pre$ver
+	[       ] ]
+	[       ] ;
+	[   THEN] then
+	[     LF]
+	[ RETURN] return
+	[     LF]
+	[     FI] fi
+	[     LF]
+	[     LF]
+	[   WORD] cd
+	[   WORD] pre$ver
+	[     LF]
+	[     LF]
+	[   WORD] i=0x1
+	[     LF]
+	[  WHILE] while
+	[       ] [
+	[   WORD] $i
+	[   WORD] -le
+	[   WORD] $n_relvers
+	[       ] ]
+	[       ] ;
+	[     DO] do
+	[     LF]
+	[     IF] if
+	[       ] [
+	[   WORD] -d
+	[   WORD] pack_${ver}_rel$i
+	[       ] ]
+	[       ] ;
+	[   THEN] then
+	[     LF]
+	[   WORD] exe1
+	[   WORD] pack_${ver}_rel$i
+	[   WORD] pack_${ver}_rel$i
+	[     LF]
+	[   WORD] exe2
+	[   WORD] pack_${ver}_rel$i
+	[     LF]
+	[     FI] fi
+	[     LF]
+	[   WORD] i=$(($i+0x1))
+	[     LF]
+	[   DONE] done
+	[     LF]
+	[     LF]
+	[   WORD] cd
+	[   WORD] ..
+	[     LF]
+	[       ] }
+	[     LF]
+	[     LF]
+	[   WORD] wbin_target
+	[       ] (
+	[       ] )
+	[     LF]
+	[       ] {
+	[     LF]
+	[   WORD] ver=$0x1
+	[     LF]
+	[     LF]
+	[     IF] if
+	[       ] [
+	[   WORD] !
+	[   WORD] -d
+	[   WORD] $dstdir/pre$ver
+	[       ] ]
+	[       ] ;
+	[   THEN] then
+	[     LF]
+	[   WORD] mkdir
+	[   WORD] -p
+	[   WORD] $dstdir/pre$ver
+	[     LF]
+	[     FI] fi
+	[     LF]
+	[     LF]
+	[   WORD] i=0x1
+	[     LF]
+	[  WHILE] while
+	[       ] [
+	[   WORD] $i
+	[   WORD] -le
+	[   WORD] $n_relvers
+	[       ] ]
+	[       ] ;
+	[     DO] do
+	[     LF]
+	[     IF] if
+	[       ] [
+	[   WORD] -f
+	[   WORD] pre$ver/pack_${ver}_rel$i
+	[       ] ]
+	[       ] ;
+	[   THEN] then
+	[     LF]
+	[   WORD] exe1
+	[   WORD] $dstdir/pre$ver
+	[   WORD] -jxf
+	[   WORD] pre$ver/pack_${ver}_rel$i
+	[     LF]
+	[     FI] fi
+	[     LF]
+	[   WORD] i=$(($i+0x1))
+	[     LF]
+	[   DONE] done
+	[     LF]
+	[       ] }
+	[     LF]
+	[     LF]
+	[     IF] if
+	[       ] [
+	[ LITSTR] 
+	[   WORD] !=
+	[ LITSTR] 3
+	[       ] ]
+	[       ] ;
+	[   THEN] then
+	[     LF]
+	[   WORD] echo
+	[ LITSTR] usage: zx_target.sh <file1> <file2>
+	[     LF]
+	[   WORD] exit
+	[    NUM] 0x1
+	[     LF]
+	[     FI] fi
+	[     LF]
+	[     LF]
+	[   WORD] cmd_mode=$0x1
+	[     LF]
+	[   WORD] start_prodid=$0x2
+	[     LF]
+	[   WORD] end_prodid=$0x3
+	[     LF]
+	[     LF]
+	[     IF] if
+	[       ] [
+	[   WORD] $cmd_mode
+	[   WORD] ==
+	[ LITSTR] z
+	[       ] ]
+	[       ] ;
+	[   THEN] then
+	[     LF]
+	[   WORD] i=$start_prodid
+	[     LF]
+	[  WHILE] while
+	[       ] [
+	[   WORD] $i
+	[   WORD] -le
+	[   WORD] $end_prodid
+	[       ] ]
+	[       ] ;
+	[     DO] do
+	[     LF]
+	[   WORD] zbin_target
+	[   WORD] $i
+	[     LF]
+	[   WORD] i=$(($i+0x1))
+	[     LF]
+	[   DONE] done
+	[     LF]
+	[     FI] fi
+	[     LF]
+	[     LF]
+	[     IF] if
+	[       ] [
+	[   WORD] $cmd_mode
+	[   WORD] ==
+	[ LITSTR] x
+	[       ] ]
+	[       ] ;
+	[   THEN] then
+	[     LF]
+	[   WORD] i=$start_prodid
+	[     LF]
+	[  WHILE] while
+	[       ] [
+	[   WORD] $i
+	[   WORD] -le
+	[   WORD] $end_prodid
+	[       ] ]
+	[       ] ;
+	[     DO] do
+	[     LF]
+	[   WORD] wbin_target
+	[   WORD] $i
+	[     LF]
+	[   WORD] i=$(($i+0x1))
+	[     LF]
+	[   DONE] done
+	[     LF]
+	[     FI] fi
+	[     LF]

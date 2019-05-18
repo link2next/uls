@@ -1,0 +1,31 @@
+
+# 2015 "kuiper-belt.h"
+
+# 715 "pluto.h"
+
+main()
+{
+	AAA = 1;
+	BBB = New-Horizon;
+
+	AAA = -0.;
+	BBB = 0x0 0x00 0x;
+	BBB = -AAA;
+
+	ID123= -1;
+
+	if (AAA && BBB || EEE) {
+		AAA = 0;
+		EEE = 0x00fffe;
+	}
+
+	YYY = -3.1415926e-8;
+	BBB =  -7094;
+	REX =  0644;
+	ID = 3.1415;
+
+	while (DDD <=EEE) {
+		YYY =  .3;
+	}
+}
+

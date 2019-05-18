@@ -1,0 +1,10 @@
+
+main()
+{
+	int AAA, BBB, EEE;
+
+    AAA = 1;
+
+	WWW =  0.;
+	YYY =  .3;
+}

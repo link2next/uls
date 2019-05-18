@@ -1,0 +1,52 @@
+	[  THERE] There
+	[     IS] is
+	[      A] a
+	[   WORD] place
+	[  WHERE] where
+	[    THE] the
+	[   WORD] sidewalk
+	[   WORD] ends
+	[     LF]
+	[    AND] And
+	[ BEFORE] before
+	[    THE] the
+	[   WORD] street
+	[   WORD] begins
+	[       ] ,
+	[     LF]
+	[    AND] And
+	[  THERE] there
+	[    THE] the
+	[   WORD] grass
+	[   WORD] grows
+	[   WORD] soft
+	[    AND] and
+	[   WORD] white
+	[       ] ,
+	[     LF]
+	[    AND] And
+	[  THERE] there
+	[    THE] the
+	[   WORD] sun
+	[   WORD] burns
+	[   WORD] crimson
+	[   WORD] bright
+	[       ] ,
+	[     LF]
+	[    AND] And
+	[  THERE] there
+	[    THE] the
+	[   WORD] moon-bird
+	[   WORD] rests
+	[   FROM] from
+	[    HIS] his
+	[   WORD] flight
+	[     LF]
+	[     TO] To
+	[   WORD] cool
+	[     IN] in
+	[    THE] the
+	[   WORD] peppermint
+	[   WORD] wind
+	[       ] .
+	[     LF]

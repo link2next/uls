@@ -1,0 +1,6 @@
+	[     ID] hello --- xdef[tokID] = 0x777
+	[     ID] hello --- xdef[tokID] = 0x777
+	[     ID] helloworld
+	[     ID] whello
+	[ NUMBER] 0.314
+	[ LITSTR]  world hello 

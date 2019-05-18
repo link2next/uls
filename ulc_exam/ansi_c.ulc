@@ -1,0 +1,75 @@
+﻿#@ulc-2.3
+#
+#  ULC for ANSI-C
+#
+DOMAIN: uls.link2next.io://season-1
+
+ID_FIRST_CHARS: _ a-z A-Z
+ID_CHARS: _ 0-9 a-z A-Z
+CASE_SENSITIVE: true
+
+NUMBER_PREFIXES: 0x:16 0X:16 0:8
+NUMBER_SUFFIXES: L l UL ul ULL ull LL f
+
+COMMENT_TYPE: /* */
+
+QUOTE_TYPE: token=DQUOTE "
+QUOTE_TYPE: token=SQUOTE ' verbatim1
+
+NOT_CHAR_TOK: ` @ _
+
+%%
+
+AUTO             auto        4 
+BREAK            break
+CASE             case
+CHAR             char
+CONST            const
+CONTINUE         continue
+DEFAULT          default
+DO               do
+DOUBLE           double
+ELSE             else
+ENUM             enum
+EXTERN           extern
+FLOAT            float
+FOR              for
+GOTO             goto
+IF               if
+INT              int
+LONG             long
+REGISTER         register
+RETURN           return
+SHORT            short
+SIGNED           signed
+SIZEOF           sizeof
+STATIC           static
+STRUCT           struct
+SWITCH           switch
+TYPEDEF          typedef
+UNION            union
+UNSIGNED         unsigned
+VOID             void          48
+VOLATILE         volatile
+WHILE            while
+
+POINTER          ->            64
+INCR             ++
+DECR             --
+LEQ              <=
+GEQ              >=
+EQL              ==
+NEQ              !=
+AND              &&
+OR               ||
+ADD_ASGN         +=
+SUB_ASGN         -=
+MUL_ASGN         *=
+DIV_ASGN         /=
+MOD_ASGN         %=
+BITAND_ASGN      &=
+BITOR_ASGN       |=
+BITXOR_ASGN      ^=
+LSHIFT_ASGN      <<=
+RSHIFT_ASGN      >>=
+

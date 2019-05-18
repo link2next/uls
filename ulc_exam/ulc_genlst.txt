@@ -1,0 +1,20 @@
+# name      enum_name      ClassName    tok_prefix
+
+java         java           JavaLex          -
+javascript   javascript     JavaScriptLex    -
+actionscript actionscript   ActionScriptLex  -
+python       python         PythonLex        -
+sql          sql            SqlLex           -
+php          php            PhpLex           -
+simple       simple         SimpleLex        TOK_
+
+ansi_c      ansi_c         AnsiCLex          -
+cpp         cpp            CppLex            -
+csharp      csharp         CsharpLex         -
+tcl         tcl            TclLex            -
+lua         lua            LuaLex            -
+Matlab      Matlab         MatlabLex         -
+
+go           golang         GoLangLex       -
+objective_c  obj_c          ObjCLex         -
+visual_basic visual_basic   VisualBasicLex  -

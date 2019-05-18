@@ -1,0 +1,96 @@
+	[   WORD] .PHONY
+	[       ] :
+	[     ID] default
+	[     ID] dummy
+	[     ID] install
+	[     ID] clean
+	[     ID] clobber
+	[     ID] all
+	[     LF]
+	[     LF]
+	[     ID] PROG
+	[       ] =
+	[   WORD]  main 
+	[     LF]
+	[     ID] SRCS
+	[       ] =
+	[   WORD]  main.c 
+	[     LF]
+	[     ID] OBJS
+	[       ] =
+	[   WORD]  $(SRCS:.c=.o)
+	[     LF]
+	[     LF]
+	[     ID] ULS_HOME
+	[       ] =
+	[   WORD]  /usr/local
+	[     LF]
+	[     ID] ULSGEN
+	[       ] =
+	[   WORD]  $(ULS_HOME)/bin/ulc2class -c
+	[     LF]
+	[     LF]
+	[     ID] CC
+	[       ] =
+	[   WORD]  gcc
+	[     LF]
+	[     ID] CFLAGS
+	[       ] =
+	[   WORD]  -g -Wall
+	[     LF]
+	[     ID] CPPFLAGS
+	[       ] =
+	[   WORD]  -I$(ULS_HOME)/include
+	[     LF]
+	[     ID] LDFLAGS
+	[       ] =
+	[   WORD]  -L$(ULS_HOME)/lib -L/usr/local/lib
+	[     LF]
+	[     ID] LDLIBS
+	[       ] =
+	[   WORD]  -luls
+	[     LF]
+	[     LF]
+	[     ID] all
+	[       ] :
+	[       ] $
+	[       ] (
+	[     ID] PROG
+	[       ] )
+	[     LF]
+	[     LF]
+	[       ] $
+	[       ] (
+	[     ID] PROG
+	[       ] )
+	[       ] :
+	[   WORD] sample_lex.h
+	[       ] $
+	[       ] (
+	[     ID] OBJS
+	[       ] )
+	[ LITSTR] $(CC) -o $@ $(OBJS) $(LDFLAGS) $(LDLIBS)
+
+	[     LF]
+	[     ID] check
+	[       ] :
+	[ LITSTR] LD_LIBRARY_PATH=$(ULS_HOME)/lib $(PROG)
+
+	[     LF]
+	[   WORD] sample_lex.h
+	[       ] :
+	[   WORD] sample.ulc
+	[ LITSTR] $(ULSGEN) $< 
+
+	[     LF]
+	[   WORD] %.o
+	[       ] :
+	[   WORD] %.c
+	[ LITSTR] $(CC) -c $(CFLAGS) $(CPPFLAGS) $<
+
+	[     LF]
+	[     ID] clean
+	[       ] :
+	[ LITSTR] $(RM) *.o a.out core sample_lex.h
+$(RM) $(PROG) *.bak *.~* $(PROG).exe .depend
+

@@ -1,0 +1,41 @@
+1. How to run batch.
+	1) install ULS
+	2) make
+	3) run_examples.sh
+
+2. Testing programs individually.
+	1) test_1st
+		a) cd test_1st
+		b) test_1st test_1st_sam.txt
+
+	2) yacc
+		a) cd yacc
+		b) ulc2xml yacc_sam.txt
+
+	3) tokseq
+		a) cd tokseq
+		b) tokseq tokseq_sam.txt
+
+	4) DumpToks
+		a) cd DumpToks
+		b) DumpToks dumptoks_sam.txt
+
+	5) Css3
+		a) cd Css3
+		b) Css3Toks css3_sam.txt
+
+	6) Html5
+		a) cd Html5
+		b) Html5Toks html5_sam.txt
+
+	7) Shell
+		a) cd Shell
+		b) ShellToks shell_sam.txt
+
+	8) Mkf
+		a) cd Mkf
+		b) MkfToks mkf_sam.txt
+
+	9) Natural
+		a) cd Natual
+		b) EngToks natural_sam.txt

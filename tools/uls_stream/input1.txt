@@ -1,0 +1,31 @@
+
+main()
+{
+	int AAA, BBB, EEE;
+	double ZZZ;
+	float YYY;
+   
+    AAA = 1;
+    BBB = 0;
+
+	if (AAA && BBB || EEE) { /**/
+		AAA = 0;
+		EEE = 0x00fffe;
+	}
+	
+	ZZZ = -31415.926e-8;
+	BBB =  -7094;
+	AAA =  0644;
+
+	/*comment 
+ blur blur
+ continued *****/
+ 
+	ZZZ =  0.;
+	YYY =  .3;
+	
+	while (__DDD <=EEE) { //  LINE COMMENT
+		YYY =  31.4; 
+	}
+}
+

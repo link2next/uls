@@ -1,0 +1,10 @@
+
+main()
+{
+	A = "\x09hello\uAE00\$world\$";
+	str = [[ This is NOT 
+		c-string ]];
+	str2 = "How \
+  	   about \
+	   this";
+}

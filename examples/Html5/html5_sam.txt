@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<html dir="abc" lang="en-US">
+<!-- THIS IS 
+            A COMMENT -->
+  <head>
+    <meta charset="utf-8">
+    <title>This is the structure of HTML5.</title>
+  </head>
+
+  <body>
+	<header>
+	  <nav>
+	  </nav>
+	</header>
+	<section>
+	  <article>
+	    <header>
+	      <h2><string>Chapter 1</string> AAA</h2>
+	    </header>
+	    <figure id="gallery">
+	      <img src="../a/b/c.png" alt="d.png">
+	      <figurecap>
+	        Twinkle, Twinkle, little star!<br/>
+	        How I wonder what you are!.
+	      </figurecap>
+	    </figure>
+	    <p>
+	        This is a text line.
+	    </p>
+	  </article>
+	  <dialog>
+	  </dialog>
+	</section>
+	<aside>
+	</aside>
+	<footer>
+	</footer>
+  </body>
+
+</html>

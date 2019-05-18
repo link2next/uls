@@ -1,0 +1,285 @@
+﻿#@ulc-2.3
+#
+# Unified Lexical Configuration
+#
+DOMAIN: uls.link2next.io://season-1
+
+ID_FIRST_CHARS: _ a-z A-Z
+ID_CHARS: _ 0-9 a-z A-Z
+CASE_SENSITIVE: false
+
+NUMBER_PREFIXES: 0x:16 0:8
+
+COMMENT_TYPE: /* */
+COMMENT_TYPE: // \n
+
+QUOTE_TYPE: token=DQUOTE "
+QUOTE_TYPE: token=SQUOTE '
+
+RENAME: NUMBER  NUM
+RENAME: LINENUM LNO
+
+%%
+#
+# Token Definition List
+# There are basically 3 columns per line, <token-name> <keyword> <token-id>.
+# The third column can be omitted if you intend it to be the successor of previous one.
+#
+LNO     <Coordinate> -3
+NONE    <None>       -2
+ERR     <ERR>        -1
+EOF     <EOF>         0
+EOI     <EOI>         1
+ID      <ID>          2
+NUM     <NUMBER>      3
+
+AT_IDENTITY    @@IDENTITY   256
+
+ENCRYPTION     ENCRYPTION
+ORDER          ORDER
+
+ADD            ADD
+END            END
+OUTER          OUTER
+
+ALL            ALL
+ERRLVL         ERRLVL
+OVER           OVER
+
+ALTER          ALTER
+ESCAPE         ESCAPE
+PERCENT        PERCENT
+
+AND            AND
+EXCEPT         EXCEPT
+PLAN           PLAN
+
+ANY            ANY
+EXEC           EXEC
+PRECISION      PRECISION
+
+AS             AS
+EXECUTE        EXECUTE
+PRIMARY        PRIMARY
+
+ASC            ASC
+EXISTS         EXISTS
+PRINT          PRINT
+
+AUTHORIZATION  AUTHORIZATION
+EXIT           EXIT
+PROC           PROC
+
+AVG            AVG
+EXPRESSION     EXPRESSION
+PROCEDURE      PROCEDURE
+
+BACKUP         BACKUP
+FETCH          FETCH
+PUBLIC         PUBLIC
+
+BEGIN          BEGIN
+FILE           FILE
+RAISERROR      RAISERROR
+
+BETWEEN        BETWEEN
+FILLFACTOR     FILLFACTOR
+READ           READ
+
+BREAK          BREAK
+FOR            FOR
+READTEXT       READTEXT
+
+BROWSE         BROWSE
+FOREIGN        FOREIGN
+RECONFIGURE    RECONFIGURE
+
+BULK           BULK
+FREETEXT       FREETEXT
+REFERENCES     REFERENCES
+
+BY             BY
+FREETEXTTABLE  FREETEXTTABLE
+REPLICATION    REPLICATION
+
+CASCADE        CASCADE
+FROM           FROM
+RESTORE        RESTORE
+
+CASE           CASE
+FULL           FULL
+RESTRICT       RESTRICT
+
+CHECK          CHECK
+FUNCTION       FUNCTION
+RETURN         RETURN
+
+CHECKPOINT     CHECKPOINT
+GOTO           GOTO
+REVOKE         REVOKE
+
+CLOSE          CLOSE
+GRANT          GRANT
+RIGHT          RIGHT
+
+CLUSTERED      CLUSTERED
+GROUP          GROUP
+ROLLBACK       ROLLBACK
+
+COALESCE       COALESCE
+HAVING         HAVING
+ROWCOUNT       ROWCOUNT
+
+COLLATE        COLLATE
+HOLDLOCK       HOLDLOCK
+ROWGUIDCOL     ROWGUIDCOL
+
+COLUMN         COLUMN
+IDENTITY       IDENTITY
+RULE           RULE
+
+COMMIT         COMMIT
+IDENTITY_INSERT IDENTITY_INSERT
+SAVE           SAVE
+
+COMPUTE        COMPUTE
+IDENTITYCOL    IDENTITYCOL
+SCHEMA         SCHEMA
+
+CONSTRAINT     CONSTRAINT
+IF             IF
+SELECT         SELECT
+
+CONTAINS       CONTAINS
+IN             IN
+SESSION_USER   SESSION_USER
+
+CONTAINSTABLE  CONTAINSTABLE
+INDEX          INDEX
+SET            SET
+
+CONTINUE       CONTINUE
+INNER          INNER
+SETUSER        SETUSER
+
+CONVERT        CONVERT
+INSERT         INSERT
+SHUTDOWN       SHUTDOWN
+
+COUNT          COUNT
+INTERSECT      INTERSECT
+SOME           SOME
+
+CREATE         CREATE
+INTO           INTO
+STATISTICS     STATISTICS
+
+CROSS          CROSS
+IS             IS
+SUM            SUM
+
+CURRENT        CURRENT
+JOIN           JOIN
+SYSTEM_USER    SYSTEM_USER
+
+CURRENT_DATE   CURRENT_DATE
+KEY            KEY
+TABLE          TABLE
+
+CURRENT_TIME   CURRENT_TIME
+KILL           KILL
+TEXTSIZE       TEXTSIZE
+
+CURRENT_TIMESTAMP CURRENT_TIMESTAMP
+LEFT           LEFT
+THEN           THEN
+
+CURRENT_USER   CURRENT_USER
+LIKE           LIKE
+TO             TO
+
+CURSOR         CURSOR
+LINENO         LINENO
+TOP            TOP
+
+DATABASE       DATABASE
+LOAD           LOAD
+TRAN           TRAN
+
+DATABASEPASSWORD DATABASEPASSWORD
+MAX            MAX
+TRANSACTION    TRANSACTION
+
+DATEADD        DATEADD
+MIN            MIN
+TRIGGER        TRIGGER
+
+DATEDIFF       DATEDIFF
+NATIONAL       NATIONAL
+TRUNCATE       TRUNCATE
+
+DATENAME       DATENAME
+NOCHECK        NOCHECK
+TSEQUAL        TSEQUAL
+
+DATEPART       DATEPART
+NONCLUSTERED   NONCLUSTERED
+UNION          UNION
+
+DBCC           DBCC
+NOT            NOT
+UNIQUE         UNIQUE
+
+DEALLOCATE     DEALLOCATE
+NULL           NULL
+UPDATE         UPDATE
+
+DECLARE        DECLARE
+NULLIF         NULLIF
+UPDATETEXT     UPDATETEXT
+
+DEFAULT        DEFAULT
+OF             OF
+USE            USE
+
+DELETE         DELETE
+OFF            OFF
+USER           USER
+
+DENY           DENY
+OFFSETS        OFFSETS
+VALUES         VALUES
+
+DESC           DESC
+ON             ON
+VARYING        VARYING
+
+DISK           DISK
+OPEN           OPEN
+VIEW           VIEW
+
+DISTINCT       DISTINCT
+OPENDATASOURCE OPENDATASOURCE
+WAITFOR        WAITFOR
+
+DISTRIBUTED    DISTRIBUTED
+OPENQUERY      OPENQUERY
+WHEN           WHEN
+
+DOUBLE         DOUBLE
+OPENROWSET     OPENROWSET
+WHERE          WHERE
+
+DROP           DROP
+OPENXML        OPENXML
+WHILE          WHILE
+
+DUMP           DUMP
+OPTION         OPTION
+WITH           WITH
+
+ELSE           ELSE
+OR             OR
+WRITETEXT      WRITETEXT
+
+

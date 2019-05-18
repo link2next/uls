@@ -1,0 +1,19 @@
+README     : Read this first
+INSTALL    : How to install ULS into your system.
+LICENSE    : The LICENSE for this Software
+MANIFEST   : This File
+UlsWin     : The start directory for Windows users.
+man        : man-pages
+src        : The source code of the 'uls-library'.
+tests      : checks if the uls-source is correctly built in your system.
+             Used by 'make check'
+examples   : the examples of uls, currently same as 'tests'
+tools      : the essential tools ulc2class, ulf_gen, and uls_stream for uls package
+ulc2class  : This converts ulc-file to C/C++ header file
+               to be used with your S/W.
+ulf_gen    : A uls-tool generating a file(*.ulf) of keywords frequencies 
+               from given sample sources of any language.
+uls_stream : A uls-tool generating a lexical-stream(*.uls) file 
+               of given source files (or uls-files).
+ulscpp     : The C++ version of the 'uls-library'.
+ulc_exam   : A few of ulc examples for widely used languages, java, sql, ...

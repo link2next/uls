@@ -1,0 +1,6 @@
+﻿
+main()
+{
+	ZZZ = XXX ^ AAA & YYY * BBB;
+}
+

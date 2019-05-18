@@ -1,0 +1,96 @@
+﻿#@ulc-2.3
+#
+#  Objective-C
+#
+DOMAIN: uls.link2next.io://season-1
+
+ID_FIRST_CHARS: _ a-z A-Z
+ID_CHARS: _ 0-9 a-z A-Z
+
+NUMBER_PREFIXES: 0x:16 0:8
+
+COMMENT_TYPE: /* */
+
+QUOTE_TYPE: token=128 ' verbatim1
+QUOTE_TYPE: token=129 "
+
+%%
+
+RUNE_LITSTR      128
+LITSTR           129
+
+AUTO             auto
+BREAK            break
+CASE             case
+CHAR             char
+CONST            const
+CONTINUE         continue
+DEFAULT          default
+DO               do
+DOUBLE           double
+ELSE             else
+ENUM             enum
+EXTERN           extern
+FLOAT            float
+FOR              for
+GOTO             goto
+IF               if
+INT              int
+LONG             long
+REGISTER         register
+RETURN           return
+SHORT            short
+SIGNED           signed
+SIZEOF           sizeof
+STATIC           static
+STRUCT           struct
+SWITCH           switch
+TYPEDEF          typedef
+UNION            union
+UNSIGNED         unsigned
+VOID             void
+VOLATILE         volatile
+WHILE            while
+
+POINTER          ->
+INCR             ++
+DECR             --
+LEQ              <=
+GEQ              >=
+EQL              ==
+NEQ              !=
+AND              &&
+OR               ||
+ADDASGN          +=
+SUBASGN          -=
+MULASGN          *=
+DIVASGN          /=
+MODASGN          %=
+BANDASGN         &=
+BORASGN          |=
+BXORASGN         ^=
+BLSHASGN         <<=
+BRSHASGN         >>=
+
+PROPERTY         property 
+PROTOCOL         protocol
+
+NONATOMIC        nonatomic
+READONLY         readonly
+READWRITE        readwrite
+RETAIN           retain
+
+STRONG           strong
+INTERFACE        interface
+
+UNSAFE_UNRETAINED unsafe_unretained
+
+WEAK             weak
+PACKED           _Packed
+IMPLEMENTATION   implementation
+
+CGFLOAT          CGFloat
+NSINTEGER        NSInteger
+NSNUMBER         NSNumber
+NSOBJECT         NSObject
+

@@ -1,0 +1,36 @@
+
+Usage Examples:
+
+ 1. To dump token sequence of 'input1.txt',
+    $ uls_stream -L sample.ulc input1.txt
+    The file 'sample.ulc' is the lexical specification file with which the analyzer will tokenize the input.
+
+ 2. To save token sequence of 'input1.txt' to 'input1_out.txt',
+    $ uls_stream -o input1_out.txt -L sample.ulc input1.txt
+
+ 3. To save the token sequence of 'input1.txt' to 'input1.bin' with the binary uls format,
+    $ uls_stream -o input1.bin -L sample.ulc -b input1.txt
+
+    If you don't specify the output with -o-option, the output will be stored
+       in the default file 'a.uls'.
+    $ uls_stream -L sample.ulc -b input1.txt
+
+    You can leave out the -b-option if the output is suffixed by '.uls'.  
+    $ uls_stream -o input1.uls -L sample.ulc input1.txt
+
+ 4. To create uls-formatted files input1.txt
+    $ uls_stream -o bin-be.uls -L sample.ulc -t bin-be input1.txt
+    $ uls_stream -L sample.ulc bin-be.uls 
+    $ uls_stream -o bin-le.uls -L sample.ulc -t bin-le input1.txt
+    $ uls_stream -o txt.uls -L sample.ulc -t txt input1.txt
+
+ 5. To create 'tmpl_ex.uls' from 'tmpl_ex.txt' processing identifier 'T' as template variable,
+    $ uls_stream -Lsample.ulc -b -TT tmpl_ex.txt
+
+ 6. To processing 'tmpl_ex.uls' with the template variable 'T' replaced with 'unsigned long',
+    $ uls_stream -L sample.ulc 'T=unsigned long' tmpl_ex.uls
+
+ 7. If you use well-known ulc, which is registered in the system, 
+       you can even omit the use of -L-option.
+    $ uls_stream -b -Lsimple input1.txt
+    $ uls_stream a.uls 

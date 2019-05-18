@@ -1,0 +1,74 @@
+﻿#@ulc-2.3
+#
+#  ULC: Unified Lexical Configuration
+#
+DOMAIN: uls.link2next.io://season-1
+
+ID_FIRST_CHARS: _ a-z A-Z
+ID_CHARS: _ 0-9 a-z A-Z
+
+NUMBER_PREFIXES: 0x:16 0:8 0b:2
+
+COMMENT_TYPE: /* */
+COMMENT_TYPE: // \n
+
+QUOTE_TYPE: token=DQUOTE " verbatim1
+QUOTE_TYPE: token=SQUOTE '
+QUOTE_TYPE: options=nothing  \\\n
+QUOTE_TYPE: options=open token=149,DOTQUOTE .'
+
+%%
+#
+# Token Definition List
+# There are basically 3 columns per line, <token-name> <keyword> <token-id>.
+# The third column can be omitted if you intend it to be the successor of the previous one.
+#
+
+EOL      \n
+TRANSPOSE          149
+ASM      asm       150
+DEFAULT  default
+AUTO     auto
+DO       do
+DOUBLE   double
+AND      &&        
+
+ELSE     else   
+OR       ||  
+
+ENUM     enum
+GOTO     goto  
+EQ       == 
+
+IF       if
+BREAK    break
+LEQ      <=
+
+CASE     case
+GEQ      >=
+
+SWITCH   switch
+NEQ      !=
+
+TYPEDEF  typedef  
+UNION    union
+CHAR     char
+EXTERN   extern
+FLOAT    float
+FOR      for       
+CONTINUE continue
+CONST    const
+INT      int
+LONG     long
+REGISTER register 
+
+RETURN   return  200
+SHORT    short
+SIGNED   signed
+SIZEOF   sizeof
+STATIC   static
+STRUCT   struct 
+UNSIGNED unsigned
+VOID     void
+VOLATILE volatile
+WHILE    while

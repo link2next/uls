@@ -1,0 +1,68 @@
+#!/bin/sh
+
+dstdir=/tmp/v
+n_relvers=24
+
+zbin_target()
+{
+	ver=$1
+
+	if [ ! -d pre$ver ]; then  
+		return
+	fi
+
+	cd pre$ver
+
+	i=1
+	while [ $i -le $n_relvers ]; do
+		if [ -d pack_${ver}_rel$i ]; then  
+			exe1 pack_${ver}_rel$i pack_${ver}_rel$i
+			exe2 pack_${ver}_rel$i
+		fi
+		i=$(($i+1))
+	done
+
+	cd ..
+}
+
+wbin_target()
+{
+	ver=$1
+
+	if [ ! -d $dstdir/pre$ver ]; then  
+		mkdir -p $dstdir/pre$ver
+	fi
+
+	i=1
+	while [ $i -le $n_relvers ]; do
+		if [ -f pre$ver/pack_${ver}_rel$i ]; then  
+			exe1 $dstdir/pre$ver -jxf pre$ver/pack_${ver}_rel$i
+		fi
+		i=$(($i+1))
+	done
+}
+
+if [ $# != "3" ]; then
+	echo "usage: zx_target.sh <file1> <file2>"
+	exit 1
+fi
+
+cmd_mode=$1
+start_prodid=$2
+end_prodid=$3
+
+if [ $cmd_mode == "z" ]; then
+	i=$start_prodid
+	while [ $i -le $end_prodid ]; do
+		zbin_target $i
+		i=$(($i+1))
+	done
+fi
+
+if [ $cmd_mode == "x" ]; then
+	i=$start_prodid
+	while [ $i -le $end_prodid ]; do
+		wbin_target  $i
+	i=$(($i+1))
+	done
+fi

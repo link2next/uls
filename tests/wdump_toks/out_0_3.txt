@@ -1,0 +1,7 @@
+  2	[     ID] hello
+  3	[ LITSTR] hello	world!
+  5	[ LITSTR] hello
+\
+	world
+  8	[ LITSTR] hello\n\
+\tworld

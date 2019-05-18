@@ -1,0 +1,11 @@
+﻿#@ulc-2.3
+#
+#  ULC: Unified Lexical Configuration
+#  The minimum format of ULC file.
+#
+DOMAIN: uls.link2next.io://season-1
+
+ID_FIRST_CHARS: a-z A-Z
+ID_CHARS: a-z A-Z
+
+%%

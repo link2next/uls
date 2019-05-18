@@ -1,0 +1,20 @@
+
+main()
+{
+   AAA = 1LU;
+	XXX = -31415.926e-8;
+	XXX = -3.1415926e-4f;
+	XXX =  0.;
+	YYY =  .3;
+
+	ZZZ = XXX * AAA & YYY ^ BBB;
+	AAA = .0;
+	BBB = - AAA;
+
+	SSS1 = "hello\n\
+\tworld";
+
+	SSS2 = 'hello\n\
+\tworld';
+}
+

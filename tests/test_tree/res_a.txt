@@ -1,0 +1,3151 @@
+             s1.c:2    [       ] #
+                       [     ID] include
+                       [ DQUOTE] filelist.h
+             s1.c:3    [       ] #
+                       [     ID] include
+                       [ DQUOTE] main.h
+             s1.c:5    [ STATIC] static
+                       [    INT] int
+             s1.c:6    [     ID] start_stream_filepath_bin
+                       [       ] (
+                       [     ID] ostream_t
+                       [       ] *
+                       [     ID] ostr
+                       [       ] ,
+                       [     ID] lex_t
+                       [       ] *
+                       [     ID] uls
+                       [       ] ,
+                       [  CONST] const
+                       [   CHAR] char
+                       [       ] *
+                       [     ID] fpath
+                       [       ] )
+             s1.c:7    [       ] {
+             s1.c:8    [     ID] istream_t
+                       [       ] *
+                       [     ID] istr
+                       [       ] ;
+             s1.c:9    [    INT] int
+                       [     ID] stat
+                       [       ] =
+                       [ NUMBER] 0
+                       [       ] ;
+             s1.c:11   [     IF] if
+                       [       ] (
+                       [       ] (
+                       [     ID] istr
+                       [       ] =
+                       [     ID] open_istream_file
+                       [       ] (
+                       [     ID] fpath
+                       [       ] )
+                       [       ] )
+                       [     EQ] ==
+                       [     ID] NULL
+                       [       ] )
+                       [       ] {
+             s1.c:12   [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] %s: can't read %s
+                       [       ] ,
+                       [     ID] __FUNCTION__
+                       [       ] ,
+                       [     ID] fpath
+                       [       ] )
+                       [       ] ;
+             s1.c:13   [ RETURN] return
+                       [ NUMBER] -1
+                       [       ] ;
+             s1.c:14   [       ] }
+             s1.c:16   [     IF] if
+                       [       ] (
+                       [     ID] bind_tmpl
+                       [       ] (
+                       [     ID] istr
+                       [       ] ,
+                       [     ID] name_val
+                       [       ] ,
+                       [     ID] n_name_val
+                       [       ] ,
+                       [     ID] uls
+                       [       ] )
+                       [       ] <
+                       [ NUMBER] 0
+                       [       ] )
+                       [       ] {
+             s1.c:17   [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] %s: fail to uls-streaming to %d
+                       [       ] ,
+                       [     ID] fpath
+                       [       ] )
+                       [       ] ;
+             s1.c:18   [     ID] stat
+                       [       ] =
+                       [ NUMBER] -2
+                       [       ] ;
+                       [   GOTO] goto
+                       [     ID] end_1
+                       [       ] ;
+             s1.c:19   [       ] }
+             s1.c:21   [     IF] if
+                       [       ] (
+                       [     ID] push_istream
+                       [       ] (
+                       [     ID] uls
+                       [       ] ,
+                       [     ID] istr
+                       [       ] ,
+                       [ NUMBER] 0
+                       [       ] )
+                       [       ] <
+                       [ NUMBER] 0
+                       [       ] )
+                       [       ] {
+             s1.c:22   [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] %s: fail to prepare input-stream
+                       [       ] ,
+                       [     ID] __FUNCTION__
+                       [       ] )
+                       [       ] ;
+             s1.c:23   [     ID] stat
+                       [       ] =
+                       [ NUMBER] -3
+                       [       ] ;
+                       [   GOTO] goto
+                       [     ID] end_1
+                       [       ] ;
+             s1.c:24   [       ] }
+             s1.c:26   [     IF] if
+                       [       ] (
+                       [     ID] start_stream
+                       [       ] (
+                       [     ID] ostr
+                       [       ] ,
+                       [     ID] uls
+                       [       ] ,
+                       [     ID] ULS_LINE_NUMBERING
+                       [       ] )
+                       [       ] <
+                       [ NUMBER] 0
+                       [       ] )
+                       [       ] {
+             s1.c:27   [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] %s: fail to uls-streaming to %d
+                       [       ] ,
+                       [     ID] fpath
+                       [       ] )
+                       [       ] ;
+             s1.c:28   [     ID] stat
+                       [       ] =
+                       [ NUMBER] -4
+                       [       ] ;
+                       [   GOTO] goto
+                       [     ID] end_1
+                       [       ] ;
+             s1.c:29   [       ] }
+             s1.c:31   [     ID] end_1
+                       [       ] :
+             s1.c:32   [     ID] close_istream
+                       [       ] (
+                       [     ID] istr
+                       [       ] )
+                       [       ] ;
+             s1.c:34   [ RETURN] return
+                       [     ID] stat
+                       [       ] ;
+             s1.c:35   [       ] }
+             s1.c:37   [    INT] int
+             s1.c:38   [     ID] write_stream_body_from_bin
+                       [       ] (
+                       [     ID] FILE
+                       [       ] *
+                       [     ID] fp_list
+                       [       ] ,
+                       [     ID] lex_t
+                       [       ] *
+                       [     ID] uls
+                       [       ] ,
+                       [     ID] ostream_t
+                       [       ] *
+                       [     ID] ostr
+                       [       ] )
+             s1.c:39   [       ] {
+             s1.c:40   [   CHAR] char
+                       [     ID] linebuff
+                       [       ] [
+                       [ NUMBER] 400
+                       [       ] ]
+                       [       ] ,
+                       [       ] *
+                       [     ID] lptr
+                       [       ] ,
+                       [       ] *
+                       [     ID] fpath
+                       [       ] ;
+             s1.c:41   [    INT] int
+                       [     ID] len
+                       [       ] ,
+                       [     ID] stat
+                       [       ] =
+                       [ NUMBER] 0
+                       [       ] ;
+             s1.c:43   [  WHILE] while
+                       [       ] (
+                       [       ] (
+                       [     ID] len
+                       [       ] =
+                       [     ID] fgets
+                       [       ] (
+                       [     ID] fp_list
+                       [       ] ,
+                       [     ID] linebuff
+                       [       ] ,
+                       [ SIZEOF] sizeof
+                       [       ] (
+                       [     ID] linebuff
+                       [       ] )
+                       [       ] )
+                       [       ] )
+                       [    GEQ] >=
+                       [ NUMBER] 0
+                       [       ] )
+                       [       ] {
+             s1.c:44   [     ID] lptr
+                       [       ] =
+                       [     ID] skip_blanks
+                       [       ] (
+                       [     ID] linebuff
+                       [       ] )
+                       [       ] ;
+             s1.c:45   [     IF] if
+                       [       ] (
+                       [       ] *
+                       [     ID] lptr
+                       [     EQ] ==
+                       [ SQUOTE] 
+                       [     OR] ||
+                       [       ] *
+                       [     ID] lptr
+                       [     EQ] ==
+                       [ SQUOTE] #
+                       [       ] )
+                       [CONTINUE] continue
+                       [       ] ;
+             s1.c:47   [     ID] len
+                       [       ] -
+                       [       ] =
+                       [       ] (
+                       [    INT] int
+                       [       ] )
+                       [       ] (
+                       [     ID] lptr
+                       [       ] -
+                       [     ID] linebuff
+                       [       ] )
+                       [       ] ;
+             s1.c:48   [     ID] len
+                       [       ] =
+                       [     ID] str_trim_end
+                       [       ] (
+                       [     ID] lptr
+                       [       ] ,
+                       [     ID] len
+                       [       ] )
+                       [       ] ;
+             s1.c:49   [     ID] fpath
+                       [       ] =
+                       [     ID] lptr
+                       [       ] ;
+             s1.c:51   [     IF] if
+                       [       ] (
+                       [       ] !
+                       [     ID] opt_silent
+                       [       ] )
+             s1.c:52   [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] processing %s, ...
+                       [       ] ,
+                       [     ID] fpath
+                       [       ] )
+                       [       ] ;
+             s1.c:54   [     IF] if
+                       [       ] (
+                       [     ID] start_stream_filepath_bin
+                       [       ] (
+                       [     ID] ostr
+                       [       ] ,
+                       [     ID] uls
+                       [       ] ,
+                       [     ID] fpath
+                       [       ] )
+                       [       ] <
+                       [ NUMBER] 0
+                       [       ] )
+                       [       ] {
+             s1.c:55   [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] fail to uls-streaming %s, ...
+                       [       ] ,
+                       [     ID] fpath
+                       [       ] )
+                       [       ] ;
+             s1.c:56   [       ] -
+                       [       ] -
+                       [     ID] stat
+                       [       ] ;
+             s1.c:57   [  BREAK] break
+                       [       ] ;
+             s1.c:58   [       ] }
+             s1.c:59   [       ] }
+             s1.c:61   [ RETURN] return
+                       [     ID] stat
+                       [       ] ;
+             s1.c:62   [       ] }
+             s1.c:64   [    INT] int
+             s1.c:65   [     ID] write_stream_body_from_raw
+                       [       ] (
+                       [    INT] int
+                       [     ID] fd_list
+                       [       ] ,
+                       [     ID] lex_t
+                       [       ] *
+                       [     ID] uls
+                       [       ] ,
+                       [     ID] ostream_t
+                       [       ] *
+                       [     ID] ostr
+                       [       ] )
+             s1.c:66   [       ] {
+             s1.c:67   [       ] #
+                       [     ID] ifdef
+                       [     ID] ULS_FDF_SUPPORT
+             s1.c:68   [     ID] fdf_t
+                       [     ID] fdfilter
+                       [       ] ;
+             s1.c:69   [       ] #
+                       [     ID] endif
+             s1.c:70   [     ID] istream_t
+                       [       ] *
+                       [     ID] istr
+                       [       ] ;
+             s1.c:71   [    INT] int
+                       [     ID] stat
+                       [       ] =
+                       [ NUMBER] 0
+                       [       ] ;
+             s1.c:73   [     IF] if
+                       [       ] (
+                       [     ID] bind_ostream
+                       [       ] (
+                       [     ID] ostr
+                       [       ] ,
+                       [     ID] uls
+                       [       ] )
+                       [       ] <
+                       [ NUMBER] 0
+                       [       ] )
+                       [       ] {
+             s1.c:74   [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] %s: can't bind!
+                       [       ] ,
+                       [     ID] __FUNCTION__
+                       [       ] )
+                       [       ] ;
+             s1.c:75   [ RETURN] return
+                       [ NUMBER] -1
+                       [       ] ;
+             s1.c:76   [       ] }
+             s1.c:77   [       ] #
+                       [     ID] ifdef
+                       [     ID] ULS_FDF_SUPPORT
+             s1.c:78   [     ID] fdf_init
+                       [       ] (
+                       [       ] &
+                       [     ID] fdfilter
+                       [       ] ,
+                       [     ID] fdf_iprovider_filelist
+                       [       ] ,
+                       [     ID] cmdline_filter
+                       [       ] )
+                       [       ] ;
+             s1.c:79   [     IF] if
+                       [       ] (
+                       [       ] (
+                       [     ID] istr
+                       [       ] =
+                       [     ID] open_istream_filter
+                       [       ] (
+                       [       ] &
+                       [     ID] fdfilter
+                       [       ] ,
+                       [     ID] fd_list
+                       [       ] )
+                       [       ] )
+                       [     EQ] ==
+                       [     ID] NULL
+                       [       ] )
+                       [       ] {
+             s1.c:80   [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] %s: can't conjecture file type!
+                       [       ] ,
+                       [     ID] __FUNCTION__
+                       [       ] )
+                       [       ] ;
+             s1.c:81   [     ID] fdf_deinit
+                       [       ] (
+                       [       ] &
+                       [     ID] fdfilter
+                       [       ] )
+                       [       ] ;
+             s1.c:82   [ RETURN] return
+                       [ NUMBER] -2
+                       [       ] ;
+             s1.c:83   [       ] }
+             s1.c:84   [       ] #
+                       [   ELSE] else
+             s1.c:85   [     IF] if
+                       [       ] (
+                       [       ] (
+                       [     ID] istr
+                       [       ] =
+                       [     ID] open_istream
+                       [       ] (
+                       [     ID] fd_list
+                       [       ] )
+                       [       ] )
+                       [     EQ] ==
+                       [     ID] NULL
+                       [       ] )
+                       [       ] {
+             s1.c:86   [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] %s: can't conjecture file type!
+                       [       ] ,
+                       [     ID] __FUNCTION__
+                       [       ] )
+                       [       ] ;
+             s1.c:87   [ RETURN] return
+                       [ NUMBER] -2
+                       [       ] ;
+             s1.c:88   [       ] }
+             s1.c:89   [       ] #
+                       [     ID] endif
+             s1.c:90   [     IF] if
+                       [       ] (
+                       [     ID] istr
+                       [       ] -
+                       [       ] >
+                       [     ID] header
+                       [       ] .
+                       [     ID] filetype
+                       [    NEQ] !=
+                       [     ID] ULS_STREAM_RAW
+                       [       ] )
+                       [       ] {
+             s1.c:91   [     IF] if
+                       [       ] (
+                       [       ] !
+                       [     ID] streql
+                       [       ] (
+                       [     ID] uls
+                       [       ] -
+                       [       ] >
+                       [     ID] ulc_name
+                       [       ] ,
+                       [     ID] istr
+                       [       ] -
+                       [       ] >
+                       [     ID] header
+                       [       ] .
+                       [     ID] specname
+                       [       ] )
+                       [     OR] ||
+             s1.c:92   [       ] !
+                       [     ID] vers_compatible
+                       [       ] (
+                       [       ] &
+                       [     ID] uls
+                       [       ] -
+                       [       ] >
+                       [     ID] stream_filever
+                       [       ] ,
+                       [       ] &
+                       [     ID] istr
+                       [       ] -
+                       [       ] >
+                       [     ID] header
+                       [       ] .
+                       [     ID] filever
+                       [       ] )
+                       [       ] )
+                       [       ] {
+             s1.c:93   [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] %s: Unsupported version: 
+                       [       ] ,
+                       [     ID] istr
+                       [       ] -
+                       [       ] >
+                       [     ID] header
+                       [       ] .
+                       [     ID] subname
+                       [       ] )
+                       [       ] ;
+             s1.c:94   [     ID] stat
+                       [       ] =
+                       [ NUMBER] -3
+                       [       ] ;
+                       [   GOTO] goto
+                       [     ID] end_1
+                       [       ] ;
+             s1.c:95   [       ] }
+             s1.c:96   [       ] }
+             s1.c:98   [     IF] if
+                       [       ] (
+                       [     ID] bind_tmpl
+                       [       ] (
+                       [     ID] istr
+                       [       ] ,
+                       [     ID] name_val
+                       [       ] ,
+                       [     ID] n_name_val
+                       [       ] ,
+                       [     ID] uls
+                       [       ] )
+                       [       ] <
+                       [ NUMBER] 0
+                       [       ] )
+                       [       ] {
+             s1.c:99   [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] %s: fail to prepare input-stream
+                       [       ] ,
+                       [     ID] __FUNCTION__
+                       [       ] )
+                       [       ] ;
+             s1.c:100  [     ID] stat
+                       [       ] =
+                       [ NUMBER] -4
+                       [       ] ;
+                       [   GOTO] goto
+                       [     ID] end_1
+                       [       ] ;
+             s1.c:101  [       ] }
+             s1.c:103  [     IF] if
+                       [       ] (
+                       [     ID] push_istream
+                       [       ] (
+                       [     ID] uls
+                       [       ] ,
+                       [     ID] istr
+                       [       ] ,
+                       [ NUMBER] 0
+                       [       ] )
+                       [       ] <
+                       [ NUMBER] 0
+                       [       ] )
+                       [       ] {
+             s1.c:104  [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] %s: fail to prepare input-stream
+                       [       ] ,
+                       [     ID] __FUNCTION__
+                       [       ] )
+                       [       ] ;
+             s1.c:105  [     ID] stat
+                       [       ] =
+                       [ NUMBER] -5
+                       [       ] ;
+                       [   GOTO] goto
+                       [     ID] end_1
+                       [       ] ;
+             s1.c:106  [       ] }
+             s1.c:108  [     IF] if
+                       [       ] (
+                       [     ID] start_stream
+                       [       ] (
+                       [     ID] ostr
+                       [       ] ,
+                       [     ID] uls
+                       [       ] ,
+                       [     ID] ULS_LINE_NUMBERING
+                       [       ] )
+                       [       ] <
+                       [ NUMBER] 0
+                       [       ] )
+                       [       ] {
+             s1.c:109  [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] %s: fail to uls-streaming to %d
+                       [       ] ,
+                       [     ID] __FUNCTION__
+                       [       ] )
+                       [       ] ;
+             s1.c:110  [     ID] stat
+                       [       ] =
+                       [ NUMBER] -6
+                       [       ] ;
+                       [   GOTO] goto
+                       [     ID] end_1
+                       [       ] ;
+             s1.c:111  [       ] }
+             s1.c:113  [     ID] end_1
+                       [       ] :
+             s1.c:114  [     ID] close_istream
+                       [       ] (
+                       [     ID] istr
+                       [       ] )
+                       [       ] ;
+             s1.c:115  [       ] #
+                       [     ID] ifdef
+                       [     ID] ULS_FDF_SUPPORT
+             s1.c:116  [     ID] fdf_deinit
+                       [       ] (
+                       [       ] &
+                       [     ID] fdfilter
+                       [       ] )
+                       [       ] ;
+             s1.c:117  [       ] #
+                       [     ID] endif
+             s1.c:118  [ RETURN] return
+                       [     ID] stat
+                       [       ] ;
+             s1.c:119  [       ] }
+             s1.c:121  [    INT] int
+             s1.c:122  [     ID] proc_filelist
+                       [       ] (
+                       [    INT] int
+                       [     ID] ftype
+                       [       ] ,
+                       [     ID] lex_t
+                       [       ] *
+                       [     ID] uls
+                       [       ] )
+             s1.c:123  [       ] {
+             s1.c:124  [    INT] int
+                       [     ID] fd_list
+                       [       ] ,
+                       [     ID] rc
+                       [       ] ,
+                       [     ID] stat
+                       [       ] =
+                       [ NUMBER] 0
+                       [       ] ;
+             s1.c:125  [     ID] ostream_t
+                       [       ] *
+                       [     ID] ostr
+                       [       ] =
+                       [     ID] NULL
+                       [       ] ;
+             s1.c:126  [     ID] FILE
+                       [       ] *
+                       [     ID] fp_list
+                       [       ] ;
+             s1.c:127  [     ID] tempfile_t
+                       [     ID] tmpfile
+                       [       ] ;
+             s1.c:128  [    INT] int
+                       [     ID] fd_out
+                       [       ] ;
+             s1.c:130  [     IF] if
+                       [       ] (
+                       [     ID] opt_verbose
+                       [       ] )
+             s1.c:131  [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] Loading uls config file %s, ...
+                       [       ] ,
+                       [     ID] config_path
+                       [       ] )
+                       [       ] ;
+             s1.c:133  [     IF] if
+                       [       ] (
+                       [       ] (
+                       [     ID] fd_out
+                       [       ] =
+                       [     ID] open_tempfile
+                       [       ] (
+                       [       ] &
+                       [     ID] tmpfile
+                       [       ] )
+                       [       ] )
+                       [       ] <
+                       [ NUMBER] 0
+                       [       ] )
+                       [       ] {
+             s1.c:134  [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] file(for writing) open error
+                       [       ] )
+                       [       ] ;
+             s1.c:135  [ RETURN] return
+                       [ NUMBER] -1
+                       [       ] ;
+             s1.c:136  [       ] }
+             s1.c:138  [     IF] if
+                       [       ] (
+                       [       ] (
+                       [     ID] ostr
+                       [       ] =
+                       [     ID] create_ostream
+                       [       ] (
+                       [     ID] fd_out
+                       [       ] ,
+                       [     ID] out_ftype
+                       [       ] ,
+                       [     ID] tag_name
+                       [       ] ,
+                       [       ] !
+                       [     ID] opt_no_numbering
+                       [       ] )
+                       [       ] )
+                       [     EQ] ==
+                       [     ID] NULL
+                       [       ] )
+                       [       ] {
+             s1.c:139  [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] can't set uls-stream to %d
+                       [       ] ,
+                       [     ID] fd_out
+                       [       ] )
+                       [       ] ;
+             s1.c:140  [     ID] stat
+                       [       ] =
+                       [ NUMBER] -1
+                       [       ] ;
+                       [   GOTO] goto
+                       [     ID] err_1
+                       [       ] ;
+             s1.c:141  [       ] }
+             s1.c:143  [     IF] if
+                       [       ] (
+                       [     ID] bind_ostream
+                       [       ] (
+                       [     ID] ostr
+                       [       ] ,
+                       [     ID] uls
+                       [       ] )
+                       [       ] <
+                       [ NUMBER] 0
+                       [       ] )
+                       [       ] {
+             s1.c:144  [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] %s: can't bind!
+                       [       ] ,
+                       [     ID] __FUNCTION__
+                       [       ] )
+                       [       ] ;
+             s1.c:145  [     ID] ostr
+                       [       ] -
+                       [       ] >
+                       [     ID] flags
+                       [       ] |
+                       [       ] =
+                       [     ID] ULS_STREAM_ERR
+                       [       ] ;
+             s1.c:146  [     ID] stat
+                       [       ] =
+                       [ NUMBER] -2
+                       [       ] ;
+                       [   GOTO] goto
+                       [     ID] err_1
+                       [       ] ;
+             s1.c:147  [       ] }
+             s1.c:149  [     IF] if
+                       [       ] (
+                       [       ] (
+                       [     ID] fd_list
+                       [       ] =
+                       [     ID] fileopen
+                       [       ] (
+                       [     ID] filelist
+                       [       ] ,
+                       [     ID] O_RDONLY
+                       [       ] )
+                       [       ] )
+                       [       ] <
+                       [ NUMBER] 0
+                       [     OR] ||
+                       [     ID] chdir
+                       [       ] (
+                       [     ID] target_dir
+                       [       ] )
+                       [       ] <
+                       [ NUMBER] 0
+                       [       ] )
+                       [       ] {
+             s1.c:150  [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] can't change to %s
+                       [       ] ,
+                       [     ID] target_dir
+                       [       ] )
+                       [       ] ;
+             s1.c:151  [     ID] stat
+                       [       ] =
+                       [ NUMBER] -3
+                       [       ] ;
+             s1.c:153  [       ] }
+                       [   ELSE] else
+                       [       ] {
+             s1.c:154  [     IF] if
+                       [       ] (
+                       [     ID] ftype
+                       [     EQ] ==
+                       [     ID] ULS_STREAM_RAW
+                       [       ] )
+                       [       ] {
+             s1.c:155  [     ID] rc
+                       [       ] =
+                       [     ID] write_stream_body_from_raw
+                       [       ] (
+                       [     ID] fd_list
+                       [       ] ,
+                       [     ID] uls
+                       [       ] ,
+                       [     ID] ostr
+                       [       ] )
+                       [       ] ;
+             s1.c:156  [       ] }
+                       [   ELSE] else
+                       [       ] {
+             s1.c:157  [     IF] if
+                       [       ] (
+                       [       ] (
+                       [     ID] fp_list
+                       [       ] =
+                       [     ID] fdopen
+                       [       ] (
+                       [     ID] fd_list
+                       [       ] ,
+                       [ DQUOTE] r
+                       [       ] )
+                       [       ] )
+                       [     EQ] ==
+                       [     ID] NULL
+                       [       ] )
+                       [       ] {
+             s1.c:158  [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] %s: improper fd of list
+                       [       ] ,
+                       [     ID] __FUNCTION__
+                       [       ] )
+                       [       ] ;
+             s1.c:159  [     ID] stat
+                       [       ] =
+                       [ NUMBER] -4
+                       [       ] ;
+             s1.c:160  [       ] }
+                       [   ELSE] else
+                       [       ] {
+             s1.c:161  [     ID] rc
+                       [       ] =
+                       [     ID] write_stream_body_from_bin
+                       [       ] (
+                       [     ID] fp_list
+                       [       ] ,
+                       [     ID] uls
+                       [       ] ,
+                       [     ID] ostr
+                       [       ] )
+                       [       ] ;
+             s1.c:162  [     ID] fileclose
+                       [       ] (
+                       [     ID] fp_list
+                       [       ] )
+                       [       ] ;
+             s1.c:163  [     ID] fd_list
+                       [       ] =
+                       [ NUMBER] -5
+                       [       ] ;
+             s1.c:164  [       ] }
+             s1.c:165  [       ] }
+             s1.c:167  [     IF] if
+                       [       ] (
+                       [     ID] rc
+                       [       ] <
+                       [ NUMBER] 0
+                       [       ] )
+                       [       ] {
+             s1.c:168  [     ID] stat
+                       [       ] =
+                       [ NUMBER] -6
+                       [       ] ;
+             s1.c:169  [       ] }
+             s1.c:170  [       ] }
+             s1.c:172  [     ID] chdir
+                       [       ] (
+                       [     ID] home_dir
+                       [       ] )
+                       [       ] ;
+             s1.c:174  [     ID] fileclose
+                       [       ] (
+                       [     ID] fd_list
+                       [       ] )
+                       [       ] ;
+             s1.c:175  [     ID] close_ostream
+                       [       ] (
+                       [     ID] ostr
+                       [       ] )
+                       [       ] ;
+             s1.c:176  [     ID] ostr
+                       [       ] =
+                       [     ID] NULL
+                       [       ] ;
+             s1.c:178  [     IF] if
+                       [       ] (
+                       [     ID] stat
+                       [     EQ] ==
+                       [ NUMBER] 0
+                       [       ] )
+                       [       ] {
+             s1.c:179  [     IF] if
+                       [       ] (
+                       [       ] !
+                       [     ID] opt_silent
+                       [       ] )
+             s1.c:180  [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] Writing to '%s', ...
+                       [       ] ,
+                       [     ID] output_file
+                       [       ] )
+                       [       ] ;
+             s1.c:182  [     IF] if
+                       [       ] (
+                       [     ID] close_tempfile
+                       [       ] (
+                       [       ] &
+                       [     ID] tmpfile
+                       [       ] ,
+                       [     ID] output_file
+                       [       ] )
+                       [       ] <
+                       [ NUMBER] 0
+                       [       ] )
+                       [       ] {
+             s1.c:183  [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] %s: can't move file %s into %s
+                       [       ] ,
+             s1.c:184  [     ID] __FUNCTION__
+                       [       ] ,
+                       [     ID] tmpfile
+                       [       ] .
+                       [     ID] filepath
+                       [       ] ,
+                       [     ID] output_file
+                       [       ] )
+                       [       ] ;
+             s1.c:185  [     ID] stat
+                       [       ] =
+                       [ NUMBER] -7
+                       [       ] ;
+                       [   GOTO] goto
+                       [     ID] err_1
+                       [       ] ;
+             s1.c:186  [       ] }
+             s1.c:187  [       ] }
+             s1.c:189  [ RETURN] return
+                       [     ID] stat
+                       [       ] ;
+             s1.c:191  [     ID] err_1
+                       [       ] :
+             s1.c:192  [     IF] if
+                       [       ] (
+                       [     ID] ostr
+                       [    NEQ] !=
+                       [     ID] NULL
+                       [       ] )
+                       [     ID] close_ostream
+                       [       ] (
+                       [     ID] ostr
+                       [       ] )
+                       [       ] ;
+             s1.c:193  [     IF] if
+                       [       ] (
+                       [     ID] close_tempfile
+                       [       ] (
+                       [       ] &
+                       [     ID] tmpfile
+                       [       ] ,
+                       [     ID] NULL
+                       [       ] )
+                       [       ] <
+                       [ NUMBER] 0
+                       [       ] )
+             s1.c:194  [     ID] err_panic
+                       [       ] (
+                       [ DQUOTE] InternalError: can't remove the temp-file.
+                       [       ] )
+                       [       ] ;
+             s1.c:195  [ RETURN] return
+                       [     ID] stat
+                       [       ] ;
+             s1.c:196  [       ] }
+       dir_a/s2.c:2    [       ] #
+                       [     ID] include
+                       [ DQUOTE] main.h
+       dir_a/s2.c:4    [       ] #
+                       [     ID] include
+                       [ DQUOTE] read_uls.h
+       dir_a/s2.c:5    [       ] #
+                       [     ID] include
+                       [ DQUOTE] write_uls.h
+       dir_a/s2.c:6    [       ] #
+                       [     ID] include
+                       [ DQUOTE] filelist.h
+       dir_a/s2.c:7    [       ] #
+                       [     ID] include
+                       [ DQUOTE] utils.h
+       dir_a/s2.c:8    [       ] #
+                       [     ID] ifdef
+                       [     ID] ULS_FDF_SUPPORT
+       dir_a/s2.c:9    [       ] #
+                       [     ID] include
+                       [ DQUOTE] fdfilter.h
+       dir_a/s2.c:10   [       ] #
+                       [     ID] endif
+       dir_a/s2.c:11   [       ] #
+                       [     ID] ifndef
+                       [     ID] ULS_WINDOWS
+       dir_a/s2.c:12   [       ] #
+                       [     ID] include
+                       [       ] <
+                       [     ID] locale
+                       [       ] .
+                       [     ID] h
+                       [       ] >
+       dir_a/s2.c:13   [       ] #
+                       [     ID] endif
+       dir_a/s2.c:15   [       ] #
+                       [     ID] ifdef
+                       [     ID] ULS_WINDOWS
+       dir_a/s2.c:16   [       ] #
+                       [     ID] define
+                       [     ID] THIS_PROGNAME
+                       [ DQUOTE] UlsStream
+       dir_a/s2.c:17   [       ] #
+                       [   ELSE] else
+       dir_a/s2.c:18   [       ] #
+                       [     ID] define
+                       [     ID] THIS_PROGNAME
+                       [ DQUOTE] stream
+       dir_a/s2.c:19   [       ] #
+                       [     ID] endif
+       dir_a/s2.c:21   [       ] #
+                       [     ID] ifdef
+                       [     ID] ULS_FDF_SUPPORT
+       dir_a/s2.c:22   [       ] #
+                       [     ID] define
+                       [     ID] ULSSTREAM_OPTSTR
+                       [ DQUOTE] o:t:T:L:n:zxvsC:VHh
+       dir_a/s2.c:23   [       ] #
+                       [   ELSE] else
+       dir_a/s2.c:24   [       ] #
+                       [     ID] define
+                       [     ID] ULSSTREAM_OPTSTR
+                       [ DQUOTE] o:t:T:L:f:n:zxvsC:VHh
+       dir_a/s2.c:25   [       ] #
+                       [     ID] endif
+       dir_a/s2.c:27   [   CHAR] char
+                       [       ] *
+                       [     ID] progname
+                       [       ] ;
+       dir_a/s2.c:28   [    INT] int
+                       [     ID] opt_verbose
+                       [       ] ,
+                       [     ID] opt_write
+                       [       ] ,
+                       [     ID] opt_silent
+                       [       ] ;
+       dir_a/s2.c:29   [    INT] int
+                       [     ID] opt_want_eof
+                       [       ] ;
+       dir_a/s2.c:30   [    INT] int
+                       [     ID] opt_no_numbering
+                       [       ] ;
+       dir_a/s2.c:32   [   CHAR] char
+                       [     ID] home_dir
+                       [       ] [
+                       [ NUMBER] 400
+                       [       ] ]
+                       [       ] ;
+       dir_a/s2.c:33   [  CONST] const
+                       [   CHAR] char
+                       [       ] *
+                       [     ID] config_path
+                       [       ] ;
+       dir_a/s2.c:34   [   CHAR] char
+                       [     ID] config_pathbuff
+                       [       ] [
+                       [ NUMBER] 400
+                       [       ] ]
+                       [       ] ;
+       dir_a/s2.c:35   [   CHAR] char
+                       [     ID] specname
+                       [       ] [
+                       [     ID] ULS_LEXSTR_MAXSIZ
+                       [       ] +
+                       [ NUMBER] 1
+                       [       ] ]
+                       [       ] ;
+       dir_a/s2.c:36   [  CONST] const
+                       [   CHAR] char
+                       [       ] *
+                       [     ID] filelist
+                       [       ] ;
+       dir_a/s2.c:38   [   CHAR] char
+                       [       ] *
+                       [     ID] target_dir
+                       [       ] ;
+       dir_a/s2.c:39   [   CHAR] char
+                       [       ] *
+                       [     ID] output_file
+                       [       ] ;
+       dir_a/s2.c:40   [  CONST] const
+                       [   CHAR] char
+                       [       ] *
+                       [     ID] tag_name
+                       [       ] ;
+       dir_a/s2.c:41   [   CHAR] char
+                       [       ] *
+                       [     ID] cmdline_filter
+                       [       ] ;
+       dir_a/s2.c:42   [    INT] int
+                       [     ID] out_ftype
+                       [       ] ;
+       dir_a/s2.c:44   [       ] #
+                       [     ID] ifdef
+                       [     ID] HAVE_GETOPT_H
+       dir_a/s2.c:45   [       ] #
+                       [     ID] include
+                       [       ] <
+                       [     ID] getopt
+                       [       ] .
+                       [     ID] h
+                       [       ] >
+       dir_a/s2.c:47   [ STATIC] static
+                       [  CONST] const
+                       [ STRUCT] struct
+                       [     ID] option
+                       [     ID] longopts
+                       [       ] [
+                       [       ] ]
+                       [       ] =
+                       [       ] {
+       dir_a/s2.c:48   [       ] {
+                       [ DQUOTE] output
+                       [       ] ,
+                       [     ID] required_argument
+                       [       ] ,
+                       [     ID] NULL
+                       [       ] ,
+                       [ SQUOTE] o
+                       [       ] }
+                       [       ] ,
+       dir_a/s2.c:49   [       ] {
+                       [ DQUOTE] type
+                       [       ] ,
+                       [     ID] required_argument
+                       [       ] ,
+                       [     ID] NULL
+                       [       ] ,
+                       [ SQUOTE] t
+                       [       ] }
+                       [       ] ,
+       dir_a/s2.c:50   [       ] {
+                       [ DQUOTE] tmpl
+                       [       ] ,
+                       [     ID] required_argument
+                       [       ] ,
+                       [     ID] NULL
+                       [       ] ,
+                       [ SQUOTE] T
+                       [       ] }
+                       [       ] ,
+       dir_a/s2.c:51   [       ] {
+                       [ DQUOTE] lang
+                       [       ] ,
+                       [     ID] required_argument
+                       [       ] ,
+                       [     ID] NULL
+                       [       ] ,
+                       [ SQUOTE] L
+                       [       ] }
+                       [       ] ,
+       dir_a/s2.c:52   [       ] {
+                       [ DQUOTE] conglomerate
+                       [       ] ,
+                       [     ID] required_argument
+                       [       ] ,
+                       [     ID] NULL
+                       [       ] ,
+                       [ SQUOTE] C
+                       [       ] }
+                       [       ] ,
+       dir_a/s2.c:53   [       ] #
+                       [     ID] ifdef
+                       [     ID] ULS_FDF_SUPPORT
+       dir_a/s2.c:54   [       ] {
+                       [ DQUOTE] filter
+                       [       ] ,
+                       [     ID] required_argument
+                       [       ] ,
+                       [     ID] NULL
+                       [       ] ,
+                       [ SQUOTE] f
+                       [       ] }
+                       [       ] ,
+       dir_a/s2.c:55   [       ] #
+                       [     ID] endif
+       dir_a/s2.c:56   [       ] {
+                       [ DQUOTE] name
+                       [       ] ,
+                       [     ID] required_argument
+                       [       ] ,
+                       [     ID] NULL
+                       [       ] ,
+                       [ SQUOTE] n
+                       [       ] }
+                       [       ] ,
+       dir_a/s2.c:57   [       ] {
+                       [ DQUOTE] no-linenum
+                       [       ] ,
+                       [     ID] no_argument
+                       [       ] ,
+                       [     ID] NULL
+                       [       ] ,
+                       [ SQUOTE] x
+                       [       ] }
+                       [       ] ,
+       dir_a/s2.c:58   [       ] {
+                       [ DQUOTE] want-eof
+                       [       ] ,
+                       [     ID] no_argument
+                       [       ] ,
+                       [     ID] NULL
+                       [       ] ,
+                       [ SQUOTE] z
+                       [       ] }
+                       [       ] ,
+       dir_a/s2.c:59   [       ] {
+                       [ DQUOTE] verbose
+                       [       ] ,
+                       [     ID] no_argument
+                       [       ] ,
+                       [     ID] NULL
+                       [       ] ,
+                       [ SQUOTE] v
+                       [       ] }
+                       [       ] ,
+       dir_a/s2.c:60   [       ] {
+                       [ DQUOTE] version
+                       [       ] ,
+                       [     ID] no_argument
+                       [       ] ,
+                       [     ID] NULL
+                       [       ] ,
+                       [ SQUOTE] V
+                       [       ] }
+                       [       ] ,
+       dir_a/s2.c:61   [       ] {
+                       [ DQUOTE] Help
+                       [       ] ,
+                       [     ID] no_argument
+                       [       ] ,
+                       [     ID] NULL
+                       [       ] ,
+                       [ SQUOTE] H
+                       [       ] }
+                       [       ] ,
+       dir_a/s2.c:62   [       ] {
+                       [ DQUOTE] help
+                       [       ] ,
+                       [     ID] no_argument
+                       [       ] ,
+                       [     ID] NULL
+                       [       ] ,
+                       [ SQUOTE] h
+                       [       ] }
+                       [       ] ,
+       dir_a/s2.c:63   [       ] {
+                       [     ID] NULL
+                       [       ] ,
+                       [ NUMBER] 0
+                       [       ] ,
+                       [     ID] NULL
+                       [       ] ,
+                       [ NUMBER] 0
+                       [       ] }
+       dir_a/s2.c:64   [       ] }
+                       [       ] ;
+       dir_a/s2.c:65   [       ] #
+                       [     ID] endif
+       dir_a/s2.c:67   [ STATIC] static
+                       [   VOID] void
+                       [     ID] usage
+                       [       ] (
+                       [   VOID] void
+                       [       ] )
+       dir_a/s2.c:68   [       ] {
+       dir_a/s2.c:69   [     ID] printf
+                       [       ] (
+                       [ DQUOTE] Usage: %s [options] [name1=value1 ...] <file|dir>\x0a
+                       [       ] ,
+                       [     ID] progname
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:70   [     ID] printf
+                       [       ] (
+                       [ DQUOTE]  options:\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:71   [     ID] printf
+                       [       ] (
+                       [ DQUOTE]   -L, --lang=<ulc-spec>      The lexical-configuration(*.ulc) about your language\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:72   [     ID] printf
+                       [       ] (
+                       [ DQUOTE]   -o, --output=<filepath>    specify the output filepath, a stream-file\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:73   [     ID] printf
+                       [       ] (
+                       [ DQUOTE]   -t, --type=<output-type>   specify the format of output-file.\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:74   [     ID] printf
+                       [       ] (
+                       [ DQUOTE]   -C, --conglomerate=<listfile>  output a conglomerate file from the multiple input-files\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:75   [       ] #
+                       [     ID] ifdef
+                       [     ID] ULS_FDF_SUPPORT
+       dir_a/s2.c:76   [     ID] printf
+                       [       ] (
+                       [ DQUOTE]   -f, --filter=<cmdline>     filter the input files with the -C-option\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:77   [       ] #
+                       [     ID] endif
+       dir_a/s2.c:78   [     ID] printf
+                       [       ] (
+                       [ DQUOTE]   -v, --verbose              verbose mode\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:79   [     ID] printf
+                       [       ] (
+                       [ DQUOTE]   -V, --version              prints the version information\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:80   [     ID] printf
+                       [       ] (
+                       [ DQUOTE]   -h, --help                 display a short help.
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:81   [     ID] printf
+                       [       ] (
+                       [ DQUOTE] \x0a\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:83   [     ID] printf
+                       [       ] (
+                       [ DQUOTE]   To dump the token sequence,\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:84   [     ID] printf
+                       [       ] (
+                       [ DQUOTE]      %s -L <ulc-file> <source-file|(*.uls)>\x0a
+                       [       ] ,
+                       [     ID] progname
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:85   [     ID] printf
+                       [       ] (
+                       [ DQUOTE]      %s -L <ulc-file> <uls-file|(*.uls)>\x0a
+                       [       ] ,
+                       [     ID] progname
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:86   [     ID] printf
+                       [       ] (
+                       [ DQUOTE] \x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:88   [     ID] printf
+                       [       ] (
+                       [ DQUOTE]   To create the token sequence file,\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:89   [     ID] printf
+                       [       ] (
+                       [ DQUOTE]      %s -L <ulc-file> -t <out-type> [-o <outfile>] <src-file|(*.uls)>\x0a
+                       [       ] ,
+                       [     ID] progname
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:90   [     ID] printf
+                       [       ] (
+                       [ DQUOTE] \x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:92   [     ID] printf
+                       [       ] (
+                       [ DQUOTE]   To concatenate the all token sequence files in directories,\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:93   [     ID] printf
+                       [       ] (
+                       [ DQUOTE]      %s [-L <ulc-file>] -C <list-file> <target-dir>\x0a
+                       [       ] ,
+                       [     ID] progname
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:94   [     ID] printf
+                       [       ] (
+                       [ DQUOTE]      %s [-L <ulc-file>] -C <list-file> -f 'filter-path' <target-dir>\x0a
+                       [       ] ,
+                       [     ID] progname
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:95   [     ID] printf
+                       [       ] (
+                       [ DQUOTE] \x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:97   [     ID] printf
+                       [       ] (
+                       [ DQUOTE]   To make a template-uls file from plain uls-file,\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:98   [     ID] printf
+                       [       ] (
+                       [ DQUOTE]      %s -L <ulc-file> -t {bin-le,bin-be,bin} -T <var1> [...] <uls-file>\x0a
+                       [       ] ,
+                       [     ID] progname
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:99   [     ID] printf
+                       [       ] (
+                       [ DQUOTE] \x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:101  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]   To instantiate the template uls-file,\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:102  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]      %s -L <ulc-file> var1=value1 [ var2=value2 ] <tmpl-uls-file>\x0a
+                       [       ] ,
+                       [     ID] progname
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:103  [     ID] printf
+                       [       ] (
+                       [ DQUOTE] \x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:104  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]  For more information, type '%s -H'\x0a\x0a
+                       [       ] ,
+                       [     ID] progname
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:105  [       ] }
+       dir_a/s2.c:107  [ STATIC] static
+                       [   VOID] void
+                       [     ID] usage_long
+                       [       ] (
+                       [   VOID] void
+                       [       ] )
+       dir_a/s2.c:108  [       ] {
+       dir_a/s2.c:109  [     ID] printf
+                       [       ] (
+                       [ DQUOTE] Usage: %s [OPTIONS]  <file|dir>\x0a\x0a
+                       [       ] ,
+                       [     ID] progname
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:110  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]        %s -L <ulc-file> <source-file|(*.uls)>\x0a\x0a
+                       [       ] ,
+                       [     ID] progname
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:111  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]        %s -L <ulc-file> -t <out-type> [-o <output-file>] <source-file|(*.uls)>\x0a\x0a
+                       [       ] ,
+                       [     ID] progname
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:112  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]        %s  <uls-file|(*.uls)>\x0a\x0a
+                       [       ] ,
+                       [     ID] progname
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:113  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]        %s [-L <ulc-file>] -C <list-file> <target-dir>\x0a\x0a
+                       [       ] ,
+                       [     ID] progname
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:114  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]        %s [-L <ulc-file>] -C <list-file> -f 'filter-path' <target-dir>\x0a\x0a
+                       [       ] ,
+                       [     ID] progname
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:116  [     ID] printf
+                       [       ] (
+                       [ DQUOTE] \x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:117  [     ID] printf
+                       [       ] (
+                       [ DQUOTE] %s reads source file or lexical stream file(*.uls), a binary token stream file,\x0a
+                       [       ] ,
+                       [     ID] progname
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:118  [     ID] printf
+                       [       ] (
+                       [ DQUOTE] and displays it or converts it into uls-file.\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:119  [     ID] printf
+                       [       ] (
+                       [ DQUOTE] Before the process, it needs to read the lexical configuration from ulc-file(*.ulc) specified by -L-option.\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:120  [     ID] printf
+                       [       ] (
+                       [ DQUOTE] Then, the created lexical analyzer will read the input-files(*.uls) which can be source files.\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:121  [     ID] printf
+                       [       ] (
+                       [ DQUOTE] The output file is uls-file, a binary token sequence file or\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:122  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]   a token list with its lexeme as below.\x0a\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:124  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]     [     ID]  DDD\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:125  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]     [     <=]  <=\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:126  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]     [     ID]  EEE\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:127  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]     [      {]  {\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:128  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]     [     ID]  YYY\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:129  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]     [      =]  \x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:130  [     ID] printf
+                       [       ] (
+                       [ DQUOTE] \x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:132  [     ID] printf
+                       [       ] (
+                       [ DQUOTE] If you specify the -t-option, %s will produce an uls-file(*.uls).\x0a
+                       [       ] ,
+                       [     ID] progname
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:133  [     ID] printf
+                       [       ] (
+                       [ DQUOTE] Then, again you can input the uls-file as an input file to '%s.\x0a
+                       [       ] ,
+                       [     ID] progname
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:134  [     ID] printf
+                       [       ] (
+                       [ DQUOTE] In short, the input file of %s can be source-code file or uls-file.\x0a
+                       [       ] ,
+                       [     ID] progname
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:135  [     ID] printf
+                       [       ] (
+                       [ DQUOTE] The available values for -t-option are 'bin-le'(little-endian), 'bin-be'(big-endian) or 'bin'(host byteorder).\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:136  [     ID] printf
+                       [       ] (
+                       [ DQUOTE] \x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:137  [     ID] printf
+                       [       ] (
+                       [ DQUOTE] If you specify -C-option, you can get a conglomerate file of all the files in <list-file> 
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:138  [     ID] printf
+                       [       ] (
+                       [ DQUOTE] , where the file in each line starts from <target-dir>.\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:139  [     ID] printf
+                       [       ] (
+                       [ DQUOTE] The <list-file> is just a simple list of file paths in 'target-dir' that you want to process.\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:140  [     ID] printf
+                       [       ] (
+                       [ DQUOTE] Let the <list-file> be as follows.\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:141  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]      # Comment here\x0a\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:142  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]      # A filepath per line\x0a\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:143  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]      input1.c\x0a\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:144  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]      src/input2.c\x0a\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:145  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]      srclib/input3.c\x0a\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:146  [     ID] printf
+                       [       ] (
+                       [ DQUOTE] \x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:148  [     ID] printf
+                       [       ] (
+                       [ DQUOTE] The default output-file ('a.uls') will be a sequence of tokens of all the files.\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:149  [     ID] printf
+                       [       ] (
+                       [ DQUOTE] The -f-option can be used with -C-option to filter the files before lexical analyzing.\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:150  [     ID] printf
+                       [       ] (
+                       [ DQUOTE] The argument of -f-option should be a command line which inputs from stdin and outputs to stdout like 'gcc -E'.\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:151  [     ID] printf
+                       [       ] (
+                       [ DQUOTE] \x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:153  [     ID] printf
+                       [       ] (
+                       [ DQUOTE] When you specify the -L-option, you must consider the search order of ulc-file.\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:154  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]   Refer the user-guide in the directory 'doc' for details.\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:155  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]   -L, --lang=<ulc-spec>      The lexical-configuration(*.ulc) about your language\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:156  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]   -o, --output=<filepath>    specify the output filepath, a stream-file\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:157  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]   -t, --type=<output-type>   specify the format of output-file.\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:158  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]   -C, --conglomerate=<listfile>  output a conglomerate file from the multiple input-files\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:159  [       ] #
+                       [     ID] ifdef
+                       [     ID] ULS_FDF_SUPPORT
+       dir_a/s2.c:160  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]   -f, --filter=<cmdline>     filter the input files with the -C-option\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:161  [       ] #
+                       [     ID] endif
+       dir_a/s2.c:162  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]   -v, --verbose              verbose mode\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:163  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]   -V, --version              prints the version information\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:164  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]   -h, --help                 display a short help.
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:165  [     ID] printf
+                       [       ] (
+                       [ DQUOTE] \x0a\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:167  [     ID] printf
+                       [       ] (
+                       [ DQUOTE] For example, you may use %s as follows.\x0a
+                       [       ] ,
+                       [     ID] progname
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:169  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]   To read ULS-file,\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:170  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]      %s -L sample.ulc input1.txt\x0a
+                       [       ] ,
+                       [     ID] progname
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:171  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]      %s -L sample.ulc bin-le.uls\x0a
+                       [       ] ,
+                       [     ID] progname
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:172  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]      %s -L sample.ulc -o a.txt bin-le.uls\x0a
+                       [       ] ,
+                       [     ID] progname
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:173  [     ID] printf
+                       [       ] (
+                       [ DQUOTE] \x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:175  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]   To write ULS-file,\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:176  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]      %s -L sample.ulc -t bin-le bin-le.uls\x0a
+                       [       ] ,
+                       [     ID] progname
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:177  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]      %s -L sample.ulc -t bin-be bin-le.uls\x0a
+                       [       ] ,
+                       [     ID] progname
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:178  [     ID] printf
+                       [       ] (
+                       [ DQUOTE] \x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:180  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]   To get the conglomerate ULS-file,\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:181  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]      %s -t bin    -C ./a.list /package/home\x0a
+                       [       ] ,
+                       [     ID] progname
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:182  [       ] #
+                       [     ID] ifdef
+                       [     ID] ULS_FDF_SUPPORT
+       dir_a/s2.c:183  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]      %s -t bin-le -C ./a.list -f 'gcc -E' ../package/home\x0a
+                       [       ] ,
+                       [     ID] progname
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:184  [       ] #
+                       [     ID] endif
+       dir_a/s2.c:185  [     ID] printf
+                       [       ] (
+                       [ DQUOTE] \x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:187  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]    To make a template-uls file,\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:188  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]       %s -L sample.ulc -t bin-le -o tmpl_ex.uls -TT tmpl_ex.txt\x0a
+                       [       ] ,
+                       [     ID] progname
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:189  [     ID] printf
+                       [       ] (
+                       [ DQUOTE] \x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:191  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]    To use the created template-uls file,\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:192  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]       %s -L <ulc-file>  tmpl_var1=int tmpl_var2='unsigned int' a.uls\x0a
+                       [       ] ,
+                       [     ID] progname
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:193  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]       %s -L sample.ulc T='unsigned int' tmpl_ex.uls\x0a
+                       [       ] ,
+                       [     ID] progname
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:194  [     ID] printf
+                       [       ] (
+                       [ DQUOTE] \x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:196  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]    To create a template uls-file,\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:197  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]       %s -Lsample.ulc -t bin -TT tmpl_ex.txt,\x0a
+                       [       ] ,
+                       [     ID] progname
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:198  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]          where the value of -T-option is the lexeme ID token.\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:199  [     ID] printf
+                       [       ] (
+                       [ DQUOTE]    The -T-option can be used to replace the ID-tokens with TMPL-tokens.\x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:200  [     ID] printf
+                       [       ] (
+                       [ DQUOTE] \x0a
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:201  [       ] }
+       dir_a/s2.c:203  [ STATIC] static
+                       [    INT] int
+                       [     ID] _ULS_STDCALL
+       dir_a/s2.c:204  [     ID] ulsstream_options
+                       [       ] (
+                       [    INT] int
+                       [     ID] opt
+                       [       ] ,
+                       [   CHAR] char
+                       [       ] *
+                       [     ID] optarg
+                       [       ] )
+       dir_a/s2.c:205  [       ] {
+       dir_a/s2.c:206  [    INT] int
+                       [     ID] stat
+                       [       ] =
+                       [ NUMBER] 0
+                       [       ] ;
+       dir_a/s2.c:207  [       ] #
+                       [     ID] ifdef
+                       [     ID] ULS_FDF_SUPPORT
+       dir_a/s2.c:208  [   CHAR] char
+                       [     ID] fpath_buff
+                       [       ] [
+                       [     ID] ULS_FILEPATH_MAX
+                       [       ] +
+                       [ NUMBER] 1
+                       [       ] ]
+                       [       ] ;
+       dir_a/s2.c:209  [   CHAR] char
+                       [       ] *
+                       [     ID] lptr
+                       [       ] ,
+                       [       ] *
+                       [     ID] cmdl
+                       [       ] ,
+                       [       ] *
+                       [     ID] argv0
+                       [       ] ;
+       dir_a/s2.c:210  [    INT] int
+                       [     ID] siz
+                       [       ] ;
+       dir_a/s2.c:211  [       ] #
+                       [     ID] endif
+       dir_a/s2.c:213  [ SWITCH] switch
+                       [       ] (
+                       [     ID] opt
+                       [       ] )
+                       [       ] {
+       dir_a/s2.c:214  [   CASE] case
+                       [ SQUOTE] o
+                       [       ] :
+       dir_a/s2.c:215  [     ID] output_file
+                       [       ] =
+                       [     ID] strdup
+                       [       ] (
+                       [     ID] optarg
+                       [       ] ,
+                       [ NUMBER] -1
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:216  [     ID] path_normalize
+                       [       ] (
+                       [     ID] output_file
+                       [       ] ,
+                       [     ID] output_file
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:217  [  BREAK] break
+                       [       ] ;
+       dir_a/s2.c:218  [       ] #
+                       [     ID] ifdef
+                       [     ID] ULS_FDF_SUPPORT
+       dir_a/s2.c:219  [   CASE] case
+                       [ SQUOTE] f
+                       [       ] :
+       dir_a/s2.c:220  [     ID] cmdl
+                       [       ] =
+                       [     ID] skip_blanks
+                       [       ] (
+                       [     ID] optarg
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:222  [     ID] siz
+                       [       ] =
+                       [     ID] strlen
+                       [       ] (
+                       [     ID] cmdl
+                       [       ] )
+                       [       ] +
+                       [     ID] ULS_FILEPATH_MAX
+                       [       ] +
+                       [ NUMBER] 4
+                       [       ] ;
+       dir_a/s2.c:223  [     ID] cmdline_filter
+                       [       ] =
+                       [     ID] malloc
+                       [       ] (
+                       [     ID] siz
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:224  [     ID] strcpy
+                       [       ] (
+                       [     ID] cmdline_filter
+                       [       ] ,
+                       [     ID] cmdl
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:226  [     ID] lptr
+                       [       ] =
+                       [     ID] cmdline_filter
+                       [       ] ;
+       dir_a/s2.c:227  [     ID] argv0
+                       [       ] =
+                       [     ID] splitstr
+                       [       ] (
+                       [       ] &
+                       [     ID] lptr
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:229  [     ID] argv0
+                       [       ] =
+                       [     ID] strdup
+                       [       ] (
+                       [     ID] argv0
+                       [       ] ,
+                       [ NUMBER] -1
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:230  [     ID] path_normalize
+                       [       ] (
+                       [     ID] argv0
+                       [       ] ,
+                       [     ID] argv0
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:232  [     IF] if
+                       [       ] (
+                       [       ] !
+                       [     ID] is_absolute_path
+                       [       ] (
+                       [     ID] argv0
+                       [       ] )
+                       [    AND] &&
+                       [     ID] dirent_exist
+                       [       ] (
+                       [     ID] argv0
+                       [       ] )
+                       [     EQ] ==
+                       [     ID] ST_MODE_REG
+                       [       ] )
+                       [       ] {
+       dir_a/s2.c:233  [     ID] getcwd
+                       [       ] (
+                       [     ID] fpath_buff
+                       [       ] ,
+                       [     ID] ULS_FILEPATH_MAX
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:234  [     ID] snprintf
+                       [       ] (
+                       [     ID] cmdline_filter
+                       [       ] ,
+                       [     ID] siz
+                       [       ] ,
+                       [ DQUOTE] %s/%s
+                       [       ] ,
+                       [     ID] fpath_buff
+                       [       ] ,
+                       [     ID] cmdl
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:235  [       ] }
+                       [   ELSE] else
+                       [       ] {
+       dir_a/s2.c:236  [     ID] mfree
+                       [       ] (
+                       [     ID] cmdline_filter
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:237  [     ID] cmdline_filter
+                       [       ] =
+                       [     ID] cmdl
+                       [       ] ;
+       dir_a/s2.c:238  [       ] }
+       dir_a/s2.c:239  [  BREAK] break
+                       [       ] ;
+       dir_a/s2.c:240  [       ] #
+                       [     ID] endif
+       dir_a/s2.c:241  [   CASE] case
+                       [ SQUOTE] t
+                       [       ] :
+       dir_a/s2.c:242  [     ID] opt_write
+                       [       ] =
+                       [ NUMBER] 1
+                       [       ] ;
+       dir_a/s2.c:243  [     IF] if
+                       [       ] (
+                       [     ID] streql
+                       [       ] (
+                       [     ID] optarg
+                       [       ] ,
+                       [ DQUOTE] bin
+                       [       ] )
+                       [       ] )
+                       [       ] {
+       dir_a/s2.c:244  [       ] #
+                       [     ID] ifdef
+                       [     ID] ULS_BIG_ENDIAN
+       dir_a/s2.c:245  [     ID] out_ftype
+                       [       ] =
+                       [     ID] ULS_STREAM_BIN_BE
+                       [       ] ;
+       dir_a/s2.c:246  [       ] #
+                       [   ELSE] else
+       dir_a/s2.c:247  [     ID] out_ftype
+                       [       ] =
+                       [     ID] ULS_STREAM_BIN_LE
+                       [       ] ;
+       dir_a/s2.c:248  [       ] #
+                       [     ID] endif
+       dir_a/s2.c:249  [       ] }
+                       [   ELSE] else
+                       [     IF] if
+                       [       ] (
+                       [     ID] streql
+                       [       ] (
+                       [     ID] optarg
+                       [       ] ,
+                       [ DQUOTE] bin-le
+                       [       ] )
+                       [       ] )
+                       [       ] {
+       dir_a/s2.c:250  [     ID] out_ftype
+                       [       ] =
+                       [     ID] ULS_STREAM_BIN_LE
+                       [       ] ;
+       dir_a/s2.c:251  [       ] }
+                       [   ELSE] else
+                       [     IF] if
+                       [       ] (
+                       [     ID] streql
+                       [       ] (
+                       [     ID] optarg
+                       [       ] ,
+                       [ DQUOTE] bin-be
+                       [       ] )
+                       [       ] )
+                       [       ] {
+       dir_a/s2.c:252  [     ID] out_ftype
+                       [       ] =
+                       [     ID] ULS_STREAM_BIN_BE
+                       [       ] ;
+       dir_a/s2.c:253  [       ] }
+                       [   ELSE] else
+                       [       ] {
+       dir_a/s2.c:254  [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] %s: invalid option value for -t
+                       [       ] ,
+                       [     ID] optarg
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:255  [     ID] stat
+                       [       ] =
+                       [ NUMBER] -1
+                       [       ] ;
+       dir_a/s2.c:256  [       ] }
+       dir_a/s2.c:257  [  BREAK] break
+                       [       ] ;
+       dir_a/s2.c:259  [   CASE] case
+                       [ SQUOTE] T
+                       [       ] :
+       dir_a/s2.c:260  [     IF] if
+                       [       ] (
+                       [       ] !
+                       [     ID] add_name_val_ent
+                       [       ] (
+                       [     ID] optarg
+                       [       ] ,
+                       [ DQUOTE] 
+                       [       ] )
+                       [       ] )
+                       [       ] {
+       dir_a/s2.c:261  [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] can't add tmpl-name
+                       [       ] ,
+                       [     ID] optarg
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:262  [     ID] stat
+                       [       ] =
+                       [ NUMBER] -1
+                       [       ] ;
+       dir_a/s2.c:263  [       ] }
+       dir_a/s2.c:264  [  BREAK] break
+                       [       ] ;
+       dir_a/s2.c:266  [   CASE] case
+                       [ SQUOTE] L
+                       [       ] :
+       dir_a/s2.c:267  [     ID] config_path
+                       [       ] =
+                       [     ID] optarg
+                       [       ] ;
+       dir_a/s2.c:268  [  BREAK] break
+                       [       ] ;
+       dir_a/s2.c:270  [   CASE] case
+                       [ SQUOTE] C
+                       [       ] :
+       dir_a/s2.c:271  [     ID] opt_write
+                       [       ] =
+                       [ NUMBER] 1
+                       [       ] ;
+       dir_a/s2.c:272  [     ID] filelist
+                       [       ] =
+                       [     ID] optarg
+                       [       ] ;
+       dir_a/s2.c:273  [  BREAK] break
+                       [       ] ;
+       dir_a/s2.c:275  [   CASE] case
+                       [ SQUOTE] s
+                       [       ] :
+       dir_a/s2.c:276  [       ] +
+                       [       ] +
+                       [     ID] opt_silent
+                       [       ] ;
+       dir_a/s2.c:277  [  BREAK] break
+                       [       ] ;
+       dir_a/s2.c:279  [   CASE] case
+                       [ SQUOTE] n
+                       [       ] :
+       dir_a/s2.c:280  [     ID] tag_name
+                       [       ] =
+                       [     ID] optarg
+                       [       ] ;
+       dir_a/s2.c:281  [  BREAK] break
+                       [       ] ;
+       dir_a/s2.c:283  [   CASE] case
+                       [ SQUOTE] z
+                       [       ] :
+       dir_a/s2.c:284  [     ID] opt_want_eof
+                       [       ] =
+                       [ NUMBER] 1
+                       [       ] ;
+       dir_a/s2.c:285  [  BREAK] break
+                       [       ] ;
+       dir_a/s2.c:287  [   CASE] case
+                       [ SQUOTE] x
+                       [       ] :
+       dir_a/s2.c:288  [     ID] opt_no_numbering
+                       [       ] =
+                       [ NUMBER] 1
+                       [       ] ;
+       dir_a/s2.c:289  [  BREAK] break
+                       [       ] ;
+       dir_a/s2.c:291  [   CASE] case
+                       [ SQUOTE] H
+                       [       ] :
+       dir_a/s2.c:292  [     ID] usage_long
+                       [       ] (
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:293  [  BREAK] break
+                       [       ] ;
+       dir_a/s2.c:295  [   CASE] case
+                       [ SQUOTE] h
+                       [       ] :
+       dir_a/s2.c:296  [     ID] usage
+                       [       ] (
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:297  [  BREAK] break
+                       [       ] ;
+       dir_a/s2.c:299  [   CASE] case
+                       [ SQUOTE] v
+                       [       ] :
+       dir_a/s2.c:300  [       ] +
+                       [       ] +
+                       [     ID] opt_verbose
+                       [       ] ;
+       dir_a/s2.c:301  [  BREAK] break
+                       [       ] ;
+       dir_a/s2.c:303  [   CASE] case
+                       [ SQUOTE] V
+                       [       ] :
+       dir_a/s2.c:304  [     ID] printf
+                       [       ] (
+                       [ DQUOTE] %s %s, written by %s,\x0a\x09is provided under %s.\x0a
+                       [       ] ,
+       dir_a/s2.c:305  [     ID] progname
+                       [       ] ,
+                       [     ID] ULF_GEN_PROGVER
+                       [       ] ,
+                       [     ID] ULS_AUTHOR
+                       [       ] ,
+                       [     ID] ULS_LICENSE_NAME
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:306  [  BREAK] break
+                       [       ] ;
+       dir_a/s2.c:308  [DEFAULT] default
+                       [       ] :
+       dir_a/s2.c:309  [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] undefined option -%c
+                       [       ] ,
+                       [     ID] opt
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:310  [     ID] stat
+                       [       ] =
+                       [ NUMBER] -1
+                       [       ] ;
+       dir_a/s2.c:311  [  BREAK] break
+                       [       ] ;
+       dir_a/s2.c:312  [       ] }
+       dir_a/s2.c:314  [ RETURN] return
+                       [     ID] stat
+                       [       ] ;
+       dir_a/s2.c:315  [       ] }
+       dir_a/s2.c:317  [ STATIC] static
+                       [    INT] int
+       dir_a/s2.c:318  [     ID] parse_options
+                       [       ] (
+                       [    INT] int
+                       [       ] *
+                       [     ID] ptr_argc
+                       [       ] ,
+                       [   CHAR] char
+                       [       ] *
+                       [     ID] argv
+                       [       ] [
+                       [       ] ]
+                       [       ] )
+       dir_a/s2.c:319  [       ] {
+       dir_a/s2.c:320  [    INT] int
+                       [     ID] argc
+                       [       ] =
+                       [       ] *
+                       [     ID] ptr_argc
+                       [       ] ;
+       dir_a/s2.c:321  [    INT] int
+                       [     ID] i
+                       [       ] ,
+                       [     ID] i0
+                       [       ] ,
+                       [     ID] i1
+                       [       ] ;
+       dir_a/s2.c:322  [   CHAR] char
+                       [       ] *
+                       [     ID] ptr
+                       [       ] ,
+                       [       ] *
+                       [     ID] name
+                       [       ] ;
+       dir_a/s2.c:324  [       ] #
+                       [     ID] ifdef
+                       [     ID] HAVE_GETOPT_H
+       dir_a/s2.c:325  [    INT] int
+                       [     ID] rc
+                       [       ] ,
+                       [     ID] opt
+                       [       ] ,
+                       [     ID] longindex
+                       [       ] ;
+       dir_a/s2.c:326  [       ] #
+                       [     ID] endif
+       dir_a/s2.c:328  [       ] #
+                       [     ID] ifdef
+                       [     ID] ULS_BIG_ENDIAN
+       dir_a/s2.c:329  [     ID] out_ftype
+                       [       ] =
+                       [     ID] ULS_STREAM_BIN_BE
+                       [       ] ;
+       dir_a/s2.c:330  [       ] #
+                       [   ELSE] else
+       dir_a/s2.c:331  [     ID] out_ftype
+                       [       ] =
+                       [     ID] ULS_STREAM_BIN_LE
+                       [       ] ;
+       dir_a/s2.c:332  [       ] #
+                       [     ID] endif
+       dir_a/s2.c:334  [       ] #
+                       [     ID] ifdef
+                       [     ID] HAVE_GETOPT_H
+       dir_a/s2.c:335  [  WHILE] while
+                       [       ] (
+                       [       ] (
+                       [     ID] opt
+                       [       ] =
+                       [     ID] getopt_long
+                       [       ] (
+                       [     ID] argc
+                       [       ] ,
+                       [     ID] argv
+                       [       ] ,
+                       [     ID] ULSSTREAM_OPTSTR
+                       [       ] ,
+                       [     ID] longopts
+                       [       ] ,
+                       [       ] &
+                       [     ID] longindex
+                       [       ] )
+                       [       ] )
+                       [    NEQ] !=
+                       [ NUMBER] -1
+                       [       ] )
+                       [       ] {
+       dir_a/s2.c:336  [     IF] if
+                       [       ] (
+                       [       ] (
+                       [     ID] rc
+                       [       ] =
+                       [     ID] ulsstream_options
+                       [       ] (
+                       [     ID] opt
+                       [       ] ,
+                       [     ID] optarg
+                       [       ] )
+                       [       ] )
+                       [       ] <
+                       [ NUMBER] 0
+                       [       ] )
+                       [       ] {
+       dir_a/s2.c:337  [ RETURN] return
+                       [     ID] rc
+                       [       ] ;
+       dir_a/s2.c:338  [       ] }
+       dir_a/s2.c:339  [       ] }
+       dir_a/s2.c:340  [     ID] i0
+                       [       ] =
+                       [     ID] optind
+                       [       ] ;
+       dir_a/s2.c:341  [       ] #
+                       [   ELSE] else
+       dir_a/s2.c:342  [     IF] if
+                       [       ] (
+                       [       ] (
+                       [     ID] i0
+                       [       ] =
+                       [     ID] getopts
+                       [       ] (
+                       [     ID] argc
+                       [       ] ,
+                       [     ID] argv
+                       [       ] ,
+                       [     ID] ULSSTREAM_OPTSTR
+                       [       ] ,
+                       [     ID] ulsstream_options
+                       [       ] )
+                       [       ] )
+                       [    LEQ] <=
+                       [ NUMBER] 0
+                       [       ] )
+                       [       ] {
+       dir_a/s2.c:343  [ RETURN] return
+                       [ NUMBER] -1
+                       [       ] ;
+       dir_a/s2.c:344  [       ] }
+       dir_a/s2.c:345  [       ] #
+                       [     ID] endif
+       dir_a/s2.c:346  [     IF] if
+                       [       ] (
+                       [     ID] config_path
+                       [    NEQ] !=
+                       [     ID] NULL
+                       [       ] )
+                       [       ] {
+       dir_a/s2.c:347  [     ID] strncpy
+                       [       ] (
+                       [     ID] config_pathbuff
+                       [       ] ,
+                       [     ID] config_path
+                       [       ] ,
+                       [     ID] ULS_LEXSTR_MAXSIZ
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:348  [     ID] config_path
+                       [       ] =
+                       [     ID] config_pathbuff
+                       [       ] ;
+       dir_a/s2.c:349  [       ] }
+       dir_a/s2.c:351  [     IF] if
+                       [       ] (
+                       [     ID] opt_write
+                       [    AND] &&
+                       [     ID] output_file
+                       [     EQ] ==
+                       [     ID] NULL
+                       [       ] )
+                       [       ] {
+       dir_a/s2.c:352  [     ID] output_file
+                       [       ] =
+                       [ DQUOTE] a.uls
+                       [       ] ;
+       dir_a/s2.c:353  [       ] }
+       dir_a/s2.c:355  [     IF] if
+                       [       ] (
+                       [     ID] filelist
+                       [    NEQ] !=
+                       [     ID] NULL
+                       [       ] )
+                       [       ] {
+       dir_a/s2.c:356  [     IF] if
+                       [       ] (
+                       [     ID] i0
+                       [    GEQ] >=
+                       [     ID] argc
+                       [       ] )
+                       [       ] {
+       dir_a/s2.c:357  [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] Specify the target-directory to apply the paths in %s
+                       [       ] ,
+                       [     ID] filelist
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:358  [ RETURN] return
+                       [ NUMBER] -1
+                       [       ] ;
+       dir_a/s2.c:359  [       ] }
+       dir_a/s2.c:360  [     ID] target_dir
+                       [       ] =
+                       [     ID] strdup
+                       [       ] (
+                       [     ID] argv
+                       [       ] [
+                       [     ID] i0
+                       [       ] +
+                       [       ] +
+                       [       ] ]
+                       [       ] ,
+                       [ NUMBER] -1
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:361  [     ID] path_normalize
+                       [       ] (
+                       [     ID] target_dir
+                       [       ] ,
+                       [     ID] target_dir
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:362  [       ] }
+       dir_a/s2.c:364  [    FOR] for
+                       [       ] (
+                       [     ID] i1
+                       [       ] =
+                       [     ID] i
+                       [       ] =
+                       [     ID] i0
+                       [       ] ;
+                       [     ID] i
+                       [       ] <
+                       [     ID] argc
+                       [       ] ;
+                       [     ID] i
+                       [       ] +
+                       [       ] +
+                       [       ] )
+                       [       ] {
+       dir_a/s2.c:365  [     IF] if
+                       [       ] (
+                       [       ] (
+                       [     ID] ptr
+                       [       ] =
+                       [     ID] strchr
+                       [       ] (
+                       [     ID] argv
+                       [       ] [
+                       [     ID] i
+                       [       ] ]
+                       [       ] ,
+                       [ SQUOTE] =
+                       [       ] )
+                       [       ] )
+                       [    NEQ] !=
+                       [     ID] NULL
+                       [       ] )
+                       [       ] {
+       dir_a/s2.c:366  [       ] *
+                       [     ID] ptr
+                       [       ] +
+                       [       ] +
+                       [       ] =
+                       [ SQUOTE] 
+                       [       ] ;
+       dir_a/s2.c:367  [     ID] name
+                       [       ] =
+                       [     ID] argv
+                       [       ] [
+                       [     ID] i
+                       [       ] ]
+                       [       ] ;
+       dir_a/s2.c:368  [     IF] if
+                       [       ] (
+                       [       ] !
+                       [     ID] add_name_val_ent
+                       [       ] (
+                       [     ID] name
+                       [       ] ,
+                       [       ] (
+                       [   VOID] void
+                       [       ] *
+                       [       ] )
+                       [     ID] ptr
+                       [       ] )
+                       [       ] )
+                       [       ] {
+       dir_a/s2.c:369  [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] duplicate template name '%s' or array overflow!
+                       [       ] ,
+                       [     ID] name
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:370  [ RETURN] return
+                       [ NUMBER] -1
+                       [       ] ;
+       dir_a/s2.c:371  [       ] }
+       dir_a/s2.c:373  [       ] }
+                       [   ELSE] else
+                       [       ] {
+       dir_a/s2.c:374  [     ID] argv
+                       [       ] [
+                       [     ID] i1
+                       [       ] +
+                       [       ] +
+                       [       ] ]
+                       [       ] =
+                       [     ID] argv
+                       [       ] [
+                       [     ID] i
+                       [       ] ]
+                       [       ] ;
+       dir_a/s2.c:375  [       ] }
+       dir_a/s2.c:376  [       ] }
+       dir_a/s2.c:378  [       ] *
+                       [     ID] ptr_argc
+                       [       ] =
+                       [     ID] argc
+                       [       ] =
+                       [     ID] i1
+                       [       ] ;
+       dir_a/s2.c:379  [ RETURN] return
+                       [     ID] i0
+                       [       ] ;
+       dir_a/s2.c:380  [       ] }
+       dir_a/s2.c:382  [    INT] int
+       dir_a/s2.c:383  [     ID] main
+                       [       ] (
+                       [    INT] int
+                       [     ID] argc
+                       [       ] ,
+                       [   CHAR] char
+                       [       ] *
+                       [     ID] argv
+                       [       ] [
+                       [       ] ]
+                       [       ] )
+       dir_a/s2.c:384  [       ] {
+       dir_a/s2.c:385  [     ID] lex_t
+                       [       ] *
+                       [     ID] uls
+                       [       ] ;
+       dir_a/s2.c:386  [    INT] int
+                       [     ID] i0
+                       [       ] ,
+                       [     ID] stat
+                       [       ] =
+                       [ NUMBER] 0
+                       [       ] ;
+       dir_a/s2.c:387  [    INT] int
+                       [     ID] i
+                       [       ] ,
+                       [     ID] ftype
+                       [       ] ;
+       dir_a/s2.c:388  [   CHAR] char
+                       [       ] *
+                       [     ID] input_file
+                       [       ] ;
+       dir_a/s2.c:389  [     ID] FILE
+                       [       ] *
+                       [     ID] fp_out
+                       [       ] ;
+       dir_a/s2.c:391  [     ID] initialize_uls
+                       [       ] (
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:392  [       ] #
+                       [     ID] ifndef
+                       [     ID] ULS_WINDOWS
+       dir_a/s2.c:393  [     ID] setlocale
+                       [       ] (
+                       [     ID] LC_CTYPE
+                       [       ] ,
+                       [ DQUOTE] 
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:394  [       ] #
+                       [     ID] endif
+       dir_a/s2.c:395  [     ID] progname
+                       [       ] =
+                       [     ID] THIS_PROGNAME
+                       [       ] ;
+       dir_a/s2.c:396  [     ID] getcwd
+                       [       ] (
+                       [     ID] home_dir
+                       [       ] ,
+                       [ SIZEOF] sizeof
+                       [       ] (
+                       [     ID] home_dir
+                       [       ] )
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:398  [     IF] if
+                       [       ] (
+                       [       ] (
+                       [     ID] i0
+                       [       ] =
+                       [     ID] parse_options
+                       [       ] (
+                       [       ] &
+                       [     ID] argc
+                       [       ] ,
+                       [     ID] argv
+                       [       ] )
+                       [       ] )
+                       [       ] <
+                       [ NUMBER] 0
+                       [       ] )
+                       [       ] {
+       dir_a/s2.c:399  [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] i0=%d, argc=%d
+                       [       ] ,
+                       [     ID] i0
+                       [       ] ,
+                       [     ID] argc
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:400  [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] Type '%s -h'
+                       [       ] ,
+                       [     ID] argv
+                       [       ] [
+                       [ NUMBER] 0
+                       [       ] ]
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:401  [ RETURN] return
+                       [     ID] i0
+                       [       ] ;
+       dir_a/s2.c:402  [       ] }
+       dir_a/s2.c:404  [     IF] if
+                       [       ] (
+                       [     ID] i0
+                       [    GEQ] >=
+                       [     ID] argc
+                       [       ] )
+                       [       ] {
+       dir_a/s2.c:405  [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] %s(%s), written by %s,\x0a\x09is provided under %s.
+                       [       ] ,
+       dir_a/s2.c:406  [     ID] progname
+                       [       ] ,
+                       [     ID] ULF_GEN_PROGVER
+                       [       ] ,
+                       [     ID] ULS_AUTHOR
+                       [       ] ,
+                       [     ID] ULS_LICENSE_NAME
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:407  [     ID] usage
+                       [       ] (
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:408  [ RETURN] return
+                       [ NUMBER] 1
+                       [       ] ;
+       dir_a/s2.c:409  [       ] }
+       dir_a/s2.c:411  [     IF] if
+                       [       ] (
+                       [     ID] filelist
+                       [    NEQ] !=
+                       [     ID] NULL
+                       [       ] )
+                       [       ] {
+       dir_a/s2.c:412  [     IF] if
+                       [       ] (
+                       [     ID] config_path
+                       [     EQ] ==
+                       [     ID] NULL
+                       [       ] )
+                       [       ] {
+       dir_a/s2.c:413  [     IF] if
+                       [       ] (
+                       [       ] (
+                       [     ID] ftype
+                       [       ] =
+                       [     ID] guess_specname_from_inputfiles
+                       [       ] (
+                       [     ID] config_pathbuff
+                       [       ] )
+                       [       ] )
+                       [       ] <
+                       [ NUMBER] 0
+                       [       ] )
+                       [       ] {
+       dir_a/s2.c:414  [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] Unknown spec-name, specify the ulc-file of input-files
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:415  [ RETURN] return
+                       [ NUMBER] -1
+                       [       ] ;
+       dir_a/s2.c:416  [       ] }
+       dir_a/s2.c:417  [     ID] config_path
+                       [       ] =
+                       [     ID] config_pathbuff
+                       [       ] ;
+       dir_a/s2.c:418  [       ] }
+       dir_a/s2.c:420  [     ID] get_specname
+                       [       ] (
+                       [     ID] config_path
+                       [       ] ,
+                       [     ID] specname
+                       [       ] ,
+                       [     ID] NULL
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:422  [     IF] if
+                       [       ] (
+                       [     ID] opt_verbose
+                       [       ] )
+       dir_a/s2.c:423  [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] The output file depends on the lex-spec '%s'
+                       [       ] ,
+                       [     ID] config_path
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:425  [     ID] chdir
+                       [       ] (
+                       [     ID] home_dir
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:427  [     IF] if
+                       [       ] (
+                       [       ] (
+                       [     ID] uls
+                       [       ] =
+                       [     ID] create
+                       [       ] (
+                       [     ID] config_path
+                       [       ] )
+                       [       ] )
+                       [     EQ] ==
+                       [     ID] NULL
+                       [       ] )
+                       [       ] {
+       dir_a/s2.c:428  [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] can't create a uls-object for lexical analysis.
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:429  [ RETURN] return
+                       [ NUMBER] -1
+                       [       ] ;
+       dir_a/s2.c:430  [       ] }
+       dir_a/s2.c:432  [     IF] if
+                       [       ] (
+                       [     ID] opt_want_eof
+                       [       ] )
+       dir_a/s2.c:433  [     ID] want_eof
+                       [       ] (
+                       [     ID] uls
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:435  [     ID] stat
+                       [       ] =
+                       [     ID] proc_filelist
+                       [       ] (
+                       [     ID] ftype
+                       [       ] ,
+                       [     ID] uls
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:436  [     ID] destroy
+                       [       ] (
+                       [     ID] uls
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:438  [ RETURN] return
+                       [     ID] stat
+                       [       ] ;
+       dir_a/s2.c:439  [       ] }
+       dir_a/s2.c:441  [     IF] if
+                       [       ] (
+                       [     ID] opt_write
+                       [       ] )
+                       [       ] {
+       dir_a/s2.c:442  [     IF] if
+                       [       ] (
+                       [     ID] config_path
+                       [     EQ] ==
+                       [     ID] NULL
+                       [       ] )
+                       [       ] {
+       dir_a/s2.c:443  [     IF] if
+                       [       ] (
+                       [     ID] guess_specname
+                       [       ] (
+                       [     ID] argv
+                       [       ] [
+                       [     ID] i0
+                       [       ] ]
+                       [       ] ,
+                       [     ID] config_pathbuff
+                       [       ] )
+                       [       ] <
+                       [ NUMBER] 0
+                       [       ] )
+                       [       ] {
+       dir_a/s2.c:444  [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] can't open or don't know spec of %s
+                       [       ] ,
+                       [     ID] argv
+                       [       ] [
+                       [     ID] i0
+                       [       ] ]
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:445  [ RETURN] return
+                       [ NUMBER] -1
+                       [       ] ;
+       dir_a/s2.c:446  [       ] }
+       dir_a/s2.c:448  [     ID] config_path
+                       [       ] =
+                       [     ID] config_pathbuff
+                       [       ] ;
+       dir_a/s2.c:449  [       ] }
+       dir_a/s2.c:451  [     ID] get_specname
+                       [       ] (
+                       [     ID] config_path
+                       [       ] ,
+                       [     ID] specname
+                       [       ] ,
+                       [     ID] NULL
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:453  [     IF] if
+                       [       ] (
+                       [     ID] opt_verbose
+                       [       ] )
+       dir_a/s2.c:454  [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] Loading uls config file '%s', ...
+                       [       ] ,
+                       [     ID] config_path
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:456  [     IF] if
+                       [       ] (
+                       [       ] (
+                       [     ID] uls
+                       [       ] =
+                       [     ID] create
+                       [       ] (
+                       [     ID] config_path
+                       [       ] )
+                       [       ] )
+                       [     EQ] ==
+                       [     ID] NULL
+                       [       ] )
+                       [       ] {
+       dir_a/s2.c:457  [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] can't create a uls-object for lexical analysis.
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:458  [ RETURN] return
+                       [ NUMBER] -1
+                       [       ] ;
+       dir_a/s2.c:459  [       ] }
+       dir_a/s2.c:461  [     IF] if
+                       [       ] (
+                       [     ID] opt_want_eof
+                       [       ] )
+       dir_a/s2.c:462  [     ID] want_eof
+                       [       ] (
+                       [     ID] uls
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:464  [    FOR] for
+                       [       ] (
+                       [     ID] i
+                       [       ] =
+                       [     ID] i0
+                       [       ] ;
+                       [     ID] i
+                       [       ] <
+                       [     ID] argc
+                       [       ] ;
+                       [     ID] i
+                       [       ] +
+                       [       ] +
+                       [       ] )
+                       [       ] {
+       dir_a/s2.c:465  [     ID] input_file
+                       [       ] =
+                       [     ID] strdup
+                       [       ] (
+                       [     ID] argv
+                       [       ] [
+                       [     ID] i
+                       [       ] ]
+                       [       ] ,
+                       [ NUMBER] -1
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:466  [     ID] path_normalize
+                       [       ] (
+                       [     ID] input_file
+                       [       ] ,
+                       [     ID] input_file
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:467  [     ID] write_file
+                       [       ] (
+                       [     ID] uls
+                       [       ] ,
+                       [     ID] input_file
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:468  [       ] }
+       dir_a/s2.c:470  [     ID] destroy
+                       [       ] (
+                       [     ID] uls
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:471  [ RETURN] return
+                       [     ID] stat
+                       [       ] ;
+       dir_a/s2.c:472  [       ] }
+       dir_a/s2.c:474  [     IF] if
+                       [       ] (
+                       [     ID] output_file
+                       [    NEQ] !=
+                       [     ID] NULL
+                       [       ] )
+                       [       ] {
+       dir_a/s2.c:475  [     IF] if
+                       [       ] (
+                       [       ] (
+                       [     ID] fp_out
+                       [       ] =
+                       [     ID] fopen
+                       [       ] (
+                       [     ID] output_file
+                       [       ] ,
+                       [ DQUOTE] w
+                       [       ] )
+                       [       ] )
+                       [     EQ] ==
+                       [     ID] NULL
+                       [       ] )
+                       [       ] {
+       dir_a/s2.c:476  [     ID] err_log
+                       [       ] (
+                       [ DQUOTE] can't create %s
+                       [       ] ,
+                       [     ID] output_file
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:477  [       ] }
+       dir_a/s2.c:478  [       ] }
+                       [   ELSE] else
+                       [       ] {
+       dir_a/s2.c:479  [     ID] fp_out
+                       [       ] =
+                       [     ID] stdout
+                       [       ] ;
+       dir_a/s2.c:480  [       ] }
+       dir_a/s2.c:482  [    FOR] for
+                       [       ] (
+                       [     ID] i
+                       [       ] =
+                       [     ID] i0
+                       [       ] ;
+                       [     ID] i
+                       [       ] <
+                       [     ID] argc
+                       [       ] ;
+                       [     ID] i
+                       [       ] +
+                       [       ] +
+                       [       ] )
+                       [       ] {
+       dir_a/s2.c:483  [     ID] input_file
+                       [       ] =
+                       [     ID] strdup
+                       [       ] (
+                       [     ID] argv
+                       [       ] [
+                       [     ID] i
+                       [       ] ]
+                       [       ] ,
+                       [ NUMBER] -1
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:484  [     ID] path_normalize
+                       [       ] (
+                       [     ID] input_file
+                       [       ] ,
+                       [     ID] input_file
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:485  [     ID] dump_file
+                       [       ] (
+                       [     ID] input_file
+                       [       ] ,
+                       [     ID] fp_out
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:486  [       ] }
+       dir_a/s2.c:488  [     ID] fileclose
+                       [       ] (
+                       [     ID] fp_out
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:489  [ RETURN] return
+                       [ NUMBER] 0
+                       [       ] ;
+       dir_a/s2.c:490  [       ] }
+                       [    EOI] 

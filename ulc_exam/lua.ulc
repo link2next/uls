@@ -1,0 +1,51 @@
+﻿#@ulc-2.3
+#
+#  ULC for Lua
+#
+DOMAIN: uls.link2next.io://season-1
+
+ID_FIRST_CHARS: _ a-z A-Z
+ID_CHARS: _ 0-9 a-z A-Z
+CASE_SENSITIVE: true
+
+NUMBER_PREFIXES: 0x:16 0:8 0b:2
+
+COMMENT_TYPE: --[[ ]]
+COMMENT_TYPE: -- \n
+
+QUOTE_TYPE: token=DQUOTE "
+QUOTE_TYPE: token=SQUOTE '
+QUOTE_TYPE: options=asymmetric,multiline token=BQUOTE [[ ]]
+
+%%
+
+EOL              \n
+EQL              ==  4
+NEQ              ~=
+LEQ              <=
+GEQ              >=
+CONCAT           ..
+
+AND              and        65
+BREAK            break
+DO               do
+ELSE             else
+ELSEIF           elseif
+END              end
+FALSE            false
+FOR              for
+FUNCTION         function
+IF               if
+IN               in
+LOCAL            local
+NIL              nil
+NOT              not
+OR               or
+REPEAT           repeat
+RETURN           return
+THEN             then
+TRUE             true
+UNTIL            until
+WHILE            while
+
+

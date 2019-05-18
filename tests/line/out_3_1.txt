@@ -1,0 +1,6 @@
+ 1stToken:
+	[     ID] hello
+ 2ndToken:
+	[     ID] ungetc
+ 3rdToken:
+	[     ID] ULS

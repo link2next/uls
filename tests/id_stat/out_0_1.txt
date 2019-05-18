@@ -1,0 +1,17 @@
+                     AAA        2
+                     ANY        1
+                    CALL        3
+                    GOTO        1
+                      IF        1
+                    L100        2
+                    L101        2
+                  PARAM1        3
+                  PARAM2        3
+               PROCEDURE        1
+             PROCEDURE_A        1
+             PROCEDURE_B        1
+             PROCEDURE_C        1
+                  RETURN        2
+                    THEN        1
+                    Then        1
+                      fi        1

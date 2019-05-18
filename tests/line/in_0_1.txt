@@ -1,0 +1,4 @@
+1. auto Auto AUTO AAA /* comment here */ "hello" ^ BBB 0 0x00fffe 
+2. 		"hello world" -7094 0644 0. .3 /* and here */
+3. 		(CCC < _AAA) AND  "world" (__DDD >EEE) // blur blur
+4. 		FFF OR "hello\tworld" 

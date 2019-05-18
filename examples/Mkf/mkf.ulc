@@ -1,0 +1,34 @@
+﻿#@ulc-2.3
+#
+#  ULC: Unified Lexical Configuration
+#
+DOMAIN: uls.link2next.io://season-1
+
+ID_FIRST_CHARS: _ a-z A-Z
+ID_CHARS: _ 0-9 a-z A-Z
+
+NUMBER_PREFIXES: 0x:16 0:8
+
+COMMENT_TYPE: # \n
+
+QUOTE_TYPE: token=DQUOTE " verbatim1
+QUOTE_TYPE: token=SQUOTE ' verbatim1
+QUOTE_TYPE: options=asymmetric token=4,MKFCMD  \n\t  \t  
+QUOTE_TYPE: options=nothing token=12,NOQUOTE1  \\\n
+
+RENAME: NUMBER NUM
+RENAME: EOF ENDFILE
+
+%%
+
+# token-name  keyword  token-id
+TABBLK                  128 
+INCLUDE      include
+ADDASGN      +=    
+QUESTASGN    ?=
+COLONASGN    :=
+DBLCOLON     ::
+EOL          \n
+
+WORD   11
+

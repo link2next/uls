@@ -1,0 +1,220 @@
+﻿#@ulc-2.3
+#
+#  ULC: Unified Lexical Configuration
+#
+DOMAIN: uls.link2next.io://season-1
+
+ID_FIRST_CHARS: _ $ a-z A-Z
+ID_CHARS: _ 0-9 a-z A-Z
+
+NUMBER_PREFIXES: 0x:16 0:8 0b:2
+
+COMMENT_TYPE: /* */
+COMMENT_TYPE: // \n
+
+QUOTE_TYPE: token=DQUOTE "
+QUOTE_TYPE: token=SQUOTE '
+
+RENAME: EOF ENDFILE
+
+%%
+
+# token-name  keyword  token-id
+NONE     <NONE>    -5
+TMPL     <TMPL>    -4
+LINENUM  <LNO>     -3
+ERR      <ERR>     -2
+ENDFILE  <EOF>     -1
+EOI      <EOI>      0
+ID       <ID>       1
+NUMBER   <NUMBER>   2
+
+BREAK          break   256
+CONTINUE       continue
+DO             do
+FOR            for
+IMPORT         import
+NEW            new
+THIS           this
+VOID           void
+CASE           case
+DEFAULT        default
+ELSE           else
+FUNCTION       function
+IN             in
+RETURN         return
+TYPEOF         typeof
+WHILE          while
+COMMENT        comment
+DELETE         delete
+EXPORT         export
+IF             if
+LABEL          label
+SWITCH         switch
+VAR            var
+WITH           with
+
+ABSTRACT       abstract
+IMPLEMENTS     implements
+PROTECTED      protected
+BOOLEAN        boolean
+INSTANCEOF     instanceOf
+PUBLIC         public
+BYTE           byte
+INT            int
+SHORT          short
+CHAR           char
+INTERFACE      interface
+STATIC         static
+DOUBLE         double
+LONG           long
+SYNCHRONIZED   synchronized
+FALSE          false
+NATIVE         native
+THROWS         throws
+FINAL          final
+NULL           null
+TRANSIENT      transient
+FLOAT          float
+PACKAGE        package
+TRUE           true
+GOTO           goto
+PRIVATE        private
+
+CATCH          catch
+ENUM           enum
+THROW          throw
+CLASS          class
+EXTENDS        extends
+TRY            try
+CONST          const
+FINALLY        finally
+DEBUGGER       debugger
+SUPER          super
+
+ALERT          alert
+EVAL           eval
+LINK           Link
+OUTERHEIGHT    outerHeight
+SCROLLTO       scrollTo
+ANCHOR         Anchor
+FILEUPLOAD     FileUpload
+LOCATION       location
+OUTERWIDTH     outerWidth
+SELECT         Select
+AREA           Area
+FIND           find
+LOCATION       Location
+PACKAGES       Packages
+SELF           self
+ARGUMENTS      arguments
+FOCUS          focus
+LOCATIONBAR    locationbar
+PAGEXOFFSET    pageXoffset
+SETINTERVAL    setInterval
+ARRAY          Array
+FORM           Form
+MATH           Math
+PAGEYOFFSET    pageYoffset
+SETTIMEOUT     setTimeout
+ASSIGN         assign
+FRAME          Frame
+MENUBAR        menubar
+PARENT         parent
+STATUS         status
+BLUR           blur
+FRAMES         frames
+MIMETYPE       MimeType
+PARSEFLOAT     parseFloat
+STATUSBAR      statusbar
+BOOLEAN        Boolean
+FUNCTION       Function
+MOVEBY         moveBy
+PARSEINT       parseInt
+STOP           stop
+BUTTON         Button
+GETCLASS       getClass
+MOVETO         moveTo
+PASSWORD       Password
+STRING         String
+CALLEE         callee
+HIDDEN         Hidden
+NAME           name
+PERSONALBAR    personalbar
+SUBMIT         Submit
+CALLER         caller
+HISTORY        history
+NAN            NaN
+PLUGIN         Plugin
+SUN            sun
+CAPTUREEVENTS  captureEvents
+HISTORY        History
+NAVIGATE       navigate
+PRINT          print
+TAINT          taint
+CHECKBOX       Checkbox
+HOME           home
+NAVIGATOR      navigator
+PROMPT         prompt
+TEXT           Text
+CLEARINTERVAL  clearInterval
+IMAGE          Image
+NAVIGATOR      Navigator
+PROTOTYPE      prototype
+TEXTAREA       Textarea
+CLEARTIMEOUT   clearTimeout
+INFINITY       Infinity
+NETSCAPE       netscape
+RADIO          Radio
+TOOLBAR        toolbar
+CLOSE          close
+INNERHEIGHT    innerHeight
+NUMBER         Number
+REF            ref
+TOP            top
+CLOSED         closed
+INNERWIDTH     innerWidth
+OBJECT         Object
+REGEXP         RegExp
+TOSTRING       toString
+CONFIRM        confirm
+ISFINITE       isFinite
+ONBLUR         onBlur
+RELEASEEVENTS  releaseEvents
+UNESCAPE       unescape
+CONSTRUCTOR    constructor
+ISNAN          isNan
+ONERROR        onError
+RESET          Reset
+UNTAINT        untaint
+DATE           Date
+JAVA           java
+ONFOCUS        onFocus
+RESIZEBY       resizeBy
+UNWATCH        unwatch
+DEFAULTSTATUS  defaultStatus
+JAVAARRAY      JavaArray
+ONLOAD         onLoad
+RESIZETO       resizeTo
+VALUEOF        valueOf
+DOCUMENT       document
+JAVACLASS      JavaClass
+ONUNLOAD       onUnload
+ROUTEEVENT     routeEvent
+WATCH          watch
+DOCUMENT       Document
+JAVAOBJECT     JavaObject
+OPEN           open
+SCROLL         scroll
+WINDOW         window
+ELEMENT        Element
+JAVAPACKAGE    JavaPackage
+OPENER         opener
+SCROLLBARS     scrollbars
+WINDOW         Window
+ESCAPE         escape
+LENGTH         length
+OPTION         Option
+SCROLLBY       scrollBy
+
+TAB   \t

@@ -1,0 +1,56 @@
+﻿#@ulc-2.3
+#
+#  ULC for Matlab
+#
+DOMAIN: uls.link2next.io://season-1
+
+ID_FIRST_CHARS: _ a-z A-Z
+ID_CHARS: _ 0-9 a-z A-Z
+CASE_SENSITIVE: true
+
+NUMBER_PREFIXES: 0x:16 0:8
+
+COMMENT_TYPE: % \n
+COMMENT_TYPE: %{ %}
+
+QUOTE_TYPE: token=SQUOTE '
+QUOTE_TYPE: options=nothing \\\n
+QUOTE_TYPE: options=open token=254,NOQUOTE1 .'
+
+NUMBER_SUFFIXES: i j
+
+%%
+
+BREAK      break       4
+CASE       case
+CATCH      catch
+CONTINUE   continue
+ELSE       else
+ELSEIF     elseif
+END        end
+FOR        for
+FUNCTION   function
+GLOBAL     global
+IF         if
+OTHERWISE  otherwise
+PERSISTENT persistent
+RETURN     return
+SWITCH     switch
+TRY        try
+WHILE      while
+
+EOL        \n          
+AND        $$
+OR         ||
+LEQ        <=
+GEQ        >=
+EQL        ==
+NEQ        ~=
+
+ARRAY_MUL   .*
+ARRAY_DIV_L .\
+ARRAY_DIV_R ./
+ARRAY_POW   .^
+#NONCONJ_TRANSPOSE .'
+ELLIPSIS    ... 
+

@@ -1,0 +1,41 @@
+class TmplStack {
+	TVAR1     *stkarray;
+	int    stksiz, top;
+
+ public:
+
+	TmplStack(int stacksize) {
+		if (stacksize <= 0) stacksize = 1;
+		stkarray = new TVAR1[stacksize];
+		stksiz = stacksize;
+		top = 0;
+	}
+
+	~TmplStack() {
+		delete[] stkarray;
+	}
+
+	bool isEmpty() {
+		return top == 0 ? true : false;
+	}
+
+	bool isFull() {
+		return top == stksiz ? true : false;
+	}
+
+	void push(const TVAR1& elmt) {
+		if (isFull()) {
+			return;
+		}
+		stkarray[top++] = elmt;
+	}
+
+	TVAR1 pop() {
+		if (isEmpty()) {
+			return;
+		} else {
+			--top;
+		}
+		return stkarray[top];
+	}
+};

@@ -1,0 +1,64 @@
+	[    TAG] !DOCTYPE
+	[     ID] html
+	[    TAG] html
+	[     ID] dir
+	[       ] =
+	[ LITSTR] abc
+	[     ID] lang
+	[       ] =
+	[ LITSTR] en-US
+	[    TAG] head
+	[    TAG] meta
+	[     ID] charset
+	[       ] =
+	[ LITSTR] utf-8
+	[    TAG] title
+	[   TEXT] $This is the structure of HTML5.$
+	[   /TAG] title
+	[   /TAG] head
+	[    TAG] body
+	[    TAG] header
+	[    TAG] nav
+	[   /TAG] nav
+	[   /TAG] header
+	[    TAG] section
+	[    TAG] article
+	[    TAG] header
+	[    TAG] h2
+	[    TAG] string
+	[   TEXT] $Chapter 1$
+	[   /TAG] string
+	[   TEXT] $ AAA$
+	[   /TAG] h2
+	[   /TAG] header
+	[    TAG] figure
+	[     ID] id
+	[       ] =
+	[ LITSTR] gallery
+	[    TAG] img
+	[     ID] src
+	[       ] =
+	[ LITSTR] ../a/b/c.png
+	[     ID] alt
+	[       ] =
+	[ LITSTR] d.png
+	[    TAG] figurecap
+	[   TEXT] $	        Twinkle, Twinkle, little star!$
+	[    TAG] br
+	[   /TAG] 
+	[   TEXT] $	        How I wonder what you are!.	      $
+	[   /TAG] figurecap
+	[   /TAG] figure
+	[    TAG] p
+	[   TEXT] $	        This is a text line.	    $
+	[   /TAG] p
+	[   /TAG] article
+	[    TAG] dialog
+	[   /TAG] dialog
+	[   /TAG] section
+	[    TAG] aside
+	[   /TAG] aside
+	[    TAG] footer
+	[   /TAG] footer
+	[   /TAG] body
+	[   /TAG] html

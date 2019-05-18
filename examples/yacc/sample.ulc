@@ -1,0 +1,66 @@
+  FILE_VERSION: 2.0
+
+WANT_LF_TOK
+WANT_TAB_TOK
+WANT_EOF_TOK
+
+ID_FIRST_CHARS: _ 
+ID_CHARS: _
+
+COMMENT_TYPE: /* */
+COMMENT_TYPE: // \n
+QUOTE_TYPE: " " 
+QUOTE_TYPE: ' ' 
+
+CASE_SENSITIVE: false
+ 
+RENAME: TOK_ERR     Tok_ERR
+RENAME: TOK_EOF     Tok_EOF
+RENAME: TOK_EOI     Tok_EOI
+RENAME: TOK_ID      Tok_ID
+RENAME: TOK_NUMBER  Tok_NUM
+
+%%
+
+Tok_AND      &&        128
+Tok_OR       ||
+Tok_EQ       ==
+Tok_LEQ      <=
+Tok_GEQ      >=
+Tok_NEQ      !=
+
+Tok_OR       or    
+Tok_ASM      asm       150
+Tok_DEFAULT  default
+Tok_AUTO     auto
+Tok_DO       do
+Tok_DOUBLE   double
+Tok_ELSE     else      160
+Tok_ENUM     enum
+Tok_GOTO     goto      165
+Tok_IF       if
+Tok_BREAK    break
+Tok_CASE     case
+Tok_SWITCH   switch
+Tok_TYPEDEF  typedef   170
+Tok_UNION    union
+Tok_CHAR     char
+Tok_EXTERN   extern
+Tok_FLOAT    float
+Tok_FOR      for       175
+Tok_CONTINUE continue
+Tok_CONST    const
+Tok_INT      int
+
+Tok_LONG     long
+Tok_REGISTER register  180
+Tok_RETURN   return    185
+Tok_SHORT    short
+Tok_SIGNED   signed
+Tok_SIZEOF   sizeof
+Tok_STATIC   static
+Tok_STRUCT   struct    190
+Tok_UNSIGNED unsigned
+Tok_VOID     void
+Tok_VOLATILE volatile
+Tok_WHILE    while

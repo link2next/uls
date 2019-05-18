@@ -1,0 +1,87 @@
+﻿#@ulc-2.3
+#
+#  ULC: Unified Lexical Configuration
+#
+DOMAIN: uls.link2next.io://season-1
+
+ID_FIRST_CHARS: _ a-z A-Z
+ID_CHARS: _ 0-9 a-z A-Z
+
+NUMBER_PREFIXES: 0x:16 0:8
+
+COMMENT_TYPE: /* */
+COMMENT_TYPE: // \n
+
+QUOTE_TYPE: token=DQUOTE "
+QUOTE_TYPE: token=SQUOTE '
+
+RENAME: EOF ENDFILE
+
+%%
+
+# token-name  keyword  token-id
+NONE     <NONE>    -5
+TMPL     <TMPL>    -4
+LINENUM  <LNO>     -3
+ERR      <ERR>     -2
+ENDFILE  <EOF>     -1
+EOI      <EOI>      0
+ID       <ID>       1
+NUMBER   <NUMBER>   2
+
+DYNAMIC          dynamic   128
+FINAL            final
+INTERNAL         internal
+NATIVE           native
+OVERRIDE         override
+PRIVATE          private
+PROTECTED        protected
+PUBLIC           public
+STATIC           static
+FALSE            false
+NULL             null
+THIS             this
+TRUE             true
+AS3              AS3
+FLASH_PROXY      flash_proxy
+OBJECT_PROXY     object_proxy
+BREAK            break
+CASE             case
+CONTINUE         continue
+DEFAULT          default
+DO               do
+WHILE            while
+ELSE             else
+FOR              for
+
+EACH             each
+IN               in
+IF               if
+LABEL            label
+RETURN           return
+SUPER            super
+SWITCH           switch
+TRY              try
+CATCH            catch
+FINALLY          finally
+THROW            throw
+WITH             with
+CLASS            class
+CONST            const
+EXTENDS          extends
+FUNCTION         function
+GET              get
+IMPLEMENTS       implements
+INTERFACE        interface
+NAMESPACE        namespace
+PACKAGE          package
+SET              set
+VAR              var
+GOTO             goto
+XML              xml
+IMPORT           import
+
+INCLUDE          include
+USE              use
+
+TAB              \t

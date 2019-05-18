@@ -1,0 +1,24 @@
+#
+# uls language db
+#
+
+java: Java
+javascript: Javascript JavaScript Java\ script java\ script
+actionscript: Actionscript ActionScript Action\ script action\ script
+python: Python python3
+sql: SQL Sql
+php: Php PHP
+simple:
+simplest:
+
+ansi_c: ansi-c ansi\ c ANSI\ c iso_c iso-c ISO\ c c89 C89 c90 C90
+cpp: c++ C++
+c_sharp: C# c# cs csharp c-sharp
+tcl: Tcl
+lua:  Lua
+Matlab: Matlab MatLab
+
+go: Go golang
+visual_basic: visual-basic VisualBasic visual\ basic Visual\ basic
+objective_c: objective-c ObjectiveC objective\ c \
+ Objective\ c Objective-C objc obj-c obj_c

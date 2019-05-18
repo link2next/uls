@@ -1,0 +1,50 @@
+
+string {
+	color: red;
+	font-size: .65em;
+	font-weight: normal;
+	display: block;
+}
+
+a:hover {
+	color: rgb(159,0,151);
+}
+
+p a:visited nav.toc {
+	border-bottom: 1px dotted rgb(230, 159, 151);
+}
+
+#f1 .toc {
+	border-radius: rotate(5deg) 10px;
+}
+
+header + p:first-letter {
+	content: '';
+	content: none;
+	text-shadow : -2px;
+	letter-spacing: -.05em
+}
+
+a[href*="speakingstyles"] {
+	color: rgb(0,255,0);
+}
+
+h1 li:nth-last-of-type(2) {
+	color: blue;
+	font-size: 100%
+}
+
+h1:after p:first:second-line, p:not(.dialog) {
+	content: url('../images/bullet-1.png');
+}
+
+h2  p ~ p em {
+	font-size: normal lighter small-caps 2em;
+	color: darkgray;
+	-moz-border-radius-topright : scale(0.35);
+}
+
+ul{
+	font: 1.25em Constantia, "Times New Roman", Serif;
+	list-style: url(../images/bullet.png) inside;
+}

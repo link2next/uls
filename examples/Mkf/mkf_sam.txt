@@ -1,0 +1,32 @@
+.PHONY: default dummy install clean clobber all
+
+PROG = main 
+SRCS = main.c 
+OBJS = $(SRCS:.c=.o)
+
+ULS_HOME = /usr/local
+ULSGEN = $(ULS_HOME)/bin/ulc2class -c
+
+CC       = gcc
+CFLAGS   = -g -Wall
+CPPFLAGS = -I$(ULS_HOME)/include
+LDFLAGS  = -L$(ULS_HOME)/lib -L/usr/local/lib
+LDLIBS   = -luls
+
+all: $(PROG)
+
+$(PROG): sample_lex.h $(OBJS) 
+	$(CC) -o $@ $(OBJS) $(LDFLAGS) $(LDLIBS)
+
+check:
+	LD_LIBRARY_PATH=$(ULS_HOME)/lib $(PROG)
+
+sample_lex.h: sample.ulc 
+	$(ULSGEN) $< 
+
+%.o : %.c 
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $<
+
+clean:
+	$(RM) *.o a.out core sample_lex.h
+	$(RM) $(PROG) *.bak *.~* $(PROG).exe .depend

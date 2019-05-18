@@ -1,0 +1,9 @@
+#@ansi_c
+
+EOF      EndFile
+CONST    CNST
+VOID     VOID_T
+EOI      128
+ERR      129
+ID       130 IDENT ID_ALIAS
+NUMBER   NUM 131 NUM_ALIAS1 num_alias2

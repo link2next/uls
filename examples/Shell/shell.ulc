@@ -1,0 +1,58 @@
+﻿#@ulc-2.3
+#
+#  ULC: Unified Lexical Configuration
+#
+DOMAIN: uls.link2next.io://season-1
+
+ID_FIRST_CHARS: _ a-z A-Z
+ID_CHARS: _ 0-9 a-z A-Z
+
+NUMBER_PREFIXES: 0x:16 0:8
+
+COMMENT_TYPE: # \n
+
+QUOTE_TYPE: token=DQUOTE " verbatim1
+QUOTE_TYPE: token=SQUOTE ' verbatim1
+QUOTE_TYPE: token=IQUOTE ` verbatim1
+QUOTE_TYPE: options=nothing token=NOQUOTE1 \\\n
+QUOTE_TYPE: options=open token=50,NOQUOTE2 $#
+
+RENAME: ID      WORD
+RENAME: NUMBER  NUM
+RENAME: EOF     ENDFILE
+
+%%
+# token-name  keyword  token-id
+AND          &&        4
+OR           ||
+EQ           ==
+EOL          \n
+
+NE           !=       11
+EOP          ;;       
+BREAK        break    
+BYTE         byte
+CASE         case
+ESAC         esac
+DEFAULT      default  
+DO           do
+DONE         done
+
+ELSE         else     20
+ELIF         elif     
+FOR          for       
+IF           if
+THEN         then
+FI           fi
+RETURN       return    
+CONTINUE     continue
+WHILE        while  
+LOCAL        local  
+
+VAR          var      30
+SELECT       select 
+FUNCTION     function
+
+ININ         in       48
+REDIRECT              
+NUM_PARMS             50

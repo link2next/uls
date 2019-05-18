@@ -1,0 +1,16 @@
+
+main()
+{
+	BBB = 0;
+
+	if (AAA && BBB || EEE) {
+		AAA = 0;
+		EEE = -0x00fffe;
+	}
+
+	while (__DDD <=EEE) {
+		YYY =  .3;
+		BBB = -AAA+EEE;
+	}
+}
+

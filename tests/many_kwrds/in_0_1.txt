@@ -1,0 +1,5 @@
+
+W514. auto Auto AUTO AAA &&  "hello" ^ BBB 0 0x00fffe
+G185. 		"hello world" -7094 0644 0. .3 ||
+Y128. 		(CCC < _AAA) ||  "world" (__DDD <=EEE)
+Z690. 		FFF || "hello\tworld" 

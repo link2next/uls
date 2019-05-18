@@ -1,0 +1,3 @@
+[0] tok_id=0, lexeme=''
+[1] tok_id=0, lexeme=''
+[2] tok_id=0, lexeme=''

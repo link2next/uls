@@ -1,0 +1,12 @@
+	AAA
+	"hello"
+	"hello world"
+	name1
+	attr
+	name
+	BBB
+	"world"
+	"hello\tworld"
+	'	'
+	name_1
+	''

@@ -1,0 +1,5 @@
+	[     ID] hello
+	[     ID] world
+	[   AUTO] AUTO
+	[     LF]
+	[    EOF] 2 10 in_1_1.txt

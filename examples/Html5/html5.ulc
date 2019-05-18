@@ -1,0 +1,22 @@
+﻿#@ulc-2.3
+#
+#  ULC: Unified Lexical Configuration
+#
+DOMAIN: uls.link2next.io://season-1
+
+ID_FIRST_CHARS: _ a-z A-Z
+ID_CHARS: _ 0-9 a-z A-Z
+
+NUMBER_PREFIXES: 0x:16 0:8
+
+QUOTE_TYPE: token=DQUOTE " verbatim1
+QUOTE_TYPE: token=SQUOTE ' verbatim1
+
+RENAME: NUMBER  NUM
+RENAME: EOF     ENDFILE
+
+%%
+
+TAGBEGIN  4
+TAGEND
+TEXT

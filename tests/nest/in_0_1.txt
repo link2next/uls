@@ -1,0 +1,25 @@
+
+main()
+{
+	int AAA, BBB, EEE;
+	float YYY;
+   
+    AAA = 1;
+    BBB = 0;
+
+	if (AAA && BBB || EEE) {
+		AAA = 0;
+		EEE = 0x00fffe;
+	}
+	
+	VVV = -31415.926e-8;
+	BBB =  -7094;
+	AAA =  0644;
+
+	WWW =  0.;
+	YYY =  .3;
+	
+	while (__DDD <=EEE) {
+		YYY =  .3;
+	}
+}

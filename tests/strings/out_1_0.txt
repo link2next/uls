@@ -1,0 +1,4 @@
+	C
+	literal
+	string
+	'hello C#, C:\Program Files\UlsWin'

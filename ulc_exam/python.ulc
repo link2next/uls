@@ -1,0 +1,73 @@
+﻿#@ulc-2.3
+#
+#  ULC: Unified Lexical Configuration
+#
+DOMAIN: uls.link2next.io://season-1
+
+ID_FIRST_CHARS: _ a-z A-Z
+ID_CHARS: _ 0-9 a-z A-Z
+
+NUMBER_PREFIXES: 0x:16 0:8 0b:2
+
+COMMENT_TYPE: /* */
+COMMENT_TYPE: // \n
+
+QUOTE_TYPE: token=DQUOTE "
+QUOTE_TYPE: options=multiline token=254,DDDQUOTE """
+QUOTE_TYPE: token=SQUOTE '
+QUOTE_TYPE: options=multiline token=255,SSSQUOTE '''
+
+RENAME: EOF ENDFILE
+
+%%
+
+# token-name  keyword  token-id
+NONE     <NONE>    -5
+TMPL     <TMPL>    -4
+LINENUM  <LNO>     -3
+ERR      <ERR>     -2
+ENDFILE  <EOF>     -1
+EOI      <EOI>      0
+ID       <ID>       1
+NUMBER   <NUMBER>   2
+
+D3QUOTE             254
+S3QUOTE
+
+EOL          \n     256
+AND          and    
+ASSERT       assert
+BREAK        break
+
+CLASS        class
+CONTINUE     continue
+DEF          def
+DEL          del
+
+ELIF         elif
+ELSE         else 
+EXCEPT       except
+EXEC         exec
+
+FINALLY      finally
+FOR          for       
+FROM         from
+
+GLOBAL       global
+IF           if
+IMPORT       import
+IN           in
+IS           is
+LAMBDA       lambda
+NOT          not
+
+OR           or
+PASS         pass
+PRINT        print
+RAISE        raise
+
+RETURN       return    
+TRY          try
+
+WHILE        while
+YIELD        yield
