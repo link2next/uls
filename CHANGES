@@ -1,4 +1,10 @@
 
+  v1.8.1
+  -----------
+    o The Windows version of uls source code is pulished with name of 'uls-windows'.
+    o The examples of C++.NET are included in the folder 'CppNetExamples'.
+
+
   v1.8
   -----------
     o The format of ulc-file is upgraded.
