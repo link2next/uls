@@ -43,10 +43,14 @@ DFL_OUTPUT_FILE="a.uls"
 temp_dir="/tmp"
 TEST_DIR=$temp_dir/uls_test
 
-if [ $# -ge 1 ]; then
-	if [ -n "$1" ]; then
-		export LD_LIBRARY_PATH="$1:$LD_LIBRARY_PATH"
-	fi
+if [ -n "$LD_LIBRARY_PATH" ]; then
+	export LD_LIBRARY_PATH="$1:$LD_LIBRARY_PATH"
+else
+	export LD_LIBRARY_PATH="$1"
+fi
+
+if [ $# -ge 2 ]; then
+	export ULS_SYSPROPS=$2
 fi
 
 if [ ! -e $TEST_DIR ]; then

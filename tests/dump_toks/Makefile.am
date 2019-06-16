@@ -8,9 +8,9 @@ dump_toks_CPPFLAGS = -I$(top_srcdir)/src
 dump_toks_LDADD = $(top_builddir)/src/libuls.la
 
 check: all
-	@bash ../run_tests.sh $(noinst_PROGRAMS) $(tests_libpath)
+	@bash ../run_tests.sh $(noinst_PROGRAMS) $(tests_libpath) $(TMP_SYSPROPS)
 
 $(dump_toks_OBJECTS) : sample_lex.h
 
 %_lex.h : %.ulc
-	$(ulc2class_exe) -lc -pTOK_ $<
+	ULS_SYSPROPS=$(TMP_SYSPROPS) $(ulc2class_exe) -lc -pTOK_ $<

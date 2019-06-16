@@ -81,7 +81,7 @@
 #define ULS_DIRLIST_DELIM    ':'
 #define ULS_DIRLIST_DELIM_WCH L':'
 #define ULS_OS_TEMP_DIR      "/tmp"
-#define ULS_SHARE_DFLDIR     ULS_OS_TEMP_DIR
+#define ULS_SHARE_DFLDIR     "/usr/share/uls"
 #define ULS_ETC_DFLDIR       "/usr/local/etc/uls"
 #ifdef _ULS_IMPLDLL 
 #ifndef ULS_ETC_DIR

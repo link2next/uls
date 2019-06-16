@@ -48,10 +48,14 @@ TEST_DIR=$temp_dir/uls_test
 OUTPUT_FILE_DFL1="$TEST_DIR/uls_res1.txt"
 OUTPUT_FILE_DFL2="$TEST_DIR/uls_res2.txt"
 
+if [ -n "$LD_LIBRARY_PATH" ]; then
+        export LD_LIBRARY_PATH="$1:$LD_LIBRARY_PATH"
+else
+        export LD_LIBRARY_PATH="$1"
+fi
+
 if [ $# -ge 2 ]; then
-	if [ -n "$2" ]; then
-		export LD_LIBRARY_PATH="$2:$LD_LIBRARY_PATH"
-	fi
+        export ULS_SYSPROPS=$2
 fi
 
 if [ ! -x $MAKE_STREAM ]; then

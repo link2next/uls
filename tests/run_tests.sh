@@ -82,8 +82,8 @@ test_1case()
 	return 0
 }
 
-if [ $# -lt 1 ]; then
-	echo "usage: $0 <test_prog> [LD_LIBPATH]"
+if [ $# -lt 2 ]; then
+	echo "usage: $0 <test_prog> <LD_LIBPATH> [sysprops-path]"
 	exit 1
 fi
 
@@ -93,8 +93,14 @@ if [ ! -e ./$test_prog ]; then
 	exit 1
 fi
 
-if [ $# -ge 2 ]; then
-	export LD_LIBRARY_PATH="$2:$LD_LIBRARY_PATH"
+if [ -n "$LD_LIBRARY_PATH" ]; then
+        export LD_LIBRARY_PATH="$2:$LD_LIBRARY_PATH"
+else
+        export LD_LIBRARY_PATH="$2"
+fi
+
+if [ $# -ge 3 ]; then
+        export ULS_SYSPROPS=$3
 fi
 
 echo "Checking $test_dname ..."

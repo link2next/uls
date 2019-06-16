@@ -306,8 +306,8 @@ uls_ver_debug = 0
 so_current = 1
 so_revision = 0
 so_age = 0
-ULS_SYSPROPS = /usr/local/etc/uls/uls.sysprops 
-TMP_SYSPROPS = /tmp/uls_sysprops.txt 
+ULS_SYSPROPS = /usr/local/etc/uls/uls.sysprops
+TMP_SYSPROPS = /tmp/uls_sysprops.txt
 ulc2class_exe = $(top_builddir)/tools/ulc2class/ulc2class
 tests_libpath = $(top_builddir)/src:$(top_builddir)/ulscpp
 ACLOCAL_AMFLAGS = -I m4
@@ -635,12 +635,12 @@ uninstall-am:
 
 
 check: all
-	@bash ../run_tests.sh $(noinst_PROGRAMS) $(tests_libpath)
+	@bash ../run_tests.sh $(noinst_PROGRAMS) $(tests_libpath) $(TMP_SYSPROPS)
 
 $(cpp_hello_OBJECTS) : Sample2Lex.cpp Sample2Lex.h
 
 Sample2Lex.cpp Sample2Lex.h : sample2.uld
-	$(ulc2class_exe) -lcpp -n AAA.BBB.Sample2Lex -f Sample2Lex $<
+	ULS_SYSPROPS=$(TMP_SYSPROPS) $(ulc2class_exe) -lcpp -n AAA.BBB.Sample2Lex -f Sample2Lex $<
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

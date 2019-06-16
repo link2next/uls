@@ -8,9 +8,9 @@ line_by_line_CPPFLAGS = -I$(top_srcdir)/src
 line_by_line_LDADD = $(top_builddir)/src/libuls.la
 
 check: all
-	@bash ../run_tests.sh $(noinst_PROGRAMS) $(tests_libpath)
+	@bash ../run_tests.sh $(noinst_PROGRAMS) $(tests_libpath) $(TMP_SYSPROPS)
 
 $(line_by_line_OBJECTS) : sample_lex.h
 
 %_lex.h : %.ulc
-	$(ulc2class_exe) -lc -ptok $<
+	ULS_SYSPROPS=$(TMP_SYSPROPS) $(ulc2class_exe) -lc -ptok $<

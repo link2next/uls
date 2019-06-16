@@ -210,7 +210,6 @@ ULS_QUALIFIED_METHOD(__initialize_uls_misc)(void)
 	initialize_uls_sysprn();
 	initialize_uls_syserr();
 #endif
-
 	if ((fpath = getenv("ULS_SYSPROPS")) == NULL || uls_dirent_exist(fpath) != ST_MODE_REG) {
 		fpath = ULS_SYSPROPS_FPATH;
 
