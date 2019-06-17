@@ -1,7 +1,7 @@
 *.o
 *.~*
 *.so.*
-*.dylib.*
+*.dylib
 *.so
 /config.sub
 /config.log
