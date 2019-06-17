@@ -44,7 +44,7 @@
 #define TMP_LANGS_FNAME      "uls_langs.txt"
 #define ULS_ULCNAME_DELIM    '/'
 
-#define ULS_VERSION_STR      _T("1.8.0")
+#define ULS_VERSION_STR      _T("1.8.1")
 #define ULC2CLASS_PROGVER    _T("v2.7.0")
 #define ULF_GEN_PROGVER      _T("v1.6.0")
 #define ULS_STREAM_PROGVER   _T("v2.6.0")
@@ -68,7 +68,7 @@
 #define ULS_DIRLIST_DELIM    ';'
 #define ULS_DIRLIST_DELIM_WCH L';'
 #define ULS_OS_TEMP_DIR      "C:\\Windows\\Temp"
-#define ULS_SHARE_DFLDIR     "C:\\Program Files\\Common Files\\UlsWin"
+#define ULS_SHARE_DFLDIR     "C:\\opt\\share\\UlsWin"
 #define ULS_ETC_DIR          "C:\\Program Files\\Common Files\\UlsWin"
 #define ULS_SYSPROPS_FPATH  ULS_ETC_DIR "\\" ULS_SYSPROPS_FNAME
 #define ULS_OS_SHARE_DFLDIR ULS_SHARE_DFLDIR
@@ -84,13 +84,11 @@
 #define ULS_SHARE_DFLDIR     "/usr/share/uls"
 #define ULS_ETC_DFLDIR       "/usr/local/etc/uls"
 #ifdef _ULS_IMPLDLL 
-
 #ifndef ULS_ETC_DIR
 #error "ULS_ETC_DIR: not defined!"
-#endif // ULS_ETC_DIR
-#define ULS_SYSPROPS_FPATH  ULS_ETC_DIR "/" ULS_SYSPROPS_FNAME
-
 #endif
+#define ULS_SYSPROPS_FPATH  ULS_ETC_DIR "/" ULS_SYSPROPS_FNAME
+#endif // _ULS_IMPLDLL 
 #define ULS_OS_SHARE_DFLDIR "/usr/local/share:/usr/share"
 #endif
 

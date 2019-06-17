@@ -8,4 +8,4 @@ ulc2class_LDADD = $(top_builddir)/tools/ulstools/libulstools.a $(top_builddir)/s
 ACLOCAL_AMFLAGS = -I m4
 
 check:
-	@bash ./run_tests.sh "$(top_builddir)/src"
+	@bash ./run_tests.sh "$(top_builddir)/src" $(TMP_SYSPROPS)

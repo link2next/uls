@@ -11,10 +11,7 @@ ACLOCAL_AMFLAGS = -I m4
 $(uls_stream_OBJECTS) : sample_lex.h
 
 sample_lex.h : sample.ulc
-	$(ulc2class_exe) -lc -pTOK_ $<
-
-%_lex.h : %.ulc
-	$(ulc2class_exe) -lc $<
+	ULS_SYSPROPS=$(TMP_SYSPROPS) $(ulc2class_exe) -lc -pTOK_ $<
 
 check:
-	@bash ./run_tests.sh "$(top_builddir)/src"
+	@bash ./run_tests.sh "$(top_builddir)/src" $(TMP_SYSPROPS)

@@ -1,8 +1,8 @@
 *.o
 *.~*
 *.so.*
-*.dylib.*
 *.so
+*.dylib
 /config.sub
 /config.log
 /config.guess

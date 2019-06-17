@@ -42,10 +42,14 @@ OUTPUT_FILE_1=./sample.ulf
 TEST_DIR=$temp_dir/uls_test
 OUTPUT_FILE_DFL="$TEST_DIR/uls_res3.txt"
 
-if [ $# -ge 2 ]; then
-	if [ -n "$2" ]; then
-		export LD_LIBRARY_PATH="$2:$LD_LIBRARY_PATH"
-	fi
+if [ -n "$LD_LIBRARY_PATH" ]; then
+	export LD_LIBRARY_PATH="$2:$LD_LIBRARY_PATH"
+else
+	export LD_LIBRARY_PATH="$2"
+fi
+
+if [ $# -ge 3 ]; then
+	export ULS_SYSPROPS=$3
 fi
 
 if [ ! -x $MAKE_ULF ]; then

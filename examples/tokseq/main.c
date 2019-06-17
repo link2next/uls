@@ -232,7 +232,7 @@ int
 _tmain(int argc, LPTARGV argv)
 {
 	LPTSTR *targv;
-	int i0, stat;
+	int stat;
 
 	ULS_GET_WARGS_LIST(argc, argv, targv);
 	progname = targv[0];

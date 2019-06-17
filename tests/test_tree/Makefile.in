@@ -254,8 +254,8 @@ uls_ver_debug = 0
 so_current = 1
 so_revision = 0
 so_age = 0
-ULS_SYSPROPS = /usr/local/etc/uls/uls.sysprops 
-TMP_SYSPROPS = /tmp/uls_sysprops.txt 
+ULS_SYSPROPS = /usr/local/etc/uls/uls.sysprops
+TMP_SYSPROPS = /tmp/uls_sysprops.txt
 ulc2class_exe = $(top_builddir)/tools/ulc2class/ulc2class
 tests_libpath = $(top_builddir)/src:$(top_builddir)/ulscpp
 all: all-am
@@ -452,7 +452,7 @@ uninstall-am:
 
 
 check: all
-	@bash ./run_tests.sh $(top_builddir)/tools/uls_stream
+	@bash ./run_tests.sh $(top_builddir)/tools/uls_stream $(TMP_SYSPROPS)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

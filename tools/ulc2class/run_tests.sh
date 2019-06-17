@@ -33,10 +33,14 @@ progname=`basename $0`
 #opt_verbose=$ULS_VERBOSE
 opt_verbose=no
 
-if [ $# -ge 1 ]; then
-	if [ -n "$1" ]; then
-		export LD_LIBRARY_PATH="$1:$LD_LIBRARY_PATH"
-	fi
+if [ -n "$LD_LIBRARY_PATH" ]; then
+	export LD_LIBRARY_PATH="$1:$LD_LIBRARY_PATH"
+else
+	export LD_LIBRARY_PATH="$1"
+fi
+
+if [ $# -ge 2 ]; then
+	export ULS_SYSPROPS=$2
 fi
 
 MAX_N_CASES=16

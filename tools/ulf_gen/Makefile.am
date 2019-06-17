@@ -8,4 +8,4 @@ ulf_gen_LDADD = $(top_builddir)/tools/ulstools/libulstools.a $(top_builddir)/src
 ACLOCAL_AMFLAGS = -I m4
 
 check:
-	@bash ./run_tests.sh "$(top_srcdir)/tests/test_tree" "$(top_builddir)/src"
+	@bash ./run_tests.sh "$(top_srcdir)/tests/test_tree" "$(top_builddir)/src" $(TMP_SYSPROPS)

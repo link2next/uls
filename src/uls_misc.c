@@ -210,12 +210,11 @@ ULS_QUALIFIED_METHOD(__initialize_uls_misc)(void)
 	initialize_uls_sysprn();
 	initialize_uls_syserr();
 #endif
-
 	if ((fpath = getenv("ULS_SYSPROPS")) == NULL || uls_dirent_exist(fpath) != ST_MODE_REG) {
 		fpath = ULS_SYSPROPS_FPATH;
 
 		if ((rc = uls_dirent_exist(fpath)) <= 0 || rc != ST_MODE_REG) {
-			len = uls_strcpy(pathbuff, ULS_OS_TEMP_DIR);
+			len = uls_strcpy(pathbuff, ULS_SHARE_DFLDIR);
 			pathbuff[len++] = ULS_FILEPATH_DELIM;
 			len += uls_strcpy(pathbuff + len, TMP_SYSPROPS_FNAME);
 
