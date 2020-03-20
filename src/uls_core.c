@@ -1306,7 +1306,7 @@ ULS_QUALIFIED_METHOD(uls_init)(uls_lex_ptr_t uls, const char* confname)
 	uls->flags = ULS_FL_STATIC;
 
 	_uls_init_namebuf(uls->ulc_name, ULC_LONGNAME_MAXSIZ);
-	_uls_init_bytespool(uls->ch_context, ULS_SYNTAX_TABLE_SIZE, 0);
+	_uls_init_bytespool(uls->ch_context, ULS_SYNTAX_TABLE_SIZE, 1);
 
 	uls->numcnst_separator = ULS_DECIMAL_SEPARATOR_DFL;
 

@@ -1,4 +1,16 @@
 
+  v1.8.2
+  -----------
+    o The secondary search path for the sysprops file(uls_sysprops.txt) is added.
+        1) C:\Program Files\Common Files\UlsWin
+        2) C:\opt\shared\UlsWin
+    o To run the examples of C#.NET, C++.NET,
+        it's necessary to adjust the path of the UlsDotNet.dll.
+        The path of it is set to 'C:\opt\UlsWin\Bin\UlsDotNet.dll' in each project.
+        You can modify it properly at the 'Reference' of the projects.
+    o The table for character group should be cleared at loading ulc-file on Windows.
+    o The missing document file is added.
+
   v1.8.1
   -----------
     o The Windows version of uls source code is pulished with name of 'uls-windows'.

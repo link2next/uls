@@ -117,9 +117,15 @@ ULS_QUALIFIED_METHOD(load_uch_ranges_list)(int max_pref)
 	len += _uls_tool_(strcpy)(fpath + len, ULS_ID_RANGES_FNAME);
 
 	if ((fin = _uls_tool_(fp_open)(fpath, ULS_FIO_READ)) == NULL) {
+#ifdef ULS_WINDOWS
+		len = _uls_tool_(strcpy)(fpath, ULS_SHARE_DFLDIR);
+		fpath[len++] = ULS_FILEPATH_DELIM;
+		len += _uls_tool_(strcpy)(fpath + len, ULS_ID_RANGES_FNAME);
+#else
 		len = _uls_tool_(strcpy)(fpath, _uls_sysinfo_(etc_dir));
 		fpath[len++] = ULS_FILEPATH_DELIM;
 		len += _uls_tool_(strcpy)(fpath + len, TMP_ID_RANGES_FNAME);
+#endif
 		if ((fin = _uls_tool_(fp_open)(fpath, ULS_FIO_READ)) == NULL) {
 			_uls_log(err_log)("Can't open the file '%s' for uch_ranges!", fpath);
 			return -1;
