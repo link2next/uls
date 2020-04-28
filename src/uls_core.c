@@ -338,6 +338,7 @@ ULS_QUALIFIED_METHOD(__uls_change_line)(uls_lex_ptr_t uls, const char* line, int
 
 	ctx->line = ctx->line_end = inp->rawbuf_ptr;
 	ctx->lptr = ctx->line;
+	ctx->lineno = start_lno;
 
 	return 0;
 }

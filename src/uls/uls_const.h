@@ -55,7 +55,7 @@
 #define ULS_URL              _T("https://sourceforge.net/projects/uls")
 #define ULS_LICENSE_NAME     _T("The MIT License (MIT)")
 #define ULS_COPYRIGHT_YEAR_START    2011
-#define ULS_COPYRIGHT_YEAR_CURRENT  2019
+#define ULS_COPYRIGHT_YEAR_CURRENT  2020
 
 #ifdef ULS_WINDOWS
 #define ULS_REG_HOME         L"HKLM:SOFTWARE\\UlsWin"

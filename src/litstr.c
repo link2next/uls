@@ -168,6 +168,7 @@ ULS_QUALIFIED_METHOD(uls_get_escape_str)(char quote_ch, char* line, char* line2)
 			if (ch==quote_ch) {
 				break;
 			}
+			if (ch == '\0') return -1;
 			if (ch=='\\') {
 				escape = 1;
 			} else {

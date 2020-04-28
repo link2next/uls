@@ -2742,8 +2742,8 @@ ULS_QUALIFIED_METHOD(ulc_read_header)(uls_lex_ptr_t uls, FILE* fin, ulc_header_p
 			return -1;
 		}
 
-		fp_stack_top = ulc_fp_push(fp_stack_top, fin, ulc_lname);
 		fp_stack_top->linenum = 1;
+		fp_stack_top = ulc_fp_push(fp_stack_top, fin, ulc_lname);
 	}
 
 	parms->data = fp_stack_ptr = fp_stack_top;
