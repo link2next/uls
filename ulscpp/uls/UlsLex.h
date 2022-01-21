@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -394,13 +394,13 @@ namespace uls {
 			// </brief>
 			// <parm name="ulc_file">The name/path of the lexical configuration.</parm>
 			// <return>none</return>
-			bool initUlsLex_ustr(const char *ulc_file, bool cr2lf);
+			bool initUlsLex_ustr(const char *ulc_file);
 
-			UlsLex(const char *ulc_file, bool cr2lf = false);
-			UlsLex(const wchar_t *ulc_wfile, bool cr2lf = false);
+			UlsLex(const char *ulc_file);
+			UlsLex(const wchar_t *ulc_wfile);
 
-			UlsLex(std::string& ulc_file, bool cr2lf = false);
-			UlsLex(std::wstring& ulc_file, bool cr2lf = false);
+			UlsLex(std::string& ulc_file);
+			UlsLex(std::wstring& ulc_file);
 
 			// <brief>
 			// The destructor of UlsLex.
@@ -646,7 +646,7 @@ namespace uls {
 			}
 
 			// <brief>
-			// These methods check if the lexeme of the current token is 
+			// These methods check if the lexeme of the current token is
 			//     an integer or floating-point number, or zero.
 			// </brief>
 			// <return>true/false</return>
@@ -758,7 +758,7 @@ namespace uls {
 
 			void getKeywordStr(int t, std::string *ptr_keyw);
 			void getKeywordStr(int t, std::wstring *ptr_keyw);
-			
+
 			// <brief>
 			// return the keyword string of the current token.
 			// </brief>
@@ -894,7 +894,7 @@ namespace uls {
 			// Logs formatted messages
 			// You can use %t %w to print the current token, its location.
 			// No need to append '\n' to the end of line 'fmt'.
-			// 
+			//
 			// It's capable of printing the keyword string of token and input coordinate,
 			//    as well as the default conversion specifications.
 			//   a) %t: use to print the name of the current token

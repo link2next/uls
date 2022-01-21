@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -66,8 +66,8 @@ ULS_QUALIFIED_METHOD(uls_create_tokdef)(void)
 	uls_tokdef_ptr_t e;
 
 	e = uls_alloc_object(uls_tokdef_t);
-	__uls_initial_zerofy_object(e);
-	_uls_init_namebuf(e->keyword, ULS_LEXSTR_MAXSIZ);
+	uls_initial_zerofy_object(e);
+	uls_init_namebuf(e->keyword, ULS_LEXSTR_MAXSIZ);
 
 	return e;
 }
@@ -75,7 +75,7 @@ ULS_QUALIFIED_METHOD(uls_create_tokdef)(void)
 void
 ULS_QUALIFIED_METHOD(uls_destroy_tokdef)(uls_tokdef_ptr_t e)
 {
-	_uls_deinit_namebuf(e->keyword);
+	uls_deinit_namebuf(e->keyword);
 	uls_dealloc_object(e);
 }
 
@@ -85,7 +85,7 @@ ULS_QUALIFIED_METHOD(__init_tokdef_vx)(uls_tokdef_vx_ptr_t e_vx)
 	e_vx->flags = 0;
 	e_vx->tok_id = 0;
 
-	_uls_init_namebuf(e_vx->name, ULS_LEXSTR_MAXSIZ);
+	uls_init_namebuf(e_vx->name, ULS_LEXSTR_MAXSIZ);
 	e_vx->l_name = 0;
 
 	e_vx->extra_tokdef = nilptr;
@@ -96,16 +96,15 @@ ULS_QUALIFIED_METHOD(__init_tokdef_vx)(uls_tokdef_vx_ptr_t e_vx)
 void
 ULS_QUALIFIED_METHOD(uls_init_tokdef_vx)(uls_tokdef_vx_ptr_t e_vx, int tok_id, const char* name, uls_tokdef_ptr_t e)
 {
-	// assert: name != NULL
 	__init_tokdef_vx(e_vx);
 
-	e_vx->l_name = _uls_set_namebuf_value(e_vx->name, name);
+	e_vx->l_name = uls_set_namebuf_value(e_vx->name, name);
 	e_vx->tok_id = tok_id;
 	e_vx->base = e;
 
 	if (e != nilptr) {
 		e->view = e_vx;
-		e->name = _uls_get_namebuf_value(e_vx->name);
+		e->name = uls_get_namebuf_value(e_vx->name);
 	}
 }
 
@@ -120,7 +119,7 @@ ULS_QUALIFIED_METHOD(uls_deinit_tokdef_vx)(uls_tokdef_vx_ptr_t e_vx)
 	}
 
 	e_vx->tokdef_names = nilptr;
-	_uls_deinit_namebuf(e_vx->name);
+	uls_deinit_namebuf(e_vx->name);
 }
 
 ULS_QUALIFIED_RETTYP(uls_tokdef_vx_ptr_t)
@@ -147,10 +146,10 @@ ULS_QUALIFIED_METHOD(alloc_tokdef_name)(const char *name, uls_tokdef_vx_ptr_t vi
 	uls_tokdef_name_ptr_t e_nam;
 
 	e_nam = uls_alloc_object(uls_tokdef_name_t);
-	__uls_initial_zerofy_object(e_nam);
+	uls_initial_zerofy_object(e_nam);
 
-	_uls_init_namebuf(e_nam->name, ULS_LEXSTR_MAXSIZ);
-	_uls_set_namebuf_value(e_nam->name, name);
+	uls_init_namebuf(e_nam->name, ULS_LEXSTR_MAXSIZ);
+	uls_set_namebuf_value(e_nam->name, name);
 
 	e_nam->view = view;
 	e_nam->prev = nilptr;
@@ -161,17 +160,17 @@ ULS_QUALIFIED_METHOD(alloc_tokdef_name)(const char *name, uls_tokdef_vx_ptr_t vi
 void
 ULS_QUALIFIED_METHOD(dealloc_tokdef_name)(uls_tokdef_name_ptr_t e_nam)
 {
-	_uls_deinit_namebuf(e_nam->name);
+	uls_deinit_namebuf(e_nam->name);
 	uls_dealloc_object(e_nam);
 }
 
 ULS_QUALIFIED_RETTYP(uls_tokdef_name_ptr_t)
-ULS_QUALIFIED_METHOD(find_tokdef_name)(uls_tokdef_vx_ptr_t e_vx_leader, const char* name, _uls_tool_ptrtype_(outparam) parms)
+ULS_QUALIFIED_METHOD(find_tokdef_name)(uls_tokdef_vx_ptr_t e_vx_leader, const char* name, uls_ptrtype_tool(outparam) parms)
 {
 	uls_tokdef_name_ptr_t e, e_prev=nilptr;
 
 	for (e=e_vx_leader->tokdef_names; e != nilptr; e = e->prev) {
-		if (uls_streql(_uls_get_namebuf_value(e->name), name)) {
+		if (uls_streql(uls_get_namebuf_value(e->name), name)) {
 			break;
 		}
 		e_prev = e;
@@ -203,7 +202,7 @@ ULS_QUALIFIED_METHOD(append_tokdef_name_to_group)(uls_tokdef_vx_ptr_t e_vx_leade
 	uls_tokdef_name_ptr_t e, e_prev=nilptr;
 
 	for (e=e_vx_leader->tokdef_names; e != nilptr; e = e->prev) {
-		if (uls_streql(_uls_get_namebuf_value(e->name), _uls_get_namebuf_value(e_nam->name))) {
+		if (uls_streql(uls_get_namebuf_value(e->name), uls_get_namebuf_value(e_nam->name))) {
 			return 0;
 		}
 		e_prev = e;
@@ -219,7 +218,7 @@ ULS_QUALIFIED_METHOD(search_tokdef_group)(uls_tokdef_vx_ptr_t e_vx_leader, const
 	uls_tokdef_ptr_t e;
 
 	for (e=e_vx_leader->base; e != nilptr; e = e->next) {
-		if (uls_streql(_uls_get_namebuf_value(e->keyword), keyw)) {
+		if (uls_streql(uls_get_namebuf_value(e->keyword), keyw)) {
 			return e;
 		}
 	}

@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -37,7 +37,7 @@ uls_uch_t
 ULS_QUALIFIED_METHOD(uls_get_escape_char_initial)(uls_litstr_ptr_t lit)
 {
 	uls_uch_t prefix_ch = lit->ch_escaped;
-	_uls_tool_type_(outparam) parms1;
+	uls_type_tool(outparam) parms1;
 	uls_uch_t uch;
 	int n;
 
@@ -64,7 +64,7 @@ ULS_QUALIFIED_METHOD(uls_get_escape_char_initial)(uls_litstr_ptr_t lit)
 	} else { // prefix_ch itself
 		parms1.x1 = prefix_ch;
 
-		if (_uls_tool_(get_simple_escape_char)(uls_ptr(parms1)) > 0) {
+		if (uls_get_simple_escape_char(uls_ptr(parms1)) > 0) {
 			uch = parms1.x2;
 			n = 0;
 		} else {
@@ -92,7 +92,6 @@ ULS_QUALIFIED_METHOD(uls_get_escape_char_cont)(uls_litstr_ptr_t lit)
 	lptr = lit->lptr;
 	lptr_end = lptr + lit->len_ch_escaped;
 
-	// assert: 'lptr' is ended with '\0' before coming across 'lptr_end'
 	if (prefix_ch == 'x' || prefix_ch == 'u' || prefix_ch == 'U') { // hexa-decimal, unicode
 		for ( ; lptr < lptr_end; lptr++) {
 			if (!_uls_tool_(isxdigit)(ch=*lptr)) {
@@ -127,7 +126,6 @@ ULS_QUALIFIED_METHOD(uls_get_escape_char)(uls_litstr_ptr_t lit)
 	lit->lptr = lptr;
 
 	uch = uls_get_escape_char_initial(lit);
-
 	if (lit->len_ch_escaped > 0) {
 		uch = uls_get_escape_char_cont(lit);
 	}
@@ -136,60 +134,71 @@ ULS_QUALIFIED_METHOD(uls_get_escape_char)(uls_litstr_ptr_t lit)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_get_escape_str)(char quote_ch, char* line, char* line2)
+ULS_QUALIFIED_METHOD(uls_get_escape_str)(char quote_ch, uls_ptrtype_tool(wrd) wrdx)
 {
-	const char *lptr;
+	char *lptr = wrdx->lptr;
+	char *outbuff = wrdx->wrd;
+	int siz_outbuff = wrdx->siz;
+	uls_litstr_t lit1;
 	int rc, escape = 0, k=0;
 	uls_uch_t  uch;
 	char ch;
-	uls_litstr_t lit1;
 
-	for (lptr=line; ; ) {
+	for ( ; ; ) {
+		if (k + ULS_UTF8_CH_MAXLEN >= siz_outbuff) { // buffer overflow
+			return -1;
+		}
+
 		ch = *lptr;
-
 		if (escape) {
 			lit1.lptr = lptr;
 			uch = uls_get_escape_char(uls_ptr(lit1));
 
 			if (lit1.len_ch_escaped < 0) {
-				line2[k++] = '\\';
-				line2[k++] = *lptr++;
+				outbuff[k++] = '\\';
+				outbuff[k++] = *lptr++;
 			} else {
-				if ((rc = _uls_tool_(encode_utf8)(uch, line2 + k, -1)) <= 0) {
+				if ((rc = _uls_tool_(encode_utf8)(uch, outbuff + k, -1)) <= 0) {
 					return -1;
 				}
 				k += rc;
-				lptr = lit1.lptr;
+				lptr = (char *) lit1.lptr;
 			}
-
 			escape = 0;
-
 		} else {
-			if (ch==quote_ch) {
+			if (ch == quote_ch) {
+				if (ch != '\0') ++lptr;
 				break;
 			}
+
 			if (ch == '\0') return -1;
 			if (ch=='\\') {
 				escape = 1;
 			} else {
-				line2[k++] = ch;
+				outbuff[k++] = ch;
 			}
 			++lptr;
 		}
 	}
 
-	line2[k] = '\0';
+	outbuff[k] = '\0';
+	wrdx->len = k;
+	wrdx->lptr = lptr;
 	return k;
 }
 
 int
-ULS_QUALIFIED_METHOD(canbe_commtype_mark)(char* wrd, _uls_tool_ptrtype_(outparam) parms)
+ULS_QUALIFIED_METHOD(canbe_commtype_mark)(char* wrd, uls_ptrtype_tool(outparam) parms)
 {
 	char *buff = parms->line;
+	uls_type_tool(wrd) wrdx;
 	int i, n=0;
 	char ch;
 
-	if ((parms->len=uls_get_escape_str('\0', wrd, buff)) <= 0) {
+	wrdx.wrd = buff;
+	wrdx.siz = ULS_COMM_MARK_MAXSIZ + 1;
+	wrdx.lptr = wrd;
+	if ((parms->len=uls_get_escape_str('\0', uls_ptr(wrdx))) <= 0) {
 		return 0;
 	}
 
@@ -206,13 +215,17 @@ ULS_QUALIFIED_METHOD(canbe_commtype_mark)(char* wrd, _uls_tool_ptrtype_(outparam
 }
 
 int
-ULS_QUALIFIED_METHOD(canbe_quotetype_mark)(char *chr_tbl, char* wrd, _uls_tool_ptrtype_(outparam) parms)
+ULS_QUALIFIED_METHOD(canbe_quotetype_mark)(char *chr_tbl, char* wrd, uls_ptrtype_tool(outparam) parms)
 {
 	char *buff = parms->line;
+	uls_type_tool(wrd) wrdx;
 	int i, n=0;
 	char ch;
 
-	if ((parms->len=uls_get_escape_str('\0', wrd, buff)) <= 0)
+	wrdx.wrd = buff;
+	wrdx.siz = ULS_QUOTE_MARK_MAXSIZ + 1;
+	wrdx.lptr = wrd;
+	if ((parms->len=uls_get_escape_str('\0', uls_ptr(wrdx))) <= 0)
 		return 0;
 
 	for (i=0; (ch=buff[i]) != '\0'; i++) {
@@ -224,7 +237,8 @@ ULS_QUALIFIED_METHOD(canbe_quotetype_mark)(char *chr_tbl, char* wrd, _uls_tool_p
 	}
 
 	ch = buff[0];
-	if ((i == 1 && ch == '.') || (chr_tbl[ch] & ULS_CH_IDFIRST)) {
+	if ((i == 1 && ch == '.') ||
+		(ch < ULS_SYNTAX_TABLE_SIZE && (chr_tbl[ch] & ULS_CH_IDFIRST))) {
 		return 0;
 	}
 
@@ -235,20 +249,19 @@ ULS_QUALIFIED_METHOD(canbe_quotetype_mark)(char *chr_tbl, char* wrd, _uls_tool_p
 void
 ULS_QUALIFIED_METHOD(uls_init_quotetype)(uls_quotetype_ptr_t qmt)
 {
-	__uls_initial_zerofy_object(qmt);
-	_uls_init_namebuf(qmt->start_mark, ULS_QUOTE_MARK_MAXSIZ);
-	_uls_init_namebuf(qmt->end_mark, ULS_QUOTE_MARK_MAXSIZ);
+	uls_initial_zerofy_object(qmt);
+	uls_init_namebuf(qmt->start_mark, ULS_QUOTE_MARK_MAXSIZ);
+	uls_init_namebuf(qmt->end_mark, ULS_QUOTE_MARK_MAXSIZ);
 	qmt->escmap = nilptr;
 }
 
 void
 ULS_QUALIFIED_METHOD(uls_deinit_quotetype)(uls_quotetype_ptr_t qmt)
 {
-	// assert: qmt->escmap != nilptr
 	uls_dealloc_escmap(qmt->escmap);
 
-	_uls_deinit_namebuf(qmt->start_mark);
-	_uls_deinit_namebuf(qmt->end_mark);
+	uls_deinit_namebuf(qmt->start_mark);
+	uls_deinit_namebuf(qmt->end_mark);
 }
 
 ULS_QUALIFIED_RETTYP(uls_quotetype_ptr_t)
@@ -335,7 +348,7 @@ ULS_QUALIFIED_METHOD(dfl_lit_analyzer_escape0)(uls_litstr_ptr_t lit)
 		return ULS_LITPROC_ERROR;
 	}
 
-	if (_uls_tool_(strncmp)(lptr, _uls_get_namebuf_value(qmt->end_mark), qmt->len_end_mark) == 0) {
+	if (_uls_tool_(strncmp)(lptr, uls_get_namebuf_value(qmt->end_mark), qmt->len_end_mark) == 0) {
 		lit->lptr = lptr += qmt->len_end_mark;
 		return ULS_LITPROC_ENDOFQUOTE;
 	}
@@ -350,7 +363,7 @@ ULS_QUALIFIED_METHOD(dfl_lit_analyzer_escape0)(uls_litstr_ptr_t lit)
 	}
 
 	if (uch == escmap->esc_sym) {
-		lit_ctx->litstr_proc = _uls_ref_callback_this(dfl_lit_analyzer_escape1);
+		lit_ctx->litstr_proc = uls_ref_callback_this(dfl_lit_analyzer_escape1);
 		len = ULS_UTF8_CH_MAXLEN;
 	} else {
 		if (uch == '\n') {
@@ -371,11 +384,10 @@ ULS_QUALIFIED_METHOD(dfl_lit_analyzer_escape0)(uls_litstr_ptr_t lit)
 }
 
 int
-ULS_QUALIFIED_METHOD(__uls_analyze_esc_ch)(uls_litstr_ptr_t lit, uls_escmap_ptr_t escmap, _uls_tool_ptrtype(csz_str) outbuf)
+ULS_QUALIFIED_METHOD(__uls_analyze_esc_ch)(uls_litstr_ptr_t lit, uls_escmap_ptr_t escmap, _uls_ptrtype_tool(csz_str) outbuf)
 {
-	// assert: prefix_ch != '\0'
 	uls_uch_t prefix_ch = lit->ch_escaped;
-	_uls_tool_type_(outparam) parms1;
+	uls_type_tool(outparam) parms1;
 	uls_uch_t uch;
 	int n, len, map_flags = 0;
 
@@ -421,7 +433,6 @@ ULS_QUALIFIED_METHOD(dfl_lit_analyzer_escape1)(uls_litstr_ptr_t lit)
 		return ULS_LITPROC_ERROR;
 	}
 
-	// assert: uch != '\0'
 	lptr += len1;
 	if (uch == '\n') {
 		++lit_ctx->n_lfs;
@@ -434,7 +445,7 @@ ULS_QUALIFIED_METHOD(dfl_lit_analyzer_escape1)(uls_litstr_ptr_t lit)
 		}
 
 		lit->lptr = lptr;
-		lit_ctx->litstr_proc = _uls_ref_callback_this(dfl_lit_analyzer_escape0);
+		lit_ctx->litstr_proc = uls_ref_callback_this(dfl_lit_analyzer_escape0);
 		return qmt->len_end_mark; // # of required bytes at the next stage.
 	}
 
@@ -444,7 +455,7 @@ ULS_QUALIFIED_METHOD(dfl_lit_analyzer_escape1)(uls_litstr_ptr_t lit)
 	if (lit->len_ch_escaped > 0) {
 		lit->map_flags = map_flags;
 		len = lit->len_ch_escaped;
-		lit_ctx->litstr_proc = _uls_ref_callback_this(dfl_lit_analyzer_escape2);
+		lit_ctx->litstr_proc = uls_ref_callback_this(dfl_lit_analyzer_escape2);
 
 	} else {
 		if ((len = _uls_tool_(encode_utf8)(lit->uch, buff, ULS_UTF8_CH_MAXLEN)) <= 0) {
@@ -456,7 +467,7 @@ ULS_QUALIFIED_METHOD(dfl_lit_analyzer_escape1)(uls_litstr_ptr_t lit)
 			_uls_tool(csz_putc)(lit_ctx->ss_dst, buff[j]);
 		}
 
-		lit_ctx->litstr_proc = _uls_ref_callback_this(dfl_lit_analyzer_escape0);
+		lit_ctx->litstr_proc = uls_ref_callback_this(dfl_lit_analyzer_escape0);
 		len = qmt->len_end_mark;
 	}
 
@@ -529,7 +540,7 @@ ULS_QUALIFIED_METHOD(dfl_lit_analyzer_escape2)(uls_litstr_ptr_t lit)
 		return -1;
 	}
 
-	lit_ctx->litstr_proc = _uls_ref_callback_this(dfl_lit_analyzer_escape0);
+	lit_ctx->litstr_proc = uls_ref_callback_this(dfl_lit_analyzer_escape0);
 	len = qmt->len_end_mark;
 
 	return len; // # of required bytes at the next stage.

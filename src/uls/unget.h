@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -43,7 +43,7 @@ extern "C" {
 #endif
 
 #ifdef ULS_DEF_PUBLIC_TYPE
-ULS_DEFINE_STRUCT(uls_nextch_detail)
+ULS_DEFINE_STRUCT(nextch_detail)
 {
 	uls_uch_t uch;
 	int len_uch;
@@ -54,7 +54,7 @@ ULS_DEFINE_STRUCT(uls_nextch_detail)
 
 #if defined(__ULS_UNGET__) || defined(ULS_DECL_PRIVATE_PROC)
 ULS_DECL_STATIC char* __find_first_space_char(const char* lptr, const char* lptr_end);
-ULS_DECL_STATIC int __numof_lfs(_uls_tool_ptrtype_(outparam) parms);
+ULS_DECL_STATIC int __numof_lfs(uls_ptrtype_tool(outparam) parms);
 ULS_DECL_STATIC int __alloc_lexseg_and_zbuf(uls_context_ptr_t ctx, uls_lexseg_ptr_t lexseg, int len,
 	uls_tokdef_vx_ptr_t e_vx, const char *qstr, int qlen);
 ULS_DECL_STATIC uls_context_ptr_t __push_and_alloc_line_right(uls_lex_ptr_t uls, int len,
@@ -67,7 +67,7 @@ ULS_DECL_STATIC uls_context_ptr_t __uls_unget_quote(uls_lex_ptr_t uls,
 
 #ifdef ULS_DECL_PROTECTED_PROC
 uls_context_ptr_t __uls_unget_tok(uls_lex_ptr_t uls);
-uls_uch_t uls_peekch_detail(uls_lex_ptr_t uls, _uls_tool_ptrtype_(outparam) parms);
+uls_uch_t uls_peekch_detail(uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) parms);
 #endif
 
 #ifdef ULS_DECL_PUBLIC_PROC

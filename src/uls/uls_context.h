@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -57,8 +57,7 @@ extern "C" {
 #define ULS_CTX_FL_FILL_RAW        0x100
 
 // the flags of uls_xcontext_t
-#define ULS_XCTX_FL_LINEFEED_GUARD 0x01
-#define ULS_XCTX_FL_CR2LF        0x02
+#define ULS_XCTX_FL_IGNORE_LF   0x01
 
 #define uls_is_ch_space(uls, uch)     (uch < ULS_SYNTAX_TABLE_SIZE && (uls)->ch_context[uch] == 0)
 #define uls_is_ch_idfirst(uls, uch)   (uch < ULS_SYNTAX_TABLE_SIZE && (uls)->ch_context[uch] & ULS_CH_IDFIRST)
@@ -77,9 +76,9 @@ extern "C" {
 #endif // ULS_DECL_PROTECTED_TYPE
 
 #ifdef ULS_DECL_PUBLIC_TYPE
-ULS_DECLARE_STRUCT(uls_xcontext);
+ULS_DECLARE_STRUCT(xcontext);
 #ifdef ULS_DOTNET
-ULS_DECLARE_STRUCT(uls_lex);
+ULS_DECLARE_STRUCT(lex);
 #endif
 
 ULS_DEFINE_DELEGATE_BEGIN(gettok, int)(uls_lex_ptr_t uls);
@@ -91,7 +90,7 @@ ULS_DEFINE_DELEGATE_END(input_ungrabber);
 ULS_DEFINE_DELEGATE_BEGIN(xcontext_filler, int)(uls_xcontext_ptr_t xctx);
 ULS_DEFINE_DELEGATE_END(xcontext_filler);
 
-ULS_DEFINE_DELEGATE_BEGIN(xctx_boundary_checker, int)(uls_xcontext_ptr_t xctx, _uls_tool_ptrtype_(parm_line) parm_ln);
+ULS_DEFINE_DELEGATE_BEGIN(xctx_boundary_checker, int)(uls_xcontext_ptr_t xctx, uls_ptrtype_tool(parm_line) parm_ln);
 ULS_DEFINE_DELEGATE_END(xctx_boundary_checker);
 
 ULS_DEFINE_DELEGATE_BEGIN(xctx_boundary_checker2, int)(uls_xcontext_ptr_t xctx, char* buf, int n);
@@ -99,7 +98,7 @@ ULS_DEFINE_DELEGATE_END(xctx_boundary_checker2);
 #endif
 
 #ifdef ULS_DEF_PUBLIC_TYPE
-ULS_DEFINE_STRUCT(uls_lexseg)
+ULS_DEFINE_STRUCT(lexseg)
 {
 	int  offset1;
 	int  len1;
@@ -110,35 +109,35 @@ ULS_DEFINE_STRUCT(uls_lexseg)
 	int  n_lfs_raw;
 	uls_tokdef_vx_ptr_t tokdef_vx;
 };
-ULS_DEF_ARRAY_THIS_TYPE10(lexseg);
+ULS_DEF_ARRAY_TYPE10(lexseg);
 
-ULS_DEFINE_STRUCT(uls_userdata)
+ULS_DEFINE_STRUCT(userdata)
 {
 	uls_input_ungrabber_t proc;
 	uls_voidptr_t data;
 	uls_userdata_ptr_t inner;
 };
 
-ULS_DEFINE_STRUCT(uls_context)
+ULS_DEFINE_STRUCT(context)
 {
 	uls_flags_t flags;
 
-	_uls_tool_type(csz_str)  tag;
+	_uls_type_tool(csz_str)  tag;
 	int  lineno, delta_lineno;
 
-	_uls_def_bytespool(cnst_nilstr, ULS_CNST_NILSTR_SIZE);
+	uls_def_bytespool(cnst_nilstr, ULS_CNST_NILSTR_SIZE);
 	uls_input_ptr_t  input;
 
-	_uls_tool_type(csz_str)  zbuf1;
-	_uls_tool_type(csz_str)  zbuf2;
+	_uls_type_tool(csz_str)  zbuf1;
+	_uls_type_tool(csz_str)  zbuf2;
 	const char *lptr, *line, *line_end;
 
-	uls_decl_array_this_type10(lexsegs, lexseg);
+	uls_decl_array_type10(lexsegs, lexseg);
 	int        i_lexsegs, n_lexsegs;
 
-	_uls_callback_type_this_(gettok)  gettok;
-	_uls_callback_type_this_(xcontext_filler) fill_proc;
-	_uls_callback_type_this_(xctx_boundary_checker) record_boundary_checker;
+	uls_callback_type_this(gettok)  gettok;
+	uls_callback_type_this(xcontext_filler) fill_proc;
+	uls_callback_type_this(xctx_boundary_checker) record_boundary_checker;
 
 	uls_tmpl_pool_ptr_t tmpls_pool;
 
@@ -146,7 +145,7 @@ ULS_DEFINE_STRUCT(uls_context)
 	const char *s_val;
 	int        s_val_len, s_val_uchars;
 
-	_uls_tool_type_(outbuf) tokbuf;
+	uls_type_tool(outbuf) tokbuf;
 	int        n_digits, expo;
 
 	uls_tokdef_vx_ptr_t anonymous_uchar_vx;
@@ -155,17 +154,20 @@ ULS_DEFINE_STRUCT(uls_context)
 	uls_context_ptr_t prev;
 };
 
-ULS_DEFINE_STRUCT_BEGIN(uls_xcontext)
+ULS_DEFINE_STRUCT_BEGIN(xcontext)
 {
 	int flags;
 
 	int toknum_EOI, toknum_EOF, toknum_ID, toknum_NUMBER;
 	int toknum_LINENUM, toknum_TMPL, toknum_LINK, toknum_NONE, toknum_ERR;
 
-	_uls_ref_bytespool(ch_context);
+	uls_ref_bytespool(ch_context);
 
-	uls_ref_array_this_type02(commtypes, commtype); // ULS_N_MAX_COMMTYPES
-	int n_commtypes;
+	uls_ref_array_type01(commtypes, commtype); // ULS_N_MAX_COMMTYPES
+	int n2_commtypes;
+
+	char *prepended_input;
+	int len_prepended_input, lfs_prepended_input;
 
 	uls_ref_parray(quotetypes, quotetype);  // ULS_N_MAX_QUOTETYPES
 
@@ -176,15 +178,15 @@ ULS_DEFINE_STRUCT_BEGIN(uls_xcontext)
 
 #if defined(__ULS_CONTEXT__) || defined(ULS_DECL_PRIVATE_PROC)
 ULS_DECL_STATIC int __xcontext_binfd_filler(uls_xcontext_ptr_t xctx);
-ULS_DECL_STATIC void add_bin_packet_to_zbuf(int tok_id, int txtlen, const char* txtptr, _uls_tool_ptrtype(csz_str) ss_dst);
+ULS_DECL_STATIC void add_bin_packet_to_zbuf(int tok_id, int txtlen, const char* txtptr, _uls_ptrtype_tool(csz_str) ss_dst);
 ULS_DECL_STATIC void insert_txt_record_into_stream(int tokid, int tokid_TMPL, const char *txtptr, int txtlen,
-	uls_context_ptr_t ctx, _uls_tool_ptrtype(csz_str)  ss_dst);
+	uls_context_ptr_t ctx, _uls_ptrtype_tool(csz_str)  ss_dst);
 
-ULS_DECL_STATIC int get_txthdr_1(_uls_tool_ptrtype_(outparam) parms);
-ULS_DECL_STATIC int get_txthdr_2(_uls_tool_ptrtype_(outparam) parms);
+ULS_DECL_STATIC int get_txthdr_1(uls_ptrtype_tool(outparam) parms);
+ULS_DECL_STATIC int get_txthdr_2(uls_ptrtype_tool(outparam) parms);
 
 ULS_DECL_STATIC int __xcontext_txtfd_filler(uls_xcontext_ptr_t xctx,
-	_uls_tool_ptrtype_(outparam) parms);
+	uls_ptrtype_tool(outparam) parms);
 
 ULS_DECL_STATIC int __check_rec_boundary_host_order(uls_xcontext_ptr_t xctx, char* buf, int n);
 ULS_DECL_STATIC int __check_rec_boundary_reverse_order(uls_xcontext_ptr_t xctx, char* buf, int n);
@@ -209,9 +211,9 @@ void uls_xcontext_init(uls_xcontext_ptr_t xctx, uls_gettok_t gettok);
 void uls_xcontext_reset(uls_xcontext_ptr_t xctx);
 void uls_xcontext_deinit(uls_xcontext_ptr_t xctx);
 
-int check_rec_boundary_null(uls_xcontext_ptr_t xctx, _uls_tool_ptrtype_(parm_line) parm_ln);
-int check_rec_boundary_host_order(uls_xcontext_ptr_t xctx, _uls_tool_ptrtype_(parm_line) parm_ln);
-int check_rec_boundary_reverse_order(uls_xcontext_ptr_t xctx, _uls_tool_ptrtype_(parm_line) parm_ln);
+int check_rec_boundary_null(uls_xcontext_ptr_t xctx, uls_ptrtype_tool(parm_line) parm_ln);
+int check_rec_boundary_host_order(uls_xcontext_ptr_t xctx, uls_ptrtype_tool(parm_line) parm_ln);
+int check_rec_boundary_reverse_order(uls_xcontext_ptr_t xctx, uls_ptrtype_tool(parm_line) parm_ln);
 
 int xcontext_raw_filler(uls_xcontext_ptr_t xctx);
 int xcontext_binfd_filler(uls_xcontext_ptr_t xctx);

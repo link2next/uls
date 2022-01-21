@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -71,9 +71,9 @@ ULS_QUALIFIED_METHOD(ulf_read_config_var)(int lno, char* lptr, ulf_header_ptr_t 
 {
 	const char  *wrd;
 	int len, stat = 0;
-	_uls_tool_type_(outparam) parms;
-	_uls_tool_type_(version) ver;
-	_uls_tool_type_(wrd) wrdx;
+	uls_type_tool(outparam) parms;
+	uls_type_tool(version) ver;
+	uls_type_tool(wrd) wrdx;
 
 	wrdx.lptr = lptr;
 	wrd = __uls_tool_(splitstr)(uls_ptr(wrdx));
@@ -97,7 +97,7 @@ ULS_QUALIFIED_METHOD(ulf_read_config_var)(int lno, char* lptr, ulf_header_ptr_t 
 		if (len > ULS_LEXSTR_MAXSIZ || !uls_streql(wrd, ULS_HASH_ALGORITHM)) {
 			stat = -1;
 		} else {
-			_uls_set_namebuf_value(hdr->hash_algorithm, wrd);
+			uls_set_namebuf_value(hdr->hash_algorithm, wrd);
 		}
 
 	} else if (uls_streql(wrd, "HASH_TABLE_SIZE:")) {
@@ -133,7 +133,7 @@ ULS_QUALIFIED_METHOD(ulf_read_header)(FILE* fin, ulf_header_ptr_t hdr)
 	const char magic_code[9] = { (char) 0xEF, (char) 0xBB, (char) 0xBF, '#', '@', 'u', 'l', 'f', '-' };
 	int  magic_code_len = 9;
 	char  linebuff[ULS_LINEBUFF_SIZ__ULF+1], *lptr, *wrd;
-	_uls_tool_type_(version) ver;
+	uls_type_tool(version) ver;
 	int   linelen, lno;
 
 	// Read Header upto '%%'
@@ -189,7 +189,6 @@ ULS_QUALIFIED_METHOD(make_keyw_stat_for_load)(uls_tokdef_ptr_t tok_info_lst, int
 	uls_tokdef_ptr_t e, e_link;
 	int   i, n_lst;
 
-	// assert: fin != NULL
 	// tok_info_lst may be NULL and n_tok_info_lst == 0
 	// set the default values for ulf
 
@@ -207,7 +206,7 @@ ULS_QUALIFIED_METHOD(make_keyw_stat_for_load)(uls_tokdef_ptr_t tok_info_lst, int
 		e->link = nilptr;
 
 		kwstat = slots_lst[i] = uls_alloc_object(uls_keyw_stat_t);
-		kwstat->keyw = _uls_get_namebuf_value(e->keyword);
+		kwstat->keyw = uls_get_namebuf_value(e->keyword);
 		kwstat->freq = -1;
 		kwstat->keyw_info = e;
 
@@ -228,8 +227,8 @@ ULS_QUALIFIED_METHOD(ulf_init_header)(ulf_header_ptr_t hdr)
 
 	hdr->init_hcode = 0;
 
-	_uls_init_namebuf(hdr->hash_algorithm, ULS_LEXSTR_MAXSIZ);
-	_uls_set_namebuf_value(hdr->hash_algorithm, ULS_HASH_ALGORITHM);
+	uls_init_namebuf(hdr->hash_algorithm, ULS_LEXSTR_MAXSIZ);
+	uls_set_namebuf_value(hdr->hash_algorithm, ULS_HASH_ALGORITHM);
 
 	hdr->hash_table_size = ULF_HASH_TABLE_SIZE;
 }
@@ -237,7 +236,7 @@ ULS_QUALIFIED_METHOD(ulf_init_header)(ulf_header_ptr_t hdr)
 void
 ULS_QUALIFIED_METHOD(ulf_deinit_header)(ulf_header_ptr_t hdr)
 {
-	_uls_deinit_namebuf(hdr->hash_algorithm);
+	uls_deinit_namebuf(hdr->hash_algorithm);
 }
 
 ULS_QUALIFIED_RETTYP(uls_keyw_stat_list_ptr_t)
@@ -253,7 +252,7 @@ ULS_QUALIFIED_METHOD(ulf_load)(uls_tokdef_ptr_t tok_info_lst, int n_tok_info_lst
 	uls_hashfunc_t hashfunc;
 	uls_dflhash_state_ptr_t hash_stat;
 
-	_uls_tool_type_(wrd) wrdx;
+	uls_type_tool(wrd) wrdx;
 
 	ulf_init_header(hdr);
 
@@ -277,12 +276,12 @@ ULS_QUALIFIED_METHOD(ulf_load)(uls_tokdef_ptr_t tok_info_lst, int n_tok_info_lst
 		return nilptr;
 	}
 
-	if (uls_streql(_uls_get_namebuf_value(hdr->hash_algorithm), ULS_HASH_ALGORITHM)) {
+	if (uls_streql(uls_get_namebuf_value(hdr->hash_algorithm), ULS_HASH_ALGORITHM)) {
 		kw_tbl->dflhash_stat.init_hcode = hdr->init_hcode;
 		hashfunc = nilptr; // use the default hash-func as it is.
 		hash_stat = uls_ptr(kw_tbl->dflhash_stat); // the params for the default hahs-func.
 	} else {
-		_uls_log(err_log)("%s: unknown hash-algorithm '%s'", __FUNCTION__, _uls_get_namebuf_value(hdr->hash_algorithm));
+		_uls_log(err_log)("%s: unknown hash-algorithm '%s'", __FUNCTION__, uls_get_namebuf_value(hdr->hash_algorithm));
 		ulc_free_kwstat_list(kwslst);
 		return nilptr;
 	}
@@ -309,7 +308,6 @@ ULS_QUALIFIED_METHOD(ulf_load)(uls_tokdef_ptr_t tok_info_lst, int n_tok_info_lst
 		if ((keyw_stat=ulc_search_kwstat_list(kwslst, wrd)) != nilptr) {
 			wrd = __uls_tool_(splitstr)(uls_ptr(wrdx));
 			keyw_stat->freq = _uls_tool_(atoi)(wrd);
-			// assert: keyw_stat->freq >= 0
 		}
 
 		lptr = wrdx.lptr;

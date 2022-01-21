@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -63,43 +63,43 @@ extern "C" {
 #endif
 
 #ifdef ULS_DECL_PUBLIC_TYPE
-ULS_DECLARE_STRUCT(uls_wr_packet);
+ULS_DECLARE_STRUCT(wr_packet);
 
 ULS_DEFINE_DELEGATE_BEGIN(reorder_bytes,void)(char *binpkt, int len_binpkt);
 ULS_DEFINE_DELEGATE_END(reorder_bytes);
 
-ULS_DEFINE_DELEGATE_BEGIN(make_packet,int)(uls_wr_packet_ptr_t pkt, _uls_tool_ptrtype(csz_str) outbuf);
+ULS_DEFINE_DELEGATE_BEGIN(make_packet,int)(uls_wr_packet_ptr_t pkt, _uls_ptrtype_tool(csz_str) outbuf);
 ULS_DEFINE_DELEGATE_END(make_packet);
 #endif
 
 #ifdef ULS_DEF_PUBLIC_TYPE
-ULS_DEFINE_STRUCT(uls_stream_header)
+ULS_DEFINE_STRUCT(stream_header)
 {
-	_uls_tool_type_(version) filever;
+	uls_type_tool(version) filever;
 
-	_uls_def_namebuf(specname, ULC_LONGNAME_MAXSIZ);
+	uls_def_namebuf(specname, ULC_LONGNAME_MAXSIZ);
 	int     filetype, subtype, reverse;
 
-	_uls_def_namebuf(subname, ULS_STREAM_SUBNAME_SIZE);
-	_uls_def_namebuf(ctime, ULS_STREAM_CTIME_SIZE);
+	uls_def_namebuf(subname, ULS_STREAM_SUBNAME_SIZE);
+	uls_def_namebuf(ctime, ULS_STREAM_CTIME_SIZE);
 };
 
-ULS_DEFINE_STRUCT(uls_rd_packet)
+ULS_DEFINE_STRUCT(rd_packet)
 {
 	int tok_id;
 	int len_tokstr;
 	const char *tokstr;
 };
-ULS_DEF_ARRAY_THIS_TYPE10(rd_packet);
+ULS_DEF_ARRAY_TYPE10(rd_packet);
 
-ULS_DEFINE_STRUCT_BEGIN(uls_wr_packet)
+ULS_DEFINE_STRUCT_BEGIN(wr_packet)
 {
 	uls_rd_packet_t pkt;
 	int lineno;
 	uls_reorder_bytes_t reorder_bytes;
 };
 
-ULS_DEFINE_STRUCT(uls_tmpl)
+ULS_DEFINE_STRUCT(tmpl)
 {
 	int idx;
 	const char *name;
@@ -107,29 +107,29 @@ ULS_DEFINE_STRUCT(uls_tmpl)
 	char *name_buff, *sval_buff;
 	int idx_name, idx_sval;
 };
-ULS_DEF_ARRAY_THIS_TYPE10(tmpl);
+ULS_DEF_ARRAY_TYPE10(tmpl);
 
-ULS_DEFINE_STRUCT(uls_tmpl_list)
+ULS_DEFINE_STRUCT(tmpl_list)
 {
 	int flags;
-	uls_decl_array_this_type10(tmpls, tmpl);
+	uls_decl_array_type10(tmpls, tmpl);
 	uls_voidptr_t shell;
 };
 
-ULS_DEFINE_STRUCT(uls_tmplvar)
+ULS_DEFINE_STRUCT(tmplvar)
 {
 	const char *name;
 	const char *sval;
 	int i0_pkt_ary, n_pkt_ary;
 };
-ULS_DEF_ARRAY_THIS_TYPE10(tmplvar);
+ULS_DEF_ARRAY_TYPE10(tmplvar);
 
-ULS_DEFINE_STRUCT(uls_tmpl_pool)
+ULS_DEFINE_STRUCT(tmpl_pool)
 {
-	uls_decl_array_this_type10(tmplvars, tmplvar);
-	uls_decl_array_this_type10(pkt_ary, rd_packet);
+	uls_decl_array_type10(tmplvars, tmplvar);
+	uls_decl_array_type10(pkt_ary, rd_packet);
 	int n_pkt_ary_delta;
-	_uls_tool_type(csz_str) str_pool;
+	_uls_type_tool(csz_str) str_pool;
 };
 
 #endif // ULS_DEF_PUBLIC_TYPE
@@ -147,7 +147,7 @@ void uls_reorder_bytes_binbe(char *binpkt, int len_binpkt);
 
 uls_tmpl_ptr_t uls_find_tmpl(uls_tmpl_list_ptr_t tmpl_list, const char* name);
 
-uls_tmplvar_ptr_t uls_search_tmpls(uls_ref_array_this_type10(tmpls, tmplvar), const char* name);
+uls_tmplvar_ptr_t uls_search_tmpls(uls_ref_array_type10(tmpls, tmplvar), const char* name);
 
 void uls_init_tmpl_pool(uls_tmpl_pool_ptr_t tmpls_pool, int n_tmpls, int n_alloc);
 void uls_deinit_tmpl_pool(uls_tmpl_pool_ptr_t tmpls_pool);
@@ -162,14 +162,14 @@ void add_rd_packet_to_tmpls_pool(int tok_id, int txtlen, const char* txtptr, uls
 
 void uls_init_tmplvar(uls_tmplvar_ptr_t tvar);
 void uls_deinit_tmplvar(uls_tmplvar_ptr_t tvar);
-
-ULS_DLL_EXTERN int uls_init_tmpls(uls_tmpl_list_ptr_t tmpl_list, int n_alloc, int flags);
-ULS_DLL_EXTERN int uls_deinit_tmpls(uls_tmpl_list_ptr_t tmpl_list);
 #endif // ULS_DECL_PROTECTED_PROC
 
 #ifdef ULS_DECL_PUBLIC_PROC
 ULS_DLL_EXTERN int _uls_const_STREAM_BIN_LE(void);
 ULS_DLL_EXTERN int _uls_const_STREAM_BIN_BE(void);
+
+ULS_DLL_EXTERN int uls_init_tmpls(uls_tmpl_list_ptr_t tmpl_list, int n_alloc, int flags);
+ULS_DLL_EXTERN int uls_deinit_tmpls(uls_tmpl_list_ptr_t tmpl_list);
 
 ULS_DLL_EXTERN void uls_reset_tmpls(uls_tmpl_list_ptr_t tmpl_list, int n_alloc);
 ULS_DLL_EXTERN uls_tmpl_list_ptr_t uls_create_tmpls(int n_alloc, int flags);

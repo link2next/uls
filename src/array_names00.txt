@@ -1,0 +1,6 @@
+onechar_tokgrp    ULS_N_ONECHAR_TOKGRPS
+twoplus_tree      ULS_KWTABLE_TWOPLUS_SIZE
+number_prefix     ULS_N_MAX_NUMBER_PREFIXES
+stdio_box         ULS_N_BOXLST
+cmd               ULC_N_LEXATTRS
+sysprop           ULS_N_SYSPROPS

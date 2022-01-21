@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -65,7 +65,7 @@ extern "C" {
 #endif
 
 #ifdef ULS_DEF_PUBLIC_TYPE
-ULS_DEFINE_STRUCT(uls_log)
+ULS_DEFINE_STRUCT(log)
 {
 	uls_flags_t flags;
 	uls_mutex_struct_t mtx;

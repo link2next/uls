@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -105,7 +105,7 @@ proc_file_coord(const char *buf)
 	char *lptr, *wrd;
 
 	if ( (len = strlen(buf))>= lbuff_siz) {
-		siz = uls_roundup(len + 1, 128);
+		siz = len + 128;
 		lbuff = (char *) uls_mrealloc(lbuff, siz);
 		lbuff_siz = siz;
 	}
@@ -195,6 +195,46 @@ test_gnu_c(const char **args, int n_args)
 }
 
 int
+lex_input_line()
+{
+	const char *tokstr;
+	const char *tagstr;
+	int t;
+
+	if (uls_push_line(gcc_lex, "// comment here!\nTo parse\ngcc pre-processed files", -1, 0) < 0) {
+		err_log("can't set the istream!");
+		return -1;
+	}
+
+	for ( ; ; ) {
+		if ((t=uls_get_tok(gcc_lex)) == TOK_EOI || t == TOK_ERR) {
+			if (t == TOK_ERR) {
+				err_log("program abnormally terminated!");
+			}
+			break;
+		}
+
+		tokstr = uls_lexeme(gcc_lex);
+		if (t == TOK_WCOORD) {
+			proc_file_coord(tokstr);
+			continue;
+		}
+
+		tagstr = uls_get_tag(gcc_lex);
+		if (*tagstr != '\0') uls_printf("%s:", tagstr);
+		uls_printf("%3d", uls_get_lineno(gcc_lex));
+
+		if (t == TOK_EOL) {
+			uls_printf(" [    EOL]\n");
+		} else {
+			uls_dump_tok(gcc_lex, " ", "\n");
+		}
+	}
+
+	return 0;
+}
+
+int
 main(int argc, char* argv[])
 {
 	int i0;
@@ -220,6 +260,10 @@ main(int argc, char* argv[])
 	case 0:
 		test_gnu_c((const char **) argv+i0, argc-i0);
 		break;
+	case 1:
+		lex_input_line();
+		break;
+
 	default:
 		break;
 	}

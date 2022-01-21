@@ -1,4 +1,4 @@
-  2: < 10> [     LF]
+  1: < 10> [     LF]
   2: <161> [     IF] if
   2: < -2> [     ID] AAA
   2: < -2> [     ID] Then
@@ -8,12 +8,12 @@
   3: <156> [   ELSE] else
   3: <149> [ LITSTR] 
   3: <149> [ LITSTR] 
-  4: < 10> [     LF]
+  3: < 10> [     LF]
   4: < -2> [     ID] CALL
   4: < -2> [     ID] PROCEDURE_A
   4: < 34> [ LITSTR] PARAM1
   4: < 39> [ LITSTR] 
   4: < 34> [ LITSTR] PARAM2
   4: < 59> [       ] ;
-  5: < 10> [     LF]
+  4: < 10> [     LF]
   5: < -2> [     ID] fi

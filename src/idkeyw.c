@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -37,13 +37,11 @@
 ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(__keyw_strncmp_case_sensitive)(const char* str1, const char* str2, int len)
 {
-	// assert: len > 0
 	int i, ch1, ch2, stat=0;
 
 	for (i=0; i<len; i++) {
 		ch1 = str1[i];
 		ch2 = str2[i];
-		// assert: ch1 != '\0' OR ch2 != '\0'
 
 		if (ch1 != ch2) {
 			stat = ch1 - ch2;
@@ -131,7 +129,6 @@ ULS_QUALIFIED_METHOD(__init_kwtable_buckets)(uls_kwtable_ptr_t tbl, int n_slots)
 	uls_decl_parray_slots(slots_bh, tokdef);
 	int i;
 
-	// assert: n_slots >= 0
 	tbl->bucket_head.n = n_slots;
 
 	if (n_slots > 0) {
@@ -172,7 +169,7 @@ ULS_QUALIFIED_METHOD(__export_kwtable)(uls_kwtable_ptr_t tbl, uls_ref_parray(lst
 
 			kwstat = slots_lst[k] = uls_alloc_object(uls_keyw_stat_t);
 
-			kwstat->keyw = _uls_get_namebuf_value(e->keyword);
+			kwstat->keyw = uls_get_namebuf_value(e->keyword);
 			kwstat->freq = -1;  // unknown
 			kwstat->keyw_info = e;
 
@@ -191,8 +188,8 @@ ULS_QUALIFIED_METHOD(__init_kwtable)(uls_kwtable_ptr_t tbl)
 
 	tbl->hash_stat = nilptr;
 
-	tbl->str_ncmp = _uls_ref_callback_this(__keyw_strncmp_case_sensitive);
-	tbl->hashfunc = _uls_ref_callback_this(__keyw_hashfunc_case_sensitive);
+	tbl->str_ncmp = uls_ref_callback_this(__keyw_strncmp_case_sensitive);
+	tbl->hashfunc = uls_ref_callback_this(__keyw_hashfunc_case_sensitive);
 }
 
 void
@@ -203,11 +200,11 @@ ULS_QUALIFIED_METHOD(uls_init_kwtable)(uls_kwtable_ptr_t tbl, int n_slots, int c
 	tbl->hash_stat = nilptr;
 
 	if (case_insensitive) {
-		tbl->str_ncmp = _uls_ref_callback_this(__keyw_strncmp_case_insensitive);
-		tbl->hashfunc = _uls_ref_callback_this(__keyw_hashfunc_case_insensitive);
+		tbl->str_ncmp = uls_ref_callback_this(__keyw_strncmp_case_insensitive);
+		tbl->hashfunc = uls_ref_callback_this(__keyw_hashfunc_case_insensitive);
 	} else {
-		tbl->str_ncmp = _uls_ref_callback_this(__keyw_strncmp_case_sensitive);
-		tbl->hashfunc = _uls_ref_callback_this(__keyw_hashfunc_case_sensitive);
+		tbl->str_ncmp = uls_ref_callback_this(__keyw_strncmp_case_sensitive);
+		tbl->hashfunc = uls_ref_callback_this(__keyw_hashfunc_case_sensitive);
 	}
 }
 
@@ -234,7 +231,7 @@ ULS_QUALIFIED_METHOD(uls_deinit_kwtable)(uls_kwtable_ptr_t tbl)
 }
 
 ULS_QUALIFIED_RETTYP(uls_tokdef_ptr_t)
-ULS_QUALIFIED_METHOD(uls_find_kw)(uls_kwtable_ptr_t tbl, _uls_tool_ptrtype_(outparam) parms)
+ULS_QUALIFIED_METHOD(uls_find_kw)(uls_kwtable_ptr_t tbl, uls_ptrtype_tool(outparam) parms)
 {
 	uls_decl_parray_slots_init(slots_bh, tokdef, uls_ptr(tbl->bucket_head));
 	const char *idstr = parms->lptr;
@@ -246,7 +243,7 @@ ULS_QUALIFIED_METHOD(uls_find_kw)(uls_kwtable_ptr_t tbl, _uls_tool_ptrtype_(outp
 
 	for (e=slots_bh[hash_id]; e!=nilptr; e=e->link) {
 		if (l_idstr == e->l_keyword &&
-			tbl->str_ncmp(idstr, _uls_get_namebuf_value(e->keyword), l_idstr) == 0) {
+			tbl->str_ncmp(idstr, uls_get_namebuf_value(e->keyword), l_idstr) == 0) {
 			e_found = e;
 			break;
 		}
@@ -261,9 +258,9 @@ ULS_QUALIFIED_METHOD(uls_add_kw)(uls_kwtable_ptr_t tbl, uls_tokdef_ptr_t e0)
 	uls_decl_parray_slots_init(slots_bh, tokdef, uls_ptr(tbl->bucket_head));
 	int hash_id;
 	uls_tokdef_ptr_t e;
-	_uls_tool_type_(outparam) parms;
+	uls_type_tool(outparam) parms;
 
-	parms.lptr = _uls_get_namebuf_value(e0->keyword);
+	parms.lptr = uls_get_namebuf_value(e0->keyword);
 	parms.len = e0->l_keyword;
 	e = uls_find_kw(tbl, uls_ptr(parms));
 	hash_id = parms.n;
@@ -297,7 +294,7 @@ ULS_QUALIFIED_METHOD(sizeof_kwtable)(uls_kwtable_ptr_t tbl)
 ULS_QUALIFIED_RETTYP(uls_tokdef_ptr_t)
 ULS_QUALIFIED_METHOD(is_keyword_idstr)(uls_kwtable_ptr_t tbl, const char* keyw, int l_keyw)
 {
-	_uls_tool_type_(outparam) parms;
+	uls_type_tool(outparam) parms;
 
 	parms.lptr = keyw;
 	parms.len =  l_keyw;
@@ -394,9 +391,9 @@ ULS_QUALIFIED_METHOD(uls_get_hashfunc)(const char* hashname, int case_insensitiv
 	}
 
 	if (case_insensitive) {
-		hashfunc = _uls_ref_callback_this(__keyw_hashfunc_case_insensitive);
+		hashfunc = uls_ref_callback_this(__keyw_hashfunc_case_insensitive);
 	} else {
-		hashfunc = _uls_ref_callback_this(__keyw_hashfunc_case_sensitive);
+		hashfunc = uls_ref_callback_this(__keyw_hashfunc_case_sensitive);
 	}
 
 	return hashfunc;

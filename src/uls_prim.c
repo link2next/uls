@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -426,7 +426,6 @@ ULS_QUALIFIED_METHOD(is_hexa_char)(char ch)
 int
 ULS_QUALIFIED_METHOD(is_num_radix)(uls_uch_t ch, int radix)
 {
-	// assert: radix >= 2
 	int num;
 
 	if (uls_isdigit(ch)) {
@@ -535,7 +534,6 @@ ULS_QUALIFIED_METHOD(uls_get_xrange)(const char* wrd, uls_uint32* ptr_x1, uls_ui
 	uls_uint32 val1, val2;
 	uls_outparam_t parms;
 
-	// assert: *wrd != '\0'
 	parms.lptr = wrd;
 	val1 = uls_skip_atox(uls_ptr(parms));
 	wrd = parms.lptr;
@@ -561,8 +559,6 @@ ULS_QUALIFIED_METHOD(get_range_aton)(uls_outparam_ptr_t parms)
 
 	if (*(lptr = parms->lptr) == '\0')
 		return 0;
-
-	// assert: uvw_isdigit(*lptr) == true;
 
 	if (lptr[1] == '-') {
 		i1 = lptr[0];
@@ -633,7 +629,6 @@ ULS_QUALIFIED_METHOD(uls_range_of_bits)(uls_uint32 n)
 		n >>= 1;
 	}
 
-	// assert: i0 + 1 >= 0
 	return i0 + 1;
 }
 
@@ -836,72 +831,71 @@ ULS_QUALIFIED_METHOD(uls_check_longdouble_fmt)(int endian)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_strcmp)(const char* str, const char* str2)
+ULS_QUALIFIED_METHOD(uls_strcmp)(const char* str1, const char* str2)
 {
-	const char *ptr=str, *ptr2=str2;
-	char ch, ch2;
-	int rc;
+	const char *ptr1=str1, *ptr2=str2;
+	char ch1, ch2;
+	int stat = 0;
 
-	for ( ; ; ptr++,ptr2++) {
-		ch = *ptr;
+	for ( ; ; ptr1++,ptr2++) {
+		ch1 = *ptr1;
 		ch2 = *ptr2;
 
-		if (ch != ch2) {
-			rc = (int) ch - (int) ch2;
+		if (ch1 != ch2) {
+			stat = (int) ch1 - (int) ch2;
 			break;
 		}
 
-		if (ch == '\0') {
-			rc = 0;
-			break;
-		}
+		if (ch1 == '\0') break;
 	}
 
-	return rc;
+	return stat;
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_strncmp)(const char* str, const char* str2, int n)
+ULS_QUALIFIED_METHOD(uls_strncmp)(const char* str1, const char* str2, int n)
 {
-	const char *ptr=str, *ptr2=str2;
-	char ch, ch2;
-	int i, rc = 0;
+	const char *ptr1=str1, *ptr2=str2;
+	char ch1, ch2;
+	int i, stat = 0;
 
-	for (i=0; i<n; i++, ptr++, ptr2++) {
-		ch = *ptr;
+	for (i=0; i<n; i++, ptr1++, ptr2++) {
+		ch1 = *ptr1;
 		ch2 = *ptr2;
 
-		if (ch != ch2) {
-			rc = (int) ch - ch2;
+		if (ch1 != ch2) {
+			stat = (int) ch1 - (int) ch2;
 			break;
 		}
 
-		if (ch == '\0') break;
+		if (ch1 == '\0') break;
 	}
 
-	return rc;
+	return stat;
 }
 
 int
 ULS_QUALIFIED_METHOD(uls_strcasecmp)(const char* str1, const char* str2)
 {
 	char  ch1, ch2;
-	int  i;
+	int  i, stat = 0;
 
 	for (i=0; ; i++) {
 		ch1 = str1[i];
 		ch2 = str2[i];
 
-		if (uls_isalpha(ch1) && uls_isalpha(ch2)) {
-			ch1 = uls_toupper(ch1);
-			ch2 = uls_toupper(ch2);
+		if (uls_isalpha(ch1)) ch1 = uls_toupper(ch1);
+		if (uls_isalpha(ch2)) ch2 = uls_toupper(ch2);
+
+		if (ch1 != ch2) {
+			stat = (int) ch1 - ch2;
+			break;
 		}
 
-		if (ch1 != ch2) return ch1 - ch2;
 		if (ch1 == '\0') break;
 	}
 
-	return 0;
+	return stat;
 }
 
 char*
@@ -1425,9 +1419,7 @@ ULS_QUALIFIED_METHOD(_uls_explode_str)(uls_wrd_ptr_t uw, char delim_ch, int dups
 			if ((ch=*lptr) == '\0') {
 				if (lptr != lptr1) {
 					len = (int) (lptr - lptr1);
-					if ((arg=al[k]) == nilptr) {
-						al[k] = arg = uls_create_argstr();
-					}
+					al[k] = arg = uls_create_argstr();
 					uls_set_argstr(arg, lptr1, len);
 					++k;
 				}
@@ -1437,9 +1429,7 @@ ULS_QUALIFIED_METHOD(_uls_explode_str)(uls_wrd_ptr_t uw, char delim_ch, int dups
 			if (ch == delim_ch || (delim_ch == ' ' && ch == '\t')) {
 				len = (int) (lptr - lptr1);
 				*lptr++ = '\0';
-				if ((arg=al[k]) == nilptr) {
-					al[k] = arg = uls_create_argstr();
-				}
+				al[k] = arg = uls_create_argstr();
 				uls_set_argstr(arg, lptr1, len);
 				++k;
 				break;
@@ -1584,17 +1574,7 @@ ULS_QUALIFIED_METHOD(uls_copy_argstr)(uls_argstr_ptr_t arg, const char *name, in
 ULS_DLL_EXTERN void
 ULS_QUALIFIED_METHOD(uls_init_arglst)(uls_arglst_ptr_t arglst, int siz)
 {
-	uls_decl_parray_slots(al, argstr);
-	int i;
-
 	uls_init_parray(uls_ptr(arglst->args), argstr, siz);
-
-	al = uls_parray_slots(uls_ptr(arglst->args));
-	for (i=0; i<arglst->args.n_alloc; i++) {
-		al[i] = nilptr;
-	}
-
-	arglst->args.n = 0;
 }
 
 ULS_DLL_EXTERN void
@@ -1611,7 +1591,7 @@ ULS_QUALIFIED_METHOD(uls_reset_arglst)(uls_arglst_ptr_t arglst)
 	uls_argstr_ptr_t arg;
 	int i;
 
-	for (i=0; i<arglst->args.n_alloc; i++) {
+	for (i=0; i<arglst->args.n; i++) {
 		if ((arg = al[i]) != nilptr) {
 			uls_destroy_argstr(arg);
 			al[i] = nilptr;
@@ -1621,6 +1601,28 @@ ULS_QUALIFIED_METHOD(uls_reset_arglst)(uls_arglst_ptr_t arglst)
 	arglst->args.n = 0;
 }
 
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(uls_resize_arglst)(uls_arglst_ptr_t arglst, int n1_alloc)
+{
+	uls_decl_parray_slots(al, argstr);
+	uls_argstr_ptr_t arg;
+	int i;
+
+	al = uls_parray_slots(uls_ptr(arglst->args));
+	for (i=n1_alloc; i<arglst->args.n; i++) {
+		if ((arg = al[i]) != nilptr) {
+			uls_destroy_argstr(arg);
+			al[i] = nilptr;
+		}
+	}
+
+	uls_resize_parray(uls_ptr(arglst->args), argstr, n1_alloc);
+
+	if (arglst->args.n > arglst->args.n_alloc) {
+		arglst->args.n = arglst->args.n_alloc;
+	}
+}
+
 ULS_DLL_EXTERN int
 ULS_QUALIFIED_METHOD(uls_append_arglst)(uls_arglst_ptr_t arglst, uls_argstr_ptr_t arg)
 {
@@ -1628,7 +1630,8 @@ ULS_QUALIFIED_METHOD(uls_append_arglst)(uls_arglst_ptr_t arglst, uls_argstr_ptr_
 	int k;
 
 	if ((k=arglst->args.n) >= arglst->args.n_alloc) {
-		return -1;
+		uls_resize_arglst(arglst, k + 16);
+		al = uls_parray_slots(uls_ptr(arglst->args));
 	}
 
 	al[k] = arg;
@@ -1716,14 +1719,16 @@ ULS_QUALIFIED_METHOD(ustr_num_chars)(const char *str, int len, uls_outparam_ptr_
 	const char *bufptr, *ptr;
 
 	if (len < 0) {
-		for (ptr=str; *ptr!='\0'; ptr+=rc) {
-			rc = uls_decode_utf8(ptr, -1, NULL);
+		for (ptr = str; *ptr != '\0'; ptr += rc) {
+			if ((rc = uls_decode_utf8(ptr, -1, NULL)) <= 0) {
+				return -1;
+			}
 			++n;
 		}
 		len = (int) (ptr - str);
 
 	} else {
-		for (i=0,ptr=str; i < len; i+=rc,ptr+=rc) {
+		for (i = 0, ptr = str; i < len; i += rc, ptr += rc) {
 			if (ptr[0] == '\0') {
 				len = (int) (ptr - str);
 				break;
@@ -1734,11 +1739,12 @@ ULS_QUALIFIED_METHOD(ustr_num_chars)(const char *str, int len, uls_outparam_ptr_
 				j = ULS_UTF8_CH_MAXLEN;
 			} else {
 				for (j=0; j<rc; j++) buff[j] = ptr[j];
-				buff[j] = '\0';
 				bufptr = buff;
 			}
 
-			rc = uls_decode_utf8(bufptr, j, NULL);
+			if ((rc = uls_decode_utf8(bufptr, j, NULL)) <= 0) {
+				return -2;
+			}
 			++n;
 		}
 	}
@@ -1761,8 +1767,7 @@ ULS_QUALIFIED_METHOD(uls_encode_utf8)(uls_uch_t uch, char* utf8buf, int siz_utf8
 		siz_utf8buf = ULS_UTF8_CH_MAXLEN;
 	}
 
-	if (uch > UTF_CODEPOINT_END ||
-		(uch >= UTF_CODEPOINT_RSVD_START && uch <= UTF_CODEPOINT_RSVD_END)) {
+	if (uch > UTF8_CODEPOINT_END) {
 		return -1;
 	}
 
@@ -1781,7 +1786,7 @@ ULS_QUALIFIED_METHOD(uls_encode_utf8)(uls_uch_t uch, char* utf8buf, int siz_utf8
 		buff[2] = 0x80 | (0x3F & uch);
 		rc = 3;
 
-	} else if (uch <= 0x10FFFF) {
+	} else if (uch <= 0x1FFFFF) {
 		buff[0] = 0xF0 | (uch >> 18);
 		buff[1] = 0x80 | (0x3F & (uch >> 12));
 		buff[2] = 0x80 | (0x3F & (uch >> 6));
@@ -1808,29 +1813,12 @@ ULS_QUALIFIED_METHOD(uls_encode_utf8)(uls_uch_t uch, char* utf8buf, int siz_utf8
 ULS_DLL_EXTERN int
 ULS_QUALIFIED_METHOD(uls_decode_utf8)(const char *utf8buf, int siz_utf8buf, uls_uch_t *p_val)
 {
-	// assert: siz_utf8buf >= 1, or < 0
 	const char *bufptr = utf8buf;
-	char ch, ch_mask, ch_ary[3] = {0x20, 0x10, 0x08};
+	char ch, ch_mask, ch_ary[3] = { 0x20, 0x10, 0x08 };
 	uls_uch_t val;
 	int  n, i;
 
-	ch = *bufptr;
-	if (p_val != NULL) *p_val = ch;
-
-	if ((ch & 0xC0) != 0xC0) {
-		return 1;
-	}
-
-	for (n=0; ; n++) {
-		if (n>=3) return 1;
-		if ((ch_ary[n] & ch) == 0) break;
-	}
-
-	++n; // n-bytes followed additionally
-	if (p_val == NULL) return 1 + n;
-
 	if (siz_utf8buf < 0) {
-		// assert: utf8buf is null-terminated string!
 		for (i=0; i<ULS_UTF8_CH_MAXLEN; i++) {
 			if (utf8buf[i] == '\0') {
 				break;
@@ -1839,7 +1827,22 @@ ULS_QUALIFIED_METHOD(uls_decode_utf8)(const char *utf8buf, int siz_utf8buf, uls_
 		siz_utf8buf = i;
 	}
 
-	if (n >= siz_utf8buf) return 0;
+	ch = *bufptr;
+	if (p_val != NULL) *p_val = ch;
+
+	if ((ch & 0xC0) != 0xC0) return 1;
+
+	for (n=0; ; n++) {
+		if (n>=3) return 1;
+		if ((ch_ary[n] & ch) == 0) {
+			++n;
+			break;
+		}
+	}
+	// n-bytes followed additionally
+
+	if (p_val == NULL) return 1 + n;
+	if (n >= siz_utf8buf) return -(1 + n);
 
 	ch_mask = (1 << (6-n)) - 1;
 	val = ch & ch_mask;
@@ -1853,32 +1856,29 @@ ULS_QUALIFIED_METHOD(uls_decode_utf8)(const char *utf8buf, int siz_utf8buf, uls_
 		val = (val << 6) | (ch & ch_mask);
 	}
 
-	++n; // n-bytes constitute a multibytes of char.
 	*p_val = val;
-
-	return n;
+	return 1 + n;
 }
 
 ULS_DLL_EXTERN int
 ULS_QUALIFIED_METHOD(uls_encode_utf16)(uls_uch_t uch, uls_uint16 *buf)
 {
 	uls_uch_t uch2;
+	int rc;
 
-	if (uch > UTF_CODEPOINT_END ||
-		(uch >= UTF_CODEPOINT_RSVD_START && uch <= UTF_CODEPOINT_RSVD_END)) {
-		return -1;
-	}
-
-	if (uch < UTF_CODEPOINT_RSVD_START || uch <= 0xFFFF) {
+	if (uch > UTF16_CODEPOINT_END) {
+		rc = -1;
+	} else if (uch <= 0xFFFF) {
 		buf[0] = (uls_uint16) uch;
-		return 1;
+		rc = 1;
+	} else {
+		uch2 = uch - 0x10000;
+		buf[0] = 0xD800 + (uch2 >> 10);
+		buf[1] = 0xDC00 + (uch2 & 0x3FF);
+		rc = 2;
 	}
 
-	uch2 = uch - 0x10000;
-	buf[0] = 0xD800 + (uch2 >> 10);
-	buf[1] = 0xDC00 + (uch2 & 0x3FF);
-
-	return 2;
+	return rc;
 }
 
 ULS_DLL_EXTERN int
@@ -1889,7 +1889,7 @@ ULS_QUALIFIED_METHOD(uls_decode_utf16)(uls_uint16 *buf, int buf_len, uls_uch_t *
 
 	if (buf_len <= 0) return 0;
 
-	if (buf[0] >= UTF_CODEPOINT_RSVD_START && buf[0] <= UTF_CODEPOINT_RSVD_END) {
+	if (buf[0] >= UTF16_CODEPOINT_RSVD_START && buf[0] <= UTF16_CODEPOINT_RSVD_END) {
 		if (buf_len < 2) return 0;
 		if (buf[1] < 0xDC00 || buf[1] > 0xDFFF) return -1;
 		uch  = (buf[0] - 0xD800) << 10;
@@ -1908,8 +1908,7 @@ ULS_QUALIFIED_METHOD(uls_decode_utf16)(uls_uint16 *buf, int buf_len, uls_uch_t *
 ULS_DLL_EXTERN int
 ULS_QUALIFIED_METHOD(uls_encode_utf32)(uls_uch_t uch, uls_uint32 *buf)
 {
-	if (uch > UTF_CODEPOINT_END ||
-		(uch >= UTF_CODEPOINT_RSVD_START && uch <= UTF_CODEPOINT_RSVD_END)) {
+	if (uch > UTF32_CODEPOINT_END) {
 		return -1;
 	}
 
@@ -1924,8 +1923,7 @@ ULS_QUALIFIED_METHOD(uls_decode_utf32)(uls_uint32 buf, uls_uch_t *p_uch)
 	uls_uch_t uch;
 
 	uch = (uls_uch_t) buf;
-	if (uch > UTF_CODEPOINT_END ||
-		(uch >= UTF_CODEPOINT_RSVD_START && uch <= UTF_CODEPOINT_RSVD_END)) {
+	if (uch > UTF32_CODEPOINT_END) {
 		return -1;
 	}
 

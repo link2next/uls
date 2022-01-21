@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -49,7 +49,7 @@ ULS_DECL_STATIC int __check_fd_dup(int fd, int flags);
 
 #ifdef ULS_DECL_PROTECTED_PROC
 int uls_select_isrc_filler(uls_context_ptr_t ctx, uls_istream_ptr_t istr);
-uls_gettok_t find_isrc_filler(int fd_type, int fd_subtype, _uls_tool_ptrtype_(outparam) parms);
+uls_gettok_t find_isrc_filler(int fd_type, int fd_subtype, uls_ptrtype_tool(outparam) parms);
 int uls_push_isrc_type(uls_lex_ptr_t uls, int fd_type, int fd_subtype);
 int uls_set_isrc_type(uls_lex_ptr_t uls, int fd_type, int fd_subtype);
 #endif

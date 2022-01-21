@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -44,33 +44,33 @@ ULS_DEFINE_DELEGATE_END(hashfunc);
 #endif
 
 #ifdef ULS_DEF_PUBLIC_TYPE
-ULS_DEFINE_STRUCT(uls_dflhash_state)
+ULS_DEFINE_STRUCT(dflhash_state)
 {
 	int        n_slots;
 	int        n_shifts;
 	uls_uint32     init_hcode;
 };
 
-ULS_DEFINE_STRUCT(uls_kwtable)
+ULS_DEFINE_STRUCT(kwtable)
 {
 	uls_voidptr_t  hash_stat;
 	uls_decl_parray(bucket_head, tokdef);
 
-	_uls_callback_type_this_(strcmp_proc) str_ncmp;
-	_uls_callback_type_this_(hashfunc) hashfunc;
+	uls_callback_type_this(strcmp_proc) str_ncmp;
+	uls_callback_type_this(hashfunc) hashfunc;
 
 	uls_dflhash_state_t dflhash_stat;
 };
 
-ULS_DEFINE_STRUCT(uls_keyw_stat)
+ULS_DEFINE_STRUCT(keyw_stat)
 {
 	const char *keyw;
 	int freq;
 	uls_tokdef_ptr_t keyw_info;
 };
-ULS_DEF_PARRAY_THIS(keyw_stat);
+ULS_DEF_PARRAY(keyw_stat);
 
-ULS_DEFINE_STRUCT(uls_keyw_stat_list)
+ULS_DEFINE_STRUCT(keyw_stat_list)
 {
 	uls_decl_parray(lst, keyw_stat);
 };
@@ -91,7 +91,7 @@ void uls_init_kwtable(uls_kwtable_ptr_t tbl, int n_slots, int case_insensitive);
 void uls_reset_kwtable(uls_kwtable_ptr_t tbl, int n_slots, uls_hashfunc_t hashfunc, uls_voidptr_t hash_stat);
 void uls_deinit_kwtable(uls_kwtable_ptr_t tbl);
 
-uls_tokdef_ptr_t uls_find_kw(uls_kwtable_ptr_t tbl, _uls_tool_ptrtype_(outparam) parms);
+uls_tokdef_ptr_t uls_find_kw(uls_kwtable_ptr_t tbl, uls_ptrtype_tool(outparam) parms);
 int uls_add_kw(uls_kwtable_ptr_t tbl, uls_tokdef_ptr_t e);
 
 int sizeof_kwtable(uls_kwtable_ptr_t tbl);

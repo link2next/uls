@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -74,9 +74,9 @@ extern "C" {
 #endif // ULS_DECL_GLOBAL_TYPES
 
 #if defined(ULS_DEF_PROTECTED_TYPE)
-ULS_DECLARE_STRUCT(csz_buf_line);
+_ULS_DECLARE_STRUCT(csz_buf_line);
 
-ULS_DEFINE_STRUCT_BEGIN(csz_buf_line)
+_ULS_DEFINE_STRUCT_BEGIN(csz_buf_line)
 {
 	char *line;
 	int  size;
@@ -85,23 +85,23 @@ ULS_DEFINE_STRUCT_BEGIN(csz_buf_line)
 #endif
 
 #if defined(ULS_DEF_PUBLIC_TYPE)
-ULS_DECLARE_STRUCT(csz_global_data);
-ULS_DEFINE_STRUCT_BEGIN(csz_global_data)
+_ULS_DECLARE_STRUCT(csz_global_data);
+_ULS_DEFINE_STRUCT_BEGIN(csz_global_data)
 {
 	uls_mutex_struct_t  mtx;
 	csz_buf_line_ptr_t  inactive_list;
 	csz_buf_line_ptr_t  active_list;
 };
 
-ULS_DEFINE_STRUCT(uls_outbuf)
+ULS_DEFINE_STRUCT(outbuf)
 {
 	char   *buf;
 	int    siz, siz_delta;
 };
 
-ULS_DEFINE_STRUCT(csz_str)
+_ULS_DEFINE_STRUCT(csz_str)
 {
-	_uls_tool_type_(outbuf) pool;
+	uls_outbuf_t pool;
 	int    alloc_delta;
 	int    len;
 };
@@ -113,12 +113,12 @@ ULS_DECL_STATIC csz_global_data_ptr_t csz_global;
 #endif
 
 #if defined(__CSZ_STREAM__) || defined(ULS_DECL_PRIVATE_PROC)
-ULS_DECL_STATIC char* __find_in_pool(_uls_tool_ptrtype_(outbuf) tmp_buf, int siz);
+ULS_DECL_STATIC char* __find_in_pool(uls_outbuf_ptr_t tmp_buf, int siz);
 ULS_DECL_STATIC int __release_in_pool(char* ptr, int siz);
 ULS_DECL_STATIC void __init_csz_pool(void);
 ULS_DECL_STATIC void __reset_csz_pool(void);
 ULS_DECL_STATIC void __deinit_csz_pool(void);
-ULS_DECL_STATIC _ULS_INLINE void __str_modify(_uls_tool_ptrtype_(outbuf) outbuf, int n_delta, int k, const char* str, int len);
+ULS_DECL_STATIC _ULS_INLINE void __str_modify(uls_outbuf_ptr_t outbuf, int n_delta, int k, const char* str, int len);
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC
@@ -129,13 +129,13 @@ void finalize_csz(void);
 
 #ifdef ULS_DECL_PUBLIC_PROC
 
-ULS_DLL_EXTERN void str_init(_uls_tool_ptrtype_(outbuf) outbuf, int siz);
-ULS_DLL_EXTERN void str_free(_uls_tool_ptrtype_(outbuf) outbuf);
+ULS_DLL_EXTERN void str_init(uls_outbuf_ptr_t outbuf, int siz);
+ULS_DLL_EXTERN void str_free(uls_outbuf_ptr_t outbuf);
 
-ULS_DLL_EXTERN void str_modify(_uls_tool_ptrtype_(outbuf) outbuf, int k, const char* str, int len);
-ULS_DLL_EXTERN int str_append(_uls_tool_ptrtype_(outbuf) outbuf, int k, const char* str, int len);
-ULS_DLL_EXTERN int  str_puts(_uls_tool_ptrtype_(outbuf) outbuf, int k, const char* str);
-ULS_DLL_EXTERN void __str_putc(_uls_tool_ptrtype_(outbuf) outbuf, int n_delta, int k, char ch);
+ULS_DLL_EXTERN void str_modify(uls_outbuf_ptr_t outbuf, int k, const char* str, int len);
+ULS_DLL_EXTERN int str_append(uls_outbuf_ptr_t outbuf, int k, const char* str, int len);
+ULS_DLL_EXTERN int  str_puts(uls_outbuf_ptr_t outbuf, int k, const char* str);
+ULS_DLL_EXTERN void __str_putc(uls_outbuf_ptr_t outbuf, int n_delta, int k, char ch);
 
 ULS_DLL_EXTERN void csz_init(csz_str_ptr_t csz, int n_delta);
 ULS_DLL_EXTERN void csz_deinit(csz_str_ptr_t csz);

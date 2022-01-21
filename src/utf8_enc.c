@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -177,7 +177,6 @@ ULS_QUALIFIED_METHOD(dec_utf8_buf)(uls_utf_inbuf_ptr_t inp, uls_uch_t* out_buf, 
 
 	for (i=0; i < n_codpnts && n_uchs < out_bufsiz; i += rc) {
 		if ((rc = uls_decode_utf8(codpnts+i, n_codpnts-i, &uch)) <= 0) {
-			// actually rc == 0
 			if (inp->is_eof != 0) {
 				_uls_log(err_log)("Incorrect utf-8 format!");
 				inp->is_eof = -1;
@@ -185,7 +184,6 @@ ULS_QUALIFIED_METHOD(dec_utf8_buf)(uls_utf_inbuf_ptr_t inp, uls_uch_t* out_buf, 
 			}
 			break;
 		}
-
 		*out_bufptr++ = uch;
 		++n_uchs;
 	}
@@ -218,7 +216,6 @@ ULS_QUALIFIED_METHOD(fill_utf16_buf)(uls_utf_inbuf_ptr_t inp)
 	if ((rc = uls_readn(inp->fd, codpnts, n_wrds_req*wrdsiz)) == 0) {
 		inp->is_eof = 1;
 	} else if (rc < 0 || rc % wrdsiz != 0) { // 2-bytes ~ utf16
-		// notice: At EOF, rc may be less than the req_size.
 		_uls_log(err_log)("IO error or segmented utf16-char at EOF!");
 		inp->is_eof = -1;
 		return -1;
@@ -286,7 +283,6 @@ ULS_QUALIFIED_METHOD(fill_utf32_buf)(uls_utf_inbuf_ptr_t inp)
 	if ((rc = uls_readn(inp->fd, codpnts, n_wrds_req*wrdsiz)) == 0) {
 		inp->is_eof = 1;
 	} else if (rc < 0 || rc % wrdsiz != 0) {
-		// notice: At EOF, rc may be less than the req_size.
 		_uls_log(err_log)("IO error or segmented utf32-char at EOF!");
 		inp->is_eof = -1;
 		return -1;
@@ -313,7 +309,7 @@ ULS_QUALIFIED_METHOD(dec_utf32_buf)(uls_utf_inbuf_ptr_t inp, uls_uch_t* out_buf,
 		return -1;
 	}
 
-	// assert: inp->bytesbuf == out_buf
+	
 	n_uchs = inp->n_wrds;
 	inp->n_wrds = 0;
 
@@ -327,16 +323,16 @@ ULS_QUALIFIED_METHOD(uls_utf_reset_inbuf)(uls_utf_inbuf_ptr_t inp, int mode)
 	int reverse = mode & UTF_INPUT_FORMAT_REVERSE ? 1 : 0;
 
 	if (enc_fmt == UTF_INPUT_FORMAT_8) {
-		inp->fill_rawbuf = _uls_ref_callback_this(fill_utf8_buf);
-		inp->dec_rawbuf = _uls_ref_callback_this(dec_utf8_buf);
+		inp->fill_rawbuf = uls_ref_callback_this(fill_utf8_buf);
+		inp->dec_rawbuf = uls_ref_callback_this(dec_utf8_buf);
 
 	} else if (enc_fmt == UTF_INPUT_FORMAT_16) {
-		inp->fill_rawbuf = _uls_ref_callback_this(fill_utf16_buf);
-		inp->dec_rawbuf = _uls_ref_callback_this(dec_utf16_buf);
+		inp->fill_rawbuf = uls_ref_callback_this(fill_utf16_buf);
+		inp->dec_rawbuf = uls_ref_callback_this(dec_utf16_buf);
 
 	} else if (enc_fmt == UTF_INPUT_FORMAT_32) {
-		inp->fill_rawbuf = _uls_ref_callback_this(fill_utf32_buf);
-		inp->dec_rawbuf = _uls_ref_callback_this(dec_utf32_buf);
+		inp->fill_rawbuf = uls_ref_callback_this(fill_utf32_buf);
+		inp->dec_rawbuf = uls_ref_callback_this(dec_utf32_buf);
 
 	} else {
 		inp->fill_rawbuf = nilptr;
@@ -366,11 +362,10 @@ ULS_QUALIFIED_METHOD(uls_utf_init_inbuf)(uls_utf_inbuf_ptr_t inp,
 		_uls_log(err_panic)("%s: invalid paramerter 'bufsiz'", __FUNCTION__);
 	}
 
-	__uls_initial_zerofy_object(inp);
+	uls_initial_zerofy_object(inp);
 	inp->flags = ULS_FL_STATIC;
 
 	if (buf == NULL) {
-		// assert: UTF_INPUT_BUFSIZ % 4 == 0
 		bufsiz = uls_roundup(bufsiz, UTF_INPUT_BUFSIZ);
 		inp->bytesbuf = uls_malloc_buffer(bufsiz);
 		inp->flags |= ULS_FL_UTF_INBUF_BUF_ALLOCED;
@@ -454,7 +449,6 @@ int
 ULS_QUALIFIED_METHOD(uls_fill_utf8str)(uls_uch_t *uchs, int n_uchs,
 	char* utf8buf, int siz_utf8buf, int *p_len_utf8buf)
 {
-	// assert: siz_utf8buf > 0
 	char *outptr = utf8buf;
 	int rc, i, len_utf8buf = 0;
 	uls_uch_t uch;
@@ -547,7 +541,6 @@ ULS_QUALIFIED_METHOD(uls_enc_utf16file_to_8)(int fd, int fd_out, int reverse)
 	mode = UTF_INPUT_FORMAT_16;
 	if (reverse) mode |= UTF_INPUT_FORMAT_REVERSE;
 	uls_utf_init_inbuf(uls_ptr(inbuff), NULL, UTF_INPUT_BUFSIZ, mode);
-	// assert: inbuff.bytesbuf_siz >= 4 for 1-char of utf-16 encoding.
 
 	outbuf_siz = inbuff.bytesbuf_siz;
 	outbuf = (uls_uch_t *) uls_malloc_buffer(outbuf_siz * sizeof(uls_uch_t));
@@ -558,8 +551,7 @@ ULS_QUALIFIED_METHOD(uls_enc_utf16file_to_8)(int fd, int fd_out, int reverse)
 	uls_utf_set_inbuf(uls_ptr(inbuff), fd);
 
 	while (!uls_utf_is_inbuf_empty(uls_ptr(inbuff))) {
-		if ((outbuf_len = uls_utf_drain_inbuf(uls_ptr(inbuff), outbuf, outbuf_siz)) <= 0) {
-			// BUGFIX-209: included the case of outbuf_len == 0 
+		if ((outbuf_len = uls_utf_drain_inbuf(uls_ptr(inbuff), outbuf, outbuf_siz)) <= 0) {	
 			stat = outbuf_len;
 			break;
 		}

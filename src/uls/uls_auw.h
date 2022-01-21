@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -51,9 +51,9 @@ extern "C" {
 #endif
 
 #ifdef ULS_DEF_PUBLIC_TYPE
-ULS_DEFINE_STRUCT(auw_outparam)
+_ULS_DEFINE_STRUCT(auw_outparam)
 {
-	_uls_tool_type(csz_str)  csz;
+	csz_str_t  csz;
 	int outlen;
 };
 #endif
@@ -62,14 +62,14 @@ ULS_DEFINE_STRUCT(auw_outparam)
 #ifdef ULS_WINDOWS
 ULS_DECL_STATIC char* wstr2mbs(const wchar_t* wstr, int wlen, int is_utf8, csz_str_ptr_t csz);
 ULS_DECL_STATIC wchar_t* mbs2wstr(const char* astr, int alen, int is_utf8, csz_str_ptr_t csz_wstr);
-ULS_DECL_STATIC int __uls_astr2ustr_ptr(_uls_tool_ptrtype_(outparam) parms);
-ULS_DECL_STATIC int __uls_ustr2astr_ptr(_uls_tool_ptrtype_(outparam) parms);
+ULS_DECL_STATIC int __uls_astr2ustr_ptr(uls_outparam_ptr_t parms);
+ULS_DECL_STATIC int __uls_ustr2astr_ptr(uls_outparam_ptr_t parms);
 #endif
 #endif
 
 #ifdef ULS_DECL_PUBLIC_PROC
 ULS_DLL_EXTERN int astr_lengthof_char(const char* str);
-ULS_DLL_EXTERN int astr_num_chars(const char* str, int len, _uls_tool_ptrtype_(outparam) parms);
+ULS_DLL_EXTERN int astr_num_chars(const char* str, int len, uls_outparam_ptr_t parms);
 
 ULS_DLL_EXTERN wchar_t* uls_astr2wstr(const char *astr, int alen, csz_str_ptr_t csz_wstr);
 ULS_DLL_EXTERN char* uls_wstr2astr(const wchar_t* wstr, int wlen, csz_str_ptr_t csz);

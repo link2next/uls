@@ -23,4 +23,3 @@ install: all
 	install -m755 uls_common.sh $(bindir)/
 	./gen_sysprops.sh "$(prefix)" "$(etc_dir)" \
 		$(uls_ver_major).$(uls_ver_minor).$(uls_ver_debug) I "$(etc_dir)"/$(sysprops_outfile)
-

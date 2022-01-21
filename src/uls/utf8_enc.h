@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -58,7 +58,7 @@ extern "C" {
 #endif
 
 #ifdef ULS_DECL_PUBLIC_TYPE
-ULS_DECLARE_STRUCT(uls_utf_inbuf);
+ULS_DECLARE_STRUCT(utf_inbuf);
 ULS_DEFINE_DELEGATE_BEGIN(fill_utf_rawbuf, int)(uls_utf_inbuf_ptr_t inp);
 ULS_DEFINE_DELEGATE_END(fill_utf_rawbuf);
 
@@ -67,7 +67,7 @@ ULS_DEFINE_DELEGATE_END(dec_utf_rawbuf);
 #endif
 
 #ifdef ULS_DEF_PUBLIC_TYPE
-ULS_DEFINE_STRUCT_BEGIN(uls_utf_inbuf)
+ULS_DEFINE_STRUCT_BEGIN(utf_inbuf)
 {
 	uls_flags_t flags;
 
@@ -80,8 +80,8 @@ ULS_DEFINE_STRUCT_BEGIN(uls_utf_inbuf)
 	int    is_eof;
 	uls_voidptr_t data;
 
-	_uls_callback_type_this_(fill_utf_rawbuf) fill_rawbuf;
-	_uls_callback_type_this_(dec_utf_rawbuf)  dec_rawbuf;
+	uls_callback_type_this(fill_utf_rawbuf) fill_rawbuf;
+	uls_callback_type_this(dec_utf_rawbuf)  dec_rawbuf;
 	int    reverse;
 };
 #endif // ULS_DEF_PUBLIC_TYPE

@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -43,7 +43,7 @@ extern "C" {
 
 #define N_PARMS_EMIT_WSTR 7
 
-ULS_DEFINE_STRUCT(uls_emit_wshell)
+ULS_DEFINE_STRUCT(emit_wshell)
 {
 	const wchar_t *wrdlst[N_PARMS_EMIT_WSTR];
 	csz_str_t csz_wrd_ary[N_PARMS_EMIT_WSTR];

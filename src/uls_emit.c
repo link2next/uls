@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -77,7 +77,7 @@ ULS_QUALIFIED_METHOD(emit_source_head)(const char *name)
 		if (*cstr != '\0') {
 			_uls_log_(sysprn)("%s %s\n", prefix_stmt, cstr);
 		} else {
-			_uls_log_(sysprn)("%s \n", prefix_stmt);
+			_uls_log_(sysprn)("%s\n", prefix_stmt);
 		}
 	}
 	_uls_log_(sysprn)(" */\n");
@@ -103,10 +103,10 @@ ULS_QUALIFIED_METHOD(filter_to_print_tokdef)(uls_lex_ptr_t uls, uls_tokdef_ptr_t
 	uls_tokdef_vx_ptr_t e_vx = e->view;
 	int stat = 1;
 
-	if (e_vx->tok_id == uls->xcontext.toknum_LINENUM || _uls_get_namebuf_value(e_vx->name)[0] == '\0') {
+	if (e_vx->tok_id == uls->xcontext.toknum_LINENUM || uls_get_namebuf_value(e_vx->name)[0] == '\0') {
 		stat = 0; // filtered
 
-	} else if (is_reserved_tok(uls, _uls_get_namebuf_value(e_vx->name)) >= 0) {
+	} else if (is_reserved_tok(uls, uls_get_namebuf_value(e_vx->name)) >= 0) {
 		if ((flags & ULS_FL_WANT_RESERVED_TOKS) == 0) stat = 0;
 
 	} else if (e->keyw_type == ULS_KEYW_TYPE_LITERAL) {
@@ -158,13 +158,13 @@ ULS_QUALIFIED_METHOD(print_tokdef_constants)(uls_lex_ptr_t uls,
 
 		if (e0_vx->tok_id % 10 == 0 || i == N_RESERVED_TOKS) _uls_log_(sysprn)("\n");
 
-		_uls_log_(snprintf)(toknam_str, sizeof(toknam_str), "%s%s", tok_pfx, _uls_get_namebuf_value(e0_vx->name));
+		_uls_log_(snprintf)(toknam_str, sizeof(toknam_str), "%s%s", tok_pfx, uls_get_namebuf_value(e0_vx->name));
 
 		uls_sysprn_tabs(n_tabs, "%s %16s %s", cnst_symbol, toknam_str, asgn_symbol);
 		_uls_log_(sysprn)(" %d%s\n", e0_vx->tok_id, end_symbol);
 
 		for (e_nam = e0_vx->tokdef_names; e_nam != nilptr; e_nam = e_nam->prev) {
-			_uls_log_(snprintf)(toknam_str, sizeof(toknam_str), "%s%s", tok_pfx, _uls_get_namebuf_value(e_nam->name));
+			_uls_log_(snprintf)(toknam_str, sizeof(toknam_str), "%s%s", tok_pfx, uls_get_namebuf_value(e_nam->name));
 			uls_sysprn_tabs(n_tabs, "%s %16s %s", cnst_symbol, toknam_str, asgn_symbol);
 			_uls_log_(sysprn)(" %d%s\n", e0_vx->tok_id, end_symbol);
 		}
@@ -207,7 +207,7 @@ ULS_QUALIFIED_METHOD(print_tokdef_enum_constants)(uls_lex_ptr_t uls,
 
 		e0_vx = slots_vx[i];
 
-		_uls_log_(snprintf)(toknam_str, sizeof(toknam_str), "%s%s", tok_pfx, _uls_get_namebuf_value(e0_vx->name));
+		_uls_log_(snprintf)(toknam_str, sizeof(toknam_str), "%s%s", tok_pfx, uls_get_namebuf_value(e0_vx->name));
 
 		sect_lead = (e0_vx->tok_id % 10 == 0);
 		if (sect_lead || prev_tok_id + 1 != e0_vx->tok_id) {
@@ -224,7 +224,7 @@ ULS_QUALIFIED_METHOD(print_tokdef_enum_constants)(uls_lex_ptr_t uls,
 		}
 
 		for (e_nam = e0_vx->tokdef_names; e_nam != nilptr; e_nam = e_nam->prev) {
-			_uls_log_(sysprn)("\t%24s = %d", _uls_get_namebuf_value(e_nam->name), e0_vx->tok_id);
+			_uls_log_(sysprn)("\t%24s = %d", uls_get_namebuf_value(e_nam->name), e0_vx->tok_id);
 			if (e_nam->prev != nilptr) {
 				_uls_log_(sysprn)(",\n");
 			} else { // last one
@@ -342,7 +342,7 @@ ULS_QUALIFIED_METHOD(__print_uld_c_source_1_fp)(int n_tabs, FILE *fin_uld)
 	int n_tok_names;
 
 	uls_sysprn_tabs(n_tabs, "static uld_line_t toknam_defs[] = {\n");
-	n_tok_names = print_uld_source(fin_uld, n_tabs + 1, _uls_ref_callback_this(__print_uld_lineproc_1));
+	n_tok_names = print_uld_source(fin_uld, n_tabs + 1, uls_ref_callback_this(__print_uld_lineproc_1));
 	uls_sysprn_tabs(n_tabs + 1, "{ NULL, }\n");
 	uls_sysprn_tabs(n_tabs, "};\n");
 
@@ -357,7 +357,7 @@ ULS_QUALIFIED_METHOD(__print_uld_c_source_2_fp)(int n_tabs, FILE *fin_uld)
 	int   n_tok_names;
 
 	uls_sysprn_tabs(n_tabs, " {\n\tuld_line_t tok_names;\n\n");
-	n_tok_names = print_uld_source(fin_uld, n_tabs, _uls_ref_callback_this(__print_uld_lineproc_2));
+	n_tok_names = print_uld_source(fin_uld, n_tabs, uls_ref_callback_this(__print_uld_lineproc_2));
 	uls_sysprn_tabs(n_tabs, " }\n");
 
 	return n_tok_names;
@@ -369,7 +369,7 @@ ULS_QUALIFIED_METHOD(print_uld_source)(FILE *fin_uld, int n_tabs, uls_proc_uld_l
 	char  linebuff[ULS_LINEBUFF_SIZ__ULD+1], *lptr;
 	int   linelen, lno=0, stat=0, n_tok_names=0;
 	uld_line_t tok_names;
-	_uls_tool_type_(wrd) wrdx;
+	uls_type_tool(wrd) wrdx;
 
 	while (1) {
 		if ((linelen=_uls_tool_(fp_gets)(fin_uld, linebuff, sizeof(linebuff), 0)) <= ULS_EOF) {
@@ -453,7 +453,7 @@ ULS_QUALIFIED_METHOD(__print_tokdef_c_source_fp)(FILE *fin_uld, int typ)
 		"static int load_pairs(uls_lex_ptr_t uls)",
 		"{",
 		"	uld_names_map_ptr_t names_map;",
-		"	int   i, stat = 0;",
+		"	int   stat = 0;",
 		"",
 		"	names_map = uld_prepare_names(uls);",
 		NULL
@@ -610,7 +610,7 @@ ULS_QUALIFIED_METHOD(print_tokdef_cpp_header)(uls_lex_ptr_t uls,
 	uls_parms_emit_ptr_t emit_parm, const char *base_ulc)
 {
 	uls_flags_t flags = emit_parm->flags;
-	_uls_decl_parray_slots_tool_(al, argstr);
+	uls_decl_parray_slots_tool(al, argstr);
 
 	const char *cptr1, *cptr2, *ns_uls;
 	char ch_lbrace='{';
@@ -697,7 +697,7 @@ ULS_QUALIFIED_METHOD(print_tokdef_cpp_source)(uls_lex_ptr_t uls,
 	uls_parms_emit_ptr_t emit_parm, const char *base_ulc)
 {
 	uls_flags_t flags = emit_parm->flags;
-	_uls_decl_parray_slots_tool_(al, argstr);
+	uls_decl_parray_slots_tool(al, argstr);
 	FILE *fin_uld;
 	const char *cptr, *cptr2, *ns_uls;
 	char ch_lbrace='{';
@@ -748,7 +748,7 @@ ULS_QUALIFIED_METHOD(print_tokdef_cpp_source)(uls_lex_ptr_t uls,
 			return -1;
 		}
 
-		print_uld_source(fin_uld, n_tabs, _uls_ref_callback_this(__print_uld_lineproc_3cpp));
+		print_uld_source(fin_uld, n_tabs, uls_ref_callback_this(__print_uld_lineproc_3cpp));
 		_uls_tool_(fp_close)(fin_uld);
 
 		_uls_log_(sysprn)("\n");
@@ -771,7 +771,7 @@ ULS_QUALIFIED_METHOD(print_tokdef_cs)(uls_lex_ptr_t uls,
 	uls_parms_emit_ptr_t emit_parm, const char *base_ulc)
 {
 	uls_flags_t flags = emit_parm->flags;
-	_uls_decl_parray_slots_tool_(al, argstr);
+	uls_decl_parray_slots_tool(al, argstr);
 	FILE *fin_uld;
 	const char *cptr, *ns_uls = "uls.polaris";
 	char ch_lbrace='{';
@@ -823,7 +823,7 @@ ULS_QUALIFIED_METHOD(print_tokdef_cs)(uls_lex_ptr_t uls,
 			return -1;
 		}
 
-		print_uld_source(fin_uld, n_tabs, _uls_ref_callback_this(__print_uld_lineproc_3cs));
+		print_uld_source(fin_uld, n_tabs, uls_ref_callback_this(__print_uld_lineproc_3cs));
 		_uls_tool_(fp_close)(fin_uld);
 
 		_uls_log_(sysprn)("\n");
@@ -848,7 +848,7 @@ ULS_QUALIFIED_METHOD(print_tokdef_java)(uls_lex_ptr_t uls,
 	uls_parms_emit_ptr_t emit_parm, const char *base_ulc)
 {
 	uls_flags_t flags = emit_parm->flags;
-	_uls_decl_parray_slots_tool_(al, argstr);
+	uls_decl_parray_slots_tool(al, argstr);
 	FILE *fin_uld;
 	const char *cptr, *ns_uls = "uls.polaris";
 	char ch_lbrace='{';
@@ -902,7 +902,7 @@ ULS_QUALIFIED_METHOD(print_tokdef_java)(uls_lex_ptr_t uls,
 			return -1;
 		}
 
-		print_uld_source(fin_uld, n_tabs, _uls_ref_callback_this(__print_uld_lineproc_3cs));
+		print_uld_source(fin_uld, n_tabs, uls_ref_callback_this(__print_uld_lineproc_3cs));
 		_uls_tool_(fp_close)(fin_uld);
 
 		_uls_log_(sysprn)("\n");
@@ -932,9 +932,9 @@ ULS_QUALIFIED_METHOD(uls_init_parms_emit)(uls_parms_emit_ptr_t emit_parm,
 	const char *tok_pfx, int flags)
 {
 	int i, rc, len_clsnam_dfl;
-	_uls_decl_parray_slots_tool_(al, argstr);
-	_uls_tool_ptrtype_(argstr) arg0;
-	_uls_tool_type_(wrd) wrdx;
+	uls_decl_parray_slots_tool(al, argstr);
+	uls_ptrtype_tool(argstr) arg0;
+	uls_type_tool(wrd) wrdx;
 	char ch, namebuff[512];
 
 	if (tok_pfx == NULL) tok_pfx = "";
@@ -1091,7 +1091,7 @@ ULS_QUALIFIED_METHOD(uls_generate_tokdef_file)(uls_lex_ptr_t uls, uls_parms_emit
 	for (i=0; i < uls->tokdef_vx_array.n; i++) {
 		e_vx = slots_vx[i];
 
-		if (_uls_get_namebuf_value(e_vx->name)[0] == '\0') {
+		if (uls_get_namebuf_value(e_vx->name)[0] == '\0') {
 			continue;
 		}
 
@@ -1124,15 +1124,15 @@ ULS_QUALIFIED_METHOD(uls_generate_tokdef_file)(uls_lex_ptr_t uls, uls_parms_emit
 
 			} else if (emit_parm->flags & (ULS_FL_CPP_GEN|ULS_FL_CPPCLI_GEN)) { // C++ class
 				print_tokdef_cpp_header(uls, uls_ptr(tokdef_ary_prn), n_tokdef_ary_prn, emit_parm,
-				_uls_get_namebuf_value(uls->ulc_name));
+				uls_get_namebuf_value(uls->ulc_name));
 
 			} else if (emit_parm->flags & ULS_FL_CS_GEN) { // C# class
 				print_tokdef_cs(uls, uls_ptr(tokdef_ary_prn), n_tokdef_ary_prn, emit_parm,
-					_uls_get_namebuf_value(uls->ulc_name));
+					uls_get_namebuf_value(uls->ulc_name));
 
 			} else if (emit_parm->flags & ULS_FL_JAVA_GEN) { // Java class
 				print_tokdef_java(uls, uls_ptr(tokdef_ary_prn), n_tokdef_ary_prn, emit_parm,
-					_uls_get_namebuf_value(uls->ulc_name));
+					uls_get_namebuf_value(uls->ulc_name));
 			}
 
 			_uls_log_(sysprn_close)();
@@ -1171,10 +1171,10 @@ ULS_QUALIFIED_METHOD(uls_generate_tokdef_file)(uls_lex_ptr_t uls, uls_parms_emit
 			emit_source_head(emit_parm->ulc_name);
 
 			if (emit_parm->flags & ULS_FL_C_GEN) {
-				print_tokdef_c_source(emit_parm, _uls_get_namebuf_value(uls->ulc_name), 2);
+				print_tokdef_c_source(emit_parm, uls_get_namebuf_value(uls->ulc_name), 2);
 			} else if (emit_parm->flags & (ULS_FL_CPP_GEN | ULS_FL_CPPCLI_GEN)) {
 				print_tokdef_cpp_source(uls, uls_ptr(tokdef_ary_prn), n_tokdef_ary_prn, emit_parm,
-					_uls_get_namebuf_value(uls->ulc_name));
+					uls_get_namebuf_value(uls->ulc_name));
 			}
 
 			_uls_log_(sysprn_close)();

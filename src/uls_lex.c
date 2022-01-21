@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -39,6 +39,7 @@
 ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(__uls_change_stream_hdr)(uls_lex_ptr_t uls, uls_istream_ptr_t istr, int flags)
 {
+	uls_xcontext_ptr_t xctx = uls_ptr(uls->xcontext);
 	uls_context_ptr_t ctx = uls->xcontext.context;
 	uls_input_ptr_t inp = ctx->input;
 	int ipos=0, start_lno;
@@ -48,25 +49,22 @@ ULS_QUALIFIED_METHOD(__uls_change_stream_hdr)(uls_lex_ptr_t uls, uls_istream_ptr
 
 	uls_select_isrc_filler(ctx, istr);
 
-	if ((uls->xcontext.flags & ULS_XCTX_FL_LINEFEED_GUARD) && (ctx->flags & ULS_CTX_FL_FILL_RAW)) {
-		ipos = uls_init_line_in_input(inp, "\n", 1, ipos);
-		start_lno = 0;
+	if (xctx->len_prepended_input > 0 && (ctx->flags & ULS_CTX_FL_FILL_RAW)) {
+		ipos = uls_init_line_in_input(inp, xctx->prepended_input, xctx->len_prepended_input, ipos);
+		start_lno = 1 - xctx->lfs_prepended_input;
 	} else {
 		start_lno = 1;
 	}
 
-	uls_init_line_in_input(inp, _uls_get_namebuf_value(istr->firstline), istr->len_firstline, ipos);
-
-	inp->lineno = start_lno;
-	uls_context_set_tag(ctx, _uls_get_namebuf_value(istr->filepath), start_lno);
-
+	uls_init_line_in_input(inp, uls_get_namebuf_value(istr->firstline), istr->len_firstline, ipos);
+	uls_context_set_tag(ctx, uls_get_namebuf_value(istr->filepath), start_lno);
 	return 0;
 }
 
 ULS_DECL_STATIC void
 ULS_QUALIFIED_METHOD(uls_fd_ungrabber)(uls_voidptr_t data)
 {
-	_uls_tool_ptrtype_(outparam) parm = (_uls_tool_ptrtype_(outparam)) data;
+	uls_ptrtype_tool(outparam) parm = (uls_ptrtype_tool(outparam)) data;
 	int fd = parm->n;
 
 	uls_dealloc_object(parm);
@@ -93,22 +91,22 @@ ULS_QUALIFIED_METHOD(__check_fd_dup)(int fd, int flags)
 int
 ULS_QUALIFIED_METHOD(uls_select_isrc_filler)(uls_context_ptr_t ctx, uls_istream_ptr_t istr)
 {
-	_uls_tool_ptrtype_(utf_inbuf) utf_inp;
-	_uls_callback_type_this_(fill_isource) fill_isrc;
-	_uls_callback_type_this_(ungrab_isource) ungrab_proc;
+	uls_ptrtype_tool(utf_inbuf) utf_inp;
+	uls_callback_type_this(fill_isource) fill_isrc;
+	uls_callback_type_this(ungrab_isource) ungrab_proc;
 	int bufsiz0, mode, subtype = istr->header.subtype;
 	uls_voidptr_t dat;
 
 	if (istr->header.filetype == ULS_STREAM_RAW) {
 		if (subtype == UTF_INPUT_FORMAT_8) {
-			fill_isrc = _uls_ref_callback_this(uls_fill_fd_source_utf8);
+			fill_isrc = uls_ref_callback_this(uls_fill_fd_source_utf8);
 		} else if (subtype == UTF_INPUT_FORMAT_16) {
-			fill_isrc = _uls_ref_callback_this(uls_fill_fd_source_utf16);
+			fill_isrc = uls_ref_callback_this(uls_fill_fd_source_utf16);
 		} else if (subtype == UTF_INPUT_FORMAT_32) {
-			fill_isrc = _uls_ref_callback_this(uls_fill_fd_source_utf32);
+			fill_isrc = uls_ref_callback_this(uls_fill_fd_source_utf32);
 		} else {
 			subtype = UTF_INPUT_FORMAT_8;
-			fill_isrc = _uls_ref_callback_this(uls_fill_fd_source_utf8);
+			fill_isrc = uls_ref_callback_this(uls_fill_fd_source_utf8);
 		}
 
 		bufsiz0 = ULS_FDBUF_INITSIZE;
@@ -121,7 +119,7 @@ ULS_QUALIFIED_METHOD(uls_select_isrc_filler)(uls_context_ptr_t ctx, uls_istream_
 		utf_inp->data = (uls_voidptr_t) istr;
 
 		dat = (uls_voidptr_t) utf_inp;
-		ungrab_proc = _uls_ref_callback_this(uls_ungrab_fd_utf);
+		ungrab_proc = uls_ref_callback_this(uls_ungrab_fd_utf);
 
 	} else {
 		fill_isrc = nilptr;
@@ -129,8 +127,8 @@ ULS_QUALIFIED_METHOD(uls_select_isrc_filler)(uls_context_ptr_t ctx, uls_istream_
 		uls_input_set_fl(ctx->input, ULS_INP_FL_READONLY);
 
 		dat = (uls_voidptr_t) istr;
-		fill_isrc = _uls_ref_callback_this(uls_fill_fd_stream);
-		ungrab_proc = _uls_ref_callback_this(uls_ungrab_fd_stream);
+		fill_isrc = uls_ref_callback_this(uls_fill_fd_stream);
+		ungrab_proc = uls_ref_callback_this(uls_ungrab_fd_stream);
 	}
 
 	uls_input_reset(ctx->input, bufsiz0, 0);
@@ -141,46 +139,46 @@ ULS_QUALIFIED_METHOD(uls_select_isrc_filler)(uls_context_ptr_t ctx, uls_istream_
 }
 
 ULS_QUALIFIED_RETTYP(uls_gettok_t)
-ULS_QUALIFIED_METHOD(find_isrc_filler)(int fd_type, int fd_subtype, _uls_tool_ptrtype_(outparam) parms)
+ULS_QUALIFIED_METHOD(find_isrc_filler)(int fd_type, int fd_subtype, uls_ptrtype_tool(outparam) parms)
 {
-	_uls_callback_type_this_(gettok) proc = nilptr;
-	_uls_callback_type_this_(xcontext_filler) fillproc = nilptr;
-	_uls_callback_type_this_(xctx_boundary_checker) subproc2 = nilptr;
+	uls_callback_type_this(gettok) proc = nilptr;
+	uls_callback_type_this(xcontext_filler) fillproc = nilptr;
+	uls_callback_type_this(xctx_boundary_checker) subproc2 = nilptr;
 	int is_fillproc_dfl = 0;
 
 	if (fd_type == ULS_STREAM_RAW) {
-		proc = _uls_ref_callback_this(uls_gettok_raw);
-		fillproc = _uls_ref_callback_this(xcontext_raw_filler);
-		subproc2 = _uls_ref_callback_this(check_rec_boundary_null);
+		proc = uls_ref_callback_this(uls_gettok_raw);
+		fillproc = uls_ref_callback_this(xcontext_raw_filler);
+		subproc2 = uls_ref_callback_this(check_rec_boundary_null);
 		is_fillproc_dfl = 1;
 
 	} else if (fd_type == ULS_STREAM_ULS) {
 		if (fd_subtype == ULS_STREAM_BIN_LE) {
 			if (_uls_sysinfo_(ULS_BYTE_ORDER) == ULS_LITTLE_ENDIAN) {
-				proc = _uls_ref_callback_this(uls_gettok_bin);
-				fillproc = _uls_ref_callback_this(xcontext_binfd_filler);
-				subproc2 = _uls_ref_callback_this(check_rec_boundary_host_order);
+				proc = uls_ref_callback_this(uls_gettok_bin);
+				fillproc = uls_ref_callback_this(xcontext_binfd_filler);
+				subproc2 = uls_ref_callback_this(check_rec_boundary_host_order);
 			} else { // ULS_BIG_ENDIAN
-				proc = _uls_ref_callback_this(uls_gettok_bin);
-				fillproc = _uls_ref_callback_this(xcontext_binfd_filler);
-				subproc2 = _uls_ref_callback_this(check_rec_boundary_reverse_order);
+				proc = uls_ref_callback_this(uls_gettok_bin);
+				fillproc = uls_ref_callback_this(xcontext_binfd_filler);
+				subproc2 = uls_ref_callback_this(check_rec_boundary_reverse_order);
 			}
 
 		} else if (fd_subtype == ULS_STREAM_BIN_BE) {
 			if (_uls_sysinfo_(ULS_BYTE_ORDER) == ULS_LITTLE_ENDIAN) {
-				proc = _uls_ref_callback_this(uls_gettok_bin);
-				fillproc = _uls_ref_callback_this(xcontext_binfd_filler);
-				subproc2 = _uls_ref_callback_this(check_rec_boundary_reverse_order);
+				proc = uls_ref_callback_this(uls_gettok_bin);
+				fillproc = uls_ref_callback_this(xcontext_binfd_filler);
+				subproc2 = uls_ref_callback_this(check_rec_boundary_reverse_order);
 			} else { // ULS_BIG_ENDIAN
-				proc = _uls_ref_callback_this(uls_gettok_bin);
-				fillproc = _uls_ref_callback_this(xcontext_binfd_filler);
-				subproc2 = _uls_ref_callback_this(check_rec_boundary_host_order);
+				proc = uls_ref_callback_this(uls_gettok_bin);
+				fillproc = uls_ref_callback_this(xcontext_binfd_filler);
+				subproc2 = uls_ref_callback_this(check_rec_boundary_host_order);
 			}
 
 		} else if (fd_subtype == ULS_STREAM_TXT) {
-			proc = _uls_ref_callback_this(uls_gettok_bin);
-			fillproc = _uls_ref_callback_this(xcontext_txtfd_filler);
-			subproc2 = _uls_ref_callback_this(check_rec_boundary_null);
+			proc = uls_ref_callback_this(uls_gettok_bin);
+			fillproc = uls_ref_callback_this(xcontext_txtfd_filler);
+			subproc2 = uls_ref_callback_this(check_rec_boundary_null);
 		}
 	}
 
@@ -198,7 +196,7 @@ ULS_QUALIFIED_METHOD(uls_push_isrc_type)(uls_lex_ptr_t uls, int fd_type, int fd_
 	uls_xcontext_filler_t fill_isrc;
 	uls_xctx_boundary_checker_t fill_subproc2;
 	uls_gettok_t  proc;
-	_uls_tool_type_(outparam) parms1;
+	uls_type_tool(outparam) parms1;
 	int start_lno;
 
 	if ((proc=find_isrc_filler(fd_type, fd_subtype, uls_ptr(parms1))) == nilptr) {
@@ -216,7 +214,6 @@ ULS_QUALIFIED_METHOD(uls_push_isrc_type)(uls_lex_ptr_t uls, int fd_type, int fd_
 	if (parms1.flags) {
 		ctx->flags |= ULS_CTX_FL_FILL_RAW;
 	} else {
-		// BUGFIX-211: You omitted unsetting ULS_CTX_FL_FILL_RAW.
 		ctx->flags &= ~ULS_CTX_FL_FILL_RAW;
 	}
 
@@ -250,7 +247,7 @@ ULS_QUALIFIED_METHOD(uls_push_istream)(uls_lex_ptr_t uls, uls_istream_ptr_t istr
 		return -1;
 	}
 
-	uls_set_tag(uls, _uls_get_namebuf_value(istr->filepath), -1);
+	uls_set_tag(uls, uls_get_namebuf_value(istr->filepath), -1);
 	++istr->ref_cnt; // grab it!!
 
 	if (__uls_change_stream_hdr(uls, istr, flags) < 0) {
@@ -260,7 +257,7 @@ ULS_QUALIFIED_METHOD(uls_push_istream)(uls_lex_ptr_t uls, uls_istream_ptr_t istr
 
 	if (__uls_bind_istream_tmpls(istr, uls, tmpl_list) < 0) {
 		_uls_log(err_log)("can't put stream %s on the stack of %s.",
-			_uls_get_namebuf_value(istr->filepath), _uls_get_namebuf_value(uls->ulc_name));
+			uls_get_namebuf_value(istr->filepath), uls_get_namebuf_value(uls->ulc_name));
 		uls_pop(uls);
 		return -1;
 	}
@@ -308,7 +305,7 @@ ULS_QUALIFIED_METHOD(uls_push_istream_2)(uls_lex_ptr_t uls, uls_istream_ptr_t is
 		return -1;
 	}
 
-	uls_set_tag(uls, _uls_get_namebuf_value(istr->filepath), -1);
+	uls_set_tag(uls, uls_get_namebuf_value(istr->filepath), -1);
 	++istr->ref_cnt;
 
 	if (tmpl_nams != nilptr) {
@@ -325,7 +322,7 @@ ULS_QUALIFIED_METHOD(uls_push_istream_2)(uls_lex_ptr_t uls, uls_istream_ptr_t is
 
 	if (__uls_bind_istream_tmpls(istr, uls, uls_ptr(tmpl_list)) < 0) {
 		_uls_log(err_log)("can't put stream %s on the stack of %s.",
-			_uls_get_namebuf_value(istr->filepath), _uls_get_namebuf_value(uls->ulc_name));
+			uls_get_namebuf_value(istr->filepath), uls_get_namebuf_value(uls->ulc_name));
 		uls_deinit_tmpls(uls_ptr(tmpl_list));
 		uls_pop(uls);
 		return -1;
@@ -419,7 +416,7 @@ ULS_DLL_EXTERN int
 ULS_QUALIFIED_METHOD(uls_push_fd)(uls_lex_ptr_t uls, int fd, int flags)
 {
 	uls_istream_ptr_t istr;
-	_uls_tool_ptrtype_(outparam) parm;
+	uls_ptrtype_tool(outparam) parm;
 	int fd2;
 
 	if ((fd2=__check_fd_dup(fd, flags)) < 0) {
@@ -440,10 +437,10 @@ ULS_QUALIFIED_METHOD(uls_push_fd)(uls_lex_ptr_t uls, int fd, int flags)
 	}
 
 	if (fd2 != fd) {
-		parm = uls_alloc_object(_uls_tool_type_(outparam));
+		parm = uls_alloc_object(uls_type_tool(outparam));
 		parm->n = fd2;
 		uls_register_ungrabber(uls, 0,
-			_uls_ref_callback_this(uls_fd_ungrabber), (uls_voidptr_t) parm);
+			uls_ref_callback_this(uls_fd_ungrabber), (uls_voidptr_t) parm);
 	}
 
 	--istr->ref_cnt;
@@ -499,7 +496,7 @@ ULS_QUALIFIED_METHOD(uls_push_utf16_line)(uls_lex_ptr_t uls, uls_uint16* wline, 
 {
 	char  *line;
 	int len;
-	_uls_tool_type_(outparam) parms;
+	uls_type_tool(outparam) parms;
 
 	if (wline == NULL || wlen < 0) {
 		_uls_log(err_log)("%s: fail to set utf16 string", __FUNCTION__);
@@ -523,7 +520,7 @@ ULS_QUALIFIED_METHOD(uls_set_utf16_line)(uls_lex_ptr_t uls, uls_uint16* wline, i
 {
 	char  *line;
 	int len;
-	_uls_tool_type_(outparam) parms;
+	uls_type_tool(outparam) parms;
 
 	if (wline == NULL || wlen < 0) {
 		_uls_log(err_log)("%s: fail to set utf16 string", __FUNCTION__);
@@ -547,7 +544,7 @@ ULS_QUALIFIED_METHOD(uls_push_utf32_line)(uls_lex_ptr_t uls, uls_uint32* wline, 
 {
 	char  *line;
 	int len;
-	_uls_tool_type_(outparam) parms;
+	uls_type_tool(outparam) parms;
 
 	if (wline == NULL || wlen < 0) {
 		_uls_log(err_log)("%s: fail to set utf32 string", __FUNCTION__);
@@ -571,7 +568,7 @@ ULS_QUALIFIED_METHOD(uls_set_utf32_line)(uls_lex_ptr_t uls, uls_uint32* wline, i
 {
 	char  *line;
 	int len;
-	_uls_tool_type_(outparam) parms;
+	uls_type_tool(outparam) parms;
 
 	if (wline == NULL || wlen < 0) {
 		_uls_log(err_log)("%s: fail to set utf32 string", __FUNCTION__);

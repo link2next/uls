@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -44,17 +44,17 @@ extern "C" {
 #endif
 
 #ifdef ULS_DEF_PUBLIC_TYPE
-#define ULS_N_SYSPROPS  16
+
 #define ULS_PROPPOOL_DFLSIZ 256
 
-ULS_DEFINE_STRUCT(uls_sysprop)
+ULS_DEFINE_STRUCT(sysprop)
 {
-	_uls_def_namebuf(name, ULS_LEXSTR_MAXSIZ);
+	uls_def_namebuf_this(name, ULS_LEXSTR_MAXSIZ);
 	int stridx;
 };
-ULS_DEF_ARRAY_THIS_TYPE01(sysprop, ULS_N_SYSPROPS);
+ULS_DEF_ARRAY_TYPE00(sysprop, SYSPROP_TYPE00_ULS_N_SYSPROPS, ULS_N_SYSPROPS);
 
-ULS_DEFINE_STRUCT(uls_sysinfo)
+ULS_DEFINE_STRUCT(sysinfo)
 {
 	int initialized;
 	int ULS_BYTE_ORDER;
@@ -67,7 +67,7 @@ ULS_DEFINE_STRUCT(uls_sysinfo)
 	char *ULC_SEARCH_PATH;
 	int  encoding, codepage, multibytes;
 
-	uls_decl_array_this_type01(properties, sysprop, ULS_N_SYSPROPS);
+	uls_decl_array_type00(properties, sysprop, ULS_N_SYSPROPS);
 	int n_properties;
 
 	int  n_strpool, n_alloc_strpool;
@@ -88,7 +88,7 @@ EXTERNAL uls_sysinfo_ptr_t uls_sysinfo;
 #if defined(__ULS_SYSPROPS__) || defined(ULS_DECL_PRIVATE_PROC)
 ULS_DECL_STATIC int __init_system_info(uls_sysinfo_ptr_t sysinfo, int poolsiz);
 ULS_DECL_STATIC uls_sysprop_ptr_t __get_system_property(uls_sysinfo_ptr_t sysinfo, const char* name);
-ULS_DECL_STATIC char* get_nameval_pair(_uls_tool_ptrtype_(parm_line) parm_ln);
+ULS_DECL_STATIC char* get_nameval_pair(uls_parm_line_ptr_t parm_ln);
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC

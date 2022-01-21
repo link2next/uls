@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -43,14 +43,14 @@ extern "C" {
 #endif
 
 #ifdef ULS_DEF_PUBLIC_TYPE
-ULS_DEFINE_STRUCT(uls_nam_tok)
+ULS_DEFINE_STRUCT(nam_tok)
 {
   const char *name;
   int tok_id;
 };
-ULS_DEF_ARRAY_THIS_TYPE10(nam_tok);
+ULS_DEF_ARRAY_TYPE10(nam_tok);
 
-ULS_DEFINE_STRUCT(uld_line)
+_ULS_DEFINE_STRUCT(uld_line)
 {
   const char *name;
   const char *name2;
@@ -58,7 +58,7 @@ ULS_DEFINE_STRUCT(uld_line)
   const char *aliases;
 };
 
-ULS_DEFINE_STRUCT(uld_names_map)
+_ULS_DEFINE_STRUCT(uld_names_map)
 {
   uls_lex_ptr_t uls;
   int n_vx_namelist;
@@ -71,11 +71,11 @@ ULS_DECL_STATIC int comp_vx_by_toknam(const uls_voidptr_t a, const uls_voidptr_t
 ULS_DECL_STATIC int srch_vx_by_toknam(const uls_voidptr_t a, const uls_voidptr_t b);
 ULS_DECL_STATIC void __change_tok_id(uls_tokdef_vx_ptr_t e_vx, int tok_id);
 ULS_DECL_STATIC int __change_tok_nam(uls_tokdef_vx_ptr_t e0_vx, const char* name, const char* name2);
-ULS_DECL_STATIC int add_aliases_to_token(uls_tokdef_vx_ptr_t e0_vx, const char *wrd, _uls_tool_ptrtype_(wrd) wrdx);
+ULS_DECL_STATIC int add_aliases_to_token(uls_tokdef_vx_ptr_t e0_vx, const char *wrd, uls_ptrtype_tool(wrd) wrdx);
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC
-int uld_pars_line(int lno, _uls_tool_ptrtype_(wrd) wrdx, uld_line_ptr_t tok_names);
+int uld_pars_line(int lno, uls_ptrtype_tool(wrd) wrdx, uld_line_ptr_t tok_names);
 int uld_proc_line(const char *tag, int lno,
   char* lptr, uls_lex_ptr_t uls, int n2_vx_namelist);
 uls_tokdef_vx_ptr_t uld_find_tokdef_vx(uls_lex_ptr_t uls, int n_vx_namelist, const char* name);
@@ -97,8 +97,8 @@ ULS_DLL_EXTERN int uld_change_tok_names(uls_tokdef_vx_ptr_t e_vx, const char* na
 
 ULS_DLL_EXTERN void uld_export_names(uls_lex_ptr_t uls);
 
-ULS_DLL_EXTERN int uld_export_extra_names(uls_lex_ptr_t uls, _uls_tool_ptrtype_(outparam) parms);
-ULS_DLL_EXTERN void uld_unexport_extra_names(uls_ref_array_this_type10(lst_names,nam_tok));
+ULS_DLL_EXTERN int uld_export_extra_names(uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) parms);
+ULS_DLL_EXTERN void uld_unexport_extra_names(uls_ref_array_type10(lst_names,nam_tok));
 #endif
 
 #ifdef _ULS_CPLUSPLUS

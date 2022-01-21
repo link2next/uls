@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -206,7 +206,7 @@ static void usage_long(void)
 	uls_printf("  go Go golang\n");
 	uls_printf("  visual_basic visual-basic VisualBasic 'visual basic' 'Visual basic'\n");
 	uls_printf("  .....\n");
-	uls_printf(" Each line represents the supported names of a language.\n"); 
+	uls_printf(" Each line represents the supported names of a language.\n");
 	uls_printf(" You may select the any name in same group for your preference.\n");
 	uls_printf(" The name must be used as the argument of uls-object creator,\n");
 	uls_printf("     such as uls_create(), subclasses of UlsLex(), for configuration name.\n");
@@ -251,7 +251,7 @@ set_lang_generated(const char* lang_name)
 	} else if (ult_streql(lang_name, "cpp") || ult_streql(lang_name, "c++")) {
 		prn_flags |= ULS_FL_CPP_GEN; // default value in Linux
 
-	} else if (ult_streql(lang_name, "cppcli") || ult_streql(lang_name, "cpp/cli") || 
+	} else if (ult_streql(lang_name, "cppcli") || ult_streql(lang_name, "cpp/cli") ||
 		ult_streql(lang_name, "c++.net")) {
 		prn_flags |= ULS_FL_CPPCLI_GEN; // default value in Windows
 

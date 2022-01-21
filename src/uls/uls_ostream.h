@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -45,7 +45,7 @@ extern "C" {
 
 #ifdef ULS_DEF_PUBLIC_TYPE
 
-ULS_DEFINE_STRUCT(uls_ostream)
+ULS_DEFINE_STRUCT(ostream)
 {
 	uls_flags_t  flags;
 	uls_stream_header_t header;
@@ -54,10 +54,10 @@ ULS_DEFINE_STRUCT(uls_ostream)
 	int     fd; /* write-only */
 
 	uls_wr_packet_t pktbuf;
-	_uls_tool_type(csz_str) out_fd_csz;
-	_uls_callback_type_this_(make_packet) make_packet_token;
-	_uls_callback_type_this_(make_packet) make_packet_lineno;
-	_uls_callback_type_this_(reorder_bytes) rearrange_packet_bytes;
+	_uls_type_tool(csz_str) out_fd_csz;
+	uls_callback_type_this(make_packet) make_packet_token;
+	uls_callback_type_this(make_packet) make_packet_lineno;
+	uls_callback_type_this(reorder_bytes) rearrange_packet_bytes;
 
 	uls_lex_ptr_t uls;
 };
@@ -65,27 +65,27 @@ ULS_DEFINE_STRUCT(uls_ostream)
 #endif // ULS_DEF_PUBLIC_TYPE
 
 #if defined(__ULS_OSTREAM__) || defined(ULS_DECL_PRIVATE_PROC)
-ULS_DECL_STATIC int uls_make_pkt__null(uls_wr_packet_ptr_t pkt, _uls_tool_ptrtype(csz_str) outbuf);
+ULS_DECL_STATIC int uls_make_pkt__null(uls_wr_packet_ptr_t pkt, _uls_ptrtype_tool(csz_str) outbuf);
 ULS_DECL_STATIC void __make_pkt_to_binstr(uls_wr_packet_ptr_t pkt, char* binstr, int reclen, int txtlen);
 
-ULS_DECL_STATIC int uls_make_pkt__bin(uls_wr_packet_ptr_t pkt, _uls_tool_ptrtype(csz_str) ss_dst);
-ULS_DECL_STATIC int uls_make_pkt__bin_lno(uls_wr_packet_ptr_t pkt, _uls_tool_ptrtype(csz_str) ss_dst);
+ULS_DECL_STATIC int uls_make_pkt__bin(uls_wr_packet_ptr_t pkt, _uls_ptrtype_tool(csz_str) ss_dst);
+ULS_DECL_STATIC int uls_make_pkt__bin_lno(uls_wr_packet_ptr_t pkt, _uls_ptrtype_tool(csz_str) ss_dst);
 
-ULS_DECL_STATIC int uls_make_pkt__txt(uls_wr_packet_ptr_t pkt, _uls_tool_ptrtype(csz_str) ss_dst);
-ULS_DECL_STATIC int uls_make_pkt__txt_lno(uls_wr_packet_ptr_t pkt, _uls_tool_ptrtype(csz_str) ss_dst);
+ULS_DECL_STATIC int uls_make_pkt__txt(uls_wr_packet_ptr_t pkt, _uls_ptrtype_tool(csz_str) ss_dst);
+ULS_DECL_STATIC int uls_make_pkt__txt_lno(uls_wr_packet_ptr_t pkt, _uls_ptrtype_tool(csz_str) ss_dst);
 
 ULS_DECL_STATIC void __init_ostream(uls_ostream_ptr_t ostr);
 ULS_DECL_STATIC void __deinit_ostream(uls_ostream_ptr_t ostr);
 ULS_DECL_STATIC uls_ostream_ptr_t __create_ostream(int fd);
 ULS_DECL_STATIC void __destroy_ostream(uls_ostream_ptr_t ostr);
 ULS_DECL_STATIC void __bind_ostream_callbacks(uls_ostream_ptr_t ostr, int stream_type);
-ULS_DECL_STATIC int write_uld_to_ostream(uls_ref_array_this_type10(lst_names,nam_tok),
-	_uls_tool_ptrtype_(outparam) parms, int fd_out);
-ULS_DECL_STATIC int write_ostream_header(uls_ostream_ptr_t ostr, uls_ref_array_this_type10(lst_names,nam_tok));
+ULS_DECL_STATIC int write_uld_to_ostream(uls_ref_array_type10(lst_names,nam_tok),
+	uls_ptrtype_tool(outparam) parms, int fd_out);
+ULS_DECL_STATIC int write_ostream_header(uls_ostream_ptr_t ostr, uls_ref_array_type10(lst_names,nam_tok));
 ULS_DECL_STATIC int __uls_bind_ostream(uls_ostream_ptr_t ostr, const char *specname,
-	uls_lex_ptr_t uls, _uls_tool_ptrtype_(outparam) parms);
+	uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) parms);
 ULS_DECL_STATIC void __uls_unbind_ostream(uls_ostream_ptr_t ostr);
-ULS_DECL_STATIC int __flush_uls_stream_buffer(_uls_tool_ptrtype(csz_str) outbuf, int fd, int force);
+ULS_DECL_STATIC int __flush_uls_stream_buffer(_uls_ptrtype_tool(csz_str) outbuf, int fd, int force);
 ULS_DECL_STATIC int __uls_finalize_ostream(uls_ostream_ptr_t ostr);
 ULS_DECL_STATIC int __uls_make_packet_linenum(uls_ostream_ptr_t ostr, int lno, const char* tag, int tag_len);
 ULS_DECL_STATIC int __uls_make_packet(uls_ostream_ptr_t ostr, int tokid, const char* tokstr, int l_tokstr);

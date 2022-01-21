@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -63,7 +63,7 @@ ULS_DEFINE_DELEGATE_END(fdf_iprovider);
 #endif
 
 #ifdef ULS_DEF_PROTECTED_TYPE
-ULS_DEFINE_STRUCT(fdf)
+_ULS_DEFINE_STRUCT(fdf)
 {
 	uls_fdf_iprovider_t i_provider;
 	const char *filter;
@@ -74,6 +74,12 @@ ULS_DEFINE_STRUCT(fdf)
 #endif // ULS_DEF_PROTECTED_TYPE
 
 #ifdef ULS_DECL_PROTECTED_PROC
+char** uls_pars_cmdline(const char* cmdline, char** p_line, int* ptr_n_args);
+int uls_execv_cmdline(const char* cmdline);
+int uls_proc_join(uls_pid_t *child_pid, int n_child_pid);
+#endif
+
+#ifdef ULS_DECL_PUBLIC_PROC
 void fdf_init(fdf_t *fdflt, uls_fdf_iprovider_t i_provider, const char* cmdline);
 void fdf_reset(fdf_t *fdflt, uls_fdf_iprovider_t i_provider, const char* cmdline);
 void fdf_deinit(fdf_t *fdflt);
@@ -81,10 +87,6 @@ int fdf_open(fdf_t *fdflt, int fd);
 int fdf_close(fdf_t* fd_flt);
 int fdf_iprovider_simple(int fdin, int writefd);
 int fdf_iprovider_filelist(int fd_list, int writefd);
-
-char** uls_pars_cmdline(const char* cmdline, char** p_line, int* ptr_n_args);
-int uls_execv_cmdline(const char* cmdline);
-int uls_proc_join(uls_pid_t *child_pid, int n_child_pid);
 #endif
 
 #ifdef _ULS_CPLUSPLUS

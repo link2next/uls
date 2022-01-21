@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -49,7 +49,7 @@ ULS_QUALIFIED_METHOD(__find_first_space_char)(const char* lptr, const char* lptr
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__numof_lfs)(_uls_tool_ptrtype_(outparam) parms)
+ULS_QUALIFIED_METHOD(__numof_lfs)(uls_ptrtype_tool(outparam) parms)
 {
 	const char* str = parms->lptr;
 	int i, len, n = 0;
@@ -168,7 +168,6 @@ ULS_QUALIFIED_METHOD(__advance_upto_nonspace)(uls_context_ptr_t ctx)
 ULS_DECL_STATIC ULS_QUALIFIED_RETTYP(uls_context_ptr_t)
 ULS_QUALIFIED_METHOD(__uls_unget_str)(uls_lex_ptr_t uls, const char* str, int len)
 {
-	// assert: len > 0
 	uls_context_ptr_t ctx = uls->xcontext.context;
 	uls_lexseg_ptr_t lexseg;
 	int len1, k1;
@@ -248,7 +247,7 @@ ULS_QUALIFIED_RETTYP(uls_context_ptr_t)
 ULS_QUALIFIED_METHOD(__uls_unget_tok)(uls_lex_ptr_t uls)
 {
 	uls_context_ptr_t ctx = uls->xcontext.context;
-	_uls_tool_type_(outparam) parms;
+	uls_type_tool(outparam) parms;
 	uls_lexseg_ptr_t lexseg_prev;
 	int n_lfs, l_lxm;
 	const char *lxm;
@@ -289,7 +288,7 @@ ULS_QUALIFIED_METHOD(__uls_unget_tok)(uls_lex_ptr_t uls)
 }
 
 uls_uch_t
-ULS_QUALIFIED_METHOD(uls_peekch_detail)(uls_lex_ptr_t uls, _uls_tool_ptrtype_(outparam) parms)
+ULS_QUALIFIED_METHOD(uls_peekch_detail)(uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) parms)
 {
 	uls_xcontext_ptr_t xctx = uls_ptr(uls->xcontext);
 	const char *ch_ctx = uls->ch_context;
@@ -301,7 +300,6 @@ ULS_QUALIFIED_METHOD(uls_peekch_detail)(uls_lex_ptr_t uls, _uls_tool_ptrtype_(ou
 	uls_uch_t   uch;
 	char ch;
 
-	// assert: pp_quotetype != NULL AND len_uch != NULL
 again_1:
 	lptr = xctx->context->lptr;
 
@@ -335,13 +333,18 @@ again_1:
 		}
 	}
 
-	// assert: lptr < lptr_end, *lptr != '\0'
-	if (ch_ctx[ch=*lptr] == 0) {
-		if (ch != '\t' && ch != '\n') uch = ' ';
-		else uch = ch;
+	if ((ch=*lptr) < ULS_SYNTAX_TABLE_SIZE) {
+		if (ch_ctx[ch] == 0) {
+			if (ch != '\t' && ch != '\n') ch = ' ';
+		}
+		uch = ch;
 		rc = 1;
 	} else {
-		rc = _uls_tool_(decode_utf8)(lptr, -1, &uch);
+		if ((rc = _uls_tool_(decode_utf8)(lptr, -1, &uch)) <= 0) {
+			parms->len = -3; // ERR
+			parms->data = nilptr;
+			return ULS_UCH_NONE;
+		}
 	}
 
 	parms->len = rc;
@@ -357,7 +360,7 @@ ULS_QUALIFIED_METHOD(uls_peek_uch)(uls_lex_ptr_t uls, uls_nextch_detail_ptr_t de
 	uls_quotetype_ptr_t qmt;
 	int      qtok, len_uch;
 	uls_uch_t uch;
-	_uls_tool_type_(outparam) parms1;
+	uls_type_tool(outparam) parms1;
 
 	if (ctx->flags & ULS_CTX_FL_TOKEN_UNGOT) {
 		ctx->flags &= ~ULS_CTX_FL_TOKEN_UNGOT;
@@ -434,7 +437,7 @@ ULS_DLL_EXTERN void
 ULS_QUALIFIED_METHOD(uls_unget_lexeme)(uls_lex_ptr_t uls, const char *lxm, int tok_id)
 {
 	uls_context_ptr_t ctx = uls->xcontext.context;
-	_uls_tool_type_(outparam) parms;
+	uls_type_tool(outparam) parms;
 	uls_decl_parray_slots_init(slots_rsv, tokdef_vx, uls_ptr(uls->tokdef_vx_rsvd));
 	int l_lxm, n_lfs;
 	char *lptr;

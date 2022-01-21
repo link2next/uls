@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -32,6 +32,7 @@
   </author>
 */
 
+#define ULS_DECL_PROTECTED_PROC
 #include "uls.h"
 #include "uls/uls_misc.h"
 #include "uls/uls_freq.h"
@@ -42,7 +43,7 @@
 #define THIS_PROGNAME "ulf_gen"
 #define DFL_N_SAMPLES 0xFFFF
 
-ULS_DEFINE_STRUCT(stat_of_round)
+_ULS_DEFINE_STRUCT(stat_of_round)
 {
 	uls_dflhash_state_t dflhash_stat0;
 	int   n; // # of buckets
@@ -568,12 +569,15 @@ main(int argc, char* argv[])
 	if ((fp_out=uls_fp_open(out_file, ULS_FIO_CREAT)) == NULL) {
 		err_log("%s: fail to create '%s'", __FUNCTION__, out_file);
 		stat = -1;
-	}
-
-	err_log("Gathering the statistics of keywords usage, ...");
-
-	if (ulf_create_file_internal(fp_list, fp_out, i0, argc, argv) < 0) {
-		stat = -1;
+	} else {
+		err_log("Gathering the statistics of keywords usage, ...");
+		if (ulf_create_file_internal(fp_list, fp_out, i0, argc, argv) < 0) {
+			err_log("%s: internal error!'", __FUNCTION__);
+			stat = -1;
+		} else {
+			err_log("Writing the frequencies of keywords to %s, ...", out_file);
+		}
+		uls_fp_close(fp_out);
 	}
 
 	if (fp_list != NULL) {
@@ -581,8 +585,6 @@ main(int argc, char* argv[])
 		fp_list = NULL;
 	}
 
-	err_log("Writing the frequencies of keywords to %s, ...", out_file);
-	uls_fp_close(fp_out);
 	uls_destroy(sam_lex);
 
 	uls_mfree(filelist);

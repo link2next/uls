@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -39,7 +39,7 @@
 #endif
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(uls_make_pkt__null)(uls_wr_packet_ptr_t pkt, _uls_tool_ptrtype(csz_str) outbuf)
+ULS_QUALIFIED_METHOD(uls_make_pkt__null)(uls_wr_packet_ptr_t pkt, _uls_ptrtype_tool(csz_str) outbuf)
 {
 	return 0;
 }
@@ -49,8 +49,6 @@ ULS_QUALIFIED_METHOD(__make_pkt_to_binstr)(uls_wr_packet_ptr_t pkt, char* binstr
 {
 	uls_int32 hdrbuf[ULS_BIN_RECHDR_NUM_INT32];
 	char *outptr = binstr;
-
-	// assert: pkt->len_tokstr >= 0
 
 	hdrbuf[0] = pkt->pkt.tok_id;
 	hdrbuf[1] = txtlen;
@@ -69,12 +67,11 @@ ULS_QUALIFIED_METHOD(__make_pkt_to_binstr)(uls_wr_packet_ptr_t pkt, char* binstr
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(uls_make_pkt__bin)(uls_wr_packet_ptr_t pkt, _uls_tool_ptrtype(csz_str) ss_dst)
+ULS_QUALIFIED_METHOD(uls_make_pkt__bin)(uls_wr_packet_ptr_t pkt, _uls_ptrtype_tool(csz_str) ss_dst)
 {
 	int  txtlen, reclen;
 	char *outptr0;
 
-	// assert: pkt->pkt.len_tokstr >= 0
 	txtlen = pkt->pkt.len_tokstr;
 	reclen = ULS_BIN_REC_SZ(txtlen);
 
@@ -86,13 +83,12 @@ ULS_QUALIFIED_METHOD(uls_make_pkt__bin)(uls_wr_packet_ptr_t pkt, _uls_tool_ptrty
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(uls_make_pkt__bin_lno)(uls_wr_packet_ptr_t pkt, _uls_tool_ptrtype(csz_str) ss_dst)
+ULS_QUALIFIED_METHOD(uls_make_pkt__bin_lno)(uls_wr_packet_ptr_t pkt, _uls_ptrtype_tool(csz_str) ss_dst)
 {
 	int  len_lno_buf, txtlen, reclen;
 	char  *hdrptr, *outptr;
 	char lno_buf[N_MAX_DIGITS_INT+1];
 
-	// assert: pkt->lineno > 0 AND pkt->tok_id == TOK_LINENUM
 	len_lno_buf = _uls_log_(snprintf)(lno_buf, sizeof(lno_buf), "%X", pkt->lineno);
 
 	if (pkt->pkt.len_tokstr > 0) {
@@ -123,14 +119,13 @@ ULS_QUALIFIED_METHOD(uls_make_pkt__bin_lno)(uls_wr_packet_ptr_t pkt, _uls_tool_p
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(uls_make_pkt__txt)(uls_wr_packet_ptr_t pkt, _uls_tool_ptrtype(csz_str) ss_dst)
+ULS_QUALIFIED_METHOD(uls_make_pkt__txt)(uls_wr_packet_ptr_t pkt, _uls_ptrtype_tool(csz_str) ss_dst)
 {
 	char hdrbuf_txt[ULS_TXT_RECHDR_SZ];
 	int  len, k0;
 
 	k0 = csz_length(ss_dst);
 
-	// assert: pkt->len_tokstr >= 0
 	len = _uls_log_(snprintf)(hdrbuf_txt, sizeof(hdrbuf_txt), "%5d %5d",
 		pkt->pkt.tok_id, pkt->pkt.len_tokstr);
 	_uls_tool(csz_append)(ss_dst, hdrbuf_txt, len);
@@ -144,7 +139,7 @@ ULS_QUALIFIED_METHOD(uls_make_pkt__txt)(uls_wr_packet_ptr_t pkt, _uls_tool_ptrty
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(uls_make_pkt__txt_lno)(uls_wr_packet_ptr_t pkt, _uls_tool_ptrtype(csz_str) ss_dst)
+ULS_QUALIFIED_METHOD(uls_make_pkt__txt_lno)(uls_wr_packet_ptr_t pkt, _uls_ptrtype_tool(csz_str) ss_dst)
 {
 	char hdrbuf_txt[ULS_TXT_RECHDR_SZ];
 	char lno_buf[N_MAX_DIGITS_INT+1];
@@ -153,7 +148,6 @@ ULS_QUALIFIED_METHOD(uls_make_pkt__txt_lno)(uls_wr_packet_ptr_t pkt, _uls_tool_p
 
 	k0 = csz_length(ss_dst);
 
-	// assert: pkt->lineno > 0 AND pkt->tok_id == TOK_LINENUM
 	len_lno_buf = _uls_log_(snprintf)(lno_buf, sizeof(lno_buf), "%X", pkt->lineno);
 
 	if (pkt->pkt.tokstr != NULL) {
@@ -188,9 +182,9 @@ ULS_QUALIFIED_METHOD(__init_ostream)(uls_ostream_ptr_t ostr) {
 	uls_init_wr_packet(uls_ptr(ostr->pktbuf));
 
 	_uls_tool(csz_init)(uls_ptr(ostr->out_fd_csz), 1024);
-	ostr->make_packet_token = _uls_ref_callback_this(uls_make_pkt__null);
-	ostr->make_packet_lineno = _uls_ref_callback_this(uls_make_pkt__null);
-	ostr->rearrange_packet_bytes = _uls_ref_callback_this(uls_reorder_bytes_null);
+	ostr->make_packet_token = uls_ref_callback_this(uls_make_pkt__null);
+	ostr->make_packet_lineno = uls_ref_callback_this(uls_make_pkt__null);
+	ostr->rearrange_packet_bytes = uls_ref_callback_this(uls_reorder_bytes_null);
 }
 
 ULS_DECL_STATIC void
@@ -209,7 +203,7 @@ ULS_QUALIFIED_METHOD(__create_ostream)(int fd)
 	if (fd < 0) return nilptr;
 
 	ostr = uls_alloc_object(uls_ostream_t);
-	__uls_initial_zerofy_object(ostr);
+	uls_initial_zerofy_object(ostr);
 	__init_ostream(ostr);
 
 	ostr->fd = fd;
@@ -242,24 +236,24 @@ ULS_DECL_STATIC void
 ULS_QUALIFIED_METHOD(__bind_ostream_callbacks)(uls_ostream_ptr_t ostr, int stream_type)
 {
 	if (stream_type == ULS_STREAM_BIN_LE) {
-		ostr->make_packet_token = _uls_ref_callback_this(uls_make_pkt__bin);
-		ostr->make_packet_lineno = _uls_ref_callback_this(uls_make_pkt__bin_lno);
-		ostr->rearrange_packet_bytes = _uls_ref_callback_this(uls_reorder_bytes_binle);
+		ostr->make_packet_token = uls_ref_callback_this(uls_make_pkt__bin);
+		ostr->make_packet_lineno = uls_ref_callback_this(uls_make_pkt__bin_lno);
+		ostr->rearrange_packet_bytes = uls_ref_callback_this(uls_reorder_bytes_binle);
 
 	} else if (stream_type == ULS_STREAM_BIN_BE) {
-		ostr->make_packet_token = _uls_ref_callback_this(uls_make_pkt__bin);
-		ostr->make_packet_lineno = _uls_ref_callback_this(uls_make_pkt__bin_lno);
-		ostr->rearrange_packet_bytes = _uls_ref_callback_this(uls_reorder_bytes_binbe);
+		ostr->make_packet_token = uls_ref_callback_this(uls_make_pkt__bin);
+		ostr->make_packet_lineno = uls_ref_callback_this(uls_make_pkt__bin_lno);
+		ostr->rearrange_packet_bytes = uls_ref_callback_this(uls_reorder_bytes_binbe);
 
 	} else if (stream_type == ULS_STREAM_TXT) {
-		ostr->make_packet_token = _uls_ref_callback_this(uls_make_pkt__txt);
-		ostr->make_packet_lineno = _uls_ref_callback_this(uls_make_pkt__txt_lno);
-		ostr->rearrange_packet_bytes = _uls_ref_callback_this(uls_reorder_bytes_null);
+		ostr->make_packet_token = uls_ref_callback_this(uls_make_pkt__txt);
+		ostr->make_packet_lineno = uls_ref_callback_this(uls_make_pkt__txt_lno);
+		ostr->rearrange_packet_bytes = uls_ref_callback_this(uls_reorder_bytes_null);
 
 	} else {
-		ostr->make_packet_token = _uls_ref_callback_this(uls_make_pkt__null);
-		ostr->make_packet_lineno = _uls_ref_callback_this(uls_make_pkt__null);
-		ostr->rearrange_packet_bytes = _uls_ref_callback_this(uls_reorder_bytes_null);
+		ostr->make_packet_token = uls_ref_callback_this(uls_make_pkt__null);
+		ostr->make_packet_lineno = uls_ref_callback_this(uls_make_pkt__null);
+		ostr->rearrange_packet_bytes = uls_ref_callback_this(uls_reorder_bytes_null);
 	}
 
 	ostr->pktbuf.reorder_bytes = ostr->rearrange_packet_bytes;
@@ -269,7 +263,6 @@ ULS_QUALIFIED_METHOD(__bind_ostream_callbacks)(uls_ostream_ptr_t ostr, int strea
 ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(writeline_istr_hdr)(char *buf, int bufsiz, int k, const char *line, int linelen)
 {
-	// assert: line != NULL
 	int k2;
 
 	if (linelen < 0) {
@@ -292,7 +285,6 @@ ULS_QUALIFIED_METHOD(writeline_istr_hdr)(char *buf, int bufsiz, int k, const cha
 ULS_DECL_STATIC void
 ULS_QUALIFIED_METHOD(fill_uls_redundant_lines)(char *buff, int buflen, int len1, const char *mesg2)
 {
-	// assert: buflen < len1
 	int i, k, n_bytes, n_lines, n;
 	int n_bytes_per_line = 63;
 	const char *mesg1 = "RECOMMENDED NOT TO EDIT!";
@@ -327,8 +319,8 @@ ULS_QUALIFIED_METHOD(fill_uls_redundant_lines)(char *buff, int buflen, int len1,
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(write_uld_to_ostream)(uls_ref_array_this_type10(lst_names,nam_tok),
-	_uls_tool_ptrtype_(outparam) parms, int fd_out)
+ULS_QUALIFIED_METHOD(write_uld_to_ostream)(uls_ref_array_type10(lst_names,nam_tok),
+	uls_ptrtype_tool(outparam) parms, int fd_out)
 {
 	int n_lst_names = lst_names->n;
 	char *remap_buf = parms->line;
@@ -375,11 +367,9 @@ ULS_QUALIFIED_METHOD(write_uld_to_ostream)(uls_ref_array_this_type10(lst_names,n
 ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(format_uls_hdrbuf)(char *ulshdr)
 {
-	// assert: ulshdr[ULS_BIN_HDR_SZ]
 	const char* magic_code = "#34183847-D64D-C131-D754-577215664901-ULS-STREAM\n";
 	int magic_code_len = _uls_tool_(strlen)(magic_code);
 
-	// assert: magic_code_len < ULS_BIN_HDR_SZ
 	_uls_tool_(memcopy)(ulshdr, magic_code, magic_code_len);
 
 	return magic_code_len;
@@ -409,7 +399,6 @@ ULS_QUALIFIED_METHOD(do_end_of_uls_hdr)(char *buff, int buflen)
 int
 ULS_QUALIFIED_METHOD(save_istr_hdrbuf)(char *ulshdr, int buflen, int fd)
 {
-	// assert: ulshdr[ULS_BIN_HDR_SZ]
 	int stat = 0;
 
 	if (do_end_of_uls_hdr(ulshdr, buflen) < 0) {
@@ -430,13 +419,13 @@ ULS_QUALIFIED_METHOD(save_istr_hdrbuf)(char *ulshdr, int buflen, int fd)
 
 ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(write_ostream_header)(uls_ostream_ptr_t ostr,
-	uls_ref_array_this_type10(lst_names,nam_tok))
+	uls_ref_array_type10(lst_names,nam_tok))
 {
 	char verstr[ULS_VERSION_STR_MAXLEN+1];
 	char *mode_str, time_buf[ULS_STREAM_CTIME_SIZE+1];
 	int  k, subtype;
-	_uls_tool_type_(version) stream_filever;
-	_uls_tool_type_(outparam) parms1;
+	uls_type_tool(version) stream_filever;
+	uls_type_tool(outparam) parms1;
 
 	char ulshdr[ULS_BIN_HDR_SZ];
 	char linebuff[ULS_LINEBUFF_SIZ__ULS+1];
@@ -468,7 +457,7 @@ ULS_QUALIFIED_METHOD(write_ostream_header)(uls_ostream_ptr_t ostr,
 		return -1;
 	}
 
-	len = _uls_log_(snprintf)(linebuff, sizeof(linebuff), "SPEC: %s", _uls_get_namebuf_value(ostr->header.specname));
+	len = _uls_log_(snprintf)(linebuff, sizeof(linebuff), "SPEC: %s", uls_get_namebuf_value(ostr->header.specname));
 	if ((k = writeline_istr_hdr(ulshdr, ULS_BIN_HDR_SZ, k, linebuff, len)) < 0) {
 		return -1;
 	}
@@ -478,13 +467,13 @@ ULS_QUALIFIED_METHOD(write_ostream_header)(uls_ostream_ptr_t ostr,
 		return -1;
 	}
 
-	uls_get_current_time_yyyymmdd_hhmm(time_buf, sizeof(time_buf));
+	_uls_tool_(get_current_time_yyyymmdd_hhmm)(time_buf, sizeof(time_buf));
 	len = _uls_log_(snprintf)(linebuff, sizeof(linebuff), "CREATION_TIME: %s", time_buf);
 	if ((k = writeline_istr_hdr(ulshdr, ULS_BIN_HDR_SZ, k, linebuff, len)) < 0) {
 		return -1;
 	}
 
-	len = _uls_log_(snprintf)(linebuff, sizeof(linebuff), "TAG: %s", _uls_get_namebuf_value(ostr->header.subname));
+	len = _uls_log_(snprintf)(linebuff, sizeof(linebuff), "TAG: %s", uls_get_namebuf_value(ostr->header.subname));
 	if ((k = writeline_istr_hdr(ulshdr, ULS_BIN_HDR_SZ, k, linebuff, len)) < 0) {
 		return -1;
 	}
@@ -504,7 +493,6 @@ ULS_QUALIFIED_METHOD(write_ostream_header)(uls_ostream_ptr_t ostr,
 		}
 
 		n_blocks = parms1.n2;
-		// notice: n_blocks >= 1
 
 		len = _uls_log_(snprintf)(linebuff, sizeof(linebuff), "TOKEN_REMAP: %d %d", lst_names->n, n_blocks);
 		if ((k = writeline_istr_hdr(ulshdr, ULS_BIN_HDR_SZ, k, linebuff, len)) < 0) {
@@ -529,10 +517,10 @@ ULS_QUALIFIED_METHOD(write_ostream_header)(uls_ostream_ptr_t ostr,
 
 ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(__uls_bind_ostream)
-	(uls_ostream_ptr_t ostr, const char *specname, uls_lex_ptr_t uls, _uls_tool_ptrtype_(outparam) parms)
+	(uls_ostream_ptr_t ostr, const char *specname, uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) parms)
 {
 	if (uls != nilptr) {
-		_uls_set_namebuf_value(ostr->header.specname, _uls_get_namebuf_value(uls->ulc_name));
+		uls_set_namebuf_value(ostr->header.specname, uls_get_namebuf_value(uls->ulc_name));
 		if (uld_export_extra_names(uls, parms) < 0) {
 			return -1;
 		}
@@ -545,7 +533,7 @@ ULS_QUALIFIED_METHOD(__uls_bind_ostream)
 		parms->data = nilptr;
 		parms->n = 0;
 		if (specname == NULL) specname = "<unknown>";
-		_uls_set_namebuf_value(ostr->header.specname, specname);
+		uls_set_namebuf_value(ostr->header.specname, specname);
 	}
 
 	return 0;
@@ -563,7 +551,7 @@ ULS_QUALIFIED_METHOD(__uls_unbind_ostream)(uls_ostream_ptr_t ostr)
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__flush_uls_stream_buffer)(_uls_tool_ptrtype(csz_str) outbuf, int fd, int force)
+ULS_QUALIFIED_METHOD(__flush_uls_stream_buffer)(_uls_ptrtype_tool(csz_str) outbuf, int fd, int force)
 {
 	int k;
 
@@ -582,7 +570,7 @@ ULS_QUALIFIED_METHOD(__flush_uls_stream_buffer)(_uls_tool_ptrtype(csz_str) outbu
 ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(__uls_finalize_ostream)(uls_ostream_ptr_t ostr)
 {
-	_uls_tool_ptrtype(csz_str) outbuf = uls_ptr(ostr->out_fd_csz);
+	_uls_ptrtype_tool(csz_str) outbuf = uls_ptr(ostr->out_fd_csz);
 	uls_lex_ptr_t uls;
 
 	if ((uls = (uls_lex_ptr_t ) ostr->uls) != nilptr) {
@@ -606,7 +594,7 @@ ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(__uls_make_packet_linenum)
 	(uls_ostream_ptr_t ostr, int lno, const char* tag, int tag_len)
 {
-	_uls_tool_ptrtype(csz_str) outbuf = uls_ptr(ostr->out_fd_csz);
+	_uls_ptrtype_tool(csz_str) outbuf = uls_ptr(ostr->out_fd_csz);
 	uls_lex_ptr_t uls = (uls_lex_ptr_t) ostr->uls;
 
 	uls_assert(uls != nilptr);
@@ -630,7 +618,7 @@ ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(__uls_make_packet)
 	(uls_ostream_ptr_t ostr, int tokid, const char* tokstr, int l_tokstr)
 {
-	_uls_tool_ptrtype(csz_str) outbuf = uls_ptr(ostr->out_fd_csz);
+	_uls_ptrtype_tool(csz_str) outbuf = uls_ptr(ostr->out_fd_csz);
 	int k0 = csz_length(outbuf);
 
 	ostr->pktbuf.pkt.tok_id = tokid;
@@ -645,7 +633,7 @@ ULS_QUALIFIED_METHOD(__uls_make_packet)
 void
 ULS_QUALIFIED_METHOD(uls_init_wr_packet)(uls_wr_packet_ptr_t pkt)
 {
-	pkt->reorder_bytes = _uls_ref_callback_this(uls_reorder_bytes_null);
+	pkt->reorder_bytes = uls_ref_callback_this(uls_reorder_bytes_null);
 	pkt->pkt.tok_id = 0;
 	pkt->pkt.tokstr = "";
 	pkt->pkt.len_tokstr = 0;
@@ -662,7 +650,7 @@ ULS_QUALIFIED_METHOD(uls_print_tok_eof)(uls_ostream_ptr_t ostr)
 {
 	uls_lex_ptr_t uls = (uls_lex_ptr_t) ostr->uls;
 	int tokbuf_len, rc;
-	_uls_tool_type_(outbuf) tokbuf;
+	uls_type_tool(outbuf) tokbuf;
 
 	_uls_tool(str_init)(uls_ptr(tokbuf), 64);
 
@@ -686,8 +674,8 @@ ULS_QUALIFIED_METHOD(__uls_create_ostream)
 	(int fd_out, uls_lex_ptr_t uls, int stream_type, const char* subname)
 {
 	uls_ostream_ptr_t ostr;
-	uls_ref_array_this_type10(lst_names, nam_tok);
-	_uls_tool_type_(outparam) parms;
+	uls_ref_array_type10(lst_names, nam_tok);
+	uls_type_tool(outparam) parms;
 	int  rc;
 
 	if (uls == nilptr || fd_out < 0) {
@@ -715,7 +703,7 @@ ULS_QUALIFIED_METHOD(__uls_create_ostream)
 	ostr->header.subtype = stream_type;
 
 	if (subname != NULL) {
-		_uls_set_namebuf_value(ostr->header.subname, subname);
+		uls_set_namebuf_value(ostr->header.subname, subname);
 	}
 
 	if (__uls_bind_ostream(ostr, nilptr, uls, uls_ptr(parms)) < 0) {
@@ -724,7 +712,7 @@ ULS_QUALIFIED_METHOD(__uls_create_ostream)
 		return nilptr;
 	}
 
-	lst_names = uls_cast_array_this_type10(nam_tok) parms.data;
+	lst_names = uls_cast_array_type10(nam_tok) parms.data;
 	rc = write_ostream_header(ostr, lst_names);
 	uld_unexport_extra_names(lst_names);
 
@@ -812,8 +800,6 @@ ULS_QUALIFIED_METHOD(__uls_print_tok)(uls_ostream_ptr_t ostr, int tokid, const c
 {
 	int rc;
 
-	// assert: tok_str != NULL AND l_tokstr >= 0
-
 	if ((rc = __uls_make_packet(ostr, tokid, tokstr, l_tokstr)) < 0) {
 		return -1;
 	}
@@ -845,8 +831,6 @@ ULS_QUALIFIED_METHOD(__uls_print_tok_linenum)(uls_ostream_ptr_t ostr, int lno, c
 {
 	int rc;
 
-	// assert: tag_len >= 0
-
 	if ((rc = __uls_make_packet_linenum(ostr, lno, tag, tag_len)) < 0) {
 		return -1;
 	}
@@ -875,8 +859,8 @@ ULS_QUALIFIED_METHOD(uls_print_tok_linenum)(uls_ostream_ptr_t ostr, int lno, con
 ULS_DLL_EXTERN int
 ULS_QUALIFIED_METHOD(uls_start_stream)(uls_ostream_ptr_t ostr, int flags)
 {
-	_uls_tool_ptrtype(csz_str) outbuf;
-	_uls_tool_type(csz_str) tag_buf;
+	_uls_ptrtype_tool(csz_str) outbuf;
+	_uls_type_tool(csz_str) tag_buf;
 	int  lno=-1, tok_id, stat=0, fd, numbering;
 	uls_lex_ptr_t uls;
 

@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -60,13 +60,13 @@ ULS_DLL_EXTERN int uls_lf_wputs_csz(uls_voidptr_t x_dat, const char* wrdptr, int
 ULS_DLL_EXTERN int uls_lf_wputs_str(uls_voidptr_t x_dat, const char* wrdptr, int wrdlen);
 ULS_DLL_EXTERN int uls_lf_wputs_file(uls_voidptr_t x_dat, const char* wrdptr, int wrdlen);
 
-ULS_DEFINE_STRUCT(uls_warg)
+ULS_DEFINE_STRUCT(warg)
 {
   wchar_t *wstr;
   int wlen;
 };
 
-ULS_DEFINE_STRUCT(uls_warg_list)
+ULS_DEFINE_STRUCT(warg_list)
 {
   uls_warg_t *wargs;
   int n_wargs;

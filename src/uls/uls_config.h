@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -104,9 +104,6 @@
 #define ULS_USE_USTR
 #define _MANAGE_ULS_OBJECTS
 
-#define ULS_QUALIFIED_METHOD(mthname) ULS_CLASS_NAME::mthname
-#define ULS_QUALIFIED_RETTYP(rettyp) ULS_CLASS_NAME::rettyp
-
 #else // ULS_DOTNET
 
 #if defined(ULS_WINDOWS)
@@ -142,7 +139,9 @@
 
 #endif // ULS_WINDOWS
 
-#if !defined(_ULS_IMPLDLL) && !defined(_ULSCPP_IMPLDLL)
+#if defined(_ULS_IMPLDLL) || defined(_ULSCPP_IMPLDLL)
+#define _ULS_INTERNAL_USE_ONLY
+#else
 #define _ULS_USE_ULSCOMPAT
 #endif
 
@@ -160,9 +159,6 @@
 #endif // _UNICODE
 #endif
 
-#define ULS_QUALIFIED_METHOD(mthname) mthname
-#define ULS_QUALIFIED_RETTYP(rettyp) rettyp
-
 #define ULS_DECL_BASIC_TYPES
 #define ULS_DECL_GLOBAL_TYPES
 
@@ -179,7 +175,9 @@
 //#define ULS_DEF_PUBLIC_DATA
 
 //#define ULS_DECL_PRIVATE_PROC
+#ifdef _ULS_INTERNAL_USE_ONLY
 #define ULS_DECL_PROTECTED_PROC
+#endif
 #define ULS_DECL_PUBLIC_PROC
 
 #if defined(__cplusplus)
@@ -187,5 +185,9 @@
 #endif
 
 #endif // ULS_DOTNET
+
+#ifdef _ULS_DEBUG
+#define ULS_DO_ASSERT
+#endif
 
 #endif // __ULS_CONFIG_H__

@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -582,7 +582,7 @@ void UlsLex::resetInputOpts(void)
 // <parm name="ulc_file">The name or path of its lexical configuration.</parm>
 // <return>none</return>
 bool
-UlsLex::initUlsLex_ustr(const char *ulc_file, bool cr2lf)
+UlsLex::initUlsLex_ustr(const char *ulc_file)
 {
 	FILE  *cstdio_out = _uls_stdio_fp(1);
 	uls_lf_puts_t puts_proc_str, puts_proc_file;
@@ -592,15 +592,11 @@ UlsLex::initUlsLex_ustr(const char *ulc_file, bool cr2lf)
 		return false;
 	}
 
-	if (cr2lf) {
-		lex.xcontext.flags |= ULS_XCTX_FL_CR2LF;
-	}
-
 	input_flags = 0;
 	lxm_nstr = new string("");
 	lxm_wstr = new wstring(L"");
 	lxm_id = uls_toknum_none(&lex);
-	
+
 	FileNameBuf = new string("");
 
 	auwcvt = new UlsAuw();
@@ -655,7 +651,7 @@ UlsLex::initUlsLex_ustr(const char *ulc_file, bool cr2lf)
 	return true;
 }
 
-UlsLex::UlsLex(const char *ulc_file, bool cr2lf)
+UlsLex::UlsLex(const char *ulc_file)
 {
 #ifdef ULS_WINDOWS
 	const char *ustr;
@@ -667,15 +663,15 @@ UlsLex::UlsLex(const char *ulc_file, bool cr2lf)
 		err_log("encoding error!");
 	}
 	else {
-		initUlsLex_ustr(ustr, cr2lf);
+		initUlsLex_ustr(ustr);
 	}
 	csz_deinit(&csz);
 #else
-	initUlsLex_ustr(ulc_file, cr2lf);
+	initUlsLex_ustr(ulc_file);
 #endif
 }
 
-UlsLex::UlsLex(const wchar_t *ulc_wfile, bool cr2lf)
+UlsLex::UlsLex(const wchar_t *ulc_wfile)
 {
 	const char *ustr;
 	csz_str_t csz;
@@ -686,13 +682,13 @@ UlsLex::UlsLex(const wchar_t *ulc_wfile, bool cr2lf)
 		err_log("encoding error!");
 	}
 	else {
-		initUlsLex_ustr(ustr, cr2lf);
+		initUlsLex_ustr(ustr);
 	}
 
 	csz_deinit(&csz);
 }
 
-UlsLex::UlsLex(string& ulc_file, bool cr2lf)
+UlsLex::UlsLex(string& ulc_file)
 {
 #ifdef ULS_WINDOWS
 	const char *ustr;
@@ -704,15 +700,15 @@ UlsLex::UlsLex(string& ulc_file, bool cr2lf)
 		err_log("encoding error!");
 	}
 	else {
-		initUlsLex_ustr(ustr, cr2lf);
+		initUlsLex_ustr(ustr);
 	}
 	csz_deinit(&csz);
 #else
-	initUlsLex_ustr(ulc_file.c_str(), cr2lf);
+	initUlsLex_ustr(ulc_file.c_str());
 #endif
 }
 
-UlsLex::UlsLex(wstring& ulc_wfile, bool cr2lf)
+UlsLex::UlsLex(wstring& ulc_wfile)
 {
 	const char *ustr;
 	csz_str_t csz;
@@ -723,7 +719,7 @@ UlsLex::UlsLex(wstring& ulc_wfile, bool cr2lf)
 		err_log("encoding error!");
 	}
 	else {
-		initUlsLex_ustr(ustr, cr2lf);
+		initUlsLex_ustr(ustr);
 	}
 
 	csz_deinit(&csz);
@@ -907,7 +903,7 @@ bool UlsLex::isLogLevelSet(int lvl)
 }
 
 // <brief>
-// Delete the literal-string analyzer that 
+// Delete the literal-string analyzer that
 //     is processing the quote-strings starting with 'pfx'.
 // </brief>
 // <parm name="pfx">The literal string analyzer of which the quote type is started with 'pfx'.</parm>

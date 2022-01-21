@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -69,7 +69,7 @@ ULS_QUALIFIED_METHOD(strdup_cnst)(uls_lang_list_ptr_t tbl, const char *str)
 }
 
 ULS_DECL_STATIC ULS_QUALIFIED_RETTYP(uls_lang_ptr_t)
-ULS_QUALIFIED_METHOD(uls_append_lang)(uls_lang_list_ptr_t tbl, _uls_tool_ptrtype_(outparam) parms)
+ULS_QUALIFIED_METHOD(uls_append_lang)(uls_lang_list_ptr_t tbl, uls_ptrtype_tool(outparam) parms)
 {
 	const char *wrd = parms->lptr;
 	uls_lang_ptr_t lang;
@@ -77,10 +77,10 @@ ULS_QUALIFIED_METHOD(uls_append_lang)(uls_lang_list_ptr_t tbl, _uls_tool_ptrtype
 
 	if ((k=tbl->langs.n) >= tbl->langs.n_alloc) {
 		siz = uls_ceil_log2(k+1, 9);
-		uls_resize_array_this_type10(uls_ptr(tbl->langs), lang, siz);
+		uls_resize_array_type10(uls_ptr(tbl->langs), lang, siz);
 	}
 
-	uls_alloc_array_this_slot_type10(uls_ptr(tbl->langs), lang, k);
+	uls_alloc_array_slot_type10(uls_ptr(tbl->langs), lang, k);
 	lang = uls_get_array_slot_type10(uls_ptr(tbl->langs), k);
 	lang->parent = tbl;
 
@@ -100,8 +100,8 @@ ULS_QUALIFIED_METHOD(langs_proc_line)(uls_lang_list_ptr_t tbl, char* line)
 	uls_lang_ptr_t lang;
 	char *lptr=line, *wrd0, *wrd;
 	int len, lst_id;
-	_uls_tool_type_(outparam) parms;
-	_uls_tool_type_(wrd) wrdx;
+	uls_type_tool(outparam) parms;
+	uls_type_tool(wrd) wrdx;
 
 	wrdx.lptr = lptr;
 	wrd0 = __uls_tool_(splitstr)(uls_ptr(wrdx));
@@ -150,11 +150,11 @@ ULS_QUALIFIED_METHOD(construct_ulc_lang_db)(uls_lang_list_ptr_t tbl)
 	}
 
 	if ((siz = tbl->alias_pool.n) < tbl->alias_pool.n_alloc) {
-		uls_resize_array_this_type10(uls_ptr(tbl->alias_pool), alias, siz);
+		uls_resize_array_type10(uls_ptr(tbl->alias_pool), alias, siz);
 	}
 
 	if ((siz = tbl->langs.n) < tbl->langs.n_alloc) {
-		uls_resize_array_this_type10(uls_ptr(tbl->langs), lang, siz);
+		uls_resize_array_type10(uls_ptr(tbl->langs), lang, siz);
 	}
 
 	slots_ht = uls_parray_slots(uls_ptr(tbl->hashtbl));
@@ -227,17 +227,17 @@ ULS_QUALIFIED_METHOD(uls_deinit_alias)(uls_alias_ptr_t alias)
 ULS_QUALIFIED_RETTYP(uls_alias_ptr_t)
 ULS_QUALIFIED_METHOD(new_ulc_alias)(uls_lang_list_ptr_t tbl, const char *wrd, int lst_id)
 {
-	uls_ref_array_this_init_type10(aliases, alias, uls_ptr(tbl->alias_pool));
+	uls_ref_array_init_type10(aliases, alias, uls_ptr(tbl->alias_pool));
 	int n_aliases = tbl->alias_pool.n, siz;
 	uls_alias_ptr_t e;
 
 	if (n_aliases >= tbl->alias_pool.n_alloc) {
 		siz = uls_ceil_log2(n_aliases+1, 8);
-		uls_resize_array_this_type10(uls_ptr(tbl->alias_pool), alias, siz);
+		uls_resize_array_type10(uls_ptr(tbl->alias_pool), alias, siz);
 		aliases = uls_ptr(tbl->alias_pool);
 	}
 
-	uls_alloc_array_this_slot_type10(aliases, alias, n_aliases);
+	uls_alloc_array_slot_type10(aliases, alias, n_aliases);
 	e = uls_get_array_slot_type10(aliases, n_aliases);
 
 	e->name = NULL;
@@ -270,7 +270,7 @@ ULS_QUALIFIED_METHOD(uls_init_lang_list)(uls_lang_list_ptr_t tbl)
 	uls_decl_parray_slots(slots_ht, alias);
 	int i;
 
-	__uls_initial_zerofy_object(tbl);
+	uls_initial_zerofy_object(tbl);
 
 	uls_init_parray(uls_ptr(tbl->hashtbl), alias, ULC_ALIAS_HASHTABLE_SIZ);
 	slots_ht = uls_parray_slots(uls_ptr(tbl->hashtbl));
@@ -278,8 +278,8 @@ ULS_QUALIFIED_METHOD(uls_init_lang_list)(uls_lang_list_ptr_t tbl)
 		slots_ht[i] = nilptr;
 	}
 
-	uls_init_array_this_type10(uls_ptr(tbl->langs), lang, 0);
-	uls_init_array_this_type10(uls_ptr(tbl->alias_pool), alias, 0);
+	uls_init_array_type10(uls_ptr(tbl->langs), lang, 0);
+	uls_init_array_type10(uls_ptr(tbl->alias_pool), alias, 0);
 }
 
 void
@@ -287,8 +287,8 @@ ULS_QUALIFIED_METHOD(uls_deinit_lang_list)(uls_lang_list_ptr_t tbl)
 {
 	uls_deinit_parray(uls_ptr(tbl->hashtbl));
 
-	uls_deinit_array_this_type10(uls_ptr(tbl->langs), lang);
-	uls_deinit_array_this_type10(uls_ptr(tbl->alias_pool), alias);
+	uls_deinit_array_type10(uls_ptr(tbl->langs), lang);
+	uls_deinit_array_type10(uls_ptr(tbl->alias_pool), alias);
 
 	uls_mfree(tbl->str_pool);
 }
@@ -299,7 +299,7 @@ ULS_QUALIFIED_METHOD(uls_load_langdb)(const char *fpath)
 	uls_lang_list_ptr_t tbl;
 	char linebuff[ULS_LINEBUFF_SIZ+1], *lptr;
 	int len, stat=0;
-	_uls_tool_ptrtype_(file) filp;
+	uls_ptrtype_tool(file) filp;
 
 	tbl = uls_alloc_object(uls_lang_list_t);
 	uls_init_lang_list(tbl);
