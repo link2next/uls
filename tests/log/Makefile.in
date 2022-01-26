@@ -105,8 +105,7 @@ CONFIG_CLEAN_VPATH_FILES =
 PROGRAMS = $(noinst_PROGRAMS)
 am_logging_OBJECTS = logging-logging.$(OBJEXT)
 logging_OBJECTS = $(am_logging_OBJECTS)
-logging_DEPENDENCIES = $(top_builddir)/ulscompat/libulscompat.la \
-	$(top_builddir)/src/libuls.la
+logging_DEPENDENCIES = $(top_builddir)/src/libuls.la
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
@@ -317,9 +316,8 @@ tests_libpath = $(top_builddir)/src:$(top_builddir)/ulscpp
 ACLOCAL_AMFLAGS = -I m4
 logging_SOURCES = logging.c
 logging_CFLAGS = -Wall
-#logging_CPPFLAGS = -I$(top_srcdir)/ulscompat -I$(top_srcdir)/src
-logging_CPPFLAGS = -DULS_USE_WSTR -I$(top_srcdir)/ulscompat -I$(top_srcdir)/src
-logging_LDADD = $(top_builddir)/ulscompat/libulscompat.la $(top_builddir)/src/libuls.la
+logging_CPPFLAGS = -I$(top_srcdir)/src
+logging_LDADD = $(top_builddir)/src/libuls.la
 all: all-am
 
 .SUFFIXES:

@@ -528,7 +528,7 @@ ULS_QUALIFIED_METHOD(uls_path_normalize)(const char* fpath, char* fpath2)
 }
 #endif
 
-int
+ULS_DLL_EXTERN int
 ULS_QUALIFIED_METHOD(uls_mkdir)(const char *filepath0)
 {
 	int rval;

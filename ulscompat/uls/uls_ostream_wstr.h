@@ -52,14 +52,4 @@ ULS_DLL_EXTERN int uls_print_tok_wstr(uls_ostream_ptr_t ostr, int tokid, const w
 }
 #endif
 
-#ifdef _ULS_USE_ULSCOMPAT
-#ifdef ULS_USE_WSTR
-#define __uls_create_ostream __uls_create_ostream_wstr
-#define uls_create_ostream uls_create_ostream_wstr
-#define uls_create_ostream_file uls_create_ostream_file_wstr
-#define uls_print_tok_linenum uls_print_tok_linenum_wstr
-#define uls_print_tok uls_print_tok_wstr
 #endif
-#endif
-
-#endif // __ULS_OSTREAM_WSTR_H__

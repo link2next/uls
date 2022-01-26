@@ -35,10 +35,6 @@
 #define __ULS_LOG__
 #include "uls/uls_log.h"
 #include "uls/uls_misc.h"
-#ifdef ULS_WINDOWS
-#include "uls/uls_util_astr.h"
-#include "uls/uls_util_wstr.h"
-#endif
 
 ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(__uls_fmtproc_coord)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lex_ptr_t uls, uls_lf_context_ptr_t ctx)
@@ -107,11 +103,7 @@ ULS_QUALIFIED_METHOD(initialize_uls_syserr)(void)
 	uls_add_default_log_convspecs(uls_ptr(lf_map_logdfl));
 
 	syslog = _uls_stdio_fp(2);
-#ifdef ULS_WINDOWS
-	syslog_puts = uls_lf_aputs_file;
-#else
 	syslog_puts = uls_lf_puts_file;
-#endif
 	uls_lf_init(uls_ptr(lf_syserr), uls_ptr(lf_map_syserr), syslog, syslog_puts);
 }
 

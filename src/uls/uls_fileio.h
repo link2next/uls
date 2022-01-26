@@ -219,12 +219,8 @@ ULS_DLL_EXTERN void uls_destroy_tempfile(uls_tempfile_ptr_t tmpfile);
 }
 #endif
 
-#ifdef _ULS_USEDLL
-#if defined(ULS_USE_WSTR)
+#ifdef ULS_USE_WSTR
 #include "uls/uls_fileio_wstr.h"
-#elif defined(ULS_USE_ASTR)
-#include "uls/uls_fileio_astr.h"
-#endif
 #endif
 
 #endif // __ULS_FILEIO_H__

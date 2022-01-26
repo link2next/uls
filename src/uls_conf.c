@@ -99,7 +99,6 @@ ULS_QUALIFIED_METHOD(check_keyw_str)(int lno, const char* str, uls_ptrtype_tool(
 		}
 	}
 
-	
 	buf[len] = '\0';
 	parms->len = len;
 
@@ -559,7 +558,6 @@ ULS_QUALIFIED_METHOD(is_quotestart_valid)(uls_lex_ptr_t uls, int k)
 
 	str = uls_get_namebuf_value(qmt0->start_mark);
 	l_str = qmt0->len_start_mark;
-	
 
 	for (i=0; i<uls->quotetypes.n; i++) {
 		if (i == k) continue;

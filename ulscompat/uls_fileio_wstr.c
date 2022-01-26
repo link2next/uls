@@ -35,7 +35,6 @@
 #include "uls/uls_fileio.h"
 #include "uls/uls_auw.h"
 
-#include "uls/uls_fileio_astr.h"
 #include "uls/uls_wlog.h"
 
 ULS_DLL_EXTERN int
@@ -90,20 +89,6 @@ uls_fp_gets_wstr(FILE *fp, wchar_t *wbuf, int wbuf_siz, int flags)
 	abuf = uls_malloc(asiz);
 	csz_init(uls_ptr(csz_wstr), asiz);
 
-#ifdef ULS_WINDOWS
-	if ((alen = uls_fp_gets_astr(fp, abuf, asiz, flags)) <= ULS_EOF) {
-		csz_deinit(uls_ptr(csz_wstr));
-		uls_mfree(abuf);
-		return alen;
-	}
-
-	if ((wstr = uls_astr2wstr(abuf, alen, uls_ptr(csz_wstr))) == NULL) {
-		err_wlog(L"encoding error!");
-		csz_deinit(uls_ptr(csz_wstr));
-		uls_mfree(abuf);
-		return ULS_EOF - 4;
-	}
-#else
 	if ((alen = uls_fp_gets(fp, abuf, asiz, flags)) <= ULS_EOF) {
 		csz_deinit(uls_ptr(csz_wstr));
 		uls_mfree(abuf);
@@ -116,7 +101,6 @@ uls_fp_gets_wstr(FILE *fp, wchar_t *wbuf, int wbuf_siz, int flags)
 		uls_mfree(abuf);
 		return ULS_EOF - 4;
 	}
-#endif
 
 	uls_mfree(abuf);
 

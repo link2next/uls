@@ -76,7 +76,6 @@ static const struct option longopts[] = {
 	{ "prefix",        required_argument, NULL, 'p' },
 	{ "query",         no_argument,       NULL, 'q' },
 	{ "output",        required_argument, NULL, 'o' },
-	{ "astr",          no_argument,       NULL, 'A' },
 	{ "wstr",          no_argument,       NULL, 'W' },
 	{ "silent",        no_argument,       NULL, 'y' },
 	{ "dump",          required_argument, NULL, 'z' },
@@ -88,7 +87,7 @@ static const struct option longopts[] = {
 };
 #endif
 
-#define ULC2CLASS_OPTSTR "d:f:e:l:n:g:p:qo:svAWVHhyz:"
+#define ULC2CLASS_OPTSTR "d:f:e:l:n:g:p:qo:svWVHhyz:"
 
 static void usage_synopsis()
 {
@@ -384,13 +383,7 @@ ulc2class_options(int opt, char* optarg)
 		prn_flags |= ULS_FL_VERBOSE;
 		break;
 
-	case 'A':
-		prn_flags |= ULS_FL_STRFMT_ASTR;
-		prn_flags &= ~ULS_FL_STRFMT_WSTR;
-		break;
-
 	case 'W':
-		prn_flags &= ~ULS_FL_STRFMT_ASTR;
 		prn_flags |= ULS_FL_STRFMT_WSTR;
 		break;
 
@@ -536,11 +529,6 @@ parse_options(int argc, char* argv[])
 	mask = ULS_FL_WANT_REGULAR_TOKS | ULS_FL_WANT_QUOTE_TOKS | ULS_FL_WANT_RESERVED_TOKS;
 	if (!(prn_flags & mask)) prn_flags |= mask;
 
-#ifdef ULS_WINDOWS
-	if ((prn_flags & (ULS_FL_STRFMT_ASTR | ULS_FL_STRFMT_WSTR)) == 0) {
-		prn_flags |= ULS_FL_STRFMT_ASTR;
-	}
-#endif
 	if ((prn_flags & ULS_FL_LANG_GEN_MASK) == 0) {
 		prn_flags |= ULS_FL_CPP_GEN;
 	}
@@ -551,7 +539,7 @@ parse_options(int argc, char* argv[])
 	}
 
 	if (!(prn_flags & ULS_FL_C_GEN)) {
-		prn_flags &= ~(ULS_FL_STRFMT_ASTR | ULS_FL_STRFMT_WSTR);
+		prn_flags &= ~ULS_FL_STRFMT_WSTR;
 	}
 
 	return i0;

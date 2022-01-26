@@ -548,10 +548,7 @@ ULS_QUALIFIED_METHOD(print_tokdef_c_source)(uls_parms_emit_ptr_t emit_parm, cons
 		_uls_log_(sysprn)("\n");
 	}
 
-
-	if (flags & ULS_FL_STRFMT_ASTR) {
-		strfmt = "_astr";
-	} else if (flags & ULS_FL_STRFMT_WSTR) {
+	if (flags & ULS_FL_STRFMT_WSTR) {
 		strfmt = "_wstr";
 	} else {
 		strfmt = "";
@@ -661,8 +658,10 @@ ULS_QUALIFIED_METHOD(print_tokdef_cpp_header)(uls_lex_ptr_t uls,
 
 	if (flags & ULS_FL_CPPCLI_GEN) {
 		cptr2 = "System::String ^";
+	} else if (flags & ULS_FL_STRFMT_WSTR) {
+		cptr2 = "std::wstring &";
 	} else {
-		cptr2 = "std::tstring &";
+		cptr2 = "std::string &";
 	}
 
 	if (flags & ULS_FL_WANT_WRAPPER) {
@@ -714,11 +713,14 @@ ULS_QUALIFIED_METHOD(print_tokdef_cpp_source)(uls_lex_ptr_t uls,
 
 	if (flags & ULS_FL_CPPCLI_GEN) {
 		ns_uls = "uls::polaris";
-		cptr2 = "System::String^";
+		cptr2 = "System::String ^";
 		_uls_log_(sysprn)("using namespace %s;\n\n", ns_uls);
+	} else if (flags & ULS_FL_STRFMT_WSTR) {
+		ns_uls = "uls::crux";
+		cptr2 = "std::wstring &";
 	} else {
 		ns_uls = "uls::crux";
-		cptr2 = "std::tstring&";
+		cptr2 = "std::string &";
 	}
 
 	al = uls_parray_slots(uls_ptr(emit_parm->name_components.args));
@@ -730,7 +732,7 @@ ULS_QUALIFIED_METHOD(print_tokdef_cpp_source)(uls_lex_ptr_t uls,
 	if (emit_parm->n_name_components > 0) ++n_tabs;
 
 	if (emit_parm->fpath_ulc != NULL) {
-		uls_sysprn_tabs(n_tabs, "%s::%s(%s ulc_file)\n", emit_parm->class_name, emit_parm->class_name, cptr2);
+		uls_sysprn_tabs(n_tabs, "%s::%s(%sulc_file)\n", emit_parm->class_name, emit_parm->class_name, cptr2);
 		uls_sysprn_tabs(n_tabs+1, ": %s::UlsLex(ulc_file) %c\n", ns_uls, ch_lbrace);
 	} else {
 		uls_sysprn_tabs(n_tabs, "%s::%s()\n", emit_parm->class_name, emit_parm->class_name);

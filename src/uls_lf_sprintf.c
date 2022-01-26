@@ -40,11 +40,6 @@
 #include "uls/uls_fileio.h"
 #include "uls/uls_auw.h"
 
-#ifdef ULS_WINDOWS
-#include "uls/uls_lf_saprintf.h"
-#include "uls/uls_lf_swprintf.h"
-#endif
-
 ULS_DECL_STATIC void
 ULS_QUALIFIED_METHOD(__uls_lf_sysputs)(const char* msg)
 {
@@ -734,7 +729,7 @@ ULS_QUALIFIED_METHOD(fmtproc_s)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, ul
 	return rc;
 }
 
-int
+ULS_DLL_EXTERN int
 ULS_QUALIFIED_METHOD(fmtproc_ws)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
 {
 	int rc, ulen, wlen;
@@ -1038,7 +1033,7 @@ ULS_QUALIFIED_METHOD(uls_lf_fill_numstr)(uls_voidptr_t x_dat, uls_lf_puts_t puts
 	return nn;
 }
 
-int
+ULS_DLL_EXTERN int
 ULS_QUALIFIED_METHOD(uls_lf_fill_mbstr)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc,
 	uls_lf_convflag_ptr_t p, const char* numstr, int l_numstr, int lw_numstr)
 {

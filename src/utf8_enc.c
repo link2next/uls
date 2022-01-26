@@ -309,7 +309,6 @@ ULS_QUALIFIED_METHOD(dec_utf32_buf)(uls_utf_inbuf_ptr_t inp, uls_uch_t* out_buf,
 		return -1;
 	}
 
-	
 	n_uchs = inp->n_wrds;
 	inp->n_wrds = 0;
 
@@ -551,7 +550,7 @@ ULS_QUALIFIED_METHOD(uls_enc_utf16file_to_8)(int fd, int fd_out, int reverse)
 	uls_utf_set_inbuf(uls_ptr(inbuff), fd);
 
 	while (!uls_utf_is_inbuf_empty(uls_ptr(inbuff))) {
-		if ((outbuf_len = uls_utf_drain_inbuf(uls_ptr(inbuff), outbuf, outbuf_siz)) <= 0) {	
+		if ((outbuf_len = uls_utf_drain_inbuf(uls_ptr(inbuff), outbuf, outbuf_siz)) <= 0) {
 			stat = outbuf_len;
 			break;
 		}

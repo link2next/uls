@@ -41,6 +41,7 @@
 #ifdef ULS_WINDOWS
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <stdint.h>
 #else
 #include <sys/types.h>
 #endif
@@ -94,12 +95,12 @@ typedef System::UInt64   uls_uint64;
 typedef System::Object ^uls_voidptr_t;
 #else
 #ifdef ULS_WINDOWS
-typedef INT16       uls_int16;
-typedef INT32       uls_int32;
-typedef INT64       uls_int64;
-typedef UINT16      uls_uint16;
-typedef UINT32      uls_uint32;
-typedef UINT64      uls_uint64;
+typedef int16_t       uls_int16;
+typedef int32_t       uls_int32;
+typedef int64_t       uls_int64;
+typedef uint16_t      uls_uint16;
+typedef uint32_t      uls_uint32;
+typedef uint64_t      uls_uint64;
 #else
 typedef int16_t     uls_int16;
 typedef int32_t     uls_int32;

@@ -39,29 +39,29 @@ using namespace uls::collection;
 
 namespace
 {
-	tstring config_name = _T("css3.ulc");
-	LPCTSTR PACKAGE_NAME = _T("Css3Toks");
+	string config_name = "css3.ulc";
+	const char * PACKAGE_NAME = "Css3Toks";
 	int  opt_verbose;
 
 	void Usage(void)
 	{
-		err_log(_T("Usage: %s <css3-file>"), PACKAGE_NAME);
-		err_log(_T("   Dumping the tokens in css3 file."));
-		err_log(_T("%s home page: <%s>\n"), PACKAGE_NAME, ULS_URL);
+		err_log("Usage: %s <css3-file>", PACKAGE_NAME);
+		err_log("   Dumping the tokens in css3 file.");
+		err_log("%s home page: <%s>\n", PACKAGE_NAME, ULS_URL);
 	}
 
 	void Version(void)
 	{
 		err_log(ULS_GREETING);
-		err_log(_T("Copyright (C) %d-%d All rights reserved."),
+		err_log("Copyright (C) %d-%d All rights reserved.",
 			ULS_COPYRIGHT_YEAR_START, ULS_COPYRIGHT_YEAR_CURRENT);
-		err_log(_T("Unless required by applicable law or agreed to in writing, software"));
-		err_log(_T("distributed under the License is distributed on an \"AS IS\" BASIS,"));
-		err_log(_T("WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied."));
-		err_log(_T(""));
+		err_log("Unless required by applicable law or agreed to in writing, software");
+		err_log("distributed under the License is distributed on an \"AS IS\" BASIS,");
+		err_log("WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.");
+		err_log("");
 	}
 
-	int css3toks_options(int opt, LPTSTR optarg)
+	int css3toks_options(int opt, char * optarg)
 	{
 		int   stat = 0;
 
@@ -78,7 +78,7 @@ namespace
 			stat = 1;
 			break;
 		default:
-			err_log(_T("undefined option -%c"), opt);
+			err_log("undefined option -%c", opt);
 			stat = -1;
 			break;
 		}
@@ -88,22 +88,22 @@ namespace
 
 	// <brief>
 	// This is a virtual method, inherited from 'UlsLex' class.
-	// This prints to the stdout the tstring representation of the current token.
+	// This prints to the stdout the string representation of the current token.
 	// </brief>
 	// <return>none</return>
 	void dumpToken(Css3Lex *css3lex)
 	{
 		int t = css3lex->getTokNum();
-		LPCTSTR tstr = css3lex->getTokStr().c_str();
+		const char * tstr = css3lex->getTokStr().c_str();
 
 		if (t == Css3Lex::CSS_ID) {
-			uls_printf(_T("\t[     ID] %s\n"), tstr);
+			uls_printf("\t[     ID] %s\n", tstr);
 		}
 		else if (t == Css3Lex::CSS_NUM) {
-			uls_printf(_T("\t[    NUM] %s\n"), tstr);
+			uls_printf("\t[    NUM] %s\n", tstr);
 		}
 		else if (t == Css3Lex::CSS_PATH) {
-			uls_printf(_T("\t[   PATH] '%s'\n"), tstr);
+			uls_printf("\t[   PATH] '%s'\n", tstr);
 		}
 		else {
 			css3lex->dumpTok();
@@ -124,23 +124,20 @@ namespace
 }
 
 int
-_tmain(int argc, LPTARGV argv)
+main(int argc, char **argv)
 {
-	LPTSTR *targv;
 	Css3Lex *css3lex;
-	tstring input_file;
+	string input_file;
 	int   i0;
 
-	ULS_GET_WARGS_LIST(argc, argv, targv);
-
-	if ((i0=uls_getopts(argc, targv, _T("vhV"), css3toks_options)) <= 0) {
+	if ((i0=uls_getopts(argc, argv, "vhV", css3toks_options)) <= 0) {
 		return i0;
 	}
 
 	css3lex = new Css3Lex(config_name);
 
 	if (i0 < argc) {
-		input_file = targv[i0];
+		input_file = argv[i0];
 	} else {
 		Usage();
 		return 1;
@@ -150,7 +147,6 @@ _tmain(int argc, LPTARGV argv)
 	dumpTokens(css3lex);
 
 	delete css3lex;
-	ULS_PUT_WARGS_LIST(argc, targv);
 
 	return 0;
 }

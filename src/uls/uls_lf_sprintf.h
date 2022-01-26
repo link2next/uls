@@ -237,11 +237,8 @@ int uls_lf_puts_prefix(char* str, int flags);
 int uls_lf_fill_ch(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, char ch_fill, int n);
 int uls_lf_fill_numstr(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc,
 	uls_lf_convflag_ptr_t p, const char* numstr, int l_numstr);
-int uls_lf_fill_mbstr(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc,
-	uls_lf_convflag_ptr_t p, const char* numstr, int l_numstr, int lw_numstr);
 
 int fmtproc_s(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx);
-int fmtproc_ws(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx);
 int fmtproc_c(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx);
 void __add_convspec_linear(uls_lf_convspec_table_ptr_t tbl,
 	char* percent_name, uls_lf_convspec_t proc, int tbl_ind);
@@ -251,6 +248,11 @@ void finalize_uls_lf(void);
 #endif // ULS_DECL_PROTECTED_PROC
 
 #ifdef ULS_DECL_PUBLIC_PROC
+ULS_DLL_EXTERN int uls_lf_fill_mbstr(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc,
+	uls_lf_convflag_ptr_t p, const char* numstr, int l_numstr, int lw_numstr);
+
+ULS_DLL_EXTERN int fmtproc_ws(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx);
+
 ULS_DLL_EXTERN uls_lf_map_ptr_t uls_lf_get_default(void);
 
 ULS_DLL_EXTERN int uls_lf_init_convspec_map(uls_lf_map_ptr_t lf_map, int flags);

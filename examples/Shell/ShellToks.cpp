@@ -40,28 +40,28 @@ using namespace uls::collection;
 
 namespace
 {
-	LPCTSTR PACKAGE_NAME = _T("ShellToks");
-	tstring config_name = _T("shell.ulc");
+	const char * PACKAGE_NAME = "ShellToks";
+	string config_name = "shell.ulc";
 	int  opt_verbose;
 
 	void Usage(void)
 	{
-		err_log(_T("Where the 'simplest.ulc' is:"));
+		err_log("Where the 'simplest.ulc' is:");
 		listUlcSearchPaths();
 	}
 
 	void Version(void)
 	{
 		err_log(ULS_GREETING);
-		err_log(_T("Copyright (C) %d-%d All rights reserved."),
+		err_log("Copyright (C) %d-%d All rights reserved.",
 			ULS_COPYRIGHT_YEAR_START, ULS_COPYRIGHT_YEAR_CURRENT);
-		err_log(_T("Unless required by applicable law or agreed to in writing, software"));
-		err_log(_T("distributed under the License is distributed on an \"AS IS\" BASIS,"));
-		err_log(_T("WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied."));
-		err_log(_T(""));
+		err_log("Unless required by applicable law or agreed to in writing, software");
+		err_log("distributed under the License is distributed on an \"AS IS\" BASIS,");
+		err_log("WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.");
+		err_log("");
 	}
 
-	int shelltoks_options(int opt, LPTSTR optarg)
+	int shelltoks_options(int opt, char * optarg)
 	{
 		int   stat = 0;
 
@@ -78,7 +78,7 @@ namespace
 			stat = 1;
 			break;
 		default:
-			err_log(_T("undefined option -%c"), opt);
+			err_log("undefined option -%c", opt);
 			stat = -1;
 			break;
 		}
@@ -94,27 +94,27 @@ namespace
 	void dumpToken(ShellLex *shlex)
 	{
 		int t = shlex->getTokNum();
-		LPCTSTR tstr = shlex->getTokStr().c_str();
+		const char * tstr = shlex->getTokStr().c_str();
 
 		switch (t) {
 		case ShellLex::WORD:
-			uls_printf(_T("\t[   WORD] %s\n"), tstr);
+			uls_printf("\t[   WORD] %s\n", tstr);
 			break;
 
 		case ShellLex::NUM:
-			uls_printf(_T("\t[    NUM] %s\n"), tstr);
+			uls_printf("\t[    NUM] %s\n", tstr);
 			break;
 
 		case ShellLex::REDIRECT:
-			uls_printf(_T("\t[  REDIR] %s\n"), tstr);
+			uls_printf("\t[  REDIR] %s\n", tstr);
 			break;
 
 		case ShellLex::EQ:
-			uls_printf(_T("\t[     ==] %s\n"), tstr);
+			uls_printf("\t[     ==] %s\n", tstr);
 			break;
 
 		case ShellLex::NE:
-			uls_printf(_T("\t[     !=] %s\n"), tstr);
+			uls_printf("\t[     !=] %s\n", tstr);
 			break;
 
 		default:
@@ -140,37 +140,32 @@ namespace
 }
 
 int
-_tmain(int argc, LPTARGV argv)
+main(int argc, char **argv)
 {
-	LPTSTR *targv;
 	ShellLex *shelllex;
-	tstring input_file;
+	string input_file;
 	int   i0;
 
-	ULS_GET_WARGS_LIST(argc, argv, targv);
-
-	if ((i0=uls_getopts(argc, targv, _T("vhV"), shelltoks_options)) <= 0) {
+	if ((i0=uls_getopts(argc, argv, "vhV", shelltoks_options)) <= 0) {
 		return i0;
 	}
 
 	shelllex = new ShellLex(config_name);
 
 	if (i0 < argc) {
-		input_file = targv[i0];
+		input_file = argv[i0];
 	} else {
 		Usage();
 		return 1;
 	}
 
 	if (shelllex->source(input_file) < 0) {
-		err_log(_T("can't open '%s'"), input_file.c_str());
+		err_log("can't open '%s'", input_file.c_str());
 	} else {
 		dumpTokens(shelllex);
 	}
 
 	delete shelllex;
-	ULS_PUT_WARGS_LIST(argc, targv);
-
 	return 0;
 }
 

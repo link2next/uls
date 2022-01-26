@@ -46,7 +46,7 @@ namespace collection
 	class EngLex : public uls::collection::EngLexBasis {
 		csz_str_t tokbuf;
 
-		std::tstring tok_str;
+		std::string tok_str;
 		int tok_id;
 		bool tok_ungot;
 
@@ -55,7 +55,7 @@ namespace collection
 
 	public:
 
-		EngLex(std::tstring& config_name);
+		EngLex(std::string& config_name);
 		~EngLex();
 
 		// <brief>
@@ -66,12 +66,12 @@ namespace collection
 		virtual int getTok(void);
 
 		virtual int getTokNum(void);
-		virtual std::tstring& getTokStr(void);
+		virtual std::string& getTokStr(void);
 
-		int set_input_file(std::tstring& fpath);
+		int set_input_file(std::string& fpath);
 
 		void ungetTok(void);
-		std::tstring getKeywordStr(int t);
+		std::string getKeywordStr(int t);
 	};
 }
 }

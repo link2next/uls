@@ -35,9 +35,6 @@
 #include "uls/uls_print.h"
 #include "uls/uls_misc.h"
 #include "uls/uls_fileio.h"
-#ifdef ULS_WINDOWS
-#include "uls/uls_util_astr.h"
-#endif
 
 void
 ULS_QUALIFIED_METHOD(initialize_uls_sysprn)(void)
@@ -75,11 +72,7 @@ ULS_QUALIFIED_METHOD(uls_sysprn_open)(uls_voidptr_t data, uls_lf_puts_t proc)
 		if (data == nilptr) {
 			proc = uls_lf_puts_null;
 		} else {
-#ifdef ULS_WINDOWS
-			proc = uls_lf_aputs_file;
-#else
 			proc = uls_lf_puts_file;
-#endif
 		}
 	}
 

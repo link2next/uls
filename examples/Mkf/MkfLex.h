@@ -52,13 +52,13 @@ namespace collection
 	class MkfLex : public uls::collection::MkfLexBasis {
 		csz_str_t tokbuf;
 
-		std::tstring tok_str;
+		std::string tok_str;
 		int tok_id;
 		bool tok_ungot;
 
 		static int tabblk_analyzer(uls_litstr_t *lit);
 
-		LPCTSTR tcschr(LPCTSTR tstr, TCHAR tch);
+		const char * tcschr(const char * tstr, char tch);
 		int expect_quotestr(char ch);
 		int expect_word(void);
 		int expect_number(void);
@@ -67,7 +67,7 @@ namespace collection
 	public:
 		mkf_tabblk_ctx_t tabblk_ctx;
 
-		MkfLex(std::tstring& config_name);
+		MkfLex(std::string& config_name);
 		~MkfLex();
 
 		// <brief>
@@ -78,17 +78,17 @@ namespace collection
 		virtual int getTok(void);
 
 		virtual int getTokNum(void);
-		virtual std::tstring& getTokStr(void);
+		virtual std::string& getTokStr(void);
 
 		void ungetTok(void);
-		std::tstring getKeywordStr(int t);
+		std::string getKeywordStr(int t);
 
 		// <brief>
 		// Sets the input file to be tokenized.
 		// </brief>
 		// <parm name="fpath">The path of file</parm>
 		// <return>none</return>
-		int include(std::tstring& fpath);
+		int include(std::string& fpath);
 	};
 }
 }

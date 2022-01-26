@@ -51,14 +51,4 @@ ULS_DLL_EXTERN int uls_fd_open_wstr(const wchar_t* wfpath, int mode);
 }
 #endif
 
-#ifdef _ULS_USE_ULSCOMPAT
-#ifdef ULS_USE_WSTR
-#define uls_dirent_exist uls_dirent_exist_wstr
-#define uls_fp_open uls_fp_wopen
-#define uls_fp_gets uls_fp_gets_wstr
-#define uls_close_tempfile uls_close_tempfile_wstr
-#define uls_fd_open uls_fd_open_wstr
-#endif
-#endif
-
 #endif // __ULS_FILEIO_WSTR_H__

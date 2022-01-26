@@ -42,10 +42,10 @@
 #define N_CMD_ARGS  16
 #define N_TMPLVAL_ARRAY 8
 
-LPCTSTR progname;
+const char * progname;
 
-LPCTSTR config_name;
-LPCTSTR input_file;
+const char * config_name;
+const char * input_file;
 
 int  opt_verbose;
 
@@ -53,13 +53,13 @@ uls_lex_t *sample_lex;
 uls_tmpl_list_t *tmpl_list;
 
 int
-print_uls_file(uls_lex_t *uls, LPCTSTR fpath, uls_ostream_t *ostr)
+print_uls_file(uls_lex_t *uls, const char * fpath, uls_ostream_t *ostr)
 {
 	int t, stat=0;
-	LPCTSTR lxm;
+	const char * lxm;
 
 	if (uls_push_file(uls, fpath, 0) < 0) {
-		err_log(_T("%s: fail to prepare input-stream %s."), __FUNCTION__, fpath);
+		err_log("%s: fail to prepare input-stream %s.", __FUNCTION__, fpath);
 		return -1;
 	}
 
@@ -87,19 +87,19 @@ print_uls_file(uls_lex_t *uls, LPCTSTR fpath, uls_ostream_t *ostr)
 }
 
 int
-read_uls_file(uls_lex_t *uls, LPCTSTR fpath)
+read_uls_file(uls_lex_t *uls, const char * fpath)
 {
 	int stat=0;
 	uls_istream_t *istr;
-	LPCTSTR lxm;
+	const char * lxm;
 
 	if ((istr = uls_open_istream_file(fpath)) == NULL) {
-		err_log(_T("can't read %s"), fpath);
+		err_log("can't read %s", fpath);
 		return -1;
 	}
 
 	if (uls_push_istream(uls, istr, tmpl_list, 0) < 0) {
-		err_log(_T("%s: fail to prepare input-stream %s."), __FUNCTION__, fpath);
+		err_log("%s: fail to prepare input-stream %s.", __FUNCTION__, fpath);
 		uls_destroy_istream(istr);
 		return -1;
 	}
@@ -115,7 +115,7 @@ read_uls_file(uls_lex_t *uls, LPCTSTR fpath)
 
 		lxm = uls_lexeme(uls);
 
-		uls_printf(_T("\t[%7t] %s\n"), uls, lxm);
+		uls_printf("\t[%7t] %s\n", uls, lxm);
 	}
 
 	uls_destroy_istream(istr);
@@ -123,27 +123,27 @@ read_uls_file(uls_lex_t *uls, LPCTSTR fpath)
 }
 
 int
-run_test_scenario(LPCTSTR out_dir)
+run_test_scenario(const char * out_dir)
 {
-	TCHAR uls_fname[1024];
-	LPCTSTR tptr, tname;
+	char uls_fname[1024];
+	const char  *tptr, *tname;
 	uls_ostream_t *ostr;
 	int stat=0;
 
-	uls_snprintf(uls_fname, 1024, _T("%s%c%s"), out_dir, ULS_FILEPATH_DELIM, _T("a1.uls"));
+	uls_snprintf(uls_fname, 1024, "%s%c%s", out_dir, ULS_FILEPATH_DELIM, "a1.uls");
 
 	// Step-1: Instantiate template vars <TVAR1,TVAR2>
-	tname = _T("AVAR");
-	tptr = _T("unsigned long long");
+	tname = "AVAR";
+	tptr = "unsigned long long";
 	uls_add_tmpl(tmpl_list, tname, tptr);
 
-	tname = _T("BVAR");
-	tptr = _T("long double");
+	tname = "BVAR";
+	tptr = "long double";
 	uls_add_tmpl(tmpl_list, tname, tptr);
 
 	// Step-2: writing stream to output file 'a1.uls'
-	if ((ostr = uls_create_ostream_file(uls_fname, sample_lex, _T("<tag_name>"))) == NULL) {
-		err_log(_T("can't set uls-stream to %s"), uls_fname);
+	if ((ostr = uls_create_ostream_file(uls_fname, sample_lex, "<tag_name>")) == NULL) {
+		err_log("can't set uls-stream to %s", uls_fname);
 		return -1;
 	}
 
@@ -158,12 +158,12 @@ run_test_scenario(LPCTSTR out_dir)
 
 static void usage(void)
 {
-	err_log(_T("usage(%s): dumping the tokens defined as in 'simple.ulc'"), progname);
-	err_log(_T("\t%s -c <config-file> <file1> ..."), progname);
+	err_log("usage(%s): dumping the tokens defined as in 'simple.ulc'", progname);
+	err_log("\t%s -c <config-file> <file1> ...", progname);
 }
 
 static int
-options(int opt, LPTSTR opttarg)
+options(int opt, char * opttarg)
 {
 	int   stat = 0;
 
@@ -176,7 +176,7 @@ options(int opt, LPTSTR opttarg)
 		stat = 1;
 		break;
 	default:
-		err_log(_T("undefined option -%c"), opt);
+		err_log("undefined option -%c", opt);
 		usage();
 		stat = -1;
 		break;
@@ -186,39 +186,39 @@ options(int opt, LPTSTR opttarg)
 }
 
 int
-test_main(int argc, LPTSTR *targv)
+test_main(int argc, char **targv)
 {
-	LPTSTR out_dir;
+	char * out_dir;
 	int i0;
 
 	// opt_verbose = 1;
-	config_name = _T("tokseq.uld");
-	out_dir = _T(".");
+	config_name = "tokseq.uld";
+	out_dir = ".";
 
-	if ((i0=uls_getopts(argc, targv, _T("vhV"), options)) <= 0) {
-		err_log(_T("Fail to parse command options."));
+	if ((i0=uls_getopts(argc, targv, "vhV", options)) <= 0) {
+		err_log("Fail to parse command options.");
 		return i0;
 	}
 
 	if (i0 < argc) {
 		input_file = targv[i0];
 		if (uls_dirent_exist(input_file) != ST_MODE_FILE) {
-			err_panic(_T("%s: not a file'"), input_file);
+			err_panic("%s: not a file'", input_file);
 		}
 	} else {
-		input_file = _T("tokseq_sam.txt");
+		input_file = "tokseq_sam.txt";
 	}
 
 	if (i0 + 1 < argc) {
 		out_dir = targv[i0 + 1];
 		if (uls_dirent_exist(out_dir) != ST_MODE_DIR) {
-			err_panic(_T("%s: not a directory'"), out_dir);
+			err_panic("%s: not a directory'", out_dir);
 		}
 	}
 
 	if ((sample_lex = uls_create(config_name)) == NULL) {
-		err_log(_T("%s: can't init uls-object of '%s'"), __FUNCTION__, config_name);
-		ulc_list_searchpath(_T("simple"));
+		err_log("%s: can't init uls-object of '%s'", __FUNCTION__, config_name);
+		ulc_list_searchpath("simple");
 		return -1;
 	}
 
@@ -229,18 +229,15 @@ test_main(int argc, LPTSTR *targv)
 }
 
 int
-_tmain(int argc, LPTARGV argv)
+main(int argc, char **argv)
 {
-	LPTSTR *targv;
 	int stat;
 
-	ULS_GET_WARGS_LIST(argc, argv, targv);
-	progname = targv[0];
+	progname = argv[0];
 
 	tmpl_list = uls_create_tmpls(N_TMPLVAL_ARRAY, 0);
-	stat = test_main(argc, targv);
+	stat = test_main(argc, argv);
 	uls_destroy_tmpls(tmpl_list);
 
-	ULS_PUT_WARGS_LIST(argc, targv);
 	return stat;
 }

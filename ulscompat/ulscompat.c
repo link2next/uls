@@ -34,10 +34,6 @@
 #include "uls.h"
 #define __ULSCOMPAT__
 #include "uls/ulscompat.h"
-#ifdef ULS_WINDOWS
-#include "uls/uls_alog.h"
-#include "uls/uls_util_astr.h"
-#endif
 #include "uls/uls_wlog.h"
 #include "uls/uls_util_wstr.h"
 #include <stdlib.h>
@@ -50,13 +46,6 @@ __finalize_ulscompat(void)
 	finalize_uls_wlog();
 	finalize_uls_wprint();
 	finalize_uls_wlf();
-
-#ifdef ULS_WINDOWS
-	finalize_uls_alog();
-	finalize_uls_aprint();
-	finalize_uls_alf();
-#endif
-
 	finalize_uls();
 
 	ulscompat_inited = 0;
@@ -71,12 +60,6 @@ _initialize_ulscompat(void)
 	if (ulscompat_inited) return;
 
 	initialize_uls_static();
-
-#ifdef ULS_WINDOWS
-	initialize_uls_alf();
-	initialize_uls_aprint();
-	initialize_uls_alog();
-#endif
 
 	initialize_uls_wlf();
 	initialize_uls_wprint();

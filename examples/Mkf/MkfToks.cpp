@@ -40,28 +40,28 @@ using namespace uls::collection;
 
 namespace
 {
-	LPCTSTR PACKAGE_NAME = _T("MkfToks");
-	tstring config_name = _T("mkf.ulc");
+	const char * PACKAGE_NAME = "MkfToks";
+	string config_name = "mkf.ulc";
 	int  opt_verbose;
 
 	void Usage(void)
 	{
-		err_log(_T("usage(%s): dumping the tokens defined as in 'sample.ulc'"), PACKAGE_NAME);
-		err_log(_T("\t%s -c <config-file> <makefile>"), PACKAGE_NAME);
+		err_log("usage(%s): dumping the tokens defined as in 'sample.ulc'", PACKAGE_NAME);
+		err_log("\t%s -c <config-file> <makefile>", PACKAGE_NAME);
 	}
 
 	void Version(void)
 	{
 		err_log(ULS_GREETING);
-		err_log(_T("Copyright (C) %d-%d All rights reserved."),
+		err_log("Copyright (C) %d-%d All rights reserved.",
 			ULS_COPYRIGHT_YEAR_START, ULS_COPYRIGHT_YEAR_CURRENT);
-		err_log(_T("Unless required by applicable law or agreed to in writing, software"));
-		err_log(_T("distributed under the License is distributed on an \"AS IS\" BASIS,"));
-		err_log(_T("WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied."));
-		err_log(_T(""));
+		err_log("Unless required by applicable law or agreed to in writing, software");
+		err_log("distributed under the License is distributed on an \"AS IS\" BASIS,");
+		err_log("WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.");
+		err_log("");
 	}
 
-	int mkftoks_options(int opt, LPTSTR optarg)
+	int mkftoks_options(int opt, char * optarg)
 	{
 		int   stat = 0;
 
@@ -78,7 +78,7 @@ namespace
 			stat = 1;
 			break;
 		default:
-			err_log(_T("undefined option -%c"), opt);
+			err_log("undefined option -%c", opt);
 			stat = -1;
 			break;
 		}
@@ -94,7 +94,7 @@ namespace
 	void dumpToken(MkfLex *mkflex)
 	{
 		int t = mkflex->getTokNum();
-		LPCTSTR tstr = mkflex->getTokStr().c_str();
+		const char * tstr = mkflex->getTokStr().c_str();
 
 		switch (t) {
 		case MkfLex::TABBLK:
@@ -103,15 +103,15 @@ namespace
 			*    the mkf command block of a makefile rule,
 			* subdivide the TokStr of it and get tokens from it using by uls_push_line().
 			*/
-			uls_printf(_T("\t[ TABBLK] %s\n"), tstr);
+			uls_printf("\t[ TABBLK] %s\n", tstr);
 			break;
 
 		case MkfLex::WORD:
-			uls_printf(_T("\t[   WORD] %s\n"), tstr);
+			uls_printf("\t[   WORD] %s\n", tstr);
 			break;
 
 		case MkfLex::NUM:
-			uls_printf(_T("\t[    NUM] %s\n"), tstr);
+			uls_printf("\t[    NUM] %s\n", tstr);
 			break;
 
 		default:
@@ -130,7 +130,7 @@ namespace
 
 		for ( ; ; ) {
 			if ((t=mkflex->getTok()) == MkfLex::ERR) {
-				err_log(_T("Error to the tokenizer!"));
+				err_log("Error to the tokenizer!");
 				break;
 			}
 
@@ -144,37 +144,32 @@ namespace
 }
 
 int
-_tmain(int argc, LPTARGV argv)
+main(int argc, char **argv)
 {
-	LPTSTR *targv;
 	MkfLex *mkflex;
-	tstring input_file;
+	string input_file;
 	int   i0;
 
-	ULS_GET_WARGS_LIST(argc, argv, targv);
-
-	if ((i0=uls_getopts(argc, targv, _T("vhV"), mkftoks_options)) <= 0) {
+	if ((i0=uls_getopts(argc, argv, "vhV", mkftoks_options)) <= 0) {
 		return i0;
 	}
 
 	mkflex = new MkfLex(config_name);
 
 	if (i0 < argc) {
-		input_file = targv[i0];
+		input_file = argv[i0];
 	} else {
 		Usage();
 		return 1;
 	}
 
 	if (mkflex->include(input_file) < 0) {
-		err_log(_T("can't open '%s'"), input_file.c_str());
+		err_log("can't open '%s'", input_file.c_str());
 	} else {
 		dumpTokens(mkflex);
 	}
 
 	delete mkflex;
-	ULS_PUT_WARGS_LIST(argc, targv);
-
 	return 0;
 }
 

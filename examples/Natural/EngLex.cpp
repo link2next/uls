@@ -40,14 +40,14 @@ using namespace std;
 using namespace uls::crux;
 using namespace uls::collection;
 
-EngLex::EngLex(tstring& config_name)
+EngLex::EngLex(string& config_name)
 	: EngLexBasis(config_name)
 {
 	csz_init(&tokbuf, 128);
 
-	tstring nil_str = _T("");
+	string nil_str = "";
 
-	tok_str = _T("");
+	tok_str = "";
 	tok_id = NONE;
 
 	tok_ungot = false;
@@ -55,9 +55,9 @@ EngLex::EngLex(tstring& config_name)
 
 EngLex::~EngLex()
 {
-	tstring nil_str = _T("");
+	string nil_str = "";
 
-	tok_str = _T("");
+	tok_str = "";
 	tok_id = NONE;
 
 	csz_deinit(&tokbuf);
@@ -69,11 +69,11 @@ EngLex::~EngLex()
 // <parm name="fpath">The path of file</parm>
 // <return>0 if it succeeds, otherwise -1</return>
 int
-EngLex::set_input_file(tstring& fpath)
+EngLex::set_input_file(string& fpath)
 {
 	pushFile(fpath);
 
-	tok_str = _T("");
+	tok_str = "";
 	tok_id = NONE;
 
 	return 0;
@@ -83,16 +83,16 @@ void
 EngLex::expect_number(void)
 {
 	unsigned int num;
-	TCHAR num_buf[32];
-	TCHAR ch;
-	LPCTSTR ptr;
+	char num_buf[32];
+	char ch;
+	const char * ptr;
 	int len, i;
-	tstring lxm;
+	string lxm;
 
 	expect(NUM);
 	EngLexBasis::getLexeme(lxm);
 	num = LexemeAsInt(lxm);
-	len = uls_zprintf(&tokbuf, _T("%u"), num);
+	len = uls_zprintf(&tokbuf, "%u", num);
 }
 
 // <brief>
@@ -104,9 +104,9 @@ EngLex::get_token(void)
 {
 	int tok, len;
 	bool is_quote;
-	LPCTSTR ptr;
+	const char * ptr;
 	uls_uch_t uch;
-	tstring *lxm;
+	string *lxm;
 
 	if (tok_ungot == true) {
 		tok_ungot = false;
@@ -130,21 +130,21 @@ EngLex::get_token(void)
 	if (isalpha(uch)) {
 		tok = EngLexBasis::getTok();
 
-		ptr = (LPCTSTR) lxm->c_str();
+		ptr = (const char *) lxm->c_str();
 	 	len = (int) lxm->length();
 
 	 	tok = WORD;
-	 	csz_append(&tokbuf, (const char *) ptr, len * sizeof(TCHAR));
+	 	csz_append(&tokbuf, (const char *) ptr, len * sizeof(char));
 	}
 
 	if (tok == NONE) {
 		tok = EngLexBasis::getTok();
-		ptr = (LPCTSTR) lxm->c_str();
+		ptr = (const char *) lxm->c_str();
 	 	len = (int) lxm->length();
-	 	csz_append(&tokbuf, (const char *) ptr, len * sizeof(TCHAR));
+	 	csz_append(&tokbuf, (const char *) ptr, len * sizeof(char));
 	}
 
-	tok_str = tstring(uls_get_csz_tstr(&tokbuf));
+	tok_str = string(csz_text(&tokbuf));
 	tok_id = tok;
 }
 
@@ -162,7 +162,7 @@ EngLex::getTokNum(void)
 	return tok_id;
 }
 
-std::tstring&
+std::string&
 EngLex::getTokStr(void)
 {
 	return tok_str;
@@ -170,9 +170,9 @@ EngLex::getTokStr(void)
 
 // <brief>
 // </brief>
-tstring EngLex::getKeywordStr(int t)
+string EngLex::getKeywordStr(int t)
 {
-	return tstring(_T("<unknown>"));
+	return string("<unknown>");
 }
 
 void

@@ -51,15 +51,4 @@ ULS_DLL_EXTERN int ulc_add_searchpath_wstr(const wchar_t *pathlist, int front);
 }
 #endif
 
-#ifdef _ULS_USE_ULSCOMPAT
-#ifdef ULS_USE_WSTR
-#define uls_is_valid_specpath uls_is_valid_specpath_wstr
-#define uls_get_spectype uls_get_spectype_wstr
-
-#define ulc_list_searchpath ulc_list_searchpath_wstr
-#define ulc_set_searchpath ulc_set_searchpath_wstr
-#define ulc_add_searchpath ulc_add_searchpath_wstr
-#endif
-#endif
-
 #endif // __ULS_CONF_WSTR_H__

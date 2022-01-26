@@ -45,16 +45,11 @@
 #include <uls/uls_fileio.h>
 #include <uls/uls_auw.h>
 
-#ifdef ULS_WINDOWS
-#include "uls/uls_util_astr.h"
-#include "uls/uls_lf_saprintf.h"
-#include "uls/uls_alog.h"
-#endif
 #include "uls/uls_util_wstr.h"
 #include "uls/uls_lf_swprintf.h"
 #include "uls/uls_wlog.h"
 
-#include "uls/ulscompat.h"
+#include "uls.h"
 
 using namespace std;
 using namespace uls::crux;
@@ -248,25 +243,7 @@ int
 uls::create_fd_wronly(string& fpath)
 {
 	int fd;
-
-#ifdef ULS_WINDOWS
-	const char *ustr;
-	csz_str_t csz;
-
-	csz_init(&csz, -1);
-
-	if ((ustr = uls_astr2ustr(fpath.c_str(), -1, &csz)) == NULL) {
-		err_log("encoding error!");
-		fd = -1;
-	}
-	else {
-		fd = uls_fd_open(ustr, ULS_FIO_CREAT | ULS_FIO_WRITE);
-	}
-	csz_deinit(&csz);
-#else
 	fd = uls_fd_open(fpath.c_str(), ULS_FIO_CREAT | ULS_FIO_WRITE);
-#endif
-
 	return fd;
 }
 
@@ -274,25 +251,7 @@ int
 uls::open_fd_rdonly(string& fpath)
 {
 	int fd;
-
-#ifdef ULS_WINDOWS
-	const char *ustr;
-	csz_str_t csz;
-
-	csz_init(&csz, -1);
-
-	if ((ustr = uls_astr2ustr(fpath.c_str(), -1, &csz)) == NULL) {
-		err_log("encoding error!");
-		fd = -1;
-	}
-	else {
-		fd = uls_fd_open(ustr, ULS_FIO_READ);;
-	}
-	csz_deinit(&csz);
-#else
 	fd = uls_fd_open(fpath.c_str(), ULS_FIO_READ);;
-#endif
-
 	return fd;
 }
 
@@ -305,14 +264,11 @@ uls::close_fd(int fd)
 void
 uls::crux::UlsLex_initialize(void)
 {
-	initialize_ulscompat();
+	initialize_uls();
 
 	if (ulscpp_convspec_nmap != NULL) return;
-#ifdef ULS_WINDOWS
-	ulscpp_convspec_nmap = uls_lf_create_convspec_amap(0);
-#else
 	ulscpp_convspec_nmap = uls_lf_create_convspec_map(0);
-#endif
+
 	if (ulscpp_convspec_nmap == NULL) {
 		err_panic("fail to initialize uls");
 	}
@@ -327,11 +283,7 @@ void
 uls::crux::UlsLex_finalize(void)
 {
 	if (ulscpp_convspec_nmap != NULL) {
-#ifdef ULS_WINDOWS
-		uls_lf_destroy_convspec_amap(ulscpp_convspec_nmap);
-#else
 		uls_lf_destroy_convspec_map(ulscpp_convspec_nmap);
-#endif
 		ulscpp_convspec_nmap = NULL;
 	}
 
@@ -339,7 +291,7 @@ uls::crux::UlsLex_finalize(void)
 		uls_lf_destroy_convspec_wmap(ulscpp_convspec_wmap);
 	}
 
-	finalize_ulscompat();
+	finalize_uls();
 }
 
 // <brief>
@@ -354,22 +306,7 @@ uls::crux::UlsLex_finalize(void)
 // <return>none</return>
 void uls::dumpSearchPathOfUlc(string& confname)
 {
-#ifdef ULS_WINDOWS
-	const char *ustr;
-	csz_str_t csz;
-
-	csz_init(&csz, -1);
-
-	if ((ustr = uls_astr2ustr(confname.c_str(), -1, &csz)) == NULL) {
-		err_log("encoding error!");
-	}
-	else {
-		ulc_list_searchpath(ustr);
-	}
-	csz_deinit(&csz);
-#else
 	ulc_list_searchpath(confname.c_str());
-#endif
 }
 
 void uls::dumpSearchPathOfUlc(wstring& wconfwname)
@@ -609,15 +546,10 @@ UlsLex::initUlsLex_ustr(const char *ulc_file)
 	toknum_NUMBER = _uls_toknum_NUMBER(&lex);
 	toknum_TMPL = _uls_toknum_TMPL(&lex);
 
-#ifdef ULS_WINDOWS
-	puts_proc_str = uls_lf_aputs_str;
-	puts_proc_file = uls_lf_aputs_file;
-#define uls_nlf_create uls_alf_create
-#else
 	puts_proc_str = uls_lf_puts_str;
 	puts_proc_file = uls_lf_puts_file;
 #define uls_nlf_create uls_lf_create
-#endif
+
 	str_nlf = uls_nlf_create(ulscpp_convspec_nmap, NULL, puts_proc_str);
 	uls_lf_change_gdat(str_nlf, &lex);
 
@@ -653,22 +585,7 @@ UlsLex::initUlsLex_ustr(const char *ulc_file)
 
 UlsLex::UlsLex(const char *ulc_file)
 {
-#ifdef ULS_WINDOWS
-	const char *ustr;
-	csz_str_t csz;
-
-	csz_init(&csz, -1);
-
-	if ((ustr = uls_astr2ustr(ulc_file, -1, &csz)) == NULL) {
-		err_log("encoding error!");
-	}
-	else {
-		initUlsLex_ustr(ustr);
-	}
-	csz_deinit(&csz);
-#else
 	initUlsLex_ustr(ulc_file);
-#endif
 }
 
 UlsLex::UlsLex(const wchar_t *ulc_wfile)
@@ -690,22 +607,7 @@ UlsLex::UlsLex(const wchar_t *ulc_wfile)
 
 UlsLex::UlsLex(string& ulc_file)
 {
-#ifdef ULS_WINDOWS
-	const char *ustr;
-	csz_str_t csz;
-
-	csz_init(&csz, -1);
-
-	if ((ustr = uls_astr2ustr(ulc_file.c_str(), -1, &csz)) == NULL) {
-		err_log("encoding error!");
-	}
-	else {
-		initUlsLex_ustr(ustr);
-	}
-	csz_deinit(&csz);
-#else
 	initUlsLex_ustr(ulc_file.c_str());
-#endif
 }
 
 UlsLex::UlsLex(wstring& ulc_wfile)
@@ -743,11 +645,7 @@ UlsLex::~UlsLex()
 	uls_deinit_log(&logbase);
 	uls_destroy(&lex);
 
-#ifdef ULS_WINDOWS
-#define uls_nlf_destroy uls_alf_destroy
-#else
 #define uls_nlf_destroy uls_lf_destroy
-#endif
 	uls_wlf_destroy(prn_wlf);
 	uls_wlf_destroy(file_wlf);
 	uls_wlf_destroy(str_wlf);
@@ -1771,13 +1669,7 @@ UlsLex::getKeywordStr(std::wstring *ptr_keyw)
 void UlsLex::vlog(const char* fmt, va_list args)
 {
 	uls::lockMutex(&syserr_g_mtx);
-
-#ifdef ULS_WINDOWS
-	uls_valog(&logbase, fmt, args);
-#else
 	uls_vlog(&logbase, fmt, args);
-#endif
-
 	uls::unlockMutex(&syserr_g_mtx);
 }
 
@@ -1900,17 +1792,11 @@ void UlsLex::openOutput_ustr(const char* out_file, uls_lf_puts_t puts_proc)
 
 void UlsLex::openOutput(string& out_file)
 {
+	const char *ustr;
 	uls_lf_puts_t puts_proc;
 
-#ifdef ULS_WINDOWS
-	puts_proc = uls_lf_aputs_file;
-#else
 	puts_proc = uls_lf_puts_file;
-#endif
-
-	const char *ustr;
 	_ULSCPP_NSTR2USTR(out_file.c_str(), ustr, 0);
-
 	openOutput_ustr(ustr, puts_proc);
 }
 
@@ -1937,11 +1823,7 @@ void UlsLex::closeOutput(void)
 	uls_lf_puts_t puts_proc;
 	FILE *fp;
 
-#ifdef ULS_WINDOWS
-	puts_proc = uls_lf_aputs_file;
-#else
 	puts_proc = uls_lf_puts_file;
-#endif
 
 	if (sysprn_opened) {
 		fp = (FILE *) prn_nlf->x_dat;
@@ -2008,11 +1890,7 @@ int UlsLex::print(const char* fmt, ...)
 	int len;
 
 	va_start(args, fmt);
-#ifdef ULS_WINDOWS
-	len = uls_lf_vxaprintf(prn_nlf, fmt, args);
-#else
 	len = uls_lf_vxprintf(prn_nlf, fmt, args);
-#endif
 	va_end(args);
 
 	return len;
@@ -2043,11 +1921,7 @@ UlsLex::vsnprintf(char* buf, int bufsiz, const char *fmt, va_list args)
 	int len;
 
 	uls_lf_lock(str_nlf);
-#ifdef ULS_WINDOWS
-	len = __uls_lf_vsnaprintf(buf, bufsiz, str_nlf, fmt, args);
-#else
 	len = __uls_lf_vsnprintf(buf, bufsiz, str_nlf, fmt, args);
-#endif
 	uls_lf_unlock(str_nlf);
 
 	return len;
@@ -2134,11 +2008,7 @@ int
 UlsLex::vfprintf(FILE* fp, const char *fmt, va_list args)
 {
 	int len;
-#ifdef ULS_WINDOWS
-	len = uls_lf_vxaprintf_generic(fp, file_nlf, fmt, args);
-#else
 	len = uls_lf_vxprintf_generic(fp, file_nlf, fmt, args);
-#endif
 	return len;
 }
 

@@ -45,7 +45,6 @@ extern "C" {
 #define ULS_FL_WANT_RESERVED_TOKS 0x04
 #define ULS_FL_WANT_WRAPPER       0x08
 #define ULS_FL_ULD_FILE           0x10
-#define ULS_FL_STRFMT_ASTR        0x20
 #define ULS_FL_STRFMT_WSTR        0x40
 #define ULS_FL_C_GEN              0x0100
 #define ULS_FL_CPP_GEN            0x0200
@@ -146,12 +145,8 @@ ULS_DLL_EXTERN int uls_generate_tokdef_file(uls_lex_ptr_t uls, uls_parms_emit_pt
 }
 #endif
 
-#ifdef _ULS_USEDLL
-#if defined(ULS_USE_WSTR)
+#ifdef ULS_USE_WSTR
 #include "uls/uls_emit_wstr.h"
-#elif defined(ULS_USE_ASTR)
-#include "uls/uls_emit_astr.h"
-#endif
 #endif
 
 #endif // __ULS_EMIT_H__

@@ -46,7 +46,7 @@ ULS_QUALIFIED_METHOD(get_uint64_from_radix_numstr)(int radix, const char *numbuf
 	for (i=0; i<numlen1; i++) {
 		ch = numbuf[i];
 
-		n = is_num_radix(ch, radix);	
+		n = is_num_radix(ch, radix);
 		num = num * radix + n;
 	}
 
@@ -789,7 +789,7 @@ ULS_QUALIFIED_METHOD(__skip_radix_number)(uls_outparam_ptr_t parms, int radix, u
 	}
 
 	parms->lptr_end = lptr1;
-	parms->n1 = (int) (lptr - lptr1);	
+	parms->n1 = (int) (lptr - lptr1);
 
 	parms->len = k - k1;
 	parms->lptr = lptr;
@@ -1077,7 +1077,6 @@ ULS_QUALIFIED_METHOD(num2stdfmt)(uls_outparam_ptr_t parms, uls_outbuf_ptr_t numb
 
 		if ((expo = n_zeros) > 0) expo = -expo;
 		lptr2 = lptr;
-	
 
 	} else if (uls_isdigit(ch)) {
 

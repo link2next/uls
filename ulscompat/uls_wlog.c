@@ -39,9 +39,6 @@
 
 #include "uls/uls_wlex.h"
 #include "uls/uls_util.h"
-#ifdef ULS_WINDOWS
-#include "uls/uls_util_astr.h"
-#endif
 #include "uls/uls_util_wstr.h"
 
 ULS_DECL_STATIC uls_lf_map_t logdfl_convspec_wmap;
@@ -117,11 +114,7 @@ initialize_uls_wlog(void)
 	uls_lf_init_convspec_wmap(uls_ptr(log_convspec_wmap), 0);
 	uls_add_default_log_convspecs(uls_ptr(log_convspec_wmap));
 
-#ifdef ULS_WINDOWS
-	proc_log = uls_lf_aputs_file;
-#else
 	proc_log = uls_lf_puts_file;
-#endif
 	dfl_syslog_wlf = uls_wlf_create(uls_ptr(logdfl_convspec_wmap), _uls_stdio_fp(2), proc_log);
 
 	csz_init(uls_ptr(wbuff_csz), 128 * sizeof(wchar_t));

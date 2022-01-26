@@ -71,7 +71,7 @@ namespace uls {
 			static const int             I_LL = 23;
 			static const int           DQUOTE = 34;
 
-			EngLexBasis(std::tstring &ulc_fpath)
+			EngLexBasis(std::string &ulc_fpath)
 				 : uls::crux::UlsLex(ulc_fpath) {}
 		};
 	}

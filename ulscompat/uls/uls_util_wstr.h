@@ -86,19 +86,4 @@ ULS_DLL_EXTERN void ulscompat_put_warg_list(wchar_t **wargv, int n_wargv);
 }
 #endif
 
-#ifdef _ULS_USE_ULSCOMPAT
-#ifdef ULS_USE_WSTR
-#define uls_putstr uls_wputstr
-#define uls_path_normalize uls_path_normalize_wstr
-#define uls_mkdir uls_mkdir_wstr
-
-#define uls_strdup uls_wstrdup
-#define uls_strchr uls_wstrchr
-#define uls_explode_str uls_explode_wstr
-
-#define uls_getopts uls_getopts_wstr
-#define cvt_ms_mbcs_filepath cvt_ms_mbcs_filepath_wstr
-#endif // ULS_USE_WSTR
 #endif
-
-#endif // __ULS_UTIL_WSTR_H__

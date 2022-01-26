@@ -143,12 +143,8 @@ ULS_DLL_EXTERN void uls_add_default_convspecs(uls_lf_map_ptr_t lf_map);
 }
 #endif
 
-#ifdef _ULS_USEDLL
-#if defined(ULS_USE_WSTR)
+#ifdef ULS_USE_WSTR
 #include "uls/uls_wlog.h"
-#elif defined(ULS_USE_ASTR)
-#include "uls/uls_alog.h"
-#endif
 #endif
 
 #endif // __ULS_LOG_H__
