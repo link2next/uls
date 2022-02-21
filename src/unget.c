@@ -395,7 +395,7 @@ ULS_QUALIFIED_METHOD(uls_peek_uch)(uls_lex_ptr_t uls, uls_nextch_detail_ptr_t de
 	return uch;
 }
 
-ULS_DLL_EXTERN uls_uch_t
+uls_uch_t
 ULS_QUALIFIED_METHOD(uls_get_uch)(uls_lex_ptr_t uls, uls_nextch_detail_ptr_t detail_ch)
 {
 	uls_context_ptr_t ctx;
@@ -421,7 +421,7 @@ ULS_QUALIFIED_METHOD(uls_get_uch)(uls_lex_ptr_t uls, uls_nextch_detail_ptr_t det
 	return uch;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_unget_tok)(uls_lex_ptr_t uls)
 {
 	uls_context_ptr_t ctx = uls->xcontext.context;
@@ -433,7 +433,7 @@ ULS_QUALIFIED_METHOD(uls_unget_tok)(uls_lex_ptr_t uls)
 	}
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_unget_lexeme)(uls_lex_ptr_t uls, const char *lxm, int tok_id)
 {
 	uls_context_ptr_t ctx = uls->xcontext.context;
@@ -471,7 +471,7 @@ ULS_QUALIFIED_METHOD(uls_unget_lexeme)(uls_lex_ptr_t uls, const char *lxm, int t
 	uls->tokdef_vx = slots_rsv[NONE_TOK_IDX];
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_unget_ch)(uls_lex_ptr_t uls, uls_uch_t uch)
 {
 	uls_context_ptr_t ctx = uls->xcontext.context;
@@ -497,7 +497,7 @@ ULS_QUALIFIED_METHOD(uls_unget_ch)(uls_lex_ptr_t uls, uls_uch_t uch)
 	}
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_unget_str)(uls_lex_ptr_t uls, const char* str)
 {
 	uls_context_ptr_t ctx = uls->xcontext.context;
@@ -517,7 +517,7 @@ ULS_QUALIFIED_METHOD(uls_unget_str)(uls_lex_ptr_t uls, const char* str)
 	uls->tokdef_vx = slots_rsv[NONE_TOK_IDX];
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(ulsjava_unget_str)(uls_lex_ptr_t uls, const uls_native_vptr_t str, int len_str)
 {
 	const char *ustr = _uls_tool_(strdup)((const char *)str, len_str);
@@ -526,7 +526,7 @@ ULS_QUALIFIED_METHOD(ulsjava_unget_str)(uls_lex_ptr_t uls, const uls_native_vptr
 	uls_mfree(ustr);
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(ulsjava_unget_lexeme)(uls_lex_ptr_t uls, const uls_native_vptr_t lxm, int len_lxm, int tok_id)
 {
 	const char *ustr = _uls_tool_(strdup)((const char *)lxm, len_lxm);
@@ -536,7 +536,7 @@ ULS_QUALIFIED_METHOD(ulsjava_unget_lexeme)(uls_lex_ptr_t uls, const uls_native_v
 }
 
 #ifndef ULS_DOTNET
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(ulsjava_peek_ch)(uls_lex_t* uls, int* tok_peek)
 {
 	uls_nextch_detail_t detail_ch;
@@ -550,7 +550,7 @@ ULS_QUALIFIED_METHOD(ulsjava_peek_ch)(uls_lex_t* uls, int* tok_peek)
 	return (int) uch;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(ulsjava_get_ch)(uls_lex_t* uls, int* tok_peek)
 {
 	uls_nextch_detail_t detail_ch;
@@ -564,7 +564,7 @@ ULS_QUALIFIED_METHOD(ulsjava_get_ch)(uls_lex_t* uls, int* tok_peek)
 	return (int) uch;
 }
 
-ULS_DLL_EXTERN uls_nextch_detail_ptr_t
+uls_nextch_detail_ptr_t
 ULS_QUALIFIED_METHOD(ulsjava_peek_nextch_info)(uls_lex_ptr_t uls)
 {
 	uls_nextch_detail_ptr_t detail_ch;
@@ -575,7 +575,7 @@ ULS_QUALIFIED_METHOD(ulsjava_peek_nextch_info)(uls_lex_ptr_t uls)
 	return detail_ch;
 }
 
-ULS_DLL_EXTERN uls_nextch_detail_ptr_t
+uls_nextch_detail_ptr_t
 ULS_QUALIFIED_METHOD(ulsjava_get_nextch_info)(uls_lex_ptr_t uls)
 {
 	uls_nextch_detail_ptr_t detail_ch;
@@ -586,19 +586,19 @@ ULS_QUALIFIED_METHOD(ulsjava_get_nextch_info)(uls_lex_ptr_t uls)
 	return detail_ch;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(ulsjava_put_nextch_info)(uls_nextch_detail_ptr_t detail_ch)
 {
 	uls_dealloc_object(detail_ch);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(ulsjava_get_uch_from_nextch)(uls_nextch_detail_ptr_t detail_ch)
 {
 	return detail_ch->uch;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(ulsjava_get_tok_from_nextch)(uls_nextch_detail_t* detail_ch)
 {
 	return detail_ch->tok;

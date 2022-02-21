@@ -129,14 +129,14 @@ finalize_uls_wlog(void)
 	uls_lf_deinit_convspec_wmap(uls_ptr(logdfl_convspec_wmap));
 }
 
-ULS_DLL_EXTERN void
+void
 err_vwlog(const wchar_t* wfmt, va_list args)
 {
 	ulslog_vwprintf(uls_ptr(wbuff_csz), dfl_syslog_wlf, wfmt, args);
 	ulslog_wflush(uls_ptr(wbuff_csz), dfl_syslog_wlf->x_dat, dfl_syslog_wlf->uls_lf_puts);
 }
 
-ULS_DLL_EXTERN void
+void
 err_wlog(const wchar_t* wfmt, ...)
 {
 	va_list	args;
@@ -146,14 +146,14 @@ err_wlog(const wchar_t* wfmt, ...)
 	va_end(args);
 }
 
-ULS_DLL_EXTERN void
+void
 err_vwpanic(const wchar_t* wfmt, va_list args)
 {
 	err_vwlog(wfmt, args);
 	err_panic("");
 }
 
-ULS_DLL_EXTERN void
+void
 err_wpanic(const wchar_t* wfmt, ...)
 {
 	va_list	args;
@@ -171,7 +171,7 @@ err_wpanic(const wchar_t* wfmt, ...)
 // <parm name="wfmt">The format string, a template for printing</parm>
 // <parm name="args">The list of args</parm>
 // <return>none</return>
-ULS_DLL_EXTERN void
+void
 uls_vwlog(uls_log_ptr_t log, const wchar_t* wfmt, va_list args)
 {
 	uls_wlog_shell_ptr_t wlog_shell = (uls_wlog_shell_ptr_t) log->shell;
@@ -202,7 +202,7 @@ uls_vwlog(uls_log_ptr_t log, const wchar_t* wfmt, va_list args)
 // <parm name="wfmt">The template for message string</parm>
 // <parm name="...">varargs</parm>
 // <return>none</return>
-ULS_DLL_EXTERN void
+void
 uls_wlog(uls_log_ptr_t log, const wchar_t* wfmt, ...)
 {
 	va_list	args;
@@ -212,7 +212,7 @@ uls_wlog(uls_log_ptr_t log, const wchar_t* wfmt, ...)
 	va_end(args);
 }
 
-ULS_DLL_EXTERN void
+void
 uls_vwpanic(uls_log_ptr_t log, const wchar_t* wfmt, va_list args)
 {
 	uls_vwlog(log, wfmt, args);
@@ -225,7 +225,7 @@ uls_vwpanic(uls_log_ptr_t log, const wchar_t* wfmt, va_list args)
 // <parm name="wfmt">The template for message string</parm>
 // <parm name="...">varargs</parm>
 // <return>none</return>
-ULS_DLL_EXTERN void
+void
 uls_wpanic(uls_log_ptr_t log, const wchar_t* wfmt, ...)
 {
 	va_list	args;
@@ -236,7 +236,7 @@ uls_wpanic(uls_log_ptr_t log, const wchar_t* wfmt, ...)
 	err_panic("");
 }
 
-ULS_DLL_EXTERN int
+int
 uls_init_wlog(uls_log_ptr_t log, uls_lf_map_ptr_t lf_map, uls_lex_ptr_t uls)
 {
 	uls_wlog_shell_ptr_t wlog_shell;
@@ -256,7 +256,7 @@ uls_init_wlog(uls_log_ptr_t log, uls_lf_map_ptr_t lf_map, uls_lex_ptr_t uls)
 	return 0;
 }
 
-ULS_DLL_EXTERN void
+void
 uls_deinit_wlog(uls_log_ptr_t log)
 {
 	uls_lf_ptr_t uls_wlf = log->lf;
@@ -274,7 +274,7 @@ uls_deinit_wlog(uls_log_ptr_t log)
 	uls_deinit_log(log);
 }
 
-ULS_DLL_EXTERN uls_log_ptr_t
+uls_log_ptr_t
 uls_create_wlog(uls_lf_map_ptr_t lf_map, uls_lex_ptr_t uls)
 {
 	uls_log_ptr_t log;
@@ -291,7 +291,7 @@ uls_create_wlog(uls_lf_map_ptr_t lf_map, uls_lex_ptr_t uls)
 	return log;
 }
 
-ULS_DLL_EXTERN void
+void
 uls_destroy_wlog(uls_log_ptr_t log)
 {
 	uls_deinit_wlog(log);

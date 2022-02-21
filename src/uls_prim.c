@@ -1168,7 +1168,7 @@ ULS_QUALIFIED_METHOD(uls_set_nambuf_raw)(char *argbuf, int argbuf_siz, const cha
 	return len;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_memset)(void *dstbuf, char ch, int n)
 {
 	char *buf, *ptr = (char *) dstbuf;
@@ -1192,13 +1192,13 @@ ULS_QUALIFIED_METHOD(uls_memset)(void *dstbuf, char ch, int n)
 	}
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_bzero)(void *dstbuf, int n)
 {
 	uls_memset(dstbuf, 0x00, n);
 }
 
-ULS_DLL_EXTERN void*
+void*
 ULS_QUALIFIED_METHOD(uls_malloc)(unsigned int n_bytes)
 {
 	void *ptr;
@@ -1214,7 +1214,7 @@ ULS_QUALIFIED_METHOD(uls_malloc)(unsigned int n_bytes)
 	return ptr;
 }
 
-ULS_DLL_EXTERN void*
+void*
 ULS_QUALIFIED_METHOD(uls_malloc_clear)(unsigned int n_bytes)
 {
 	void *ptr;
@@ -1226,7 +1226,7 @@ ULS_QUALIFIED_METHOD(uls_malloc_clear)(unsigned int n_bytes)
 	return ptr;
 }
 
-ULS_DLL_EXTERN void*
+void*
 ULS_QUALIFIED_METHOD(uls_mrealloc)(void *ptr, unsigned int n_bytes)
 {
 	if (n_bytes == 0) {
@@ -1247,14 +1247,14 @@ ULS_QUALIFIED_METHOD(uls_mrealloc)(void *ptr, unsigned int n_bytes)
 	return ptr;
 }
 
-ULS_DLL_EXTERN void*
+void*
 ULS_QUALIFIED_METHOD(__uls_mfree)(void *ptr)
 {
 	if (ptr != NULL) free(ptr);
 	return NULL;
 }
 
-ULS_DLL_EXTERN char*
+char*
 ULS_QUALIFIED_METHOD(uls_strdup)(const char* str, int len)
 {
 	char *ptr;
@@ -1269,7 +1269,7 @@ ULS_QUALIFIED_METHOD(uls_strdup)(const char* str, int len)
 	return ptr;
 }
 
-ULS_DLL_EXTERN void*
+void*
 ULS_QUALIFIED_METHOD(uls_memcopy)(void *dst, const void* src, int n)
 {
 	void *ptr;
@@ -1284,7 +1284,7 @@ ULS_QUALIFIED_METHOD(uls_memcopy)(void *dst, const void* src, int n)
 	return ptr;
 }
 
-ULS_DLL_EXTERN void*
+void*
 ULS_QUALIFIED_METHOD(uls_memmove)(void *dst, const void* src, int n)
 {
 	void *ptr;
@@ -1299,7 +1299,7 @@ ULS_QUALIFIED_METHOD(uls_memmove)(void *dst, const void* src, int n)
 	return ptr;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_wstrlen)(const uls_uch_t* wstr)
 {
 	const uls_uch_t* wptr;
@@ -1310,7 +1310,7 @@ ULS_QUALIFIED_METHOD(uls_wstrlen)(const uls_uch_t* wstr)
 	return (int) (wptr - wstr);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_strlen)(const char* str)
 {
 	const char* ptr;
@@ -1321,7 +1321,7 @@ ULS_QUALIFIED_METHOD(uls_strlen)(const char* str)
 	return (int) (ptr - str);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_strcpy)(char* bufptr, const char* str)
 {
 	const char *ptr;
@@ -1335,7 +1335,7 @@ ULS_QUALIFIED_METHOD(uls_strcpy)(char* bufptr, const char* str)
 	return (int) (ptr - str);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_strncpy)(char* bufptr, const char* ptr, int n)
 {
 	char ch;
@@ -1352,7 +1352,7 @@ ULS_QUALIFIED_METHOD(uls_strncpy)(char* bufptr, const char* ptr, int n)
 	return i;
 }
 
-ULS_DLL_EXTERN char*
+char*
 ULS_QUALIFIED_METHOD(skip_blanks)(const char* lptr)
 {
 	register int ch;
@@ -1362,7 +1362,7 @@ ULS_QUALIFIED_METHOD(skip_blanks)(const char* lptr)
 	return (char *) lptr;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(str_trim_end)(char* str, int len)
 {
 	register int   i;
@@ -1376,7 +1376,7 @@ ULS_QUALIFIED_METHOD(str_trim_end)(char* str, int len)
 	return i;
 }
 
-ULS_DLL_EXTERN char*
+char*
 ULS_QUALIFIED_METHOD(_uls_splitstr)(uls_wrd_ptr_t uw)
 {
 	char      *str = uw->lptr;
@@ -1401,7 +1401,7 @@ ULS_QUALIFIED_METHOD(_uls_splitstr)(uls_wrd_ptr_t uw)
 	return ptr0;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(_uls_explode_str)(uls_wrd_ptr_t uw, char delim_ch, int dupstr, uls_arglst_ptr_t arglst)
 {
 	char  *lptr=uw->lptr, *lptr1, ch;
@@ -1451,7 +1451,7 @@ ULS_QUALIFIED_METHOD(_uls_explode_str)(uls_wrd_ptr_t uw, char delim_ch, int dups
 	return k;
 }
 
-ULS_DLL_EXTERN char*
+char*
 ULS_QUALIFIED_METHOD(_uls_filename)(uls_outparam_ptr_t parms)
 {
 	const char *filepath = parms->lptr;
@@ -1485,7 +1485,7 @@ ULS_QUALIFIED_METHOD(_uls_filename)(uls_outparam_ptr_t parms)
 	return (char *) filename;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_init_argstr)(uls_argstr_ptr_t arg, int siz)
 {
 	if (siz >= 0) {
@@ -1502,7 +1502,7 @@ ULS_QUALIFIED_METHOD(uls_init_argstr)(uls_argstr_ptr_t arg, int siz)
 	}
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_deinit_argstr)(uls_argstr_ptr_t arg)
 {
 	uls_mfree(arg->buf);
@@ -1512,7 +1512,7 @@ ULS_QUALIFIED_METHOD(uls_deinit_argstr)(uls_argstr_ptr_t arg)
 	arg->len = -1;
 }
 
-ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_argstr_ptr_t)
+ULS_QUALIFIED_RETTYP(uls_argstr_ptr_t)
 ULS_QUALIFIED_METHOD(uls_create_argstr)(void)
 {
 	uls_argstr_ptr_t arg;
@@ -1523,14 +1523,14 @@ ULS_QUALIFIED_METHOD(uls_create_argstr)(void)
 	return arg;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_destroy_argstr)(uls_argstr_ptr_t arg)
 {
 	uls_deinit_argstr(arg);
 	uls_dealloc_object(arg);
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_set_argstr)(uls_argstr_ptr_t arg, char *name, int name_len)
 {
 	arg->str = name;
@@ -1546,7 +1546,7 @@ ULS_QUALIFIED_METHOD(uls_set_argstr)(uls_argstr_ptr_t arg, char *name, int name_
 	}
 }
 
-ULS_DLL_EXTERN char*
+char*
 ULS_QUALIFIED_METHOD(uls_copy_argstr)(uls_argstr_ptr_t arg, const char *name, int name_len)
 {
 	char *str;
@@ -1571,20 +1571,20 @@ ULS_QUALIFIED_METHOD(uls_copy_argstr)(uls_argstr_ptr_t arg, const char *name, in
 	return str;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_init_arglst)(uls_arglst_ptr_t arglst, int siz)
 {
 	uls_init_parray(uls_ptr(arglst->args), argstr, siz);
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_deinit_arglst)(uls_arglst_ptr_t arglst)
 {
 	uls_reset_arglst(arglst);
 	uls_deinit_parray(uls_ptr(arglst->args));
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_reset_arglst)(uls_arglst_ptr_t arglst)
 {
 	uls_decl_parray_slots_init(al, argstr, uls_ptr(arglst->args));
@@ -1601,7 +1601,7 @@ ULS_QUALIFIED_METHOD(uls_reset_arglst)(uls_arglst_ptr_t arglst)
 	arglst->args.n = 0;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_resize_arglst)(uls_arglst_ptr_t arglst, int n1_alloc)
 {
 	uls_decl_parray_slots(al, argstr);
@@ -1623,7 +1623,7 @@ ULS_QUALIFIED_METHOD(uls_resize_arglst)(uls_arglst_ptr_t arglst, int n1_alloc)
 	}
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_append_arglst)(uls_arglst_ptr_t arglst, uls_argstr_ptr_t arg)
 {
 	uls_decl_parray_slots_init(al, argstr, uls_ptr(arglst->args));
@@ -1641,7 +1641,7 @@ ULS_QUALIFIED_METHOD(uls_append_arglst)(uls_arglst_ptr_t arglst, uls_argstr_ptr_
 }
 
 #ifndef ULS_DOTNET
-ULS_DLL_EXTERN void*
+void*
 ULS_QUALIFIED_METHOD(uls_zalloc)(unsigned int n_bytes)
 {
 	void *ptr;
@@ -1653,7 +1653,7 @@ ULS_QUALIFIED_METHOD(uls_zalloc)(unsigned int n_bytes)
 	return ptr;
 }
 
-ULS_DLL_EXTERN char*
+char*
 ULS_QUALIFIED_METHOD(uls_splitstr)(char** p_str)
 {
 	uls_wrd_t wrdx;
@@ -1666,7 +1666,7 @@ ULS_QUALIFIED_METHOD(uls_splitstr)(char** p_str)
 	return wrd;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_explode_str)(char **ptr_line, char delim_ch, char** args, int n_args)
 {
 	uls_wrd_t wrdx;
@@ -1693,7 +1693,7 @@ ULS_QUALIFIED_METHOD(uls_explode_str)(char **ptr_line, char delim_ch, char** arg
 	return n_wrd;
 }
 
-ULS_DLL_EXTERN char*
+char*
 ULS_QUALIFIED_METHOD(uls_filename)(const char *filepath, int* len_fname)
 {
 	uls_outparam_t parms;
@@ -1711,7 +1711,7 @@ ULS_QUALIFIED_METHOD(uls_filename)(const char *filepath, int* len_fname)
 
 #endif // ULS_DOTNET
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(ustr_num_chars)(const char *str, int len, uls_outparam_ptr_t parms)
 {
 	int i, j, rc, n=0;
@@ -1757,7 +1757,7 @@ ULS_QUALIFIED_METHOD(ustr_num_chars)(const char *str, int len, uls_outparam_ptr_
 	return n;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_encode_utf8)(uls_uch_t uch, char* utf8buf, int siz_utf8buf)
 {
 	char buff[ULS_UTF8_CH_MAXLEN];
@@ -1810,7 +1810,7 @@ ULS_QUALIFIED_METHOD(uls_encode_utf8)(uls_uch_t uch, char* utf8buf, int siz_utf8
 	return rc;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_decode_utf8)(const char *utf8buf, int siz_utf8buf, uls_uch_t *p_val)
 {
 	const char *bufptr = utf8buf;
@@ -1860,7 +1860,7 @@ ULS_QUALIFIED_METHOD(uls_decode_utf8)(const char *utf8buf, int siz_utf8buf, uls_
 	return 1 + n;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_encode_utf16)(uls_uch_t uch, uls_uint16 *buf)
 {
 	uls_uch_t uch2;
@@ -1881,7 +1881,7 @@ ULS_QUALIFIED_METHOD(uls_encode_utf16)(uls_uch_t uch, uls_uint16 *buf)
 	return rc;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_decode_utf16)(uls_uint16 *buf, int buf_len, uls_uch_t *p_uch)
 {
 	uls_uch_t uch;
@@ -1905,7 +1905,7 @@ ULS_QUALIFIED_METHOD(uls_decode_utf16)(uls_uint16 *buf, int buf_len, uls_uch_t *
 	return rc;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_encode_utf32)(uls_uch_t uch, uls_uint32 *buf)
 {
 	if (uch > UTF32_CODEPOINT_END) {
@@ -1917,7 +1917,7 @@ ULS_QUALIFIED_METHOD(uls_encode_utf32)(uls_uch_t uch, uls_uint32 *buf)
 	return 1;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_decode_utf32)(uls_uint32 buf, uls_uch_t *p_uch)
 {
 	uls_uch_t uch;
@@ -1932,7 +1932,7 @@ ULS_QUALIFIED_METHOD(uls_decode_utf32)(uls_uint32 buf, uls_uch_t *p_uch)
 }
 
 #if defined(HAVE_PTHREAD)
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_init_mutex)(uls_mutex_t mtx)
 {
 	uls_mutex_struct_ptr_t  a_mtx = (uls_mutex_struct_ptr_t) mtx;
@@ -1952,7 +1952,7 @@ ULS_QUALIFIED_METHOD(uls_init_mutex)(uls_mutex_t mtx)
 	pthread_mutexattr_destroy(uls_ptr(attr));
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_deinit_mutex)(uls_mutex_t mtx)
 {
 	uls_mutex_struct_ptr_t  a_mtx = (uls_mutex_struct_ptr_t) mtx;
@@ -1963,7 +1963,7 @@ ULS_QUALIFIED_METHOD(uls_deinit_mutex)(uls_mutex_t mtx)
 	uls_dealloc_object(a_mtx->mtx_pthr);
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_lock_mutex)(uls_mutex_t mtx)
 {
 	uls_mutex_struct_ptr_t  a_mtx = (uls_mutex_struct_ptr_t) mtx;
@@ -1973,7 +1973,7 @@ ULS_QUALIFIED_METHOD(uls_lock_mutex)(uls_mutex_t mtx)
 	}
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_unlock_mutex)(uls_mutex_t mtx)
 {
 	uls_mutex_struct_ptr_t  a_mtx = (uls_mutex_struct_ptr_t) mtx;
@@ -1984,7 +1984,7 @@ ULS_QUALIFIED_METHOD(uls_unlock_mutex)(uls_mutex_t mtx)
 }
 
 #elif defined(ULS_WINDOWS)
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_init_mutex)(uls_mutex_t mtx)
 {
 	uls_mutex_struct_ptr_t  a_mtx = (uls_mutex_struct_ptr_t) mtx;
@@ -1995,7 +1995,7 @@ ULS_QUALIFIED_METHOD(uls_init_mutex)(uls_mutex_t mtx)
 	}
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_deinit_mutex)(uls_mutex_t mtx)
 {
 	uls_mutex_struct_ptr_t  a_mtx = (uls_mutex_struct_ptr_t) mtx;
@@ -2004,7 +2004,7 @@ ULS_QUALIFIED_METHOD(uls_deinit_mutex)(uls_mutex_t mtx)
 	a_mtx->hndl = INVALID_HANDLE_VALUE;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_lock_mutex)(uls_mutex_t mtx)
 {
 	uls_mutex_struct_ptr_t  a_mtx = (uls_mutex_struct_ptr_t) mtx;
@@ -2017,41 +2017,41 @@ ULS_QUALIFIED_METHOD(uls_lock_mutex)(uls_mutex_t mtx)
 	}
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_unlock_mutex)(uls_mutex_t mtx)
 {
 	uls_mutex_struct_ptr_t  a_mtx = (uls_mutex_struct_ptr_t) mtx;
 	ReleaseMutex(a_mtx->hndl);
 }
 #else
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_init_mutex)(uls_mutex_t mtx)
 {
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_deinit_mutex)(uls_mutex_t mtx)
 {
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_lock_mutex)(uls_mutex_t mtx)
 {
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_unlock_mutex)(uls_mutex_t mtx)
 {
 }
 #endif
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_sys_lock)(void)
 {
 	uls_lock_mutex(uls_ptr(uls_global_mtx));
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_sys_unlock)(void)
 {
 	uls_unlock_mutex(uls_ptr(uls_global_mtx));

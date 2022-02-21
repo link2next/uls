@@ -344,7 +344,7 @@ ULS_QUALIFIED_METHOD(uls_destroy_lang_list)(uls_lang_list_ptr_t tbl)
 	uls_dealloc_object(tbl);
 }
 
-ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_lang_ptr_t)
+ULS_QUALIFIED_RETTYP(uls_lang_ptr_t)
 ULS_QUALIFIED_METHOD(uls_find_lang)(uls_lang_list_ptr_t tbl, const char* alias)
 {
 	uls_decl_parray_slots(slots_ht, alias);
@@ -369,7 +369,7 @@ ULS_QUALIFIED_METHOD(uls_find_lang)(uls_lang_list_ptr_t tbl, const char* alias)
 	return nilptr;
 }
 
-ULS_DLL_EXTERN const char*
+const char*
 ULS_QUALIFIED_METHOD(uls_find_lang_name)(const char* alias)
 {
 	uls_alias_ptr_t e0;
@@ -383,7 +383,7 @@ ULS_QUALIFIED_METHOD(uls_find_lang_name)(const char* alias)
 	return e0->name;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_list_names_of_lang)(const char* alias)
 {
 	uls_lang_ptr_t lang;
@@ -397,7 +397,7 @@ ULS_QUALIFIED_METHOD(uls_list_names_of_lang)(const char* alias)
 	return 0;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_list_langs)(void)
 {
 	uls_lang_list_ptr_t tbl = uls_langs;

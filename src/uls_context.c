@@ -859,7 +859,7 @@ ULS_QUALIFIED_METHOD(xcontext_txtfd_filler)(uls_xcontext_ptr_t xctx)
 	return csz_length(uls_ptr(ctx->zbuf1));
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_context_set_tag)(uls_context_ptr_t ctx, const char* tagstr, int lno)
 {
 	if (tagstr != NULL) {
@@ -872,7 +872,7 @@ ULS_QUALIFIED_METHOD(uls_context_set_tag)(uls_context_ptr_t ctx, const char* tag
 	}
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_xcontext_delete_litstr_analyzer)(uls_xcontext_ptr_t xctx, const char* prefix)
 {
 	uls_decl_parray_slots_init(slots_qmt, quotetype, xctx->quotetypes);
@@ -904,7 +904,7 @@ ULS_QUALIFIED_METHOD(uls_xcontext_delete_litstr_analyzer)(uls_xcontext_ptr_t xct
 	return 0;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_xcontext_change_litstr_analyzer)(uls_xcontext_ptr_t xctx,
 	const char* prefix, uls_litstr_analyzer_t lit_analyzer, uls_voidptr_t dat)
 {
@@ -930,7 +930,7 @@ ULS_QUALIFIED_METHOD(uls_xcontext_change_litstr_analyzer)(uls_xcontext_ptr_t xct
 	return stat;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_context_inc_lineno)(uls_context_ptr_t ctx, int delta)
 {
 	int lno;
@@ -940,7 +940,7 @@ ULS_QUALIFIED_METHOD(uls_context_inc_lineno)(uls_context_ptr_t ctx, int delta)
 	}
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_context_set_line)(uls_context_ptr_t ctx, const char* line, int len)
 {
 	if (line == NULL) {

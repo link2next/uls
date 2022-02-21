@@ -112,7 +112,7 @@ uls_deinit_tmpl_wstr(uls_tmpl_wstr_ptr_t tmpl_wstr)
 	tmpl_wstr->val_wsiz = tmpl_wstr->val_wlen = 0;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_init_tmpls_wstr(uls_tmpl_list_ptr_t tmpl_list, int n_alloc, int flags)
 {
 	uls_tmpl_list_wstr_ptr_t ext;
@@ -128,7 +128,7 @@ uls_init_tmpls_wstr(uls_tmpl_list_ptr_t tmpl_list, int n_alloc, int flags)
 	return 0;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_deinit_tmpls_wstr(uls_tmpl_list_ptr_t tmpl_list)
 {
 	uls_tmpl_list_wstr_ptr_t ext = (uls_tmpl_list_wstr_ptr_t) tmpl_list->shell;
@@ -141,7 +141,7 @@ uls_deinit_tmpls_wstr(uls_tmpl_list_ptr_t tmpl_list)
 	return uls_deinit_tmpls(tmpl_list);
 }
 
-ULS_DLL_EXTERN uls_tmpl_list_ptr_t
+uls_tmpl_list_ptr_t
 uls_create_tmpls_wstr(int n_alloc, int flags)
 {
 	uls_tmpl_list_ptr_t tmpl_list;
@@ -157,7 +157,7 @@ uls_create_tmpls_wstr(int n_alloc, int flags)
 	return tmpl_list;
 }
 
-ULS_DLL_EXTERN void
+void
 uls_reset_tmpls_wstr(uls_tmpl_list_ptr_t tmpl_list, int n_alloc)
 {
 	int theflags = tmpl_list->flags;
@@ -168,7 +168,7 @@ uls_reset_tmpls_wstr(uls_tmpl_list_ptr_t tmpl_list, int n_alloc)
 	tmpl_list->flags = theflags;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_destroy_tmpls_wstr(uls_tmpl_list_ptr_t tmpl_list)
 {
 	if (uls_deinit_tmpls_wstr(tmpl_list) < 0) {
@@ -182,7 +182,7 @@ uls_destroy_tmpls_wstr(uls_tmpl_list_ptr_t tmpl_list)
 	return 0;
 }
 
-ULS_DLL_EXTERN uls_tmpl_t*
+uls_tmpl_t*
 uls_find_tmpl_wstr(uls_tmpl_list_ptr_t tmpl_list, const wchar_t *name)
 {
 	char *ustr;
@@ -204,7 +204,7 @@ uls_find_tmpl_wstr(uls_tmpl_list_ptr_t tmpl_list, const wchar_t *name)
 	return tmpl;
 }
 
-ULS_DLL_EXTERN const wchar_t*
+const wchar_t*
 uls_get_tmpl_value_wstr(uls_tmpl_list_ptr_t tmpl_list, const wchar_t *name)
 {
 	uls_tmpl_list_wstr_ptr_t ext = (uls_tmpl_list_wstr_ptr_t) tmpl_list->shell;
@@ -219,7 +219,7 @@ uls_get_tmpl_value_wstr(uls_tmpl_list_ptr_t tmpl_list, const wchar_t *name)
 	return tmpl_ext->val_wstr;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_set_tmpl_value_wstr(uls_tmpl_list_ptr_t tmpl_list, const wchar_t* name, const wchar_t *val)
 {
 	uls_tmpl_list_wstr_ptr_t ext = (uls_tmpl_list_wstr_ptr_t) tmpl_list->shell;
@@ -238,7 +238,7 @@ uls_set_tmpl_value_wstr(uls_tmpl_list_ptr_t tmpl_list, const wchar_t* name, cons
 	return 0;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_add_tmpl_wstr(uls_tmpl_list_ptr_t tmpl_list, const wchar_t *name, const wchar_t *val)
 {
 	uls_tmpl_list_wstr_ptr_t ext = (uls_tmpl_list_wstr_ptr_t) tmpl_list->shell;
@@ -270,7 +270,7 @@ uls_add_tmpl_wstr(uls_tmpl_list_ptr_t tmpl_list, const wchar_t *name, const wcha
 	return 0;
 }
 
-ULS_DLL_EXTERN void
+void
 uls_set_istream_wtag(uls_istream_ptr_t istr, const wchar_t* wtag)
 {
 	char *ustr;
@@ -289,7 +289,7 @@ uls_set_istream_wtag(uls_istream_ptr_t istr, const wchar_t* wtag)
 	csz_deinit(uls_ptr(csz));
 }
 
-ULS_DLL_EXTERN uls_istream_ptr_t
+uls_istream_ptr_t
 uls_open_istream_file_wstr(const wchar_t* filepath)
 {
 	char *ustr;
@@ -310,7 +310,7 @@ uls_open_istream_file_wstr(const wchar_t* filepath)
 }
 
 #ifdef ULS_FDF_SUPPORT
-ULS_DLL_EXTERN uls_istream_ptr_t
+uls_istream_ptr_t
 uls_open_istream_filter_file_wstr(fdf_t* fdf, const wchar_t* wfilepath)
 {
 	char *ustr;

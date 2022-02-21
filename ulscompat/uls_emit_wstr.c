@@ -40,7 +40,7 @@
 #include "uls/uls_wlog.h"
 
 
-ULS_DLL_EXTERN int
+int
 uls_init_parms_emit_wstr(uls_parms_emit_ptr_t emit_parm,
 	const wchar_t *out_wdpath, const wchar_t *out_wfname, const wchar_t *wfpath_uld,
 	const wchar_t *ulc_wname, const wchar_t *class_wname, const wchar_t *enum_wname,
@@ -91,7 +91,7 @@ uls_init_parms_emit_wstr(uls_parms_emit_ptr_t emit_parm,
 	return stat;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_deinit_parms_emit_wstr(uls_parms_emit_ptr_t emit_parm)
 {
 	uls_emit_wshell_ptr_t wext = (uls_emit_wshell_ptr_t) emit_parm->ext_data;

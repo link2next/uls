@@ -164,19 +164,19 @@ ULS_QUALIFIED_METHOD(uls_log_fmtproc_keyword)(uls_voidptr_t x_dat, uls_lf_puts_t
 	return __uls_fmtproc_keyword(x_dat, puts_proc, uls, ctx);
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(err_syslog_lock)(void)
 {
 	uls_lf_lock(uls_ptr(lf_syserr));
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(err_syslog_unlock)(void)
 {
 	uls_lf_unlock(uls_ptr(lf_syserr));
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(err_vlog)(const char* fmt, va_list args)
 {
 	uls_voidptr_t syslog = lf_syserr.x_dat;
@@ -191,7 +191,7 @@ ULS_QUALIFIED_METHOD(err_vlog)(const char* fmt, va_list args)
 	uls_lf_unlock(uls_ptr(lf_syserr));
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(err_log)(const char* fmt, ...)
 {
 	va_list	args;
@@ -201,14 +201,14 @@ ULS_QUALIFIED_METHOD(err_log)(const char* fmt, ...)
 	va_end(args);
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(err_vpanic)(const char* fmt, va_list args)
 {
 	err_vlog(fmt, args);
 	uls_appl_exit(1);
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(err_panic)(const char* fmt, ...)
 {
 	va_list	args;
@@ -220,7 +220,7 @@ ULS_QUALIFIED_METHOD(err_panic)(const char* fmt, ...)
 	uls_appl_exit(1);
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(err_change_port)(uls_voidptr_t data, uls_lf_puts_t proc)
 {
 	uls_lf_delegate_t delegate;
@@ -238,7 +238,7 @@ ULS_QUALIFIED_METHOD(err_change_port)(uls_voidptr_t data, uls_lf_puts_t proc)
 	uls_lf_change_puts(uls_ptr(lf_syserr), uls_ptr(delegate));
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_init_log)(uls_log_ptr_t log, uls_lf_map_ptr_t lf_map, uls_lex_ptr_t uls)
 {
 	if (uls == nilptr) {
@@ -268,7 +268,7 @@ ULS_QUALIFIED_METHOD(uls_init_log)(uls_log_ptr_t log, uls_lf_map_ptr_t lf_map, u
 	return 0;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_deinit_log)(uls_log_ptr_t log)
 {
 	uls_lex_ptr_t uls = log->uls;
@@ -287,7 +287,7 @@ ULS_QUALIFIED_METHOD(uls_deinit_log)(uls_log_ptr_t log)
 	uls_deinit_mutex(uls_ptr(log->mtx));
 }
 
-ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_log_ptr_t)
+ULS_QUALIFIED_RETTYP(uls_log_ptr_t)
 ULS_QUALIFIED_METHOD(uls_create_log)(uls_lf_map_ptr_t lf_map, uls_lex_ptr_t uls)
 {
 	uls_log_ptr_t log;
@@ -304,7 +304,7 @@ ULS_QUALIFIED_METHOD(uls_create_log)(uls_lf_map_ptr_t lf_map, uls_lex_ptr_t uls)
 	return log;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_destroy_log)(uls_log_ptr_t log)
 {
 	uls_deinit_log(log);
@@ -314,7 +314,7 @@ ULS_QUALIFIED_METHOD(uls_destroy_log)(uls_log_ptr_t log)
 	}
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_log_change)(uls_log_ptr_t log, uls_voidptr_t data, uls_lf_puts_t proc)
 {
 	uls_lf_delegate_t delegate;
@@ -343,7 +343,7 @@ ULS_QUALIFIED_METHOD(uls_log_change)(uls_log_ptr_t log, uls_voidptr_t data, uls_
 // <parm name="fmt">The format string, a template for printing</parm>
 // <parm name="args">The list of args</parm>
 // <return>none</return>
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_vlog)(uls_log_ptr_t log, const char* fmt, va_list args)
 {
 	char numbuf[N_LOGBUF_CHARS];
@@ -378,7 +378,7 @@ ULS_QUALIFIED_METHOD(uls_vlog)(uls_log_ptr_t log, const char* fmt, va_list args)
 // </brief>
 // <parm name="fmt">The template for message string</parm>
 // <return>void</return>
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_log)(uls_log_ptr_t log, const char* fmt, ...)
 {
 	va_list	args;
@@ -388,7 +388,7 @@ ULS_QUALIFIED_METHOD(uls_log)(uls_log_ptr_t log, const char* fmt, ...)
 	va_end(args);
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_vpanic)(uls_log_ptr_t log, const char* fmt, va_list args)
 {
 	uls_vlog(log, fmt, args);
@@ -401,7 +401,7 @@ ULS_QUALIFIED_METHOD(uls_vpanic)(uls_log_ptr_t log, const char* fmt, va_list arg
 // </brief>
 // <parm name="fmt">The template for message string</parm>
 // <return>none</return>
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_panic)(uls_log_ptr_t log, const char* fmt, ...)
 {
 	va_list	args;
@@ -413,7 +413,7 @@ ULS_QUALIFIED_METHOD(uls_panic)(uls_log_ptr_t log, const char* fmt, ...)
 	uls_appl_exit(1);
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_set_loglevel)(uls_log_ptr_t log, int lvl)
 {
 	if (lvl > ULS_MAX_LOGLEVEL || lvl < 0) {
@@ -431,7 +431,7 @@ ULS_QUALIFIED_METHOD(uls_set_loglevel)(uls_log_ptr_t log, int lvl)
 	}
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_loglevel_isset)(uls_log_ptr_t log, int lvl)
 {
 	if (lvl > ULS_MAX_LOGLEVEL || lvl < 0) {
@@ -441,7 +441,7 @@ ULS_QUALIFIED_METHOD(uls_loglevel_isset)(uls_log_ptr_t log, int lvl)
 	return (log->log_mask & ULS_LOGLEVEL_FLAG(lvl)) ? 1 : 0;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_clear_loglevel)(uls_log_ptr_t log, int lvl)
 {
 	if (lvl > ULS_MAX_LOGLEVEL || lvl < 0) {
@@ -461,7 +461,7 @@ ULS_QUALIFIED_METHOD(uls_clear_loglevel)(uls_log_ptr_t log, int lvl)
 	}
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_add_default_log_convspecs)(uls_lf_map_ptr_t lf_map)
 {
 	uls_lf_register_convspec(lf_map, "w", uls_log_fmtproc_coord);
@@ -469,7 +469,7 @@ ULS_QUALIFIED_METHOD(uls_add_default_log_convspecs)(uls_lf_map_ptr_t lf_map)
 	uls_lf_register_convspec(lf_map, "k", uls_log_fmtproc_keyword);
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_add_default_convspecs)(uls_lf_map_ptr_t lf_map)
 {
 	uls_lf_register_convspec(lf_map, "w", uls_fmtproc_coord);

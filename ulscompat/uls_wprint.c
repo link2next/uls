@@ -71,7 +71,7 @@ finalize_uls_wprint(void)
 	uls_wlf_destroy(prn_wlf);
 }
 
-ULS_DLL_EXTERN int
+int
 uls_sysprn_wopen(uls_voidptr_t data, uls_lf_puts_t proc)
 {
 	uls_lf_delegate_t delegate;
@@ -99,7 +99,7 @@ uls_sysprn_wopen(uls_voidptr_t data, uls_lf_puts_t proc)
 // Closes the output file used by uls_sysprn() or uls_wprint().
 // </brief>
 // <return>none</return>
-ULS_DLL_EXTERN void
+void
 uls_sysprn_wclose(void)
 {
 	uls_lf_delegate_t delegate;
@@ -119,7 +119,7 @@ uls_sysprn_wclose(void)
 // </brief>
 // <parm name="wfmt">The template for message string</parm>
 // <return># of wchar_t's</return>
-ULS_DLL_EXTERN int
+int
 uls_vwsysprn(const wchar_t* wfmt, va_list args)
 {
 	return __uls_lf_vxwprintf(prn_wlf, wfmt, args);
@@ -130,7 +130,7 @@ uls_vwsysprn(const wchar_t* wfmt, va_list args)
 // </brief>
 // <parm name="wfmt">The template for message string</parm>
 // <return># of wchar_t's</return>
-ULS_DLL_EXTERN int
+int
 uls_wsysprn(const wchar_t* wfmt, ...)
 {
 	va_list	args;
@@ -151,7 +151,7 @@ uls_wsysprn(const wchar_t* wfmt, ...)
 // <parm name="wfmt">The format string, a template for printing</parm>
 // <parm name="args">The list of args</parm>
 // <return># of wchar_t's int 'wbuf'</return>
-ULS_DLL_EXTERN int
+int
 __uls_lf_vsnwprintf(wchar_t* wbuf, int wbuf_siz, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, va_list args)
 {
 	uls_buf4wstr_t stdwbuf;
@@ -178,7 +178,7 @@ __uls_lf_vsnwprintf(wchar_t* wbuf, int wbuf_siz, uls_lf_ptr_t uls_lf, const wcha
 	return wlen;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_lf_vsnwprintf(wchar_t* wbuf, int wbuf_siz, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, va_list args)
 {
 	int wlen;
@@ -190,7 +190,7 @@ uls_lf_vsnwprintf(wchar_t* wbuf, int wbuf_siz, uls_lf_ptr_t uls_lf, const wchar_
 	return wlen;
 }
 
-ULS_DLL_EXTERN int
+int
 __uls_lf_snwprintf(wchar_t* wbuf, int wbuf_siz, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, ...)
 {
 	va_list args;
@@ -203,7 +203,7 @@ __uls_lf_snwprintf(wchar_t* wbuf, int wbuf_siz, uls_lf_ptr_t uls_lf, const wchar
 	return wlen;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_lf_snwprintf(wchar_t* wbuf, int wbuf_siz, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, ...)
 {
 	va_list args;
@@ -224,13 +224,13 @@ uls_lf_snwprintf(wchar_t* wbuf, int wbuf_siz, uls_lf_ptr_t uls_lf, const wchar_t
 // <parm name="wfmt">The template for message string</parm>
 // <return># of wchar_t's</return>
 
-ULS_DLL_EXTERN int
+int
 __uls_vsnwprintf(wchar_t* wbuf, int wbuf_siz, const wchar_t *wfmt, va_list args)
 {
 	return __uls_lf_vsnwprintf(wbuf, wbuf_siz, str_wlf, wfmt, args);
 }
 
-ULS_DLL_EXTERN int
+int
 uls_vsnwprintf(wchar_t* wbuf, int wbuf_siz, const wchar_t *wfmt, va_list args)
 {
 	int wlen;
@@ -242,7 +242,7 @@ uls_vsnwprintf(wchar_t* wbuf, int wbuf_siz, const wchar_t *wfmt, va_list args)
 	return wlen;
 }
 
-ULS_DLL_EXTERN int
+int
 __uls_snwprintf(wchar_t* wbuf, int wbuf_siz, const wchar_t *wfmt, ...)
 {
 	va_list args;
@@ -255,7 +255,7 @@ __uls_snwprintf(wchar_t* wbuf, int wbuf_siz, const wchar_t *wfmt, ...)
 	return wlen;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_snwprintf(wchar_t* wbuf, int wbuf_siz, const wchar_t *wfmt, ...)
 {
 	va_list args;
@@ -274,7 +274,7 @@ uls_snwprintf(wchar_t* wbuf, int wbuf_siz, const wchar_t *wfmt, ...)
 // <parm name="fp">The pointer of FILE to be wrriten</parm>
 // <parm name="wfmt">The template for message string</parm>
 // <return># of wchar_t's written</return>
-ULS_DLL_EXTERN int
+int
 __uls_lf_vzwprintf(csz_str_ptr_t csz, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, va_list args)
 {
 	uls_lf_delegate_t delegate;
@@ -290,7 +290,7 @@ __uls_lf_vzwprintf(csz_str_ptr_t csz, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, 
 	return wlen;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_lf_vzwprintf(csz_str_ptr_t csz, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, va_list args)
 {
 	int wlen;
@@ -302,7 +302,7 @@ uls_lf_vzwprintf(csz_str_ptr_t csz, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, va
 	return wlen;
 }
 
-ULS_DLL_EXTERN int
+int
 __uls_lf_zwprintf(csz_str_ptr_t csz, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, ...)
 {
 	va_list args;
@@ -315,7 +315,7 @@ __uls_lf_zwprintf(csz_str_ptr_t csz, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, .
 	return wlen;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_lf_zwprintf(csz_str_ptr_t csz, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, ...)
 {
 	va_list args;
@@ -334,13 +334,13 @@ uls_lf_zwprintf(csz_str_ptr_t csz, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, ...
 // <parm name="fp">The pointer of FILE to be wrriten</parm>
 // <parm name="wfmt">The template for message string</parm>
 // <return># of wchar_t's written</return>
-ULS_DLL_EXTERN int
+int
 __uls_vzwprintf(csz_str_ptr_t csz, const wchar_t *wfmt, va_list args)
 {
 	return __uls_lf_vxwprintf_generic(csz, csz_wlf, wfmt, args);
 }
 
-ULS_DLL_EXTERN int
+int
 uls_vzwprintf(csz_str_ptr_t csz, const wchar_t *wfmt, va_list args)
 {
 	int wlen;
@@ -352,7 +352,7 @@ uls_vzwprintf(csz_str_ptr_t csz, const wchar_t *wfmt, va_list args)
 	return wlen;
 }
 
-ULS_DLL_EXTERN int
+int
 __uls_zwprintf(csz_str_ptr_t csz, const wchar_t *wfmt, ...)
 {
 	va_list args;
@@ -365,7 +365,7 @@ __uls_zwprintf(csz_str_ptr_t csz, const wchar_t *wfmt, ...)
 	return wlen;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_zwprintf(csz_str_ptr_t csz, const wchar_t *wfmt, ...)
 {
 	va_list args;
@@ -384,7 +384,7 @@ uls_zwprintf(csz_str_ptr_t csz, const wchar_t *wfmt, ...)
 // <parm name="fp">The pointer of FILE to be wrriten</parm>
 // <parm name="wfmt">The template for message string</parm>
 // <return># of wchar_t's written</return>
-ULS_DLL_EXTERN int
+int
 __uls_lf_vfwprintf(FILE* fp, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, va_list args)
 {
 	uls_lf_delegate_t delegate;
@@ -400,7 +400,7 @@ __uls_lf_vfwprintf(FILE* fp, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, va_list a
 	return wlen;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_lf_vfwprintf(FILE* fp, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, va_list args)
 {
 	int wlen;
@@ -412,7 +412,7 @@ uls_lf_vfwprintf(FILE* fp, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, va_list arg
 	return wlen;
 }
 
-ULS_DLL_EXTERN int
+int
 __uls_lf_fwprintf(FILE* fp, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, ...)
 {
 	va_list args;
@@ -425,7 +425,7 @@ __uls_lf_fwprintf(FILE* fp, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, ...)
 	return wlen;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_lf_fwprintf(FILE* fp, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, ...)
 {
 	va_list args;
@@ -444,13 +444,13 @@ uls_lf_fwprintf(FILE* fp, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, ...)
 // <parm name="fp">The pointer of FILE to be wrriten</parm>
 // <parm name="wfmt">The template for message string</parm>
 // <return># of wchar_t's written</return>
-ULS_DLL_EXTERN int
+int
 __uls_vfwprintf(FILE* fp, const wchar_t *wfmt, va_list args)
 {
 	return __uls_lf_vxwprintf_generic(fp, file_wlf, wfmt, args);
 }
 
-ULS_DLL_EXTERN int
+int
 uls_vfwprintf(FILE* fp, const wchar_t *wfmt, va_list args)
 {
 	int wlen;
@@ -462,7 +462,7 @@ uls_vfwprintf(FILE* fp, const wchar_t *wfmt, va_list args)
 	return wlen;
 }
 
-ULS_DLL_EXTERN int
+int
 __uls_fwprintf(FILE* fp, const wchar_t *wfmt, ...)
 {
 	va_list args;
@@ -475,7 +475,7 @@ __uls_fwprintf(FILE* fp, const wchar_t *wfmt, ...)
 	return wlen;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_fwprintf(FILE* fp, const wchar_t *wfmt, ...)
 {
 	va_list args;
@@ -494,13 +494,13 @@ uls_fwprintf(FILE* fp, const wchar_t *wfmt, ...)
 // <parm name="wfmt">The template for message string</parm>
 // <return># of chars printed</return>
 
-ULS_DLL_EXTERN int
+int
 __uls_lf_vwprintf(uls_lf_ptr_t uls_lf, const wchar_t *wfmt, va_list args)
 {
 	return __uls_lf_vfwprintf(_uls_stdio_fp(1), uls_lf, wfmt, args);
 }
 
-ULS_DLL_EXTERN int
+int
 uls_lf_vwprintf(uls_lf_ptr_t uls_lf, const wchar_t *wfmt, va_list args)
 {
 	int wlen;
@@ -512,7 +512,7 @@ uls_lf_vwprintf(uls_lf_ptr_t uls_lf, const wchar_t *wfmt, va_list args)
 	return wlen;
 }
 
-ULS_DLL_EXTERN int
+int
 __uls_lf_wprintf(uls_lf_ptr_t uls_lf, const wchar_t *wfmt, ...)
 {
 	va_list args;
@@ -525,7 +525,7 @@ __uls_lf_wprintf(uls_lf_ptr_t uls_lf, const wchar_t *wfmt, ...)
 	return wlen;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_lf_wprintf(uls_lf_ptr_t uls_lf, const wchar_t *wfmt, ...)
 {
 	va_list args;
@@ -544,13 +544,13 @@ uls_lf_wprintf(uls_lf_ptr_t uls_lf, const wchar_t *wfmt, ...)
 // <parm name="wfmt">The template for message string</parm>
 // <return># of chars printed</return>
 
-ULS_DLL_EXTERN int
+int
 __uls_vwprintf(const wchar_t *wfmt, va_list args)
 {
 	return __uls_vfwprintf(_uls_stdio_fp(1), wfmt, args);
 }
 
-ULS_DLL_EXTERN int
+int
 uls_vwprintf(const wchar_t *wfmt, va_list args)
 {
 	int wlen;
@@ -562,7 +562,7 @@ uls_vwprintf(const wchar_t *wfmt, va_list args)
 	return wlen;
 }
 
-ULS_DLL_EXTERN int
+int
 __uls_wprintf(const wchar_t *wfmt, ...)
 {
 	va_list args;
@@ -575,7 +575,7 @@ __uls_wprintf(const wchar_t *wfmt, ...)
 	return wlen;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_wprintf(const wchar_t *wfmt, ...)
 {
 	va_list args;

@@ -78,7 +78,7 @@ _finalize_ulscompat(void)
 	__finalize_ulscompat();
 }
 
-ULS_DLL_EXTERN void
+void
 initialize_ulscompat(void)
 {
 	_initialize_ulscompat();
@@ -87,7 +87,7 @@ initialize_ulscompat(void)
 #endif
 }
 
-ULS_DLL_EXTERN void
+void
 finalize_ulscompat(void)
 {
 	_finalize_ulscompat();

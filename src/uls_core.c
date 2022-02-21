@@ -1056,7 +1056,7 @@ ULS_QUALIFIED_METHOD(uls_push_context)(uls_lex_ptr_t uls, uls_context_ptr_t ctx_
 	return ctx_new;
 }
 
-ULS_DLL_EXTERN const char*
+const char*
 ULS_QUALIFIED_METHOD(uls_tok2keyw)(uls_lex_ptr_t uls, int t)
 {
 	uls_tokdef_vx_ptr_t e_vx;
@@ -1077,7 +1077,7 @@ ULS_QUALIFIED_METHOD(uls_tok2keyw)(uls_lex_ptr_t uls, int t)
 	return str;
 }
 
-ULS_DLL_EXTERN const char*
+const char*
 ULS_QUALIFIED_METHOD(uls_tok2name)(uls_lex_ptr_t uls, int t)
 {
 	uls_tokdef_vx_ptr_t e_vx;
@@ -1096,7 +1096,7 @@ ULS_QUALIFIED_METHOD(uls_tok2name)(uls_lex_ptr_t uls, int t)
 	return str;
 }
 
-ULS_DLL_EXTERN const char*
+const char*
 ULS_QUALIFIED_METHOD(uls_tok2keyw_2)(uls_lex_ptr_t uls, int t, uls_ptrtype_tool(outparam) parms)
 {
 	const char *str;
@@ -1116,7 +1116,7 @@ ULS_QUALIFIED_METHOD(uls_tok2keyw_2)(uls_lex_ptr_t uls, int t, uls_ptrtype_tool(
 	return str;
 }
 
-ULS_DLL_EXTERN const char*
+const char*
 ULS_QUALIFIED_METHOD(uls_tok2name_2)(uls_lex_ptr_t uls, int t, uls_ptrtype_tool(outparam) parms)
 {
 	const char *str;
@@ -1136,7 +1136,7 @@ ULS_QUALIFIED_METHOD(uls_tok2name_2)(uls_lex_ptr_t uls, int t, uls_ptrtype_tool(
 	return str;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(_uls_get_tokid_list)(uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) parms)
 {
 	uls_decl_parray_slots_init(slots_vx, tokdef_vx, uls_ptr(uls->tokdef_vx_array));
@@ -1171,7 +1171,7 @@ ULS_QUALIFIED_METHOD(_uls_get_tokid_list)(uls_lex_ptr_t uls, uls_ptrtype_tool(ou
 	return k;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(_uls_put_tokid_list)(uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) parms)
 {
 	int *outbuf = (int *) parms->native_data;
@@ -1180,7 +1180,7 @@ ULS_QUALIFIED_METHOD(_uls_put_tokid_list)(uls_lex_ptr_t uls, uls_ptrtype_tool(ou
 
 #ifndef ULS_DOTNET
 
-ULS_DLL_EXTERN int
+int
 ulsjava_get_tokid_list(uls_lex_t* uls, int **ptr_outbuf)
 {
 	uls_type_tool(outparam) parms;
@@ -1192,7 +1192,7 @@ ulsjava_get_tokid_list(uls_lex_t* uls, int **ptr_outbuf)
 	return n;
 }
 
-ULS_DLL_EXTERN void
+void
 ulsjava_put_tokid_list(uls_lex_t* uls, int **ptr_outbuf)
 {
 	uls_type_tool(outparam) parms;
@@ -1203,7 +1203,7 @@ ulsjava_put_tokid_list(uls_lex_t* uls, int **ptr_outbuf)
 
 #endif
 
-ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_tokid_simple_list_ptr_t)
+ULS_QUALIFIED_RETTYP(uls_tokid_simple_list_ptr_t)
 ULS_QUALIFIED_METHOD(_uls_get_tokid_list_2)(uls_lex_ptr_t uls)
 {
 	uls_tokid_simple_list_ptr_t lst;
@@ -1218,7 +1218,7 @@ ULS_QUALIFIED_METHOD(_uls_get_tokid_list_2)(uls_lex_ptr_t uls)
 	return lst;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(_uls_put_tokid_list_2)(uls_tokid_simple_list_ptr_t lst)
 {
 	uls_type_tool(outparam) parms;
@@ -1232,7 +1232,7 @@ ULS_QUALIFIED_METHOD(_uls_put_tokid_list_2)(uls_tokid_simple_list_ptr_t lst)
 	uls_dealloc_object(lst);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_init)(uls_lex_ptr_t uls, const char* confname)
 {
 	char   specname[ULC_LONGNAME_MAXSIZ+1];
@@ -1337,7 +1337,7 @@ ULS_QUALIFIED_METHOD(uls_init)(uls_lex_ptr_t uls, const char* confname)
 	return 0;
 }
 
-ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_lex_ptr_t)
+ULS_QUALIFIED_RETTYP(uls_lex_ptr_t)
 ULS_QUALIFIED_METHOD(uls_create)(const char* confname)
 {
 	uls_lex_ptr_t uls;
@@ -1353,13 +1353,13 @@ ULS_QUALIFIED_METHOD(uls_create)(const char* confname)
 	return uls;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_reset)(uls_lex_ptr_t uls)
 {
 	uls_pop_all(uls);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_destroy)(uls_lex_ptr_t uls)
 {
 	if (uls == nilptr || uls->ref_cnt <= 0) {
@@ -1376,7 +1376,7 @@ ULS_QUALIFIED_METHOD(uls_destroy)(uls_lex_ptr_t uls)
 	return 0;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_skip_blanks)(uls_lex_ptr_t uls)
 {
 	int stat = 0;
@@ -1396,7 +1396,7 @@ ULS_QUALIFIED_METHOD(uls_skip_blanks)(uls_lex_ptr_t uls)
 	return stat;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_is_quote_tok)(uls_lex_ptr_t uls, int tok_id)
 {
 	uls_quotetype_ptr_t qmt;
@@ -1405,7 +1405,7 @@ ULS_QUALIFIED_METHOD(uls_is_quote_tok)(uls_lex_ptr_t uls, int tok_id)
 }
 
 #ifndef ULS_DOTNET
-ULS_DLL_EXTERN const char*
+const char*
 ULS_QUALIFIED_METHOD(uls_get_tag2)(uls_lex_ptr_t uls, int* ptr_n_bytes)
 {
 	const char *tagstr;
@@ -1420,13 +1420,13 @@ ULS_QUALIFIED_METHOD(uls_get_tag2)(uls_lex_ptr_t uls, int* ptr_n_bytes)
 }
 #endif // ULS_DOTNET
 
-ULS_DLL_EXTERN uls_voidptr_t
+uls_voidptr_t
 ULS_QUALIFIED_METHOD(uls_get_current_extra_tokdef)(uls_lex_ptr_t uls)
 {
 	return uls->tokdef_vx->extra_tokdef;
 }
 
-ULS_DLL_EXTERN uls_voidptr_t
+uls_voidptr_t
 ULS_QUALIFIED_METHOD(uls_get_extra_tokdef)(uls_lex_ptr_t uls, int tok_id)
 {
 	uls_tokdef_vx_ptr_t e_vx;
@@ -1441,7 +1441,7 @@ ULS_QUALIFIED_METHOD(uls_get_extra_tokdef)(uls_lex_ptr_t uls, int tok_id)
 	return e_vx->extra_tokdef;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_set_extra_tokdef)(uls_lex_ptr_t uls, int tok_id, uls_voidptr_t extra_tokdef)
 {
 	int rval;
@@ -1455,7 +1455,7 @@ ULS_QUALIFIED_METHOD(uls_set_extra_tokdef)(uls_lex_ptr_t uls, int tok_id, uls_vo
 	return rval;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_set_current_extra_tokdef)(uls_lex_ptr_t uls, uls_voidptr_t extra_tokdef)
 {
 	uls_tokdef_vx_ptr_t e_vx = uls->tokdef_vx;
@@ -1467,7 +1467,7 @@ ULS_QUALIFIED_METHOD(uls_set_current_extra_tokdef)(uls_lex_ptr_t uls, uls_voidpt
 	}
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_get_tok)(uls_lex_ptr_t uls)
 {
 	uls_context_ptr_t ctx = uls->xcontext.context;
@@ -1517,7 +1517,7 @@ ULS_QUALIFIED_METHOD(uls_get_tok)(uls_lex_ptr_t uls)
 	return ctx->tok;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_set_tok)(uls_lex_ptr_t uls, int tokid, const char* lexeme, int l_lexeme)
 {
 	uls_context_ptr_t ctx = uls->xcontext.context;
@@ -1535,7 +1535,7 @@ ULS_QUALIFIED_METHOD(uls_set_tok)(uls_lex_ptr_t uls, int tokid, const char* lexe
 	ctx->tok = tokid;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_expect)(uls_lex_ptr_t uls, int value)
 {
 	int val0 = __uls_tok(uls);
@@ -1553,14 +1553,14 @@ ULS_QUALIFIED_METHOD(uls_expect)(uls_lex_ptr_t uls, int value)
 	}
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_push)(uls_lex_ptr_t uls, uls_context_ptr_t ctx)
 {
 	if (ctx == nilptr) return;
 	uls_push_context(uls, ctx);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_push_isrc)(uls_lex_ptr_t uls,
 	uls_voidptr_t isrc, uls_fill_isource_t fill_rawbuf, uls_ungrab_isource_t ungrab_proc)
 {
@@ -1574,7 +1574,7 @@ ULS_QUALIFIED_METHOD(uls_push_isrc)(uls_lex_ptr_t uls,
 	return 0;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_set_isrc)(uls_lex_ptr_t uls,
 	uls_voidptr_t isrc, uls_fill_isource_t fill_rawbuf, uls_ungrab_isource_t ungrab_proc)
 {
@@ -1582,7 +1582,7 @@ ULS_QUALIFIED_METHOD(uls_set_isrc)(uls_lex_ptr_t uls,
 	return uls_push_isrc(uls, isrc, fill_rawbuf, ungrab_proc);
 }
 
-ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_context_ptr_t)
+ULS_QUALIFIED_RETTYP(uls_context_ptr_t)
 ULS_QUALIFIED_METHOD(uls_pop)(uls_lex_ptr_t uls)
 {
 	uls_source_ptr_t isrc;
@@ -1610,7 +1610,7 @@ ULS_QUALIFIED_METHOD(uls_pop)(uls_lex_ptr_t uls)
 	return ctx_prev;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_pop_all)(uls_lex_ptr_t uls)
 {
 	while (!uls_is_context_initial(uls)) {
@@ -1618,7 +1618,7 @@ ULS_QUALIFIED_METHOD(uls_pop_all)(uls_lex_ptr_t uls)
 	}
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_push_line)(uls_lex_ptr_t uls, const char* line, int len, int flags)
 {
 	if (line == NULL) {
@@ -1643,14 +1643,14 @@ ULS_QUALIFIED_METHOD(uls_push_line)(uls_lex_ptr_t uls, const char* line, int len
 	return 0;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_set_line)(uls_lex_ptr_t uls, const char* line, int len, int flags)
 {
 	uls_pop(uls);
 	return uls_push_line(uls, line, len, flags);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_cardinal_toknam)(char* toknam, uls_lex_ptr_t uls, int tok_id)
 {
 	uls_xcontext_ptr_t xctx = uls_ptr(uls->xcontext);
@@ -1711,7 +1711,7 @@ ULS_QUALIFIED_METHOD(uls_cardinal_toknam)(char* toknam, uls_lex_ptr_t uls, int t
 	return has_lxm;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_get_number_prefix)(uls_ptrtype_tool(outparam) parms, char *prefix)
 {
 	const char *tok_str = parms->lptr;
@@ -1735,7 +1735,7 @@ ULS_QUALIFIED_METHOD(uls_get_number_prefix)(uls_ptrtype_tool(outparam) parms, ch
 	return i;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_cardinal_toknam_deco)(char *toknam_buff, const char *toknam)
 {
 	int len;
@@ -1743,7 +1743,7 @@ ULS_QUALIFIED_METHOD(uls_cardinal_toknam_deco)(char *toknam_buff, const char *to
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_cardinal_toknam_deco_lxmpfx)(char *toknam_buff, char *lxmpfx, uls_lex_ptr_t uls,
 	int tok_id, uls_ptrtype_tool(outparam) parms)
 {
@@ -1763,7 +1763,7 @@ ULS_QUALIFIED_METHOD(uls_cardinal_toknam_deco_lxmpfx)(char *toknam_buff, char *l
 	return has_lxm;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_dump_tok)(uls_lex_ptr_t uls, const char *pfx, const char *suff)
 {
 	int tok_id = __uls_tok(uls), has_lxm;
@@ -1786,7 +1786,7 @@ ULS_QUALIFIED_METHOD(uls_dump_tok)(uls_lex_ptr_t uls, const char *pfx, const cha
 	_uls_log_(printf)("%s", suff);
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(_uls_dump_tok_2)(uls_lex_ptr_t uls, const char* pfx, const char *id_str, const char *tok_str, const char *suff)
 {
 	char toknam_buff[ULS_CARDINAL_TOKNAM_SIZ+1];
@@ -1799,13 +1799,13 @@ ULS_QUALIFIED_METHOD(_uls_dump_tok_2)(uls_lex_ptr_t uls, const char* pfx, const 
 	_uls_log_(printf)(" %s%s", tok_str, suff);
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_dumpln_tok)(uls_lex_ptr_t uls)
 {
 	uls_dump_tok(uls, "\t", "\n");
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_is_real)(uls_lex_ptr_t uls)
 {
 	if (__uls_tok(uls) == uls->xcontext.toknum_NUMBER) {
@@ -1815,7 +1815,7 @@ ULS_QUALIFIED_METHOD(uls_is_real)(uls_lex_ptr_t uls)
 	return 0;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_is_int)(uls_lex_ptr_t uls)
 {
 	if (__uls_tok(uls) == uls->xcontext.toknum_NUMBER) {
@@ -1825,7 +1825,7 @@ ULS_QUALIFIED_METHOD(uls_is_int)(uls_lex_ptr_t uls)
 	return 0;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_is_zero)(uls_lex_ptr_t uls)
 {
 	const char *ptr;
@@ -1840,7 +1840,7 @@ ULS_QUALIFIED_METHOD(uls_is_zero)(uls_lex_ptr_t uls)
 	return 0;
 }
 
-ULS_DLL_EXTERN const char*
+const char*
 ULS_QUALIFIED_METHOD(uls_number_suffix)(uls_lex_ptr_t uls)
 {
 	const char *ptr;
@@ -1858,7 +1858,7 @@ ULS_QUALIFIED_METHOD(uls_number_suffix)(uls_lex_ptr_t uls)
 	return ptr;
 }
 
-ULS_DLL_EXTERN const char*
+const char*
 ULS_QUALIFIED_METHOD(uls_eof_tag)(uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) parms)
 {
 	const char *ptr;
@@ -1870,7 +1870,7 @@ ULS_QUALIFIED_METHOD(uls_eof_tag)(uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) 
 	return ptr;
 }
 
-ULS_DLL_EXTERN double
+double
 ULS_QUALIFIED_METHOD(uls_lexeme_double)(uls_lex_ptr_t uls)
 {
 	const char *ptr;
@@ -1893,7 +1893,7 @@ ULS_QUALIFIED_METHOD(uls_lexeme_double)(uls_lex_ptr_t uls)
 	return d_val;
 }
 
-ULS_DLL_EXTERN uls_uint32
+uls_uint32
 ULS_QUALIFIED_METHOD(uls_lexeme_uint32)(uls_lex_ptr_t uls)
 {
 	const char *ptr;
@@ -1906,7 +1906,7 @@ ULS_QUALIFIED_METHOD(uls_lexeme_uint32)(uls_lex_ptr_t uls)
 	return __uls_lexeme_uint32(ptr);
 }
 
-ULS_DLL_EXTERN uls_int32
+uls_int32
 ULS_QUALIFIED_METHOD(uls_lexeme_int32)(uls_lex_ptr_t uls)
 {
 	const char *ptr;
@@ -1928,7 +1928,7 @@ ULS_QUALIFIED_METHOD(uls_lexeme_int32)(uls_lex_ptr_t uls)
 	return minus ? - (uls_int32) u32_val : u32_val;
 }
 
-ULS_DLL_EXTERN uls_uint64
+uls_uint64
 ULS_QUALIFIED_METHOD(uls_lexeme_uint64)(uls_lex_ptr_t uls)
 {
 	const char *ptr;
@@ -1941,7 +1941,7 @@ ULS_QUALIFIED_METHOD(uls_lexeme_uint64)(uls_lex_ptr_t uls)
 	return __uls_lexeme_uint64(ptr);
 }
 
-ULS_DLL_EXTERN uls_int64
+uls_int64
 ULS_QUALIFIED_METHOD(uls_lexeme_int64)(uls_lex_ptr_t uls)
 {
 	const char *ptr;
@@ -1963,7 +1963,7 @@ ULS_QUALIFIED_METHOD(uls_lexeme_int64)(uls_lex_ptr_t uls)
 	return minus ? - (uls_int64) i64_val : i64_val;
 }
 
-ULS_DLL_EXTERN unsigned int
+unsigned int
 ULS_QUALIFIED_METHOD(uls_lexeme_u)(uls_lex_ptr_t uls)
 {
 	unsigned int u_val;
@@ -1982,7 +1982,7 @@ ULS_QUALIFIED_METHOD(uls_lexeme_u)(uls_lex_ptr_t uls)
 	return u_val;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_lexeme_d)(uls_lex_ptr_t uls)
 {
 	int i_val;
@@ -2001,7 +2001,7 @@ ULS_QUALIFIED_METHOD(uls_lexeme_d)(uls_lex_ptr_t uls)
 	return i_val;
 }
 
-ULS_DLL_EXTERN unsigned long
+unsigned long
 ULS_QUALIFIED_METHOD(uls_lexeme_lu)(uls_lex_ptr_t uls)
 {
 	unsigned long lu_val;
@@ -2020,7 +2020,7 @@ ULS_QUALIFIED_METHOD(uls_lexeme_lu)(uls_lex_ptr_t uls)
 	return lu_val;
 }
 
-ULS_DLL_EXTERN long
+long
 ULS_QUALIFIED_METHOD(uls_lexeme_ld)(uls_lex_ptr_t uls)
 {
 	long ld_val;
@@ -2039,7 +2039,7 @@ ULS_QUALIFIED_METHOD(uls_lexeme_ld)(uls_lex_ptr_t uls)
 	return ld_val;
 }
 
-ULS_DLL_EXTERN unsigned long long
+unsigned long long
 ULS_QUALIFIED_METHOD(uls_lexeme_llu)(uls_lex_ptr_t uls)
 {
 	unsigned long long llu_val;
@@ -2058,7 +2058,7 @@ ULS_QUALIFIED_METHOD(uls_lexeme_llu)(uls_lex_ptr_t uls)
 	return llu_val;
 }
 
-ULS_DLL_EXTERN long long
+long long
 ULS_QUALIFIED_METHOD(uls_lexeme_lld)(uls_lex_ptr_t uls)
 {
 	long long lld_val;
@@ -2077,169 +2077,169 @@ ULS_QUALIFIED_METHOD(uls_lexeme_lld)(uls_lex_ptr_t uls)
 	return lld_val;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(_uls_const_WANT_EOFTOK)(void)
 {
 	return ULS_WANT_EOFTOK;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(_uls_const_DO_DUP)(void)
 {
 	return ULS_DO_DUP;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(_uls_const_FILE_MS_MBCS)(void)
 {
 	return ULS_FILE_MS_MBCS;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(_uls_const_FILE_UTF8)(void)
 {
 	return ULS_FILE_UTF8;
 }
 
-ULS_DLL_EXTERN uls_uch_t
+uls_uch_t
 ULS_QUALIFIED_METHOD(_uls_const_NEXTCH_NONE)(void)
 {
 	return ULS_UCH_NONE;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(_uls_toknum_EOI)(uls_lex_ptr_t uls)
 {
 	return uls->xcontext.toknum_EOI;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(_uls_toknum_EOF)(uls_lex_ptr_t uls)
 {
 	return uls->xcontext.toknum_EOF;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(_uls_toknum_ERR)(uls_lex_ptr_t uls)
 {
 	return uls->xcontext.toknum_ERR;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(_uls_toknum_NONE)(uls_lex_ptr_t uls)
 {
 	return uls->xcontext.toknum_NONE;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(_uls_toknum_ID)(uls_lex_ptr_t uls)
 {
 	return uls->xcontext.toknum_ID;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(_uls_toknum_NUMBER)(uls_lex_ptr_t uls)
 {
 	return uls->xcontext.toknum_NUMBER;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(_uls_toknum_TMPL)(uls_lex_ptr_t uls)
 {
 	return uls->xcontext.toknum_TMPL;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(_uls_is_ch_space)(uls_lex_ptr_t uls, uls_uch_t uch)
 {
 	return uls_is_ch_space(uls, uch);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(_uls_is_ch_idfirst)(uls_lex_ptr_t uls, uls_uch_t uch)
 {
 	return uls_is_ch_idfirst(uls, uch);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(_uls_is_ch_id)(uls_lex_ptr_t uls, uls_uch_t uch)
 {
 	return uls_is_ch_id(uls, uch);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(_uls_is_ch_quote)(uls_lex_ptr_t uls, uls_uch_t uch)
 {
 	return uls_is_ch_quote(uls, uch);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(_uls_is_ch_1ch_token)(uls_lex_ptr_t uls, uls_uch_t uch)
 {
 	return uls_is_ch_1ch_token(uls, uch);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(_uls_is_ch_2ch_token)(uls_lex_ptr_t uls, uls_uch_t uch)
 {
 	return uls_is_ch_2ch_token(uls, uch);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(_uls_get_lineno)(uls_lex_ptr_t uls)
 {
 	return __uls_get_lineno(uls);
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(_uls_set_lineno)(uls_lex_ptr_t uls, int lineno)
 {
 	uls_context_set_tag(uls->xcontext.context, NULL, lineno);
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(_uls_inc_lineno)(uls_lex_ptr_t uls, int amount)
 {
 	uls_context_inc_lineno(uls->xcontext.context, amount);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(_uls_tok_id)(uls_lex_ptr_t uls)
 {
 	return __uls_tok(uls);
 }
 
-ULS_DLL_EXTERN const char*
+const char*
 ULS_QUALIFIED_METHOD(_uls_lexeme)(uls_lex_ptr_t uls)
 {
 	return __uls_lexeme(uls);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(_uls_lexeme_len)(uls_lex_ptr_t uls)
 {
 	return __uls_lexeme_len(uls);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(_uls_lexeme_chars)(uls_lex_ptr_t uls)
 {
 	return __uls_lexeme_chars(uls);
 }
 
-ULS_DLL_EXTERN const char*
+const char*
 ULS_QUALIFIED_METHOD(_uls_get_tag)(uls_lex_ptr_t uls)
 {
 	return __uls_get_tag(uls);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(_uls_get_taglen)(uls_lex_ptr_t uls)
 {
 	return __uls_get_taglen(uls);
 }
 
-ULS_DLL_EXTERN const char*
+const char*
 ULS_QUALIFIED_METHOD(_uls_get_tag2)(uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) parms)
 {
 	const char *tagstr = __uls_get_tag(uls);
@@ -2252,13 +2252,13 @@ ULS_QUALIFIED_METHOD(_uls_get_tag2)(uls_lex_ptr_t uls, uls_ptrtype_tool(outparam
 	return tagstr;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_set_tag)(uls_lex_ptr_t uls, const char* tag, int lno)
 {
 	uls_context_set_tag(uls->xcontext.context, tag, lno);
 }
 
-ULS_DLL_EXTERN const char*
+const char*
 ULS_QUALIFIED_METHOD(_uls_number_suffix)(uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) parms)
 {
 	const char *ptr;
@@ -2269,7 +2269,7 @@ ULS_QUALIFIED_METHOD(_uls_number_suffix)(uls_lex_ptr_t uls, uls_ptrtype_tool(out
 	return ptr;
 }
 
-ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_lex_ptr_t)
+ULS_QUALIFIED_RETTYP(uls_lex_ptr_t)
 ULS_QUALIFIED_METHOD(ulsjava_create)(uls_native_vptr_t confname, int len_confname)
 {
 	const char *ustr = _uls_tool_(strdup)((const char *)confname, len_confname);
@@ -2281,7 +2281,7 @@ ULS_QUALIFIED_METHOD(ulsjava_create)(uls_native_vptr_t confname, int len_confnam
 	return uls;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(ulsjava_dump_tok)(uls_lex_ptr_t uls, const void *pfx, int len_pfx, const void *suff, int len_suff)
 {
 	const char *ustr1 = _uls_tool_(strdup)((const char *)pfx, len_pfx);
@@ -2293,7 +2293,7 @@ ULS_QUALIFIED_METHOD(ulsjava_dump_tok)(uls_lex_ptr_t uls, const void *pfx, int l
 	uls_mfree(ustr2);
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(ulsjava_set_tag)(uls_lex_ptr_t uls, const void *tag, int len_tag, int lineno)
 {
 	const char *ustr = _uls_tool_(strdup)((const char *)tag, len_tag);

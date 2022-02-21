@@ -185,21 +185,21 @@ ULS_QUALIFIED_METHOD(__uls_ustr2astr_ptr)(uls_outparam_ptr_t parms)
 }
 #endif // ULS_WINDOWS
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(auw_init_outparam)(auw_outparam_ptr_t auw)
 {
 	csz_init(uls_ptr(auw->csz), -1);
 	auw->outlen = 0;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(auw_deinit_outparam)(auw_outparam_ptr_t auw)
 {
 	csz_deinit(uls_ptr(auw->csz));
 	auw->outlen = 0;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(astr_lengthof_char)(const char* str)
 {
 	char ch;
@@ -216,7 +216,7 @@ ULS_QUALIFIED_METHOD(astr_lengthof_char)(const char* str)
 	return n;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(astr_num_chars)(const char* str, int len, uls_outparam_ptr_t parms)
 {
 	const char *ptr;
@@ -249,7 +249,7 @@ ULS_QUALIFIED_METHOD(astr_num_chars)(const char* str, int len, uls_outparam_ptr_
 }
 
 #ifdef ULS_WINDOWS
-ULS_DLL_EXTERN wchar_t*
+wchar_t*
 ULS_QUALIFIED_METHOD(uls_astr2wstr)(const char *astr, int alen, csz_str_ptr_t csz_wstr)
 {
 	int  has_nil=0;
@@ -274,7 +274,7 @@ ULS_QUALIFIED_METHOD(uls_astr2wstr)(const char *astr, int alen, csz_str_ptr_t cs
 	return wstr;
 }
 
-ULS_DLL_EXTERN char*
+char*
 ULS_QUALIFIED_METHOD(uls_wstr2astr)(const wchar_t* wstr, int wlen, csz_str_ptr_t csz)
 {
 	int  has_nil=0;
@@ -297,7 +297,7 @@ ULS_QUALIFIED_METHOD(uls_wstr2astr)(const wchar_t* wstr, int wlen, csz_str_ptr_t
 	return astr;
 }
 
-ULS_DLL_EXTERN wchar_t*
+wchar_t*
 ULS_QUALIFIED_METHOD(uls_ustr2wstr)(const char *ustr, int ulen, csz_str_ptr_t csz_wstr)
 {
 	int has_nil=0;
@@ -322,7 +322,7 @@ ULS_QUALIFIED_METHOD(uls_ustr2wstr)(const char *ustr, int ulen, csz_str_ptr_t cs
 	return wstr;
 }
 
-ULS_DLL_EXTERN char*
+char*
 ULS_QUALIFIED_METHOD(uls_wstr2ustr)(const wchar_t* wstr, int wlen, csz_str_ptr_t csz)
 {
 	int  has_nil=0;
@@ -345,7 +345,7 @@ ULS_QUALIFIED_METHOD(uls_wstr2ustr)(const wchar_t* wstr, int wlen, csz_str_ptr_t
 	return ustr;
 }
 
-ULS_DLL_EXTERN char*
+char*
 ULS_QUALIFIED_METHOD(uls_ustr2astr)(const char *ustr, int ulen, csz_str_ptr_t csz)
 {
 	csz_str_t csz_wstr;
@@ -375,7 +375,7 @@ ULS_QUALIFIED_METHOD(uls_ustr2astr)(const char *ustr, int ulen, csz_str_ptr_t cs
 	return astr;
 }
 
-ULS_DLL_EXTERN char*
+char*
 ULS_QUALIFIED_METHOD(uls_astr2ustr)(const char *astr, int alen, csz_str_ptr_t csz)
 {
 	csz_str_t csz_wstr;
@@ -405,7 +405,7 @@ ULS_QUALIFIED_METHOD(uls_astr2ustr)(const char *astr, int alen, csz_str_ptr_t cs
 	return ustr;
 }
 
-ULS_DLL_EXTERN const char*
+const char*
 ULS_QUALIFIED_METHOD(uls_ustr2astr_ptr)(const char *ustr, int ulen, auw_outparam_ptr_t auw)
 {
 	csz_str_ptr_t csz = uls_ptr(auw->csz);
@@ -437,7 +437,7 @@ ULS_QUALIFIED_METHOD(uls_ustr2astr_ptr)(const char *ustr, int ulen, auw_outparam
 	return astr;
 }
 
-ULS_DLL_EXTERN const char*
+const char*
 ULS_QUALIFIED_METHOD(uls_astr2ustr_ptr)(const char *astr, int alen, auw_outparam_ptr_t auw)
 {
 	csz_str_ptr_t csz = uls_ptr(auw->csz);
@@ -471,21 +471,21 @@ ULS_QUALIFIED_METHOD(uls_astr2ustr_ptr)(const char *astr, int alen, auw_outparam
 
 #else // ~ULS_WINDOWS
 
-ULS_DLL_EXTERN wchar_t*
+wchar_t*
 ULS_QUALIFIED_METHOD(uls_astr2wstr)(const char *astr, int alen, csz_str_ptr_t csz_wstr)
 {
 	_uls_log(err_panic)("%s: Not Supported on this platform", __FUNCTION__);
 	return NULL;
 }
 
-ULS_DLL_EXTERN char*
+char*
 ULS_QUALIFIED_METHOD(uls_wstr2astr)(const wchar_t *wstr, int wlen, csz_str_ptr_t csz)
 {
 	_uls_log(err_panic)("%s: Not Supported on this platform", __FUNCTION__);
 	return NULL;
 }
 
-ULS_DLL_EXTERN wchar_t*
+wchar_t*
 ULS_QUALIFIED_METHOD(uls_ustr2wstr)(const char *ustr, int ulen, csz_str_ptr_t csz_wstr)
 {
 	wchar_t *wstr;
@@ -547,7 +547,7 @@ ULS_QUALIFIED_METHOD(uls_ustr2wstr)(const char *ustr, int ulen, csz_str_ptr_t cs
 	return wstr;
 }
 
-ULS_DLL_EXTERN char*
+char*
 ULS_QUALIFIED_METHOD(uls_wstr2ustr)(const wchar_t *wstr, int wlen, csz_str_ptr_t csz)
 {
 	char *ustr;
@@ -606,14 +606,14 @@ ULS_QUALIFIED_METHOD(uls_wstr2ustr)(const wchar_t *wstr, int wlen, csz_str_ptr_t
 	return ustr;
 }
 
-ULS_DLL_EXTERN char*
+char*
 ULS_QUALIFIED_METHOD(uls_ustr2astr)(const char *ustr, int ulen, csz_str_ptr_t csz)
 {
 	_uls_log(err_panic)("%s: Not Supported on the platform", __FUNCTION__);
 	return NULL;
 }
 
-ULS_DLL_EXTERN char*
+char*
 ULS_QUALIFIED_METHOD(uls_astr2ustr)(const char *astr, int alen, csz_str_ptr_t csz)
 {
 	_uls_log(err_panic)("%s: Not Supported on the platform", __FUNCTION__);
@@ -621,14 +621,14 @@ ULS_QUALIFIED_METHOD(uls_astr2ustr)(const char *astr, int alen, csz_str_ptr_t cs
 }
 
 
-ULS_DLL_EXTERN const char*
+const char*
 ULS_QUALIFIED_METHOD(uls_ustr2astr_ptr)(const char *ustr, int ulen, auw_outparam_ptr_t auw)
 {
 	_uls_log(err_panic)("%s: Not Supported on the platform", __FUNCTION__);
 	return NULL;
 }
 
-ULS_DLL_EXTERN const char*
+const char*
 ULS_QUALIFIED_METHOD(uls_astr2ustr_ptr)(const char *astr, int alen, auw_outparam_ptr_t auw)
 {
 	_uls_log(err_panic)("%s: Not Supported on the platform", __FUNCTION__);

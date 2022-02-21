@@ -68,7 +68,7 @@ finalize_uls_wlf(void)
 	uls_lf_deinit_convspec_wmap(uls_ptr(dfl_convspec_wmap));
 }
 
-ULS_DLL_EXTERN int
+int
 uls_lf_init_convspec_wmap(uls_lf_map_ptr_t lf_map, int flags)
 {
 	if (uls_lf_init_convspec_map(lf_map, flags) < 0)
@@ -80,13 +80,13 @@ uls_lf_init_convspec_wmap(uls_lf_map_ptr_t lf_map, int flags)
 	return 0;
 }
 
-ULS_DLL_EXTERN void
+void
 uls_lf_deinit_convspec_wmap(uls_lf_map_ptr_t lf_map)
 {
 	uls_lf_deinit_convspec_map(lf_map);
 }
 
-ULS_DLL_EXTERN uls_lf_map_ptr_t
+uls_lf_map_ptr_t
 uls_lf_create_convspec_wmap(int flags)
 {
 	uls_lf_map_ptr_t lf_map;
@@ -100,7 +100,7 @@ uls_lf_create_convspec_wmap(int flags)
 	return lf_map;
 }
 
-ULS_DLL_EXTERN void
+void
 uls_lf_destroy_convspec_wmap(uls_lf_map_ptr_t lf_map)
 {
 	uls_lf_deinit_convspec_wmap(lf_map);
@@ -110,7 +110,7 @@ uls_lf_destroy_convspec_wmap(uls_lf_map_ptr_t lf_map)
 	}
 }
 
-ULS_DLL_EXTERN int
+int
 uls_wlf_init(uls_lf_ptr_t uls_lf, uls_lf_map_ptr_t map, uls_voidptr_t x_dat, uls_lf_puts_t puts_proc)
 {
 	uls_wlf_shell_ptr_t wlf;
@@ -126,7 +126,7 @@ uls_wlf_init(uls_lf_ptr_t uls_lf, uls_lf_map_ptr_t map, uls_voidptr_t x_dat, uls
 	return 0;
 }
 
-ULS_DLL_EXTERN void
+void
 uls_wlf_deinit(uls_lf_ptr_t uls_lf)
 {
 	uls_wlf_shell_ptr_t wlf = (uls_wlf_shell_ptr_t) uls_lf->shell;
@@ -138,7 +138,7 @@ uls_wlf_deinit(uls_lf_ptr_t uls_lf)
 	uls_lf_deinit(uls_lf);
 }
 
-ULS_DLL_EXTERN uls_lf_ptr_t
+uls_lf_ptr_t
 uls_wlf_create(uls_lf_map_ptr_t map, uls_voidptr_t x_dat, uls_lf_puts_t puts_proc)
 {
 	uls_lf_ptr_t uls_lf;
@@ -152,14 +152,14 @@ uls_wlf_create(uls_lf_map_ptr_t map, uls_voidptr_t x_dat, uls_lf_puts_t puts_pro
 	return uls_lf;
 }
 
-ULS_DLL_EXTERN void
+void
 uls_wlf_destroy(uls_lf_ptr_t uls_lf)
 {
 	uls_wlf_deinit(uls_lf);
 	uls_dealloc_object(uls_lf);
 }
 
-ULS_DLL_EXTERN int
+int
 __uls_lf_vxwprintf(uls_lf_ptr_t uls_lf, const wchar_t *wfmt, va_list args)
 {
 	uls_wlf_shell_ptr_t lf_wctx = (uls_wlf_shell_ptr_t) uls_lf->shell;
@@ -176,7 +176,7 @@ __uls_lf_vxwprintf(uls_lf_ptr_t uls_lf, const wchar_t *wfmt, va_list args)
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_lf_vxwprintf(uls_lf_ptr_t uls_lf, const wchar_t* wfmt, va_list args)
 {
 	int len;
@@ -188,7 +188,7 @@ uls_lf_vxwprintf(uls_lf_ptr_t uls_lf, const wchar_t* wfmt, va_list args)
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 __uls_lf_xwprintf(uls_lf_ptr_t uls_lf, const wchar_t* wfmt, ...)
 {
 	va_list args;
@@ -201,7 +201,7 @@ __uls_lf_xwprintf(uls_lf_ptr_t uls_lf, const wchar_t* wfmt, ...)
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_lf_xwprintf(uls_lf_ptr_t uls_lf, const wchar_t* wfmt, ...)
 {
 	va_list args;
@@ -214,7 +214,7 @@ uls_lf_xwprintf(uls_lf_ptr_t uls_lf, const wchar_t* wfmt, ...)
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 __uls_lf_vxwprintf_generic(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const wchar_t* wfmt, va_list args)
 {
 	uls_voidptr_t old_xdat;
@@ -227,7 +227,7 @@ __uls_lf_vxwprintf_generic(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const wchar
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_lf_vxwprintf_generic(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const wchar_t* wfmt, va_list args)
 {
 	int len;
@@ -239,7 +239,7 @@ uls_lf_vxwprintf_generic(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const wchar_t
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 __uls_lf_xwprintf_generic(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const wchar_t* wfmt, ...)
 {
 	va_list args;
@@ -252,7 +252,7 @@ __uls_lf_xwprintf_generic(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const wchar_
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_lf_xwprintf_generic(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const wchar_t* wfmt, ...)
 {
 	va_list args;

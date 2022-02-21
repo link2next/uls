@@ -327,7 +327,7 @@ ULS_QUALIFIED_METHOD(keyw_stat_comp_by_freq)(const uls_voidptr_t a, const uls_vo
 	return a1->freq - b1->freq;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(ulf_create_file)(int n_hcodes, uls_uint32 *hcodes,
 	int htab_siz, uls_keyw_stat_list_ptr_t kwslst, FILE* fout)
 {

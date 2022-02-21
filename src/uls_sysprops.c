@@ -258,7 +258,7 @@ ULS_QUALIFIED_METHOD(uls_arch2le_array)(char* ary, int n)
 	}
 }
 
-ULS_DLL_EXTERN const char*
+const char*
 ULS_QUALIFIED_METHOD(uls_add_system_property)(const char* name, const char* val)
 {
 	uls_sysinfo_ptr_t sysinfo = uls_sysinfo;
@@ -291,7 +291,7 @@ ULS_QUALIFIED_METHOD(uls_add_system_property)(const char* name, const char* val)
 	return cptr;
 }
 
-ULS_DLL_EXTERN const char*
+const char*
 ULS_QUALIFIED_METHOD(uls_get_system_property)(const char* name)
 {
 	uls_sysinfo_ptr_t sysinfo = uls_sysinfo;

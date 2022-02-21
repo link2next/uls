@@ -37,7 +37,7 @@
 
 #include "uls/uls_wlog.h"
 
-ULS_DLL_EXTERN int
+int
 uls_dirent_exist_wstr(const wchar_t *wfpath)
 {
 	char *ustr;
@@ -56,7 +56,7 @@ uls_dirent_exist_wstr(const wchar_t *wfpath)
 	return rval;
 }
 
-ULS_DLL_EXTERN FILE*
+FILE*
 uls_fp_wopen(const wchar_t* wfpath, int mode)
 {
 	char *ustr;
@@ -75,7 +75,7 @@ uls_fp_wopen(const wchar_t* wfpath, int mode)
 	return fp;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_fp_gets_wstr(FILE *fp, wchar_t *wbuf, int wbuf_siz, int flags)
 {
 	char *abuf = NULL;
@@ -117,7 +117,7 @@ uls_fp_gets_wstr(FILE *fp, wchar_t *wbuf, int wbuf_siz, int flags)
 	return wlen;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_close_tempfile_wstr(uls_tempfile_ptr_t tmpfile, const wchar_t* wfilepath)
 {
 	char *ustr;
@@ -141,7 +141,7 @@ uls_close_tempfile_wstr(uls_tempfile_ptr_t tmpfile, const wchar_t* wfilepath)
 	return rval;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_fd_open_wstr(const wchar_t* wfpath, int mode)
 {
 	char *ustr;
