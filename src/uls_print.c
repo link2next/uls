@@ -85,9 +85,35 @@ ULS_QUALIFIED_METHOD(uls_sysprn_open)(uls_voidptr_t data, uls_lf_puts_t proc)
 
 	uls_lf_lock(dfl_sysprn_lf);
 	__uls_lf_change_puts(dfl_sysprn_lf, uls_ptr(delegate));
+
 	sysprn_opened = 1;
+	uls_sysprn_set_tabsiz(0);
 
 	return 0;
+}
+
+void
+ULS_QUALIFIED_METHOD(uls_sysprn_set_tabsiz)(int tabsiz)
+{
+	char ch_tab;
+
+	if (!sysprn_opened) return;
+
+	if (tabsiz > 0) {
+		if (tabsiz > ULS_SYSPRN_TABBUF_SIZE) {
+			tabsiz = ULS_SYSPRN_TABBUF_SIZE;
+		}
+		ch_tab = ' ';
+	} else {
+		ch_tab = '\t';
+		tabsiz = 1;
+	}
+
+	sysprn_ntabs = ULS_SYSPRN_TABBUF_SIZE / tabsiz;
+	sysprn_tabsiz = tabsiz;
+	sysprn_tabbuf_len = sysprn_tabsiz * sysprn_ntabs;
+
+	_uls_tool_(memset)(sysprn_tabbuf, ch_tab, sysprn_tabbuf_len);
 }
 
 // <brief>
@@ -139,19 +165,17 @@ ULS_QUALIFIED_METHOD(uls_sysprn_puttabs)(int n)
 {
 	uls_voidptr_t sysprn = dfl_sysprn_lf->x_dat;
 	uls_lf_puts_t sysprn_puts = dfl_sysprn_lf->uls_lf_puts;
-	int i, buf_len;
-	char buf[16];
+	int i, buf_len = sysprn_tabbuf_len;
 
-	buf_len = sizeof(buf) - 1;
-	uls_memset(buf, '\t', buf_len);
-	buf[buf_len] = '\0';
+	if (n <= 0) return;
 
-	for (i=0; i<n/buf_len; i++)
-		sysprn_puts(sysprn, buf, buf_len);
+	for (i=0; i < n / sysprn_ntabs; i++) {
+		sysprn_puts(sysprn, sysprn_tabbuf, buf_len);
+	}
 
-	if ((i=n % buf_len) > 0) {
-		buf[i] = '\0';
-		sysprn_puts(sysprn, buf, i);
+	if ((i = n % sysprn_ntabs) > 0) {
+		buf_len = i * sysprn_tabsiz;
+		sysprn_puts(sysprn, sysprn_tabbuf, buf_len);
 	}
 }
 

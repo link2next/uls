@@ -189,9 +189,6 @@ ULS_QUALIFIED_METHOD(make_keyw_stat_for_load)(uls_tokdef_ptr_t tok_info_lst, int
 	uls_tokdef_ptr_t e, e_link;
 	int   i, n_lst;
 
-	// tok_info_lst may be NULL and n_tok_info_lst == 0
-	// set the default values for ulf
-
 	kwslst = uls_alloc_object(uls_keyw_stat_list_t);
 
 	// the length of tok_info_lst linked by e:link is same as 'n_tok_info_lst'

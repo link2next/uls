@@ -50,6 +50,9 @@ ULS_DECL_STATIC uls_lf_ptr_t dfl_file_lf;
 ULS_DECL_STATIC uls_lf_ptr_t dfl_csz_lf;
 ULS_DECL_STATIC uls_lf_ptr_t dfl_sysprn_lf;
 ULS_DECL_STATIC int sysprn_opened;
+#define ULS_SYSPRN_TABBUF_SIZE  64
+ULS_DECL_STATIC char sysprn_tabbuf[ULS_SYSPRN_TABBUF_SIZE];
+ULS_DECL_STATIC int  sysprn_tabsiz, sysprn_ntabs, sysprn_tabbuf_len;
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC
@@ -59,6 +62,7 @@ void finalize_uls_sysprn(void);
 
 #if defined(__ULS_PRINT__) || defined(ULS_DECL_PUBLIC_PROC)
 ULS_DLL_EXTERN int uls_sysprn_open(uls_voidptr_t data, uls_lf_puts_t proc);
+ULS_DLL_EXTERN void uls_sysprn_set_tabsiz(int tabsiz);
 ULS_DLL_EXTERN void uls_sysprn_close(void);
 ULS_DLL_EXTERN int uls_vsysprn(const char* fmt, va_list args);
 ULS_DLL_EXTERN int uls_sysprn(const char* fmt, ...);

@@ -479,6 +479,52 @@ ULS_QUALIFIED_METHOD(uls_get_simple_escape_str)(char quote_ch, uls_ptrtype_tool(
 	return k;
 }
 
+int
+ULS_QUALIFIED_METHOD(uls_get_simple_unescape_char)(int ch)
+{
+	int ch2;
+
+	switch (ch) {
+	case '\n': ch2 = 'n'; break;
+	case '\t': ch2 = 't'; break;
+	case '\r': ch2 = 'r'; break;
+	case '\b': ch2 = 'b'; break;
+	case '\a': ch2 = 'a'; break;
+	case '\f': ch2 = 'f'; break;
+	case '\v': ch2 = 'v'; break;
+	case '\\': ch2 = '\\'; break;
+	case '\'': ch2 = '\''; break;
+	case '"': ch2 = '"'; break;
+	case '\0': ch2 = '0'; break;
+	default :
+		ch2 = -1;
+		break;
+	}
+
+	return ch2;
+}
+
+int
+ULS_QUALIFIED_METHOD(uls_get_simple_unescape_str)(uls_ptrtype_tool(outparam) parms)
+{
+	char* outbuf = parms->line;
+	const char *lptr;
+	int ch, ch2;
+	int k = 0;
+
+	for (lptr = parms->lptr; (ch=*lptr) != '\0'; lptr++) {
+		if ((ch2 = uls_get_simple_unescape_char(ch)) < 0) {
+			outbuf[k++] = ch;
+		} else {
+			outbuf[k++] = '\\';
+			outbuf[k++] = ch2;
+		}
+	}
+
+	outbuf[k] = '\0';
+	return k;
+}
+
 FILE*
 ULS_QUALIFIED_METHOD(uls_get_spec_fp)(const char* dirpath_list, const char* fpath, uls_ptrtype_tool(outparam) parms)
 {

@@ -96,7 +96,7 @@ ULS_QUALIFIED_METHOD(add_decstr_by_xx)(const char* numstr, int n_digits, int nn,
 
 	if (n_digits == 1 && numstr[0] == '0') {
 		k = 0;
-		if ((a = nn / 10) != 0) {	
+		if ((a = nn / 10) != 0) {
 			outbuf[k++] = '0' + a;
 		}
 

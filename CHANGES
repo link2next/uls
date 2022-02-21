@@ -1,10 +1,14 @@
+  v1.8.6
+  -----------
+    o Added a program 'tools/ulc2yaml' to dump yaml-file from ulc-file.
+    o a few bug fixes
 
   v1.8.5
   -----------
-    o Changed the 'character set' properties of Visual Studio projects 
+    o Changed the 'character set' properties of Visual Studio projects
        from 'Multibytes' to 'Unicode'.
     o Use utf-8 string instead of ANSI-string.
-        Add the option '/utf-8' in properties of projects to build your own cpp-applications 
+        Add the option '/utf-8' in properties of projects to build your own cpp-applications
 
   v1.8.4
   -----------
@@ -46,22 +50,22 @@
   v1.8
   -----------
     o The format of ulc-file is upgraded.
-      a) Decimal separator is supported for number token. 
+      a) Decimal separator is supported for number token.
          The separator may be one character.
          For example, you can specify the separator in ulc-file.
             DECIMAL_SEPARATOR: _
-      b) To specify the radix of number, you can use attribute NUMBER_PREFIXES in ulc-file. 
+      b) To specify the radix of number, you can use attribute NUMBER_PREFIXES in ulc-file.
             NUMBER_PREFIXES: 0:8 0x16 0b:2 0o:8
-         This is the list of pairs where the item is number prefix and radix. 
+         This is the list of pairs where the item is number prefix and radix.
       c) The format of the attribute 'QUOTE_TYPE:' of ulc-file is largely changed.
 
       The upgrade_ulc.py in the directory 'tools' will convert the previous format to v2.3.
-      You can use it as following examples:   
-         i) upgrade_ulc.py -o new_sample.ulc sample.ulc 
+      You can use it as following examples:
+         i) upgrade_ulc.py -o new_sample.ulc sample.ulc
             This will convert input file 'sample.ulc' to output file 'new_sample.ulc'.
-        ii) upgrade_ulc.py sample1.ulc sample2.ulc 
+        ii) upgrade_ulc.py sample1.ulc sample2.ulc
             This will convert two file 'sample1.ulc' and 'sample2.ulc'.
-            The original files will be preserved as files prefixed by '.bak'. 
+            The original files will be preserved as files prefixed by '.bak'.
       You can give it the input ulc-file of version v2.1 or v2.2.
 
     o The format of uls-file has been changed.
@@ -72,11 +76,11 @@
           by the -t-option of the commmand 'uls_stream' like this:
           uls_stream -L <ulc-file> -t txt <input-file>
       The command in tools/uls_stream,
-          uls_stream -L sample.ulc -t txt input1.txt 
+          uls_stream -L sample.ulc -t txt input1.txt
       will save the token stream in the file 'a.uls'.
 
     o The admin-directory of ULS is changed from '/etc/uls' to '/usr/local/etc/uls'.
-      The default installation directory is '/usr/local' as before. 
+      The default installation directory is '/usr/local' as before.
     o You can also change the admin-directory using the option of 'configure'
       For instance, if you want it to be '/opt/uls_1_8/etc',
            run 'configure' like this:
@@ -86,7 +90,7 @@
 
     o Building the uls package on macOS is supported.
       On version 'mohave' of macOS, the testing has been executed.
-      It's scheduled to support for 'brew install' via github site. 
+      It's scheduled to support for 'brew install' via github site.
       You can build it with terminal as in Linux.
 
     o The license of ULS has been changed from 'Apache 2.0' to 'MIT.
@@ -94,10 +98,10 @@
 
   v1.7.3
   -----------
-    o Fixed Numbering of lines of literal string occupying multiple lines. 
+    o Fixed Numbering of lines of literal string occupying multiple lines.
         The starting line number is to be reported instead of ending line.
     o The conversion specification of '%s' of null-pointer should be displayed as '<null>'
-         instead of '<nilptr>' 
+         instead of '<nilptr>'
     o A few bug-fixes in ulscpp, ulscompat
 
   v1.7.2
@@ -110,8 +114,8 @@
         d) 0E-2 0.E-2
 
     o JNI support for Java is introduced.
-        Refer to README.txt in the directory 'uls_jni' for more information. 
-        a) The command 'java' to run examples can be use in Linux. 
+        Refer to README.txt in the directory 'uls_jni' for more information.
+        a) The command 'java' to run examples can be use in Linux.
         b) There also exist Eclipse project files for 'uls_jni'.
 
     o UlsJava is adjusted to support for new version 4.5.2 of JNA.
@@ -124,7 +128,7 @@
       Refer to the user-guide in doc/uls_ug-0.7.1.pdf about the revised APIs.
     o Added the line-end char converter of text-file.
       It converts the characters '\r\n', '\n\r', and '\r' at EOL in the input
-        to '\n' uniformly. It can be applied by using uls_create_crlf2lf() 
+        to '\n' uniformly. It can be applied by using uls_create_crlf2lf()
           instead of uls_create() and the following APIs is provided:
           a) uls_create_crlf2lf()
           b) uls_push_line_crlf2lf()
@@ -167,14 +171,14 @@
       The names of tools UlfGen.exe, UlsStream.exe have been renamed
         to ulf_gen.exe, uls_stream.exe.
 
-    o Some (qualified) package paths in class libraries have been changed. 
+    o Some (qualified) package paths in class libraries have been changed.
         a) ULS.Crux ==> uls.crux in C++
-        b) uls.nemesis ==> uls.polaris in Java 
+        b) uls.nemesis ==> uls.polaris in Java
 
 
   v1.6.4
   -----------
-    o deintialization of the lock of UlsCpp::vlog(). 
+    o deintialization of the lock of UlsCpp::vlog().
     o Fixed the bug in examples/DumpToks related to the template vars.
 
   v1.6.3
@@ -188,7 +192,7 @@
 
   v1.6.1
   -----------
-    o Fixed the bug that long(>=64) ulc-file path won't be loaded. 
+    o Fixed the bug that long(>=64) ulc-file path won't be loaded.
     o The encoding of Windows MBCS might work incorrectly for European Code Pages.
        The length of the mbcs string is now counted correctly.
 
@@ -360,7 +364,7 @@ v1.5.4
     o Add an overloaded method UlsCpp::Keyword() to retreive the keyword string of current token.
     o Gives you the accurate position of the error in the message when it reads ulc-file.
     o Fixed a malfunction of case-insensitivity process of keywords.
-    o a few bug fixes. 
+    o a few bug fixes.
 
   v1.3.2
   -----------
@@ -391,7 +395,7 @@ v1.5.4
       After installation of ULS(by 'make install'), go into the directories below 'examples',
          try to run the programs after building('make').
       In Windows, to build the programs run the solution file 'UlsExamples.sln' in UlsExamples
- 
+
     o The unget APIs(uls_ungetch, uls_ungettok) have been reinforced and diversified.
       Use uls_unget_ch, uls_unget_tok, uls_unget_str, uls_unget_lexeme for C users and
          ungetCh, ungetTok, ungetStr, ungetLexeme for C++ users.
@@ -407,9 +411,9 @@ v1.5.4
          ULS::Collection::Html5Lex
          ULS::Collection::ShellLex
          ULS::Collection::MkfLex
- 
+
     o The literal string analyzing function sophisticatedly defined and given to user.
-        For further details, refer to 'uls_litstr_analyzer_t' in uls_type.h, 
+        For further details, refer to 'uls_litstr_analyzer_t' in uls_type.h,
         default_litstr_analyzer() and MkfLex::tabblk_analyzer() in examples/MkfLex.cpp.
 
     o The version of ULC-file is upgraded to v1.0.1.
@@ -426,8 +430,8 @@ v1.5.4
         DumpToks dumps token stream from any text files, even from binary.
         usage: DumpToks <input-filepath>
         The C-version of DumpToks is in the 'tests/dump_toks'.
-        The program in examples/test_uls is used in order to check 
-             that ULS is correctly installed. 
+        The program in examples/test_uls is used in order to check
+             that ULS is correctly installed.
         After installing ULS by 'make install', you can build it.
     o Added functions that get number-value from the current lexeme.
         uls_lexeme_int(), uls_lexeme_uint()
@@ -447,9 +451,9 @@ v1.5.4
   v1.0.1
   -----------
     o The number in ULS, which is represented by TOK_NUMBER is now nonnegative.
-      The sign of number-token(TOK_NUMBER) should be determined 
+      The sign of number-token(TOK_NUMBER) should be determined
       at the semantic stage.
-    o Added a function uls_is_zero() that checks if the current token is 
+    o Added a function uls_is_zero() that checks if the current token is
 		number(integer or real) 0.
 
   v1.0

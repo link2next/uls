@@ -125,6 +125,10 @@ ULS_DLL_EXTERN uls_voidptr_t uls_bi_search_vptr(const uls_voidptr_t keyw, _uls_d
 
 int uls_get_simple_escape_char(uls_ptrtype_tool(outparam) parms);
 int uls_get_simple_escape_str(char quote_ch, uls_ptrtype_tool(outparam) parms);
+
+int uls_get_simple_unescape_char(int ch);
+int uls_get_simple_unescape_str(uls_ptrtype_tool(outparam) parms);
+
 FILE* uls_get_spec_fp(const char* dirpath_list, const char* fpath, uls_ptrtype_tool(outparam) parms);
 
 ULS_DLL_EXTERN int uls_cmd_run(uls_array_ref_slots_type00(cmdlst,cmd), int n_cmdlst, const char* keyw, char *line, uls_voidptr_t data);

@@ -193,7 +193,6 @@ ULS_DECL_STATIC int read_config__RENAME(char *line, uls_cmd_ptr_t cmd);
 ULS_DECL_STATIC int read_config__NOT_CHAR_TOK(char *line, uls_cmd_ptr_t cmd);
 ULS_DECL_STATIC int read_config__CASE_SENSITIVE(char *line, uls_cmd_ptr_t cmd);
 ULS_DECL_STATIC int read_config__DOMAIN(char *line, uls_cmd_ptr_t cmd);
-ULS_DECL_STATIC int read_config__CHAR_TOK(char *line, uls_cmd_ptr_t cmd);
 ULS_DECL_STATIC int read_config__ID_MAX_LENGTH(char *line, uls_cmd_ptr_t cmd);
 ULS_DECL_STATIC int read_config__NUMBER_PREFIXES(char *line, uls_cmd_ptr_t cmd);
 ULS_DECL_STATIC int read_config__NUMBER_SUFFIXES(char *line, uls_cmd_ptr_t cmd);
@@ -272,7 +271,7 @@ int calc_len_surplus_recommended(uls_lex_ptr_t uls);
 int srch_vx_by_id(const uls_voidptr_t a, const uls_voidptr_t p_id);
 int comp_vx_by_tokid(const uls_voidptr_t a, const uls_voidptr_t b);
 
-int parse_id_ranges(uls_lex_ptr_t uls, int is_first, const char* tag_nam, int lno, char *line);
+int parse_id_ranges(uls_lex_ptr_t uls, int is_first, char *line);
 #endif
 
 #ifdef ULS_DECL_PUBLIC_PROC
@@ -286,7 +285,6 @@ ULS_DLL_EXTERN void ulx_set_decimal_separator(uls_lex_ptr_t uls, uls_uch_t uch);
 ULS_DLL_EXTERN void ulx_add_config_number_prefixes(uls_lex_ptr_t uls, char *wrd, int len, int radix, int slot_id);
 ULS_DLL_EXTERN int  ulx_add_config_number_suffixes(uls_lex_ptr_t uls, const char *suffix);
 ULS_DLL_EXTERN void ulx_set_not_char_tok(uls_lex_ptr_t uls, const char* non_ch_toks);
-ULS_DLL_EXTERN void ulx_set_char_tok(uls_lex_ptr_t uls, const char* ch_toks);
 ULS_DLL_EXTERN void ulx_set_comment_type(uls_lex_ptr_t uls, const char *mark1, const char *mark2);
 ULS_DLL_EXTERN int  ulx_set_rename(uls_lex_ptr_t uls, const char *name1, const char *name2);
 ULS_DLL_EXTERN int  ulx_set_quote_type(uls_lex_ptr_t uls, int tok_id, const char *tok_nam, const char *mark1, const char *mark2, char *line_escmap);
