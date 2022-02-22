@@ -73,6 +73,7 @@ AC_CONFIG_FILES([Makefile
         tools/ulc2class/Makefile
         tools/ulf_gen/Makefile
         tools/uls_stream/Makefile
+        tools/ulc2yaml/Makefile
         doc/Makefile
         doc/man/Makefile
         tests/Makefile

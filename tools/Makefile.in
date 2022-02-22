@@ -318,7 +318,7 @@ ULS_SYSPROPS = /usr/local/etc/uls/uls.sysprops
 TMP_SYSPROPS = /tmp/uls_sysprops.txt
 ulc2class_exe = $(top_builddir)/tools/ulc2class/ulc2class
 tests_libpath = $(top_builddir)/src:$(top_builddir)/ulscpp
-SUBDIRS = ulstools ulc2class ulf_gen uls_stream 
+SUBDIRS = ulstools ulc2class ulf_gen uls_stream ulc2yaml
 ACLOCAL_AMFLAGS = -I m4
 all: all-recursive
 

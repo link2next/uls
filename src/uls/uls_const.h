@@ -48,6 +48,7 @@
 #define ULC2CLASS_PROGVER    "v2.7.0"
 #define ULF_GEN_PROGVER      "v1.6.0"
 #define ULS_STREAM_PROGVER   "v2.6.0"
+#define ULC2YAML_PROGVER     "v1.0.0"
 
 #define ULS_INITIAL_NAME     "ULS(Unified Lexical Scheme)"
 #define ULS_AUTHOR           "Stanley Hong (link2next@gmail.com)"

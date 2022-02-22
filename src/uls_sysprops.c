@@ -81,6 +81,7 @@ ULS_QUALIFIED_METHOD(__init_system_info)(uls_sysinfo_ptr_t sysinfo, int poolsiz)
 	}
 
 	sysinfo->n_strpool = 0;
+	sysinfo->fp_cvt2yaml = NULL;
 	return 0;
 }
 

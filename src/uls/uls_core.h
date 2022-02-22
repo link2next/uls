@@ -182,6 +182,8 @@ const char* skip_white_spaces(uls_lex_ptr_t uls);
 void free_tokdef_array(uls_lex_ptr_t uls);
 int ulc_load(uls_lex_ptr_t uls, FILE *fin_ulc, FILE *fin_ulf);
 
+int ulc_load_cvt2yaml(uls_lex_ptr_t uls, FILE *fin_ulc);
+
 int uls_init_fp(uls_lex_ptr_t uls, const char *specname,
   FILE *fin_ulc, FILE *fin_ulf);
 

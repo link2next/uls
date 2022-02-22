@@ -558,6 +558,121 @@ ULS_QUALIFIED_METHOD(ulc_load)(uls_lex_ptr_t uls, FILE *fin_ulc, FILE *fin_ulf)
 }
 
 int
+ULS_QUALIFIED_METHOD(ulc_load_cvt2yaml)(uls_lex_ptr_t uls, FILE *fin_ulc)
+{
+	ulc_header_t  uls_config;
+	char     linebuff[ULS_LINEBUFF_SIZ__ULC+1], *lptr;
+	int      linelen, lno;
+	int      i, stat = 0;
+	int      n, tok_id;
+
+	uls_tokdef_ptr_t e, e_link, idtok_list;
+	uls_tokdef_vx_ptr_t e_vx;
+
+	uls_type_tool(outparam) parms;
+
+	_uls_tool_(version_make)(uls_ptr(uls_config.filever), 0, 0, 0);
+
+	uls_config.n_keys_twoplus = uls_config.n_keys_idstr = 0;
+	uls_config.tok_id_seed = 0;
+	uls_config.tok_id_min = uls_config.tok_id_max = 0;
+
+	n = N_RESERVED_TOKS + TOKDEF_LINES_DELTA;
+	uls_resize_parray(uls_ptr(uls->tokdef_array), tokdef, n);
+	uls->tokdef_array.n = 0;
+
+	uls_resize_parray(uls_ptr(uls->tokdef_vx_array), tokdef_vx, n);
+	uls->tokdef_vx_array.n = 0;
+
+	init_reserved_toks(uls);
+
+	lno = ulc_read_header_cvt2yaml(uls, fin_ulc, uls_ptr(uls_config), uls_get_namebuf_value(uls->ulc_name));
+	if (lno < 0) {
+		_uls_log(err_log)("fail to read the header of uls-spec.");
+		return -1;
+	}
+
+	if (classify_char_group(uls, uls_ptr(uls_config)) < 0) {
+		_uls_log(err_log)("%s: lex-conf file not consistent!", __FUNCTION__);
+		return -1;
+	}
+
+	while (1) {
+		if ((linelen=_uls_tool_(fp_gets)(fin_ulc, linebuff, sizeof(linebuff), 0)) <= ULS_EOF) {
+			if (linelen < ULS_EOF) {
+				_uls_log(err_log)("%s: ulc file i/o error at %d", __FUNCTION__, lno);
+				stat = -1;
+			}
+			break;
+		}
+		++lno;
+
+		if (*(lptr = _uls_tool(skip_blanks)(linebuff)) == '\0' ||
+			*lptr == '#' || (lptr[0]=='/' && lptr[1]=='/'))
+			continue;
+
+		if ((e_vx=ulc_proc_line(uls_get_namebuf_value(uls->ulc_name),
+			lno, lptr, uls, uls_ptr(uls_config), uls_ptr(parms))) == nilptr) {
+			stat = -1;
+			break;
+		}
+
+		e = (uls_tokdef_ptr_t) parms.data;
+
+		tok_id = e_vx->tok_id;
+
+		if (tok_id < uls_config.tok_id_min)
+			uls_config.tok_id_min = tok_id;
+
+		if (tok_id > uls_config.tok_id_max)
+			uls_config.tok_id_max = tok_id;
+	}
+
+	if (stat < 0 || check_rsvd_toks(uls) < 0) {
+		free_tokdef_array(uls);
+		return -1;
+	}
+
+	// uls.commtypes, uls.quotetypes is used as matching the prefices of comments, quote-strings
+	//     as the defined order
+
+	uls->xcontext.len_surplus = calc_len_surplus_recommended(uls);
+
+	if ((i=uls->tokdef_array.n) < uls->tokdef_array.n_alloc) {
+		// shrink the size of uls->tokdef_array to the compact size.
+		uls_resize_parray(uls_ptr(uls->tokdef_array), tokdef, i);
+	}
+
+	if ((i=uls->tokdef_vx_array.n) < uls->tokdef_vx_array.n_alloc) {
+		// shrink the size of uls->tokdef_vx_array to the compact size.
+		uls_resize_parray(uls_ptr(uls->tokdef_vx_array), tokdef_vx, i);
+	}
+
+	if (classify_tok_group(uls) < 0) {
+		_uls_log(err_log)("%s: lex-conf file not consistent!", __FUNCTION__);
+		return -1;
+	}
+
+	idtok_list = rearrange_tokname_of_quotetypes(uls, uls_config.n_keys_twoplus, uls_ptr(parms));
+//	n_idtok_list = parms.n;
+
+	uls_init_kwtable(uls_ptr(uls->idkeyw_table), 0, uls->flags & ULS_FL_CASE_INSENSITIVE);
+
+	uls_reset_kwtable(uls_ptr(uls->idkeyw_table), ULF_HASH_TABLE_SIZE,
+		nilptr, uls_ptr(uls->idkeyw_table.dflhash_stat));
+
+	// consume tok_info_lst upto n_lst
+	for (e=idtok_list; e!=nilptr; e=e_link) {
+		e_link = e->link;
+		uls_add_kw(uls_ptr(uls->idkeyw_table), e);
+	}
+
+	distribute_twoplus_toks(uls_ptr(uls->twoplus_table), uls->idkeyw_table.str_ncmp);
+
+	return stat;
+}
+
+int
 ULS_QUALIFIED_METHOD(uls_init_fp)(uls_lex_ptr_t uls, const char *specname,
 	FILE *fin_ulc, FILE *fin_ulf)
 {
@@ -608,7 +723,15 @@ ULS_QUALIFIED_METHOD(uls_init_fp)(uls_lex_ptr_t uls, const char *specname,
 
 	uls->shell = nilptr;
 
-	if ((rc = ulc_load(uls, fin_ulc, fin_ulf)) < 0) {
+	if (uls_get_cvt2yaml() != NULL) {
+		rc = ulc_load_cvt2yaml(uls, fin_ulc);
+		_uls_tool_(fp_close)(fin_ulc);
+		_uls_tool_(fp_close)(fin_ulf);
+	} else {
+		rc = ulc_load(uls, fin_ulc, fin_ulf);
+	}
+
+	if (rc < 0) {
 		// fin_ulc, fin_ulf consumed
 		uls_xcontext_deinit(uls_ptr(uls->xcontext));
 		uls_deinit_onechar_table(uls_ptr(uls->onechar_table));
