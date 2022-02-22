@@ -23,12 +23,11 @@ Makefile
 Makefile.in
 *.class
 *.list
-a?.uls
-autom4te.cache/
+/autom4te.cache
+/doc/man/*.1
+/tests/**/a?.uls
+/examples/**/a?.uls
 /post_inst/uninst_info.txt
-/doc/man/ulc2class.1
-/doc/man/ulf_gen.1
-/doc/man/uls_stream.1
 /examples/Css3/Css3Toks
 /examples/DumpToks/DumpToks
 /examples/Html5/Html5Toks
@@ -54,5 +53,3 @@ autom4te.cache/
 /tools/ulc2class/ulc2class
 /tools/ulf_gen/ulf_gen
 /tools/uls_stream/uls_stream
-
-
