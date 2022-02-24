@@ -215,7 +215,7 @@ uls_get_tmpl_value_wstr(uls_tmpl_list_ptr_t tmpl_list, const wchar_t *name)
 		return NULL;
 	}
 
-	tmpl_ext = uls_get_array_slot_type10(uls_ptr(ext->tmpls_wext), tmpl->idx);
+	tmpl_ext = uls_array_get_slot_type10(uls_ptr(ext->tmpls_wext), tmpl->idx);
 	return tmpl_ext->val_wstr;
 }
 
@@ -230,7 +230,7 @@ uls_set_tmpl_value_wstr(uls_tmpl_list_ptr_t tmpl_list, const wchar_t* name, cons
 		return -1;
 	}
 
-	tmpl_ext = uls_get_array_slot_type10(uls_ptr(ext->tmpls_wext), tmpl->idx);
+	tmpl_ext = uls_array_get_slot_type10(uls_ptr(ext->tmpls_wext), tmpl->idx);
 	if (__set_tmpl_value_wstr(tmpl_ext, name, val) < 0) {
 		return -1;
 	}
@@ -251,8 +251,8 @@ uls_add_tmpl_wstr(uls_tmpl_list_ptr_t tmpl_list, const wchar_t *name, const wcha
 		return -1;
 	}
 
-	uls_alloc_array_slot_type10(uls_ptr(ext->tmpls_wext), tmpl_wstr, k);
-	tmpl_ext = uls_get_array_slot_type10(uls_ptr(ext->tmpls_wext), k);
+	uls_array_alloc_slot_type10(uls_ptr(ext->tmpls_wext), tmpl_wstr, k);
+	tmpl_ext = uls_array_get_slot_type10(uls_ptr(ext->tmpls_wext), k);
 
 	if (__set_tmpl_value_wstr(tmpl_ext, name, val) < 0) {
 		return -1;

@@ -24,21 +24,16 @@
 #ifndef __ULS_VERSION_H__
 #define __ULS_VERSION_H__
 
-#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_type.h"
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
-#ifdef ULS_DECL_GLOBAL_TYPES
 #define ULS_VERSION_CODE_LEN     3
 #define ULS_VERSION_STR_MAXLEN  11
-#define uls_vers_compatible(ver1,ver2) (_uls_tool_(version_cmp_code)(ver1,ver2) >= 2)
-#endif
+#define uls_vers_compatible(ver1,ver2) (uls_version_cmp_code(ver1,ver2) >= 2)
 
-#ifdef ULS_DEF_PUBLIC_TYPE
 ULS_DEFINE_STRUCT(version)
 {
 	char  major;
@@ -46,9 +41,7 @@ ULS_DEFINE_STRUCT(version)
 	char  debug;
 	char  sequence;
 };
-#endif
 
-#ifdef ULS_DECL_PUBLIC_PROC
 ULS_DLL_EXTERN void uls_init_version(uls_version_ptr_t a);
 ULS_DLL_EXTERN void uls_deinit_version(uls_version_ptr_t a);
 
@@ -60,7 +53,6 @@ ULS_DLL_EXTERN void uls_version_copy(uls_version_ptr_t dst, const uls_version_pt
 ULS_DLL_EXTERN int uls_version_make_string(const uls_version_ptr_t a, char* ver_str);
 ULS_DLL_EXTERN int uls_version_cmp_code(const uls_version_ptr_t a, const uls_version_ptr_t b);
 ULS_DLL_EXTERN int uls_version_pars_str(const char *lptr, uls_version_ptr_t a);
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 }

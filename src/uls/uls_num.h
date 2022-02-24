@@ -36,22 +36,17 @@
 #ifndef __ULS_NUM_H__
 #define __ULS_NUM_H__
 
-#ifndef ULS_EXCLUDE_HFILES
 #include "uls/csz_stream.h"
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
-#ifdef ULS_DECL_PROTECTED_TYPE
 #define ULS_NUM_FL_MINUS    0x10
 #define ULS_NUM_FL_ZERO     0x20
 #define ULS_NUM_FL_FLOAT    0x40
 
-#endif // ULS_DECL_PROTECTED_TYPE
-
-#if defined(__ULS_NUM__) || defined(ULS_DECL_PRIVATE_PROC)
+#if defined(__ULS_NUM__)
 ULS_DECL_STATIC uls_uint64 get_uint64_from_radix_numstr(int radix, const char *numbuf, int numlen1);
 ULS_DECL_STATIC int uls_cvt_radix_simple_num(int radix1, const char *numbuf1, int numlen1, int radix2, uls_outbuf_ptr_t outbuf, int k);
 
@@ -125,7 +120,6 @@ int div_decstr_by_16(char* wrd, uls_outparam_ptr_t parms);
 int __uls_cvt_radix2hexa_str_generic(int radix, const char *numbuf, int n_digits, uls_outbuf_ptr_t outbuf, int k);
 #endif // ULS_DECL_PROTECTED_PROC
 
-#ifdef ULS_DECL_PUBLIC_PROC
 int uls_oct2hex_str(const char *numbuf, int n_digits, char* outbuf);
 int uls_bin2hex_str(const char* numstr, int n_digits, char* outbuf);
 int uls_quaternary2hex_str(const char* numstr, int n_digits, char* outbuf);
@@ -139,7 +133,6 @@ int uls_radix2hexadecimal_str(int radix1, const char *numbuf1, int n1_digits, ul
 int skip_radix_number(uls_outparam_ptr_t parms, int radix, uls_outbuf_ptr_t numbuf, int k);
 int num2stdfmt_0(uls_outparam_ptr_t parms, uls_outbuf_ptr_t numbuf, int k);
 int num2stdfmt(uls_outparam_ptr_t parms, uls_outbuf_ptr_t numbuf, int k);
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 }

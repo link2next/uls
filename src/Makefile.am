@@ -13,10 +13,10 @@ libuls_la_SOURCES = \
 noinst_HEADERS = 
 include_HEADERS = uls.h 
 
-uls/uls_const_linux.h: array_names00.txt
+uls/uls_const_array00.h: array_names00.txt
 	./gen_array_names00.sh $< > $@
 
-uls_prim.c: uls/uls_const_linux.h
+uls_prim.c: uls/uls_const_array00.h
 
 libuls_la_CPPFLAGS = -D_ULS_IMPLDLL -DULS_SRC_DIR=\"$(PWD)\" \
 	-DULS_ETC_DIR=\"$(etc_dir)\" \

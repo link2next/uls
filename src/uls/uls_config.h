@@ -45,7 +45,6 @@
 
 #if defined(_WIN32)
 #define ULS_WINDOWS
-#define ULS_CLASSIFY_SOURCE
 
 #ifdef _WIN64
 #define ARCH_64BIT
@@ -69,7 +68,6 @@
 #define ARCH_64BIT
 #endif
 
-//#define ULS_CLASSIFY_SOURCE
 #define HAVE_GETOPT
 #define HAVE_PTHREAD
 #define ULS_FDF_SUPPORT
@@ -81,7 +79,6 @@
 #define ARCH_64BIT
 #endif
 
-//#define ULS_CLASSIFY_SOURCE
 #define HAVE_GETOPT
 #define HAVE_PTHREAD
 #define ULS_FDF_SUPPORT
@@ -90,24 +87,7 @@
 #error "ULS: Unrecognized arch!"
 #endif // _WIN32
 
-#ifdef ULS_DOTNET
-
-#define ULS_DLL_EXTERN
-#define ULSCPP_DLL_EXTERN
-#define _ULS_INLINE
-#define ULS_DECL_STATIC
-// ULS_DECL_EXTERN_STATIC: class methods
-#define ULS_DECL_EXTERN_STATIC static
-#ifndef ULS_CLASSIFY_SOURCE
-#define ULS_CLASSIFY_SOURCE
-#endif
-#define ULS_USE_USTR
-#define _MANAGE_ULS_OBJECTS
-
-#else // ULS_DOTNET
-
-#if defined(ULS_WINDOWS)
-
+#ifdef ULS_WINDOWS
 #ifdef _ULS_BUILD_STATIC_LIBS
 #define ULS_DLL_EXTERN
 #define ULSCPP_DLL_EXTERN
@@ -130,7 +110,7 @@
 #define ULS_DECL_STATIC static
 #define ULS_DECL_EXTERN_STATIC
 
-#else // !ULS_WINDOWS
+#else // ULS_WINDOWS
 #define ULS_DLL_EXTERN
 #define ULSCPP_DLL_EXTERN
 #define ULS_DECL_STATIC static
@@ -145,32 +125,13 @@
 #define _ULS_USEDLL
 #endif
 
-#define ULS_DECL_BASIC_TYPES
-#define ULS_DECL_GLOBAL_TYPES
-
-#define ULS_DECL_PRIVATE_TYPE
-#define ULS_DECL_PROTECTED_TYPE
-#define ULS_DECL_PUBLIC_TYPE
-
-#define ULS_DEF_PRIVATE_TYPE
-#define ULS_DEF_PROTECTED_TYPE
-#define ULS_DEF_PUBLIC_TYPE
-
-//#define ULS_DEF_PRIVATE_DATA
-//#define ULS_DEF_PROTECTED_DATA
-//#define ULS_DEF_PUBLIC_DATA
-
-//#define ULS_DECL_PRIVATE_PROC
 #ifdef _ULS_INTERNAL_USE_ONLY
 #define ULS_DECL_PROTECTED_PROC
 #endif
-#define ULS_DECL_PUBLIC_PROC
 
 #if defined(__cplusplus)
 #define _ULS_CPLUSPLUS
 #endif
-
-#endif // ULS_DOTNET
 
 #ifdef _ULS_DEBUG
 #define ULS_DO_ASSERT

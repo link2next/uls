@@ -31,18 +31,16 @@
     Stanley Hong <link2next@gmail.com>, August 2011.
   </author>
 */
-#if !defined(ULS_DOTNET) && !defined(__ULS_LOG_H__)
+#ifndef __ULS_LOG_H__
 #define __ULS_LOG_H__
 
-#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_print.h"
-#endif
+#include "uls/uls_core.h"
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
-#ifdef ULS_DECL_GLOBAL_TYPES
 #define ULS_LOG_EMERG     0
 #define ULS_LOG_ALERT     1
 #define ULS_LOG_CRIT      2
@@ -57,14 +55,10 @@ extern "C" {
 
 #define uls_log_lock(log) uls_lock_mutex(uls_ptr((log)->mtx))
 #define uls_log_unlock(log) uls_unlock_mutex(uls_ptr((log)->mtx))
-#endif
 
-#ifdef ULS_DECL_PROTECTED_TYPE
 #define N_LOGBUF_CHARS    81
 #define ULS_MAX_LOGLEVEL  (sizeof(uls_uint32)*8 - 1)
-#endif
 
-#ifdef ULS_DEF_PUBLIC_TYPE
 ULS_DEFINE_STRUCT(log)
 {
 	uls_flags_t flags;
@@ -80,15 +74,13 @@ ULS_DEFINE_STRUCT(log)
 	uls_voidptr_t shell;
 };
 
-#endif // ULS_DEF_PUBLIC_TYPE
-
-#if (!defined(ULS_DOTNET) && defined(__ULS_LOG__)) || defined(ULS_DEF_PRIVATE_DATA)
+#if defined(__ULS_LOG__)
 ULS_DECL_STATIC uls_lf_map_t lf_map_syserr;
 ULS_DECL_STATIC uls_lf_map_t lf_map_logdfl;
 ULS_DECL_STATIC uls_lf_t lf_syserr;
 #endif
 
-#ifdef ULS_DECL_PRIVATE_PROC
+#if defined(__ULS_LOG__)
 ULS_DECL_STATIC int __uls_fmtproc_coord(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lex_ptr_t uls, uls_lf_context_ptr_t ctx);
 ULS_DECL_STATIC int __uls_fmtproc_tokname(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lex_ptr_t uls, uls_lf_context_ptr_t ctx);
 ULS_DECL_STATIC int __uls_fmtproc_keyword(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lex_ptr_t uls, uls_lf_context_ptr_t ctx);
@@ -107,7 +99,6 @@ int uls_log_fmtproc_tokname(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf
 int uls_log_fmtproc_keyword(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t ctx);
 #endif // ULS_DECL_PROTECTED_PROC
 
-#ifdef ULS_DECL_PUBLIC_PROC
 ULS_DLL_EXTERN void err_syslog_lock(void);
 ULS_DLL_EXTERN void err_syslog_unlock(void);
 
@@ -137,7 +128,6 @@ ULS_DLL_EXTERN void uls_panic(uls_log_ptr_t log, const char* fmt, ...);
 
 ULS_DLL_EXTERN void uls_add_default_log_convspecs(uls_lf_map_ptr_t lf_map);
 ULS_DLL_EXTERN void uls_add_default_convspecs(uls_lf_map_ptr_t lf_map);
-#endif // ULS_DECL_PUBLIC_PROC
 
 #ifdef _ULS_CPLUSPLUS
 }

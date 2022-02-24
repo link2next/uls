@@ -37,7 +37,7 @@
 #include "uls/uls_fileio.h"
 
 void
-ULS_QUALIFIED_METHOD(initialize_uls_sysprn)(void)
+initialize_uls_sysprn(void)
 {
 	dfl_str_lf = uls_lf_create(nilptr, nilptr, uls_lf_puts_str);
 	dfl_file_lf = uls_lf_create(nilptr, _uls_stdio_fp(1), uls_lf_puts_file);
@@ -48,7 +48,7 @@ ULS_QUALIFIED_METHOD(initialize_uls_sysprn)(void)
 }
 
 void
-ULS_QUALIFIED_METHOD(finalize_uls_sysprn)(void)
+finalize_uls_sysprn(void)
 {
 	uls_lf_destroy(dfl_sysprn_lf);
 
@@ -64,7 +64,7 @@ ULS_QUALIFIED_METHOD(finalize_uls_sysprn)(void)
 // <parm name="out_file">The output file path</parm>
 // <return>none</return>
 int
-ULS_QUALIFIED_METHOD(uls_sysprn_open)(uls_voidptr_t data, uls_lf_puts_t proc)
+uls_sysprn_open(uls_voidptr_t data, uls_lf_puts_t proc)
 {
 	uls_lf_delegate_t delegate;
 
@@ -93,7 +93,7 @@ ULS_QUALIFIED_METHOD(uls_sysprn_open)(uls_voidptr_t data, uls_lf_puts_t proc)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_sysprn_set_tabsiz)(int tabsiz)
+uls_sysprn_set_tabsiz(int tabsiz)
 {
 	char ch_tab;
 
@@ -113,7 +113,7 @@ ULS_QUALIFIED_METHOD(uls_sysprn_set_tabsiz)(int tabsiz)
 	sysprn_tabsiz = tabsiz;
 	sysprn_tabbuf_len = sysprn_tabsiz * sysprn_ntabs;
 
-	_uls_tool_(memset)(sysprn_tabbuf, ch_tab, sysprn_tabbuf_len);
+	uls_memset(sysprn_tabbuf, ch_tab, sysprn_tabbuf_len);
 }
 
 // <brief>
@@ -121,7 +121,7 @@ ULS_QUALIFIED_METHOD(uls_sysprn_set_tabsiz)(int tabsiz)
 // </brief>
 // <return>none</return>
 void
-ULS_QUALIFIED_METHOD(uls_sysprn_close)(void)
+uls_sysprn_close(void)
 {
 	uls_lf_delegate_t delegate;
 
@@ -142,13 +142,13 @@ ULS_QUALIFIED_METHOD(uls_sysprn_close)(void)
 // <parm name="fmt">The template for message string</parm>
 // <return># of chars printed</return>
 int
-ULS_QUALIFIED_METHOD(uls_vsysprn)(const char* fmt, va_list args)
+uls_vsysprn(const char* fmt, va_list args)
 {
 	return __uls_lf_vxprintf(dfl_sysprn_lf, fmt, args);
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_sysprn)(const char* fmt, ...)
+uls_sysprn(const char* fmt, ...)
 {
 	va_list	args;
 	int len;
@@ -161,7 +161,7 @@ ULS_QUALIFIED_METHOD(uls_sysprn)(const char* fmt, ...)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_sysprn_puttabs)(int n)
+uls_sysprn_puttabs(int n)
 {
 	uls_voidptr_t sysprn = dfl_sysprn_lf->x_dat;
 	uls_lf_puts_t sysprn_puts = dfl_sysprn_lf->uls_lf_puts;
@@ -180,7 +180,7 @@ ULS_QUALIFIED_METHOD(uls_sysprn_puttabs)(int n)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_sysprn_tabs)(int n_tabs, char *fmt, ...)
+uls_sysprn_tabs(int n_tabs, char *fmt, ...)
 {
 	va_list args;
 
@@ -200,7 +200,7 @@ ULS_QUALIFIED_METHOD(uls_sysprn_tabs)(int n_tabs, char *fmt, ...)
 // <return># of chars filled except for '\0'</return>
 
 int
-ULS_QUALIFIED_METHOD(__uls_lf_vsnprintf)(char* buf, int bufsiz, uls_lf_ptr_t uls_lf, const char *fmt, va_list args)
+__uls_lf_vsnprintf(char* buf, int bufsiz, uls_lf_ptr_t uls_lf, const char *fmt, va_list args)
 {
 	uls_buf4str_t stdbuf;
 
@@ -230,7 +230,7 @@ ULS_QUALIFIED_METHOD(__uls_lf_vsnprintf)(char* buf, int bufsiz, uls_lf_ptr_t uls
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_lf_vsnprintf)(char* buf, int bufsiz, uls_lf_ptr_t uls_lf, const char *fmt, va_list args)
+uls_lf_vsnprintf(char* buf, int bufsiz, uls_lf_ptr_t uls_lf, const char *fmt, va_list args)
 {
 	int len;
 
@@ -242,7 +242,7 @@ ULS_QUALIFIED_METHOD(uls_lf_vsnprintf)(char* buf, int bufsiz, uls_lf_ptr_t uls_l
 }
 
 int
-ULS_QUALIFIED_METHOD(__uls_lf_snprintf)(char* buf, int bufsiz, uls_lf_ptr_t uls_lf, const char *fmt, ...)
+__uls_lf_snprintf(char* buf, int bufsiz, uls_lf_ptr_t uls_lf, const char *fmt, ...)
 {
 	va_list args;
 	int len;
@@ -255,7 +255,7 @@ ULS_QUALIFIED_METHOD(__uls_lf_snprintf)(char* buf, int bufsiz, uls_lf_ptr_t uls_
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_lf_snprintf)(char* buf, int bufsiz, uls_lf_ptr_t uls_lf, const char *fmt, ...)
+uls_lf_snprintf(char* buf, int bufsiz, uls_lf_ptr_t uls_lf, const char *fmt, ...)
 {
 	va_list args;
 	int len;
@@ -276,13 +276,13 @@ ULS_QUALIFIED_METHOD(uls_lf_snprintf)(char* buf, int bufsiz, uls_lf_ptr_t uls_lf
 // <return># of chars filled except for '\0'</return>
 
 int
-ULS_QUALIFIED_METHOD(__uls_vsnprintf)(char* buf, int bufsiz, const char *fmt, va_list args)
+__uls_vsnprintf(char* buf, int bufsiz, const char *fmt, va_list args)
 {
 	return __uls_lf_vsnprintf(buf, bufsiz, dfl_str_lf, fmt, args);
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_vsnprintf)(char* buf, int bufsiz, const char *fmt, va_list args)
+uls_vsnprintf(char* buf, int bufsiz, const char *fmt, va_list args)
 {
 	int len;
 
@@ -294,7 +294,7 @@ ULS_QUALIFIED_METHOD(uls_vsnprintf)(char* buf, int bufsiz, const char *fmt, va_l
 }
 
 int
-ULS_QUALIFIED_METHOD(__uls_snprintf)(char* buf, int bufsiz, const char *fmt, ...)
+__uls_snprintf(char* buf, int bufsiz, const char *fmt, ...)
 {
 	va_list args;
 	int len;
@@ -307,7 +307,7 @@ ULS_QUALIFIED_METHOD(__uls_snprintf)(char* buf, int bufsiz, const char *fmt, ...
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_snprintf)(char* buf, int bufsiz, const char *fmt, ...)
+uls_snprintf(char* buf, int bufsiz, const char *fmt, ...)
 {
 	va_list args;
 	int len;
@@ -326,7 +326,7 @@ ULS_QUALIFIED_METHOD(uls_snprintf)(char* buf, int bufsiz, const char *fmt, ...)
 // <parm name="fmt">The template for message string</parm>
 // <return># of chars filled</return>
 int
-ULS_QUALIFIED_METHOD(__uls_lf_vzprintf)(_uls_ptrtype_tool(csz_str) csz, uls_lf_ptr_t uls_lf, const char *fmt, va_list args)
+__uls_lf_vzprintf(csz_str_ptr_t csz, uls_lf_ptr_t uls_lf, const char *fmt, va_list args)
 {
 	uls_lf_delegate_t delegate;
 	int len;
@@ -341,7 +341,7 @@ ULS_QUALIFIED_METHOD(__uls_lf_vzprintf)(_uls_ptrtype_tool(csz_str) csz, uls_lf_p
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_lf_vzprintf)(_uls_ptrtype_tool(csz_str) csz, uls_lf_ptr_t uls_lf, const char *fmt, va_list args)
+uls_lf_vzprintf(csz_str_ptr_t csz, uls_lf_ptr_t uls_lf, const char *fmt, va_list args)
 {
 	int len;
 
@@ -353,7 +353,7 @@ ULS_QUALIFIED_METHOD(uls_lf_vzprintf)(_uls_ptrtype_tool(csz_str) csz, uls_lf_ptr
 }
 
 int
-ULS_QUALIFIED_METHOD(__uls_lf_zprintf)(_uls_ptrtype_tool(csz_str) csz, uls_lf_ptr_t uls_lf, const char *fmt, ...)
+__uls_lf_zprintf(csz_str_ptr_t csz, uls_lf_ptr_t uls_lf, const char *fmt, ...)
 {
 	va_list args;
 	int len;
@@ -366,7 +366,7 @@ ULS_QUALIFIED_METHOD(__uls_lf_zprintf)(_uls_ptrtype_tool(csz_str) csz, uls_lf_pt
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_lf_zprintf)(_uls_ptrtype_tool(csz_str) csz, uls_lf_ptr_t uls_lf, const char *fmt, ...)
+uls_lf_zprintf(csz_str_ptr_t csz, uls_lf_ptr_t uls_lf, const char *fmt, ...)
 {
 	va_list args;
 	int len;
@@ -379,13 +379,13 @@ ULS_QUALIFIED_METHOD(uls_lf_zprintf)(_uls_ptrtype_tool(csz_str) csz, uls_lf_ptr_
 }
 
 int
-ULS_QUALIFIED_METHOD(__uls_vzprintf)(_uls_ptrtype_tool(csz_str) csz, const char *fmt, va_list args)
+__uls_vzprintf(csz_str_ptr_t csz, const char *fmt, va_list args)
 {
 	return __uls_lf_vzprintf(csz, dfl_csz_lf, fmt, args);
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_vzprintf)(_uls_ptrtype_tool(csz_str) csz, const char *fmt, va_list args)
+uls_vzprintf(csz_str_ptr_t csz, const char *fmt, va_list args)
 {
 	int len;
 
@@ -397,7 +397,7 @@ ULS_QUALIFIED_METHOD(uls_vzprintf)(_uls_ptrtype_tool(csz_str) csz, const char *f
 }
 
 int
-ULS_QUALIFIED_METHOD(__uls_zprintf)(_uls_ptrtype_tool(csz_str) csz, const char *fmt, ...)
+__uls_zprintf(csz_str_ptr_t csz, const char *fmt, ...)
 {
 	va_list args;
 	int len;
@@ -410,7 +410,7 @@ ULS_QUALIFIED_METHOD(__uls_zprintf)(_uls_ptrtype_tool(csz_str) csz, const char *
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_zprintf)(_uls_ptrtype_tool(csz_str) csz, const char *fmt, ...)
+uls_zprintf(csz_str_ptr_t csz, const char *fmt, ...)
 {
 	va_list args;
 	int len;
@@ -429,7 +429,7 @@ ULS_QUALIFIED_METHOD(uls_zprintf)(_uls_ptrtype_tool(csz_str) csz, const char *fm
 // <parm name="fmt">The template for message string</parm>
 // <return># of chars written</return>
 int
-ULS_QUALIFIED_METHOD(__uls_lf_vfprintf)(FILE* fp, uls_lf_ptr_t uls_lf, const char *fmt, va_list args)
+__uls_lf_vfprintf(FILE* fp, uls_lf_ptr_t uls_lf, const char *fmt, va_list args)
 {
 	uls_lf_delegate_t delegate;
 	int len;
@@ -444,7 +444,7 @@ ULS_QUALIFIED_METHOD(__uls_lf_vfprintf)(FILE* fp, uls_lf_ptr_t uls_lf, const cha
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_lf_vfprintf)(FILE* fp, uls_lf_ptr_t uls_lf, const char *fmt, va_list args)
+uls_lf_vfprintf(FILE* fp, uls_lf_ptr_t uls_lf, const char *fmt, va_list args)
 {
 	int len;
 
@@ -456,7 +456,7 @@ ULS_QUALIFIED_METHOD(uls_lf_vfprintf)(FILE* fp, uls_lf_ptr_t uls_lf, const char 
 }
 
 int
-ULS_QUALIFIED_METHOD(__uls_lf_fprintf)(FILE* fp, uls_lf_ptr_t uls_lf, const char *fmt, ...)
+__uls_lf_fprintf(FILE* fp, uls_lf_ptr_t uls_lf, const char *fmt, ...)
 {
 	va_list args;
 	int len;
@@ -469,7 +469,7 @@ ULS_QUALIFIED_METHOD(__uls_lf_fprintf)(FILE* fp, uls_lf_ptr_t uls_lf, const char
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_lf_fprintf)(FILE* fp, uls_lf_ptr_t uls_lf, const char *fmt, ...)
+uls_lf_fprintf(FILE* fp, uls_lf_ptr_t uls_lf, const char *fmt, ...)
 {
 	va_list args;
 	int len;
@@ -482,13 +482,13 @@ ULS_QUALIFIED_METHOD(uls_lf_fprintf)(FILE* fp, uls_lf_ptr_t uls_lf, const char *
 }
 
 int
-ULS_QUALIFIED_METHOD(__uls_vfprintf)(FILE* fp, const char *fmt, va_list args)
+__uls_vfprintf(FILE* fp, const char *fmt, va_list args)
 {
 	return uls_lf_vxprintf_generic(fp, dfl_file_lf, fmt, args);
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_vfprintf)(FILE* fp, const char *fmt, va_list args)
+uls_vfprintf(FILE* fp, const char *fmt, va_list args)
 {
 	int len;
 
@@ -500,7 +500,7 @@ ULS_QUALIFIED_METHOD(uls_vfprintf)(FILE* fp, const char *fmt, va_list args)
 }
 
 int
-ULS_QUALIFIED_METHOD(__uls_fprintf)(FILE* fp, const char *fmt, ...)
+__uls_fprintf(FILE* fp, const char *fmt, ...)
 {
 	va_list args;
 	int len;
@@ -513,7 +513,7 @@ ULS_QUALIFIED_METHOD(__uls_fprintf)(FILE* fp, const char *fmt, ...)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_fprintf)(FILE* fp, const char *fmt, ...)
+uls_fprintf(FILE* fp, const char *fmt, ...)
 {
 	va_list args;
 	int len;
@@ -531,13 +531,13 @@ ULS_QUALIFIED_METHOD(uls_fprintf)(FILE* fp, const char *fmt, ...)
 // <parm name="fmt">The template for message string</parm>
 // <return># of chars printed</return>
 int
-ULS_QUALIFIED_METHOD(__uls_lf_vprintf)(uls_lf_ptr_t uls_lf, const char *fmt, va_list args)
+__uls_lf_vprintf(uls_lf_ptr_t uls_lf, const char *fmt, va_list args)
 {
 	return __uls_lf_vfprintf(_uls_stdio_fp(1), uls_lf, fmt, args);
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_lf_vprintf)(uls_lf_ptr_t uls_lf, const char *fmt, va_list args)
+uls_lf_vprintf(uls_lf_ptr_t uls_lf, const char *fmt, va_list args)
 {
 	int len;
 
@@ -549,7 +549,7 @@ ULS_QUALIFIED_METHOD(uls_lf_vprintf)(uls_lf_ptr_t uls_lf, const char *fmt, va_li
 }
 
 int
-ULS_QUALIFIED_METHOD(__uls_lf_printf)(uls_lf_ptr_t uls_lf, const char *fmt, ...)
+__uls_lf_printf(uls_lf_ptr_t uls_lf, const char *fmt, ...)
 {
 	va_list args;
 	int len;
@@ -562,7 +562,7 @@ ULS_QUALIFIED_METHOD(__uls_lf_printf)(uls_lf_ptr_t uls_lf, const char *fmt, ...)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_lf_printf)(uls_lf_ptr_t uls_lf, const char *fmt, ...)
+uls_lf_printf(uls_lf_ptr_t uls_lf, const char *fmt, ...)
 {
 	va_list args;
 	int len;
@@ -580,13 +580,13 @@ ULS_QUALIFIED_METHOD(uls_lf_printf)(uls_lf_ptr_t uls_lf, const char *fmt, ...)
 // <parm name="fmt">The template for message string</parm>
 // <return># of chars printed</return>
 int
-ULS_QUALIFIED_METHOD(__uls_vprintf)(const char *fmt, va_list args)
+__uls_vprintf(const char *fmt, va_list args)
 {
 	return __uls_vfprintf(_uls_stdio_fp(1), fmt, args);
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_vprintf)(const char *fmt, va_list args)
+uls_vprintf(const char *fmt, va_list args)
 {
 	int len;
 
@@ -598,7 +598,7 @@ ULS_QUALIFIED_METHOD(uls_vprintf)(const char *fmt, va_list args)
 }
 
 int
-ULS_QUALIFIED_METHOD(__uls_printf)(const char *fmt, ...)
+__uls_printf(const char *fmt, ...)
 {
 	va_list args;
 	int len;
@@ -611,7 +611,7 @@ ULS_QUALIFIED_METHOD(__uls_printf)(const char *fmt, ...)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_printf)(const char *fmt, ...)
+uls_printf(const char *fmt, ...)
 {
 	va_list args;
 	int len;

@@ -35,16 +35,13 @@
 #ifndef __ULS_CONTEXT_H__
 #define __ULS_CONTEXT_H__
 
-#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_tokdef.h"
 #include "uls/uls_stream.h"
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
-#ifdef ULS_DECL_PROTECTED_TYPE
 // the flags of uls_context_t
 #define ULS_CTX_FL_WANT_EOFTOK     0x01
 #define ULS_CTX_FL_EOF             0x02
@@ -67,19 +64,14 @@ extern "C" {
 #define uls_is_ch_2ch_token(uls, uch) (uch < ULS_SYNTAX_TABLE_SIZE && (uls)->ch_context[uch] & ULS_CH_2PLUS)
 #define uls_is_ch_comm(uls, uch)      (uch < ULS_SYNTAX_TABLE_SIZE && (uls)->ch_context[uch] & ULS_CH_COMM)
 
-#define uls_context_get_tag(ctx) (_uls_tool(csz_text)(uls_ptr((ctx)->tag)))
+#define uls_context_get_tag(ctx) (csz_text(uls_ptr((ctx)->tag)))
 #define uls_context_get_taglen(ctx) (csz_length(uls_ptr((ctx)->tag)))
 
 #define uls_context_set_lineno(ctx,lno) uls_context_set_tag(ctx, NULL, lno)
 #define uls_context_get_lineno(ctx) ((ctx)->lineno)
 
-#endif // ULS_DECL_PROTECTED_TYPE
-
-#ifdef ULS_DECL_PUBLIC_TYPE
 ULS_DECLARE_STRUCT(xcontext);
-#ifdef ULS_DOTNET
 ULS_DECLARE_STRUCT(lex);
-#endif
 
 ULS_DEFINE_DELEGATE_BEGIN(gettok, int)(uls_lex_ptr_t uls);
 ULS_DEFINE_DELEGATE_END(gettok);
@@ -90,14 +82,12 @@ ULS_DEFINE_DELEGATE_END(input_ungrabber);
 ULS_DEFINE_DELEGATE_BEGIN(xcontext_filler, int)(uls_xcontext_ptr_t xctx);
 ULS_DEFINE_DELEGATE_END(xcontext_filler);
 
-ULS_DEFINE_DELEGATE_BEGIN(xctx_boundary_checker, int)(uls_xcontext_ptr_t xctx, uls_ptrtype_tool(parm_line) parm_ln);
+ULS_DEFINE_DELEGATE_BEGIN(xctx_boundary_checker, int)(uls_xcontext_ptr_t xctx, uls_parm_line_ptr_t parm_ln);
 ULS_DEFINE_DELEGATE_END(xctx_boundary_checker);
 
 ULS_DEFINE_DELEGATE_BEGIN(xctx_boundary_checker2, int)(uls_xcontext_ptr_t xctx, char* buf, int n);
 ULS_DEFINE_DELEGATE_END(xctx_boundary_checker2);
-#endif
 
-#ifdef ULS_DEF_PUBLIC_TYPE
 ULS_DEFINE_STRUCT(lexseg)
 {
 	int  offset1;
@@ -122,22 +112,22 @@ ULS_DEFINE_STRUCT(context)
 {
 	uls_flags_t flags;
 
-	_uls_type_tool(csz_str)  tag;
+	csz_str_t  tag;
 	int  lineno, delta_lineno;
 
 	uls_def_bytespool(cnst_nilstr, ULS_CNST_NILSTR_SIZE);
 	uls_input_ptr_t  input;
 
-	_uls_type_tool(csz_str)  zbuf1;
-	_uls_type_tool(csz_str)  zbuf2;
+	csz_str_t  zbuf1;
+	csz_str_t  zbuf2;
 	const char *lptr, *line, *line_end;
 
 	uls_decl_array_type10(lexsegs, lexseg);
 	int        i_lexsegs, n_lexsegs;
 
-	uls_callback_type_this(gettok)  gettok;
-	uls_callback_type_this(xcontext_filler) fill_proc;
-	uls_callback_type_this(xctx_boundary_checker) record_boundary_checker;
+	uls_callback_type(gettok)  gettok;
+	uls_callback_type(xcontext_filler) fill_proc;
+	uls_callback_type(xctx_boundary_checker) record_boundary_checker;
 
 	uls_tmpl_pool_ptr_t tmpls_pool;
 
@@ -145,7 +135,7 @@ ULS_DEFINE_STRUCT(context)
 	const char *s_val;
 	int        s_val_len, s_val_uchars;
 
-	uls_type_tool(outbuf) tokbuf;
+	uls_outbuf_t tokbuf;
 	int        n_digits, expo;
 
 	uls_tokdef_vx_ptr_t anonymous_uchar_vx;
@@ -174,19 +164,18 @@ ULS_DEFINE_STRUCT_BEGIN(xcontext)
 	int len_surplus;
 	uls_context_ptr_t context;
 };
-#endif // ULS_DEF_PUBLIC_TYPE
 
-#if defined(__ULS_CONTEXT__) || defined(ULS_DECL_PRIVATE_PROC)
+#if defined(__ULS_CONTEXT__)
 ULS_DECL_STATIC int __xcontext_binfd_filler(uls_xcontext_ptr_t xctx);
-ULS_DECL_STATIC void add_bin_packet_to_zbuf(int tok_id, int txtlen, const char* txtptr, _uls_ptrtype_tool(csz_str) ss_dst);
+ULS_DECL_STATIC void add_bin_packet_to_zbuf(int tok_id, int txtlen, const char* txtptr, csz_str_ptr_t ss_dst);
 ULS_DECL_STATIC void insert_txt_record_into_stream(int tokid, int tokid_TMPL, const char *txtptr, int txtlen,
-	uls_context_ptr_t ctx, _uls_ptrtype_tool(csz_str)  ss_dst);
+	uls_context_ptr_t ctx, csz_str_ptr_t  ss_dst);
 
-ULS_DECL_STATIC int get_txthdr_1(uls_ptrtype_tool(outparam) parms);
-ULS_DECL_STATIC int get_txthdr_2(uls_ptrtype_tool(outparam) parms);
+ULS_DECL_STATIC int get_txthdr_1(uls_outparam_ptr_t parms);
+ULS_DECL_STATIC int get_txthdr_2(uls_outparam_ptr_t parms);
 
 ULS_DECL_STATIC int __xcontext_txtfd_filler(uls_xcontext_ptr_t xctx,
-	uls_ptrtype_tool(outparam) parms);
+	uls_outparam_ptr_t parms);
 
 ULS_DECL_STATIC int __check_rec_boundary_host_order(uls_xcontext_ptr_t xctx, char* buf, int n);
 ULS_DECL_STATIC int __check_rec_boundary_reverse_order(uls_xcontext_ptr_t xctx, char* buf, int n);
@@ -211,16 +200,15 @@ void uls_xcontext_init(uls_xcontext_ptr_t xctx, uls_gettok_t gettok);
 void uls_xcontext_reset(uls_xcontext_ptr_t xctx);
 void uls_xcontext_deinit(uls_xcontext_ptr_t xctx);
 
-int check_rec_boundary_null(uls_xcontext_ptr_t xctx, uls_ptrtype_tool(parm_line) parm_ln);
-int check_rec_boundary_host_order(uls_xcontext_ptr_t xctx, uls_ptrtype_tool(parm_line) parm_ln);
-int check_rec_boundary_reverse_order(uls_xcontext_ptr_t xctx, uls_ptrtype_tool(parm_line) parm_ln);
+int check_rec_boundary_null(uls_xcontext_ptr_t xctx, uls_parm_line_ptr_t parm_ln);
+int check_rec_boundary_host_order(uls_xcontext_ptr_t xctx, uls_parm_line_ptr_t parm_ln);
+int check_rec_boundary_reverse_order(uls_xcontext_ptr_t xctx, uls_parm_line_ptr_t parm_ln);
 
 int xcontext_raw_filler(uls_xcontext_ptr_t xctx);
 int xcontext_binfd_filler(uls_xcontext_ptr_t xctx);
 int xcontext_txtfd_filler(uls_xcontext_ptr_t xctx);
 #endif
 
-#ifdef ULS_DECL_PUBLIC_PROC
 ULS_DLL_EXTERN void uls_context_set_tag(uls_context_ptr_t ctx, const char* tagstr, int lno);
 ULS_DLL_EXTERN void uls_context_inc_lineno(uls_context_ptr_t ctx, int delta);
 ULS_DLL_EXTERN void uls_context_set_line(uls_context_ptr_t ctx, const char* line, int len);
@@ -228,7 +216,6 @@ ULS_DLL_EXTERN void uls_context_set_line(uls_context_ptr_t ctx, const char* line
 ULS_DLL_EXTERN int uls_xcontext_delete_litstr_analyzer(uls_xcontext_ptr_t xctx, const char* prefix);
 ULS_DLL_EXTERN int uls_xcontext_change_litstr_analyzer(uls_xcontext_ptr_t xctx,
 	const char* prefix, uls_litstr_analyzer_t lit_analyzer, uls_voidptr_t data);
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 }

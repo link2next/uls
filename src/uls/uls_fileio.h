@@ -35,16 +35,13 @@
 #ifndef __ULS_FILEIO_H__
 #define __ULS_FILEIO_H__
 
-#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_prim.h"
 #include <stdio.h>
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
-#ifdef ULS_DECL_GLOBAL_TYPES
 #define ULS_EOF  -1
 
 #define ULS_FIO_READ     0x01
@@ -66,10 +63,6 @@ extern "C" {
 #define uls_tempfile_is_open(tmp) ((tmp)->len_filepath>0)
 #define uls_tempfile_path(tmpfile) uls_get_namebuf_value((tmpfile)->filepath)
 #define uls_tempfile_pathlen(tmpfile) ((tmpfile)->len_filepath)
-
-#endif // ULS_DECL_GLOBAL_TYPES
-
-#ifdef ULS_DECL_PUBLIC_TYPE
 
 #define ST_MODE_NOENT    0
 #define ST_MODE_REG      1
@@ -104,13 +97,11 @@ extern "C" {
 
 ULS_DEFINE_DELEGATE_BEGIN(fgetch, int)(uls_voidptr_t dat, char *buf, int buf_siz);
 ULS_DEFINE_DELEGATE_END(fgetch);
-#endif
 
-#ifdef ULS_DEF_PUBLIC_TYPE
 ULS_DEFINE_STRUCT(fio)
 {
 	uls_flags_t flags;
-	uls_callback_type_this(fgetch) fgetch;
+	uls_callback_type(fgetch) fgetch;
 	uls_voidptr_t dat;
 };
 
@@ -131,19 +122,18 @@ ULS_DEFINE_STRUCT(tempfile)
 {
 	uls_flags_t flags;
 
-	uls_def_namebuf_this(filepath, ULS_TEMP_FILEPATH_MAXSIZ);
+	uls_def_namebuf(filepath, ULS_TEMP_FILEPATH_MAXSIZ);
 	int  len_filepath;
 
 	int  fd;
 	FILE *fp;
 };
-#endif // ULS_DEF_PUBLIC_TYPE
 
-#if defined(__ULS_FILEIO__) || defined(ULS_DEF_PRIVATE_DATA)
+#if defined(__ULS_FILEIO__)
 ULS_DECL_STATIC uls_decl_array_type00(stdio_boxlst, stdio_box, ULS_N_BOXLST);
 #endif
 
-#if defined(__ULS_FILEIO__) || defined(ULS_DECL_PRIVATE_PROC)
+#if defined(__ULS_FILEIO__)
 ULS_DECL_STATIC int __uls_fd_create_check(const char* fpath, uls_outparam_ptr_t parms);
 ULS_DECL_STATIC int __uls_fd_open_check(uls_outparam_ptr_t parms);
 ULS_DECL_STATIC int __uls_fd_create(const char* fpath, int mode);
@@ -161,7 +151,6 @@ ULS_DLL_EXTERN void uls_init_fio(uls_fio_ptr_t fio, int flags);
 ULS_DLL_EXTERN void uls_deinit_fio(uls_fio_ptr_t fio);
 #endif
 
-#ifdef ULS_DECL_PUBLIC_PROC
 int uls_readn(int fd, uls_native_vptr_t ptr, int n);
 int uls_writen(int fd, uls_native_vptr_t ptr, int n);
 int uls_readline(int fd, char* ptr, int n);
@@ -213,7 +202,6 @@ ULS_DLL_EXTERN int uls_open_tempfile(uls_tempfile_ptr_t tmpfile);
 ULS_DLL_EXTERN FILE* uls_fopen_tempfile(uls_tempfile_ptr_t tmpfile);
 ULS_DLL_EXTERN int uls_close_tempfile(uls_tempfile_ptr_t tmpfile, const char* filepath);
 ULS_DLL_EXTERN void uls_destroy_tempfile(uls_tempfile_ptr_t tmpfile);
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 }

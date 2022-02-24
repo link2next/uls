@@ -30,15 +30,11 @@
 #ifndef __ULS_ONECHAR_H__
 #define __ULS_ONECHAR_H__
 
-#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_tokdef.h"
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
-
-#ifdef ULS_DEF_PUBLIC_TYPE
 
 ULS_DEFINE_STRUCT(onechar_tokgrp)
 {
@@ -68,9 +64,7 @@ ULS_DEFINE_STRUCT(tokdef_outparam)
 	uls_onechar_tokgrp_ptr_t tokgrp;
 };
 
-#endif // ULS_DEF_PUBLIC_TYPE
-
-#if defined(__ULS_ONECHAR__) || defined(ULS_DECL_PRIVATE_PROC)
+#if defined(__ULS_ONECHAR__)
 ULS_DECL_STATIC void __init_onechar_tokgrp(uls_onechar_table_ptr_t tbl, int grp_id, uls_uch_t uch0, int n);
 #endif
 

@@ -35,11 +35,10 @@
 #ifndef __ULS_PRIM_H__
 #define __ULS_PRIM_H__
 
-#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_type.h"
 #include <stdio.h>
 
-#if !defined(ULS_DOTNET) && !defined(USE_ULSNETJAVA)
+#ifndef USE_ULSNETJAVA
 #ifdef ULS_WINDOWS
 #include <tchar.h>
 #include <io.h>
@@ -49,8 +48,8 @@
 #else
 #include <winnls.h>
 #endif
-#endif // ULS_WINDOWS
-#endif // !defined(ULS_DOTNET) && !defined(USE_ULSNETJAVA)
+#endif
+#endif
 
 #ifdef HAVE_PTHREAD
 #include <pthread.h>
@@ -61,35 +60,28 @@
 #include <wchar.h>
 #endif
 
-#endif // ULS_EXCLUDE_HFILES
-
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
-#ifdef ULS_DECL_GLOBAL_TYPES
 #define DECLARE_ULS_MUTEX(name) uls_mutex_struct_t name
 #define EXTERN_ULS_MUTEX(name) extern uls_mutex_struct_t name
 
-#define uls_malloc_buffer(n) (char *) _uls_tool_(malloc)(n)
-#define uls_malloc_buffer_clear(n) (char *) _uls_tool_(malloc_clear)(n)
-#define uls_mfree(a) do { _uls_tool(__uls_mfree)((void *)(a)); (a)=NULL; } while (0)
-#endif // ULS_DECL_GLOBAL_TYPES
+#define uls_malloc_buffer(n) (char *) uls_malloc(n)
+#define uls_malloc_buffer_clear(n) (char *) uls_malloc_clear(n)
+#define uls_mfree(a) do { __uls_mfree((void *)(a)); (a)=NULL; } while (0)
 
-#ifdef ULS_DECL_PUBLIC_TYPE
 #ifdef ULS_DO_ASSERT
 #define uls_assert(x) do { \
   if ((x)==0) { \
-    _uls_log_primitive(err_log)("assertion failed:%s(#%d)", __FILE__, __LINE__); \
-    _uls_log_primitive(err_panic)(#x); \
+    err_log_primitive("assertion failed:%s(#%d)", __FILE__, __LINE__); \
+    err_panic_primitive(#x); \
   } \
 } while (0)
 #else
 #define uls_assert(x)
 #endif
-#endif // ULS_DECL_PUBLIC_TYPE
 
-#ifdef ULS_DECL_PROTECTED_TYPE
 #define ULS_MEMSET_CHUNKSIZE 32
 
 #define BYTE_SIZE_LOG_BITS  3
@@ -130,10 +122,6 @@ extern "C" {
 #define ULS_LF_SHIFT_BASE_DEC   0
 #define ULS_LF_SHIFT_BASE_BIN   1
 #define ULS_LF_SHIFT_BASE_HEX   4
-
-#endif // ULS_DECL_PROTECTED_TYPE
-
-#ifdef ULS_DEF_PUBLIC_TYPE
 
 #if defined(HAVE_PTHREAD)
 ULS_DEFINE_STRUCT(mutex_struct)
@@ -205,17 +193,13 @@ ULS_DEFINE_STRUCT(uch_range)
 	uls_uch_t x2;
 };
 ULS_DEF_ARRAY_TYPE01(uch_range);
-#ifndef ULS_CLASSIFY_SOURCE
 ULS_DEF_PARRAY(uch_range);
-#endif
 
-#endif // ULS_DEF_PUBLIC_TYPE
-
-#if defined(__ULS_PRIM__) || defined(ULS_DEF_PRIVATE_DATA)
+#if defined(__ULS_PRIM__)
 ULS_DECL_STATIC uls_mutex_struct_t uls_global_mtx;
 #endif
 
-#if defined(__ULS_PRIM__) || defined(ULS_DECL_PRIVATE_PROC)
+#if defined(__ULS_PRIM__)
 ULS_DECL_STATIC _ULS_INLINE int __find_first_1bit(char ch, int j1, int j2);
 #endif
 
@@ -224,14 +208,12 @@ int uls_lf_number_u(char *numstr, unsigned int num, int base_shift);
 int uls_lf_number_lu(char *numstr, unsigned long num, int base_shift);
 int uls_lf_number_Lu(char *numstr, unsigned long long num, int base_shift);
 
-#ifndef ULS_DOTNET
 void err_log_puts(const char* mesg, int len);
 int uls_vsnprintf_primitive(char *buf,  int bufsiz, const char* fmt, va_list args);
 int uls_snprintf_primitive(char *buf,  int bufsiz, const char* fmt, ...);
 int err_vlog_primitive(const char* fmt, va_list args);
 void err_log_primitive(const char* fmt, ...);
 void err_panic_primitive(const char* fmt, ...);
-#endif
 
 int is_octal_char(char ch);
 int is_hexa_char(char ch);
@@ -252,8 +234,6 @@ int initialize_primitives(void);
 void finalize_primitives(void);
 
 #endif // ULS_DECL_PROTECTED_PROC
-
-#ifdef ULS_DECL_PUBLIC_PROC
 
 int uls_isgraph(int c);
 int uls_isprint(int c);
@@ -348,21 +328,18 @@ ULS_DLL_EXTERN int uls_decode_utf16(uls_uint16 *buf, int buf_len, uls_uch_t *p_u
 ULS_DLL_EXTERN int uls_encode_utf32(uls_uch_t uch, uls_uint32 *buf);
 ULS_DLL_EXTERN int uls_decode_utf32(uls_uint32 buf, uls_uch_t *p_uch);
 
-ULS_DLL_EXTERN ULS_DECL_EXTERN_STATIC void uls_init_mutex(uls_mutex_t mtx);
-ULS_DLL_EXTERN ULS_DECL_EXTERN_STATIC void uls_deinit_mutex(uls_mutex_t mtx);
-ULS_DLL_EXTERN ULS_DECL_EXTERN_STATIC void uls_lock_mutex(uls_mutex_t mtx);
-ULS_DLL_EXTERN ULS_DECL_EXTERN_STATIC void uls_unlock_mutex(uls_mutex_t mtx);
+ULS_DLL_EXTERN void uls_init_mutex(uls_mutex_t mtx);
+ULS_DLL_EXTERN void uls_deinit_mutex(uls_mutex_t mtx);
+ULS_DLL_EXTERN void uls_lock_mutex(uls_mutex_t mtx);
+ULS_DLL_EXTERN void uls_unlock_mutex(uls_mutex_t mtx);
 
-#ifndef ULS_DOTNET
 ULS_DLL_EXTERN void *uls_zalloc(unsigned int n_bytes);
 ULS_DLL_EXTERN char *uls_splitstr(char** p_str);
 ULS_DLL_EXTERN int uls_explode_str(char **ptr_line, char delim_ch, char** args, int n_args);
 ULS_DLL_EXTERN char *uls_filename(const char *filepath, int* len_fname);
-#endif
 
 ULS_DLL_EXTERN void uls_sys_lock(void);
 ULS_DLL_EXTERN void uls_sys_unlock(void);
-#endif // ULS_DECL_PUBLIC_PROC
 
 #ifdef _ULS_CPLUSPLUS
 }

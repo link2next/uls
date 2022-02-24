@@ -35,16 +35,14 @@
 #ifndef __ULS_UTF_FILE_H__
 #define __ULS_UTF_FILE_H__
 
-#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_prim.h"
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
-#if defined(__ULS_UTF_FILE__) || defined(ULS_DEF_PRIVATE_DATA)
-ULS_DECL_STATIC uls_decl_array_tool_type01(id_range_list1, uch_range);
+#if defined(__ULS_UTF_FILE__)
+ULS_DECL_STATIC uls_decl_array_type01(id_range_list1, uch_range);
 #endif
 
 #if defined(__ULS_UTF_FILE__) || defined(ULS_DECL_PROTECTED_PROC)

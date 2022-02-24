@@ -27,15 +27,13 @@
  *
  *  This file is part of ULS, Unified Lexical Scheme.
  */
-#ifndef ULS_EXCLUDE_HFILES
 #define __ULS_TWOPLUS__
 #include "uls/twoplus.h"
 #include "uls/uls_misc.h"
 #include "uls/uls_log.h"
-#endif
 
-ULS_DECL_STATIC ULS_QUALIFIED_RETTYP(uls_tokdef_vx_ptr_t)
-ULS_QUALIFIED_METHOD(__twoplus_bi_search)(uls_kwtable_twoplus_ptr_t tbl, const char* keyw,
+ULS_DECL_STATIC uls_tokdef_vx_ptr_t
+__twoplus_bi_search(uls_kwtable_twoplus_ptr_t tbl, const char* keyw,
 	uls_ref_parray(ary,tokdef_vx), int n_ary)
 {
 	uls_decl_parray_slots_init(slots_ary, tokdef_vx, ary);
@@ -64,7 +62,7 @@ ULS_QUALIFIED_METHOD(__twoplus_bi_search)(uls_kwtable_twoplus_ptr_t tbl, const c
 }
 
 int
-ULS_QUALIFIED_METHOD(cmp_twoplus_by_length)(const uls_voidptr_t a, const uls_voidptr_t b)
+cmp_twoplus_by_length(const uls_voidptr_t a, const uls_voidptr_t b)
 {
 	const uls_tokdef_vx_ptr_t e1_vx = (const uls_tokdef_vx_ptr_t) a;
 	const uls_tokdef_vx_ptr_t e2_vx = (const uls_tokdef_vx_ptr_t) b;
@@ -82,7 +80,7 @@ ULS_QUALIFIED_METHOD(cmp_twoplus_by_length)(const uls_voidptr_t a, const uls_voi
 }
 
 int
-ULS_QUALIFIED_METHOD(cmp_twoplus_vx_by_keyword)(const uls_voidptr_t a, const uls_voidptr_t b)
+cmp_twoplus_vx_by_keyword(const uls_voidptr_t a, const uls_voidptr_t b)
 {
 	const uls_tokdef_vx_ptr_t e1_vx = (const uls_tokdef_vx_ptr_t) a;
 	const uls_tokdef_vx_ptr_t e2_vx = (const uls_tokdef_vx_ptr_t) b;
@@ -94,24 +92,24 @@ ULS_QUALIFIED_METHOD(cmp_twoplus_vx_by_keyword)(const uls_voidptr_t a, const uls
 	// return -1 if keyword1 < keyword2
 	// return  1 if keyword1 > keyword2
 	// return  0 if keyword1 == keyword2
-	return _uls_tool_(strcmp)(uls_get_namebuf_value(e1->keyword), uls_get_namebuf_value(e2->keyword));
+	return uls_strcmp(uls_get_namebuf_value(e1->keyword), uls_get_namebuf_value(e2->keyword));
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_init_twoplus_tree)(uls_twoplus_tree_ptr_t tree)
+uls_init_twoplus_tree(uls_twoplus_tree_ptr_t tree)
 {
 	uls_initial_zerofy_object(tree);
 	uls_init_parray(uls_ptr(tree->twoplus_sorted), tokdef_vx, 0);
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_deinit_twoplus_tree)(uls_twoplus_tree_ptr_t tree)
+uls_deinit_twoplus_tree(uls_twoplus_tree_ptr_t tree)
 {
 	uls_deinit_parray(uls_ptr(tree->twoplus_sorted));
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_init_kwtable_twoplus)(uls_kwtable_twoplus_ptr_t tbl)
+uls_init_kwtable_twoplus(uls_kwtable_twoplus_ptr_t tbl)
 {
 	uls_twoplus_tree_ptr_t tree;
 	int i;
@@ -120,19 +118,19 @@ ULS_QUALIFIED_METHOD(uls_init_kwtable_twoplus)(uls_kwtable_twoplus_ptr_t tbl)
 	uls_init_array_type00(uls_ptr(tbl->tree_array), twoplus_tree, ULS_KWTABLE_TWOPLUS_SIZE);
 
 	for (i=0; i < ULS_KWTABLE_TWOPLUS_SIZE; i++) {
-		tree = uls_get_array_slot_type00(uls_ptr(tbl->tree_array), i);
+		tree = uls_array_get_slot_type00(uls_ptr(tbl->tree_array), i);
 		uls_init_twoplus_tree(tree);
 	}
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_deinit_kwtable_twoplus)(uls_kwtable_twoplus_ptr_t tbl)
+uls_deinit_kwtable_twoplus(uls_kwtable_twoplus_ptr_t tbl)
 {
 	uls_twoplus_tree_ptr_t tree;
 	int i;
 
 	for (i=0; i < ULS_KWTABLE_TWOPLUS_SIZE; i++) {
-		tree = uls_get_array_slot_type00(uls_ptr(tbl->tree_array), i);
+		tree = uls_array_get_slot_type00(uls_ptr(tbl->tree_array), i);
 		uls_deinit_twoplus_tree(tree);
 	}
 
@@ -140,8 +138,8 @@ ULS_QUALIFIED_METHOD(uls_deinit_kwtable_twoplus)(uls_kwtable_twoplus_ptr_t tbl)
 	uls_deinit_parray(uls_ptr(tbl->twoplus_mempool));
 }
 
-ULS_QUALIFIED_RETTYP(uls_twoplus_tree_ptr_t)
-ULS_QUALIFIED_METHOD(uls_get_ind_twoplus_tree)(uls_kwtable_twoplus_ptr_t tbl, int len_twoplus, uls_ptrtype_tool(outparam) parms)
+uls_twoplus_tree_ptr_t
+uls_get_ind_twoplus_tree(uls_kwtable_twoplus_ptr_t tbl, int len_twoplus, uls_outparam_ptr_t parms)
 {
 	int ind;
 
@@ -153,11 +151,11 @@ ULS_QUALIFIED_METHOD(uls_get_ind_twoplus_tree)(uls_kwtable_twoplus_ptr_t tbl, in
 		parms->n = ind;
 	}
 
-	return uls_get_array_slot_type00(uls_ptr(tbl->tree_array), ind);
+	return uls_array_get_slot_type00(uls_ptr(tbl->tree_array), ind);
 }
 
-ULS_QUALIFIED_RETTYP(uls_tokdef_ptr_t)
-ULS_QUALIFIED_METHOD(is_keyword_twoplus)(uls_kwtable_twoplus_ptr_t tbl, const char *ch_ctx, const char* str)
+uls_tokdef_ptr_t
+is_keyword_twoplus(uls_kwtable_twoplus_ptr_t tbl, const char *ch_ctx, const char* str)
 {
 	uls_twoplus_tree_ptr_t tree;
 	uls_tokdef_vx_ptr_t e_vx;
@@ -195,7 +193,7 @@ ULS_QUALIFIED_METHOD(is_keyword_twoplus)(uls_kwtable_twoplus_ptr_t tbl, const ch
 }
 
 void
-ULS_QUALIFIED_METHOD(distribute_twoplus_toks)(uls_kwtable_twoplus_ptr_t tbl, uls_strcmp_proc_t cmpfunc)
+distribute_twoplus_toks(uls_kwtable_twoplus_ptr_t tbl, uls_strcmp_proc_t cmpfunc)
 {
 	uls_decl_parray_slots_init(slots_vx, tokdef_vx, uls_ptr(tbl->twoplus_mempool));
 	int n_tokdefs_vx = tbl->twoplus_mempool.n;
@@ -225,14 +223,13 @@ ULS_QUALIFIED_METHOD(distribute_twoplus_toks)(uls_kwtable_twoplus_ptr_t tbl, uls
 		len_keyw = e->l_keyword;
 
 		if ((tree=uls_get_ind_twoplus_tree(tbl, len_keyw, nilptr)) == nilptr)
-			_uls_log(err_panic)("%s: get tree index for '%s'", uls_get_namebuf_value(e_vx->name));
+			err_panic("%s: get tree index for '%s'", uls_get_namebuf_value(e_vx->name));
 
 		tree->len_keyw = len_keyw;
 
 		for (i0=i++; i<n_tokdefs_vx; i++) {
 			e_vx = slots_vx[i];
 			e = e_vx->base;
-
 			if (len_keyw != e->l_keyword) break;
 		}
 
@@ -258,7 +255,7 @@ ULS_QUALIFIED_METHOD(distribute_twoplus_toks)(uls_kwtable_twoplus_ptr_t tbl, uls
 
 	tree_prev = nilptr;
 	for (i=0; i < ULS_KWTABLE_TWOPLUS_SIZE; i++) {
-		tree = uls_get_array_slot_type00(uls_ptr(tbl->tree_array), i);
+		tree = uls_array_get_slot_type00(uls_ptr(tbl->tree_array), i);
 
 		if (tree->len_keyw <= 0) {
 			tree->prev = tree_prev;

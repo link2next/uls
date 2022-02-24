@@ -35,15 +35,12 @@
 #ifndef __UTF8_ENC_H__
 #define __UTF8_ENC_H__
 
-#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_prim.h"
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
-#ifdef ULS_DECL_PROTECTED_TYPE
 #define ULS_FL_UTF_INBUF_BUF_ALLOCED 0x00000001
 
 #define UTF_INPUT_FORMAT_8       0
@@ -55,18 +52,14 @@ extern "C" {
 #ifdef _ULS_IMPLDLL
 #define UTF_INPUT_BUFSIZ 512
 #endif
-#endif
 
-#ifdef ULS_DECL_PUBLIC_TYPE
 ULS_DECLARE_STRUCT(utf_inbuf);
 ULS_DEFINE_DELEGATE_BEGIN(fill_utf_rawbuf, int)(uls_utf_inbuf_ptr_t inp);
 ULS_DEFINE_DELEGATE_END(fill_utf_rawbuf);
 
 ULS_DEFINE_DELEGATE_BEGIN(dec_utf_rawbuf, int)(uls_utf_inbuf_ptr_t inp, uls_uch_t* out_buf, int out_bufsiz);
 ULS_DEFINE_DELEGATE_END(dec_utf_rawbuf);
-#endif
 
-#ifdef ULS_DEF_PUBLIC_TYPE
 ULS_DEFINE_STRUCT_BEGIN(utf_inbuf)
 {
 	uls_flags_t flags;
@@ -80,13 +73,12 @@ ULS_DEFINE_STRUCT_BEGIN(utf_inbuf)
 	int    is_eof;
 	uls_voidptr_t data;
 
-	uls_callback_type_this(fill_utf_rawbuf) fill_rawbuf;
-	uls_callback_type_this(dec_utf_rawbuf)  dec_rawbuf;
+	uls_callback_type(fill_utf_rawbuf) fill_rawbuf;
+	uls_callback_type(dec_utf_rawbuf)  dec_rawbuf;
 	int    reverse;
 };
-#endif // ULS_DEF_PUBLIC_TYPE
 
-#if defined(__ULS_UTF8_ENC__) || defined(ULS_DECL_PRIVATE_PROC)
+#if defined(__ULS_UTF8_ENC__)
 ULS_DECL_STATIC int enc_utf16_to_utf8(uls_uint16 *codpnts, int n_codpnts, uls_outparam_ptr_t parms);
 
 ULS_DECL_STATIC int fill_utf8_buf(uls_utf_inbuf_ptr_t inp);
@@ -105,7 +97,6 @@ void utf_deinit_inbuf(uls_utf_inbuf_ptr_t inp);
 void uls_utf_reset_inbuf(uls_utf_inbuf_ptr_t inp, int mode);
 #endif
 
-#ifdef ULS_DECL_PUBLIC_PROC
 int uls_fill_utf8str(uls_uch_t *uchs, int n_uchs,
 	char* utf8buf, int siz_utf8buf, int *p_len_utf8buf);
 char* uls_enc_utf16str_to_utf8str(uls_uint16 *wstr1, int l_wstr1, uls_outparam_ptr_t parms);
@@ -123,7 +114,6 @@ int uls_enc_utf16file_to_8(int fd, int fd_out, int reverse);
 int uls_enc_utf8file_to_16(int fd, int fd_out, int reverse);
 int uls_enc_utf32file_to_8(int fd, int fd_out, int reverse);
 int uls_enc_utf8file_to_32(int fd, int fd_out, int reverse);
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 }

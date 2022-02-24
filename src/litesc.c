@@ -27,15 +27,13 @@
  *
  *  This file is part of ULS, Unified Lexical Scheme.
  */
-#ifndef ULS_EXCLUDE_HFILES
 #define __ULS_LITESC__
 #include "uls/litesc.h"
 #include "uls/uls_misc.h"
 #include "uls/uls_log.h"
-#endif
 
 int
-ULS_QUALIFIED_METHOD(uls_escmap_canbe_escch)(uls_uch_t uch)
+uls_escmap_canbe_escch(uls_uch_t uch)
 {
 	int ind;
 
@@ -49,15 +47,15 @@ ULS_QUALIFIED_METHOD(uls_escmap_canbe_escch)(uls_uch_t uch)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_init_escstr)(uls_escstr_ptr_t escstr, char ch, char *str, int len)
+uls_init_escstr(uls_escstr_ptr_t escstr, char ch, char *str, int len)
 {
 	escstr->esc_ch = ch;
 	escstr->str = str;
 	escstr->len = len;
 }
 
-ULS_QUALIFIED_RETTYP(uls_escstr_ptr_t)
-ULS_QUALIFIED_METHOD(uls_alloc_escstr)(char ch, char *str, int len)
+uls_escstr_ptr_t
+uls_alloc_escstr(char ch, char *str, int len)
 {
 	uls_escstr_ptr_t escstr;
 
@@ -68,44 +66,43 @@ ULS_QUALIFIED_METHOD(uls_alloc_escstr)(char ch, char *str, int len)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_deinit_escstr)(uls_escstr_ptr_t escstr)
+uls_deinit_escstr(uls_escstr_ptr_t escstr)
 {
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_dealloc_escstr)(uls_escstr_ptr_t escstr)
+uls_dealloc_escstr(uls_escstr_ptr_t escstr)
 {
 	uls_deinit_escstr(escstr);
 	uls_dealloc_object(escstr);
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_init_escmap)(uls_escmap_ptr_t map)
+uls_init_escmap(uls_escmap_ptr_t map)
 {
 	map->flags = 0;
 	map->esc_sym = ULS_ESCMAP_DFL_ESCSYM;
 	uls_init_parray(uls_ptr(map->escstr_list), escstr, ULS_ESCMAP_MAPSIZE);
-#ifndef ULS_DOTNET
-	uls_bzero(uls_parray_slots(uls_ptr(map->escstr_list)), ULS_ESCMAP_MAPSIZE * sizeof(uls_escstr_ptr_t));
-#endif
+	uls_bzero(uls_parray_slots(uls_ptr(map->escstr_list)),
+		ULS_ESCMAP_MAPSIZE * sizeof(uls_escstr_ptr_t));
 }
 
 void
-ULS_QUALIFIED_METHOD(__uls_deinit_escmap)(uls_escmap_ptr_t map)
+__uls_deinit_escmap(uls_escmap_ptr_t map)
 {
 	uls_deinit_parray(uls_ptr(map->escstr_list));
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_deinit_escmap)(uls_escmap_ptr_t map)
+uls_deinit_escmap(uls_escmap_ptr_t map)
 {
 	if ((map->flags & ULS_ESCMAP_SYSTEM) == 0) {
 		__uls_deinit_escmap(map);
 	}
 }
 
-ULS_QUALIFIED_RETTYP(uls_escmap_ptr_t)
-ULS_QUALIFIED_METHOD(uls_alloc_escmap)()
+uls_escmap_ptr_t
+uls_alloc_escmap()
 {
 	uls_escmap_ptr_t map;
 
@@ -116,7 +113,7 @@ ULS_QUALIFIED_METHOD(uls_alloc_escmap)()
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_dealloc_escmap)(uls_escmap_ptr_t map)
+uls_dealloc_escmap(uls_escmap_ptr_t map)
 {
 	int flags = map->flags;
 
@@ -127,8 +124,8 @@ ULS_QUALIFIED_METHOD(uls_dealloc_escmap)(uls_escmap_ptr_t map)
 	}
 }
 
-ULS_QUALIFIED_RETTYP(uls_escstr_ptr_t)
-ULS_QUALIFIED_METHOD(uls_find_escstr)(uls_escmap_ptr_t map, char ch)
+uls_escstr_ptr_t
+uls_find_escstr(uls_escmap_ptr_t map, char ch)
 {
 	uls_decl_parray_slots(slots_escstr, escstr);
 	int ind;
@@ -141,8 +138,8 @@ ULS_QUALIFIED_METHOD(uls_find_escstr)(uls_escmap_ptr_t map, char ch)
 	return slots_escstr[ind];
 }
 
-ULS_QUALIFIED_RETTYP(uls_escmap_container_ptr_t)
-ULS_QUALIFIED_METHOD(uls_alloc_escmap_container)(char esc_ch, char *str, int len)
+uls_escmap_container_ptr_t
+uls_alloc_escmap_container(char esc_ch, char *str, int len)
 {
 	uls_escmap_container_ptr_t wrap;
 
@@ -154,25 +151,24 @@ ULS_QUALIFIED_METHOD(uls_alloc_escmap_container)(char esc_ch, char *str, int len
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_dealloc_escmap_container)(uls_escmap_container_ptr_t wrap)
+uls_dealloc_escmap_container(uls_escmap_container_ptr_t wrap)
 {
 	uls_deinit_escstr(uls_ptr(wrap->escstr));
 	uls_dealloc_object(wrap);
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_init_escmap_pool)(uls_escmap_pool_ptr_t escmap_pool)
+uls_init_escmap_pool(uls_escmap_pool_ptr_t escmap_pool)
 {
-	_uls_tool(isp_init)(uls_ptr(escmap_pool->strpool), 512);
+	isp_init(uls_ptr(escmap_pool->strpool), 512);
 
 	uls_init_parray(uls_ptr(escmap_pool->escstr_containers), escmap_container, ULS_ESCMAP_MAPSIZE);
-#ifndef ULS_DOTNET
-	uls_bzero(uls_parray_slots(uls_ptr(escmap_pool->escstr_containers)), ULS_ESCMAP_MAPSIZE * sizeof(uls_escmap_container_ptr_t));
-#endif
+	uls_bzero(uls_parray_slots(uls_ptr(escmap_pool->escstr_containers)),
+		ULS_ESCMAP_MAPSIZE * sizeof(uls_escmap_container_ptr_t));
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_deinit_escmap_pool)(uls_escmap_pool_ptr_t escmap_pool)
+uls_deinit_escmap_pool(uls_escmap_pool_ptr_t escmap_pool)
 {
 	uls_decl_parray_slots_init(slots_escstr_containers, escmap_container, uls_ptr(escmap_pool->escstr_containers));
 	uls_escmap_container_ptr_t wrap, wrap_next, wrap_head;
@@ -190,11 +186,11 @@ ULS_QUALIFIED_METHOD(uls_deinit_escmap_pool)(uls_escmap_pool_ptr_t escmap_pool)
 	}
 
 	uls_deinit_parray(uls_ptr(escmap_pool->escstr_containers));
-	_uls_tool(isp_deinit)(uls_ptr(escmap_pool->strpool));
+	isp_deinit(uls_ptr(escmap_pool->strpool));
 }
 
-ULS_QUALIFIED_RETTYP(uls_escstr_ptr_t)
-ULS_QUALIFIED_METHOD(uls_find_escstr_in_escmap)(uls_escmap_pool_ptr_t escmap_pool, char esc_ch, const char *str, int len)
+uls_escstr_ptr_t
+uls_find_escstr_in_escmap(uls_escmap_pool_ptr_t escmap_pool, char esc_ch, const char *str, int len)
 {
 	uls_decl_parray_slots(slots_escstr_containers, escmap_container);
 	uls_escmap_container_ptr_t wrap, wrap_head;
@@ -209,7 +205,7 @@ ULS_QUALIFIED_METHOD(uls_find_escstr_in_escmap)(uls_escmap_pool_ptr_t escmap_poo
 	wrap_head = slots_escstr_containers[ind];
 
 	if (str != NULL) {
-		if (len < 0) len = _uls_tool_(strlen)(str);
+		if (len < 0) len = uls_strlen(str);
 		for (wrap = wrap_head; wrap != nilptr; wrap = wrap->next) {
 			e = uls_ptr(wrap->escstr);
 			if (e->str != NULL) {
@@ -234,8 +230,8 @@ ULS_QUALIFIED_METHOD(uls_find_escstr_in_escmap)(uls_escmap_pool_ptr_t escmap_poo
 	return e_ret;
 }
 
-ULS_QUALIFIED_RETTYP(uls_escstr_ptr_t)
-ULS_QUALIFIED_METHOD(uls_add_escstr_in_escmap)(uls_escmap_pool_ptr_t escmap_pool, char esc_ch, char *str, int len)
+uls_escstr_ptr_t
+uls_add_escstr_in_escmap(uls_escmap_pool_ptr_t escmap_pool, char esc_ch, char *str, int len)
 {
 	uls_decl_parray_slots(slots_escstr_containers, escmap_container);
 	uls_escmap_container_ptr_t wrap_head, wrap;
@@ -257,7 +253,7 @@ ULS_QUALIFIED_METHOD(uls_add_escstr_in_escmap)(uls_escmap_pool_ptr_t escmap_pool
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_add_escstr)(uls_escmap_pool_ptr_t escmap_pool,
+uls_add_escstr(uls_escmap_pool_ptr_t escmap_pool,
 	uls_escmap_ptr_t map, char esc_ch, const char *str, int len)
 {
 	uls_decl_parray_slots(slots_escstr, escstr);
@@ -271,10 +267,10 @@ ULS_QUALIFIED_METHOD(uls_add_escstr)(uls_escmap_pool_ptr_t escmap_pool,
 
 	if ((escstr = uls_find_escstr_in_escmap(escmap_pool, esc_ch, str, len)) == nilptr) {
 		if (str != NULL) {
-			if (len < 0) len = _uls_tool_(strlen)(str);
+			if (len < 0) len = uls_strlen(str);
 
-			if ((str2= _uls_tool(isp_find)(uls_ptr(escmap_pool->strpool), str, len)) == NULL) {
-				if ((str2 = _uls_tool(isp_insert)(uls_ptr(escmap_pool->strpool), str, len)) == NULL) {
+			if ((str2= isp_find(uls_ptr(escmap_pool->strpool), str, len)) == NULL) {
+				if ((str2 = isp_insert(uls_ptr(escmap_pool->strpool), str, len)) == NULL) {
 					return -1;
 				}
 			}
@@ -293,14 +289,14 @@ ULS_QUALIFIED_METHOD(uls_add_escstr)(uls_escmap_pool_ptr_t escmap_pool,
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_del_escstr)(uls_escmap_ptr_t map, char esc_ch)
+uls_del_escstr(uls_escmap_ptr_t map, char esc_ch)
 {
 	uls_decl_parray_slots(slots_escstr, escstr);
 	uls_escstr_ptr_t escstr;
 	int ind;
 
 	if ((ind=uls_escmap_canbe_escch(esc_ch)) < 0) {
-//		_uls_log(err_log)("Unregistered ch(0x%02x)...return", esc_ch);
+//		err_log("Unregistered ch(0x%02x)...return", esc_ch);
 		return -1;
 	}
 
@@ -313,7 +309,7 @@ ULS_QUALIFIED_METHOD(uls_del_escstr)(uls_escmap_ptr_t map, char esc_ch)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_register_escstr)(uls_escmap_pool_ptr_t escmap_pool,
+uls_register_escstr(uls_escmap_pool_ptr_t escmap_pool,
 	uls_escmap_ptr_t map, char esc_ch, const char *str, int len)
 {
 	uls_decl_parray_slots_init(slots_escstr, escstr, uls_ptr(map->escstr_list));
@@ -321,7 +317,7 @@ ULS_QUALIFIED_METHOD(uls_register_escstr)(uls_escmap_pool_ptr_t escmap_pool,
 	int ind, len2, stat = 0;
 
 	if (str != NULL) {
-		if (len < 0) len = _uls_tool_(strlen)(str);
+		if (len < 0) len = uls_strlen(str);
 		len2 = len;
 	} else {
 		len2 = -len;
@@ -341,7 +337,7 @@ ULS_QUALIFIED_METHOD(uls_register_escstr)(uls_escmap_pool_ptr_t escmap_pool,
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(uls_register_hex_escstr)(uls_escmap_ptr_t dst_map, uls_escmap_pool_ptr_t escmap_pool,
+uls_register_hex_escstr(uls_escmap_ptr_t dst_map, uls_escmap_pool_ptr_t escmap_pool,
 	char esc_ch, int n, int zero_pad, int do_unicode)
 {
 	int rval_flags = 0;
@@ -366,7 +362,7 @@ ULS_QUALIFIED_METHOD(uls_register_hex_escstr)(uls_escmap_ptr_t dst_map, uls_escm
 }
 
 int
-ULS_QUALIFIED_METHOD(__uls_dup_escmap)(uls_escmap_ptr_t src_map, uls_escmap_ptr_t dst_map, uls_escmap_pool_ptr_t escmap_pool, char esc_sym, int flags)
+__uls_dup_escmap(uls_escmap_ptr_t src_map, uls_escmap_ptr_t dst_map, uls_escmap_pool_ptr_t escmap_pool, char esc_sym, int flags)
 {
 	uls_decl_parray_slots(slots_escstr_src, escstr);
 	uls_decl_parray_slots(slots_escstr_dst, escstr);
@@ -440,8 +436,8 @@ ULS_QUALIFIED_METHOD(__uls_dup_escmap)(uls_escmap_ptr_t src_map, uls_escmap_ptr_
 	return 0;
 }
 
-ULS_QUALIFIED_RETTYP(uls_escmap_ptr_t)
-ULS_QUALIFIED_METHOD(uls_dup_escmap)(uls_escmap_ptr_t src_map, uls_escmap_pool_ptr_t escmap_pool, char esc_sym, int flags)
+uls_escmap_ptr_t
+uls_dup_escmap(uls_escmap_ptr_t src_map, uls_escmap_pool_ptr_t escmap_pool, char esc_sym, int flags)
 {
 	uls_escmap_ptr_t dst_map;
 
@@ -456,15 +452,15 @@ ULS_QUALIFIED_METHOD(uls_dup_escmap)(uls_escmap_ptr_t src_map, uls_escmap_pool_p
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(get_escstr_unicode_opts)(const char *lptr)
+get_escstr_unicode_opts(const char *lptr)
 {
 	int n=0, stat = 0;
 	char ch;
 
-	if (_uls_tool_(strncmp)(lptr, "\\u", 2) == 0) {
+	if (uls_strncmp(lptr, "\\u", 2) == 0) {
 		stat |= ULS_FL_ESCSTR_MAPUNICODE;
 		lptr += 2;
-	} else if (_uls_tool_(strncmp)(lptr, "\\x", 2) == 0) {
+	} else if (uls_strncmp(lptr, "\\x", 2) == 0) {
 		stat |= ULS_FL_ESCSTR_MAPHEXA;
 		lptr += 2;
 	} else {
@@ -495,14 +491,14 @@ ULS_QUALIFIED_METHOD(get_escstr_unicode_opts)(const char *lptr)
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__parse_escmap_optgrp)(char *line, char esc_sym)
+__parse_escmap_optgrp(char *line, char esc_sym)
 {
 	char *lptr, *wrd, *lptr2, ch;
 	int flags = 0;
 
 	for (lptr = line; lptr != NULL; ) {
 		wrd = lptr;
-		if ((lptr = _uls_tool_(strchr)(lptr, ',')) != NULL) {
+		if ((lptr = uls_strchr(lptr, ',')) != NULL) {
 			*lptr++ = '\0';
 		}
 
@@ -557,7 +553,7 @@ ULS_QUALIFIED_METHOD(__parse_escmap_optgrp)(char *line, char esc_sym)
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(parse_escmap_optgrp)(uls_escmap_ptr_t esc_map, uls_ptrtype_tool(outparam) parms)
+parse_escmap_optgrp(uls_escmap_ptr_t esc_map, uls_outparam_ptr_t parms)
 {
 	int flags = parms->flags;
 	int rval_flags, flags_err, stat = 0;
@@ -578,15 +574,15 @@ ULS_QUALIFIED_METHOD(parse_escmap_optgrp)(uls_escmap_ptr_t esc_map, uls_ptrtype_
 	*/
 
 	lptr1 = parms->line;
-	if ((lptr= _uls_tool_(strchr)(lptr1, ')')) == NULL) {
-		_uls_log(err_log)("misuse of options: no matching ')'");
+	if ((lptr= uls_strchr(lptr1, ')')) == NULL) {
+		err_log("misuse of options: no matching ')'");
 		return -1;
 	}
 
 	lptr3 = lptr; // indicating ')'
 	*lptr++ = '\0';
 
-	if ((lptr2 = _uls_tool_(strchr)(lptr1, ';')) != NULL) {
+	if ((lptr2 = uls_strchr(lptr1, ';')) != NULL) {
 		*lptr2++ = '\0';
 		esc_sym = *lptr2;
 	}
@@ -597,7 +593,7 @@ ULS_QUALIFIED_METHOD(parse_escmap_optgrp)(uls_escmap_ptr_t esc_map, uls_ptrtype_
 
 	rval_flags = __parse_escmap_optgrp(lptr1, esc_sym);
 	if (rval_flags < 0) {
-		_uls_log(err_log)("undefined flag specified on %s", lptr1);
+		err_log("undefined flag specified on %s", lptr1);
 		return -1;
 	}
 	flags |= rval_flags;
@@ -623,7 +619,7 @@ ULS_QUALIFIED_METHOD(parse_escmap_optgrp)(uls_escmap_ptr_t esc_map, uls_ptrtype_
 	}
 
 	if (flags_err != 0) {
-		_uls_log(err_log)("undefined features 0x%x specified on %s", flags_err, feature_group);
+		err_log("undefined features 0x%x specified on %s", flags_err, feature_group);
 		return -1;
 	}
 
@@ -634,23 +630,23 @@ ULS_QUALIFIED_METHOD(parse_escmap_optgrp)(uls_escmap_ptr_t esc_map, uls_ptrtype_
 	return stat;
 }
 
-ULS_QUALIFIED_RETTYP(uls_escmap_ptr_t)
-ULS_QUALIFIED_METHOD(uls_parse_escmap_feature)(uls_escmap_pool_ptr_t escmap_pool, uls_ptrtype_tool(outparam) parms)
+uls_escmap_ptr_t
+uls_parse_escmap_feature(uls_escmap_pool_ptr_t escmap_pool, uls_outparam_ptr_t parms)
 {
 	char *line = parms->line;
 	char  *wrd, *lptr, *mode_str, ch, ch_bak, esc_sym;
 	uls_escmap_ptr_t esc_map;
 	int len, flags=0;
-	uls_type_tool(outparam) parms1;
+	uls_outparam_t parms1;
 
-	if (*(wrd = _uls_tool(skip_blanks)(line)) == '\0') {
+	if (*(wrd = skip_blanks(line)) == '\0') {
 		esc_map = uls_ptr(uls_litesc->uls_escstr__legacy_full);
 		parms->line = NULL;
 		return esc_map;
 	}
 
 	for (lptr = wrd + 1; (ch=*lptr) != '\0'; lptr++) {
-		if (!_uls_tool_(isalnum)(ch)) break;
+		if (!uls_isalnum(ch)) break;
 	}
 
 	len = (int) (lptr - wrd);
@@ -706,7 +702,7 @@ ULS_QUALIFIED_METHOD(uls_parse_escmap_feature)(uls_escmap_pool_ptr_t escmap_pool
 		esc_map = uls_dup_escmap(esc_map, escmap_pool, esc_sym, flags);
 
 	} else {
-		if (*(lptr = _uls_tool(skip_blanks)(lptr)) != '\0') {
+		if (*(lptr = skip_blanks(lptr)) != '\0') {
 			esc_map = uls_dup_escmap(esc_map, escmap_pool, ULS_ESCMAP_DFL_ESCSYM, 0);
 		} else {
 			lptr = NULL;
@@ -718,19 +714,19 @@ ULS_QUALIFIED_METHOD(uls_parse_escmap_feature)(uls_escmap_pool_ptr_t escmap_pool
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(extract_escstr_mapexpr)(uls_ptrtype_tool(outparam) parms)
+extract_escstr_mapexpr(uls_outparam_ptr_t parms)
 {
 	char  *lptr = (char *) parms->lptr, *lptr1;
 	int len, ret_flag = 0;
-	uls_type_tool(outparam) parms1;
-	uls_type_tool(wrd) wrdx;
+	uls_outparam_t parms1;
+	uls_wrd_t wrdx;
 
-	lptr = _uls_tool(skip_blanks)(lptr);
+	lptr = skip_blanks(lptr);
 	if (*lptr == '\0') return -1;
 	parms->uch = *lptr;
 
 	if (lptr[1] != ':') {
-		_uls_log(err_log)("incorrect format!");
+		err_log("incorrect format!");
 		return -2;
 	}
 	lptr += 2;
@@ -744,7 +740,7 @@ ULS_QUALIFIED_METHOD(extract_escstr_mapexpr)(uls_ptrtype_tool(outparam) parms)
 
 	} else {
 		wrdx.lptr = lptr1 = lptr;
-		lptr1 = __uls_tool_(splitstr)(uls_ptr(wrdx));
+		lptr1 = _uls_splitstr(uls_ptr(wrdx));
 		lptr = wrdx.lptr;
 
 		if ((ret_flag = get_escstr_unicode_opts(lptr1)) < 0) {
@@ -768,14 +764,14 @@ ULS_QUALIFIED_METHOD(extract_escstr_mapexpr)(uls_ptrtype_tool(outparam) parms)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_parse_escmap_mapping)(uls_escmap_ptr_t esc_map, uls_escmap_pool_ptr_t escmap_pool, char *line)
+uls_parse_escmap_mapping(uls_escmap_ptr_t esc_map, uls_escmap_pool_ptr_t escmap_pool, char *line)
 {
 	int len, rval, rval_flags, stat = 0;
 	char  *lptr, *escstr_buf, esc_ch;
-	uls_type_tool(outparam) parms1;
+	uls_outparam_t parms1;
 
-	len = _uls_tool_(strlen)(line);
-	escstr_buf = (char *)_uls_tool_(malloc)(len + 1);
+	len = uls_strlen(line);
+	escstr_buf = (char *)uls_malloc(len + 1);
 
 	for (lptr = line; ; ) {
 		parms1.lptr = lptr;
@@ -783,7 +779,7 @@ ULS_QUALIFIED_METHOD(uls_parse_escmap_mapping)(uls_escmap_ptr_t esc_map, uls_esc
 
 		if ((rval=extract_escstr_mapexpr(uls_ptr(parms1))) <= -1) {
 			if (rval < -1) {
-				_uls_log(err_log)("failed to extract esc-str!");
+				err_log("failed to extract esc-str!");
 				stat = -1;
 			}
 			break;
@@ -810,11 +806,11 @@ ULS_QUALIFIED_METHOD(uls_parse_escmap_mapping)(uls_escmap_ptr_t esc_map, uls_esc
 	return stat;
 }
 
-ULS_QUALIFIED_RETTYP(uls_escmap_ptr_t)
-ULS_QUALIFIED_METHOD(uls_parse_escmap)(char *line, uls_escmap_pool_ptr_t escmap_pool)
+uls_escmap_ptr_t
+uls_parse_escmap(char *line, uls_escmap_pool_ptr_t escmap_pool)
 {
 	uls_escmap_ptr_t esc_map;
-	uls_type_tool(outparam) parms1;
+	uls_outparam_t parms1;
 
 	parms1.line = line;
 	esc_map = uls_parse_escmap_feature(escmap_pool, uls_ptr(parms1));
@@ -831,7 +827,7 @@ ULS_QUALIFIED_METHOD(uls_parse_escmap)(char *line, uls_escmap_pool_ptr_t escmap_
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_dec_escaped_char)(uls_escmap_ptr_t map, uls_ptrtype_tool(outparam) parms, _uls_ptrtype_tool(csz_str) cszbuf)
+uls_dec_escaped_char(uls_escmap_ptr_t map, uls_outparam_ptr_t parms, csz_str_ptr_t cszbuf)
 {
 	char esc_ch = (char) parms->x1;
 	const char *lptr1;
@@ -843,19 +839,19 @@ ULS_QUALIFIED_METHOD(uls_dec_escaped_char)(uls_escmap_ptr_t map, uls_ptrtype_too
 	if ((escstr = uls_find_escstr(map, esc_ch)) == nilptr) {
 		// copy it verbatim
 		buff[0] = map->esc_sym; buff[1] = esc_ch;
-		_uls_tool(csz_append)(cszbuf, buff, 2);
+		csz_append(cszbuf, buff, 2);
 		return 2;
 	}
 
 	if ((lptr1 = escstr->str) != NULL) {
 		len = escstr->len;
-		_uls_tool(csz_append)(cszbuf, lptr1, len);
+		csz_append(cszbuf, lptr1, len);
 
 	} else {
 		map_flags = escstr->len;
 		n = map_flags & ULS_FL_ESCSTR_MASK;
 
-		if (_uls_tool_(isdigit)(esc_ch)) {
+		if (uls_isdigit(esc_ch)) {
 			uch = esc_ch - '0';
 		} else {
 			uch = 0;
@@ -870,7 +866,7 @@ ULS_QUALIFIED_METHOD(uls_dec_escaped_char)(uls_escmap_ptr_t map, uls_ptrtype_too
 }
 
 int
-ULS_QUALIFIED_METHOD(initialize_uls_litesc)()
+initialize_uls_litesc()
 {
 	uls_escmap_pool_ptr_t escmap_pool;
 	uls_escmap_ptr_t map;
@@ -916,18 +912,17 @@ ULS_QUALIFIED_METHOD(initialize_uls_litesc)()
 
 	// octal
 	rval_flags = ULS_FL_ESCSTR_MAPHEXA | ULS_FL_ESCSTR_OCTAL | 0x02;
-
 	for (i=0; i<10; i++) {
 		esc_ch = '0' + i;
 		if (uls_add_escstr(escmap_pool, map, esc_ch, NULL, rval_flags) < 0) {
-			_uls_log(err_log)("%s: failed at escape-octal", __FUNCTION__);
+			err_log("%s: failed at escape-octal", __FUNCTION__);
 		}
 	}
 
 	// hexa-demcimal
 	rval_flags = ULS_FL_ESCSTR_MAPHEXA | ULS_FL_ESCSTR_HEXA | 0x02;
 	if (uls_add_escstr(escmap_pool, map, 'x', NULL, rval_flags) < 0) {
-		_uls_log(err_log)("%s: failed at escape-hexa-decimal", __FUNCTION__);
+		err_log("%s: failed at escape-hexa-decimal", __FUNCTION__);
 	}
 
 	/* modern */
@@ -953,7 +948,7 @@ ULS_QUALIFIED_METHOD(initialize_uls_litesc)()
 }
 
 void
-ULS_QUALIFIED_METHOD(finalize_uls_litesc)()
+finalize_uls_litesc()
 {
 	/* modern */
 	__uls_deinit_escmap(uls_ptr(uls_litesc->uls_escstr__modern));

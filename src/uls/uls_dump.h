@@ -30,15 +30,12 @@
 #ifndef __ULS_DUMP_H__
 #define __ULS_DUMP_H__
 
-#ifndef ULS_EXCLUDE_HFILES
 #include "uls_lex.h"
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
-#ifdef ULS_DECL_PUBLIC_PROC
 ULS_DLL_EXTERN void ulc_dump_tokdef_sorted(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN void uls_dump_char_context(uls_lex_ptr_t uls);
 
@@ -54,7 +51,6 @@ ULS_DLL_EXTERN void uls_dump_tokdef_names(uls_lex_ptr_t uls);
 
 ULS_DLL_EXTERN void dump_fd_tower(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN void uls_dump_kwtable(uls_kwtable_ptr_t tbl);
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 }

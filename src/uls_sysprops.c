@@ -31,13 +31,11 @@
     Stanley Hong <link2next@gmail.com>, 2014.
   </author>
 */
-#ifndef ULS_EXCLUDE_HFILES
 #define __ULS_SYSPROPS__
 #include "uls/uls_sysprops.h"
-#endif
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__init_system_info)(uls_sysinfo_ptr_t sysinfo, int poolsiz)
+__init_system_info(uls_sysinfo_ptr_t sysinfo, int poolsiz)
 {
 	sysinfo->home_dir = sysinfo->etc_dir = NULL;
 	sysinfo->ulcs_dir = NULL;
@@ -84,15 +82,15 @@ ULS_QUALIFIED_METHOD(__init_system_info)(uls_sysinfo_ptr_t sysinfo, int poolsiz)
 	return 0;
 }
 
-ULS_DECL_STATIC ULS_QUALIFIED_RETTYP(uls_sysprop_ptr_t)
-ULS_QUALIFIED_METHOD(__get_system_property)(uls_sysinfo_ptr_t sysinfo, const char* name)
+ULS_DECL_STATIC uls_sysprop_ptr_t
+__get_system_property(uls_sysinfo_ptr_t sysinfo, const char* name)
 {
 	uls_sysprop_ptr_t sys_prop;
 	int i;
 
 	for (i=0; i<sysinfo->n_properties; i++) {
-		sys_prop = uls_get_array_slot_type00(uls_ptr(sysinfo->properties), i);
-		if (uls_streql(name, uls_get_namebuf_value_this(sys_prop->name))) {
+		sys_prop = uls_array_get_slot_type00(uls_ptr(sysinfo->properties), i);
+		if (uls_streql(name, uls_get_namebuf_value(sys_prop->name))) {
 			return sys_prop;
 		}
 	}
@@ -101,7 +99,7 @@ ULS_QUALIFIED_METHOD(__get_system_property)(uls_sysinfo_ptr_t sysinfo, const cha
 }
 
 ULS_DECL_STATIC char*
-ULS_QUALIFIED_METHOD(get_nameval_pair)(uls_parm_line_ptr_t parm_ln)
+get_nameval_pair(uls_parm_line_ptr_t parm_ln)
 {
 	char *line0, *line, *lptr, ch;
 	int  i;
@@ -137,19 +135,19 @@ ULS_QUALIFIED_METHOD(get_nameval_pair)(uls_parm_line_ptr_t parm_ln)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_init_sysprop)(uls_sysprop_ptr_t sys_prop)
+uls_init_sysprop(uls_sysprop_ptr_t sys_prop)
 {
-	uls_init_namebuf_this(sys_prop->name, ULS_LEXSTR_MAXSIZ);
+	uls_init_namebuf(sys_prop->name, ULS_LEXSTR_MAXSIZ);
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_deinit_sysprop)(uls_sysprop_ptr_t sys_prop)
+uls_deinit_sysprop(uls_sysprop_ptr_t sys_prop)
 {
-	uls_deinit_namebuf_this(sys_prop->name);
+	uls_deinit_namebuf(sys_prop->name);
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_init_sysinfo)(uls_sysinfo_ptr_t sysinfo)
+uls_init_sysinfo(uls_sysinfo_ptr_t sysinfo)
 {
 	uls_initial_zerofy_object(sysinfo);
 	__init_system_info(sysinfo, 0);
@@ -157,7 +155,7 @@ ULS_QUALIFIED_METHOD(uls_init_sysinfo)(uls_sysinfo_ptr_t sysinfo)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_deinit_sysinfo)(uls_sysinfo_ptr_t sysinfo)
+uls_deinit_sysinfo(uls_sysinfo_ptr_t sysinfo)
 {
 	uls_sysprop_ptr_t sys_prop;
 	int i;
@@ -165,7 +163,7 @@ ULS_QUALIFIED_METHOD(uls_deinit_sysinfo)(uls_sysinfo_ptr_t sysinfo)
 	__init_system_info(sysinfo, 0);
 
 	for (i=0; i<sysinfo->n_properties; i++) {
-		sys_prop = uls_get_array_slot_type00(uls_ptr(sysinfo->properties), i);
+		sys_prop = uls_array_get_slot_type00(uls_ptr(sysinfo->properties), i);
 		uls_deinit_sysprop(sys_prop);
 	}
 	sysinfo->n_properties = 0;
@@ -173,8 +171,8 @@ ULS_QUALIFIED_METHOD(uls_deinit_sysinfo)(uls_sysinfo_ptr_t sysinfo)
 	uls_deinit_array_type00(uls_ptr(sysinfo->properties), sysprop);
 }
 
-ULS_QUALIFIED_RETTYP(uls_sysinfo_ptr_t)
-ULS_QUALIFIED_METHOD(uls_create_sysinfo)(void)
+uls_sysinfo_ptr_t
+uls_create_sysinfo(void)
 {
 	uls_sysinfo_ptr_t sysinfo;
 
@@ -185,14 +183,14 @@ ULS_QUALIFIED_METHOD(uls_create_sysinfo)(void)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_destroy_sysinfo)(uls_sysinfo_ptr_t sysinfo)
+uls_destroy_sysinfo(uls_sysinfo_ptr_t sysinfo)
 {
 	uls_deinit_sysinfo(sysinfo);
 	uls_dealloc_object(sysinfo);
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_load_system_properties)(const char *fpath, uls_sysinfo_ptr_t sysinfo)
+uls_load_system_properties(const char *fpath, uls_sysinfo_ptr_t sysinfo)
 {
 	const char utf8_bom[3] = { (char) 0xEF, (char) 0xBB, (char) 0xBF };
 	FILE *fp;
@@ -243,7 +241,7 @@ ULS_QUALIFIED_METHOD(uls_load_system_properties)(const char *fpath, uls_sysinfo_
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_arch2be_array)(char* ary, int n)
+uls_arch2be_array(char* ary, int n)
 {
 	if (_uls_sysinfo_(ULS_BYTE_ORDER) == ULS_LITTLE_ENDIAN) {
 		uls_reverse_bytes(ary, n);
@@ -251,7 +249,7 @@ ULS_QUALIFIED_METHOD(uls_arch2be_array)(char* ary, int n)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_arch2le_array)(char* ary, int n)
+uls_arch2le_array(char* ary, int n)
 {
 	if (_uls_sysinfo_(ULS_BYTE_ORDER) == ULS_BIG_ENDIAN) {
 		uls_reverse_bytes(ary, n);
@@ -259,7 +257,7 @@ ULS_QUALIFIED_METHOD(uls_arch2le_array)(char* ary, int n)
 }
 
 const char*
-ULS_QUALIFIED_METHOD(uls_add_system_property)(const char* name, const char* val)
+uls_add_system_property(const char* name, const char* val)
 {
 	uls_sysinfo_ptr_t sysinfo = uls_sysinfo;
 	uls_sysprop_ptr_t sys_prop;
@@ -271,11 +269,11 @@ ULS_QUALIFIED_METHOD(uls_add_system_property)(const char* name, const char* val)
 			return NULL;
 		}
 
-		sys_prop = uls_get_array_slot_type00(uls_ptr(sysinfo->properties), sysinfo->n_properties);
+		sys_prop = uls_array_get_slot_type00(uls_ptr(sysinfo->properties), sysinfo->n_properties);
 		++sysinfo->n_properties;
 
 		uls_init_sysprop(sys_prop);
-		uls_set_namebuf_value_this(sys_prop->name, name);
+		uls_set_namebuf_value(sys_prop->name, name);
 	}
 
 	len = uls_strlen(val) + 1;
@@ -292,7 +290,7 @@ ULS_QUALIFIED_METHOD(uls_add_system_property)(const char* name, const char* val)
 }
 
 const char*
-ULS_QUALIFIED_METHOD(uls_get_system_property)(const char* name)
+uls_get_system_property(const char* name)
 {
 	uls_sysinfo_ptr_t sysinfo = uls_sysinfo;
 	uls_sysprop_ptr_t sys_prop;
@@ -308,7 +306,7 @@ ULS_QUALIFIED_METHOD(uls_get_system_property)(const char* name)
 }
 
 int
-ULS_QUALIFIED_METHOD(initialize_sysprops)(const char *fpath)
+initialize_sysprops(const char *fpath)
 {
 	int rc;
 
@@ -322,7 +320,7 @@ ULS_QUALIFIED_METHOD(initialize_sysprops)(const char *fpath)
 }
 
 void
-ULS_QUALIFIED_METHOD(finalize_sysprops)(void)
+finalize_sysprops(void)
 {
 	uls_destroy_sysinfo(uls_sysinfo);
 	uls_sysinfo = nilptr;

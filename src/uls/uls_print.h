@@ -32,19 +32,17 @@
   </author>
 */
 
-#if !defined(ULS_DOTNET) && !defined(__ULS_PRINT_H__)
+#ifndef __ULS_PRINT_H__
 #define __ULS_PRINT_H__
 
-#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_lf_sprintf.h"
 #include <stdio.h>
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
-#if defined(__ULS_PRINT__) || defined(ULS_DEF_PRIVATE_DATA)
+#if defined(__ULS_PRINT__)
 ULS_DECL_STATIC uls_lf_ptr_t dfl_str_lf;
 ULS_DECL_STATIC uls_lf_ptr_t dfl_file_lf;
 ULS_DECL_STATIC uls_lf_ptr_t dfl_csz_lf;
@@ -60,7 +58,6 @@ void initialize_uls_sysprn(void);
 void finalize_uls_sysprn(void);
 #endif
 
-#if defined(__ULS_PRINT__) || defined(ULS_DECL_PUBLIC_PROC)
 ULS_DLL_EXTERN int uls_sysprn_open(uls_voidptr_t data, uls_lf_puts_t proc);
 ULS_DLL_EXTERN void uls_sysprn_set_tabsiz(int tabsiz);
 ULS_DLL_EXTERN void uls_sysprn_close(void);
@@ -112,7 +109,6 @@ ULS_DLL_EXTERN int __uls_vprintf(const char *fmt, va_list args);
 ULS_DLL_EXTERN int uls_vprintf(const char *fmt, va_list args);
 ULS_DLL_EXTERN int __uls_printf(const char *fmt, ...);
 ULS_DLL_EXTERN int uls_printf(const char *fmt, ...);
-#endif // ULS_DECL_PUBLIC_PROC
 
 #ifdef _ULS_CPLUSPLUS
 }

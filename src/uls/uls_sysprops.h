@@ -35,21 +35,17 @@
 #ifndef __ULS_SYSPROPS_H__
 #define __ULS_SYSPROPS_H__
 
-#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_prim.h"
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
-#ifdef ULS_DEF_PUBLIC_TYPE
-
 #define ULS_PROPPOOL_DFLSIZ 256
 
 ULS_DEFINE_STRUCT(sysprop)
 {
-	uls_def_namebuf_this(name, ULS_LEXSTR_MAXSIZ);
+	uls_def_namebuf(name, ULS_LEXSTR_MAXSIZ);
 	int stridx;
 };
 ULS_DEF_ARRAY_TYPE00(sysprop, SYSPROP_TYPE00_ULS_N_SYSPROPS, ULS_N_SYSPROPS);
@@ -73,19 +69,16 @@ ULS_DEFINE_STRUCT(sysinfo)
 	int  n_strpool, n_alloc_strpool;
 	char *strpool;
 };
-#endif // ULS_DEF_PUBLIC_TYPE
 
-#if defined(ULS_DOTNET) || defined(__ULS_SYSPROPS__)
+#if defined(__ULS_SYSPROPS__)
 #define EXTERNAL
 #else
 #define EXTERNAL extern
 #endif
 
-#if !defined(ULS_DOTNET) || defined(ULS_DEF_PUBLIC_DATA)
 EXTERNAL uls_sysinfo_ptr_t uls_sysinfo;
-#endif
 
-#if defined(__ULS_SYSPROPS__) || defined(ULS_DECL_PRIVATE_PROC)
+#if defined(__ULS_SYSPROPS__)
 ULS_DECL_STATIC int __init_system_info(uls_sysinfo_ptr_t sysinfo, int poolsiz);
 ULS_DECL_STATIC uls_sysprop_ptr_t __get_system_property(uls_sysinfo_ptr_t sysinfo, const char* name);
 ULS_DECL_STATIC char* get_nameval_pair(uls_parm_line_ptr_t parm_ln);
@@ -109,14 +102,10 @@ void uls_arch2be_array(char* ary, int n);
 void uls_arch2le_array(char* ary, int n);
 #endif
 
-#ifdef ULS_DECL_PUBLIC_PROC
 ULS_DLL_EXTERN const char* uls_add_system_property(const char* name, const char* val);
 ULS_DLL_EXTERN const char* uls_get_system_property(const char* name);
-#endif
 
-#ifndef ULS_DOTNET
 #define _uls_sysinfo_(attr) uls_sysinfo->attr
-#endif
 
 #undef EXTERNAL
 #ifdef _ULS_CPLUSPLUS

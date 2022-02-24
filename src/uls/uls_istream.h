@@ -30,7 +30,6 @@
 #ifndef __ULS_ISTREAM_H__
 #define __ULS_ISTREAM_H__
 
-#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_core.h"
 #include "uls/uls_stream.h"
 #include "uls/uls_fileio.h"
@@ -38,13 +37,10 @@
 #include "uls/fdfilter.h"
 #endif
 #include <stdio.h>
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
-
-#ifdef ULS_DEF_PUBLIC_TYPE
 
 ULS_DEFINE_STRUCT(istream)
 {
@@ -62,12 +58,10 @@ ULS_DEFINE_STRUCT(istream)
 	int     start_off;
 
 	uls_lex_ptr_t uls;
-	uls_type_tool(tempfile) uld_file;
+	uls_tempfile_t uld_file;
 };
 
-#endif // ULS_DEF_PUBLIC_TYPE
-
-#if defined(__ULS_ISTREAM__) || defined(ULS_DECL_PRIVATE_PROC)
+#if defined(__ULS_ISTREAM__)
 ULS_DECL_STATIC void __init_istream(uls_istream_ptr_t istr);
 ULS_DECL_STATIC uls_istream_ptr_t __create_istream(int fd);
 ULS_DECL_STATIC void __destroy_istream(uls_istream_ptr_t istr);
@@ -81,7 +75,7 @@ ULS_DECL_STATIC int parse_uls_hdr(char* line, int fd_in, uls_istream_ptr_t istr)
 #ifdef ULS_DECL_PROTECTED_PROC
 int check_istr_compatibility(uls_istream_ptr_t istr, uls_lex_ptr_t uls);
 int uls_check_stream_ver(uls_stream_header_ptr_t hdr, uls_lex_ptr_t uls);
-int get_rawfile_subtype(char *buff, int n_bytes, uls_ptrtype_tool(outparam) parms);
+int get_rawfile_subtype(char *buff, int n_bytes, uls_outparam_ptr_t parms);
 
 void uls_ungrab_fd_utf(uls_source_ptr_t isrc);
 
@@ -93,9 +87,8 @@ int uls_fill_fd_stream(uls_source_ptr_t isrc, char* buf, int buflen, int bufsiz)
 void uls_ungrab_fd_stream(uls_source_ptr_t isrc);
 
 int uls_gettok_bin(uls_lex_ptr_t uls);
-#endif // ULS_DECL_PROTECTED_PROC
+#endif
 
-#ifdef ULS_DECL_PUBLIC_PROC
 ULS_DLL_EXTERN void uls_set_istream_tag(uls_istream_ptr_t istr, const char* tag);
 
 ULS_DLL_EXTERN uls_istream_ptr_t uls_open_istream(int fd);
@@ -114,13 +107,12 @@ ULS_DLL_EXTERN void uls_destroy_istream(uls_istream_ptr_t istr);
 ULS_DLL_EXTERN int uls_rewind_istream(uls_istream_ptr_t istr);
 ULS_DLL_EXTERN int uls_bind_istream(uls_istream_ptr_t istr, uls_lex_ptr_t uls);
 
-ULS_DLL_EXTERN int uls_read_tok(uls_istream_ptr_t istr, uls_ptrtype_tool(outparam) parms);
+ULS_DLL_EXTERN int uls_read_tok(uls_istream_ptr_t istr, uls_outparam_ptr_t parms);
 
 ULS_DLL_EXTERN int _uls_get_raw_input_subtype(FILE* fp);
 ULS_DLL_EXTERN int _uls_const_TMPLS_DUP(void);
 
 ULS_DLL_EXTERN uls_istream_ptr_t ulsjava_open_istream_file(const void *filepath, int len_filepath);
-#endif // ULS_DECL_PUBLIC_PROC
 
 #ifdef _ULS_CPLUSPLUS
 }

@@ -31,27 +31,21 @@
     Stanley Hong <link2next@gmail.com>, July 2011.
   </author>
 */
-#if !defined(ULS_DOTNET) && !defined(__ULS_LF_SPRINTF_H__)
+#ifndef __ULS_LF_SPRINTF_H__
 #define __ULS_LF_SPRINTF_H__
 
-#ifndef ULS_EXCLUDE_HFILES
 #include "uls/csz_stream.h"
 #include <stdarg.h>
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
-#ifdef ULS_DECL_GLOBAL_TYPES
 #define uls_lf_map_lock(map) uls_lock_mutex(uls_ptr((map)->mtx))
 #define uls_lf_map_unlock(map) uls_unlock_mutex(uls_ptr((map)->mtx))
 
 #define uls_lf_lock(uls_lf) uls_lock_mutex(uls_ptr((uls_lf)->mtx))
 #define uls_lf_unlock(uls_lf) uls_unlock_mutex(uls_ptr((uls_lf)->mtx))
-#endif
-
-#ifdef ULS_DECL_PUBLIC_TYPE
 
 #define ULS_LF_PERCENT_NAMESIZ 3
 #define ULS_LF_N_FILLCHS 16
@@ -109,9 +103,6 @@ ULS_DEFINE_DELEGATE_END(lf_puts);
 
 ULS_DEFINE_DELEGATE_BEGIN(lf_convspec, int)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx);
 ULS_DEFINE_DELEGATE_END(lf_convspec);
-#endif // ULS_DECL_PUBLIC_TYPE
-
-#ifdef ULS_DEF_PROTECTED_TYPE
 
 #ifdef _ULS_IMPLDLL
 ULS_DEFINE_STRUCT(buf4str)
@@ -150,9 +141,7 @@ ULS_DEFINE_STRUCT(lf_map)
 	uls_lf_convspec_table_t linear;
 	uls_lf_convspec_table_t sorted[ULS_LF_PERCENT_NAMESIZ];
 };
-#endif
 
-#ifdef ULS_DEF_PUBLIC_TYPE
 ULS_DEFINE_STRUCT(lf)
 {
 	void           *x_dat;
@@ -183,13 +172,11 @@ ULS_DEFINE_STRUCT(lf_delegate)
 	uls_lf_puts_t puts;
 };
 
-#endif
-
-#if defined(__ULS_LF_SPRINTF__) || defined(ULS_DEF_PRIVATE_DATA)
+#if defined(__ULS_LF_SPRINTF__)
 ULS_DECL_STATIC uls_lf_map_t dfl_convspec_map;
 #endif
 
-#if defined(__ULS_LF_SPRINTF__) || defined(ULS_DECL_PRIVATE_PROC)
+#if defined(__ULS_LF_SPRINTF__)
 ULS_DECL_STATIC void __uls_lf_sysputs(const char* msg);
 ULS_DECL_STATIC int __puts_proc_str(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, const char* str, int len);
 
@@ -230,7 +217,7 @@ ULS_DECL_STATIC int __replace_convspec_linear(uls_lf_convspec_table_ptr_t tbl,
 	const char* percent_name, uls_lf_convspec_t proc, uls_voidptr_t user_data);
 ULS_DECL_STATIC void load_default_convspec_map(uls_lf_map_ptr_t lf_map);
 ULS_DECL_STATIC int __uls_lf_skip_atou(const char ** p_ptr);
-#endif // ULS_DECL_PRIVATE_PROC
+#endif // __ULS_LF_SPRINTF__
 
 #ifdef ULS_DECL_PROTECTED_PROC
 int uls_lf_puts_prefix(char* str, int flags);
@@ -247,7 +234,6 @@ void initialize_uls_lf(void);
 void finalize_uls_lf(void);
 #endif // ULS_DECL_PROTECTED_PROC
 
-#ifdef ULS_DECL_PUBLIC_PROC
 ULS_DLL_EXTERN int uls_lf_fill_mbstr(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc,
 	uls_lf_convflag_ptr_t p, const char* numstr, int l_numstr, int lw_numstr);
 
@@ -294,7 +280,6 @@ ULS_DLL_EXTERN int uls_lf_puts_csz(uls_voidptr_t x_dat, const char* wrdptr, int 
 ULS_DLL_EXTERN int uls_lf_puts_str(uls_voidptr_t x_dat, const char* wrdptr, int wrdlen);
 ULS_DLL_EXTERN int uls_lf_puts_file(uls_voidptr_t x_dat, const char* wrdptr, int wrdlen);
 ULS_DLL_EXTERN int uls_lf_puts_null(uls_voidptr_t x_dat, const char* wrdptr, int wrdlen);
-#endif // ULS_DECL_PUBLIC_PROC
 
 #ifdef _ULS_CPLUSPLUS
 }

@@ -31,7 +31,6 @@
     Stanley Hong <link2next@gmail.com>, July 2016.
   </author>
 */
-#ifndef ULS_EXCLUDE_HFILES
 #define __ULS_PRIM__
 #include "uls/uls_prim.h"
 
@@ -40,10 +39,9 @@
 #ifndef ULS_WINDOWS
 #include <unistd.h>
 #endif
-#endif
 
 ULS_DECL_STATIC _ULS_INLINE int
-ULS_QUALIFIED_METHOD(__find_first_1bit)(char ch, int j1, int j2)
+__find_first_1bit(char ch, int j1, int j2)
 {
 	int j;
 
@@ -58,7 +56,7 @@ ULS_QUALIFIED_METHOD(__find_first_1bit)(char ch, int j1, int j2)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_lf_number_u)(char *numstr, unsigned int num, int base_shift)
+uls_lf_number_u(char *numstr, unsigned int num, int base_shift)
 {
 	unsigned int  base_mask;
 	register int   i;
@@ -96,7 +94,7 @@ ULS_QUALIFIED_METHOD(uls_lf_number_u)(char *numstr, unsigned int num, int base_s
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_lf_number_lu)(char *numstr, unsigned long num, int base_shift)
+uls_lf_number_lu(char *numstr, unsigned long num, int base_shift)
 {
 	unsigned long  base_mask;
 	register int   i;
@@ -127,7 +125,7 @@ ULS_QUALIFIED_METHOD(uls_lf_number_lu)(char *numstr, unsigned long num, int base
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_lf_number_Lu)(char *numstr, unsigned long long num, int base_shift)
+uls_lf_number_Lu(char *numstr, unsigned long long num, int base_shift)
 {
 	unsigned long long base_mask;
 	register int   i;
@@ -156,10 +154,8 @@ ULS_QUALIFIED_METHOD(uls_lf_number_Lu)(char *numstr, unsigned long long num, int
 	return i;
 }
 
-#ifndef ULS_DOTNET
-
 void
-ULS_QUALIFIED_METHOD(err_log_puts)(const char* mesg, int len)
+err_log_puts(const char* mesg, int len)
 {
 	int rc,  fd = STDERR_FILENO;
 
@@ -180,7 +176,7 @@ ULS_QUALIFIED_METHOD(err_log_puts)(const char* mesg, int len)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_vsnprintf_primitive)(char *buf,  int bufsiz, const char* fmt, va_list args)
+uls_vsnprintf_primitive(char *buf,  int bufsiz, const char* fmt, va_list args)
 {
 	int   j, len, ival, minus, buflen, bufsiz1;
 	const char  *fmtptr, *wrdptr;
@@ -279,7 +275,7 @@ ULS_QUALIFIED_METHOD(uls_vsnprintf_primitive)(char *buf,  int bufsiz, const char
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_snprintf_primitive)(char *buf,  int bufsiz, const char* fmt, ...)
+uls_snprintf_primitive(char *buf,  int bufsiz, const char* fmt, ...)
 {
 	int len;
 	va_list args;
@@ -292,7 +288,7 @@ ULS_QUALIFIED_METHOD(uls_snprintf_primitive)(char *buf,  int bufsiz, const char*
 }
 
 int
-ULS_QUALIFIED_METHOD(err_vlog_primitive)(const char* fmt, va_list args)
+err_vlog_primitive(const char* fmt, va_list args)
 {
 	char buf[256];
 	int len;
@@ -329,89 +325,87 @@ err_panic_primitive(const char* fmt, ...)
 	exit(1);
 }
 
-#endif // ULS_DOTNET
-
 int
-ULS_QUALIFIED_METHOD(uls_isgraph)(int c)
+uls_isgraph(int c)
 {
 	return c>=0x21 && c<=0x7E;
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_isprint)(int c)
+uls_isprint(int c)
 {
 	return c>=0x20 && c<=0x7E;
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_iscntrl)(int c)
+uls_iscntrl(int c)
 {
 	return c<0x20 || c>0x7E;
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_isspace)(int c)
+uls_isspace(int c)
 {
 	return c==' ' || (c>=0x9 && c<=0xD);
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_isdigit)(int c)
+uls_isdigit(int c)
 {
 	return _IS_CH_DIGIT(c);
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_islower)(int c)
+uls_islower(int c)
 {
 	return _IS_CH_LOWER(c);
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_isupper)(int c)
+uls_isupper(int c)
 {
 	return _IS_CH_UPPER(c);
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_isalpha)(int c)
+uls_isalpha(int c)
 {
 	return _IS_CH_LOWER(c) || _IS_CH_UPPER(c);
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_isalnum)(int c)
+uls_isalnum(int c)
 {
 	return _IS_CH_LOWER(c) || _IS_CH_UPPER(c) || _IS_CH_DIGIT(c);
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_isxdigit)(int c)
+uls_isxdigit(int c)
 {
 	return _IS_CH_DIGIT(c) || (c>='a' && c<='f') || (c>='A' && c<='F');
 }
 
 char
-ULS_QUALIFIED_METHOD(uls_toupper)(int c)
+uls_toupper(int c)
 {
 	return _IS_CH_LOWER(c) ? 'A'+(c-'a') : c;
 }
 
 char
-ULS_QUALIFIED_METHOD(uls_tolower)(int c)
+uls_tolower(int c)
 {
 	return _IS_CH_UPPER(c) ? 'a'+(c-'A') : c;
 }
 
 int
-ULS_QUALIFIED_METHOD(is_octal_char)(char ch)
+is_octal_char(char ch)
 {
 	if (ch >= '0' && ch < '8') return 1;
 	return 0; // including '\0'
 }
 
 int
-ULS_QUALIFIED_METHOD(is_hexa_char)(char ch)
+is_hexa_char(char ch)
 {
 	int stat;
 
@@ -424,7 +418,7 @@ ULS_QUALIFIED_METHOD(is_hexa_char)(char ch)
 }
 
 int
-ULS_QUALIFIED_METHOD(is_num_radix)(uls_uch_t ch, int radix)
+is_num_radix(uls_uch_t ch, int radix)
 {
 	int num;
 
@@ -443,7 +437,7 @@ ULS_QUALIFIED_METHOD(is_num_radix)(uls_uch_t ch, int radix)
 }
 
 char
-ULS_QUALIFIED_METHOD(read_hexa_char)(char* ptr)
+read_hexa_char(char* ptr)
 {
 	unsigned n, ch_val = 0;
 	char ch;
@@ -469,7 +463,7 @@ ULS_QUALIFIED_METHOD(read_hexa_char)(char* ptr)
 }
 
 int
-ULS_QUALIFIED_METHOD(is_pure_int_number)(const char* lptr)
+is_pure_int_number(const char* lptr)
 {
 	int minus=0, pure=1, n;
 	const char* lptr0;
@@ -497,7 +491,7 @@ ULS_QUALIFIED_METHOD(is_pure_int_number)(const char* lptr)
 }
 
 int
-ULS_QUALIFIED_METHOD(is_pure_word)(const char* lptr, int must_id)
+is_pure_word(const char* lptr, int must_id)
 {
 	int len, stat=0;
 	const char* lptr0 = lptr;
@@ -523,13 +517,13 @@ ULS_QUALIFIED_METHOD(is_pure_word)(const char* lptr, int must_id)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_atoi)(const char *str)
+uls_atoi(const char *str)
 {
 	return atoi(str);
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_get_xrange)(const char* wrd, uls_uint32* ptr_x1, uls_uint32* ptr_x2)
+uls_get_xrange(const char* wrd, uls_uint32* ptr_x1, uls_uint32* ptr_x2)
 {
 	uls_uint32 val1, val2;
 	uls_outparam_t parms;
@@ -551,7 +545,7 @@ ULS_QUALIFIED_METHOD(uls_get_xrange)(const char* wrd, uls_uint32* ptr_x1, uls_ui
 }
 
 int
-ULS_QUALIFIED_METHOD(get_range_aton)(uls_outparam_ptr_t parms)
+get_range_aton(uls_outparam_ptr_t parms)
 {
 	unsigned int i1, i2;
 	uls_outparam_t parms1;
@@ -595,7 +589,7 @@ ULS_QUALIFIED_METHOD(get_range_aton)(uls_outparam_ptr_t parms)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_index_range)(uls_outparam_ptr_t parms, int i2_limit)
+uls_index_range(uls_outparam_ptr_t parms, int i2_limit)
 {
 	int i1 = parms->n1;
 	int i2p1 = parms->n2;
@@ -620,7 +614,7 @@ ULS_QUALIFIED_METHOD(uls_index_range)(uls_outparam_ptr_t parms, int i2_limit)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_range_of_bits)(uls_uint32 n)
+uls_range_of_bits(uls_uint32 n)
 {
 	int  i, i0 = -1;
 
@@ -633,7 +627,7 @@ ULS_QUALIFIED_METHOD(uls_range_of_bits)(uls_uint32 n)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_clear_bits)(char* srcptr, uls_uint32 start_bit, uls_uint32 end_bit)
+uls_clear_bits(char* srcptr, uls_uint32 start_bit, uls_uint32 end_bit)
 {
 	uls_uint32  i1, j1, i2, j2, j;
 	char  *dstptr;
@@ -690,7 +684,7 @@ ULS_QUALIFIED_METHOD(uls_clear_bits)(char* srcptr, uls_uint32 start_bit, uls_uin
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_find_first_1bit)(char* srcptr,
+uls_find_first_1bit(char* srcptr,
 	uls_uint32 start_bit, uls_uint32 end_bit, uls_uint32* found_bit)
 {
 	char  *dstptr;
@@ -760,7 +754,7 @@ ULS_QUALIFIED_METHOD(uls_find_first_1bit)(char* srcptr,
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_host_byteorder)(void)
+uls_host_byteorder(void)
 {
 	unsigned int ui;
 	char *ptr;
@@ -774,7 +768,7 @@ ULS_QUALIFIED_METHOD(uls_host_byteorder)(void)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_reverse_bytes)(char* ary, int n)
+uls_reverse_bytes(char* ary, int n)
 {
 	char ch;
 	int i, j;
@@ -789,7 +783,7 @@ ULS_QUALIFIED_METHOD(uls_reverse_bytes)(char* ary, int n)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_check_longdouble_fmt)(int endian)
+uls_check_longdouble_fmt(int endian)
 {
 	long double temp_lf;
 	char *ptr = (char *) &temp_lf;
@@ -822,16 +816,14 @@ ULS_QUALIFIED_METHOD(uls_check_longdouble_fmt)(int endian)
 	} else if (n_bits == 128) {
 		ret_typ = ULS_IEEE754_BINARY128;
 	} else {
-#ifdef ULS_DOTNET
 		ret_typ = ULS_IEEE754_BINARY64;
-#endif
 	}
 
 	return ret_typ;
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_strcmp)(const char* str1, const char* str2)
+uls_strcmp(const char* str1, const char* str2)
 {
 	const char *ptr1=str1, *ptr2=str2;
 	char ch1, ch2;
@@ -853,7 +845,7 @@ ULS_QUALIFIED_METHOD(uls_strcmp)(const char* str1, const char* str2)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_strncmp)(const char* str1, const char* str2, int n)
+uls_strncmp(const char* str1, const char* str2, int n)
 {
 	const char *ptr1=str1, *ptr2=str2;
 	char ch1, ch2;
@@ -875,7 +867,7 @@ ULS_QUALIFIED_METHOD(uls_strncmp)(const char* str1, const char* str2, int n)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_strcasecmp)(const char* str1, const char* str2)
+uls_strcasecmp(const char* str1, const char* str2)
 {
 	char  ch1, ch2;
 	int  i, stat = 0;
@@ -899,7 +891,7 @@ ULS_QUALIFIED_METHOD(uls_strcasecmp)(const char* str1, const char* str2)
 }
 
 char*
-ULS_QUALIFIED_METHOD(uls_strchr)(const char* lptr, char ch0)
+uls_strchr(const char* lptr, char ch0)
 {
 	char ch;
 	int i;
@@ -918,7 +910,7 @@ ULS_QUALIFIED_METHOD(uls_strchr)(const char* lptr, char ch0)
 }
 
 char*
-ULS_QUALIFIED_METHOD(uls_strchr_r)(const char* lptr, char ch)
+uls_strchr_r(const char* lptr, char ch)
 {
 	int i, len = uls_strlen(lptr);
 
@@ -934,7 +926,7 @@ ULS_QUALIFIED_METHOD(uls_strchr_r)(const char* lptr, char ch)
 }
 
 const char*
-ULS_QUALIFIED_METHOD(uls_strstr)(const char *str, const char* substr)
+uls_strstr(const char *str, const char* substr)
 {
 	int i, l_str, l_substr;
 	char ch0;
@@ -957,7 +949,7 @@ ULS_QUALIFIED_METHOD(uls_strstr)(const char *str, const char* substr)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_str_tolower)(const char* src, char *dst, int len)
+uls_str_tolower(const char* src, char *dst, int len)
 {
 	int i;
 	char ch;
@@ -975,7 +967,7 @@ ULS_QUALIFIED_METHOD(uls_str_tolower)(const char* src, char *dst, int len)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_str_toupper)(const char* src, char *dst, int len)
+uls_str_toupper(const char* src, char *dst, int len)
 {
 	int i;
 	char ch;
@@ -993,7 +985,7 @@ ULS_QUALIFIED_METHOD(uls_str_toupper)(const char* src, char *dst, int len)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_memcmp)(const void *src1, const void *src2, int n)
+uls_memcmp(const void *src1, const void *src2, int n)
 {
 	int rc;
 
@@ -1006,7 +998,7 @@ ULS_QUALIFIED_METHOD(uls_memcmp)(const void *src1, const void *src2, int n)
 }
 
 unsigned int
-ULS_QUALIFIED_METHOD(uls_skip_atou)(uls_outparam_ptr_t parms)
+uls_skip_atou(uls_outparam_ptr_t parms)
 {
 	const char   *lptr = parms->lptr;
 	unsigned int n = 0;
@@ -1021,7 +1013,7 @@ ULS_QUALIFIED_METHOD(uls_skip_atou)(uls_outparam_ptr_t parms)
 }
 
 unsigned int
-ULS_QUALIFIED_METHOD(uls_skip_atox)(uls_outparam_ptr_t parms)
+uls_skip_atox(uls_outparam_ptr_t parms)
 {
 	const char   *lptr = parms->lptr;
 	unsigned int  n = 0;
@@ -1042,7 +1034,7 @@ ULS_QUALIFIED_METHOD(uls_skip_atox)(uls_outparam_ptr_t parms)
 }
 
 char*
-ULS_QUALIFIED_METHOD(split_clause)(uls_outparam_ptr_t parms)
+split_clause(uls_outparam_ptr_t parms)
 {
 	char *str;
 
@@ -1053,7 +1045,7 @@ ULS_QUALIFIED_METHOD(split_clause)(uls_outparam_ptr_t parms)
 }
 
 char*
-ULS_QUALIFIED_METHOD(split_litstr)(char *str, char qch)
+split_litstr(char *str, char qch)
 {
 	char   *ptr, *ptr1;
 	char   ch, esc_ch=0;
@@ -1082,7 +1074,7 @@ ULS_QUALIFIED_METHOD(split_litstr)(char *str, char qch)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_fp_getline)(FILE* fp, char* buf, int buf_siz)
+uls_fp_getline(FILE* fp, char* buf, int buf_siz)
 {
 	int len;
 	char ch;
@@ -1112,13 +1104,13 @@ ULS_QUALIFIED_METHOD(uls_fp_getline)(FILE* fp, char* buf, int buf_siz)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_appl_exit)(int exit_code)
+uls_appl_exit(int exit_code)
 {
 	exit(exit_code);
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_init_nambuf)(uls_nambuf_ptr_t arg, int siz)
+uls_init_nambuf(uls_nambuf_ptr_t arg, int siz)
 {
 	// siz >= 0
 	arg->buf_siz = siz + 1;
@@ -1128,14 +1120,14 @@ ULS_QUALIFIED_METHOD(uls_init_nambuf)(uls_nambuf_ptr_t arg, int siz)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_deinit_nambuf)(uls_nambuf_ptr_t arg)
+uls_deinit_nambuf(uls_nambuf_ptr_t arg)
 {
 	uls_mfree(arg->str);
 	arg->buf_siz = arg->len = 0;
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_set_nambuf)(uls_nambuf_ptr_t arg, const char *name, int name_len)
+uls_set_nambuf(uls_nambuf_ptr_t arg, const char *name, int name_len)
 {
 	int len, siz = arg->buf_siz - 1;
 
@@ -1152,7 +1144,7 @@ ULS_QUALIFIED_METHOD(uls_set_nambuf)(uls_nambuf_ptr_t arg, const char *name, int
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_set_nambuf_raw)(char *argbuf, int argbuf_siz, const char *name, int name_len)
+uls_set_nambuf_raw(char *argbuf, int argbuf_siz, const char *name, int name_len)
 {
 	int len;
 
@@ -1169,7 +1161,7 @@ ULS_QUALIFIED_METHOD(uls_set_nambuf_raw)(char *argbuf, int argbuf_siz, const cha
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_memset)(void *dstbuf, char ch, int n)
+uls_memset(void *dstbuf, char ch, int n)
 {
 	char *buf, *ptr = (char *) dstbuf;
 	int i;
@@ -1193,13 +1185,13 @@ ULS_QUALIFIED_METHOD(uls_memset)(void *dstbuf, char ch, int n)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_bzero)(void *dstbuf, int n)
+uls_bzero(void *dstbuf, int n)
 {
 	uls_memset(dstbuf, 0x00, n);
 }
 
 void*
-ULS_QUALIFIED_METHOD(uls_malloc)(unsigned int n_bytes)
+uls_malloc(unsigned int n_bytes)
 {
 	void *ptr;
 
@@ -1207,7 +1199,7 @@ ULS_QUALIFIED_METHOD(uls_malloc)(unsigned int n_bytes)
 		ptr = NULL;
 	} else {
 		if ((ptr = malloc(n_bytes))==NULL) {
-			_uls_log_primitive(err_panic)("malloc error, need some scheduling, ...");
+			err_panic_primitive("malloc error, need some scheduling, ...");
 		}
 	}
 
@@ -1215,7 +1207,7 @@ ULS_QUALIFIED_METHOD(uls_malloc)(unsigned int n_bytes)
 }
 
 void*
-ULS_QUALIFIED_METHOD(uls_malloc_clear)(unsigned int n_bytes)
+uls_malloc_clear(unsigned int n_bytes)
 {
 	void *ptr;
 
@@ -1227,7 +1219,7 @@ ULS_QUALIFIED_METHOD(uls_malloc_clear)(unsigned int n_bytes)
 }
 
 void*
-ULS_QUALIFIED_METHOD(uls_mrealloc)(void *ptr, unsigned int n_bytes)
+uls_mrealloc(void *ptr, unsigned int n_bytes)
 {
 	if (n_bytes == 0) {
 		if (ptr!=NULL) free(ptr);
@@ -1241,21 +1233,21 @@ ULS_QUALIFIED_METHOD(uls_mrealloc)(void *ptr, unsigned int n_bytes)
 	}
 
 	if (ptr == NULL) {
-		_uls_log_primitive(err_panic)("malloc error");
+		err_panic_primitive("malloc error");
 	}
 
 	return ptr;
 }
 
 void*
-ULS_QUALIFIED_METHOD(__uls_mfree)(void *ptr)
+__uls_mfree(void *ptr)
 {
 	if (ptr != NULL) free(ptr);
 	return NULL;
 }
 
 char*
-ULS_QUALIFIED_METHOD(uls_strdup)(const char* str, int len)
+uls_strdup(const char* str, int len)
 {
 	char *ptr;
 
@@ -1270,7 +1262,7 @@ ULS_QUALIFIED_METHOD(uls_strdup)(const char* str, int len)
 }
 
 void*
-ULS_QUALIFIED_METHOD(uls_memcopy)(void *dst, const void* src, int n)
+uls_memcopy(void *dst, const void* src, int n)
 {
 	void *ptr;
 
@@ -1285,7 +1277,7 @@ ULS_QUALIFIED_METHOD(uls_memcopy)(void *dst, const void* src, int n)
 }
 
 void*
-ULS_QUALIFIED_METHOD(uls_memmove)(void *dst, const void* src, int n)
+uls_memmove(void *dst, const void* src, int n)
 {
 	void *ptr;
 
@@ -1300,7 +1292,7 @@ ULS_QUALIFIED_METHOD(uls_memmove)(void *dst, const void* src, int n)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_wstrlen)(const uls_uch_t* wstr)
+uls_wstrlen(const uls_uch_t* wstr)
 {
 	const uls_uch_t* wptr;
 
@@ -1311,7 +1303,7 @@ ULS_QUALIFIED_METHOD(uls_wstrlen)(const uls_uch_t* wstr)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_strlen)(const char* str)
+uls_strlen(const char* str)
 {
 	const char* ptr;
 
@@ -1322,7 +1314,7 @@ ULS_QUALIFIED_METHOD(uls_strlen)(const char* str)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_strcpy)(char* bufptr, const char* str)
+uls_strcpy(char* bufptr, const char* str)
 {
 	const char *ptr;
 	char ch;
@@ -1336,7 +1328,7 @@ ULS_QUALIFIED_METHOD(uls_strcpy)(char* bufptr, const char* str)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_strncpy)(char* bufptr, const char* ptr, int n)
+uls_strncpy(char* bufptr, const char* ptr, int n)
 {
 	char ch;
 	int i;
@@ -1353,7 +1345,7 @@ ULS_QUALIFIED_METHOD(uls_strncpy)(char* bufptr, const char* ptr, int n)
 }
 
 char*
-ULS_QUALIFIED_METHOD(skip_blanks)(const char* lptr)
+skip_blanks(const char* lptr)
 {
 	register int ch;
 
@@ -1363,7 +1355,7 @@ ULS_QUALIFIED_METHOD(skip_blanks)(const char* lptr)
 }
 
 int
-ULS_QUALIFIED_METHOD(str_trim_end)(char* str, int len)
+str_trim_end(char* str, int len)
 {
 	register int   i;
 
@@ -1377,7 +1369,7 @@ ULS_QUALIFIED_METHOD(str_trim_end)(char* str, int len)
 }
 
 char*
-ULS_QUALIFIED_METHOD(_uls_splitstr)(uls_wrd_ptr_t uw)
+_uls_splitstr(uls_wrd_ptr_t uw)
 {
 	char      *str = uw->lptr;
 	char      *ptr, *ptr0;
@@ -1402,7 +1394,7 @@ ULS_QUALIFIED_METHOD(_uls_splitstr)(uls_wrd_ptr_t uw)
 }
 
 int
-ULS_QUALIFIED_METHOD(_uls_explode_str)(uls_wrd_ptr_t uw, char delim_ch, int dupstr, uls_arglst_ptr_t arglst)
+_uls_explode_str(uls_wrd_ptr_t uw, char delim_ch, int dupstr, uls_arglst_ptr_t arglst)
 {
 	char  *lptr=uw->lptr, *lptr1, ch;
 	uls_decl_parray_slots_init(al, argstr, uls_ptr(arglst->args));
@@ -1452,7 +1444,7 @@ ULS_QUALIFIED_METHOD(_uls_explode_str)(uls_wrd_ptr_t uw, char delim_ch, int dups
 }
 
 char*
-ULS_QUALIFIED_METHOD(_uls_filename)(uls_outparam_ptr_t parms)
+_uls_filename(uls_outparam_ptr_t parms)
 {
 	const char *filepath = parms->lptr;
 	const char *ptr, *ptr0;
@@ -1486,7 +1478,7 @@ ULS_QUALIFIED_METHOD(_uls_filename)(uls_outparam_ptr_t parms)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_init_argstr)(uls_argstr_ptr_t arg, int siz)
+uls_init_argstr(uls_argstr_ptr_t arg, int siz)
 {
 	if (siz >= 0) {
 		arg->buf_siz = siz + 1;
@@ -1503,7 +1495,7 @@ ULS_QUALIFIED_METHOD(uls_init_argstr)(uls_argstr_ptr_t arg, int siz)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_deinit_argstr)(uls_argstr_ptr_t arg)
+uls_deinit_argstr(uls_argstr_ptr_t arg)
 {
 	uls_mfree(arg->buf);
 	arg->buf_siz = 0;
@@ -1512,8 +1504,8 @@ ULS_QUALIFIED_METHOD(uls_deinit_argstr)(uls_argstr_ptr_t arg)
 	arg->len = -1;
 }
 
-ULS_QUALIFIED_RETTYP(uls_argstr_ptr_t)
-ULS_QUALIFIED_METHOD(uls_create_argstr)(void)
+uls_argstr_ptr_t
+uls_create_argstr(void)
 {
 	uls_argstr_ptr_t arg;
 
@@ -1524,14 +1516,14 @@ ULS_QUALIFIED_METHOD(uls_create_argstr)(void)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_destroy_argstr)(uls_argstr_ptr_t arg)
+uls_destroy_argstr(uls_argstr_ptr_t arg)
 {
 	uls_deinit_argstr(arg);
 	uls_dealloc_object(arg);
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_set_argstr)(uls_argstr_ptr_t arg, char *name, int name_len)
+uls_set_argstr(uls_argstr_ptr_t arg, char *name, int name_len)
 {
 	arg->str = name;
 
@@ -1547,7 +1539,7 @@ ULS_QUALIFIED_METHOD(uls_set_argstr)(uls_argstr_ptr_t arg, char *name, int name_
 }
 
 char*
-ULS_QUALIFIED_METHOD(uls_copy_argstr)(uls_argstr_ptr_t arg, const char *name, int name_len)
+uls_copy_argstr(uls_argstr_ptr_t arg, const char *name, int name_len)
 {
 	char *str;
 
@@ -1572,20 +1564,20 @@ ULS_QUALIFIED_METHOD(uls_copy_argstr)(uls_argstr_ptr_t arg, const char *name, in
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_init_arglst)(uls_arglst_ptr_t arglst, int siz)
+uls_init_arglst(uls_arglst_ptr_t arglst, int siz)
 {
 	uls_init_parray(uls_ptr(arglst->args), argstr, siz);
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_deinit_arglst)(uls_arglst_ptr_t arglst)
+uls_deinit_arglst(uls_arglst_ptr_t arglst)
 {
 	uls_reset_arglst(arglst);
 	uls_deinit_parray(uls_ptr(arglst->args));
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_reset_arglst)(uls_arglst_ptr_t arglst)
+uls_reset_arglst(uls_arglst_ptr_t arglst)
 {
 	uls_decl_parray_slots_init(al, argstr, uls_ptr(arglst->args));
 	uls_argstr_ptr_t arg;
@@ -1602,7 +1594,7 @@ ULS_QUALIFIED_METHOD(uls_reset_arglst)(uls_arglst_ptr_t arglst)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_resize_arglst)(uls_arglst_ptr_t arglst, int n1_alloc)
+uls_resize_arglst(uls_arglst_ptr_t arglst, int n1_alloc)
 {
 	uls_decl_parray_slots(al, argstr);
 	uls_argstr_ptr_t arg;
@@ -1624,7 +1616,7 @@ ULS_QUALIFIED_METHOD(uls_resize_arglst)(uls_arglst_ptr_t arglst, int n1_alloc)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_append_arglst)(uls_arglst_ptr_t arglst, uls_argstr_ptr_t arg)
+uls_append_arglst(uls_arglst_ptr_t arglst, uls_argstr_ptr_t arg)
 {
 	uls_decl_parray_slots_init(al, argstr, uls_ptr(arglst->args));
 	int k;
@@ -1640,9 +1632,8 @@ ULS_QUALIFIED_METHOD(uls_append_arglst)(uls_arglst_ptr_t arglst, uls_argstr_ptr_
 	return 0;
 }
 
-#ifndef ULS_DOTNET
 void*
-ULS_QUALIFIED_METHOD(uls_zalloc)(unsigned int n_bytes)
+uls_zalloc(unsigned int n_bytes)
 {
 	void *ptr;
 
@@ -1654,7 +1645,7 @@ ULS_QUALIFIED_METHOD(uls_zalloc)(unsigned int n_bytes)
 }
 
 char*
-ULS_QUALIFIED_METHOD(uls_splitstr)(char** p_str)
+uls_splitstr(char** p_str)
 {
 	uls_wrd_t wrdx;
 	char *wrd;
@@ -1667,7 +1658,7 @@ ULS_QUALIFIED_METHOD(uls_splitstr)(char** p_str)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_explode_str)(char **ptr_line, char delim_ch, char** args, int n_args)
+uls_explode_str(char **ptr_line, char delim_ch, char** args, int n_args)
 {
 	uls_wrd_t wrdx;
 	uls_arglst_t wrdlst;
@@ -1694,7 +1685,7 @@ ULS_QUALIFIED_METHOD(uls_explode_str)(char **ptr_line, char delim_ch, char** arg
 }
 
 char*
-ULS_QUALIFIED_METHOD(uls_filename)(const char *filepath, int* len_fname)
+uls_filename(const char *filepath, int* len_fname)
 {
 	uls_outparam_t parms;
 	char *fname;
@@ -1709,10 +1700,8 @@ ULS_QUALIFIED_METHOD(uls_filename)(const char *filepath, int* len_fname)
 	return fname;
 }
 
-#endif // ULS_DOTNET
-
 int
-ULS_QUALIFIED_METHOD(ustr_num_chars)(const char *str, int len, uls_outparam_ptr_t parms)
+ustr_num_chars(const char *str, int len, uls_outparam_ptr_t parms)
 {
 	int i, j, rc, n=0;
 	char buff[ULS_UTF8_CH_MAXLEN];
@@ -1758,7 +1747,7 @@ ULS_QUALIFIED_METHOD(ustr_num_chars)(const char *str, int len, uls_outparam_ptr_
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_encode_utf8)(uls_uch_t uch, char* utf8buf, int siz_utf8buf)
+uls_encode_utf8(uls_uch_t uch, char* utf8buf, int siz_utf8buf)
 {
 	char buff[ULS_UTF8_CH_MAXLEN];
 	int i, rc;
@@ -1811,7 +1800,7 @@ ULS_QUALIFIED_METHOD(uls_encode_utf8)(uls_uch_t uch, char* utf8buf, int siz_utf8
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_decode_utf8)(const char *utf8buf, int siz_utf8buf, uls_uch_t *p_val)
+uls_decode_utf8(const char *utf8buf, int siz_utf8buf, uls_uch_t *p_val)
 {
 	const char *bufptr = utf8buf;
 	char ch, ch_mask, ch_ary[3] = { 0x20, 0x10, 0x08 };
@@ -1861,7 +1850,7 @@ ULS_QUALIFIED_METHOD(uls_decode_utf8)(const char *utf8buf, int siz_utf8buf, uls_
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_encode_utf16)(uls_uch_t uch, uls_uint16 *buf)
+uls_encode_utf16(uls_uch_t uch, uls_uint16 *buf)
 {
 	uls_uch_t uch2;
 	int rc;
@@ -1882,7 +1871,7 @@ ULS_QUALIFIED_METHOD(uls_encode_utf16)(uls_uch_t uch, uls_uint16 *buf)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_decode_utf16)(uls_uint16 *buf, int buf_len, uls_uch_t *p_uch)
+uls_decode_utf16(uls_uint16 *buf, int buf_len, uls_uch_t *p_uch)
 {
 	uls_uch_t uch;
 	int rc;
@@ -1906,7 +1895,7 @@ ULS_QUALIFIED_METHOD(uls_decode_utf16)(uls_uint16 *buf, int buf_len, uls_uch_t *
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_encode_utf32)(uls_uch_t uch, uls_uint32 *buf)
+uls_encode_utf32(uls_uch_t uch, uls_uint32 *buf)
 {
 	if (uch > UTF32_CODEPOINT_END) {
 		return -1;
@@ -1918,7 +1907,7 @@ ULS_QUALIFIED_METHOD(uls_encode_utf32)(uls_uch_t uch, uls_uint32 *buf)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_decode_utf32)(uls_uint32 buf, uls_uch_t *p_uch)
+uls_decode_utf32(uls_uint32 buf, uls_uch_t *p_uch)
 {
 	uls_uch_t uch;
 
@@ -1933,7 +1922,7 @@ ULS_QUALIFIED_METHOD(uls_decode_utf32)(uls_uint32 buf, uls_uch_t *p_uch)
 
 #if defined(HAVE_PTHREAD)
 void
-ULS_QUALIFIED_METHOD(uls_init_mutex)(uls_mutex_t mtx)
+uls_init_mutex(uls_mutex_t mtx)
 {
 	uls_mutex_struct_ptr_t  a_mtx = (uls_mutex_struct_ptr_t) mtx;
 	pthread_mutexattr_t attr;
@@ -1941,62 +1930,62 @@ ULS_QUALIFIED_METHOD(uls_init_mutex)(uls_mutex_t mtx)
 	pthread_mutexattr_init(uls_ptr(attr));
 
 	if (pthread_mutexattr_settype(uls_ptr(attr), PTHREAD_MUTEX_RECURSIVE) != 0) {
-		_uls_log_static(err_panic)("error: fail to make the mutex recursive-one");
+		err_panic_primitive("error: fail to make the mutex recursive-one");
 	}
 
 	a_mtx->mtx_pthr = uls_alloc_object(pthread_mutex_t);
 	if (pthread_mutex_init(a_mtx->mtx_pthr, uls_ptr(attr)) != 0) {
-		_uls_log_static(err_panic)("error: mutex init");
+		err_panic_primitive("error: mutex init");
 	}
 
 	pthread_mutexattr_destroy(uls_ptr(attr));
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_deinit_mutex)(uls_mutex_t mtx)
+uls_deinit_mutex(uls_mutex_t mtx)
 {
 	uls_mutex_struct_ptr_t  a_mtx = (uls_mutex_struct_ptr_t) mtx;
 
 	if (pthread_mutex_destroy(a_mtx->mtx_pthr) != 0) {
-		_uls_log_static(err_panic)("error: mutex destroy");
+		err_panic_primitive("error: mutex destroy");
 	}
 	uls_dealloc_object(a_mtx->mtx_pthr);
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_lock_mutex)(uls_mutex_t mtx)
+uls_lock_mutex(uls_mutex_t mtx)
 {
 	uls_mutex_struct_ptr_t  a_mtx = (uls_mutex_struct_ptr_t) mtx;
 
 	if (pthread_mutex_lock(a_mtx->mtx_pthr) != 0) {
-		_uls_log_static(err_panic)("error to pthread_mutex_lock");
+		err_panic_primitive("error to pthread_mutex_lock");
 	}
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_unlock_mutex)(uls_mutex_t mtx)
+uls_unlock_mutex(uls_mutex_t mtx)
 {
 	uls_mutex_struct_ptr_t  a_mtx = (uls_mutex_struct_ptr_t) mtx;
 
 	if (pthread_mutex_unlock(a_mtx->mtx_pthr) != 0) {
-		_uls_log_static(err_panic)("error to pthread_mutex_unlock");
+		err_panic_primitive("error to pthread_mutex_unlock");
 	}
 }
 
 #elif defined(ULS_WINDOWS)
 void
-ULS_QUALIFIED_METHOD(uls_init_mutex)(uls_mutex_t mtx)
+uls_init_mutex(uls_mutex_t mtx)
 {
 	uls_mutex_struct_ptr_t  a_mtx = (uls_mutex_struct_ptr_t) mtx;
 
 	a_mtx->hndl = CreateMutex(NULL, FALSE, NULL);
 	if (a_mtx->hndl == INVALID_HANDLE_VALUE) {
-		_uls_log_static(err_panic)("error: mutex init");
+		err_panic_primitive("error: mutex init");
 	}
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_deinit_mutex)(uls_mutex_t mtx)
+uls_deinit_mutex(uls_mutex_t mtx)
 {
 	uls_mutex_struct_ptr_t  a_mtx = (uls_mutex_struct_ptr_t) mtx;
 
@@ -2005,7 +1994,7 @@ ULS_QUALIFIED_METHOD(uls_deinit_mutex)(uls_mutex_t mtx)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_lock_mutex)(uls_mutex_t mtx)
+uls_lock_mutex(uls_mutex_t mtx)
 {
 	uls_mutex_struct_ptr_t  a_mtx = (uls_mutex_struct_ptr_t) mtx;
 	DWORD dwWaitResult;
@@ -2013,59 +2002,59 @@ ULS_QUALIFIED_METHOD(uls_lock_mutex)(uls_mutex_t mtx)
 	dwWaitResult = WaitForSingleObject(a_mtx->hndl, INFINITE);
 
 	if (dwWaitResult != WAIT_OBJECT_0) {
-		_uls_log_static(err_panic)("error: mutex lock");
+		err_panic_primitive("error: mutex lock");
 	}
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_unlock_mutex)(uls_mutex_t mtx)
+uls_unlock_mutex(uls_mutex_t mtx)
 {
 	uls_mutex_struct_ptr_t  a_mtx = (uls_mutex_struct_ptr_t) mtx;
 	ReleaseMutex(a_mtx->hndl);
 }
 #else
 void
-ULS_QUALIFIED_METHOD(uls_init_mutex)(uls_mutex_t mtx)
+uls_init_mutex(uls_mutex_t mtx)
 {
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_deinit_mutex)(uls_mutex_t mtx)
+uls_deinit_mutex(uls_mutex_t mtx)
 {
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_lock_mutex)(uls_mutex_t mtx)
+uls_lock_mutex(uls_mutex_t mtx)
 {
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_unlock_mutex)(uls_mutex_t mtx)
+uls_unlock_mutex(uls_mutex_t mtx)
 {
 }
 #endif
 
 void
-ULS_QUALIFIED_METHOD(uls_sys_lock)(void)
+uls_sys_lock(void)
 {
 	uls_lock_mutex(uls_ptr(uls_global_mtx));
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_sys_unlock)(void)
+uls_sys_unlock(void)
 {
 	uls_unlock_mutex(uls_ptr(uls_global_mtx));
 }
 
 int
-ULS_QUALIFIED_METHOD(initialize_primitives)(void)
+initialize_primitives(void)
 {
 	uls_init_mutex(uls_ptr(uls_global_mtx));
 	return 0;
 }
 
 void
-ULS_QUALIFIED_METHOD(finalize_primitives)(void)
+finalize_primitives(void)
 {
 	uls_deinit_mutex(uls_ptr(uls_global_mtx));
 }

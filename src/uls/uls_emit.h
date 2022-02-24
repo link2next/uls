@@ -30,16 +30,13 @@
 #ifndef __ULS_EMIT_H__
 #define __ULS_EMIT_H__
 
-#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_tokdef.h"
 #include "uls/uld_conf.h"
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
-#ifdef ULS_DECL_GLOBAL_TYPES
 #define ULS_FL_WANT_REGULAR_TOKS  0x01
 #define ULS_FL_WANT_QUOTE_TOKS    0x02
 #define ULS_FL_WANT_RESERVED_TOKS 0x04
@@ -52,9 +49,7 @@ extern "C" {
 #define ULS_FL_CS_GEN             0x0800
 #define ULS_FL_JAVA_GEN           0x1000
 #define ULS_FL_LANG_GEN_MASK      0xFF00
-#endif
 
-#ifdef ULS_DEF_PUBLIC_TYPE
 #define ULS_CLASS_DEPTH          32
 ULS_DEFINE_DELEGATE_BEGIN(proc_uld_line, int)(uld_line_ptr_t tok_names, int n_tabs, const char *lptr);
 ULS_DEFINE_DELEGATE_END(proc_uld_line);
@@ -76,14 +71,13 @@ ULS_DEFINE_STRUCT(parms_emit)
 	const char *fpath;
 	int len_fpath;
 
-	uls_type_tool(arglst) name_components;
+	uls_arglst_t name_components;
 	int n_name_components;
 
 	uls_voidptr_t ext_data;
 };
-#endif
 
-#if defined(__ULS_EMIT__) || defined(ULS_DECL_PRIVATE_PROC)
+#if defined(__ULS_EMIT__)
 ULS_DECL_STATIC void emit_source_head(const char *name);
 ULS_DECL_STATIC int comp_by_tokid_vx(const uls_voidptr_t a, const uls_voidptr_t b);
 
@@ -132,14 +126,12 @@ int print_tokdef_java(uls_lex_ptr_t uls,
 	uls_parms_emit_ptr_t emit_parm, const char *base_ulc);
 #endif
 
-#ifdef ULS_DECL_PUBLIC_PROC
 ULS_DLL_EXTERN int uls_init_parms_emit(uls_parms_emit_ptr_t emit_parm,
 	const char *out_dpath, const char *out_fname, const char *fpath_config,
 	const char* ulc_name, const char* class_path, const char *enum_name,
 	const char *tok_pfx, int flags);
 ULS_DLL_EXTERN int uls_deinit_parms_emit(uls_parms_emit_ptr_t emit_parm);
 ULS_DLL_EXTERN int uls_generate_tokdef_file(uls_lex_ptr_t uls, uls_parms_emit_ptr_t emit_parm);
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 }

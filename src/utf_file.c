@@ -27,20 +27,18 @@
  *
  *  This file is part of ULS, Unified Lexical Scheme.
  */
-#ifndef ULS_EXCLUDE_HFILES
 #define __ULS_UTF_FILE__
 #include "uls/utf_file.h"
 #include "uls/uls_misc.h"
 #include "uls/uls_sysprops.h"
 #include "uls/uls_fileio.h"
 #include "uls/uls_log.h"
-#endif
 
 int
-ULS_QUALIFIED_METHOD(id_range_comp)(const uls_voidptr_t e, const uls_voidptr_t b)
+id_range_comp(const uls_voidptr_t e, const uls_voidptr_t b)
 {
-	const uls_ptrtype_tool(uch_range) id_range = (const uls_ptrtype_tool(uch_range)) e;
-	const uls_ptrtype_tool(outparam) parms = (const uls_ptrtype_tool(outparam)) b;
+	const uls_uch_range_ptr_t id_range = (const uls_uch_range_ptr_t) e;
+	const uls_outparam_ptr_t parms = (const uls_outparam_ptr_t) b;
 	uls_uch_t  val = (uls_uch_t) parms->x1;
 
 	// x2 < UNIT_MAX
@@ -55,19 +53,16 @@ ULS_QUALIFIED_METHOD(id_range_comp)(const uls_voidptr_t e, const uls_voidptr_t b
 }
 
 int
-ULS_QUALIFIED_METHOD(is_utf_id)(uls_uch_t uch)
+is_utf_id(uls_uch_t uch)
 {
-	uls_ptrtype_tool(uch_range) id_range;
-	uls_type_tool(outparam) parms1;
+	uls_uch_range_ptr_t id_range;
+	uls_outparam_t parms1;
 
 	parms1.x1 = (unsigned int) uch;
-#ifdef ULS_CLASSIFY_SOURCE
-	id_range = (uls_ptrtype_tool(uch_range)) _uls_bisearch_vptr((uls_voidptr_t) uls_ptr(parms1),
-		uls_array_slots_type01(uls_ptr(id_range_list1)), id_range_list1.n, id_range_comp);
-#else
-	id_range = (uls_ptrtype_tool(uch_range)) uls_bi_search((uls_voidptr_t) uls_ptr(parms1),
+
+	id_range = (uls_uch_range_ptr_t) uls_bi_search((uls_voidptr_t) uls_ptr(parms1),
 		(uls_native_vptr_t) uls_array_slots_type01(uls_ptr(id_range_list1)), id_range_list1.n, sizeof(uls_uch_range_t), id_range_comp);
-#endif
+
 	if (id_range != nilptr) {
 		return 1;
 	}
@@ -76,82 +71,82 @@ ULS_QUALIFIED_METHOD(is_utf_id)(uls_uch_t uch)
 }
 
 int
-ULS_QUALIFIED_METHOD(load_uch_ranges_list)(void)
+load_uch_ranges_list(void)
 {
 	char linebuff[ULS_LINEBUFF_SIZ+1];
-	uls_type_tool(arglst) wrdlst;
+	uls_arglst_t wrdlst;
 	int  len, i, k, n_wrdlst, n_lines, rc, stat=0;
 
-	uls_ptrtype_tool(uch_range) id_range;
+	uls_uch_range_ptr_t id_range;
 	uls_uch_t val1, val2;
 	char fpath[ULS_FILEPATH_MAX+1];
 	FILE *fin;
 
-	uls_type_tool(wrd) wrdx;
-	uls_decl_parray_slots_tool(al_wrds, argstr);
+	uls_wrd_t wrdx;
+	uls_decl_parray_slots(al_wrds, argstr);
 
-	len = _uls_tool_(strcpy)(fpath, _uls_sysinfo_(etc_dir));
+	len = uls_strcpy(fpath, _uls_sysinfo_(etc_dir));
 	fpath[len++] = ULS_FILEPATH_DELIM;
-	len += _uls_tool_(strcpy)(fpath + len, ULS_ID_RANGES_FNAME);
+	len += uls_strcpy(fpath + len, ULS_ID_RANGES_FNAME);
 
-	if ((fin = _uls_tool_(fp_open)(fpath, ULS_FIO_READ)) == NULL) {
-		len = _uls_tool_(strcpy)(fpath, _uls_sysinfo_(etc_dir));
+	if ((fin = uls_fp_open(fpath, ULS_FIO_READ)) == NULL) {
+		len = uls_strcpy(fpath, _uls_sysinfo_(etc_dir));
 		fpath[len++] = ULS_FILEPATH_DELIM;
-		len += _uls_tool_(strcpy)(fpath + len, TMP_ID_RANGES_FNAME);
-		if ((fin = _uls_tool_(fp_open)(fpath, ULS_FIO_READ)) == NULL) {
-			_uls_log(err_log)("Can't open the file '%s' for uch_ranges!", fpath);
+		len += uls_strcpy(fpath + len, TMP_ID_RANGES_FNAME);
+		if ((fin = uls_fp_open(fpath, ULS_FIO_READ)) == NULL) {
+			err_log("Can't open the file '%s' for uch_ranges!", fpath);
 			return -1;
 		}
 	}
 
-	if ((len=_uls_tool_(fp_gets)(fin, linebuff, sizeof(linebuff), 0)) < 1 || linebuff[0] != '#') {
-		_uls_log(err_log)("ULS: can't read %s!", fpath);
-		_uls_tool_(fp_close)(fin);
+	if ((len=uls_fp_gets(fin, linebuff, sizeof(linebuff), 0)) < 1 || linebuff[0] != '#') {
+		err_log("ULS: can't read %s!", fpath);
+		uls_fp_close(fin);
 		return -1;
 	}
 
 	wrdx.lptr = linebuff + 1; // next to '#'
-	_uls_tool_(init_arglst)(uls_ptr(wrdlst), 2);
+	uls_init_arglst(uls_ptr(wrdlst), 2);
 
-	if ((n_wrdlst = __uls_tool_(explode_str)(uls_ptr(wrdx), ' ', 0, uls_ptr(wrdlst))) < 1) {
-		_uls_log(err_log)("%s: incorrect format of the header data!", fpath);
-		_uls_tool_(fp_close)(fin);
-		_uls_tool_(deinit_arglst)(uls_ptr(wrdlst));
+	if ((n_wrdlst = _uls_explode_str(uls_ptr(wrdx), ' ', 0, uls_ptr(wrdlst))) < 1) {
+		err_log("%s: incorrect format of the header data!", fpath);
+		uls_fp_close(fin);
+		uls_deinit_arglst(uls_ptr(wrdlst));
 		return -1;
 	}
 
 	al_wrds = uls_parray_slots(uls_ptr(wrdlst.args));
 
 	// n_lines: # of records
-	n_lines = _uls_tool_(atoi)(al_wrds[0]->str);
-	uls_init_array_tool_type01(uls_ptr(id_range_list1), uch_range, n_lines);
+	n_lines = uls_atoi(al_wrds[0]->str);
+	uls_init_array_type01(uls_ptr(id_range_list1), uch_range, n_lines);
 
 	k = 0;
 	for (i=1; i <= n_lines; i++) {
-		if ((len=_uls_tool_(fp_gets)(fin, linebuff, sizeof(linebuff), 0)) <= ULS_EOF) {
+		if ((len=uls_fp_gets(fin, linebuff, sizeof(linebuff), 0)) <= ULS_EOF) {
 			if (len < ULS_EOF) stat = -1;
 			break;
 		}
 
 		wrdx.lptr = linebuff;
-		if ((rc=__uls_tool_(explode_str)(uls_ptr(wrdx), ' ', 0, uls_ptr(wrdlst))) == 0) {
+		if ((rc=_uls_explode_str(uls_ptr(wrdx), ' ', 0, uls_ptr(wrdlst))) == 0) {
 			continue;
 		}
 
 		/* charset range */
-		_uls_tool_(get_xrange)(al_wrds[0]->str, &val1, &val2);
+		uls_get_xrange(al_wrds[0]->str, &val1, &val2);
 
-		id_range = uls_get_array_slot_type01(uls_ptr(id_range_list1), k);
+		id_range = uls_array_get_slot_type01(uls_ptr(id_range_list1), k);
 		id_range->x1 = val1;
 		id_range->x2 = val2;
 		k++;
 	}
 
-	_uls_tool_(deinit_arglst)(uls_ptr(wrdlst));
-	_uls_tool_(fp_close)(fin);
+	uls_deinit_arglst(uls_ptr(wrdlst));
+	uls_fp_close(fin);
 
 	if (k < n_lines || n_lines <= 0) {
-		_uls_log(err_log)("%s: internal error to read lines!", fpath);
+		err_log("%s: internal error to read lines!", fpath);
 		stat = -2;
 	}
 
@@ -159,7 +154,7 @@ ULS_QUALIFIED_METHOD(load_uch_ranges_list)(void)
 }
 
 void
-ULS_QUALIFIED_METHOD(unload_uch_ranges_list)(void)
+unload_uch_ranges_list(void)
 {
-	uls_deinit_array_tool_type01(uls_ptr(id_range_list1), uch_range);
+	uls_deinit_array_type01(uls_ptr(id_range_list1), uch_range);
 }

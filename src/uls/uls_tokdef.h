@@ -30,15 +30,12 @@
 #ifndef __ULS_TOKDEF_H__
 #define __ULS_TOKDEF_H__
 
-#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_prim.h"
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
-#ifdef ULS_DECL_PUBLIC_TYPE
 #define ULS_KEYW_TYPE_IDSTR      0
 #define ULS_KEYW_TYPE_TWOPLUS    1
 #define ULS_KEYW_TYPE_1CHAR      2
@@ -53,14 +50,10 @@ extern "C" {
 
 ULS_DECLARE_STRUCT(tokdef_vx);
 ULS_DECLARE_STRUCT(tokdef);
-#endif
 
-#ifdef ULS_DECL_PUBLIC_TYPE
 ULS_DEFINE_DELEGATE_BEGIN(strcmp_proc,int)(const char* wrd1, const char* wrd2, int len);
 ULS_DEFINE_DELEGATE_END(strcmp_proc);
-#endif
 
-#ifdef ULS_DEF_PUBLIC_TYPE
 ULS_DEFINE_STRUCT(tokdef_name)
 {
 	uls_flags_t flags; // ULS_VX_TOKNAM_CHANGED
@@ -103,15 +96,12 @@ ULS_DEFINE_STRUCT_BEGIN(tokdef)
 };
 ULS_DEF_PARRAY(tokdef);
 
-#endif // ULS_DEF_PUBLIC_TYPE
-
 #ifdef ULS_DECL_PROTECTED_PROC
 void print_tokdef_vx_char(uls_uch_t uch, uls_tokdef_vx_ptr_t e_vx);
 void uls_init_tokdef_vx(uls_tokdef_vx_ptr_t e_vx, int tok_id, const char* name, uls_tokdef_ptr_t e);
 void uls_deinit_tokdef_vx(uls_tokdef_vx_ptr_t e_vx);
 #endif
 
-#ifdef ULS_DECL_PUBLIC_PROC
 int __is_in_ilist(int *ilst, int n_ilst, int val);
 
 uls_tokdef_ptr_t uls_create_tokdef(void);
@@ -124,13 +114,12 @@ void uls_destroy_tokdef_vx(uls_tokdef_vx_ptr_t e_vx);
 uls_tokdef_name_ptr_t alloc_tokdef_name(const char *name, uls_tokdef_vx_ptr_t view);
 void dealloc_tokdef_name(uls_tokdef_name_ptr_t e_nam);
 
-uls_tokdef_name_ptr_t find_tokdef_name(uls_tokdef_vx_ptr_t e_vx_leader, const char* name, uls_ptrtype_tool(outparam) parms);
+uls_tokdef_name_ptr_t find_tokdef_name(uls_tokdef_vx_ptr_t e_vx_leader, const char* name, uls_outparam_ptr_t parms);
 void insert_tokdef_name_to_group(uls_tokdef_vx_ptr_t e_vx_leader, uls_tokdef_name_ptr_t e_nam_prev, uls_tokdef_name_ptr_t e_nam);
 int append_tokdef_name_to_group(uls_tokdef_vx_ptr_t e_vx_leader, uls_tokdef_name_ptr_t e_nam);
 
 uls_tokdef_ptr_t search_tokdef_group(uls_tokdef_vx_ptr_t e_vx_leader, const char* keyw);
 void append_tokdef_to_group(uls_tokdef_vx_ptr_t e_vx_leader, uls_tokdef_ptr_t e_target);
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 }

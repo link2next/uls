@@ -30,16 +30,12 @@
 #ifndef __ULS_LITESC_H__
 #define __ULS_LITESC_H__
 
-#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_util.h"
 #include "uls/csz_stream.h"
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
-
-#ifdef ULS_DECL_PROTECTED_TYPE
 
 #define ULS_FL_ESCSTR_MASK         0x00FF
 #define ULS_FL_ESCSTR_HEXA         0x0100
@@ -88,9 +84,7 @@ ULS_DECLARE_STRUCT(escmap_container);
 ULS_DECLARE_STRUCT(escmap_pool);
 
 ULS_DECLARE_STRUCT(litesc_sysinfo);
-#endif
 
-#ifdef ULS_DEF_PROTECTED_TYPE
 ULS_DEFINE_STRUCT(escstr)
 {
 	char esc_ch;
@@ -115,7 +109,7 @@ ULS_DEF_PARRAY(escmap_container);
 
 ULS_DEFINE_STRUCT_BEGIN(escmap_pool)
 {
-	uls_type_tool(isp) strpool;
+	uls_isp_t strpool;
 	uls_decl_parray(escstr_containers, escmap_container);
 };
 
@@ -129,22 +123,21 @@ ULS_DEFINE_STRUCT_BEGIN(litesc_sysinfo)
 	uls_escmap_t uls_escstr__verbatim_moderate;
 	uls_escmap_t uls_escstr__modern;
 };
-#endif // ULS_DEF_PROTECTED_TYPE
 
-#if defined(__ULS_LITESC__) || defined(ULS_DEF_PRIVATE_DATA)
+#if defined(__ULS_LITESC__)
 ULS_DECL_STATIC uls_litesc_sysinfo_ptr_t uls_litesc;
 #endif
 
-#if defined(__ULS_LITESC__) || defined(ULS_DECL_PRIVATE_PROC)
+#if defined(__ULS_LITESC__)
 ULS_DECL_STATIC int get_escstr_unicode_opts(const char *lptr);
 ULS_DECL_STATIC int uls_register_hex_escstr(uls_escmap_ptr_t dst_map, uls_escmap_pool_ptr_t escmap_pool,
 	char esc_ch, int n, int zero_pad, int do_unicode);
 
-ULS_DECL_STATIC int extract_escstr_mapexpr(uls_ptrtype_tool(outparam) parms);
+ULS_DECL_STATIC int extract_escstr_mapexpr(uls_outparam_ptr_t parms);
 ULS_DECL_STATIC int __parse_escmap_optgrp(char *line, char esc_sym);
-ULS_DECL_STATIC int parse_escmap_optgrp(uls_escmap_ptr_t esc_map, uls_ptrtype_tool(outparam) parms);
+ULS_DECL_STATIC int parse_escmap_optgrp(uls_escmap_ptr_t esc_map, uls_outparam_ptr_t parms);
 
-#endif // ULS_DECL_PRIVATE_PROC
+#endif
 
 #ifdef ULS_DECL_PROTECTED_PROC
 int uls_escmap_canbe_escch(uls_uch_t uch);
@@ -174,7 +167,7 @@ int uls_register_escstr(uls_escmap_pool_ptr_t escmap_pool, uls_escmap_ptr_t map,
 int __uls_dup_escmap(uls_escmap_ptr_t src_map, uls_escmap_ptr_t dst_map, uls_escmap_pool_ptr_t escmap_pool, char esc_sym, int flags);
 uls_escmap_ptr_t uls_dup_escmap(uls_escmap_ptr_t src_map, uls_escmap_pool_ptr_t escmap_pool, char esc_sym, int flags);
 
-uls_escmap_ptr_t uls_parse_escmap_feature(uls_escmap_pool_ptr_t escmap_pool, uls_ptrtype_tool(outparam) parms);
+uls_escmap_ptr_t uls_parse_escmap_feature(uls_escmap_pool_ptr_t escmap_pool, uls_outparam_ptr_t parms);
 int uls_parse_escmap_mapping(uls_escmap_ptr_t esc_map, uls_escmap_pool_ptr_t escmap_pool, char *line);
 uls_escmap_ptr_t uls_parse_escmap(char *line, uls_escmap_pool_ptr_t escmap_pool);
 
@@ -183,9 +176,7 @@ void finalize_uls_litesc();
 
 #endif // ULS_DECL_PROTECTED_PROC
 
-#ifdef ULS_DECL_PUBLIC_PROC
-int uls_dec_escaped_char(uls_escmap_ptr_t map, uls_ptrtype_tool(outparam) parms, _uls_ptrtype_tool(csz_str) cszbuf);
-#endif
+int uls_dec_escaped_char(uls_escmap_ptr_t map, uls_outparam_ptr_t parms, csz_str_ptr_t cszbuf);
 
 #ifdef _ULS_CPLUSPLUS
 }

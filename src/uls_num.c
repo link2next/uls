@@ -27,17 +27,15 @@
  *
  *  This file is part of ULS, Unified Lexical Scheme.
  */
-#ifndef ULS_EXCLUDE_HFILES
 #define __ULS_NUM__
 #include "uls/uls_num.h"
 #include "uls/uls_prim.h"
 #include "uls/uls_log.h"
-#endif
 
 #define num2char_radix(val) (((val) >= 10) ?  (val) - 10 + 'A' : (val) + '0')
 
 ULS_DECL_STATIC uls_uint64
-ULS_QUALIFIED_METHOD(get_uint64_from_radix_numstr)(int radix, const char *numbuf, int numlen1)
+get_uint64_from_radix_numstr(int radix, const char *numbuf, int numlen1)
 {
 	int i, n;
 	uls_uint64 num = 0;
@@ -54,7 +52,7 @@ ULS_QUALIFIED_METHOD(get_uint64_from_radix_numstr)(int radix, const char *numbuf
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_cvt_radix_simple_num)(int radix1, const char *numbuf1, int numlen1, int radix2, uls_outbuf_ptr_t outbuf, int k)
+uls_cvt_radix_simple_num(int radix1, const char *numbuf1, int numlen1, int radix2, uls_outbuf_ptr_t outbuf, int k)
 {
 	uls_uint64 num;
 	int k0, val;
@@ -87,7 +85,7 @@ ULS_QUALIFIED_METHOD(uls_cvt_radix_simple_num)(int radix1, const char *numbuf1, 
 }
 
 int
-ULS_QUALIFIED_METHOD(add_decstr_by_xx)(const char* numstr, int n_digits, int nn, char* outbuf)
+add_decstr_by_xx(const char* numstr, int n_digits, int nn, char* outbuf)
 {
 	int val, ch, carry;
 	int i, k, a;
@@ -134,6 +132,7 @@ ULS_QUALIFIED_METHOD(add_decstr_by_xx)(const char* numstr, int n_digits, int nn,
 	// the second digit
 	if ((a = nn / 10) != 0) {
 		if (n_digits < 2) outbuf[1] = 0;
+
 		if ((val = carry + a  + outbuf[1]) >= 10) {
 			carry = 1; val -= 10;
 		} else {
@@ -176,7 +175,7 @@ ULS_QUALIFIED_METHOD(add_decstr_by_xx)(const char* numstr, int n_digits, int nn,
 }
 
 int
-ULS_QUALIFIED_METHOD(mul_decstr_by_xx)(const char* numstr, int n_digits, int multiplier, char* outbuf)
+mul_decstr_by_xx(const char* numstr, int n_digits, int multiplier, char* outbuf)
 {
 	// numstr * multiplier --> outbuf
 	int i, n1, k, a, b, val, carry = 0;
@@ -247,14 +246,14 @@ ULS_QUALIFIED_METHOD(mul_decstr_by_xx)(const char* numstr, int n_digits, int mul
 }
 
 int
-ULS_QUALIFIED_METHOD(div_decstr_by_16)(char* wrd, uls_outparam_ptr_t parms)
+div_decstr_by_16(char* wrd, uls_outparam_ptr_t parms)
 {
 	char  *wrd_end;
 	char *ptr, *outptr;
 	int a, len, rem;
 
 	if ((len=parms->len) <= 0 || !uls_isdigit(wrd[0])) {
-		_uls_log(err_panic)("%s: invalid format!", wrd);
+		err_panic("%s: invalid format!", wrd);
 	}
 	wrd_end = wrd + parms->len;
 
@@ -293,7 +292,7 @@ ULS_QUALIFIED_METHOD(div_decstr_by_16)(char* wrd, uls_outparam_ptr_t parms)
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(binstr2hexval)(const char* bi_str, int m)
+binstr2hexval(const char* bi_str, int m)
 {
 	int hex_val = 0;
 	int j;
@@ -306,7 +305,7 @@ ULS_QUALIFIED_METHOD(binstr2hexval)(const char* bi_str, int m)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_bin2hex_str)(const char* numstr, int n_digits, char* outbuf)
+uls_bin2hex_str(const char* numstr, int n_digits, char* outbuf)
 {
 	// zeros in front of numstr is NOT permitted.
 	int i, k=0, n, m;
@@ -338,7 +337,7 @@ ULS_QUALIFIED_METHOD(uls_bin2hex_str)(const char* numstr, int n_digits, char* ou
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_quaternary2hex_str)(const char* numstr, int n_digits, char* outbuf)
+uls_quaternary2hex_str(const char* numstr, int n_digits, char* outbuf)
 {
 	// zeros in front of numstr is NOT permitted.
 	int i, k=0, n, m;
@@ -370,7 +369,7 @@ ULS_QUALIFIED_METHOD(uls_quaternary2hex_str)(const char* numstr, int n_digits, c
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(get_hexanum_from_octal)(uls_outparam_ptr_t parms, int a_bits)
+get_hexanum_from_octal(uls_outparam_ptr_t parms, int a_bits)
 {
 	unsigned int two_octals = parms->x1;
 	int n, b_bits; // a_bits + b_bits == 4;
@@ -394,7 +393,7 @@ ULS_QUALIFIED_METHOD(get_hexanum_from_octal)(uls_outparam_ptr_t parms, int a_bit
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_oct2hex_str)(const char *numbuf, int n_digits, char* outbuf)
+uls_oct2hex_str(const char *numbuf, int n_digits, char* outbuf)
 {
 	// write hexa-digits to outbuf without prepending the '0x'.
 	const char  *lptr;
@@ -405,7 +404,6 @@ ULS_QUALIFIED_METHOD(uls_oct2hex_str)(const char *numbuf, int n_digits, char* ou
 	uls_outparam_t parms1;
 
 	if (n_digits < 0) n_digits = uls_strlen(numbuf);
-
 	lptr = numbuf;
 	lptr_end = lptr + n_digits;
 
@@ -439,7 +437,6 @@ ULS_QUALIFIED_METHOD(uls_oct2hex_str)(const char *numbuf, int n_digits, char* ou
 		 */
 		parms1.x1 = o_num;
 		h_val = get_hexanum_from_octal(uls_ptr(parms1), a_bits);
-
 		ch = num2char_radix(h_val);
 		o_num = parms1.x2;
 
@@ -484,7 +481,7 @@ ULS_QUALIFIED_METHOD(uls_oct2hex_str)(const char *numbuf, int n_digits, char* ou
 }
 
 ULS_DECL_STATIC char*
-ULS_QUALIFIED_METHOD(decstr2hexbin)(uls_outparam_ptr_t parms)
+decstr2hexbin(uls_outparam_ptr_t parms)
 {
 	// In case decimal string is "143230",
 	// return-value(outptr): pointer of hexa bin: 0x022F7E
@@ -527,7 +524,7 @@ ULS_QUALIFIED_METHOD(decstr2hexbin)(uls_outparam_ptr_t parms)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_dec2hex_str)(char* wrd, int wrdlen, char* outptr)
+uls_dec2hex_str(char* wrd, int wrdlen, char* outptr)
 {
 	// reutrn the length of a string of hexa-digits without prepending the '0x'.
 	// 'outptr' can be 'wrd'
@@ -559,7 +556,7 @@ ULS_QUALIFIED_METHOD(uls_dec2hex_str)(char* wrd, int wrdlen, char* outptr)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_cvt_radix2dec_str)(int radix, const char *numbuf1, int n1_digits, uls_outbuf_ptr_t outbuf)
+uls_cvt_radix2dec_str(int radix, const char *numbuf1, int n1_digits, uls_outbuf_ptr_t outbuf)
 {
 	int i, m;
 	int n2_digits;
@@ -601,7 +598,7 @@ ULS_QUALIFIED_METHOD(uls_cvt_radix2dec_str)(int radix, const char *numbuf1, int 
 }
 
 int
-ULS_QUALIFIED_METHOD(__uls_cvt_radix2hexa_str_generic)(int radix, const char *numbuf, int n_digits, uls_outbuf_ptr_t outbuf, int k)
+__uls_cvt_radix2hexa_str_generic(int radix, const char *numbuf, int n_digits, uls_outbuf_ptr_t outbuf, int k)
 {
 	// Don't input number='-0'
 	int k0, val, n2_digits;
@@ -636,7 +633,7 @@ ULS_QUALIFIED_METHOD(__uls_cvt_radix2hexa_str_generic)(int radix, const char *nu
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_cvt_radix2hexa_str_generic)(int radix, const char *numbuf, int n_digits, uls_outbuf_ptr_t outbuf, int k)
+uls_cvt_radix2hexa_str_generic(int radix, const char *numbuf, int n_digits, uls_outbuf_ptr_t outbuf, int k)
 {
 	if (n_digits < 0) n_digits = uls_strlen(numbuf);
 
@@ -651,7 +648,7 @@ ULS_QUALIFIED_METHOD(uls_cvt_radix2hexa_str_generic)(int radix, const char *numb
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_cvt_radix_to_hexadecimal_str)(int radix, const char *numbuf1, int n1_digits, uls_outbuf_ptr_t outbuf, int k)
+uls_cvt_radix_to_hexadecimal_str(int radix, const char *numbuf1, int n1_digits, uls_outbuf_ptr_t outbuf, int k)
 {
 	int n2_digits;
 	char *outptr;
@@ -691,7 +688,7 @@ ULS_QUALIFIED_METHOD(uls_cvt_radix_to_hexadecimal_str)(int radix, const char *nu
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_radix2hexadecimal_str)(int radix1, const char *numbuf1, int n1_digits, uls_outbuf_ptr_t outbuf, int k)
+uls_radix2hexadecimal_str(int radix1, const char *numbuf1, int n1_digits, uls_outbuf_ptr_t outbuf, int k)
 {
 	int radix2 = 16;
 	int n_max_digits;
@@ -722,7 +719,7 @@ ULS_QUALIFIED_METHOD(uls_radix2hexadecimal_str)(int radix1, const char *numbuf1,
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(skip_prefixed_zeros)(uls_outparam_ptr_t parms)
+skip_prefixed_zeros(uls_outparam_ptr_t parms)
 {
 	// skip the zeros after '0x', '0b', '0o'.
 	const char *lptr0 = parms->lptr, *lptr;
@@ -755,7 +752,7 @@ ULS_QUALIFIED_METHOD(skip_prefixed_zeros)(uls_outparam_ptr_t parms)
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__skip_radix_number)(uls_outparam_ptr_t parms, int radix, uls_uch_t numsep,
+__skip_radix_number(uls_outparam_ptr_t parms, int radix, uls_uch_t numsep,
 	uls_outbuf_ptr_t numbuf, int k)
 {
 	const char *lptr = parms->lptr, *lptr1;
@@ -798,7 +795,7 @@ ULS_QUALIFIED_METHOD(__skip_radix_number)(uls_outparam_ptr_t parms, int radix, u
 }
 
 int
-ULS_QUALIFIED_METHOD(skip_radix_number)(uls_outparam_ptr_t parms, int radix, uls_outbuf_ptr_t numbuf, int k)
+skip_radix_number(uls_outparam_ptr_t parms, int radix, uls_outbuf_ptr_t numbuf, int k)
 {
 	const char *lptr0 = parms->lptr, *lptr1, *lptr;
 	uls_uch_t numsep = parms->uch;
@@ -844,7 +841,7 @@ ULS_QUALIFIED_METHOD(skip_radix_number)(uls_outparam_ptr_t parms, int radix, uls
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(check_expo)(uls_outparam_ptr_t parms)
+check_expo(uls_outparam_ptr_t parms)
 {
 	int expo, minus = 0;
 	const char *lptr0=parms->lptr, *lptr;
@@ -892,7 +889,7 @@ ULS_QUALIFIED_METHOD(check_expo)(uls_outparam_ptr_t parms)
 } while (0)
 
 int
-ULS_QUALIFIED_METHOD(num2stdfmt_0)(uls_outparam_ptr_t parms, uls_outbuf_ptr_t numbuf, int k)
+num2stdfmt_0(uls_outparam_ptr_t parms, uls_outbuf_ptr_t numbuf, int k)
 {
 	// process only integer, 0(zero), octal, binary, hexadecimal
 	const char *lptr=parms->lptr, *lptr0, *lptr1;
@@ -987,7 +984,7 @@ ULS_QUALIFIED_METHOD(num2stdfmt_0)(uls_outparam_ptr_t parms, uls_outbuf_ptr_t nu
 #undef ZERO_RET
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(append_expo)(int num, uls_outbuf_ptr_t numbuf, int k)
+append_expo(int num, uls_outbuf_ptr_t numbuf, int k)
 {
 	char numstr[ULS_MAXSZ_NUMSTR + 1];
 	int j;
@@ -1019,13 +1016,14 @@ ULS_QUALIFIED_METHOD(append_expo)(int num, uls_outbuf_ptr_t numbuf, int k)
 	parms1.lptr_end = var3; parms1.x2 = var4; } while (0)
 
 int
-ULS_QUALIFIED_METHOD(num2stdfmt)(uls_outparam_ptr_t parms, uls_outbuf_ptr_t numbuf, int k)
+num2stdfmt(uls_outparam_ptr_t parms, uls_outbuf_ptr_t numbuf, int k)
 {
 	const char *lptr=parms->lptr, *lptr1, *lptr2;
 	int  expo, n1, n2, k0, k1, j, m, n_zeros, has_zero;
 	uls_uch_t numsep = parms->uch;
 	char ch, ch2;
 	uls_outparam_t parms1;
+
 
 	ch = *lptr;
 	lptr1 = lptr; // next to '-'
@@ -1078,6 +1076,7 @@ ULS_QUALIFIED_METHOD(num2stdfmt)(uls_outparam_ptr_t parms, uls_outbuf_ptr_t numb
 		if ((expo = n_zeros) > 0) expo = -expo;
 		lptr2 = lptr;
 
+
 	} else if (uls_isdigit(ch)) {
 
 		parms1.lptr = lptr;
@@ -1125,7 +1124,7 @@ ULS_QUALIFIED_METHOD(num2stdfmt)(uls_outparam_ptr_t parms, uls_outbuf_ptr_t numb
 				parms->lptr = lptr;
 
 				j = (numbuf->buf[0] == '-') ? 1 : 0;
-				parms->len = _uls_tool_(dec2hex_str)(numbuf->buf + k0, k - k0, numbuf->buf + j);
+				parms->len = uls_dec2hex_str(numbuf->buf + k0, k - k0, numbuf->buf + j);
 				k = j + parms->len;
 
 				__FORCE2USE(lptr1, n1, lptr1, n1);

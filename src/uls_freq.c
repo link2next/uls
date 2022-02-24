@@ -27,16 +27,14 @@
  *
  *  This file is part of ULS, Unified Lexical Scheme.
  */
-#ifndef ULS_EXCLUDE_HFILES
 #define __ULS_FREQ__
 #include "uls/uls_freq.h"
 #include "uls/uls_misc.h"
 #include "uls/uls_fileio.h"
 #include "uls/uls_log.h"
-#endif
 
 ULS_DECL_STATIC void
-ULS_QUALIFIED_METHOD(normalize_keyw_stat_list)(uls_keyw_stat_list_ptr_t kwslst)
+normalize_keyw_stat_list(uls_keyw_stat_list_ptr_t kwslst)
 {
 	uls_ref_parray_init(lst, keyw_stat, uls_ptr(kwslst->lst));
 	uls_decl_parray_slots_init(slots_lst, keyw_stat, lst);
@@ -67,33 +65,33 @@ ULS_QUALIFIED_METHOD(normalize_keyw_stat_list)(uls_keyw_stat_list_ptr_t kwslst)
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(ulf_read_config_var)(int lno, char* lptr, ulf_header_ptr_t hdr)
+ulf_read_config_var(int lno, char* lptr, ulf_header_ptr_t hdr)
 {
 	const char  *wrd;
 	int len, stat = 0;
-	uls_type_tool(outparam) parms;
-	uls_type_tool(version) ver;
-	uls_type_tool(wrd) wrdx;
+	uls_outparam_t parms;
+	uls_version_t ver;
+	uls_wrd_t wrdx;
 
 	wrdx.lptr = lptr;
-	wrd = __uls_tool_(splitstr)(uls_ptr(wrdx));
+	wrd = _uls_splitstr(uls_ptr(wrdx));
 
 	if (uls_streql(wrd, "INITIAL_HASHCODE:")) {
-		wrd = __uls_tool_(splitstr)(uls_ptr(wrdx));
+		wrd = _uls_splitstr(uls_ptr(wrdx));
 		if (wrd[0] == '0' && wrd[1] == 'x') {
 			parms.lptr = wrd + 2;
-			hdr->init_hcode = _uls_tool_(skip_atox)(uls_ptr(parms));
+			hdr->init_hcode = uls_skip_atox(uls_ptr(parms));
 			wrd = parms.lptr;
 		} else {
 			parms.lptr = wrd;
-			hdr->init_hcode = _uls_tool_(skip_atou)(uls_ptr(parms));
+			hdr->init_hcode = uls_skip_atou(uls_ptr(parms));
 			wrd = parms.lptr;
 		}
 
 	} else if (uls_streql(wrd, "HASH_ALGORITHM:")) {
-		wrd = __uls_tool_(splitstr)(uls_ptr(wrdx));
+		wrd = _uls_splitstr(uls_ptr(wrdx));
 
-		len = _uls_tool_(str_toupper)(wrd, (char *) wrd, -1);
+		len = uls_str_toupper(wrd, (char *) wrd, -1);
 		if (len > ULS_LEXSTR_MAXSIZ || !uls_streql(wrd, ULS_HASH_ALGORITHM)) {
 			stat = -1;
 		} else {
@@ -101,26 +99,26 @@ ULS_QUALIFIED_METHOD(ulf_read_config_var)(int lno, char* lptr, ulf_header_ptr_t 
 		}
 
 	} else if (uls_streql(wrd, "HASH_TABLE_SIZE:")) {
-		if ((len=_uls_tool_(atoi)(__uls_tool_(splitstr)(uls_ptr(wrdx)))) <= 0) {
-			_uls_log(err_log)("Improper hash_table_size", len);
+		if ((len=uls_atoi(_uls_splitstr(uls_ptr(wrdx)))) <= 0) {
+			err_log("Improper hash_table_size", len);
 			stat = -1;
 		} else {
 			hdr->hash_table_size = len;
 		}
 
 	} else if (uls_streql(wrd, "HASH_VERSION:")) {
-		wrd = __uls_tool_(splitstr)(uls_ptr(wrdx));
+		wrd = _uls_splitstr(uls_ptr(wrdx));
 
-		if (_uls_tool_(version_pars_str)(wrd, uls_ptr(ver)) < 0 ||
+		if (uls_version_pars_str(wrd, uls_ptr(ver)) < 0 ||
 			!uls_is_ulf_compatible(uls_ptr(ver), uls_ptr(hdr->hfunc_ver))) {
-			_uls_log(err_log)("unsupported version(hash-ulf)");
+			err_log("unsupported version(hash-ulf)");
 			stat = -1;
 		}
 
-		_uls_tool_(version_copy)(uls_ptr(hdr->hfunc_ver), uls_ptr(ver));
+		uls_version_copy(uls_ptr(hdr->hfunc_ver), uls_ptr(ver));
 
 	} else {
-		_uls_log(err_log)("%s: unknown attribute in ULF", wrd);
+		err_log("%s: unknown attribute in ULF", wrd);
 		stat = -1;
 	}
 
@@ -128,46 +126,46 @@ ULS_QUALIFIED_METHOD(ulf_read_config_var)(int lno, char* lptr, ulf_header_ptr_t 
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(ulf_read_header)(FILE* fin, ulf_header_ptr_t hdr)
+ulf_read_header(FILE* fin, ulf_header_ptr_t hdr)
 {
 	const char magic_code[9] = { (char) 0xEF, (char) 0xBB, (char) 0xBF, '#', '@', 'u', 'l', 'f', '-' };
 	int  magic_code_len = 9;
 	char  linebuff[ULS_LINEBUFF_SIZ__ULF+1], *lptr, *wrd;
-	uls_type_tool(version) ver;
+	uls_version_t ver;
 	int   linelen, lno;
 
 	// Read Header upto '%%'
 	lno = 0;
 
-	if ((linelen = _uls_tool_(fp_gets)(fin, linebuff, sizeof(linebuff), 0)) < magic_code_len ||
-		_uls_tool_(memcmp)(linebuff, magic_code, magic_code_len) != 0) {
-		_uls_log(err_log)("Improper ulf file format");
+	if ((linelen = uls_fp_gets(fin, linebuff, sizeof(linebuff), 0)) < magic_code_len ||
+		uls_memcmp(linebuff, magic_code, magic_code_len) != 0) {
+		err_log("Improper ulf file format");
 		return -1;
 	}
 
 	wrd = linebuff + magic_code_len;
-	_uls_tool(str_trim_end)(wrd, linelen - magic_code_len);
+	str_trim_end(wrd, linelen - magic_code_len);
 
-	if (_uls_tool_(version_pars_str)(wrd, uls_ptr(ver)) < 0 ||
+	if (uls_version_pars_str(wrd, uls_ptr(ver)) < 0 ||
 		!uls_is_ulf_compatible(uls_ptr(ver), uls_ptr(hdr->filever))) {
-		_uls_log(err_log)("unsupported version(ulf): %s", wrd);
+		err_log("unsupported version(ulf): %s", wrd);
 		return -2;
 	}
 
-	_uls_tool_(version_copy)(uls_ptr(hdr->filever), uls_ptr(ver));
+	uls_version_copy(uls_ptr(hdr->filever), uls_ptr(ver));
 
 	while (1) {
-		if ((linelen=_uls_tool_(fp_gets)(fin, linebuff, sizeof(linebuff), 0)) <= ULS_EOF) {
+		if ((linelen=uls_fp_gets(fin, linebuff, sizeof(linebuff), 0)) <= ULS_EOF) {
 			if (linelen < ULS_EOF) lno = -1;
 			break;
 		}
 		++lno;
 
-		if (!_uls_tool_(strncmp)(linebuff, "%%%%", 2)) {
+		if (!uls_strncmp(linebuff, "%%%%", 2)) {
 			break;
 		}
 
-		lptr = _uls_tool(skip_blanks)(linebuff);
+		lptr = skip_blanks(linebuff);
 		if (*lptr=='\0' || *lptr=='#') continue;
 
 		if (ulf_read_config_var(lno, lptr, hdr) < 0) {
@@ -179,8 +177,8 @@ ULS_QUALIFIED_METHOD(ulf_read_header)(FILE* fin, ulf_header_ptr_t hdr)
 	return lno;
 }
 
-ULS_QUALIFIED_RETTYP(uls_keyw_stat_list_ptr_t)
-ULS_QUALIFIED_METHOD(make_keyw_stat_for_load)(uls_tokdef_ptr_t tok_info_lst, int n_tok_info_lst, ulf_header_ptr_t hdr)
+uls_keyw_stat_list_ptr_t
+make_keyw_stat_for_load(uls_tokdef_ptr_t tok_info_lst, int n_tok_info_lst, ulf_header_ptr_t hdr)
 {
 	uls_keyw_stat_list_ptr_t kwslst;
 	uls_ref_parray(lst, keyw_stat);
@@ -188,6 +186,9 @@ ULS_QUALIFIED_METHOD(make_keyw_stat_for_load)(uls_tokdef_ptr_t tok_info_lst, int
 	uls_keyw_stat_ptr_t kwstat;
 	uls_tokdef_ptr_t e, e_link;
 	int   i, n_lst;
+
+	// tok_info_lst may be NULL and n_tok_info_lst == 0
+	// set the default values for ulf
 
 	kwslst = uls_alloc_object(uls_keyw_stat_list_t);
 
@@ -217,10 +218,10 @@ ULS_QUALIFIED_METHOD(make_keyw_stat_for_load)(uls_tokdef_ptr_t tok_info_lst, int
 }
 
 void
-ULS_QUALIFIED_METHOD(ulf_init_header)(ulf_header_ptr_t hdr)
+ulf_init_header(ulf_header_ptr_t hdr)
 {
-	_uls_tool_(version_make)(uls_ptr(hdr->filever), 0, 0, 0);
-	_uls_tool_(version_make)(uls_ptr(hdr->hfunc_ver), 0, 0, 0);
+	uls_version_make(uls_ptr(hdr->filever), 0, 0, 0);
+	uls_version_make(uls_ptr(hdr->hfunc_ver), 0, 0, 0);
 
 	hdr->init_hcode = 0;
 
@@ -231,13 +232,13 @@ ULS_QUALIFIED_METHOD(ulf_init_header)(ulf_header_ptr_t hdr)
 }
 
 void
-ULS_QUALIFIED_METHOD(ulf_deinit_header)(ulf_header_ptr_t hdr)
+ulf_deinit_header(ulf_header_ptr_t hdr)
 {
 	uls_deinit_namebuf(hdr->hash_algorithm);
 }
 
-ULS_QUALIFIED_RETTYP(uls_keyw_stat_list_ptr_t)
-ULS_QUALIFIED_METHOD(ulf_load)(uls_tokdef_ptr_t tok_info_lst, int n_tok_info_lst,
+uls_keyw_stat_list_ptr_t
+ulf_load(uls_tokdef_ptr_t tok_info_lst, int n_tok_info_lst,
 	FILE *fin, ulf_header_ptr_t hdr, uls_kwtable_ptr_t kw_tbl)
 {
 	uls_keyw_stat_list_ptr_t kwslst;
@@ -249,26 +250,26 @@ ULS_QUALIFIED_METHOD(ulf_load)(uls_tokdef_ptr_t tok_info_lst, int n_tok_info_lst
 	uls_hashfunc_t hashfunc;
 	uls_dflhash_state_ptr_t hash_stat;
 
-	uls_type_tool(wrd) wrdx;
+	uls_wrd_t wrdx;
 
 	ulf_init_header(hdr);
 
-	_uls_tool_(version_make)(uls_ptr(hdr->filever),
+	uls_version_make(uls_ptr(hdr->filever),
 		ULF_VERSION_MAJOR, ULF_VERSION_MINOR, ULF_VERSION_DEBUG);
 
-	_uls_tool_(version_make)(uls_ptr(hdr->hfunc_ver),
+	uls_version_make(uls_ptr(hdr->hfunc_ver),
 		ULF_VERSION_HASHFUNC_MAJOR, ULF_VERSION_HASHFUNC_MINOR,
 		ULF_VERSION_HASHFUNC_DEBUG);
 
 	if ((kwslst = make_keyw_stat_for_load(tok_info_lst, n_tok_info_lst, hdr)) == nilptr) {
 		if (n_tok_info_lst > 0) {
-			_uls_log(err_log)("%s: fail to make keyw_stats", __FUNCTION__);
+			err_log("%s: fail to make keyw_stats", __FUNCTION__);
 			return nilptr;
 		}
 	}
 
 	if ((lno=ulf_read_header(fin, hdr)) < 0) {
-		_uls_log(err_log)("%s: fail to read ulf-header", __FUNCTION__);
+		err_log("%s: fail to read ulf-header", __FUNCTION__);
 		ulc_free_kwstat_list(kwslst);
 		return nilptr;
 	}
@@ -278,7 +279,7 @@ ULS_QUALIFIED_METHOD(ulf_load)(uls_tokdef_ptr_t tok_info_lst, int n_tok_info_lst
 		hashfunc = nilptr; // use the default hash-func as it is.
 		hash_stat = uls_ptr(kw_tbl->dflhash_stat); // the params for the default hahs-func.
 	} else {
-		_uls_log(err_log)("%s: unknown hash-algorithm '%s'", __FUNCTION__, uls_get_namebuf_value(hdr->hash_algorithm));
+		err_log("%s: unknown hash-algorithm '%s'", __FUNCTION__, uls_get_namebuf_value(hdr->hash_algorithm));
 		ulc_free_kwstat_list(kwslst);
 		return nilptr;
 	}
@@ -286,9 +287,9 @@ ULS_QUALIFIED_METHOD(ulf_load)(uls_tokdef_ptr_t tok_info_lst, int n_tok_info_lst
 	uls_reset_kwtable(kw_tbl, hdr->hash_table_size, hashfunc, hash_stat);
 
 	while (1) {
-		if ((linelen=_uls_tool_(fp_gets)(fin, linebuff, sizeof(linebuff), 0)) <= ULS_EOF) {
+		if ((linelen=uls_fp_gets(fin, linebuff, sizeof(linebuff), 0)) <= ULS_EOF) {
 			if (linelen < ULS_EOF) {
-				_uls_log(err_log)("%s: fail to read ulf-header(io-error)", __FUNCTION__);
+				err_log("%s: fail to read ulf-header(io-error)", __FUNCTION__);
 				ulc_free_kwstat_list(kwslst);
 				return nilptr;
 			}
@@ -296,15 +297,15 @@ ULS_QUALIFIED_METHOD(ulf_load)(uls_tokdef_ptr_t tok_info_lst, int n_tok_info_lst
 		}
 		++lno;
 
-		lptr = _uls_tool(skip_blanks)(linebuff);
+		lptr = skip_blanks(linebuff);
 		if (*lptr=='\0' || *lptr=='#') continue;
 
 		wrdx.lptr = lptr;
-		wrd = __uls_tool_(splitstr)(uls_ptr(wrdx));
+		wrd = _uls_splitstr(uls_ptr(wrdx));
 
 		if ((keyw_stat=ulc_search_kwstat_list(kwslst, wrd)) != nilptr) {
-			wrd = __uls_tool_(splitstr)(uls_ptr(wrdx));
-			keyw_stat->freq = _uls_tool_(atoi)(wrd);
+			wrd = _uls_splitstr(uls_ptr(wrdx));
+			keyw_stat->freq = uls_atoi(wrd);
 		}
 
 		lptr = wrdx.lptr;
@@ -316,7 +317,7 @@ ULS_QUALIFIED_METHOD(ulf_load)(uls_tokdef_ptr_t tok_info_lst, int n_tok_info_lst
 }
 
 int
-ULS_QUALIFIED_METHOD(keyw_stat_comp_by_freq)(const uls_voidptr_t a, const uls_voidptr_t b)
+keyw_stat_comp_by_freq(const uls_voidptr_t a, const uls_voidptr_t b)
 {
 	const uls_keyw_stat_ptr_t a1 = (const uls_keyw_stat_ptr_t ) a;
 	const uls_keyw_stat_ptr_t b1 = (const uls_keyw_stat_ptr_t ) b;
@@ -325,7 +326,7 @@ ULS_QUALIFIED_METHOD(keyw_stat_comp_by_freq)(const uls_voidptr_t a, const uls_vo
 }
 
 int
-ULS_QUALIFIED_METHOD(ulf_create_file)(int n_hcodes, uls_uint32 *hcodes,
+ulf_create_file(int n_hcodes, uls_uint32 *hcodes,
 	int htab_siz, uls_keyw_stat_list_ptr_t kwslst, FILE* fout)
 {
 	uls_ref_parray_init(lst, keyw_stat, uls_ptr(kwslst->lst));
@@ -336,38 +337,38 @@ ULS_QUALIFIED_METHOD(ulf_create_file)(int n_hcodes, uls_uint32 *hcodes,
 
 	if (htab_siz <= 0) return -1;
 
-	if (_uls_log_(sysprn_open)(fout, nilptr) < 0) {
-		_uls_log(err_log)("%s: create an output file", __FUNCTION__);
+	if (uls_sysprn_open(fout, nilptr) < 0) {
+		err_log("%s: create an output file", __FUNCTION__);
 		return -1;
 	}
 
-	_uls_tool_(fp_putc)(fout, (char) 0xEF);
-	_uls_tool_(fp_putc)(fout, (char) 0xBB);
-	_uls_tool_(fp_putc)(fout, (char) 0xBF);
-	_uls_log_(sysprn)("#@ulf-%d.%d", ULF_VERSION_MAJOR, ULF_VERSION_MINOR);
-	_uls_log_(sysprn)(".%d\n\n", ULF_VERSION_DEBUG);
+	uls_fp_putc(fout, (char) 0xEF);
+	uls_fp_putc(fout, (char) 0xBB);
+	uls_fp_putc(fout, (char) 0xBF);
+	uls_sysprn("#@ulf-%d.%d", ULF_VERSION_MAJOR, ULF_VERSION_MINOR);
+	uls_sysprn(".%d\n\n", ULF_VERSION_DEBUG);
 
-	_uls_log_(sysprn)("HASH_ALGORITHM: %s\n", ULS_HASH_ALGORITHM);
-	_uls_log_(sysprn)("HASH_VERSION: %d.%d", ULF_VERSION_HASHFUNC_MAJOR, ULF_VERSION_HASHFUNC_MINOR);
-	_uls_log_(sysprn)(".%d\n", ULF_VERSION_HASHFUNC_DEBUG);
+	uls_sysprn("HASH_ALGORITHM: %s\n", ULS_HASH_ALGORITHM);
+	uls_sysprn("HASH_VERSION: %d.%d", ULF_VERSION_HASHFUNC_MAJOR, ULF_VERSION_HASHFUNC_MINOR);
+	uls_sysprn(".%d\n", ULF_VERSION_HASHFUNC_DEBUG);
 
-	_uls_log_(sysprn)("HASH_TABLE_SIZE: %d\n", htab_siz);
+	uls_sysprn("HASH_TABLE_SIZE: %d\n", htab_siz);
 
-	_uls_log_(sysprn)("INITIAL_HASHCODE: ");
+	uls_sysprn("INITIAL_HASHCODE: ");
 	for (i=0; i<n_hcodes; i++) {
-		_uls_log_(sysprn)(" 0x%08X", hcodes[i]);
+		uls_sysprn(" 0x%08X", hcodes[i]);
 	}
-	_uls_log_(sysprn)("\n");
+	uls_sysprn("\n");
 
-	_uls_log_(sysprn)("\n%%%%\n\n");
+	uls_sysprn("\n%%%%\n\n");
 
 	slots_lst = uls_parray_slots(lst);
 	for (i=0; i<kwslst->lst.n; i++) {
 		kwstat = slots_lst[i];
 		if (kwstat->freq >= 0)
-			_uls_log_(sysprn)("%-24s %d\n", kwstat->keyw, kwstat->freq);
+			uls_sysprn("%-24s %d\n", kwstat->keyw, kwstat->freq);
 	}
 
-	_uls_log_(sysprn_close)();
+	uls_sysprn_close();
 	return 0;
 }

@@ -27,15 +27,13 @@
  *
  *  This file is part of ULS, Unified Lexical Scheme.
  */
-#ifndef ULS_EXCLUDE_HFILES
 #define __ULS_IDKEYW__
 #include "uls/idkeyw.h"
 #include "uls/uls_misc.h"
 #include "uls/uls_log.h"
-#endif
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__keyw_strncmp_case_sensitive)(const char* str1, const char* str2, int len)
+__keyw_strncmp_case_sensitive(const char* str1, const char* str2, int len)
 {
 	int i, ch1, ch2, stat=0;
 
@@ -53,7 +51,7 @@ ULS_QUALIFIED_METHOD(__keyw_strncmp_case_sensitive)(const char* str1, const char
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__keyw_hashfunc_case_sensitive)(uls_voidptr_t tbl_info, const char *name)
+__keyw_hashfunc_case_sensitive(uls_voidptr_t tbl_info, const char *name)
 {
 	uls_dflhash_state_ptr_t tbl = (uls_dflhash_state_ptr_t) tbl_info;
 
@@ -65,7 +63,7 @@ ULS_QUALIFIED_METHOD(__keyw_hashfunc_case_sensitive)(uls_voidptr_t tbl_info, con
 	if (n_slots <= 0) return 0;
 
 	if (n_shifts < 0) {
-		n_shifts = _uls_tool_(range_of_bits)(n_slots) - 8;
+		n_shifts = uls_range_of_bits(n_slots) - 8;
 		if (n_shifts < 0) n_shifts = 0;
 	}
 
@@ -79,12 +77,12 @@ ULS_QUALIFIED_METHOD(__keyw_hashfunc_case_sensitive)(uls_voidptr_t tbl_info, con
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__keyw_strncmp_case_insensitive)(const char* wrd, const char* keyw, int len)
+__keyw_strncmp_case_insensitive(const char* wrd, const char* keyw, int len)
 {
 	int i, ch1, ch2, stat=0;
 
 	for (i=0; i<len; i++) {
-		ch1 = _uls_tool_(toupper)(wrd[i]);
+		ch1 = uls_toupper(wrd[i]);
 		ch2 = keyw[i];
 
 		if (ch1 != ch2) {
@@ -97,7 +95,7 @@ ULS_QUALIFIED_METHOD(__keyw_strncmp_case_insensitive)(const char* wrd, const cha
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__keyw_hashfunc_case_insensitive)(uls_voidptr_t tbl_info, const char *name)
+__keyw_hashfunc_case_insensitive(uls_voidptr_t tbl_info, const char *name)
 {
 	uls_dflhash_state_ptr_t tbl = (uls_dflhash_state_ptr_t) tbl_info;
 
@@ -109,13 +107,13 @@ ULS_QUALIFIED_METHOD(__keyw_hashfunc_case_insensitive)(uls_voidptr_t tbl_info, c
 	if (n_slots <= 0) return 0;
 
 	if (n_shifts < 0) {
-		n_shifts = _uls_tool_(range_of_bits)(n_slots) - 8;
+		n_shifts = uls_range_of_bits(n_slots) - 8;
 		if (n_shifts < 0) n_shifts = 0;
 	}
 
 	codes0 = tbl->init_hcode;
 	for (i=0; (a=name[i])!='\0'; i++) {
-		a = _uls_tool_(toupper)(a);
+		a = uls_toupper(a);
 		j = i % (n_shifts + 1);
 		codes0 = (codes0 << 1) ^ (a << j);
 	}
@@ -124,7 +122,7 @@ ULS_QUALIFIED_METHOD(__keyw_hashfunc_case_insensitive)(uls_voidptr_t tbl_info, c
 }
 
 ULS_DECL_STATIC void
-ULS_QUALIFIED_METHOD(__init_kwtable_buckets)(uls_kwtable_ptr_t tbl, int n_slots)
+__init_kwtable_buckets(uls_kwtable_ptr_t tbl, int n_slots)
 {
 	uls_decl_parray_slots(slots_bh, tokdef);
 	int i;
@@ -139,7 +137,7 @@ ULS_QUALIFIED_METHOD(__init_kwtable_buckets)(uls_kwtable_ptr_t tbl, int n_slots)
 		}
 
 		tbl->dflhash_stat.n_slots = n_slots;
-		tbl->dflhash_stat.n_shifts = _uls_tool_(range_of_bits)(n_slots) - 8;
+		tbl->dflhash_stat.n_shifts = uls_range_of_bits(n_slots) - 8;
 		if (tbl->dflhash_stat.n_shifts < 0) tbl->dflhash_stat.n_shifts = 0;
 	} else {
 		uls_init_parray(uls_ptr(tbl->bucket_head), tokdef, 0);
@@ -151,7 +149,7 @@ ULS_QUALIFIED_METHOD(__init_kwtable_buckets)(uls_kwtable_ptr_t tbl, int n_slots)
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__export_kwtable)(uls_kwtable_ptr_t tbl, uls_ref_parray(lst, keyw_stat), int n_lst)
+__export_kwtable(uls_kwtable_ptr_t tbl, uls_ref_parray(lst, keyw_stat), int n_lst)
 {
 	uls_decl_parray_slots_init(slots_bh, tokdef, uls_ptr(tbl->bucket_head));
 	uls_decl_parray_slots_init(slots_lst, keyw_stat, lst);
@@ -182,34 +180,34 @@ ULS_QUALIFIED_METHOD(__export_kwtable)(uls_kwtable_ptr_t tbl, uls_ref_parray(lst
 }
 
 void
-ULS_QUALIFIED_METHOD(__init_kwtable)(uls_kwtable_ptr_t tbl)
+__init_kwtable(uls_kwtable_ptr_t tbl)
 {
 	__init_kwtable_buckets(tbl, 0);
 
 	tbl->hash_stat = nilptr;
 
-	tbl->str_ncmp = uls_ref_callback_this(__keyw_strncmp_case_sensitive);
-	tbl->hashfunc = uls_ref_callback_this(__keyw_hashfunc_case_sensitive);
+	tbl->str_ncmp = uls_ref_callback(__keyw_strncmp_case_sensitive);
+	tbl->hashfunc = uls_ref_callback(__keyw_hashfunc_case_sensitive);
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_init_kwtable)(uls_kwtable_ptr_t tbl, int n_slots, int case_insensitive)
+uls_init_kwtable(uls_kwtable_ptr_t tbl, int n_slots, int case_insensitive)
 {
 	__init_kwtable_buckets(tbl, n_slots);
 
 	tbl->hash_stat = nilptr;
 
 	if (case_insensitive) {
-		tbl->str_ncmp = uls_ref_callback_this(__keyw_strncmp_case_insensitive);
-		tbl->hashfunc = uls_ref_callback_this(__keyw_hashfunc_case_insensitive);
+		tbl->str_ncmp = uls_ref_callback(__keyw_strncmp_case_insensitive);
+		tbl->hashfunc = uls_ref_callback(__keyw_hashfunc_case_insensitive);
 	} else {
-		tbl->str_ncmp = uls_ref_callback_this(__keyw_strncmp_case_sensitive);
-		tbl->hashfunc = uls_ref_callback_this(__keyw_hashfunc_case_sensitive);
+		tbl->str_ncmp = uls_ref_callback(__keyw_strncmp_case_sensitive);
+		tbl->hashfunc = uls_ref_callback(__keyw_hashfunc_case_sensitive);
 	}
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_reset_kwtable)(uls_kwtable_ptr_t tbl, int n_slots, uls_hashfunc_t hashfunc, uls_voidptr_t hash_stat)
+uls_reset_kwtable(uls_kwtable_ptr_t tbl, int n_slots, uls_hashfunc_t hashfunc, uls_voidptr_t hash_stat)
 {
 	uls_deinit_parray(uls_ptr(tbl->bucket_head));
 
@@ -222,7 +220,7 @@ ULS_QUALIFIED_METHOD(uls_reset_kwtable)(uls_kwtable_ptr_t tbl, int n_slots, uls_
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_deinit_kwtable)(uls_kwtable_ptr_t tbl)
+uls_deinit_kwtable(uls_kwtable_ptr_t tbl)
 {
 	uls_deinit_parray(uls_ptr(tbl->bucket_head));
 
@@ -230,8 +228,8 @@ ULS_QUALIFIED_METHOD(uls_deinit_kwtable)(uls_kwtable_ptr_t tbl)
 	tbl->hashfunc = nilptr;
 }
 
-ULS_QUALIFIED_RETTYP(uls_tokdef_ptr_t)
-ULS_QUALIFIED_METHOD(uls_find_kw)(uls_kwtable_ptr_t tbl, uls_ptrtype_tool(outparam) parms)
+uls_tokdef_ptr_t
+uls_find_kw(uls_kwtable_ptr_t tbl, uls_outparam_ptr_t parms)
 {
 	uls_decl_parray_slots_init(slots_bh, tokdef, uls_ptr(tbl->bucket_head));
 	const char *idstr = parms->lptr;
@@ -253,12 +251,12 @@ ULS_QUALIFIED_METHOD(uls_find_kw)(uls_kwtable_ptr_t tbl, uls_ptrtype_tool(outpar
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_add_kw)(uls_kwtable_ptr_t tbl, uls_tokdef_ptr_t e0)
+uls_add_kw(uls_kwtable_ptr_t tbl, uls_tokdef_ptr_t e0)
 {
 	uls_decl_parray_slots_init(slots_bh, tokdef, uls_ptr(tbl->bucket_head));
 	int hash_id;
 	uls_tokdef_ptr_t e;
-	uls_type_tool(outparam) parms;
+	uls_outparam_t parms;
 
 	parms.lptr = uls_get_namebuf_value(e0->keyword);
 	parms.len = e0->l_keyword;
@@ -275,7 +273,7 @@ ULS_QUALIFIED_METHOD(uls_add_kw)(uls_kwtable_ptr_t tbl, uls_tokdef_ptr_t e0)
 }
 
 int
-ULS_QUALIFIED_METHOD(sizeof_kwtable)(uls_kwtable_ptr_t tbl)
+sizeof_kwtable(uls_kwtable_ptr_t tbl)
 {
 	uls_decl_parray_slots_init(slots_bh, tokdef, uls_ptr(tbl->bucket_head));
 	uls_tokdef_ptr_t  e;
@@ -291,10 +289,10 @@ ULS_QUALIFIED_METHOD(sizeof_kwtable)(uls_kwtable_ptr_t tbl)
 	return n;
 }
 
-ULS_QUALIFIED_RETTYP(uls_tokdef_ptr_t)
-ULS_QUALIFIED_METHOD(is_keyword_idstr)(uls_kwtable_ptr_t tbl, const char* keyw, int l_keyw)
+uls_tokdef_ptr_t
+is_keyword_idstr(uls_kwtable_ptr_t tbl, const char* keyw, int l_keyw)
 {
-	uls_type_tool(outparam) parms;
+	uls_outparam_t parms;
 
 	parms.lptr = keyw;
 	parms.len =  l_keyw;
@@ -303,16 +301,16 @@ ULS_QUALIFIED_METHOD(is_keyword_idstr)(uls_kwtable_ptr_t tbl, const char* keyw, 
 }
 
 int
-ULS_QUALIFIED_METHOD(keyw_stat_comp_by_keyw)(const uls_voidptr_t a, const uls_voidptr_t b)
+keyw_stat_comp_by_keyw(const uls_voidptr_t a, const uls_voidptr_t b)
 {
 	uls_keyw_stat_ptr_t a1 = (uls_keyw_stat_ptr_t ) a;
 	uls_keyw_stat_ptr_t b1 = (uls_keyw_stat_ptr_t ) b;
 
-	return _uls_tool_(strcmp)(a1->keyw, b1->keyw);
+	return uls_strcmp(a1->keyw, b1->keyw);
 }
 
-ULS_QUALIFIED_RETTYP(uls_keyw_stat_list_ptr_t)
-ULS_QUALIFIED_METHOD(ulc_export_kwtable)(uls_kwtable_ptr_t tbl)
+uls_keyw_stat_list_ptr_t
+ulc_export_kwtable(uls_kwtable_ptr_t tbl)
 {
 	uls_keyw_stat_list_ptr_t kwslst;
 	uls_ref_parray(lst, keyw_stat);
@@ -337,8 +335,8 @@ ULS_QUALIFIED_METHOD(ulc_export_kwtable)(uls_kwtable_ptr_t tbl)
 	return kwslst;
 }
 
-ULS_QUALIFIED_RETTYP(uls_keyw_stat_ptr_t)
-ULS_QUALIFIED_METHOD(ulc_search_kwstat_list)(uls_keyw_stat_list_ptr_t kwslst, const char* str)
+uls_keyw_stat_ptr_t
+ulc_search_kwstat_list(uls_keyw_stat_list_ptr_t kwslst, const char* str)
 {
 	uls_ref_parray_init(lst, keyw_stat, uls_ptr(kwslst->lst));
 	uls_decl_parray_slots_init(slots_lst, keyw_stat, lst);
@@ -353,7 +351,7 @@ ULS_QUALIFIED_METHOD(ulc_search_kwstat_list)(uls_keyw_stat_list_ptr_t kwslst, co
 		mid = (low + high) / 2;
 		e = slots_lst[mid];
 
-		if ((cond = _uls_tool_(strcmp)(e->keyw, str)) < 0) {
+		if ((cond = uls_strcmp(e->keyw, str)) < 0) {
 			low = mid + 1;
 		} else if (cond > 0) {
 			high = mid - 1;
@@ -366,7 +364,7 @@ ULS_QUALIFIED_METHOD(ulc_search_kwstat_list)(uls_keyw_stat_list_ptr_t kwslst, co
 }
 
 void
-ULS_QUALIFIED_METHOD(ulc_free_kwstat_list)(uls_keyw_stat_list_ptr_t kwslst)
+ulc_free_kwstat_list(uls_keyw_stat_list_ptr_t kwslst)
 {
 	uls_ref_parray_init(lst, keyw_stat, uls_ptr(kwslst->lst));
 	uls_decl_parray_slots_init(slots_lst, keyw_stat, lst);
@@ -380,20 +378,20 @@ ULS_QUALIFIED_METHOD(ulc_free_kwstat_list)(uls_keyw_stat_list_ptr_t kwslst)
 	uls_dealloc_object(kwslst);
 }
 
-ULS_QUALIFIED_RETTYP(uls_hashfunc_t)
-ULS_QUALIFIED_METHOD(uls_get_hashfunc)(const char* hashname, int case_insensitive)
+uls_hashfunc_t
+uls_get_hashfunc(const char* hashname, int case_insensitive)
 {
 	uls_hashfunc_t hashfunc;
 
 	if (!uls_streql(hashname, ULS_HASH_ALGORITHM)) {
-		_uls_log(err_log)("%s: unsupported hash algorithm!", hashname);
+		err_log("%s: unsupported hash algorithm!", hashname);
 		return nilptr;
 	}
 
 	if (case_insensitive) {
-		hashfunc = uls_ref_callback_this(__keyw_hashfunc_case_insensitive);
+		hashfunc = uls_ref_callback(__keyw_hashfunc_case_insensitive);
 	} else {
-		hashfunc = uls_ref_callback_this(__keyw_hashfunc_case_sensitive);
+		hashfunc = uls_ref_callback(__keyw_hashfunc_case_sensitive);
 	}
 
 	return hashfunc;

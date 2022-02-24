@@ -35,16 +35,13 @@
 #ifndef __ULS_INPUT_H__
 #define __ULS_INPUT_H__
 
-#ifndef ULS_EXCLUDE_HFILES
 #include "uls/csz_stream.h"
 #include "uls/litstr.h"
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
-#ifdef ULS_DECL_GLOBAL_TYPES
 // the flags of 'uls_source'
 #define ULS_ISRC_FL_EOF           0x01
 #define ULS_ISRC_FL_ERR           0x02
@@ -54,14 +51,10 @@ extern "C" {
 #define ULS_COMM_ONELINE     0x01
 #define ULS_COMM_COLUMN0     0x02
 #define ULS_COMM_NESTED      0x04
-#endif
 
-#ifdef ULS_DECL_PROTECTED_TYPE
 ULS_DECLARE_STRUCT(source);
 ULS_DECLARE_STRUCT(input);
-#endif
 
-#ifdef ULS_DECL_PUBLIC_TYPE
 ULS_DEFINE_DELEGATE_BEGIN(input_refill, int)(uls_input_ptr_t inp, int n_bytes);
 ULS_DEFINE_DELEGATE_END(input_refill);
 
@@ -70,9 +63,7 @@ ULS_DEFINE_DELEGATE_END(fill_isource);
 
 ULS_DEFINE_DELEGATE_BEGIN(ungrab_isource, void)(uls_source_ptr_t isrc);
 ULS_DEFINE_DELEGATE_END(ungrab_isource);
-#endif
 
-#ifdef ULS_DEF_PROTECTED_TYPE
 ULS_DEFINE_STRUCT(commtype)
 {
 	int flags;
@@ -92,8 +83,8 @@ ULS_DEFINE_STRUCT_BEGIN(source)
 	uls_flags_t flags;
 
 	uls_voidptr_t usrc; // input-stream
-	uls_callback_type_this(fill_isource) usrc_fillbuff;
-	uls_callback_type_this(ungrab_isource) usrc_ungrab;
+	uls_callback_type(fill_isource) usrc_fillbuff;
+	uls_callback_type(ungrab_isource) usrc_ungrab;
 };
 
 #define ULS_INP_FL_READONLY    0x0001
@@ -104,26 +95,25 @@ ULS_DEFINE_STRUCT_BEGIN(input)
 	uls_flags_t flags;
 	uls_source_t isource;
 
-	uls_type_tool(outbuf) rawbuf;
+	uls_outbuf_t rawbuf;
 	const char *rawbuf_ptr;
 	int  rawbuf_bytes;
 	int line_num;
 
-	uls_callback_type_this(input_refill) refill;
+	uls_callback_type(input_refill) refill;
 };
-#endif // ULS_DEF_PUBLIC_TYPE
 
-#ifdef ULS_DECL_PRIVATE_PROC
-ULS_DECL_STATIC _ULS_INLINE int __input_space_proc(const char* ch_ctx, _uls_ptrtype_tool(csz_str) ss_dst, uls_ptrtype_tool(outparam) parms);
+#if defined(__ULS_INPUT__)
+ULS_DECL_STATIC _ULS_INLINE int __input_space_proc(const char* ch_ctx, csz_str_ptr_t ss_dst, uls_outparam_ptr_t parms);
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC
 void uls_init_commtype(uls_commtype_ptr_t qmt);
 void uls_deinit_commtype(uls_commtype_ptr_t qmt);
 
-int input_skip_comment(uls_commtype_ptr_t cmt, uls_input_ptr_t inp, uls_ptrtype_tool(outparam) parms);
-int input_quote_proc(uls_input_ptr_t inp, uls_quotetype_ptr_t qmt, _uls_ptrtype_tool(csz_str) ss_dst, uls_ptrtype_tool(outparam) parms);
-int input_space_proc(const char* ch_ctx, uls_input_ptr_t inp, _uls_ptrtype_tool(csz_str) ss_dst, int len_surplus, uls_ptrtype_tool(outparam) parms0);
+int input_skip_comment(uls_commtype_ptr_t cmt, uls_input_ptr_t inp, uls_outparam_ptr_t parms);
+int input_quote_proc(uls_input_ptr_t inp, uls_quotetype_ptr_t qmt, csz_str_ptr_t ss_dst, uls_outparam_ptr_t parms);
+int input_space_proc(const char* ch_ctx, uls_input_ptr_t inp, csz_str_ptr_t ss_dst, int len_surplus, uls_outparam_ptr_t parms0);
 
 void uls_init_isource(uls_source_ptr_t isrc);
 void uls_deinit_isource(uls_source_ptr_t isrc);

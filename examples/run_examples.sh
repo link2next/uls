@@ -100,7 +100,7 @@ test_1case()
 	fi
 
 	diff -q $tmpfile1 $outfile_res;
-	# assert: $outfile_res exists
+
 	if [ -f $outfile_res1 ]; then
 		diff -q $tmpfile1 $outfile_res;
 		if [ $? != 0 ]; then

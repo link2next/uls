@@ -34,22 +34,17 @@
 #ifndef __ULS_STREAM_H__
 #define __ULS_STREAM_H__
 
-#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_version.h"
 #include "uls/uls_input.h"
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
-#ifdef ULS_DECL_GLOBAL_TYPES
 #define ULS_STREAM_BIN_LE     0
 #define ULS_STREAM_BIN_BE     1
 #define ULS_STREAM_TXT        2
-#endif
 
-#ifdef ULS_DECL_PROTECTED_TYPE
 #define ULS_STREAM_ERR         0x01
 #define ULS_STREAM_FDCLOSE     0x02
 #define ULS_STREAM_REWINDABLE  0x04
@@ -60,22 +55,18 @@ extern "C" {
 
 #define ULS_STREAM_RAW        0
 #define ULS_STREAM_ULS        1
-#endif
 
-#ifdef ULS_DECL_PUBLIC_TYPE
 ULS_DECLARE_STRUCT(wr_packet);
 
 ULS_DEFINE_DELEGATE_BEGIN(reorder_bytes,void)(char *binpkt, int len_binpkt);
 ULS_DEFINE_DELEGATE_END(reorder_bytes);
 
-ULS_DEFINE_DELEGATE_BEGIN(make_packet,int)(uls_wr_packet_ptr_t pkt, _uls_ptrtype_tool(csz_str) outbuf);
+ULS_DEFINE_DELEGATE_BEGIN(make_packet,int)(uls_wr_packet_ptr_t pkt, csz_str_ptr_t outbuf);
 ULS_DEFINE_DELEGATE_END(make_packet);
-#endif
 
-#ifdef ULS_DEF_PUBLIC_TYPE
 ULS_DEFINE_STRUCT(stream_header)
 {
-	uls_type_tool(version) filever;
+	uls_version_t filever;
 
 	uls_def_namebuf(specname, ULC_LONGNAME_MAXSIZ);
 	int     filetype, subtype, reverse;
@@ -129,10 +120,8 @@ ULS_DEFINE_STRUCT(tmpl_pool)
 	uls_decl_array_type10(tmplvars, tmplvar);
 	uls_decl_array_type10(pkt_ary, rd_packet);
 	int n_pkt_ary_delta;
-	_uls_type_tool(csz_str) str_pool;
+	csz_str_t str_pool;
 };
-
-#endif // ULS_DEF_PUBLIC_TYPE
 
 #ifdef ULS_DECL_PROTECTED_PROC
 void uls_init_tmpl(uls_tmpl_ptr_t tmpl);
@@ -160,9 +149,7 @@ void add_rd_packet_to_tmpls_pool(int tok_id, int txtlen, const char* txtptr, uls
 
 void uls_init_tmplvar(uls_tmplvar_ptr_t tvar);
 void uls_deinit_tmplvar(uls_tmplvar_ptr_t tvar);
-#endif // ULS_DECL_PROTECTED_PROC
-
-#ifdef ULS_DECL_PUBLIC_PROC
+#endif
 
 ULS_DLL_EXTERN uls_tmpl_ptr_t uls_find_tmpl(uls_tmpl_list_ptr_t tmpl_list, const char* name);
 
@@ -183,7 +170,6 @@ ULS_DLL_EXTERN int uls_add_tmpl(uls_tmpl_list_ptr_t tmpl_list, const char *name,
 
 ULS_DLL_EXTERN int ulsjava_add_tmpl(uls_tmpl_list_ptr_t tmpl_list,
 	const void *name, int len_name, const void *val, int len_val);
-#endif // ULS_DECL_PUBLIC_PROC
 
 #ifdef _ULS_CPLUSPLUS
 }

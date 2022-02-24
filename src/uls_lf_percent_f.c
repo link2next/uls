@@ -31,15 +31,13 @@
     Stanley Hong <link2next@gmail.com>, May 2011.
   </author>
 */
-#ifndef ULS_EXCLUDE_HFILES
 #define __ULS_LF_PERCENT_F__
 #include "uls/uls_lf_percent_f.h"
 #include "uls/ieee754.h"
 #include <math.h>
-#endif
 
 ULS_DECL_STATIC void
-ULS_QUALIFIED_METHOD(reverse_char_array)(char* ary, int n)
+reverse_char_array(char* ary, int n)
 {
 	int i, j;
 	char ch;
@@ -56,7 +54,7 @@ ULS_QUALIFIED_METHOD(reverse_char_array)(char* ary, int n)
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(unsigned2str)(unsigned int n, csz_str_ptr_t ss)
+unsigned2str(unsigned int n, csz_str_ptr_t ss)
 {
 	int i0, len;
 
@@ -78,7 +76,7 @@ ULS_QUALIFIED_METHOD(unsigned2str)(unsigned int n, csz_str_ptr_t ss)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_lf_digits_to_percent_f)
+uls_lf_digits_to_percent_f
 	(char* numstr, int minus, int n_expo, int n_prec, csz_str_ptr_t ss)
 {
 	char *ptr, ch;
@@ -122,7 +120,7 @@ ULS_QUALIFIED_METHOD(uls_lf_digits_to_percent_f)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_lf_digits_to_percent_e)
+uls_lf_digits_to_percent_e
 	(char* numstr, int minus, int n_expo, int n_prec, csz_str_ptr_t ss)
 {
 	char *ptr;
@@ -163,7 +161,7 @@ ULS_QUALIFIED_METHOD(uls_lf_digits_to_percent_e)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_lf_digits_to_percent_g)
+uls_lf_digits_to_percent_g
 	(char* numstr, int minus, int n_expo, int n_prec, csz_str_ptr_t ss)
 {
 	int len;
@@ -178,7 +176,7 @@ ULS_QUALIFIED_METHOD(uls_lf_digits_to_percent_g)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_lf_double2digits)(double x, int n_precision, csz_str_ptr_t numstr)
+uls_lf_double2digits(double x, int n_precision, csz_str_ptr_t numstr)
 {
 	double frac, x_int;
 	double frac2;
@@ -256,7 +254,7 @@ ULS_QUALIFIED_METHOD(uls_lf_double2digits)(double x, int n_precision, csz_str_pt
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_lf_longdouble2digits)(long double x, int n_precision, csz_str_ptr_t numstr)
+uls_lf_longdouble2digits(long double x, int n_precision, csz_str_ptr_t numstr)
 {
 	long double frac, x_int;
 	long double frac2;

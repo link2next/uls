@@ -20,13 +20,11 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_version.h"
 #include "uls/uls_print.h"
-#endif
 
 void
-ULS_QUALIFIED_METHOD(uls_version_make)(uls_version_ptr_t a, char v1, char v2, char v3)
+uls_version_make(uls_version_ptr_t a, char v1, char v2, char v3)
 {
 	a->major = v1;
 	a->minor = v2;
@@ -34,7 +32,7 @@ ULS_QUALIFIED_METHOD(uls_version_make)(uls_version_ptr_t a, char v1, char v2, ch
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_version_encode)(const uls_version_ptr_t a, char* codstr)
+uls_version_encode(const uls_version_ptr_t a, char* codstr)
 {
 	codstr[0] = a->major;
 	codstr[1] = a->minor;
@@ -42,7 +40,7 @@ ULS_QUALIFIED_METHOD(uls_version_encode)(const uls_version_ptr_t a, char* codstr
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_version_decode)(char* codstr, uls_version_ptr_t a)
+uls_version_decode(char* codstr, uls_version_ptr_t a)
 {
 	a->major = codstr[0];
 	a->minor = codstr[1];
@@ -50,7 +48,7 @@ ULS_QUALIFIED_METHOD(uls_version_decode)(char* codstr, uls_version_ptr_t a)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_version_copy)(uls_version_ptr_t dst, const uls_version_ptr_t src)
+uls_version_copy(uls_version_ptr_t dst, const uls_version_ptr_t src)
 {
 	dst->major = src->major;
 	dst->minor = src->minor;
@@ -58,7 +56,7 @@ ULS_QUALIFIED_METHOD(uls_version_copy)(uls_version_ptr_t dst, const uls_version_
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_version_make_string)(const uls_version_ptr_t a, char* ver_str)
+uls_version_make_string(const uls_version_ptr_t a, char* ver_str)
 {
 	char codstr[ULS_VERSION_CODE_LEN];
 	int i, k=0, n=0;
@@ -76,7 +74,7 @@ ULS_QUALIFIED_METHOD(uls_version_make_string)(const uls_version_ptr_t a, char* v
 		for (i=0; i<n; i++) {
 			if (i != 0) ver_str[k++] = '.';
 
-			k += _uls_log_(snprintf)(ver_str+k, ULS_VERSION_STR_MAXLEN+1-k, "%d", codstr[i]);
+			k += uls_snprintf(ver_str+k, ULS_VERSION_STR_MAXLEN+1-k, "%d", codstr[i]);
 		}
 	}
 
@@ -84,7 +82,7 @@ ULS_QUALIFIED_METHOD(uls_version_make_string)(const uls_version_ptr_t a, char* v
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_version_cmp_code)(const uls_version_ptr_t a, const uls_version_ptr_t b)
+uls_version_cmp_code(const uls_version_ptr_t a, const uls_version_ptr_t b)
 {
 	char codstr1[ULS_VERSION_CODE_LEN];
 	char codstr2[ULS_VERSION_CODE_LEN];
@@ -101,7 +99,7 @@ ULS_QUALIFIED_METHOD(uls_version_cmp_code)(const uls_version_ptr_t a, const uls_
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_version_pars_str)(const char *lptr, uls_version_ptr_t a)
+uls_version_pars_str(const char *lptr, uls_version_ptr_t a)
 {
 	char codstr[ULS_VERSION_CODE_LEN];
 	uls_outparam_t parms;
@@ -127,13 +125,13 @@ ULS_QUALIFIED_METHOD(uls_version_pars_str)(const char *lptr, uls_version_ptr_t a
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_init_version)(uls_version_ptr_t a)
+uls_init_version(uls_version_ptr_t a)
 {
 	uls_version_make(a, 0, 0, 0);
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_deinit_version)(uls_version_ptr_t a)
+uls_deinit_version(uls_version_ptr_t a)
 {
 	uls_version_make(a, 0, 0, 0);
 }

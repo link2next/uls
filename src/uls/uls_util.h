@@ -35,12 +35,10 @@
 #ifndef __ULS_UTIL_H__
 #define __ULS_UTIL_H__
 
-#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_prim.h"
 
 #include <stdlib.h>
 #include <errno.h>
-#endif // ULS_EXCLUDE_HFILES
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
@@ -72,24 +70,20 @@ typedef const char *LPCTSTR;
 #endif
 #endif // ULS_WINDOWS
 
-#ifdef ULS_DECL_PUBLIC_TYPE
 ULS_DEFINE_DELEGATE_BEGIN(optproc,int)(int opt, char* optarg);
 ULS_DEFINE_DELEGATE_END(optproc);
-#endif
 
-#ifdef ULS_DEF_PUBLIC_TYPE
 ULS_DEFINE_STRUCT(isp)
 {
 	char *buff;
 	int  len_strpool, siz_strpool;
 	int  align_strpool;
 };
-#endif
 
-#if defined(__ULS_UTIL__) || defined(ULS_DECL_PRIVATE_PROC)
+#if defined(__ULS_UTIL__)
 ULS_DECL_STATIC int __os_mkdir_ustr(const char *filepath);
 ULS_DECL_STATIC int __uls_mkdir_ustr(const char *filepath0);
-ULS_DECL_STATIC int get_ms_codepage(uls_ptrtype_tool(outparam) parms);
+ULS_DECL_STATIC int get_ms_codepage(uls_outparam_ptr_t parms);
 ULS_DECL_STATIC int uls_get_exeloc_by_pathenv(const char *progname, char *fpath_buf);
 #endif
 
@@ -102,10 +96,9 @@ int __uls_path_normalize_ustr(const char* fpath, char* fpath2);
 #endif
 #endif
 
-#ifdef ULS_DECL_PUBLIC_PROC
 void uls_print_bytes(const char* srcptr, int n_bytes);
 int uls_get_exeloc_dir(const char* argv0, char *fpath_buf);
-const char* uls_get_dirpath(const char* fname, uls_ptrtype_tool(outparam) parms);
+const char* uls_get_dirpath(const char* fname, uls_outparam_ptr_t parms);
 
 int is_absolute_path(const char* path);
 int is_path_prefix(const char *filepath);
@@ -121,12 +114,10 @@ void isp_deinit(uls_isp_ptr_t isp);
 char* isp_find(uls_isp_ptr_t isp, const char* str, int len);
 char* isp_insert(uls_isp_ptr_t isp, const char* str, int len);
 
-#ifndef ULS_DOTNET
 ULS_DLL_EXTERN int uls_getopts(int n_args, char* args[], const char* optfmt, uls_optproc_t proc);
-#endif
+
 int initialize_uls_util(void);
 void finalize_uls_util(void);
-#endif // ULS_DECL_PUBLIC_PROC
 
 #ifdef _ULS_CPLUSPLUS
 }

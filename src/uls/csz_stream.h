@@ -35,27 +35,24 @@
 #ifndef __CSZ_STREAM_H__
 #define __CSZ_STREAM_H__
 
-#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_prim.h"
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
-#ifdef ULS_DECL_GLOBAL_TYPES
 #define N_LINES_IN_POOL 32
 #define CSZ_STREAM_DELTA_DFL 64
 
 /* Character String Zero */
 
-#define str_deinit(a,b) _uls_tool(str_free)(a,b)
-#define str_copy _uls_tool(str_modify)
+#define str_deinit(a,b) str_free(a,b)
+#define str_copy str_modify
 #define str_putc(outbuf,k,ch) \
-	_uls_tool(__str_putc)(outbuf, CSZ_STREAM_DELTA_DFL, k, ch)
+	__str_putc(outbuf, CSZ_STREAM_DELTA_DFL, k, ch)
 #define str_putc_nosafe(outbuf, k, ch) (outbuf->buf[k]=(ch))
 
-#define csz_copy _uls_tool(csz_modify)
+#define csz_copy csz_modify
 #define csz_putc_nosafe(csz,ch) do { \
 		(csz)->pool[(csz)->len] = (ch); \
 		++(csz)->len; \
@@ -71,9 +68,6 @@ extern "C" {
 #define csz_data_ptr(csz) ((csz)->pool.buf)
 #define csz_eos_ptr(csz) (csz_data_ptr(csz) + csz_length(csz))
 
-#endif // ULS_DECL_GLOBAL_TYPES
-
-#if defined(ULS_DEF_PROTECTED_TYPE)
 _ULS_DECLARE_STRUCT(csz_buf_line);
 
 _ULS_DEFINE_STRUCT_BEGIN(csz_buf_line)
@@ -82,9 +76,7 @@ _ULS_DEFINE_STRUCT_BEGIN(csz_buf_line)
 	int  size;
 	csz_buf_line_ptr_t next;
 };
-#endif
 
-#if defined(ULS_DEF_PUBLIC_TYPE)
 _ULS_DECLARE_STRUCT(csz_global_data);
 _ULS_DEFINE_STRUCT_BEGIN(csz_global_data)
 {
@@ -106,13 +98,11 @@ _ULS_DEFINE_STRUCT(csz_str)
 	int    len;
 };
 
-#endif
-
-#if defined(__CSZ_STREAM__) || defined(ULS_DEF_PRIVATE_DATA)
+#if defined(__CSZ_STREAM__)
 ULS_DECL_STATIC csz_global_data_ptr_t csz_global;
 #endif
 
-#if defined(__CSZ_STREAM__) || defined(ULS_DECL_PRIVATE_PROC)
+#if defined(__CSZ_STREAM__)
 ULS_DECL_STATIC char* __find_in_pool(uls_outbuf_ptr_t tmp_buf, int siz);
 ULS_DECL_STATIC int __release_in_pool(char* ptr, int siz);
 ULS_DECL_STATIC void __init_csz_pool(void);
@@ -126,8 +116,6 @@ void initialize_csz(void);
 void reset_csz(void);
 void finalize_csz(void);
 #endif
-
-#ifdef ULS_DECL_PUBLIC_PROC
 
 ULS_DLL_EXTERN void str_init(uls_outbuf_ptr_t outbuf, int siz);
 ULS_DLL_EXTERN void str_free(uls_outbuf_ptr_t outbuf);
@@ -153,8 +141,6 @@ ULS_DLL_EXTERN void csz_add_eos(csz_str_ptr_t csz);
 ULS_DLL_EXTERN char* csz_text(csz_str_ptr_t csz);
 ULS_DLL_EXTERN wchar_t* uls_get_csz_wstr(csz_str_ptr_t csz);
 ULS_DLL_EXTERN char* csz_export(csz_str_ptr_t csz);
-
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 }

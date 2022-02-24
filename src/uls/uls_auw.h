@@ -35,30 +35,24 @@
 #ifndef __ULS_AUW_H__
 #define __ULS_AUW_H__
 
-#ifndef ULS_EXCLUDE_HFILES
 #include "uls/csz_stream.h"
 #include <wchar.h>
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
-#ifdef ULS_DECL_GLOBAL_TYPES
 #define uls_wcslen(wstr) ((int)wcslen(wstr))
 #define auw_csz_wstr(csz) ((wchar_t *)csz_data_ptr(csz))
 #define auw_csz_wlen(csz) (csz_length(csz)/sizeof(wchar_t))
-#endif
 
-#ifdef ULS_DEF_PUBLIC_TYPE
 _ULS_DEFINE_STRUCT(auw_outparam)
 {
 	csz_str_t  csz;
 	int outlen;
 };
-#endif
 
-#if defined(__ULS_AUW__) || defined(ULS_DECL_PRIVATE_PROC)
+#if defined(__ULS_AUW__)
 #ifdef ULS_WINDOWS
 ULS_DECL_STATIC char* wstr2mbs(const wchar_t* wstr, int wlen, int is_utf8, csz_str_ptr_t csz);
 ULS_DECL_STATIC wchar_t* mbs2wstr(const char* astr, int alen, int is_utf8, csz_str_ptr_t csz_wstr);
@@ -67,7 +61,6 @@ ULS_DECL_STATIC int __uls_ustr2astr_ptr(uls_outparam_ptr_t parms);
 #endif
 #endif
 
-#ifdef ULS_DECL_PUBLIC_PROC
 ULS_DLL_EXTERN int astr_lengthof_char(const char* str);
 ULS_DLL_EXTERN int astr_num_chars(const char* str, int len, uls_outparam_ptr_t parms);
 
@@ -85,7 +78,6 @@ ULS_DLL_EXTERN void auw_deinit_outparam(auw_outparam_ptr_t auw);
 
 ULS_DLL_EXTERN const char* uls_ustr2astr_ptr(const char *ustr, int ulen, auw_outparam_ptr_t auw);
 ULS_DLL_EXTERN const char* uls_astr2ustr_ptr(const char *astr, int alen, auw_outparam_ptr_t auw);
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 }

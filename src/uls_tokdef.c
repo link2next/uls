@@ -27,30 +27,28 @@
  *
  *  This file is part of ULS, Unified Lexical Scheme.
  */
-#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_tokdef.h"
 #include "uls/uls_log.h"
-#endif
 
 void
-ULS_QUALIFIED_METHOD(print_tokdef_vx_char)(uls_uch_t uch, uls_tokdef_vx_ptr_t e_vx)
+print_tokdef_vx_char(uls_uch_t uch, uls_tokdef_vx_ptr_t e_vx)
 {
 	int tokid = e_vx->tok_id;
 
-	if (_uls_tool_(isgraph)(uch)) {
-		_uls_log_(printf)("\t'%c' (%3u)", uch, uch);
+	if (uls_isgraph(uch)) {
+		uls_printf("\t'%c' (%3u)", uch, uch);
 		if (uch != tokid) {
-			_uls_log_(printf)("  --> %d\n", tokid);
+			uls_printf("  --> %d\n", tokid);
 		} else {
-			_uls_log_(printf)("\n");
+			uls_printf("\n");
 		}
 	} else {
-		_uls_log_(printf)("\t    (%3u)  --> %d\n", uch, tokid);
+		uls_printf("\t    (%3u)  --> %d\n", uch, tokid);
 	}
 }
 
 int
-ULS_QUALIFIED_METHOD(__is_in_ilist)(int *ilst, int n_ilst, int val)
+__is_in_ilist(int *ilst, int n_ilst, int val)
 {
 	int j;
 
@@ -60,8 +58,8 @@ ULS_QUALIFIED_METHOD(__is_in_ilist)(int *ilst, int n_ilst, int val)
 	return 0;
 }
 
-ULS_QUALIFIED_RETTYP(uls_tokdef_ptr_t)
-ULS_QUALIFIED_METHOD(uls_create_tokdef)(void)
+uls_tokdef_ptr_t
+uls_create_tokdef(void)
 {
 	uls_tokdef_ptr_t e;
 
@@ -73,14 +71,14 @@ ULS_QUALIFIED_METHOD(uls_create_tokdef)(void)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_destroy_tokdef)(uls_tokdef_ptr_t e)
+uls_destroy_tokdef(uls_tokdef_ptr_t e)
 {
 	uls_deinit_namebuf(e->keyword);
 	uls_dealloc_object(e);
 }
 
 void
-ULS_QUALIFIED_METHOD(__init_tokdef_vx)(uls_tokdef_vx_ptr_t e_vx)
+__init_tokdef_vx(uls_tokdef_vx_ptr_t e_vx)
 {
 	e_vx->flags = 0;
 	e_vx->tok_id = 0;
@@ -94,7 +92,7 @@ ULS_QUALIFIED_METHOD(__init_tokdef_vx)(uls_tokdef_vx_ptr_t e_vx)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_init_tokdef_vx)(uls_tokdef_vx_ptr_t e_vx, int tok_id, const char* name, uls_tokdef_ptr_t e)
+uls_init_tokdef_vx(uls_tokdef_vx_ptr_t e_vx, int tok_id, const char* name, uls_tokdef_ptr_t e)
 {
 	__init_tokdef_vx(e_vx);
 
@@ -109,7 +107,7 @@ ULS_QUALIFIED_METHOD(uls_init_tokdef_vx)(uls_tokdef_vx_ptr_t e_vx, int tok_id, c
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_deinit_tokdef_vx)(uls_tokdef_vx_ptr_t e_vx)
+uls_deinit_tokdef_vx(uls_tokdef_vx_ptr_t e_vx)
 {
 	uls_tokdef_name_ptr_t e_nam, e_nam_prev;
 
@@ -122,8 +120,8 @@ ULS_QUALIFIED_METHOD(uls_deinit_tokdef_vx)(uls_tokdef_vx_ptr_t e_vx)
 	uls_deinit_namebuf(e_vx->name);
 }
 
-ULS_QUALIFIED_RETTYP(uls_tokdef_vx_ptr_t)
-ULS_QUALIFIED_METHOD(uls_create_tokdef_vx)(int tok_id, const char* name, uls_tokdef_ptr_t e)
+uls_tokdef_vx_ptr_t
+uls_create_tokdef_vx(int tok_id, const char* name, uls_tokdef_ptr_t e)
 {
 	uls_tokdef_vx_ptr_t e_vx;
 
@@ -134,14 +132,14 @@ ULS_QUALIFIED_METHOD(uls_create_tokdef_vx)(int tok_id, const char* name, uls_tok
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_destroy_tokdef_vx)(uls_tokdef_vx_ptr_t e_vx)
+uls_destroy_tokdef_vx(uls_tokdef_vx_ptr_t e_vx)
 {
 	uls_deinit_tokdef_vx(e_vx);
 	uls_dealloc_object(e_vx);
 }
 
-ULS_QUALIFIED_RETTYP(uls_tokdef_name_ptr_t)
-ULS_QUALIFIED_METHOD(alloc_tokdef_name)(const char *name, uls_tokdef_vx_ptr_t view)
+uls_tokdef_name_ptr_t
+alloc_tokdef_name(const char *name, uls_tokdef_vx_ptr_t view)
 {
 	uls_tokdef_name_ptr_t e_nam;
 
@@ -158,14 +156,14 @@ ULS_QUALIFIED_METHOD(alloc_tokdef_name)(const char *name, uls_tokdef_vx_ptr_t vi
 }
 
 void
-ULS_QUALIFIED_METHOD(dealloc_tokdef_name)(uls_tokdef_name_ptr_t e_nam)
+dealloc_tokdef_name(uls_tokdef_name_ptr_t e_nam)
 {
 	uls_deinit_namebuf(e_nam->name);
 	uls_dealloc_object(e_nam);
 }
 
-ULS_QUALIFIED_RETTYP(uls_tokdef_name_ptr_t)
-ULS_QUALIFIED_METHOD(find_tokdef_name)(uls_tokdef_vx_ptr_t e_vx_leader, const char* name, uls_ptrtype_tool(outparam) parms)
+uls_tokdef_name_ptr_t
+find_tokdef_name(uls_tokdef_vx_ptr_t e_vx_leader, const char* name, uls_outparam_ptr_t parms)
 {
 	uls_tokdef_name_ptr_t e, e_prev=nilptr;
 
@@ -184,7 +182,7 @@ ULS_QUALIFIED_METHOD(find_tokdef_name)(uls_tokdef_vx_ptr_t e_vx_leader, const ch
 }
 
 void
-ULS_QUALIFIED_METHOD(insert_tokdef_name_to_group)(uls_tokdef_vx_ptr_t e_vx_leader,
+insert_tokdef_name_to_group(uls_tokdef_vx_ptr_t e_vx_leader,
 	uls_tokdef_name_ptr_t e_nam_prev, uls_tokdef_name_ptr_t e_nam)
 {
 	if (e_nam_prev != nilptr) {
@@ -197,7 +195,7 @@ ULS_QUALIFIED_METHOD(insert_tokdef_name_to_group)(uls_tokdef_vx_ptr_t e_vx_leade
 }
 
 int
-ULS_QUALIFIED_METHOD(append_tokdef_name_to_group)(uls_tokdef_vx_ptr_t e_vx_leader, uls_tokdef_name_ptr_t e_nam)
+append_tokdef_name_to_group(uls_tokdef_vx_ptr_t e_vx_leader, uls_tokdef_name_ptr_t e_nam)
 {
 	uls_tokdef_name_ptr_t e, e_prev=nilptr;
 
@@ -212,8 +210,8 @@ ULS_QUALIFIED_METHOD(append_tokdef_name_to_group)(uls_tokdef_vx_ptr_t e_vx_leade
 	return 1;
 }
 
-ULS_QUALIFIED_RETTYP(uls_tokdef_ptr_t)
-ULS_QUALIFIED_METHOD(search_tokdef_group)(uls_tokdef_vx_ptr_t e_vx_leader, const char* keyw)
+uls_tokdef_ptr_t
+search_tokdef_group(uls_tokdef_vx_ptr_t e_vx_leader, const char* keyw)
 {
 	uls_tokdef_ptr_t e;
 
@@ -227,7 +225,7 @@ ULS_QUALIFIED_METHOD(search_tokdef_group)(uls_tokdef_vx_ptr_t e_vx_leader, const
 }
 
 void
-ULS_QUALIFIED_METHOD(append_tokdef_to_group)(uls_tokdef_vx_ptr_t e_vx_leader, uls_tokdef_ptr_t e_target)
+append_tokdef_to_group(uls_tokdef_vx_ptr_t e_vx_leader, uls_tokdef_ptr_t e_target)
 {
 	uls_tokdef_ptr_t e, e_prev=nilptr;
 

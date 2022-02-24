@@ -34,15 +34,12 @@
 #ifndef __ULD_CONF_H__
 #define __ULD_CONF_H__
 
-#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_conf.h"
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
-#ifdef ULS_DEF_PUBLIC_TYPE
 ULS_DEFINE_STRUCT(nam_tok)
 {
   const char *name;
@@ -64,18 +61,16 @@ _ULS_DEFINE_STRUCT(uld_names_map)
   int n_vx_namelist;
 };
 
-#endif
-
-#if defined(__ULD_CONF__) || defined(ULS_DECL_PRIVATE_PROC)
+#if defined(__ULD_CONF__)
 ULS_DECL_STATIC int comp_vx_by_toknam(const uls_voidptr_t a, const uls_voidptr_t b);
 ULS_DECL_STATIC int srch_vx_by_toknam(const uls_voidptr_t a, const uls_voidptr_t b);
 ULS_DECL_STATIC void __change_tok_id(uls_tokdef_vx_ptr_t e_vx, int tok_id);
 ULS_DECL_STATIC int __change_tok_nam(uls_tokdef_vx_ptr_t e0_vx, const char* name, const char* name2);
-ULS_DECL_STATIC int add_aliases_to_token(uls_tokdef_vx_ptr_t e0_vx, const char *wrd, uls_ptrtype_tool(wrd) wrdx);
+ULS_DECL_STATIC int add_aliases_to_token(uls_tokdef_vx_ptr_t e0_vx, const char *wrd, uls_wrd_ptr_t wrdx);
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC
-int uld_pars_line(int lno, uls_ptrtype_tool(wrd) wrdx, uld_line_ptr_t tok_names);
+int uld_pars_line(int lno, uls_wrd_ptr_t wrdx, uld_line_ptr_t tok_names);
 int uld_proc_line(const char *tag, int lno,
   char* lptr, uls_lex_ptr_t uls, int n2_vx_namelist);
 uls_tokdef_vx_ptr_t uld_find_tokdef_vx(uls_lex_ptr_t uls, int n_vx_namelist, const char* name);
@@ -87,7 +82,6 @@ void uls_init_nam_tok(uls_nam_tok_ptr_t nam_tok);
 void uls_deinit_nam_tok(uls_nam_tok_ptr_t nam_tok);
 #endif
 
-#ifdef ULS_DECL_PUBLIC_PROC
 ULS_DLL_EXTERN uld_names_map_ptr_t uld_prepare_names(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN int uld_change_names(uld_names_map_ptr_t names_map, uld_line_ptr_t names);
 ULS_DLL_EXTERN int uld_post_names(uld_names_map_ptr_t names_map);
@@ -97,9 +91,8 @@ ULS_DLL_EXTERN int uld_change_tok_names(uls_tokdef_vx_ptr_t e_vx, const char* na
 
 ULS_DLL_EXTERN void uld_export_names(uls_lex_ptr_t uls);
 
-ULS_DLL_EXTERN int uld_export_extra_names(uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) parms);
+ULS_DLL_EXTERN int uld_export_extra_names(uls_lex_ptr_t uls, uls_outparam_ptr_t parms);
 ULS_DLL_EXTERN void uld_unexport_extra_names(uls_ref_array_type10(lst_names,nam_tok));
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 }

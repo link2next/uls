@@ -35,9 +35,7 @@
 #ifndef __ULS_CONST_H__
 #define __ULS_CONST_H__
 
-#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_config.h"
-#endif
 
 #define TMP_SYSPROPS_FNAME   "uls_sysprops.txt"
 #define TMP_ID_RANGES_FNAME  "uls_id_ranges.txt"
@@ -149,6 +147,7 @@
 #define ULS_TXT_RECHDR_SZ          32
 #define ULS_BIN_BLKSIZ_LOG2        9
 #define ULS_BIN_BLKSIZ             (1<<ULS_BIN_BLKSIZ_LOG2)
+
 #define ULS_BIN_HDR_SZ             512
 #define ULS_BIN_RECHDR_NUM_INT32   2
 #define ULS_BIN_RECHDR_SZ (ULS_BIN_RECHDR_NUM_INT32*sizeof(uls_int32))
@@ -251,8 +250,9 @@
 #define ULS_N_BOXLST 3
 #define ULS_N_SYSPROPS  16
 
-#ifndef ULS_WINDOWS
-#include "uls_const_linux.h"
-#endif
+#define ULS_CNST_SUFFIX_MAXSIZ   3
+#define ULS_CNST_SUFFIXES_MAXSIZ 31
+
+#include "uls_const_array00.h"
 
 #endif // __ULS_CONST_H__

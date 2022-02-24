@@ -35,15 +35,13 @@
 #ifndef __ULS_INIT_H__
 #define __ULS_INIT_H__
 
-#ifndef ULS_EXCLUDE_HFILES
 #include "uls_type.h"
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
-#if defined(__ULS_INIT__) || defined(ULS_DECL_PRIVATE_PROC)
+#if defined(__ULS_INIT__)
 ULS_DECL_STATIC int __initialize_uls(void);
 ULS_DECL_STATIC void __finalize_uls(void);
 #ifndef ULS_WINDOWS
@@ -56,11 +54,9 @@ void _initialize_uls(void);
 void _finalize_uls(void);
 #endif
 
-#ifdef ULS_DECL_PUBLIC_PROC
 ULS_DLL_EXTERN void initialize_uls_static(void);
 ULS_DLL_EXTERN void initialize_uls(void);
 ULS_DLL_EXTERN void finalize_uls(void);
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 }

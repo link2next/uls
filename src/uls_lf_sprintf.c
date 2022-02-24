@@ -41,13 +41,13 @@
 #include "uls/uls_auw.h"
 
 ULS_DECL_STATIC void
-ULS_QUALIFIED_METHOD(__uls_lf_sysputs)(const char* msg)
+__uls_lf_sysputs(const char* msg)
 {
 	uls_put_binstr(msg, -1, _uls_stdio_fd(2));
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__puts_proc_str)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, const char* str, int len)
+__puts_proc_str(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, const char* str, int len)
 {
 	int nn;
 
@@ -61,7 +61,7 @@ ULS_QUALIFIED_METHOD(__puts_proc_str)(uls_voidptr_t x_dat, uls_lf_puts_t puts_pr
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(fmtproc_d)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
+fmtproc_d(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
 {
 	char buf[ULS_MAXSZ_NUMSTR+1];
 	char *wrdptr;
@@ -86,7 +86,7 @@ ULS_QUALIFIED_METHOD(fmtproc_d)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, ul
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(fmtproc_u)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
+fmtproc_u(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
 {
 	char buf[ULS_MAXSZ_NUMSTR+1];
 	char *wrdptr;
@@ -102,7 +102,7 @@ ULS_QUALIFIED_METHOD(fmtproc_u)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, ul
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(fmtproc_lld)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
+fmtproc_lld(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
 {
 	char buf[ULS_MAXSZ_NUMSTR+1];
 	char *wrdptr;
@@ -127,7 +127,7 @@ ULS_QUALIFIED_METHOD(fmtproc_lld)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, 
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(fmtproc_llu)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
+fmtproc_llu(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
 {
 	char buf[ULS_MAXSZ_NUMSTR+1];
 	char *wrdptr;
@@ -143,7 +143,7 @@ ULS_QUALIFIED_METHOD(fmtproc_llu)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, 
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(fmtproc_LX)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
+fmtproc_LX(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
 {
 	char buf[ULS_MAXSZ_NUMSTR+1];
 	char *wrdptr;
@@ -163,7 +163,7 @@ ULS_QUALIFIED_METHOD(fmtproc_LX)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, u
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(fmtproc_Lx)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
+fmtproc_Lx(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
 {
 	char buf[ULS_MAXSZ_NUMSTR+1];
 	char *wrdptr;
@@ -186,7 +186,7 @@ ULS_QUALIFIED_METHOD(fmtproc_Lx)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, u
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(fmtproc_X)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
+fmtproc_X(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
 {
 	char buf[ULS_MAXSZ_NUMSTR+1];
 	char *wrdptr;
@@ -207,7 +207,7 @@ ULS_QUALIFIED_METHOD(fmtproc_X)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, ul
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(fmtproc_x)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
+fmtproc_x(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
 {
 	char buf[ULS_MAXSZ_NUMSTR+1];
 	char *wrdptr;
@@ -231,7 +231,7 @@ ULS_QUALIFIED_METHOD(fmtproc_x)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, ul
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(fmtproc_o)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
+fmtproc_o(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
 {
 	char buf[ULS_MAXSZ_NUMSTR+1];
 	char *wrdptr;
@@ -248,7 +248,7 @@ ULS_QUALIFIED_METHOD(fmtproc_o)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, ul
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(fmtproc_p)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
+fmtproc_p(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
 {
 	char buf[ULS_MAXSZ_NUMSTR+1];
 	char *wrdptr;
@@ -274,7 +274,7 @@ ULS_QUALIFIED_METHOD(fmtproc_p)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, ul
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(fmtproc_ld)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
+fmtproc_ld(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
 {
 	char buf[ULS_MAXSZ_NUMSTR+1];
 	char *wrdptr;
@@ -299,7 +299,7 @@ ULS_QUALIFIED_METHOD(fmtproc_ld)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, u
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(fmtproc_lu)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
+fmtproc_lu(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
 {
 	char buf[ULS_MAXSZ_NUMSTR+1];
 	char *wrdptr;
@@ -315,7 +315,7 @@ ULS_QUALIFIED_METHOD(fmtproc_lu)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, u
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(fmtproc_lX)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
+fmtproc_lX(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
 {
 	char buf[ULS_MAXSZ_NUMSTR+1];
 	char *wrdptr;
@@ -335,7 +335,7 @@ ULS_QUALIFIED_METHOD(fmtproc_lX)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, u
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(fmtproc_lx)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
+fmtproc_lx(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
 {
 	char buf[ULS_MAXSZ_NUMSTR+1];
 	char *wrdptr;
@@ -358,7 +358,7 @@ ULS_QUALIFIED_METHOD(fmtproc_lx)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, u
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__fmtproc_f_e_g)
+__fmtproc_f_e_g
 	(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx, double num_f)
 {
 	uls_lf_convflag_ptr_t perfmt = uls_ptr(lf_ctx->perfmt);
@@ -403,7 +403,7 @@ ULS_QUALIFIED_METHOD(__fmtproc_f_e_g)
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(fmtproc_f)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
+fmtproc_f(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
 {
 	double num_f;
 
@@ -412,7 +412,7 @@ ULS_QUALIFIED_METHOD(fmtproc_f)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, ul
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(fmtproc_e)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
+fmtproc_e(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
 {
 	double num_f;
 
@@ -422,7 +422,7 @@ ULS_QUALIFIED_METHOD(fmtproc_e)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, ul
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(fmtproc_g)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
+fmtproc_g(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
 {
 	double num_f;
 
@@ -432,7 +432,7 @@ ULS_QUALIFIED_METHOD(fmtproc_g)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, ul
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__fmtproc_lf_le_lg)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx, long double num_lf)
+__fmtproc_lf_le_lg(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx, long double num_lf)
 {
 	uls_lf_convflag_ptr_t perfmt = uls_ptr(lf_ctx->perfmt);
 	char  *wrdptr;
@@ -476,7 +476,7 @@ ULS_QUALIFIED_METHOD(__fmtproc_lf_le_lg)(uls_voidptr_t x_dat, uls_lf_puts_t puts
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(fmtproc_lf)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
+fmtproc_lf(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
 {
 	long double num_lf;
 
@@ -485,7 +485,7 @@ ULS_QUALIFIED_METHOD(fmtproc_lf)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, u
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(fmtproc_le)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
+fmtproc_le(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
 {
 	long double num_lf;
 
@@ -496,7 +496,7 @@ ULS_QUALIFIED_METHOD(fmtproc_le)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, u
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(fmtproc_lg)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
+fmtproc_lg(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
 {
 	long double num_lf;
 
@@ -507,13 +507,13 @@ ULS_QUALIFIED_METHOD(fmtproc_lg)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, u
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(fmtproc_null)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
+fmtproc_null(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
 {
 	return 0;
 }
 
-ULS_DECL_STATIC ULS_QUALIFIED_RETTYP(uls_lf_name2proc_ptr_t)
-ULS_QUALIFIED_METHOD(uls_lf_bi_search)(const char* keyw, int len, uls_lf_name2proc_ptr_t ary, int n_ary)
+ULS_DECL_STATIC uls_lf_name2proc_ptr_t
+uls_lf_bi_search(const char* keyw, int len, uls_lf_name2proc_ptr_t ary, int n_ary)
 {
 	uls_lf_name2proc_ptr_t e;
 	int   low, high, mid, cond;
@@ -537,8 +537,8 @@ ULS_QUALIFIED_METHOD(uls_lf_bi_search)(const char* keyw, int len, uls_lf_name2pr
 	return nilptr;
 }
 
-ULS_DECL_STATIC ULS_QUALIFIED_RETTYP(uls_lf_convspec_t)
-ULS_QUALIFIED_METHOD(__find_convspec)(const char** p_fmtptr, uls_lf_map_ptr_t map, uls_lf_context_ptr_t lf_ctx)
+ULS_DECL_STATIC uls_lf_convspec_t
+__find_convspec(const char** p_fmtptr, uls_lf_map_ptr_t map, uls_lf_context_ptr_t lf_ctx)
 {
 	const char *fmtptr = *p_fmtptr;
 	uls_lf_convspec_table_ptr_t tbl;
@@ -581,8 +581,8 @@ ULS_QUALIFIED_METHOD(__find_convspec)(const char** p_fmtptr, uls_lf_map_ptr_t ma
 	return nilptr;
 }
 
-ULS_DECL_STATIC ULS_QUALIFIED_RETTYP(uls_lf_name2proc_ptr_t)
-ULS_QUALIFIED_METHOD(__realloc_convspec_table)(uls_lf_convspec_table_ptr_t tbl, int n)
+ULS_DECL_STATIC uls_lf_name2proc_ptr_t
+__realloc_convspec_table(uls_lf_convspec_table_ptr_t tbl, int n)
 {
 	n += tbl->n_used;
 
@@ -597,7 +597,7 @@ ULS_QUALIFIED_METHOD(__realloc_convspec_table)(uls_lf_convspec_table_ptr_t tbl, 
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__add_convspec_sorted)(uls_lf_convspec_table_ptr_t tbl,
+__add_convspec_sorted(uls_lf_convspec_table_ptr_t tbl,
 	const char* percent_name, uls_lf_convspec_t proc, uls_voidptr_t user_data)
 {
 	uls_lf_name2proc_ptr_t proc_map = tbl->proc_tab;
@@ -633,7 +633,7 @@ ULS_QUALIFIED_METHOD(__add_convspec_sorted)(uls_lf_convspec_table_ptr_t tbl,
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__replace_convspec_linear)(uls_lf_convspec_table_ptr_t tbl,
+__replace_convspec_linear(uls_lf_convspec_table_ptr_t tbl,
 	const char* percent_name, uls_lf_convspec_t proc, uls_voidptr_t user_data)
 {
 	uls_lf_name2proc_ptr_t e, proc_map;
@@ -654,7 +654,7 @@ ULS_QUALIFIED_METHOD(__replace_convspec_linear)(uls_lf_convspec_table_ptr_t tbl,
 }
 
 ULS_DECL_STATIC void
-ULS_QUALIFIED_METHOD(load_default_convspec_map)(uls_lf_map_ptr_t lf_map)
+load_default_convspec_map(uls_lf_map_ptr_t lf_map)
 {
 	uls_lf_convspec_table_ptr_t tbl;
 
@@ -699,7 +699,7 @@ ULS_QUALIFIED_METHOD(load_default_convspec_map)(uls_lf_map_ptr_t lf_map)
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__uls_lf_skip_atou)(const char ** p_ptr)
+__uls_lf_skip_atou(const char ** p_ptr)
 {
 	const char   *ptr = *p_ptr;
 	char   ch;
@@ -712,7 +712,7 @@ ULS_QUALIFIED_METHOD(__uls_lf_skip_atou)(const char ** p_ptr)
 }
 
 int
-ULS_QUALIFIED_METHOD(fmtproc_s)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
+fmtproc_s(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
 {
 	const char  *wrdptr;
 	int rc, len, n_chars;
@@ -730,7 +730,7 @@ ULS_QUALIFIED_METHOD(fmtproc_s)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, ul
 }
 
 int
-ULS_QUALIFIED_METHOD(fmtproc_ws)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
+fmtproc_ws(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
 {
 	int rc, ulen, wlen;
 	wchar_t *wstr;
@@ -757,7 +757,7 @@ ULS_QUALIFIED_METHOD(fmtproc_ws)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, u
 }
 
 int
-ULS_QUALIFIED_METHOD(fmtproc_c)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
+fmtproc_c(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
 {
 	uls_uint32 mch;
 	char buff[4];
@@ -820,7 +820,7 @@ ULS_QUALIFIED_METHOD(fmtproc_c)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, ul
 }
 
 void
-ULS_QUALIFIED_METHOD(__add_convspec_linear)(uls_lf_convspec_table_ptr_t tbl,
+__add_convspec_linear(uls_lf_convspec_table_ptr_t tbl,
 	char* percent_name, uls_lf_convspec_t proc, int tbl_ind)
 {
 	uls_lf_name2proc_ptr_t e, proc_map;
@@ -848,8 +848,8 @@ ULS_QUALIFIED_METHOD(__add_convspec_linear)(uls_lf_convspec_table_ptr_t tbl,
 	e->user_data = nilptr;
 }
 
-ULS_QUALIFIED_RETTYP(uls_lf_convspec_t)
-ULS_QUALIFIED_METHOD(get_default_convspec)(const char* percent_name, int len)
+uls_lf_convspec_t
+get_default_convspec(const char* percent_name, int len)
 {
 	uls_lf_convspec_table_ptr_t tbl;
 	uls_lf_convspec_t proc;
@@ -868,7 +868,7 @@ ULS_QUALIFIED_METHOD(get_default_convspec)(const char* percent_name, int len)
 }
 
 const char*
-ULS_QUALIFIED_METHOD(uls_pars_perfmt)(uls_lf_convflag_ptr_t p, const char* fmt)
+uls_pars_perfmt(uls_lf_convflag_ptr_t p, const char* fmt)
 {
 	uls_lf_convflag_t nilspec;
 	char  ch;
@@ -914,19 +914,19 @@ ULS_QUALIFIED_METHOD(uls_pars_perfmt)(uls_lf_convflag_ptr_t p, const char* fmt)
 }
 
 void
-ULS_QUALIFIED_METHOD(initialize_uls_lf)(void)
+initialize_uls_lf(void)
 {
 	uls_lf_init_convspec_map(uls_ptr(dfl_convspec_map), 0);
 }
 
 void
-ULS_QUALIFIED_METHOD(finalize_uls_lf)(void)
+finalize_uls_lf(void)
 {
 	uls_lf_deinit_convspec_map(uls_ptr(dfl_convspec_map));
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_lf_puts_prefix)(char* str, int flags)
+uls_lf_puts_prefix(char* str, int flags)
 {
 	int   k = 0;
 
@@ -948,7 +948,7 @@ ULS_QUALIFIED_METHOD(uls_lf_puts_prefix)(char* str, int flags)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_lf_fill_ch)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, char ch_fill, int n)
+uls_lf_fill_ch(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, char ch_fill, int n)
 {
 	char fillstr[ULS_LF_N_FILLCHS];
 	int i, m, nn, rc;
@@ -974,7 +974,7 @@ ULS_QUALIFIED_METHOD(uls_lf_fill_ch)(uls_voidptr_t x_dat, uls_lf_puts_t puts_pro
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_lf_fill_numstr)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc,
+uls_lf_fill_numstr(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc,
 	uls_lf_convflag_ptr_t p, const char* numstr, int l_numstr)
 {
 	int     width, len1, len2, len3, nn, rc;
@@ -1034,7 +1034,7 @@ ULS_QUALIFIED_METHOD(uls_lf_fill_numstr)(uls_voidptr_t x_dat, uls_lf_puts_t puts
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_lf_fill_mbstr)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc,
+uls_lf_fill_mbstr(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc,
 	uls_lf_convflag_ptr_t p, const char* numstr, int l_numstr, int lw_numstr)
 {
 	int width=p->width, len2, nn, rc;
@@ -1072,14 +1072,14 @@ ULS_QUALIFIED_METHOD(uls_lf_fill_mbstr)(uls_voidptr_t x_dat, uls_lf_puts_t puts_
 	return nn;
 }
 
-ULS_QUALIFIED_RETTYP(uls_lf_map_ptr_t)
-ULS_QUALIFIED_METHOD(uls_lf_get_default)(void)
+uls_lf_map_ptr_t
+uls_lf_get_default(void)
 {
 	return uls_ptr(dfl_convspec_map);
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_lf_puts_csz)(uls_voidptr_t x_dat, const char* wrdptr, int wrdlen)
+uls_lf_puts_csz(uls_voidptr_t x_dat, const char* wrdptr, int wrdlen)
 {
 	if (wrdptr == NULL) {
 		csz_text((csz_str_ptr_t ) x_dat);
@@ -1091,7 +1091,7 @@ ULS_QUALIFIED_METHOD(uls_lf_puts_csz)(uls_voidptr_t x_dat, const char* wrdptr, i
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_lf_puts_str)(uls_voidptr_t x_dat, const char* wrdptr, int wrdlen)
+uls_lf_puts_str(uls_voidptr_t x_dat, const char* wrdptr, int wrdlen)
 {
 	uls_buf4str_ptr_t lb = (uls_buf4str_ptr_t) x_dat;
 
@@ -1117,7 +1117,7 @@ ULS_QUALIFIED_METHOD(uls_lf_puts_str)(uls_voidptr_t x_dat, const char* wrdptr, i
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_lf_puts_file)(uls_voidptr_t x_dat, const char* wrdptr, int wrdlen)
+uls_lf_puts_file(uls_voidptr_t x_dat, const char* wrdptr, int wrdlen)
 {
 	FILE *fout = (FILE *) x_dat;
 
@@ -1134,7 +1134,7 @@ ULS_QUALIFIED_METHOD(uls_lf_puts_file)(uls_voidptr_t x_dat, const char* wrdptr, 
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_lf_puts_null)(uls_voidptr_t x_dat, const char* wrdptr, int wrdlen)
+uls_lf_puts_null(uls_voidptr_t x_dat, const char* wrdptr, int wrdlen)
 {
 	return 0;
 }
@@ -1147,7 +1147,7 @@ ULS_QUALIFIED_METHOD(uls_lf_puts_null)(uls_voidptr_t x_dat, const char* wrdptr, 
 // <parm name="proc">The user defined procedure for processing '%percent_name'</parm>
 // <return>0 if it suceeds, otherwise -1</return>
 int
-ULS_QUALIFIED_METHOD(uls_lf_register_convspec)(uls_lf_map_ptr_t lf_map, const char* percent_name, uls_lf_convspec_t proc)
+uls_lf_register_convspec(uls_lf_map_ptr_t lf_map, const char* percent_name, uls_lf_convspec_t proc)
 {
 	uls_voidptr_t user_data=nilptr;
 	uls_lf_convspec_table_ptr_t tbl;
@@ -1182,7 +1182,7 @@ ULS_QUALIFIED_METHOD(uls_lf_register_convspec)(uls_lf_map_ptr_t lf_map, const ch
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_lf_init_convspec_map)(uls_lf_map_ptr_t lf_map, int flags)
+uls_lf_init_convspec_map(uls_lf_map_ptr_t lf_map, int flags)
 {
 	uls_initial_zerofy_object(lf_map);
 
@@ -1200,8 +1200,8 @@ ULS_QUALIFIED_METHOD(uls_lf_init_convspec_map)(uls_lf_map_ptr_t lf_map, int flag
 	return 0;
 }
 
-ULS_QUALIFIED_RETTYP(uls_lf_map_ptr_t)
-ULS_QUALIFIED_METHOD(uls_lf_create_convspec_map)(int flags)
+uls_lf_map_ptr_t
+uls_lf_create_convspec_map(int flags)
 {
 	uls_lf_map_ptr_t lf_map;
 
@@ -1216,7 +1216,7 @@ ULS_QUALIFIED_METHOD(uls_lf_create_convspec_map)(int flags)
 }
 
 void
-ULS_QUALIFIED_METHOD(__lf_deinit_convspec_map)(uls_lf_map_ptr_t lf_map)
+__lf_deinit_convspec_map(uls_lf_map_ptr_t lf_map)
 {
 	uls_lf_convspec_table_ptr_t tbl;
 	int i;
@@ -1235,7 +1235,7 @@ ULS_QUALIFIED_METHOD(__lf_deinit_convspec_map)(uls_lf_map_ptr_t lf_map)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_lf_deinit_convspec_map)(uls_lf_map_ptr_t lf_map)
+uls_lf_deinit_convspec_map(uls_lf_map_ptr_t lf_map)
 {
 	int rc;
 
@@ -1264,7 +1264,7 @@ ULS_QUALIFIED_METHOD(uls_lf_deinit_convspec_map)(uls_lf_map_ptr_t lf_map)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_lf_destroy_convspec_map)(uls_lf_map_ptr_t lf_map)
+uls_lf_destroy_convspec_map(uls_lf_map_ptr_t lf_map)
 {
 	int rc;
 
@@ -1280,7 +1280,7 @@ ULS_QUALIFIED_METHOD(uls_lf_destroy_convspec_map)(uls_lf_map_ptr_t lf_map)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_lf_grab_convspec_map)(uls_lf_map_ptr_t lf_map)
+uls_lf_grab_convspec_map(uls_lf_map_ptr_t lf_map)
 {
 	uls_lf_map_lock(lf_map);
 	++lf_map->ref_cnt;
@@ -1288,13 +1288,13 @@ ULS_QUALIFIED_METHOD(uls_lf_grab_convspec_map)(uls_lf_map_ptr_t lf_map)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_lf_ungrab_convspec_map)(uls_lf_map_ptr_t lf_map)
+uls_lf_ungrab_convspec_map(uls_lf_map_ptr_t lf_map)
 {
 	uls_lf_destroy_convspec_map(lf_map);
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_lf_init)(uls_lf_ptr_t uls_lf, uls_lf_map_ptr_t lf_map, uls_voidptr_t x_dat, uls_lf_puts_t puts_proc)
+uls_lf_init(uls_lf_ptr_t uls_lf, uls_lf_map_ptr_t lf_map, uls_voidptr_t x_dat, uls_lf_puts_t puts_proc)
 {
 	uls_lf->x_dat = x_dat;
 
@@ -1321,7 +1321,7 @@ ULS_QUALIFIED_METHOD(uls_lf_init)(uls_lf_ptr_t uls_lf, uls_lf_map_ptr_t lf_map, 
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_lf_deinit)(uls_lf_ptr_t uls_lf)
+uls_lf_deinit(uls_lf_ptr_t uls_lf)
 {
 	csz_deinit(uls_ptr(uls_lf->wbuf1));
 	csz_deinit(uls_ptr(uls_lf->wbuf2));
@@ -1330,8 +1330,8 @@ ULS_QUALIFIED_METHOD(uls_lf_deinit)(uls_lf_ptr_t uls_lf)
 	uls_deinit_mutex(uls_ptr(uls_lf->mtx));
 }
 
-ULS_QUALIFIED_RETTYP(uls_lf_ptr_t)
-ULS_QUALIFIED_METHOD(uls_lf_create)(uls_lf_map_ptr_t lf_map, uls_voidptr_t x_dat, uls_lf_puts_t puts_proc)
+uls_lf_ptr_t
+uls_lf_create(uls_lf_map_ptr_t lf_map, uls_voidptr_t x_dat, uls_lf_puts_t puts_proc)
 {
 	uls_lf_ptr_t uls_lf;
 
@@ -1342,7 +1342,7 @@ ULS_QUALIFIED_METHOD(uls_lf_create)(uls_lf_map_ptr_t lf_map, uls_voidptr_t x_dat
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_lf_destroy)(uls_lf_ptr_t uls_lf)
+uls_lf_destroy(uls_lf_ptr_t uls_lf)
 {
 	uls_lf_deinit(uls_lf);
 	uls_mfree(uls_lf);
@@ -1355,7 +1355,7 @@ ULS_QUALIFIED_METHOD(uls_lf_destroy)(uls_lf_ptr_t uls_lf)
 // <parm name="puts_proc">A newly output interface</parm>
 // <return>none</return>
 uls_voidptr_t
-ULS_QUALIFIED_METHOD(__uls_lf_change_gdat)(uls_lf_ptr_t uls_lf, uls_voidptr_t gdat)
+__uls_lf_change_gdat(uls_lf_ptr_t uls_lf, uls_voidptr_t gdat)
 {
 	uls_voidptr_t old_gdat;
 
@@ -1366,7 +1366,7 @@ ULS_QUALIFIED_METHOD(__uls_lf_change_gdat)(uls_lf_ptr_t uls_lf, uls_voidptr_t gd
 }
 
 uls_voidptr_t
-ULS_QUALIFIED_METHOD(uls_lf_change_gdat)(uls_lf_ptr_t uls_lf, uls_voidptr_t gdat)
+uls_lf_change_gdat(uls_lf_ptr_t uls_lf, uls_voidptr_t gdat)
 {
 	uls_voidptr_t old_gdat;
 
@@ -1384,7 +1384,7 @@ ULS_QUALIFIED_METHOD(uls_lf_change_gdat)(uls_lf_ptr_t uls_lf, uls_voidptr_t gdat
 // <parm name="puts_proc">A newly output interface</parm>
 // <return>none</return>
 uls_voidptr_t
-ULS_QUALIFIED_METHOD(__uls_lf_change_xdat)(uls_lf_ptr_t uls_lf, uls_voidptr_t xdat)
+__uls_lf_change_xdat(uls_lf_ptr_t uls_lf, uls_voidptr_t xdat)
 {
 	uls_voidptr_t old_xdat;
 
@@ -1399,7 +1399,7 @@ ULS_QUALIFIED_METHOD(__uls_lf_change_xdat)(uls_lf_ptr_t uls_lf, uls_voidptr_t xd
 }
 
 uls_voidptr_t
-ULS_QUALIFIED_METHOD(uls_lf_change_xdat)(uls_lf_ptr_t uls_lf, uls_voidptr_t xdat)
+uls_lf_change_xdat(uls_lf_ptr_t uls_lf, uls_voidptr_t xdat)
 {
 	uls_voidptr_t old_xdat;
 
@@ -1417,7 +1417,7 @@ ULS_QUALIFIED_METHOD(uls_lf_change_xdat)(uls_lf_ptr_t uls_lf, uls_voidptr_t xdat
 // <parm name="puts_proc">A newly output interface</parm>
 // <return>none</return>
 void
-ULS_QUALIFIED_METHOD(__uls_lf_change_puts)(uls_lf_ptr_t uls_lf, uls_lf_delegate_ptr_t delegate)
+__uls_lf_change_puts(uls_lf_ptr_t uls_lf, uls_lf_delegate_ptr_t delegate)
 {
 	uls_lf_puts_t old_proc;
 
@@ -1435,7 +1435,7 @@ ULS_QUALIFIED_METHOD(__uls_lf_change_puts)(uls_lf_ptr_t uls_lf, uls_lf_delegate_
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_lf_change_puts)(uls_lf_ptr_t uls_lf, uls_lf_delegate_ptr_t delegate)
+uls_lf_change_puts(uls_lf_ptr_t uls_lf, uls_lf_delegate_ptr_t delegate)
 {
 	uls_lf_lock(uls_lf);
 	__uls_lf_change_puts(uls_lf, delegate);
@@ -1443,7 +1443,7 @@ ULS_QUALIFIED_METHOD(uls_lf_change_puts)(uls_lf_ptr_t uls_lf, uls_lf_delegate_pt
 }
 
 int
-ULS_QUALIFIED_METHOD(__uls_lf_vxprintf)(uls_lf_ptr_t uls_lf, const char* fmt, va_list args)
+__uls_lf_vxprintf(uls_lf_ptr_t uls_lf, const char* fmt, va_list args)
 {
 	uls_voidptr_t x_dat = uls_lf->x_dat;
 	uls_lf_puts_t     puts_proc = uls_lf->uls_lf_puts;
@@ -1535,7 +1535,7 @@ ULS_QUALIFIED_METHOD(__uls_lf_vxprintf)(uls_lf_ptr_t uls_lf, const char* fmt, va
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_lf_vxprintf)(uls_lf_ptr_t uls_lf, const char* fmt, va_list args)
+uls_lf_vxprintf(uls_lf_ptr_t uls_lf, const char* fmt, va_list args)
 {
 	int len;
 
@@ -1547,7 +1547,7 @@ ULS_QUALIFIED_METHOD(uls_lf_vxprintf)(uls_lf_ptr_t uls_lf, const char* fmt, va_l
 }
 
 int
-ULS_QUALIFIED_METHOD(__uls_lf_xprintf)(uls_lf_ptr_t uls_lf, const char* fmt, ...)
+__uls_lf_xprintf(uls_lf_ptr_t uls_lf, const char* fmt, ...)
 {
 	va_list args;
 	int len;
@@ -1560,7 +1560,7 @@ ULS_QUALIFIED_METHOD(__uls_lf_xprintf)(uls_lf_ptr_t uls_lf, const char* fmt, ...
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_lf_xprintf)(uls_lf_ptr_t uls_lf, const char* fmt, ...)
+uls_lf_xprintf(uls_lf_ptr_t uls_lf, const char* fmt, ...)
 {
 	va_list args;
 	int len;
@@ -1573,7 +1573,7 @@ ULS_QUALIFIED_METHOD(uls_lf_xprintf)(uls_lf_ptr_t uls_lf, const char* fmt, ...)
 }
 
 int
-ULS_QUALIFIED_METHOD(__uls_lf_vxprintf_generic)(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const char* fmt, va_list args)
+__uls_lf_vxprintf_generic(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const char* fmt, va_list args)
 {
 	uls_voidptr_t old_dat;
 	int len;
@@ -1589,7 +1589,7 @@ ULS_QUALIFIED_METHOD(__uls_lf_vxprintf_generic)(uls_voidptr_t x_dat, uls_lf_ptr_
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_lf_vxprintf_generic)(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const char* fmt, va_list args)
+uls_lf_vxprintf_generic(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const char* fmt, va_list args)
 {
 	int len;
 
@@ -1603,7 +1603,7 @@ ULS_QUALIFIED_METHOD(uls_lf_vxprintf_generic)(uls_voidptr_t x_dat, uls_lf_ptr_t 
 }
 
 int
-ULS_QUALIFIED_METHOD(__uls_lf_xprintf_generic)(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const char* fmt, ...)
+__uls_lf_xprintf_generic(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const char* fmt, ...)
 {
 	va_list args;
 	int len;
@@ -1616,7 +1616,7 @@ ULS_QUALIFIED_METHOD(__uls_lf_xprintf_generic)(uls_voidptr_t x_dat, uls_lf_ptr_t
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_lf_xprintf_generic)(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const char* fmt, ...)
+uls_lf_xprintf_generic(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const char* fmt, ...)
 {
 	va_list args;
 	int len;

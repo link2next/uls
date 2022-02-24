@@ -31,7 +31,6 @@
     Stanley Hong <link2next@gmail.com>, 2020.
   </author>
 */
-#ifndef ULS_EXCLUDE_HFILES
 #define __ULS_UTIL__
 #include "uls/uls_util.h"
 #include "uls/uls_fileio.h"
@@ -48,10 +47,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #endif
-#endif
 
 void
-ULS_QUALIFIED_METHOD(uls_print_bytes)(const char* srcptr, int n_bytes)
+uls_print_bytes(const char* srcptr, int n_bytes)
 {
 	char ch;
 	int i, j;
@@ -62,17 +60,17 @@ ULS_QUALIFIED_METHOD(uls_print_bytes)(const char* srcptr, int n_bytes)
 		ch = srcptr[i];
 
 		for (j=0; j<8; j++) {
-			if (ch & BYTE_LEFT_MOST_1) _uls_log_(printf)("1");
-			else _uls_log_(printf)(".");
+			if (ch & BYTE_LEFT_MOST_1) uls_printf("1");
+			else uls_printf(".");
 			ch <<= 1;
 		}
 		if (++i>=n_bytes) break;
-		_uls_log_(printf)(" ");
+		uls_printf(" ");
 	}
 }
 
 int
-ULS_QUALIFIED_METHOD(skip_c_comment_file)(FILE* fin)
+skip_c_comment_file(FILE* fin)
 {
 	int  ch, prev_ch;
 	int  n_lines=0;
@@ -92,7 +90,7 @@ ULS_QUALIFIED_METHOD(skip_c_comment_file)(FILE* fin)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_get_current_time_yyyymmdd_hhmm)(char* buf, int buf_siz)
+uls_get_current_time_yyyymmdd_hhmm(char* buf, int buf_siz)
 {
 #ifdef ULS_WINDOWS
 	SYSTEMTIME tm;
@@ -100,9 +98,9 @@ ULS_QUALIFIED_METHOD(uls_get_current_time_yyyymmdd_hhmm)(char* buf, int buf_siz)
 
 	GetLocalTime(&tm);
 
-	len = _uls_log_(snprintf)(buf, buf_siz, "%4d-", tm.wYear);
-	len += _uls_log_(snprintf)(buf+len, buf_siz-len, "%02d-%02d", tm.wMonth, tm.wDay);
-	len += _uls_log_(snprintf)(buf+len, buf_siz-len, " %02d:%02d", tm.wHour, tm.wMinute);
+	len = uls_snprintf(buf, buf_siz, "%4d-", tm.wYear);
+	len += uls_snprintf(buf+len, buf_siz-len, "%02d-%02d", tm.wMonth, tm.wDay);
+	len += uls_snprintf(buf+len, buf_siz-len, " %02d:%02d", tm.wHour, tm.wMinute);
 #else
 	struct tm  *tm;
 	time_t  curtim;
@@ -110,17 +108,17 @@ ULS_QUALIFIED_METHOD(uls_get_current_time_yyyymmdd_hhmm)(char* buf, int buf_siz)
 	curtim = time(NULL);
 	tm = localtime(uls_ptr(curtim));
 
-	_uls_log_(snprintf)(buf, buf_siz, "%4d-%02d-%02d %02d:%02d",
+	uls_snprintf(buf, buf_siz, "%4d-%02d-%02d %02d:%02d",
 		1900 + tm->tm_year, 1 + tm->tm_mon, tm->tm_mday, tm->tm_hour, tm->tm_min);
 #endif
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(uls_get_exeloc_by_pathenv)(const char *progname, char *fpath_buf)
+uls_get_exeloc_by_pathenv(const char *progname, char *fpath_buf)
 {
 	const char *pathlist, *dirptr;
 	int dirlen, fpath_buflen=-1;
-	uls_type_tool(outparam) parms;
+	uls_outparam_t parms;
 
 	if (progname == NULL || *progname == '\0') return -1;
 
@@ -130,12 +128,12 @@ ULS_QUALIFIED_METHOD(uls_get_exeloc_by_pathenv)(const char *progname, char *fpat
 		dirlen = parms.len;
 
 		if (dirptr != NULL) {
-			_uls_tool_(memcopy)(fpath_buf, dirptr, dirlen);
+			uls_memcopy(fpath_buf, dirptr, dirlen);
 			fpath_buflen = dirlen;
 
 			fpath_buf[fpath_buflen++] = ULS_FILEPATH_DELIM;
-			_uls_tool_(strcpy)(fpath_buf+fpath_buflen, progname);
-			fpath_buflen += _uls_tool_(strlen)(progname);
+			uls_strcpy(fpath_buf+fpath_buflen, progname);
+			fpath_buflen += uls_strlen(progname);
 		}
 	}
 
@@ -143,39 +141,39 @@ ULS_QUALIFIED_METHOD(uls_get_exeloc_by_pathenv)(const char *progname, char *fpat
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_get_exeloc_dir)(const char* argv0, char *fpath_buf)
+uls_get_exeloc_dir(const char* argv0, char *fpath_buf)
 {
 	int len;
 	char *ptr;
 #ifdef ULS_WINDOWS
 	char *ustr;
-	_uls_type_tool(csz_str) ustr_csz;
+	csz_str_t ustr_csz;
 #endif
 
 	if (fpath_buf == NULL) {
-		_uls_log(err_log)("%s: invalid parameter!", __FUNCTION__);
+		err_log("%s: invalid parameter!", __FUNCTION__);
 		return -1;
 	}
 
 #ifdef ULS_WINDOWS
 	if ((len = GetModuleFileNameA(NULL, fpath_buf, ULS_FILEPATH_MAX)) >= ULS_FILEPATH_MAX) {
-		_uls_log(err_log)("%s: internal error!", __FUNCTION__);
+		err_log("%s: internal error!", __FUNCTION__);
 		return -1;
 	}
 	fpath_buf[len] = '\0';
 
-	_uls_tool(csz_init)(uls_ptr(ustr_csz), -1);
+	csz_init(uls_ptr(ustr_csz), -1);
 
-	if ((ustr = _uls_tool_(astr2ustr)(fpath_buf, len, uls_ptr(ustr_csz))) == NULL ||
-		(ptr = (char *) _uls_tool_(strchr_r)(ustr, ULS_FILEPATH_DELIM)) == NULL) {
+	if ((ustr = uls_astr2ustr(fpath_buf, len, uls_ptr(ustr_csz))) == NULL ||
+		(ptr = (char *) uls_strchr_r(ustr, ULS_FILEPATH_DELIM)) == NULL) {
 		len = -1;
 	} else {
 		len = (int) (ptr - ustr);
-		_uls_tool_(memcopy)(fpath_buf, ustr, len);
+		uls_memcopy(fpath_buf, ustr, len);
 		fpath_buf[len] = '\0';
 	}
 
-	_uls_tool(csz_deinit)(uls_ptr(ustr_csz));
+	csz_deinit(uls_ptr(ustr_csz));
 #else
 	if (argv0 == NULL) {
 		if ((len = (int) readlink("/proc/self/exe", fpath_buf, ULS_FILEPATH_MAX+1)) < 0) {
@@ -184,21 +182,21 @@ ULS_QUALIFIED_METHOD(uls_get_exeloc_dir)(const char* argv0, char *fpath_buf)
 		fpath_buf[len] = '\0';
 	} else {
 		if (argv0[0] == ULS_FILEPATH_DELIM) {
-			len = _uls_tool_(strcpy)(fpath_buf, argv0);
-		} else if (_uls_tool_(strchr)(argv0, ULS_FILEPATH_DELIM) != NULL &&
-			(len=_uls_tool_(getcwd)(fpath_buf, ULS_FILEPATH_MAX+1)) > 0) {
+			len = uls_strcpy(fpath_buf, argv0);
+		} else if (uls_strchr(argv0, ULS_FILEPATH_DELIM) != NULL &&
+			(len=uls_getcwd(fpath_buf, ULS_FILEPATH_MAX+1)) > 0) {
 			fpath_buf[len++] = ULS_FILEPATH_DELIM;
-			len += _uls_tool_(strcpy)(fpath_buf+len, argv0);
+			len += uls_strcpy(fpath_buf+len, argv0);
 		} else if ((len = uls_get_exeloc_by_pathenv(argv0, fpath_buf)) < 0) {
 			return -2;
 		}
 	}
 
 	if ((ptr=realpath(fpath_buf, NULL)) != NULL) {
-		len = _uls_tool_(strcpy)(fpath_buf, ptr);
+		len = uls_strcpy(fpath_buf, ptr);
 		free(ptr);
 
-		ptr = (char *) _uls_tool_(strchr_r)(fpath_buf, ULS_FILEPATH_DELIM);
+		ptr = (char *) uls_strchr_r(fpath_buf, ULS_FILEPATH_DELIM);
 		uls_assert(ptr != NULL);
 		if (fpath_buf < ptr) {
 			*ptr = '\0';
@@ -215,7 +213,7 @@ ULS_QUALIFIED_METHOD(uls_get_exeloc_dir)(const char* argv0, char *fpath_buf)
 }
 
 const char*
-ULS_QUALIFIED_METHOD(uls_get_dirpath)(const char* fname, uls_ptrtype_tool(outparam) parms)
+uls_get_dirpath(const char* fname, uls_outparam_ptr_t parms)
 {
 	const char* dirpath_list = parms->lptr;
 	char fpath_buff[ULS_FILEPATH_MAX+1];
@@ -227,22 +225,22 @@ ULS_QUALIFIED_METHOD(uls_get_dirpath)(const char* fname, uls_ptrtype_tool(outpar
 	}
 
 	for (lptr0=dirpath_list; lptr0 != NULL; ) {
-		if ((lptr = _uls_tool_(strchr)(lptr0, ULS_DIRLIST_DELIM)) != NULL) {
+		if ((lptr = uls_strchr(lptr0, ULS_DIRLIST_DELIM)) != NULL) {
 			len_fptr = (int) (lptr - lptr0);
 			fptr = lptr0;
 			lptr0 = ++lptr;
 		} else {
-			len_fptr = _uls_tool_(strlen)(lptr0);
+			len_fptr = uls_strlen(lptr0);
 			fptr = lptr0;
 			lptr0 = NULL;
 		}
 
 		if (len_fptr==0) continue;
 
-		_uls_tool_(strncpy)(fpath_buff, fptr, len_fptr);
+		uls_strncpy(fpath_buff, fptr, len_fptr);
 		len = len_fptr;
 		fpath_buff[len++] = ULS_FILEPATH_DELIM;
-		_uls_tool_(strcpy)(fpath_buff+len, fname);
+		uls_strcpy(fpath_buff+len, fname);
 
 		if (uls_dirent_exist(fpath_buff) == ST_MODE_FILE) {
 			dirpath_ret = fptr;
@@ -255,7 +253,7 @@ ULS_QUALIFIED_METHOD(uls_get_dirpath)(const char* fname, uls_ptrtype_tool(outpar
 }
 
 int
-ULS_QUALIFIED_METHOD(is_filepath_delim)(char ch)
+is_filepath_delim(char ch)
 {
 	int rc = 0;
 #ifdef ULS_WINDOWS
@@ -267,13 +265,13 @@ ULS_QUALIFIED_METHOD(is_filepath_delim)(char ch)
 }
 
 int
-ULS_QUALIFIED_METHOD(is_absolute_path)(const char* path)
+is_absolute_path(const char* path)
 {
 	int stat;
 
 	if (*path == ULS_FILEPATH_DELIM) stat = 1;
 #ifdef ULS_WINDOWS
-	else if (_uls_tool_(isalpha)(path[0]) && path[1] == ':') stat = 1;
+	else if (uls_isalpha(path[0]) && path[1] == ':') stat = 1;
 #endif
 	else stat = 0;
 
@@ -281,7 +279,7 @@ ULS_QUALIFIED_METHOD(is_absolute_path)(const char* path)
 }
 
 int
-ULS_QUALIFIED_METHOD(is_path_prefix)(const char *filepath)
+is_path_prefix(const char *filepath)
 {
 	int i, stat=0;
 	char ch;
@@ -306,7 +304,7 @@ ULS_QUALIFIED_METHOD(is_path_prefix)(const char *filepath)
 }
 
 char*
-ULS_QUALIFIED_METHOD(path_skip_uplevel)(char* fpath)
+path_skip_uplevel(char* fpath)
 {
 	char *lptr;
 
@@ -332,23 +330,23 @@ ULS_QUALIFIED_METHOD(path_skip_uplevel)(char* fpath)
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__os_mkdir_ustr)(const char *filepath)
+__os_mkdir_ustr(const char *filepath)
 {
 	int rval;
 #ifdef ULS_WINDOWS
 	const char *astr;
-	_uls_type_tool(auw_outparam) buf_csz;
+	auw_outparam_t buf_csz;
 
-	_uls_tool(auw_init_outparam)(uls_ptr(buf_csz));
+	auw_init_outparam(uls_ptr(buf_csz));
 
-	if ((astr = _uls_tool_(ustr2astr_ptr)(filepath, -1, uls_ptr(buf_csz))) == NULL) {
+	if ((astr = uls_ustr2astr_ptr(filepath, -1, uls_ptr(buf_csz))) == NULL) {
 		rval = -1;
 	} else {
 		rval = _mkdir(astr);
 		if (rval != 0) rval = -1;
 	}
 
-	_uls_tool(auw_deinit_outparam)(uls_ptr(buf_csz));
+	auw_deinit_outparam(uls_ptr(buf_csz));
 #else
 	rval = mkdir(filepath, 0755);
 #endif
@@ -356,14 +354,14 @@ ULS_QUALIFIED_METHOD(__os_mkdir_ustr)(const char *filepath)
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__uls_mkdir_ustr)(const char *filepath0)
+__uls_mkdir_ustr(const char *filepath0)
 {
 	char fpath_buf[ULS_FILEPATH_MAX+3];
 	char *filepath, *fpath, *ptr, ch_bak;
 	int  n, i, rc, len, len1;
-	uls_type_tool(outparam) parms;
+	uls_outparam_t parms;
 
-	len = _uls_tool_(strcpy)(fpath_buf, filepath0);
+	len = uls_strcpy(fpath_buf, filepath0);
 	filepath = fpath_buf;
 	ptr = filepath + len;
 
@@ -380,14 +378,14 @@ ULS_QUALIFIED_METHOD(__uls_mkdir_ustr)(const char *filepath0)
 		ch_bak = *fpath;
 		*fpath = '\0';
 
-		if ((rc=_uls_tool_(dirent_exist)(fpath_buf)) < 0 || rc != ST_MODE_DIR)
+		if ((rc=uls_dirent_exist(fpath_buf)) < 0 || rc != ST_MODE_DIR)
 			return -1;
 		*fpath = ch_bak;
 	} else {
 		fpath = path_skip_uplevel(fpath_buf);
 	}
 
-	if ((rc=_uls_tool_(dirent_exist)(filepath)) < 0 || rc == ST_MODE_FILE) {
+	if ((rc=uls_dirent_exist(filepath)) < 0 || rc == ST_MODE_FILE) {
 		return -1;
 	} else if (rc == ST_MODE_DIR) {
 		return 0;
@@ -395,7 +393,7 @@ ULS_QUALIFIED_METHOD(__uls_mkdir_ustr)(const char *filepath0)
 
 	for (n=1; ; n++) {
 		parms.lptr = fpath;
-		ptr = __uls_tool_(filename)(uls_ptr(parms));
+		ptr = _uls_filename(uls_ptr(parms));
 
 		if (fpath < ptr) {
 			ptr[-1] = '\0';
@@ -403,7 +401,7 @@ ULS_QUALIFIED_METHOD(__uls_mkdir_ustr)(const char *filepath0)
 			break;
 		}
 
-		if ((rc=_uls_tool_(dirent_exist)(filepath)) < 0) {
+		if ((rc=uls_dirent_exist(filepath)) < 0) {
 			return -1;
 		} else if (rc == ST_MODE_DIR) {
 			ptr[-1] = ULS_FILEPATH_DELIM;
@@ -412,9 +410,9 @@ ULS_QUALIFIED_METHOD(__uls_mkdir_ustr)(const char *filepath0)
 	}
 
 	for (i=0; i<n; i++) {
-		len = _uls_tool_(strlen)(ptr);
+		len = uls_strlen(ptr);
 		if (__os_mkdir_ustr(filepath) < 0) {
-			_uls_log(err_log)("mkdir('%s') of %s failed", filepath);
+			err_log("mkdir('%s') of %s failed", filepath);
 			return -1;
 		}
 
@@ -427,7 +425,7 @@ ULS_QUALIFIED_METHOD(__uls_mkdir_ustr)(const char *filepath0)
 
 #ifdef ULS_WINDOWS
 int
-ULS_QUALIFIED_METHOD(get_volume_name)(const char* filepath)
+get_volume_name(const char* filepath)
 {
 	const char *ptr = filepath;
 	char delim_ch;
@@ -435,15 +433,15 @@ ULS_QUALIFIED_METHOD(get_volume_name)(const char* filepath)
 
 	if (is_filepath_delim(ptr[0]) && is_filepath_delim(ptr[1])) {
 		delim_ch = ptr[0];
-		if ((ptr = _uls_tool_(strchr)(ptr+2, delim_ch)) != NULL) {
+		if ((ptr = uls_strchr(ptr+2, delim_ch)) != NULL) {
 			len = (int) (ptr - filepath);
 		} else {
-			len = _uls_tool_(strlen)(filepath);
+			len = uls_strlen(filepath);
 		}
 
-	} else if (_uls_tool_(isalpha)(ptr[0]) && (ptr[1]==':' || (_uls_tool_(isalpha)(ptr[1]) && ptr[2]==':'))) {
+	} else if (uls_isalpha(ptr[0]) && (ptr[1]==':' || (uls_isalpha(ptr[1]) && ptr[2]==':'))) {
 		++ptr;
-		ptr = _uls_tool_(strchr)(ptr, ':') + 1;
+		ptr = uls_strchr(ptr, ':') + 1;
 		len = (int) (ptr - filepath);
 
 	} else {
@@ -456,10 +454,10 @@ ULS_QUALIFIED_METHOD(get_volume_name)(const char* filepath)
 
 #ifdef ULS_WINDOWS
 int
-ULS_QUALIFIED_METHOD(__uls_path_normalize_ustr)(const char* fpath, char* fpath2)
+__uls_path_normalize_ustr(const char* fpath, char* fpath2)
 #else
 int
-ULS_QUALIFIED_METHOD(uls_path_normalize)(const char* fpath, char* fpath2)
+uls_path_normalize(const char* fpath, char* fpath2)
 #endif
 {
 	const char *ptr0=fpath, *ptr1, *ptr;
@@ -497,7 +495,7 @@ ULS_QUALIFIED_METHOD(uls_path_normalize)(const char* fpath, char* fpath2)
 
 #ifdef ULS_WINDOWS
 int
-ULS_QUALIFIED_METHOD(uls_path_normalize)(const char* fpath, char* fpath2)
+uls_path_normalize(const char* fpath, char* fpath2)
 {
 	const char *ptr0, *ptr;
 	char *out_ptr, ch;
@@ -529,13 +527,13 @@ ULS_QUALIFIED_METHOD(uls_path_normalize)(const char* fpath, char* fpath2)
 #endif
 
 int
-ULS_QUALIFIED_METHOD(uls_mkdir)(const char *filepath0)
+uls_mkdir(const char *filepath0)
 {
 	int rval;
 	char *fpath;
 
 	if (filepath0 == NULL || *filepath0 == '\0') return -1;
-	fpath = _uls_tool_(strdup)(filepath0, -1);
+	fpath = uls_strdup(filepath0, -1);
 
 	if (uls_path_normalize(fpath, fpath) < 0) {
 		uls_mfree(fpath);
@@ -554,7 +552,7 @@ ULS_QUALIFIED_METHOD(uls_mkdir)(const char *filepath0)
 }
 
 void
-ULS_QUALIFIED_METHOD(isp_init)(uls_isp_ptr_t isp, int init_size)
+isp_init(uls_isp_ptr_t isp, int init_size)
 {
 	if (init_size < 0)
 		init_size = 512;
@@ -565,13 +563,13 @@ ULS_QUALIFIED_METHOD(isp_init)(uls_isp_ptr_t isp, int init_size)
 }
 
 void
-ULS_QUALIFIED_METHOD(isp_reset)(uls_isp_ptr_t isp)
+isp_reset(uls_isp_ptr_t isp)
 {
 	isp->len_strpool = 1;
 }
 
 void
-ULS_QUALIFIED_METHOD(isp_deinit)(uls_isp_ptr_t isp)
+isp_deinit(uls_isp_ptr_t isp)
 {
 	isp->len_strpool = 0;
 
@@ -582,7 +580,7 @@ ULS_QUALIFIED_METHOD(isp_deinit)(uls_isp_ptr_t isp)
 }
 
 char*
-ULS_QUALIFIED_METHOD(isp_find)(uls_isp_ptr_t isp, const char* str, int len)
+isp_find(uls_isp_ptr_t isp, const char* str, int len)
 {
 	char *ptr;
 	int l, ind;
@@ -604,7 +602,7 @@ ULS_QUALIFIED_METHOD(isp_find)(uls_isp_ptr_t isp, const char* str, int len)
 }
 
 char*
-ULS_QUALIFIED_METHOD(isp_insert)(uls_isp_ptr_t isp, const char* str, int len)
+isp_insert(uls_isp_ptr_t isp, const char* str, int len)
 {
 	char *ptr;
 	int i, l;
@@ -613,7 +611,7 @@ ULS_QUALIFIED_METHOD(isp_insert)(uls_isp_ptr_t isp, const char* str, int len)
 
 	l = isp->siz_strpool - isp->len_strpool;
 	if (len + 1 > l) {
-		_uls_log(err_log)("%s: isp full!", __FUNCTION__);
+		err_log("%s: isp full!", __FUNCTION__);
 		return NULL;
 	}
 
@@ -627,7 +625,6 @@ ULS_QUALIFIED_METHOD(isp_insert)(uls_isp_ptr_t isp, const char* str, int len)
 	return isp->buff + l;
 }
 
-#ifndef ULS_DOTNET
 /**
  * Parsing command line arguments.
  * e.g. i0 = uls_getopts(argc, argv, "lqf:s:o:v", options);
@@ -635,7 +632,7 @@ ULS_QUALIFIED_METHOD(isp_insert)(uls_isp_ptr_t isp, const char* str, int len)
  *     use argv[i0], argv[i0+1] ... as strings(void of '-') arguments if i0 > 0
  */
 int
-ULS_QUALIFIED_METHOD(uls_getopts)(int n_args, char* args[], const char* optfmt, uls_optproc_t proc)
+uls_getopts(int n_args, char* args[], const char* optfmt, uls_optproc_t proc)
 {
 	const char  *ptr;
 	char        *optarg, *optstr;
@@ -650,8 +647,8 @@ ULS_QUALIFIED_METHOD(uls_getopts)(int n_args, char* args[], const char* optfmt, 
 				return 0; // call usage();
 			}
 
-			if ((ptr=_uls_tool_(strchr)(optfmt, opt)) == NULL) {
-				_uls_log(err_log)("%s: undefined option -%c", __FUNCTION__, opt);
+			if ((ptr=uls_strchr(optfmt, opt)) == NULL) {
+				err_log("%s: undefined option -%c", __FUNCTION__, opt);
 				return -1;
 			}
 
@@ -661,13 +658,13 @@ ULS_QUALIFIED_METHOD(uls_getopts)(int n_args, char* args[], const char* optfmt, 
 				} else if (k+1 < n_args && args[k+1][0] != '-') {
 					optarg = args[++k];
 				} else {
-					_uls_log(err_log)("%s: option -%c requires an arg.", __FUNCTION__, opt);
+					err_log("%s: option -%c requires an arg.", __FUNCTION__, opt);
 					return -1;
 				}
 
 				if ((rc=proc(opt, optarg)) != 0) {
 					if (rc > 0) rc = 0;
-					else _uls_log(err_log)("error in processing the option -%c, %s.", opt, optarg);
+					else err_log("error in processing the option -%c, %s.", opt, optarg);
 					return rc;
 				}
 				break;
@@ -676,7 +673,7 @@ ULS_QUALIFIED_METHOD(uls_getopts)(int n_args, char* args[], const char* optfmt, 
 				optarg = "";
 				if ((rc=proc(opt, optarg)) != 0) {
 					if (rc > 0) rc = 0;
-					else _uls_log(err_log)("%s: error in -%c.", __FUNCTION__, opt);
+					else err_log("%s: error in -%c.", __FUNCTION__, opt);
 					return rc;
 				}
 				j++;
@@ -686,21 +683,20 @@ ULS_QUALIFIED_METHOD(uls_getopts)(int n_args, char* args[], const char* optfmt, 
 
 	return i;
 }
-#endif // ULS_DOTNET
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(get_ms_codepage)(uls_ptrtype_tool(outparam) parms)
+get_ms_codepage(uls_outparam_ptr_t parms)
 {
 	const char *name = parms->lptr;
-	uls_type_tool(outparam) parms1;
+	uls_outparam_t parms1;
 	const char *cptr;
 	int n, mbs;
 
-	if (name[0] != 'c' || name[1] != 'p' || !_uls_tool_(isdigit)(name[2]))
+	if (name[0] != 'c' || name[1] != 'p' || !uls_isdigit(name[2]))
 		return -1;
 
 	parms1.lptr = name + 2;
-	n = (int)_uls_tool_(skip_atou)(uls_ptr(parms1));
+	n = (int)uls_skip_atou(uls_ptr(parms1));
 	cptr = parms1.lptr;
 	if (*cptr != '\0') return -1;
 
@@ -716,9 +712,9 @@ ULS_QUALIFIED_METHOD(get_ms_codepage)(uls_ptrtype_tool(outparam) parms)
 	return n;
 }
 
-#if defined(ULS_WINDOWS) && !defined(ULS_DOTNET)
+#if defined(ULS_WINDOWS)
 char*
-ULS_QUALIFIED_METHOD(uls_win32_lookup_regval)(wchar_t* reg_dir, uls_ptrtype_tool(outparam) parms)
+uls_win32_lookup_regval(wchar_t* reg_dir, uls_outparam_ptr_t parms)
 {
 	wchar_t* reg_name = (wchar_t*) parms->line;
 	int	n_wchars, stat = -1;
@@ -734,7 +730,7 @@ ULS_QUALIFIED_METHOD(uls_win32_lookup_regval)(wchar_t* reg_dir, uls_ptrtype_tool
 
 	if ((lpKeyStr = wcschr(reg_dir, L':')) == NULL || reg_dir == lpKeyStr ||
 		(rval=(LONG)(lpKeyStr-reg_dir)) >= sizeof(keyRootBuff)/sizeof(wchar_t)) {
-		_uls_log(err_log)("incorrect format of reg-dir!");
+		err_log("incorrect format of reg-dir!");
 		return NULL;
 	}
 
@@ -753,13 +749,13 @@ ULS_QUALIFIED_METHOD(uls_win32_lookup_regval)(wchar_t* reg_dir, uls_ptrtype_tool
 	} else if  (!wcscmp(keyRootBuff, L"HKU")) {
 		hKeyRoot = HKEY_USERS;
 	} else {
-		_uls_log(err_log)("unknown reg key!");
+		err_log("unknown reg key!");
 		return NULL;
 	}
 
 	rval = RegOpenKeyExW(hKeyRoot, reg_dir, 0, KEY_READ, &hRegKey);
 	if (rval != ERROR_SUCCESS) {
-		_uls_log(err_log)("Can't find the home directory of ULS.");
+		err_log("Can't find the home directory of ULS.");
 		return NULL;
 	}
 
@@ -767,7 +763,7 @@ ULS_QUALIFIED_METHOD(uls_win32_lookup_regval)(wchar_t* reg_dir, uls_ptrtype_tool
 	rval = RegQueryValueExW(hRegKey, reg_name, 0, &value_type, NULL, &bufsize);
 	if (rval != ERROR_SUCCESS) {
 		if (rval == ERROR_FILE_NOT_FOUND)
-			_uls_log(err_log)("Error: RegQueryValueEx: 'UlsHome' Not found");
+			err_log("Error: RegQueryValueEx: 'UlsHome' Not found");
 		RegCloseKey(hRegKey);
 		return NULL;
 	}
@@ -775,7 +771,7 @@ ULS_QUALIFIED_METHOD(uls_win32_lookup_regval)(wchar_t* reg_dir, uls_ptrtype_tool
 	if ((lpKeyStr = (wchar_t *) uls_malloc(bufsize)) == NULL ||
 		(rval = RegQueryValueExW(hRegKey, reg_name, 0,
 			&value_type, (LPBYTE) lpKeyStr, &bufsize)) != ERROR_SUCCESS) {
-		_uls_log(err_log)("RegQueryValueEx failed");
+		err_log("RegQueryValueEx failed");
 		ustr = NULL;
 
 	} else {
@@ -800,13 +796,13 @@ ULS_QUALIFIED_METHOD(uls_win32_lookup_regval)(wchar_t* reg_dir, uls_ptrtype_tool
 #endif
 
 int
-ULS_QUALIFIED_METHOD(initialize_uls_util)(void)
+initialize_uls_util(void)
 {
 	char pathbuff[ULS_FILEPATH_MAX+1];
 	const char *fpath, *cptr;
 
 	int rc, mbs, len;
-	uls_type_tool(outparam) parms;
+	uls_outparam_t parms;
 	unsigned int a;
 
 #ifdef ULS_WINDOWS
@@ -822,40 +818,40 @@ ULS_QUALIFIED_METHOD(initialize_uls_util)(void)
 
 	initialize_primitives();
 	initialize_csz();
-#ifndef ULS_DOTNET
+
 	initialize_uls_lf();
 	uls_add_default_convspecs(uls_lf_get_default());
 	initialize_uls_sysprn();
 	initialize_uls_syserr();
-#endif
-	if ((fpath = getenv("ULS_SYSPROPS")) == NULL || _uls_tool_(dirent_exist)(fpath) != ST_MODE_REG) {
+
+	if ((fpath = getenv("ULS_SYSPROPS")) == NULL || uls_dirent_exist(fpath) != ST_MODE_REG) {
 		fpath = ULS_SYSPROPS_FPATH;
-		if ((rc = _uls_tool_(dirent_exist)(fpath)) <= 0 || rc != ST_MODE_REG) {
+		if ((rc = uls_dirent_exist(fpath)) <= 0 || rc != ST_MODE_REG) {
 #ifdef ULS_WINDOWS
-			len = _uls_tool_(strcpy)(pathbuff, ULS_SHARE_DFLDIR);
+			len = uls_strcpy(pathbuff, ULS_SHARE_DFLDIR);
 #else
 			len = uls_strcpy(pathbuff, ULS_OS_TEMP_DIR);
 #endif
 			pathbuff[len++] = ULS_FILEPATH_DELIM;
-			len += _uls_tool_(strcpy)(pathbuff + len, TMP_SYSPROPS_FNAME);
+			len += uls_strcpy(pathbuff + len, TMP_SYSPROPS_FNAME);
 
 			fpath = pathbuff;
-			if ((rc = _uls_tool_(dirent_exist)(fpath)) <= 0 || rc != ST_MODE_REG) {
-				_uls_log(err_log)("ULS: can't find the system property file in %s.", ULS_SYSPROPS_FPATH);
+			if ((rc = uls_dirent_exist(fpath)) <= 0 || rc != ST_MODE_REG) {
+				err_log("ULS: can't find the system property file in %s.", ULS_SYSPROPS_FPATH);
 				return -1;
 			}
 		}
 	}
 
 	if ((rc=initialize_sysprops(fpath)) < 0) {
-		_uls_log(err_log)("ULS: can't load the system property file in %s(err=%d).", fpath, rc);
+		err_log("ULS: can't load the system property file in %s(err=%d).", fpath, rc);
 		return -1;
 	}
 
 	initialize_uls_fileio();
 
 	if ((_uls_sysinfo_(home_dir) = uls_get_system_property("ULS_HOME")) == NULL) {
-#if defined(ULS_WINDOWS) && !defined(ULS_DOTNET)
+#if defined(ULS_WINDOWS)
 		char *homedir;
 
 		parms.line = (char *) ULS_REG_INSTDIR_NAME;
@@ -863,20 +859,20 @@ ULS_QUALIFIED_METHOD(initialize_uls_util)(void)
 		rc = parms.n;
 
 		if (homedir == NULL) {
-			_uls_log(err_log)("ULS: don't know about the installation information.");
+			err_log("ULS: don't know about the installation information.");
 			return -1;
 		}
 
 		_uls_sysinfo_(home_dir) = uls_add_system_property("ULS_HOME", homedir);
 		uls_mfree(homedir);
 #else
-		_uls_log(err_log)("ULS: don't know the installed directory.");
+		err_log("ULS: don't know the installed directory.");
 		return -1;
 #endif
 	}
 
 	if ((_uls_sysinfo_(etc_dir) = uls_get_system_property("ULS_ETC")) == NULL) {
-		_uls_log(err_log)("ULS: can't find etc dir for uls!");
+		err_log("ULS: can't find etc dir for uls!");
 		return -1;
 	}
 
@@ -885,7 +881,7 @@ ULS_QUALIFIED_METHOD(initialize_uls_util)(void)
 	}
 
 	if ((cptr = uls_get_system_property("ULS_MBCS")) == NULL) {
-		_uls_log(err_log)("ULS: can't find the encoding of the system!");
+		err_log("ULS: can't find the encoding of the system!");
 		return -1;
 	}
 
@@ -903,7 +899,7 @@ ULS_QUALIFIED_METHOD(initialize_uls_util)(void)
 			_uls_sysinfo_(multibytes) = mbs;
 
 		} else {
-			_uls_log(err_log)("%s: unknown file-encoding %s", cptr);
+			err_log("%s: unknown file-encoding %s", cptr);
 			return -1;
 		}
 	}
@@ -912,15 +908,15 @@ ULS_QUALIFIED_METHOD(initialize_uls_util)(void)
 }
 
 void
-ULS_QUALIFIED_METHOD(finalize_uls_util)(void)
+finalize_uls_util(void)
 {
 	finalize_uls_fileio();
 	finalize_sysprops();
-#ifndef ULS_DOTNET
+
 	finalize_uls_syserr();
 	finalize_uls_sysprn();
 	finalize_uls_lf();
-#endif
+
 	finalize_csz();
 	finalize_primitives();
 }

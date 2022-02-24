@@ -32,7 +32,6 @@
     Stanley Hong <link2next@gmail.com>, June 2015.
   </author>
 */
-#ifndef ULS_EXCLUDE_HFILES
 #define __ULS_AUW__
 #include "uls/uls_auw.h"
 #include "uls/uls_prim.h"
@@ -41,11 +40,10 @@
 
 #include <stdlib.h>
 #include <string.h>
-#endif
 
 #ifdef ULS_WINDOWS
 ULS_DECL_STATIC char*
-ULS_QUALIFIED_METHOD(wstr2mbs)(const wchar_t* wstr, int wlen, int is_utf8, csz_str_ptr_t csz)
+wstr2mbs(const wchar_t* wstr, int wlen, int is_utf8, csz_str_ptr_t csz)
 {
 	UINT codepage = is_utf8 ? CP_UTF8 : CP_ACP;
 	DWORD  errnum;
@@ -62,7 +60,7 @@ ULS_QUALIFIED_METHOD(wstr2mbs)(const wchar_t* wstr, int wlen, int is_utf8, csz_s
 		if ((errnum=GetLastError()) == ERROR_INVALID_PARAMETER || errnum == ERROR_NO_UNICODE_TRANSLATION) {
 			return NULL;
 		}
-		_uls_log_primitive(err_log)("Error: WideCharToMultiByte!");
+		err_log_primitive("Error: WideCharToMultiByte!");
 		return NULL;
 	}
 
@@ -71,7 +69,7 @@ ULS_QUALIFIED_METHOD(wstr2mbs)(const wchar_t* wstr, int wlen, int is_utf8, csz_s
 	astr = csz_data_ptr(csz);
 
 	if ((rc = WideCharToMultiByte(codepage, 0, wstr, wlen, astr, asiz, NULL, NULL)) <= 0) {
-		_uls_log_primitive(err_log)("Error: WideCharToMultiByte!");
+		err_log_primitive("Error: WideCharToMultiByte!");
 		csz_reset(csz);
 		astr = NULL;
 	} else {
@@ -83,7 +81,7 @@ ULS_QUALIFIED_METHOD(wstr2mbs)(const wchar_t* wstr, int wlen, int is_utf8, csz_s
 }
 
 ULS_DECL_STATIC wchar_t*
-ULS_QUALIFIED_METHOD(mbs2wstr)(const char* astr, int alen, int is_utf8, csz_str_ptr_t csz)
+mbs2wstr(const char* astr, int alen, int is_utf8, csz_str_ptr_t csz)
 {
 	UINT codepage = is_utf8 ? CP_UTF8 : CP_ACP;
 	DWORD  errnum;
@@ -102,7 +100,7 @@ ULS_QUALIFIED_METHOD(mbs2wstr)(const char* astr, int alen, int is_utf8, csz_str_
 		if ((errnum=GetLastError()) == ERROR_INVALID_PARAMETER || errnum == ERROR_NO_UNICODE_TRANSLATION) {
 			return NULL;
 		}
-  		_uls_log_primitive(err_log)("Error: MultiByteToWideChar!");
+  		err_log_primitive("Error: MultiByteToWideChar!");
   		return NULL;
 	}
 
@@ -111,7 +109,7 @@ ULS_QUALIFIED_METHOD(mbs2wstr)(const char* astr, int alen, int is_utf8, csz_str_
 	wstr = (wchar_t *) csz_data_ptr(csz);
 
 	if ((rc = MultiByteToWideChar(codepage, 0, astr, alen, wstr, wsiz)) <= 0) {
-		_uls_log_primitive(err_log)("Error: MultiByteToWideChar!");
+		err_log_primitive("Error: MultiByteToWideChar!");
 		csz_reset(csz);
 		wstr = NULL;
 	} else {
@@ -125,7 +123,7 @@ ULS_QUALIFIED_METHOD(mbs2wstr)(const char* astr, int alen, int is_utf8, csz_str_
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__uls_astr2ustr_ptr)(uls_outparam_ptr_t parms)
+__uls_astr2ustr_ptr(uls_outparam_ptr_t parms)
 {
 	const char *astr = parms->lptr;
 	int alen = parms->len;
@@ -155,7 +153,7 @@ ULS_QUALIFIED_METHOD(__uls_astr2ustr_ptr)(uls_outparam_ptr_t parms)
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__uls_ustr2astr_ptr)(uls_outparam_ptr_t parms)
+__uls_ustr2astr_ptr(uls_outparam_ptr_t parms)
 {
 	const char *ustr = parms->lptr;
 	int ulen = parms->len;
@@ -186,21 +184,21 @@ ULS_QUALIFIED_METHOD(__uls_ustr2astr_ptr)(uls_outparam_ptr_t parms)
 #endif // ULS_WINDOWS
 
 void
-ULS_QUALIFIED_METHOD(auw_init_outparam)(auw_outparam_ptr_t auw)
+auw_init_outparam(auw_outparam_ptr_t auw)
 {
 	csz_init(uls_ptr(auw->csz), -1);
 	auw->outlen = 0;
 }
 
 void
-ULS_QUALIFIED_METHOD(auw_deinit_outparam)(auw_outparam_ptr_t auw)
+auw_deinit_outparam(auw_outparam_ptr_t auw)
 {
 	csz_deinit(uls_ptr(auw->csz));
 	auw->outlen = 0;
 }
 
 int
-ULS_QUALIFIED_METHOD(astr_lengthof_char)(const char* str)
+astr_lengthof_char(const char* str)
 {
 	char ch;
 	int n;
@@ -217,7 +215,7 @@ ULS_QUALIFIED_METHOD(astr_lengthof_char)(const char* str)
 }
 
 int
-ULS_QUALIFIED_METHOD(astr_num_chars)(const char* str, int len, uls_outparam_ptr_t parms)
+astr_num_chars(const char* str, int len, uls_outparam_ptr_t parms)
 {
 	const char *ptr;
 	int n=0, i, rc;
@@ -250,7 +248,7 @@ ULS_QUALIFIED_METHOD(astr_num_chars)(const char* str, int len, uls_outparam_ptr_
 
 #ifdef ULS_WINDOWS
 wchar_t*
-ULS_QUALIFIED_METHOD(uls_astr2wstr)(const char *astr, int alen, csz_str_ptr_t csz_wstr)
+uls_astr2wstr(const char *astr, int alen, csz_str_ptr_t csz_wstr)
 {
 	int  has_nil=0;
 	wchar_t *wstr;
@@ -275,7 +273,7 @@ ULS_QUALIFIED_METHOD(uls_astr2wstr)(const char *astr, int alen, csz_str_ptr_t cs
 }
 
 char*
-ULS_QUALIFIED_METHOD(uls_wstr2astr)(const wchar_t* wstr, int wlen, csz_str_ptr_t csz)
+uls_wstr2astr(const wchar_t* wstr, int wlen, csz_str_ptr_t csz)
 {
 	int  has_nil=0;
 	char *astr;
@@ -298,7 +296,7 @@ ULS_QUALIFIED_METHOD(uls_wstr2astr)(const wchar_t* wstr, int wlen, csz_str_ptr_t
 }
 
 wchar_t*
-ULS_QUALIFIED_METHOD(uls_ustr2wstr)(const char *ustr, int ulen, csz_str_ptr_t csz_wstr)
+uls_ustr2wstr(const char *ustr, int ulen, csz_str_ptr_t csz_wstr)
 {
 	int has_nil=0;
 	wchar_t *wstr;
@@ -323,7 +321,7 @@ ULS_QUALIFIED_METHOD(uls_ustr2wstr)(const char *ustr, int ulen, csz_str_ptr_t cs
 }
 
 char*
-ULS_QUALIFIED_METHOD(uls_wstr2ustr)(const wchar_t* wstr, int wlen, csz_str_ptr_t csz)
+uls_wstr2ustr(const wchar_t* wstr, int wlen, csz_str_ptr_t csz)
 {
 	int  has_nil=0;
 	char *ustr;
@@ -346,7 +344,7 @@ ULS_QUALIFIED_METHOD(uls_wstr2ustr)(const wchar_t* wstr, int wlen, csz_str_ptr_t
 }
 
 char*
-ULS_QUALIFIED_METHOD(uls_ustr2astr)(const char *ustr, int ulen, csz_str_ptr_t csz)
+uls_ustr2astr(const char *ustr, int ulen, csz_str_ptr_t csz)
 {
 	csz_str_t csz_wstr;
 	wchar_t *wstr;
@@ -376,7 +374,7 @@ ULS_QUALIFIED_METHOD(uls_ustr2astr)(const char *ustr, int ulen, csz_str_ptr_t cs
 }
 
 char*
-ULS_QUALIFIED_METHOD(uls_astr2ustr)(const char *astr, int alen, csz_str_ptr_t csz)
+uls_astr2ustr(const char *astr, int alen, csz_str_ptr_t csz)
 {
 	csz_str_t csz_wstr;
 	wchar_t *wstr;
@@ -406,7 +404,7 @@ ULS_QUALIFIED_METHOD(uls_astr2ustr)(const char *astr, int alen, csz_str_ptr_t cs
 }
 
 const char*
-ULS_QUALIFIED_METHOD(uls_ustr2astr_ptr)(const char *ustr, int ulen, auw_outparam_ptr_t auw)
+uls_ustr2astr_ptr(const char *ustr, int ulen, auw_outparam_ptr_t auw)
 {
 	csz_str_ptr_t csz = uls_ptr(auw->csz);
 	const char *astr;
@@ -438,7 +436,7 @@ ULS_QUALIFIED_METHOD(uls_ustr2astr_ptr)(const char *ustr, int ulen, auw_outparam
 }
 
 const char*
-ULS_QUALIFIED_METHOD(uls_astr2ustr_ptr)(const char *astr, int alen, auw_outparam_ptr_t auw)
+uls_astr2ustr_ptr(const char *astr, int alen, auw_outparam_ptr_t auw)
 {
 	csz_str_ptr_t csz = uls_ptr(auw->csz);
 	const char *ustr;
@@ -472,21 +470,21 @@ ULS_QUALIFIED_METHOD(uls_astr2ustr_ptr)(const char *astr, int alen, auw_outparam
 #else // ~ULS_WINDOWS
 
 wchar_t*
-ULS_QUALIFIED_METHOD(uls_astr2wstr)(const char *astr, int alen, csz_str_ptr_t csz_wstr)
+uls_astr2wstr(const char *astr, int alen, csz_str_ptr_t csz_wstr)
 {
-	_uls_log(err_panic)("%s: Not Supported on this platform", __FUNCTION__);
+	err_panic("%s: Not Supported on this platform", __FUNCTION__);
 	return NULL;
 }
 
 char*
-ULS_QUALIFIED_METHOD(uls_wstr2astr)(const wchar_t *wstr, int wlen, csz_str_ptr_t csz)
+uls_wstr2astr(const wchar_t *wstr, int wlen, csz_str_ptr_t csz)
 {
-	_uls_log(err_panic)("%s: Not Supported on this platform", __FUNCTION__);
+	err_panic("%s: Not Supported on this platform", __FUNCTION__);
 	return NULL;
 }
 
 wchar_t*
-ULS_QUALIFIED_METHOD(uls_ustr2wstr)(const char *ustr, int ulen, csz_str_ptr_t csz_wstr)
+uls_ustr2wstr(const char *ustr, int ulen, csz_str_ptr_t csz_wstr)
 {
 	wchar_t *wstr;
 	int wsiz, wlen, has_nil=0;
@@ -548,7 +546,7 @@ ULS_QUALIFIED_METHOD(uls_ustr2wstr)(const char *ustr, int ulen, csz_str_ptr_t cs
 }
 
 char*
-ULS_QUALIFIED_METHOD(uls_wstr2ustr)(const wchar_t *wstr, int wlen, csz_str_ptr_t csz)
+uls_wstr2ustr(const wchar_t *wstr, int wlen, csz_str_ptr_t csz)
 {
 	char *ustr;
 	int usiz, ulen, has_nil=0;
@@ -607,31 +605,31 @@ ULS_QUALIFIED_METHOD(uls_wstr2ustr)(const wchar_t *wstr, int wlen, csz_str_ptr_t
 }
 
 char*
-ULS_QUALIFIED_METHOD(uls_ustr2astr)(const char *ustr, int ulen, csz_str_ptr_t csz)
+uls_ustr2astr(const char *ustr, int ulen, csz_str_ptr_t csz)
 {
-	_uls_log(err_panic)("%s: Not Supported on the platform", __FUNCTION__);
+	err_panic("%s: Not Supported on the platform", __FUNCTION__);
 	return NULL;
 }
 
 char*
-ULS_QUALIFIED_METHOD(uls_astr2ustr)(const char *astr, int alen, csz_str_ptr_t csz)
+uls_astr2ustr(const char *astr, int alen, csz_str_ptr_t csz)
 {
-	_uls_log(err_panic)("%s: Not Supported on the platform", __FUNCTION__);
+	err_panic("%s: Not Supported on the platform", __FUNCTION__);
 	return NULL;
 }
 
 
 const char*
-ULS_QUALIFIED_METHOD(uls_ustr2astr_ptr)(const char *ustr, int ulen, auw_outparam_ptr_t auw)
+uls_ustr2astr_ptr(const char *ustr, int ulen, auw_outparam_ptr_t auw)
 {
-	_uls_log(err_panic)("%s: Not Supported on the platform", __FUNCTION__);
+	err_panic("%s: Not Supported on the platform", __FUNCTION__);
 	return NULL;
 }
 
 const char*
-ULS_QUALIFIED_METHOD(uls_astr2ustr_ptr)(const char *astr, int alen, auw_outparam_ptr_t auw)
+uls_astr2ustr_ptr(const char *astr, int alen, auw_outparam_ptr_t auw)
 {
-	_uls_log(err_panic)("%s: Not Supported on the platform", __FUNCTION__);
+	err_panic("%s: Not Supported on the platform", __FUNCTION__);
 	return NULL;
 }
 

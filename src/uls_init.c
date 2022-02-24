@@ -31,7 +31,6 @@
     Stanley Hong <link2next@gmail.com>, 2011.
   </author>
 */
-#ifndef ULS_EXCLUDE_HFILES
 #define __ULS_INIT__
 #include "uls/uls_init.h"
 #include "uls/uls_lex.h"
@@ -46,10 +45,9 @@
 #ifndef ULS_WINDOWS
 #include <locale.h>
 #endif
-#endif
 
 ULS_DECL_STATIC void
-ULS_QUALIFIED_METHOD(__finalize_uls)(void)
+__finalize_uls(void)
 {
 	finalize_uls_litesc();
 	finalize_ulc_lexattr();
@@ -62,33 +60,30 @@ ULS_QUALIFIED_METHOD(__finalize_uls)(void)
 	unload_uch_ranges_list();
 
 	ulc_set_searchpath(NULL);
-#ifndef ULS_DOTNET
 	finalize_uls_util();
-#endif
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__initialize_uls)(void)
+__initialize_uls(void)
 {
 	char pathbuff[ULS_FILEPATH_MAX+1];
 
-#ifndef ULS_DOTNET
-	if (_uls_tool(initialize_uls_util)() < 0) {
+	if (initialize_uls_util() < 0) {
 		return -1;
 	}
-#endif
+
 	if (load_uch_ranges_list() < 0) {
-		_uls_log(err_log)("ULS: can't find the file for unicode id ranges!");
+		err_log("ULS: can't find the file for unicode id ranges!");
 		return -1;
 	}
 
 	if (uls_langs != nilptr) uls_destroy_lang_list(uls_langs);
-	_uls_log_(snprintf)(pathbuff, ULS_FILEPATH_MAX, "%s/%s", _uls_sysinfo_(etc_dir), ULS_LANGS_FNAME);
+	uls_snprintf(pathbuff, ULS_FILEPATH_MAX, "%s/%s", _uls_sysinfo_(etc_dir), ULS_LANGS_FNAME);
 	if ((uls_langs = uls_load_langdb(pathbuff)) == nilptr) {
-		_uls_log_(snprintf)(pathbuff, ULS_FILEPATH_MAX, "%s/%s", _uls_sysinfo_(etc_dir), TMP_LANGS_FNAME);
+		uls_snprintf(pathbuff, ULS_FILEPATH_MAX, "%s/%s", _uls_sysinfo_(etc_dir), TMP_LANGS_FNAME);
 		if ((uls_langs = uls_load_langdb(pathbuff)) == nilptr) {
-			_uls_log(err_log)("can't load lang-db '%s'!", ULS_LANGS_FNAME);
-			_uls_log(err_log)("  etc_dir = '%s'", _uls_sysinfo_(etc_dir));
+			err_log("can't load lang-db '%s'!", ULS_LANGS_FNAME);
+			err_log("  etc_dir = '%s'", _uls_sysinfo_(etc_dir));
 			return -1;
 		}
 	}
@@ -102,7 +97,7 @@ ULS_QUALIFIED_METHOD(__initialize_uls)(void)
 
 #ifndef ULS_WINDOWS
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(set_uls_locale)(void)
+set_uls_locale(void)
 {
 	const char *cptr0, *cptr;
 	char lang_entry[16], lang_buff[16];
@@ -111,7 +106,7 @@ ULS_QUALIFIED_METHOD(set_uls_locale)(void)
 	int i, j, len, stat=0;
 
 	if ((cptr0=getenv("LANG")) != NULL) {
-		if ((cptr = _uls_tool_(strchr)(cptr0, '.')) != NULL && (len=(int)(cptr-cptr0)) > 0 && len < 8) {
+		if ((cptr = uls_strchr(cptr0, '.')) != NULL && (len=(int)(cptr-cptr0)) > 0 && len < 8) {
 			for (j=0; j<len; j++) lang_entry[j] = cptr0[j];
 			lang_entry[len] = '\0';
 			locale_list[0] = lang_entry;
@@ -120,13 +115,13 @@ ULS_QUALIFIED_METHOD(set_uls_locale)(void)
 
 	for (i=0; i<uls_dim(locale_list); i++) {
 		cptr0 = locale_list[i];
-		len = _uls_tool_(strlen)(cptr0);
+		len = uls_strlen(cptr0);
 
-		_uls_tool_(strcpy)(lang_buff, cptr0);
+		uls_strcpy(lang_buff, cptr0);
 
 		for (j=0; j<uls_dim(encoding_suffs); j++) {
 			lang_buff[len] = '.';
-			_uls_tool_(strcpy)(lang_buff+len+1, encoding_suffs[j]);
+			uls_strcpy(lang_buff+len+1, encoding_suffs[j]);
 			if (setlocale(LC_ALL, lang_buff) != NULL) {
 				stat = 1;
 				break;
@@ -143,18 +138,18 @@ void
 #ifdef __GNUC__
 __attribute__((constructor))
 #endif
-ULS_QUALIFIED_METHOD(_initialize_uls)(void)
+_initialize_uls(void)
 {
-	if (_uls_tool_(sysinfo) != nilptr && _uls_sysinfo_(initialized)) {
+	if (uls_sysinfo != nilptr && _uls_sysinfo_(initialized)) {
 		return;
 	}
 
 	if (__initialize_uls() < 0) {
-		_uls_tool_(appl_exit)(1);
+		uls_appl_exit(1);
 	}
 #ifndef ULS_WINDOWS
 	if (!set_uls_locale()) {
-		_uls_log(err_log)("Fail to set locale utf8!");
+		err_log("Fail to set locale utf8!");
 	}
 #endif
 }
@@ -163,9 +158,9 @@ void
 #ifdef __GNUC__
 __attribute__((destructor))
 #endif
-ULS_QUALIFIED_METHOD(_finalize_uls)(void)
+_finalize_uls(void)
 {
-	if (_uls_tool_(sysinfo) == nilptr || !_uls_sysinfo_(initialized)) {
+	if (uls_sysinfo == nilptr || !_uls_sysinfo_(initialized)) {
 		return;
 	}
 
@@ -173,13 +168,13 @@ ULS_QUALIFIED_METHOD(_finalize_uls)(void)
 }
 
 void
-ULS_QUALIFIED_METHOD(initialize_uls_static)(void)
+initialize_uls_static(void)
 {
 	_initialize_uls();
 }
 
 void
-ULS_QUALIFIED_METHOD(initialize_uls)(void)
+initialize_uls(void)
 {
 	initialize_uls_static();
 #ifdef ULS_NO_SUPPORT_FINALCALL
@@ -188,7 +183,7 @@ ULS_QUALIFIED_METHOD(initialize_uls)(void)
 }
 
 void
-ULS_QUALIFIED_METHOD(finalize_uls)(void)
+finalize_uls(void)
 {
 	_finalize_uls();
 }

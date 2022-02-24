@@ -30,15 +30,12 @@
 #ifndef __ULS_TWOPLUS_H__
 #define __ULS_TWOPLUS_H__
 
-#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_tokdef.h"
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
-#ifdef ULS_DEF_PUBLIC_TYPE
 ULS_DEFINE_STRUCT(twoplus_tree)
 {
 	int len_keyw;
@@ -53,13 +50,12 @@ ULS_DEFINE_STRUCT(kwtable_twoplus)
 	uls_decl_array_type00(tree_array, twoplus_tree, ULS_KWTABLE_TWOPLUS_SIZE);
 
 	uls_twoplus_tree_ptr_t  start;
-	uls_callback_type_this(strcmp_proc) str_ncmp;
+	uls_callback_type(strcmp_proc) str_ncmp;
 
 	uls_decl_parray(twoplus_mempool, tokdef_vx);
 };
-#endif // ULS_DEF_PUBLIC_TYPE
 
-#if defined(__ULS_TWOPLUS__) || defined(ULS_DECL_PRIVATE_PROC)
+#if defined(__ULS_TWOPLUS__)
 ULS_DECL_STATIC uls_tokdef_vx_ptr_t __twoplus_bi_search(uls_kwtable_twoplus_ptr_t tbl, const char* keyw,
 	uls_ref_parray(ary,tokdef_vx), int n_ary);
 #endif
@@ -70,7 +66,7 @@ void uls_deinit_twoplus_tree(uls_twoplus_tree_ptr_t tree);
 
 void uls_init_kwtable_twoplus(uls_kwtable_twoplus_ptr_t tbl);
 void uls_deinit_kwtable_twoplus(uls_kwtable_twoplus_ptr_t tbl);
-uls_twoplus_tree_ptr_t uls_get_ind_twoplus_tree(uls_kwtable_twoplus_ptr_t tbl, int len_twoplus, uls_ptrtype_tool(outparam) parms);
+uls_twoplus_tree_ptr_t uls_get_ind_twoplus_tree(uls_kwtable_twoplus_ptr_t tbl, int len_twoplus, uls_outparam_ptr_t parms);
 
 int cmp_twoplus_by_length(const uls_voidptr_t a, const uls_voidptr_t b);
 int cmp_twoplus_vx_by_keyword(const uls_voidptr_t a, const uls_voidptr_t b);

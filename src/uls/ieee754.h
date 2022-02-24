@@ -35,15 +35,13 @@
 #ifndef __ULS_IEEE754_H__
 #define __ULS_IEEE754_H__
 
-#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_type.h"
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
-#if defined(__ULS_IEEE754__) || defined(ULS_DECL_PRIVATE_PROC)
+#if defined(__ULS_IEEE754__)
 ULS_DECL_STATIC int get_ieee754_biased_expo(char* buff, int n_bits_expo);
 ULS_DECL_STATIC void put_ieee754_biased_expo(int m_expo, char* buff, int n_bits_expo);
 #endif

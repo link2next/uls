@@ -31,17 +31,15 @@
     Stanley Hong <link2next@gmail.com>, April 2011.
   </author>
 */
-#ifndef ULS_EXCLUDE_HFILES
 #define __ULS_MISC__
 #include "uls/uls_misc.h"
 #include "uls/uls_sysprops.h"
 #include "uls/uls_fileio.h"
 #include "uls/uls_log.h"
 #include "uls/uls_util.h"
-#endif
 
 int
-ULS_QUALIFIED_METHOD(splitint)(const char* line, uls_ptrtype_tool(outparam) parms)
+splitint(const char* line, uls_outparam_ptr_t parms)
 {
 	int   n, i=parms->n;
 	int   minus=0, ch;
@@ -54,14 +52,14 @@ ULS_QUALIFIED_METHOD(splitint)(const char* line, uls_ptrtype_tool(outparam) parm
 		++i;
 	}
 
-	if (!_uls_tool_(isdigit)(ch=line[i])) {
+	if (!uls_isdigit(ch=line[i])) {
 		return 0;
 	} else {
 		n = ch - '0';
 		++i;
 	}
 
-	for ( ; _uls_tool_(isdigit)(ch=line[i]); i++) {
+	for ( ; uls_isdigit(ch=line[i]); i++) {
 		n = n*10 + (ch - '0');
 	}
 
@@ -72,16 +70,16 @@ ULS_QUALIFIED_METHOD(splitint)(const char* line, uls_ptrtype_tool(outparam) parm
 }
 
 int
-ULS_QUALIFIED_METHOD(canbe_tokname)(const char *str)
+canbe_tokname(const char *str)
 {
 	int i, val;
 	char ch;
 
 	for (i=0; (ch=str[i])!='\0'; i++) {
 		if (i > 0) {
-			val = _uls_tool_(isalnum)(ch) || (ch == '_');
+			val = uls_isalnum(ch) || (ch == '_');
 		} else {
-			val = _uls_tool_(isalpha)(ch) || (ch == '_');
+			val = uls_isalpha(ch) || (ch == '_');
 		}
 		if (val == 0) return 0;
 	}
@@ -93,7 +91,7 @@ ULS_QUALIFIED_METHOD(canbe_tokname)(const char *str)
 }
 
 const char*
-ULS_QUALIFIED_METHOD(uls_skip_multiline_comment)(uls_ptrtype_tool(parm_line) parm_ln)
+uls_skip_multiline_comment(uls_parm_line_ptr_t parm_ln)
 {
 	const char* lptr = parm_ln->lptr, *lptr_end=parm_ln->lptr_end;
 	int  ch, prev_ch, n=0;
@@ -123,7 +121,7 @@ ULS_QUALIFIED_METHOD(uls_skip_multiline_comment)(uls_ptrtype_tool(parm_line) par
 }
 
 const char*
-ULS_QUALIFIED_METHOD(uls_skip_singleline_comment)(uls_ptrtype_tool(parm_line) parm_ln)
+uls_skip_singleline_comment(uls_parm_line_ptr_t parm_ln)
 {
 	const char* lptr = parm_ln->lptr, *lptr_end=parm_ln->lptr_end;
 	int  ch;
@@ -141,7 +139,7 @@ ULS_QUALIFIED_METHOD(uls_skip_singleline_comment)(uls_ptrtype_tool(parm_line) pa
 }
 
 ULS_DECL_STATIC unsigned int
-ULS_QUALIFIED_METHOD(uls_gauss_log2)(unsigned int n, uls_ptrtype_tool(outparam) parms)
+uls_gauss_log2(unsigned int n, uls_outparam_ptr_t parms)
 {
 	unsigned int i, n_bits=sizeof(unsigned int)<<3;
 	unsigned int m, m_prev;
@@ -160,19 +158,17 @@ ULS_QUALIFIED_METHOD(uls_gauss_log2)(unsigned int n, uls_ptrtype_tool(outparam) 
 	return parms->x2;
 }
 
-#ifndef ULS_DOTNET
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(sortcmp_obj4sort)(const uls_voidptr_t a, const uls_voidptr_t b)
+sortcmp_obj4sort(const uls_voidptr_t a, const uls_voidptr_t b)
 {
 	const uls_obj4sort_ptr_t e1 = (const uls_obj4sort_ptr_t) a;
 	const uls_obj4sort_ptr_t e2 = (const uls_obj4sort_ptr_t) b;
 
 	return e1->cmpfunc(e1->vptr, e2->vptr);
 }
-#endif
 
 ULS_DECL_STATIC void
-ULS_QUALIFIED_METHOD(downheap_vptr)(uls_heaparray_ptr_t hh, unsigned int i0)
+downheap_vptr(uls_heaparray_ptr_t hh, unsigned int i0)
 {
 	uls_sort_cmpfunc_t cmpfunc = hh->cmpfunc;
 	unsigned int left, right, k;
@@ -215,7 +211,7 @@ ULS_QUALIFIED_METHOD(downheap_vptr)(uls_heaparray_ptr_t hh, unsigned int i0)
 }
 
 ULS_DECL_STATIC void
-ULS_QUALIFIED_METHOD(extract_top_vptr)(uls_heaparray_ptr_t hh)
+extract_top_vptr(uls_heaparray_ptr_t hh)
 {
 	unsigned int n2;
 	_uls_decl_array(ary,uls_voidptr_t) = hh->ary;
@@ -231,11 +227,11 @@ ULS_QUALIFIED_METHOD(extract_top_vptr)(uls_heaparray_ptr_t hh)
 }
 
 void
-ULS_QUALIFIED_METHOD(build_heaptree_vptr)(uls_heaparray_ptr_t hh,
+build_heaptree_vptr(uls_heaparray_ptr_t hh,
 	_uls_decl_array(ary,uls_voidptr_t), unsigned int n, uls_sort_cmpfunc_t cmpfunc)
 {
 	unsigned int two_exp, i2, j, lvl;
-	uls_type_tool(outparam) parms1;
+	uls_outparam_t parms1;
 
 	hh->ary = ary;
 	hh->n_ary = hh->ary_siz = n;
@@ -259,9 +255,8 @@ ULS_QUALIFIED_METHOD(build_heaptree_vptr)(uls_heaparray_ptr_t hh,
 	}
 }
 
-#ifndef ULS_DOTNET
 void
-ULS_QUALIFIED_METHOD(uls_quick_sort)(uls_native_vptr_t ary, int n_ary, int elmt_size, uls_sort_cmpfunc_t cmpfunc)
+uls_quick_sort(uls_native_vptr_t ary, int n_ary, int elmt_size, uls_sort_cmpfunc_t cmpfunc)
 {
 	uls_decl_parray(obj4_sort_ary, obj4sort);
 	uls_decl_parray_slots(slots_obj, obj4sort);
@@ -305,7 +300,7 @@ ULS_QUALIFIED_METHOD(uls_quick_sort)(uls_native_vptr_t ary, int n_ary, int elmt_
 }
 
 uls_voidptr_t
-ULS_QUALIFIED_METHOD(uls_bi_search)(const uls_voidptr_t keyw,
+uls_bi_search(const uls_voidptr_t keyw,
 	uls_native_vptr_t ary, int n_ary, int elmt_size, uls_bi_comp_t cmpfunc)
 {
 	int   low, high, mid, cond;
@@ -329,10 +324,9 @@ ULS_QUALIFIED_METHOD(uls_bi_search)(const uls_voidptr_t keyw,
 
 	return nilptr;
 }
-#endif // ULS_DOTNET
 
 void
-ULS_QUALIFIED_METHOD(uls_quick_sort_vptr)(_uls_decl_array(ary,uls_voidptr_t),
+uls_quick_sort_vptr(_uls_decl_array(ary,uls_voidptr_t),
 	int n_ary, uls_sort_cmpfunc_t cmpfunc)
 {
 	uls_heaparray_t heap_array;
@@ -355,7 +349,7 @@ ULS_QUALIFIED_METHOD(uls_quick_sort_vptr)(_uls_decl_array(ary,uls_voidptr_t),
 }
 
 uls_voidptr_t
-ULS_QUALIFIED_METHOD(uls_bi_search_vptr)(const uls_voidptr_t keyw,
+uls_bi_search_vptr(const uls_voidptr_t keyw,
 	_uls_decl_array(ary,uls_voidptr_t), int n_ary, uls_bi_comp_t cmpfunc)
 {
 	int   low, high, mid, cond;
@@ -381,7 +375,7 @@ ULS_QUALIFIED_METHOD(uls_bi_search_vptr)(const uls_voidptr_t keyw,
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_get_simple_escape_char)(uls_ptrtype_tool(outparam) parms)
+uls_get_simple_escape_char(uls_outparam_ptr_t parms)
 {
 	int processed = 1;
 	char ch2;
@@ -412,12 +406,12 @@ ULS_QUALIFIED_METHOD(uls_get_simple_escape_char)(uls_ptrtype_tool(outparam) parm
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_get_simple_escape_str)(char quote_ch, uls_ptrtype_tool(outparam) parms)
+uls_get_simple_escape_str(char quote_ch, uls_outparam_ptr_t parms)
 {
 	const char *lptr = parms->lptr;
 	char* outbuf = parms->line;
 	int rval, escape = 0, j, k=0;
-	uls_type_tool(outparam) parms1;
+	uls_outparam_t parms1;
 	char ch, ch2;
 
 	for ( ; ; lptr++) {
@@ -426,7 +420,7 @@ ULS_QUALIFIED_METHOD(uls_get_simple_escape_str)(char quote_ch, uls_ptrtype_tool(
 //				err_log("the escape char('\\') at the end of string!");
 				outbuf[k++] = '\\';
 			} else if (quote_ch != '\0') {
-				_uls_log(err_log)("unterminated literal string!");
+				err_log("unterminated literal string!");
 				parms->lptr = lptr;
 				return -1;
 			}
@@ -436,15 +430,15 @@ ULS_QUALIFIED_METHOD(uls_get_simple_escape_str)(char quote_ch, uls_ptrtype_tool(
 		if (escape) {
 			if (ch == 'x') {
 				for (ch2=0,j=0; j<2; j++) {
-					if (!_uls_tool_(isxdigit)(ch=lptr[j+1])) {
+					if (!uls_isxdigit(ch=lptr[j+1])) {
 						if (j == 0) {
-							_uls_log(err_log)("%s: No hexa-string format!", __FUNCTION__);
+							err_log("%s: No hexa-string format!", __FUNCTION__);
 							parms->lptr = lptr;
 							return -1;
 						}
 						break;
 					}
-					ch2 |= _uls_tool_(isdigit)(ch) ? ch - '0' : 10 + (_uls_tool_(toupper)(ch) - 'A');
+					ch2 |= uls_isdigit(ch) ? ch - '0' : 10 + (uls_toupper(ch) - 'A');
 				}
 				outbuf[k++] = ch2;
 				lptr += j;
@@ -480,7 +474,7 @@ ULS_QUALIFIED_METHOD(uls_get_simple_escape_str)(char quote_ch, uls_ptrtype_tool(
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_get_simple_unescape_char)(int ch)
+uls_get_simple_unescape_char(int ch)
 {
 	int ch2;
 
@@ -505,7 +499,7 @@ ULS_QUALIFIED_METHOD(uls_get_simple_unescape_char)(int ch)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_get_simple_unescape_str)(uls_ptrtype_tool(outparam) parms)
+uls_get_simple_unescape_str(uls_outparam_ptr_t parms)
 {
 	char* outbuf = parms->line;
 	const char *lptr;
@@ -526,21 +520,21 @@ ULS_QUALIFIED_METHOD(uls_get_simple_unescape_str)(uls_ptrtype_tool(outparam) par
 }
 
 FILE*
-ULS_QUALIFIED_METHOD(uls_get_spec_fp)(const char* dirpath_list, const char* fpath, uls_ptrtype_tool(outparam) parms)
+uls_get_spec_fp(const char* dirpath_list, const char* fpath, uls_outparam_ptr_t parms)
 {
 	char filepath_buff[ULS_FILEPATH_MAX+1];
 	const char *fptr, *lptr0, *lptr;
 	int len, len_fptr;
 	FILE *fp_in;
-	uls_type_tool(outparam) parms1;
+	uls_outparam_t parms1;
 
 	if (fpath == NULL) return NULL;
 
-	if (dirpath_list == NULL || _uls_tool(is_absolute_path)(fpath) > 0) {
-		fp_in = _uls_tool_(fp_open)(fpath, ULS_FIO_READ);
+	if (dirpath_list == NULL || is_absolute_path(fpath) > 0) {
+		fp_in = uls_fp_open(fpath, ULS_FIO_READ);
 
 		parms1.lptr = fpath;
-		lptr = __uls_tool_(filename)(uls_ptr(parms1));
+		lptr = _uls_filename(uls_ptr(parms1));
 
 		if (parms != nilptr) {
 			parms->lptr = fpath;
@@ -552,25 +546,25 @@ ULS_QUALIFIED_METHOD(uls_get_spec_fp)(const char* dirpath_list, const char* fpat
 
 	fp_in = NULL;
 	for (lptr0 = dirpath_list; lptr0 != NULL; ) {
-		if ((lptr = _uls_tool_(strchr)(lptr0, ULS_DIRLIST_DELIM)) != NULL) {
+		if ((lptr = uls_strchr(lptr0, ULS_DIRLIST_DELIM)) != NULL) {
 			len_fptr = (int) (lptr - lptr0);
 			fptr = lptr0;
 			lptr0 = ++lptr;
 		} else {
-			len_fptr = _uls_tool_(strlen)(lptr0);
+			len_fptr = uls_strlen(lptr0);
 			fptr = lptr0;
 			lptr0 = NULL;
 		}
 
 		if (len_fptr > 0) {
-			len = _uls_tool_(strncpy)(filepath_buff, fptr, len_fptr);
+			len = uls_strncpy(filepath_buff, fptr, len_fptr);
 			filepath_buff[len++] = ULS_FILEPATH_DELIM;
-			_uls_tool_(strcpy)(filepath_buff+len, fpath);
+			uls_strcpy(filepath_buff+len, fpath);
 		} else {
-			_uls_tool_(strcpy)(filepath_buff, fpath);
+			uls_strcpy(filepath_buff, fpath);
 		}
 
-		if ((fp_in=_uls_tool_(fp_open)(filepath_buff, ULS_FIO_READ)) != NULL) {
+		if ((fp_in=uls_fp_open(filepath_buff, ULS_FIO_READ)) != NULL) {
 			if (parms != nilptr) {
 				parms->lptr = fptr;
 				parms->len = len_fptr;
@@ -583,7 +577,7 @@ ULS_QUALIFIED_METHOD(uls_get_spec_fp)(const char* dirpath_list, const char* fpat
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_cmd_run)(uls_array_ref_slots_type00(cmdlst,cmd), int n_cmdlst, const char* keyw,
+uls_cmd_run(uls_array_ref_slots_type00(cmdlst,cmd), int n_cmdlst, const char* keyw,
 	char *line, uls_voidptr_t data)
 {
 	int stat = -2;
@@ -597,7 +591,7 @@ ULS_QUALIFIED_METHOD(uls_cmd_run)(uls_array_ref_slots_type00(cmdlst,cmd), int n_
 		mid = (low + high) / 2;
 		cmd = uls_get_array_slot(cmdlst,mid);
 
-		if ((cond = _uls_tool_(strcmp)(cmd->name, keyw)) < 0) {
+		if ((cond = uls_strcmp(cmd->name, keyw)) < 0) {
 			low = mid + 1;
 		} else if (cond > 0) {
 			high = mid - 1;
