@@ -114,8 +114,4 @@ ULS_DLL_EXTERN int uls_printf(const char *fmt, ...);
 }
 #endif
 
-#ifdef ULS_USE_WSTR
-#include "uls/uls_wprint.h"
-#endif
-
 #endif // __ULS_PRINT_H__

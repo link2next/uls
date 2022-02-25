@@ -454,17 +454,3 @@ csz_export(csz_str_ptr_t csz)
 
 	return ptr;
 }
-
-wchar_t*
-uls_get_csz_wstr(csz_str_ptr_t csz)
-{
-	wchar_t nilwbuf[1] = { L'\0' };
-	int k;
-
-	k = csz_length(csz);
-	__str_modify(uls_ptr(csz->pool), csz->alloc_delta, k, NULL, sizeof(wchar_t));
- 	uls_memcopy(csz->pool.buf + k, (const char *) nilwbuf, sizeof(wchar_t));
-
-	return (wchar_t *) csz_data_ptr(csz);
-}
-

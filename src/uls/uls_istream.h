@@ -118,8 +118,4 @@ ULS_DLL_EXTERN uls_istream_ptr_t ulsjava_open_istream_file(const void *filepath,
 }
 #endif
 
-#ifdef ULS_USE_WSTR
-#include "uls/uls_istream_wstr.h"
-#endif
-
 #endif // __ULS_ISTREAM_H__

@@ -312,7 +312,7 @@ ulc2class_exe = $(uls_bin_dir)/ulc2class
 ACLOCAL_AMFLAGS = -I m4
 EngToks_SOURCES = EngToks.cpp EngLex.cpp
 EngToks_CPPFLAGS = -I$(uls_inc_dir)
-EngToks_LDADD = -L$(uls_lib_dir) -lulscpp -lulscompat -luls
+EngToks_LDADD = -L$(uls_lib_dir) -lulscpp -luls
 all: all-am
 
 .SUFFIXES:

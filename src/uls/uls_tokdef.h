@@ -125,8 +125,4 @@ void append_tokdef_to_group(uls_tokdef_vx_ptr_t e_vx_leader, uls_tokdef_ptr_t e_
 }
 #endif
 
-#ifdef ULS_USE_WSTR
-#include "uls/uls_tokdef_wstr.h"
-#endif
-
 #endif // __ULS_TOKDEF_H__

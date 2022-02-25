@@ -76,7 +76,6 @@ static const struct option longopts[] = {
 	{ "prefix",        required_argument, NULL, 'p' },
 	{ "query",         no_argument,       NULL, 'q' },
 	{ "output",        required_argument, NULL, 'o' },
-	{ "wstr",          no_argument,       NULL, 'W' },
 	{ "silent",        no_argument,       NULL, 'y' },
 	{ "dump",          required_argument, NULL, 'z' },
 	{ "verbose",       no_argument,       NULL, 'v' },
@@ -87,7 +86,7 @@ static const struct option longopts[] = {
 };
 #endif
 
-#define ULC2CLASS_OPTSTR "d:f:e:l:n:g:p:qo:svWVHhyz:"
+#define ULC2CLASS_OPTSTR "d:f:e:l:n:g:p:qo:svVHhyz:"
 
 static void usage_synopsis()
 {
@@ -254,9 +253,6 @@ set_lang_generated(const char* lang_name)
 		ult_streql(lang_name, "c++.net")) {
 		prn_flags |= ULS_FL_CPPCLI_GEN; // default value in Windows
 
-	} else if (ult_streql(lang_name, "cs")) {
-		prn_flags |= ULS_FL_CS_GEN;
-
 	} else if (ult_streql(lang_name, "java")) {
 		prn_flags |= ULS_FL_JAVA_GEN;
 
@@ -272,9 +268,7 @@ get_standard_suffix(void)
 {
 	const char *cptr;
 
-	if (prn_flags & ULS_FL_CS_GEN) {
-		cptr = ".cs";
-	} else if (prn_flags & ULS_FL_JAVA_GEN) {
+	if (prn_flags & ULS_FL_JAVA_GEN) {
 		cptr = ".java";
 	} else {
 		cptr = ".h";
@@ -381,10 +375,6 @@ ulc2class_options(int opt, char* optarg)
 
 	case 'v':
 		prn_flags |= ULS_FL_VERBOSE;
-		break;
-
-	case 'W':
-		prn_flags |= ULS_FL_STRFMT_WSTR;
 		break;
 
 	case 'V':
@@ -536,10 +526,6 @@ parse_options(int argc, char* argv[])
 	if (prn_flags & (ULS_FL_C_GEN | ULS_FL_CPP_GEN |ULS_FL_CPPCLI_GEN)) {
 	} else {
 		prn_flags &= ~ULS_FL_WANT_WRAPPER;
-	}
-
-	if (!(prn_flags & ULS_FL_C_GEN)) {
-		prn_flags &= ~ULS_FL_STRFMT_WSTR;
 	}
 
 	return i0;

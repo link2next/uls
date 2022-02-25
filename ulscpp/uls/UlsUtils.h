@@ -33,7 +33,6 @@
 #pragma once
 
 #include <uls/csz_stream.h>
-#include <uls/uls_util_wstr.h>
 
 namespace uls {
 	namespace crux {
@@ -71,54 +70,5 @@ namespace uls {
 
 			int get_slot_len(int slot_no);
 		};
-
-		class ULSCPP_DLL_EXTERN ArgListW {
-			wchar_t **wargs;
-			int n_wargs;
-
-		public:
-			// <brief>
-			// This is a constructor of ArgListW
-			// </brief>
-			ArgListW();
-
-			// <brief>
-			// The destructor of ArgListW
-			// </brief>
-			virtual ~ArgListW();
-
-			// <brief>
-			// convert the list of string to wide strings.
-			// </brief>
-			// <parm name="args">list of string</parm>
-			// <parm name="n_args"># of strings in the list</parm>
-			// <return>list of wide-char string</return>
-			bool setWArgList(char **args, int n_args);
-
-			// <brief>
-			// return i-th args as wide-string
-			// </brief>
-			// <parm name="i">i-th requested</parm>
-			// <return>wide-string as a pointer</return>
-			wchar_t* getWArg(int i);
-
-			// <brief>
-			// clear the internal list.
-			// </brief>
-			void reset();
-
-			wchar_t **exportWArgs(int *ptr_n_args);
-		};
-
 	}
-
-	// <brief>
-	// convert the list of string to wide strings.
-	// </brief>
-	wchar_t** get_warg_list(char **argv, int n_argv);
-
-	// <brief>
-	// release the memory of list of wide strings.
-	// </brief>
-	void put_warg_list(wchar_t **wargv, int n_wargv);
 }

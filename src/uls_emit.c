@@ -141,9 +141,6 @@ print_tokdef_constants(uls_lex_ptr_t uls,
 	} else if ((flags & ULS_FL_CPP_GEN) || (flags & ULS_FL_CPPCLI_GEN)) {
 		cnst_symbol = "static const int";
 
-	} else if (flags & ULS_FL_CS_GEN) {
-		cnst_symbol = "public const int";
-
 	} else if (flags & ULS_FL_JAVA_GEN) {
 		cnst_symbol = "public final int";
 
@@ -189,7 +186,7 @@ print_tokdef_enum_constants(uls_lex_ptr_t uls,
 
 	if (flags & ULS_FL_CPPCLI_GEN) {
 		cptr = "enum class";
-	} else if (flags & (ULS_FL_CS_GEN | ULS_FL_JAVA_GEN)) {
+	} else if (flags & ULS_FL_JAVA_GEN) {
 		cptr = "public enum";
 	} else {
 		cptr = "enum";
@@ -234,7 +231,7 @@ print_tokdef_enum_constants(uls_lex_ptr_t uls,
 		prev_tok_id = e0_vx->tok_id;
 	}
 
-	if (flags & (ULS_FL_CS_GEN | ULS_FL_JAVA_GEN)) {
+	if (flags & ULS_FL_JAVA_GEN) {
 		cptr = "}";
 	} else {
 		cptr = "};";
@@ -532,9 +529,8 @@ __print_tokdef_c_source_file(const char *filepath, int typ)
 int
 print_tokdef_c_source(uls_parms_emit_ptr_t emit_parm, const char *base_ulc, int typ)
 {
-	uls_flags_t flags = emit_parm->flags;
+//	uls_flags_t flags = emit_parm->flags;
 	const char *lex_name = emit_parm->class_name;
-	const char *strfmt;
 
 	uls_sysprn("#include <uls/uls_core.h>\n");
 
@@ -547,17 +543,11 @@ print_tokdef_c_source(uls_parms_emit_ptr_t emit_parm, const char *base_ulc, int 
 		uls_sysprn("\n");
 	}
 
-	if (flags & ULS_FL_STRFMT_WSTR) {
-		strfmt = "_wstr";
-	} else {
-		strfmt = "";
-	}
-
 	uls_sysprn("int uls_init_%s(uls_lex_ptr_t uls)\n", lex_name);
 	uls_sysprn("{\n");
 	uls_sysprn("	const char *confname = \"%s\";\n", base_ulc);
 	uls_sysprn("\n");
-	uls_sysprn("	if (uls_init%s(uls, confname) <  0) {\n", strfmt);
+	uls_sysprn("	if (uls_init(uls, confname) <  0) {\n");
 	uls_sysprn("		return -1;\n");
 	uls_sysprn("	}\n");
 	uls_sysprn("\n");
@@ -577,7 +567,7 @@ print_tokdef_c_source(uls_parms_emit_ptr_t emit_parm, const char *base_ulc, int 
 	uls_sysprn("	const char *confname = \"%s\";\n", base_ulc);
 	uls_sysprn("	uls_lex_ptr_t uls;\n");
 	uls_sysprn("\n");
-	uls_sysprn("	if ((uls = uls_create%s(confname)) == NULL) {\n", strfmt);
+	uls_sysprn("	if ((uls = uls_create(confname)) == NULL) {\n");
 	uls_sysprn("		return NULL;\n");
 	uls_sysprn("	}\n");
 	uls_sysprn("\n");
@@ -657,8 +647,6 @@ print_tokdef_cpp_header(uls_lex_ptr_t uls,
 
 	if (flags & ULS_FL_CPPCLI_GEN) {
 		cptr2 = "System::String ^";
-	} else if (flags & ULS_FL_STRFMT_WSTR) {
-		cptr2 = "std::wstring &";
 	} else {
 		cptr2 = "std::string &";
 	}
@@ -714,9 +702,6 @@ print_tokdef_cpp_source(uls_lex_ptr_t uls,
 		ns_uls = "uls::polaris";
 		cptr2 = "System::String ^";
 		uls_sysprn("using namespace %s;\n\n", ns_uls);
-	} else if (flags & ULS_FL_STRFMT_WSTR) {
-		ns_uls = "uls::crux";
-		cptr2 = "std::wstring &";
 	} else {
 		ns_uls = "uls::crux";
 		cptr2 = "std::string &";
@@ -761,83 +746,6 @@ print_tokdef_cpp_source(uls_lex_ptr_t uls,
 
 	for (i=emit_parm->n_name_components-1; i >= 0; i--) {
 		uls_sysprn("}\n");
-	}
-
-	return 0;
-}
-
-int
-print_tokdef_cs(uls_lex_ptr_t uls,
-	uls_ref_parray(tokdef_ary_prn,tokdef_vx), int n_tokdef_ary_prn,
-	uls_parms_emit_ptr_t emit_parm, const char *base_ulc)
-{
-	uls_flags_t flags = emit_parm->flags;
-	uls_decl_parray_slots(al, argstr);
-	FILE *fin_uld;
-	const char *cptr, *ns_uls = "uls.polaris";
-	char ch_lbrace='{';
-	int  n_tabs;
-
-	if (n_tokdef_ary_prn <= 0) {
-		return 0;
-	}
-
-	al = uls_parray_slots(uls_ptr(emit_parm->name_components.args));
-
-	uls_sysprn("using System;\n\n");
-	for (n_tabs=0; n_tabs<emit_parm->n_name_components; n_tabs++) {
-		cptr = al[n_tabs]->str;
-		uls_sysprn_tabs(n_tabs, "namespace %s\n", cptr);
-		uls_sysprn_tabs(n_tabs, "%c\n", ch_lbrace);
-	}
-
-	uls_sysprn_tabs(n_tabs, "public class %s : %s.UlsLex", emit_parm->class_name, ns_uls);
-	uls_sysprn(" %c\n", ch_lbrace);
-
-	++n_tabs;
-
-	if (emit_parm->enum_name != NULL) {
-		print_tokdef_enum_constants(uls, tokdef_ary_prn, n_tokdef_ary_prn,
-			n_tabs, emit_parm->enum_name, emit_parm->tok_pfx, flags);
-	} else {
-		print_tokdef_constants(uls, tokdef_ary_prn, n_tokdef_ary_prn,
-			n_tabs, emit_parm->tok_pfx, flags);
-	}
-
-	uls_sysprn_tabs(0, "\n");
-
-	if (emit_parm->fpath_ulc != NULL) {
-		uls_sysprn_tabs(n_tabs, "public %s(String ulc_file)\n", emit_parm->class_name);
-		uls_sysprn_tabs(n_tabs+1, ": base(ulc_file) %c\n", ch_lbrace);
-	} else {
-		uls_sysprn_tabs(n_tabs, "public %s()\n", emit_parm->class_name);
-		uls_sysprn_tabs(n_tabs+1, ": base(\"%s\") %c\n", base_ulc, ch_lbrace);
-	}
-
-	++n_tabs;
-	if (emit_parm->fpath_uld != NULL) {
-		uls_sysprn_tabs(n_tabs, "prepareUldMap();\n");
-		uls_sysprn("\n");
-
-		if ((fin_uld = uls_fp_open(emit_parm->fpath_uld, ULS_FIO_READ)) == NULL) {
-			err_log("can't open file '%s'", emit_parm->fpath_uld);
-			return -1;
-		}
-
-		print_uld_source(fin_uld, n_tabs, uls_ref_callback(__print_uld_lineproc_3cs));
-		uls_fp_close(fin_uld);
-
-		uls_sysprn("\n");
-		uls_sysprn_tabs(n_tabs, "finishUldMap();\n");
-	}
-	--n_tabs;
-	uls_sysprn_tabs(n_tabs, "}\n");
-
-	--n_tabs;
-	uls_sysprn_tabs(n_tabs, "} // End of %s\n", emit_parm->class_name);
-
-	for (--n_tabs; n_tabs >= 0; n_tabs--) {
-		uls_sysprn_tabs(n_tabs, "}\n");
 	}
 
 	return 0;
@@ -1025,10 +933,7 @@ uls_init_parms_emit(uls_parms_emit_ptr_t emit_parm,
 
 	emit_parm->len_fpath += uls_strcpy(emit_parm->pathbuff + emit_parm->len_fpath, out_fname);
 
-	if (flags & ULS_FL_CS_GEN) {
-		uls_strcpy(emit_parm->pathbuff + emit_parm->len_fpath, ".cs");
-
-	} else if (flags & ULS_FL_JAVA_GEN) {
+	if (flags & ULS_FL_JAVA_GEN) {
 		uls_strcpy(emit_parm->pathbuff + emit_parm->len_fpath, ".java");
 
 	} else {
@@ -1126,10 +1031,6 @@ uls_generate_tokdef_file(uls_lex_ptr_t uls, uls_parms_emit_ptr_t emit_parm)
 			} else if (emit_parm->flags & (ULS_FL_CPP_GEN|ULS_FL_CPPCLI_GEN)) { // C++ class
 				print_tokdef_cpp_header(uls, uls_ptr(tokdef_ary_prn), n_tokdef_ary_prn, emit_parm,
 				uls_get_namebuf_value(uls->ulc_name));
-
-			} else if (emit_parm->flags & ULS_FL_CS_GEN) { // C# class
-				print_tokdef_cs(uls, uls_ptr(tokdef_ary_prn), n_tokdef_ary_prn, emit_parm,
-					uls_get_namebuf_value(uls->ulc_name));
 
 			} else if (emit_parm->flags & ULS_FL_JAVA_GEN) { // Java class
 				print_tokdef_java(uls, uls_ptr(tokdef_ary_prn), n_tokdef_ary_prn, emit_parm,

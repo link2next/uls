@@ -42,11 +42,10 @@ extern "C" {
 #define ULS_FL_WANT_RESERVED_TOKS 0x04
 #define ULS_FL_WANT_WRAPPER       0x08
 #define ULS_FL_ULD_FILE           0x10
-#define ULS_FL_STRFMT_WSTR        0x40
+
 #define ULS_FL_C_GEN              0x0100
 #define ULS_FL_CPP_GEN            0x0200
 #define ULS_FL_CPPCLI_GEN         0x0400
-#define ULS_FL_CS_GEN             0x0800
 #define ULS_FL_JAVA_GEN           0x1000
 #define ULS_FL_LANG_GEN_MASK      0xFF00
 
@@ -117,10 +116,6 @@ int print_tokdef_cpp_source(uls_lex_ptr_t uls,
 	uls_ref_parray(tokdef_ary_prn,tokdef_vx), int n_tokdef_ary_prn,
 	uls_parms_emit_ptr_t emit_parm, const char *base_ulc);
 
-int print_tokdef_cs(uls_lex_ptr_t uls,
-	uls_ref_parray(tokdef_ary_prn,tokdef_vx), int n_tokdef_ary_prn,
-	uls_parms_emit_ptr_t emit_parm, const char *base_ulc);
-
 int print_tokdef_java(uls_lex_ptr_t uls,
 	uls_ref_parray(tokdef_ary_prn,tokdef_vx), int n_tokdef_ary_prn,
 	uls_parms_emit_ptr_t emit_parm, const char *base_ulc);
@@ -135,10 +130,6 @@ ULS_DLL_EXTERN int uls_generate_tokdef_file(uls_lex_ptr_t uls, uls_parms_emit_pt
 
 #ifdef _ULS_CPLUSPLUS
 }
-#endif
-
-#ifdef ULS_USE_WSTR
-#include "uls/uls_emit_wstr.h"
 #endif
 
 #endif // __ULS_EMIT_H__

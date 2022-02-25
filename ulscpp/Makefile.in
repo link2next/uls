@@ -132,8 +132,7 @@ am__uninstall_files_from_dir = { \
   }
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includedir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
-libulscpp_la_DEPENDENCIES = $(top_builddir)/ulscompat/libulscompat.la \
-	$(top_builddir)/src/libuls.la
+libulscpp_la_DEPENDENCIES = $(top_builddir)/src/libuls.la
 am_libulscpp_la_OBJECTS = libulscpp_la-UlsLex.lo \
 	libulscpp_la-UlsStream.lo libulscpp_la-UlsIStream.lo \
 	libulscpp_la-UlsOStream.lo libulscpp_la-UlsUtils.lo
@@ -341,7 +340,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 uls_ver_major = 1
-uls_ver_minor = 8
+uls_ver_minor = 9
 uls_ver_debug = 0
 so_current = 1
 so_revision = 0
@@ -358,10 +357,10 @@ libulscpp_la_SOURCES = \
 noinst_HEADERS = 
 include_HEADERS = 
 libulscpp_la_CPPFLAGS = -D_ULSCPP_IMPLDLL -include $(CONFIG_HEADER) \
-	-I$(top_srcdir)/ulscompat -I$(top_srcdir)/src
+	-I$(top_srcdir)/src
 
 libulscpp_la_CFLAGS = -funsigned-char -Wall -Wno-char-subscripts
-libulscpp_la_LIBADD = $(top_builddir)/ulscompat/libulscompat.la $(top_builddir)/src/libuls.la
+libulscpp_la_LIBADD = $(top_builddir)/src/libuls.la
 libulscpp_la_LDFLAGS = -version-info $(so_current):$(so_revision):$(so_age)
 ACLOCAL_AMFLAGS = -I m4
 all: all-am

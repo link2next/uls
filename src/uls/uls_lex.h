@@ -95,12 +95,6 @@ ULS_DLL_EXTERN void uls_skip_white_spaces(uls_lex_ptr_t uls);
 #ifdef _ULS_USEDLL
 #include "uls/litstr.h"
 #include "uls/unget.h"
-#ifdef ULS_USE_WSTR
-#include "uls/uls_util_wstr.h"
-#include "uls/uls_wprint.h"
-#include "uls/uls_wlog.h"
-#include "uls/uls_wlex.h"
-#endif
 #endif
 
 #endif // __ULS_LEX_H__

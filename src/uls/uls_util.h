@@ -44,32 +44,6 @@
 extern "C" {
 #endif
 
-#ifndef ULS_WINDOWS
-#ifdef ULS_USE_WSTR
-#define _T(a) L##a
-#define TEXT(a) L##a
-typedef wchar_t TCHAR;
-typedef wchar_t *LPTSTR;
-typedef const wchar_t *LPCTSTR;
-#define uls_get_csz_tstr(csz) uls_get_csz_wstr(csz)
-#define ULS_GET_WARGS_LIST(argc,argv,targv) do { \
-	(targv) = ulscompat_get_warg_list(argv,argc); \
-	} while (0)
-#define ULS_PUT_WARGS_LIST(n_wargv,wargv) ulscompat_put_warg_list(wargv,n_wargv)
-#else // ULS_USE_WSTR
-#define _T(a) a
-#define TEXT(a) a
-typedef char TCHAR;
-typedef char *LPTSTR;
-typedef const char *LPCTSTR;
-#define uls_get_csz_tstr(csz) csz_text(csz)
-#define ULS_GET_WARGS_LIST(argc,argv,targv) do { \
-	(targv) = (argv); \
-	} while (0)
-#define ULS_PUT_WARGS_LIST(n_wargv,wargv)
-#endif
-#endif // ULS_WINDOWS
-
 ULS_DEFINE_DELEGATE_BEGIN(optproc,int)(int opt, char* optarg);
 ULS_DEFINE_DELEGATE_END(optproc);
 
@@ -121,10 +95,6 @@ void finalize_uls_util(void);
 
 #ifdef _ULS_CPLUSPLUS
 }
-#endif
-
-#ifdef ULS_USE_WSTR
-#include "uls/uls_util_wstr.h"
 #endif
 
 #endif // __ULS_UTIL_H__

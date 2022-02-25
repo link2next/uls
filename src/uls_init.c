@@ -187,3 +187,29 @@ finalize_uls(void)
 {
 	_finalize_uls();
 }
+
+#if defined(ULS_WINDOWS)
+BOOL WINAPI
+DllMain(HINSTANCE hInst, DWORD dwReason, LPVOID lpvReserved)
+{
+	BOOL rval = TRUE;
+
+	switch (dwReason) {
+	case DLL_PROCESS_ATTACH:
+		initialize_uls_static();
+		break;
+
+	case DLL_THREAD_ATTACH:
+		break;
+
+	case DLL_THREAD_DETACH:
+		break;
+
+	case DLL_PROCESS_DETACH:
+		finalize_uls();
+		break;
+	}
+
+	return rval;
+}
+#endif

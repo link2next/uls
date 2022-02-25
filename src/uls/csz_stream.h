@@ -139,7 +139,6 @@ ULS_DLL_EXTERN void csz_putc(csz_str_ptr_t csz, char ch);
 
 ULS_DLL_EXTERN void csz_add_eos(csz_str_ptr_t csz);
 ULS_DLL_EXTERN char* csz_text(csz_str_ptr_t csz);
-ULS_DLL_EXTERN wchar_t* uls_get_csz_wstr(csz_str_ptr_t csz);
 ULS_DLL_EXTERN char* csz_export(csz_str_ptr_t csz);
 
 #ifdef _ULS_CPLUSPLUS

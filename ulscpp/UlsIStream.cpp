@@ -53,13 +53,11 @@ uls::crux::UlsTmplList::UlsTmplList(int size)
 {
 	auwcvt = new UlsAuw();
 	hashtbl = new std::map<string,string>();
-	whashtbl = new std::map<wstring,wstring>();
 }
 
 uls::crux::UlsTmplList::~UlsTmplList()
 {
 	delete hashtbl;
-	delete whashtbl;
 	delete auwcvt;
 }
 
@@ -71,7 +69,6 @@ void
 uls::crux::UlsTmplList::clear(void)
 {
 	hashtbl->clear();
-	whashtbl->clear();
 }
 
 // <brief>
@@ -86,22 +83,6 @@ uls::crux::UlsTmplList::exist(string& tnam)
 
 	it = hashtbl->find(tnam);
 	if (it != hashtbl->end()) {
-		stat = true;
-	} else {
-		stat = false;
-	}
-
-	return stat;
-}
-
-bool
-uls::crux::UlsTmplList::exist(std::wstring& wtnam)
-{
-	std::map<wstring,wstring>::iterator it;
-	bool stat;
-
-	it = whashtbl->find(wtnam);
-	if (it != whashtbl->end()) {
 		stat = true;
 	} else {
 		stat = false;
@@ -132,12 +113,6 @@ void
 uls::crux::UlsTmplList::insert(const char *tnam, const char *tval)
 {
 	(*hashtbl)[string(tnam)] = tval;
-}
-
-void
-uls::crux::UlsTmplList::insert(const wchar_t *wtnam, const wchar_t *wtval)
-{
-	(*whashtbl)[wstring(wtnam)] = wtval;
 }
 
 // <brief>
@@ -180,38 +155,6 @@ uls::crux::UlsTmplList::getValue(string& tnam, string& tval)
 	return stat;
 }
 
-const wchar_t*
-uls::crux::UlsTmplList::getValue(const wchar_t *wtnam)
-{
-	std::map<wstring,wstring>::iterator it;
-	const wchar_t *wtval = NULL;
-
-	it = whashtbl->find(wstring(wtnam));
-	if (it != whashtbl->end()) {
-		std::pair<wstring,wstring> pp=*it;
-		wtval = pp.second.c_str();
-	}
-
-	return wtval;
-}
-
-bool
-uls::crux::UlsTmplList::getValue(std::wstring& wtnam, std::wstring& wtval)
-{
-	const wchar_t *wptr;
-	bool stat;
-
-	if ((wptr = getValue(wtnam.c_str())) != NULL) {
-		wtval = wptr;
-		stat = true;
-	} else {
-		wtval = L"";
-		stat = false;
-	}
-
-	return stat;
-
-}
 // <brief>
 // Modify the pair <tnam,tval> in the internal list.
 // </brief>
@@ -222,13 +165,6 @@ bool
 uls::crux::UlsTmplList::setValue(const char *tnam, const char *tval)
 {
 	insert(tnam, tval);
-
-	wchar_t *wstr0, *wstr1;
-	_ULSCPP_NSTR2WSTR(tnam, wstr0, 0);
-	_ULSCPP_NSTR2WSTR(tval, wstr1, 1);
-
-	insert(wstr0, wstr1);
-
 	return true;
 }
 
@@ -238,25 +174,6 @@ uls::crux::UlsTmplList::setValue(string& tnam, string& tval)
 	return setValue(tnam.c_str(), tval.c_str());
 }
 
-bool
-uls::crux::UlsTmplList::setValue(const wchar_t *wtnam, const wchar_t *wtval)
-{
-	insert(wtnam, wtval);
-
-	const char *nstr0, *nstr1;
-	_ULSCPP_WSTR2NSTR(wtnam, nstr0, 0);
-	_ULSCPP_WSTR2NSTR(wtval, nstr1, 1);
-
-	insert(nstr0, nstr1);
-
-	return true;
-}
-
-bool
-uls::crux::UlsTmplList::setValue(std::wstring& wtnam, std::wstring& wtval)
-{
-	return setValue(wtnam.c_str(), wtval.c_str());
-}
 // <brief>
 // Uses the structure 'uls_tmpl_list_t' to export the intenal list.
 // </brief>
@@ -342,16 +259,6 @@ uls::crux::UlsIStream::UlsIStream(string filepath, UlsTmplList *uls_tmpls)
 	const char *ustr;
 
 	_ULSCPP_NSTR2USTR(filepath.c_str(), ustr, 0);
-	initUlsIStream_ustr(ustr, uls_tmpls);
-}
-
-
-uls::crux::UlsIStream::UlsIStream(wstring wfilepath, UlsTmplList *uls_tmpls)
-	: tmpl_vars(8)
-{
-	const char *ustr;
-
-	_ULSCPP_WSTR2USTR(wfilepath.c_str(), ustr, 0);
 	initUlsIStream_ustr(ustr, uls_tmpls);
 }
 

@@ -129,6 +129,12 @@ if [ -z "$ULS_HOME" ]; then
     exit 1
 fi
 
+if [ "$ULS_HOME" = "/usr/local" -o "$ULS_HOME" = "/usr" -o "$ULS_HOME" = "/" ]; then
+	sysdir_installed=yes
+else
+	sysdir_installed=no
+fi
+
 if [ "$ULS_HOME" = "/usr" -o "$ULS_HOME" = "/" ]; then
 	echo "$progname: the package might has been installed via gdebi."
 	echo -n "Do you want to continue removing it? "
@@ -168,7 +174,7 @@ del_file "$etc_dir"/{uls.langs,uls.id_ranges}
 del_file "$sysprops_fpath"
 del_tree "$etc_dir"
 
-if [ "$ULS_HOME" != "/usr/local" -a "$ULS_HOME" != "/usr" -a "$ULS_HOME" != "/" ]; then
+if [ "$sysdir_installed" = "no" ]; then
 	del_tree $ULS_HOME
 fi
 
