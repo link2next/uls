@@ -472,14 +472,14 @@ uls_astr2ustr_ptr(const char *astr, int alen, auw_outparam_ptr_t auw)
 wchar_t*
 uls_astr2wstr(const char *astr, int alen, csz_str_ptr_t csz_wstr)
 {
-	err_panic("%s: Not Supported on this platform", __FUNCTION__);
+	err_panic("%s: Not Supported on this platform", __func__);
 	return NULL;
 }
 
 char*
 uls_wstr2astr(const wchar_t *wstr, int wlen, csz_str_ptr_t csz)
 {
-	err_panic("%s: Not Supported on this platform", __FUNCTION__);
+	err_panic("%s: Not Supported on this platform", __func__);
 	return NULL;
 }
 
@@ -607,14 +607,14 @@ uls_wstr2ustr(const wchar_t *wstr, int wlen, csz_str_ptr_t csz)
 char*
 uls_ustr2astr(const char *ustr, int ulen, csz_str_ptr_t csz)
 {
-	err_panic("%s: Not Supported on the platform", __FUNCTION__);
+	err_panic("%s: Not Supported on the platform", __func__);
 	return NULL;
 }
 
 char*
 uls_astr2ustr(const char *astr, int alen, csz_str_ptr_t csz)
 {
-	err_panic("%s: Not Supported on the platform", __FUNCTION__);
+	err_panic("%s: Not Supported on the platform", __func__);
 	return NULL;
 }
 
@@ -622,14 +622,14 @@ uls_astr2ustr(const char *astr, int alen, csz_str_ptr_t csz)
 const char*
 uls_ustr2astr_ptr(const char *ustr, int ulen, auw_outparam_ptr_t auw)
 {
-	err_panic("%s: Not Supported on the platform", __FUNCTION__);
+	err_panic("%s: Not Supported on the platform", __func__);
 	return NULL;
 }
 
 const char*
 uls_astr2ustr_ptr(const char *astr, int alen, auw_outparam_ptr_t auw)
 {
-	err_panic("%s: Not Supported on the platform", __FUNCTION__);
+	err_panic("%s: Not Supported on the platform", __func__);
 	return NULL;
 }
 

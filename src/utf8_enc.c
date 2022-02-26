@@ -356,7 +356,7 @@ uls_utf_init_inbuf(uls_utf_inbuf_ptr_t inp,
 	char *buf, int bufsiz, int mode)
 {
 	if (bufsiz <= 0) {
-		err_panic("%s: invalid paramerter 'bufsiz'", __FUNCTION__);
+		err_panic("%s: invalid paramerter 'bufsiz'", __func__);
 	}
 
 	uls_initial_zerofy_object(inp);
@@ -455,7 +455,7 @@ uls_fill_utf8str(uls_uch_t *uchs, int n_uchs,
 
 		rc = uls_encode_utf8(uch, outptr, siz_utf8buf - len_utf8buf);
 		if (rc < 0) {
-			err_log("%s: incorrect uch!", __FUNCTION__);
+			err_log("%s: incorrect uch!", __func__);
 			return -1;
 		} else if (rc == 0) {
 			break;
@@ -494,7 +494,7 @@ uls_fill_utf8buf(uls_utf_inbuf_ptr_t inp, char* utf8buf, int len0_utf8buf, int s
 
 				if ((rc=uls_fill_utf8str(&uch, 1,
 					utf8buf + len_utf8buf, siz_utf8buf - len_utf8buf, &n_bytes)) < 0) {
-					err_log("%s: An incorrect uch exists", __FUNCTION__);
+					err_log("%s: An incorrect uch exists", __func__);
 					return -2;
 				} else if (rc == 0) {
 					break;
@@ -516,7 +516,7 @@ uls_fill_utf8buf(uls_utf_inbuf_ptr_t inp, char* utf8buf, int len0_utf8buf, int s
 
 		if (uls_fill_utf8str(uchbuf, n_words,
 			utf8buf + len_utf8buf, siz_utf8buf - len_utf8buf, &n_bytes) < 0) {
-			err_log("%s: An incorrect uch exists", __FUNCTION__);
+			err_log("%s: An incorrect uch exists", __func__);
 			return -1;
 		}
 

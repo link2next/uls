@@ -121,7 +121,7 @@ input_skip_comment(uls_commtype_ptr_t cmt, uls_input_ptr_t inp, uls_outparam_ptr
 			inp->rawbuf_bytes = (int) (lptr_end - lptr);
 
 			if (inp->refill(inp, len_mark) < 0) {
-//				err_log("%s: I/O error", __FUNCTION__);
+//				err_log("%s: I/O error", __func__);
 				uls_input_reset_cursor(inp);
 				lptr = lptr_end = inp->rawbuf.buf;
 				stat = -1; // error
@@ -179,7 +179,7 @@ input_quote_proc(uls_input_ptr_t inp, uls_quotetype_ptr_t qmt, csz_str_ptr_t ss_
 			inp->rawbuf_bytes = (int) (lptr_end - lptr);
 
 			if (inp->refill(inp, n_bytes_req) < 0) {
-//				err_log("%s: I/O error", __FUNCTION__);
+//				err_log("%s: I/O error", __func__);
 				uls_input_reset_cursor(inp);
 				return ULS_LITPROC_ERROR;
 			}
@@ -229,7 +229,7 @@ input_space_proc(const char* ch_ctx, uls_input_ptr_t inp,
 			inp->rawbuf_bytes = (int) (parms.lptr_end - parms.lptr);
 
 			if (inp->refill(inp, len_surplus) < 0) {
-//				err_log("%s: I/O error", __FUNCTION__);
+//				err_log("%s: I/O error", __func__);
 				return -1;
 			}
 

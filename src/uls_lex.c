@@ -76,7 +76,7 @@ __check_fd_dup(int fd, int flags)
 
 	if (flags & ULS_DO_DUP) {
 		if ((fd2 = uls_fd_dup(fd)) < 0) {
-			err_log("%s: error to dup-fd", __FUNCTION__);
+			err_log("%s: error to dup-fd", __func__);
 			return -1;
 		}
 	} else {
@@ -198,7 +198,7 @@ uls_push_isrc_type(uls_lex_ptr_t uls, int fd_type, int fd_subtype)
 	int start_lno;
 
 	if ((proc=find_isrc_filler(fd_type, fd_subtype, uls_ptr(parms1))) == nilptr) {
-		err_log("%s: unknown fd-type %d", __FUNCTION__, fd_type);
+		err_log("%s: unknown fd-type %d", __func__, fd_type);
 		return -1;
 	}
 
@@ -235,7 +235,7 @@ uls_push_istream(uls_lex_ptr_t uls, uls_istream_ptr_t istr,
 	uls_tmpl_list_ptr_t tmpl_list, int flags)
 {
 	if (istr == nilptr) {
-		err_log("%s: invalid parameter!", __FUNCTION__);
+		err_log("%s: invalid parameter!", __func__);
 		return -1;
 	}
 
@@ -271,7 +271,7 @@ int
 uls_set_istream(uls_lex_ptr_t uls, uls_istream_ptr_t istr, uls_tmpl_list_ptr_t tmpl_list, int flags)
 {
 	if (istr == nilptr) {
-		err_log("%s: invalid parameter!", __FUNCTION__);
+		err_log("%s: invalid parameter!", __func__);
 		return -1;
 	}
 
@@ -288,7 +288,7 @@ uls_push_istream_2(uls_lex_ptr_t uls, uls_istream_ptr_t istr,
 	int i, stat=0;
 
 	if (istr == nilptr) {
-		err_log("%s: invalid parameter!", __FUNCTION__);
+		err_log("%s: invalid parameter!", __func__);
 		return -1;
 	}
 
@@ -340,7 +340,7 @@ uls_push_file(uls_lex_ptr_t uls, const char* filepath, int flags)
 	uls_istream_ptr_t istr;
 
 	if (filepath == nilptr) {
-		err_log("%s: invalid parameter!", __FUNCTION__);
+		err_log("%s: invalid parameter!", __func__);
 		return -1;
 	}
 
@@ -363,7 +363,7 @@ int
 uls_set_file(uls_lex_ptr_t uls, const char* filepath, int flags)
 {
 	if (filepath == NULL) {
-		err_log("%s: invalid parameter!", __FUNCTION__);
+		err_log("%s: invalid parameter!", __func__);
 		return -1;
 	}
 
@@ -377,7 +377,7 @@ uls_push_fp(uls_lex_ptr_t uls, FILE* fp, int flags)
 	uls_istream_ptr_t istr;
 
 	if (fp == NULL) {
-		err_log("%s: invalid parameter!", __FUNCTION__);
+		err_log("%s: invalid parameter!", __func__);
 		return -1;
 	}
 
@@ -400,7 +400,7 @@ int
 uls_set_fp(uls_lex_ptr_t uls, FILE* fp, int flags)
 {
 	if (fp == nilptr) {
-		err_log("%s: invalid parameter!", __FUNCTION__);
+		err_log("%s: invalid parameter!", __func__);
 		return -1;
 	}
 
@@ -416,7 +416,7 @@ uls_push_fd(uls_lex_ptr_t uls, int fd, int flags)
 	int fd2;
 
 	if ((fd2=__check_fd_dup(fd, flags)) < 0) {
-		err_log("%s: invalid parameter fd=%d", __FUNCTION__);
+		err_log("%s: invalid parameter fd=%d", __func__);
 		return -1;
 	}
 
@@ -458,7 +458,7 @@ uls_register_ungrabber(uls_lex_ptr_t uls, int at_tail, uls_input_ungrabber_t pro
 	uls_userdata_ptr_t ud0, ud, ud_prev;
 
 	if (proc == nilptr) {
-		err_log("%s: invalid parameter!", __FUNCTION__);
+		err_log("%s: invalid parameter!", __func__);
 		return -1;
 	}
 
@@ -495,7 +495,7 @@ uls_push_utf16_line(uls_lex_ptr_t uls, uls_uint16* wline, int wlen)
 	uls_outparam_t parms;
 
 	if (wline == NULL || wlen < 0) {
-		err_log("%s: fail to set utf16 string", __FUNCTION__);
+		err_log("%s: fail to set utf16 string", __func__);
 		return;
 	} else if (wlen == 0) {
 		uls_push_line(uls, "", 0, 0);
@@ -503,7 +503,7 @@ uls_push_utf16_line(uls_lex_ptr_t uls, uls_uint16* wline, int wlen)
 	}
 
 	if ((line = uls_enc_utf16str_to_utf8str(wline, wlen, uls_ptr(parms))) == NULL) {
-		err_log("%s: fail to set utf16 string", __FUNCTION__);
+		err_log("%s: fail to set utf16 string", __func__);
 		return;
 	}
 
@@ -519,7 +519,7 @@ uls_set_utf16_line(uls_lex_ptr_t uls, uls_uint16* wline, int wlen)
 	uls_outparam_t parms;
 
 	if (wline == NULL || wlen < 0) {
-		err_log("%s: fail to set utf16 string", __FUNCTION__);
+		err_log("%s: fail to set utf16 string", __func__);
 		return;
 	} else if (wlen == 0) {
 		uls_set_line(uls, "", 0, 0);
@@ -527,7 +527,7 @@ uls_set_utf16_line(uls_lex_ptr_t uls, uls_uint16* wline, int wlen)
 	}
 
 	if ((line = uls_enc_utf16str_to_utf8str(wline, wlen, uls_ptr(parms))) == NULL) {
-		err_log("%s: fail to set utf16 string", __FUNCTION__);
+		err_log("%s: fail to set utf16 string", __func__);
 		return;
 	}
 
@@ -543,7 +543,7 @@ uls_push_utf32_line(uls_lex_ptr_t uls, uls_uint32* wline, int wlen)
 	uls_outparam_t parms;
 
 	if (wline == NULL || wlen < 0) {
-		err_log("%s: fail to set utf32 string", __FUNCTION__);
+		err_log("%s: fail to set utf32 string", __func__);
 		return;
 	} else if (wlen == 0) {
 		uls_push_line(uls, "", 0, 0);
@@ -551,7 +551,7 @@ uls_push_utf32_line(uls_lex_ptr_t uls, uls_uint32* wline, int wlen)
 	}
 
 	if ((line = uls_enc_utf32str_to_utf8str(wline, wlen, uls_ptr(parms))) == NULL) {
-		err_log("%s: fail to set utf32 string", __FUNCTION__);
+		err_log("%s: fail to set utf32 string", __func__);
 		return;
 	}
 
@@ -567,7 +567,7 @@ uls_set_utf32_line(uls_lex_ptr_t uls, uls_uint32* wline, int wlen)
 	uls_outparam_t parms;
 
 	if (wline == NULL || wlen < 0) {
-		err_log("%s: fail to set utf32 string", __FUNCTION__);
+		err_log("%s: fail to set utf32 string", __func__);
 		return;
 	} else if (wlen == 0) {
 		uls_set_line(uls, "", 0, 0);
@@ -575,7 +575,7 @@ uls_set_utf32_line(uls_lex_ptr_t uls, uls_uint32* wline, int wlen)
 	}
 
 	if ((line = uls_enc_utf32str_to_utf8str(wline, wlen, uls_ptr(parms))) == NULL) {
-		err_log("%s: fail to set utf32 string", __FUNCTION__);
+		err_log("%s: fail to set utf32 string", __func__);
 		return;
 	}
 

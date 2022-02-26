@@ -279,7 +279,7 @@ ulsstream_options(int opt, char* optarg)
 
 		if (!ult_is_absolute_path(argv0) && uls_dirent_exist(argv0) == ST_MODE_REG) {
 			if (ult_getcwd(fpath_buff, ULS_FILEPATH_MAX) < 0) {
-				err_panic("%s: fail to getcwd()", __FUNCTION__);
+				err_panic("%s: fail to getcwd()", __func__);
 			}
 			uls_snprintf(cmdline_filter, siz, "%s/%s", fpath_buff, cmdl);
 		} else {
@@ -288,7 +288,7 @@ ulsstream_options(int opt, char* optarg)
 		}
 		uls_mfree(argv0);
 #else
-		err_log("%s: fdf not supported!", __FUNCTION__);
+		err_log("%s: fdf not supported!", __func__);
 		stat = -1;
 #endif
 		break;
@@ -373,7 +373,7 @@ parse_options(int argc, char* argv[])
 
 	uls_endian = ult_guess_host_byteorder();
 	if (ult_getcwd(home_dir, ULS_FILEPATH_MAX) < 0) {
-		err_panic("%s: fail to getcwd()", __FUNCTION__);
+		err_panic("%s: fail to getcwd()", __func__);
 	}
 
 	target_dir = ult_strdup(".");
@@ -483,12 +483,12 @@ main(int argc, char* argv[])
 	if (ulc_config == NULL) {
 		if (filelist != NULL) {
 			if ((fp_list=uls_fp_open(filelist, ULS_FIO_READ)) == NULL) {
-				err_log("%s: fail to read '%s'", __FUNCTION__, filelist);
+				err_log("%s: fail to read '%s'", __func__, filelist);
 				return -1;
 			}
 
 			if (ult_chdir(target_dir) < 0) {
-				err_log("%s: fail to chdir %s", __FUNCTION__, target_dir);
+				err_log("%s: fail to chdir %s", __func__, target_dir);
 				uls_fp_close(fp_list);
 				return -1;
 			}
@@ -500,7 +500,7 @@ main(int argc, char* argv[])
 
 		} else {
 			if (ult_chdir(target_dir) < 0) {
-				err_log("%s: fail to chdir %s", __FUNCTION__, target_dir);
+				err_log("%s: fail to chdir %s", __func__, target_dir);
 				return -1;
 			}
 

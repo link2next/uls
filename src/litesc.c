@@ -915,14 +915,14 @@ initialize_uls_litesc()
 	for (i=0; i<10; i++) {
 		esc_ch = '0' + i;
 		if (uls_add_escstr(escmap_pool, map, esc_ch, NULL, rval_flags) < 0) {
-			err_log("%s: failed at escape-octal", __FUNCTION__);
+			err_log("%s: failed at escape-octal", __func__);
 		}
 	}
 
 	// hexa-demcimal
 	rval_flags = ULS_FL_ESCSTR_MAPHEXA | ULS_FL_ESCSTR_HEXA | 0x02;
 	if (uls_add_escstr(escmap_pool, map, 'x', NULL, rval_flags) < 0) {
-		err_log("%s: failed at escape-hexa-decimal", __FUNCTION__);
+		err_log("%s: failed at escape-hexa-decimal", __func__);
 	}
 
 	/* modern */

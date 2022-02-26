@@ -282,7 +282,7 @@ uls_readn(int fd, uls_native_vptr_t vptr, int n)
 	int	nleft, rc;
 
 	if (n <= 0) {
-		err_log("%s: invalid parameter n=%d!", __FUNCTION__, n);
+		err_log("%s: invalid parameter n=%d!", __func__, n);
 		return -3;
 	}
 
@@ -293,7 +293,7 @@ uls_readn(int fd, uls_native_vptr_t vptr, int n)
 //				usleep(100000);
 				continue;
 			} else {
-				err_log("%s: %s", __FUNCTION__, strerror(errno));
+				err_log("%s: %s", __func__, strerror(errno));
 			}
 			return -1;
 		} else if (rc==0) {
@@ -314,7 +314,7 @@ uls_writen(int fd, uls_native_vptr_t vptr, int n)
 	int	 nleft, rc;
 
 	if (n < 0) {
-		err_log("%s: invalid parameter n=%d!", __FUNCTION__, n);
+		err_log("%s: invalid parameter n=%d!", __func__, n);
 		return -3;
 	}
 
@@ -325,7 +325,7 @@ uls_writen(int fd, uls_native_vptr_t vptr, int n)
 //				usleep(100000);
 				continue;
 			} else {
-				err_log("%s: %s", __FUNCTION__, strerror(errno));
+				err_log("%s: %s", __func__, strerror(errno));
 			}
 			return -1;
 		} else if (rc==0) {
@@ -482,7 +482,7 @@ uls_copyfile_fd(int fd_in, int fd_out)
 
 	while (stat > 0) {
 		if ((rc=uls_readn(fd_in, buf, sizeof(buf))) < 0) {
-			err_log("%s: error in reading ..", __FUNCTION__);
+			err_log("%s: error in reading ..", __func__);
 			stat = -1;
 			break;
 		} else if (rc < sizeof(buf)) {
@@ -491,7 +491,7 @@ uls_copyfile_fd(int fd_in, int fd_out)
 		}
 
 		if (uls_writen(fd_out, buf, rc) < rc) {
-			err_log("%s: error in writing after writing %d ..", __FUNCTION__, rc);
+			err_log("%s: error in writing after writing %d ..", __func__, rc);
 			stat = -2;
 		}
 	}
@@ -532,12 +532,12 @@ uls_movefile(const char* fpath1, const char* fpath2)
 	}
 
 	if (uls_copyfile(fpath1, fpath2) < 0) {
-		err_log("%s:(copy-file) error", __FUNCTION__);
+		err_log("%s:(copy-file) error", __func__);
 		return -1;
 	}
 
 	if (uls_unlink(fpath1) < 0) {
-		err_log("%s:(unlink) error", __FUNCTION__);
+		err_log("%s:(unlink) error", __func__);
 		return -1;
 	}
 	return 0;
@@ -549,7 +549,7 @@ __uls_close_tempfile(uls_tempfile_ptr_t tmpfile, const char* filepath)
 	int stat = 1;
 
 	if (uls_get_namebuf_value(tmpfile->filepath) == filepath) {
-		err_log("%s: invalid filepath!", __FUNCTION__);
+		err_log("%s: invalid filepath!", __func__);
 		return -4;
 	}
 
@@ -560,12 +560,12 @@ __uls_close_tempfile(uls_tempfile_ptr_t tmpfile, const char* filepath)
 	}
 
 	if (uls_dirent_exist(uls_get_namebuf_value(tmpfile->filepath)) != ST_MODE_FILE) {
-		err_log("%s: can' find the tempfile %s!", __FUNCTION__, uls_get_namebuf_value(tmpfile->filepath));
+		err_log("%s: can' find the tempfile %s!", __func__, uls_get_namebuf_value(tmpfile->filepath));
 		stat = -3;
 
 	} else if (filepath == NULL) {
 		if (uls_unlink(uls_get_namebuf_value(tmpfile->filepath)) < 0) {
-			err_log("%s: unlink error!", __FUNCTION__);
+			err_log("%s: unlink error!", __func__);
 			stat = -2;
 		} else {
 			stat = 2;
@@ -895,7 +895,7 @@ uls_fio_gets(uls_fio_ptr_t fio, char* buf, int buf_siz)
 	int ch, flags=fio->flags;
 
 	if (buf == NULL || buf_siz < 1) {
-		err_log("%s: invalid parameter buf or buf_siz=%d", __FUNCTION__, buf_siz);
+		err_log("%s: invalid parameter buf or buf_siz=%d", __func__, buf_siz);
 		return ULS_EOF - 3;
 	}
 
@@ -903,7 +903,7 @@ uls_fio_gets(uls_fio_ptr_t fio, char* buf, int buf_siz)
 
 	for (bufptr=buf,rc=0; ; ) {
 		if ((bufptr+=rc) >= buf_end) {
-			err_log("%s: Too long line(>%d)! return error!", __FUNCTION__, buf_siz);
+			err_log("%s: Too long line(>%d)! return error!", __func__, buf_siz);
 			len = ULS_EOF - 2;
 			break;
 		}
@@ -1048,7 +1048,7 @@ uls_fp_open(const char *filepath, int mode)
 	mode = parms.n1;
 
 	if (rc < 0) {
-		err_log("%s: invalid mode", __FUNCTION__);
+		err_log("%s: invalid mode", __func__);
 		return NULL;
 	}
 
@@ -1076,7 +1076,7 @@ uls_fp_open(const char *filepath, int mode)
 	auw_init_outparam(uls_ptr(buf_csz));
 
 	if ((astr = uls_ustr2astr_ptr(filepath, -1,  uls_ptr(buf_csz))) == NULL) {
-		err_log("%s: encoding error!", __FUNCTION__);
+		err_log("%s: encoding error!", __func__);
 		fp = NULL;
 	} else {
 		fp = fopen(astr, modestr);
@@ -1217,7 +1217,7 @@ uls_close_tempfile(uls_tempfile_ptr_t tmpfile, const char* filepath)
 
 	if (tmpfile->len_filepath > 0) {
 		if (__uls_close_tempfile(tmpfile, filepath) < 0) {
-			err_log("%s: failed to deinit tempfile!", __FUNCTION__);
+			err_log("%s: failed to deinit tempfile!", __func__);
 			stat = -1;
 		}
 		tmpfile->len_filepath = 0;

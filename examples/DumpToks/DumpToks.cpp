@@ -294,7 +294,7 @@ main(int argc, char **argv)
 
 	if (sample1_lex == NULL || sample2_lex == NULL) {
 		uls::listUlcSearchPaths();
-		err_panic("%s: can't init uls-object", __FUNCTION__);
+		err_panic("%s: can't init uls-object", __func__);
 	}
 
 	test_extra_tokdefs(sample2_lex);

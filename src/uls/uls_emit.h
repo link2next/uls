@@ -45,7 +45,7 @@ extern "C" {
 
 #define ULS_FL_C_GEN              0x0100
 #define ULS_FL_CPP_GEN            0x0200
-#define ULS_FL_CPPCLI_GEN         0x0400
+
 #define ULS_FL_JAVA_GEN           0x1000
 #define ULS_FL_LANG_GEN_MASK      0xFF00
 

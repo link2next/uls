@@ -341,7 +341,7 @@ dfl_lit_analyzer_escape0(uls_litstr_ptr_t lit)
 	uls_uch_t uch;
 
 	if ((len = (int) (lptr_end - lptr)) < qmt->len_end_mark) {
-//		err_log("%s: unterminated literal-string", __FUNCTION__);
+//		err_log("%s: unterminated literal-string", __func__);
 		return ULS_LITPROC_ERROR;
 	}
 
@@ -355,7 +355,7 @@ dfl_lit_analyzer_escape0(uls_litstr_ptr_t lit)
 	buff[j] = '\0';
 
 	if ((rc = uls_decode_utf8(buff, j, &uch)) <= 0) {
-//		err_log("%s: encoding error!", __FUNCTION__);
+//		err_log("%s: encoding error!", __func__);
 		return ULS_LITPROC_ERROR;
 	}
 
@@ -365,7 +365,7 @@ dfl_lit_analyzer_escape0(uls_litstr_ptr_t lit)
 	} else {
 		if (uch == '\n') {
 			if ((qmt->flags & ULS_QSTR_MULTILINE) == 0) {
-//				err_log("%s: unterminated literal-string", __FUNCTION__);
+//				err_log("%s: unterminated literal-string", __func__);
 				return ULS_LITPROC_ERROR;
 			}
 			++lit_ctx->n_lfs;
@@ -417,7 +417,7 @@ dfl_lit_analyzer_escape1(uls_litstr_ptr_t lit)
 	uls_uch_t uch;
 
 	if ((len = (int) (lptr_end - lptr)) < 1) {
-//		err_log("%s: unterminated literal-string", __FUNCTION__);
+//		err_log("%s: unterminated literal-string", __func__);
 		return ULS_LITPROC_ERROR;
 	}
 
@@ -426,7 +426,7 @@ dfl_lit_analyzer_escape1(uls_litstr_ptr_t lit)
 	buff[j] = '\0';
 
 	if ((len1 = uls_decode_utf8(buff, j, &uch)) <= 0) {
-//		err_log("%s: unterminated literal-string", __FUNCTION__);
+//		err_log("%s: unterminated literal-string", __func__);
 		return ULS_LITPROC_ERROR;
 	}
 
@@ -456,7 +456,7 @@ dfl_lit_analyzer_escape1(uls_litstr_ptr_t lit)
 
 	} else {
 		if ((len = uls_encode_utf8(lit->uch, buff, ULS_UTF8_CH_MAXLEN)) <= 0) {
-//			err_log("%s: encoding error!", __FUNCTION__);
+//			err_log("%s: encoding error!", __func__);
 			return ULS_LITPROC_ERROR;
 		}
 
@@ -533,7 +533,7 @@ dfl_lit_analyzer_escape2(uls_litstr_ptr_t lit)
 		csz_putc(lit_ctx->ss_dst, (char) uch);
 
 	} else {
-		err_log("%s: unknown esc-ch mapping!", __FUNCTION__);
+		err_log("%s: unknown esc-ch mapping!", __func__);
 		return -1;
 	}
 

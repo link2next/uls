@@ -435,7 +435,7 @@ ulc_load(uls_lex_ptr_t uls, FILE *fin_ulc, FILE *fin_ulf)
 	}
 
 	if (classify_char_group(uls, uls_ptr(uls_config)) < 0) {
-		err_log("%s: lex-conf file not consistent!", __FUNCTION__);
+		err_log("%s: lex-conf file not consistent!", __func__);
 		release_ulc_fp_stack(ulc_fp_stack);
 		uls_fp_close(fin_ulf);
 		return -1;
@@ -449,7 +449,7 @@ ulc_load(uls_lex_ptr_t uls, FILE *fin_ulc, FILE *fin_ulf)
 	while (1) {
 		if ((linelen=uls_fp_gets(fin_ulc, linebuff, sizeof(linebuff), 0)) <= ULS_EOF) {
 			if (linelen < ULS_EOF) {
-				err_log("%s: ulc file i/o error at %d", __FUNCTION__, lno);
+				err_log("%s: ulc file i/o error at %d", __func__, lno);
 				stat = -1;
 				break;
 			}
@@ -509,7 +509,7 @@ ulc_load(uls_lex_ptr_t uls, FILE *fin_ulc, FILE *fin_ulf)
 	}
 
 	if (classify_tok_group(uls) < 0) {
-		err_log("%s: lex-conf file not consistent!", __FUNCTION__);
+		err_log("%s: lex-conf file not consistent!", __func__);
 		uls_fp_close(fin_ulf);
 		return -1;
 	}
@@ -701,7 +701,7 @@ uls_spec_compatible(uls_lex_ptr_t uls, const char* specname, uls_version_ptr_t f
 		!uls_vers_compatible(uls_ptr(uls->stream_filever), filever)) {
 		uls_version_make_string(uls_ptr(uls->stream_filever), ver_str1);
 		uls_version_make_string(filever, ver_str2);
-		err_log("%s: Unsupported or not compatible:", __FUNCTION__);
+		err_log("%s: Unsupported or not compatible:", __func__);
 		err_log("\t'%s'(%s)", uls_get_namebuf_value(uls->ulc_name), ver_str1);
 		err_log("\t'%s'(%s)", specname, ver_str2);
 		stat = 0;
@@ -719,7 +719,7 @@ uls_fillbuff(uls_lex_ptr_t uls)
 	int rc;
 
 	if ((ctx->flags & ULS_CTX_FL_ERR) || inp->isource.flags & ULS_ISRC_FL_ERR) {
-		err_log("%s: called again after I/O failed!", __FUNCTION__);
+		err_log("%s: called again after I/O failed!", __func__);
 		return -1;
 	} else if (ctx->flags & ULS_CTX_FL_EOF) {
 		return 0;
@@ -739,7 +739,7 @@ uls_fillbuff(uls_lex_ptr_t uls)
 
 	ctx->lptr = ctx->line = line =csz_text(uls_ptr(ctx->zbuf1));
 	if ((ctx->line_end=line+rc) < line) {
-		err_panic("%s: invalid string length, %d.", __FUNCTION__, rc);
+		err_panic("%s: invalid string length, %d.", __func__, rc);
 		return -1;
 	}
 
@@ -1025,7 +1025,7 @@ __uls_change_isrc(uls_lex_ptr_t uls, int bufsiz, uls_voidptr_t isrc,
 	uls_context_set_tag(ctx, NULL, start_lno);
 
 	if (uls_fillbuff_and_reset(uls) < 0) {
-		err_log("%s: fail to fill the initial buff", __FUNCTION__);
+		err_log("%s: fail to fill the initial buff", __func__);
 		return -1;
 	}
 
@@ -1237,7 +1237,7 @@ uls_init(uls_lex_ptr_t uls, const char* confname)
 	uls_outparam_t parms1;
 
 	if (uls == nilptr || confname == NULL) {
-		err_log("%s: invalid parameter!", __FUNCTION__);
+		err_log("%s: invalid parameter!", __func__);
 		return -1;
 	}
 
@@ -1357,7 +1357,7 @@ int
 uls_destroy(uls_lex_ptr_t uls)
 {
 	if (uls == nilptr || uls->ref_cnt <= 0) {
-		err_log("%s: called for invalid object!", __FUNCTION__);
+		err_log("%s: called for invalid object!", __func__);
 		return -1;
 	}
 
@@ -1628,7 +1628,7 @@ uls_push_line(uls_lex_ptr_t uls, const char* line, int len, int flags)
 	}
 
 	if (uls_fillbuff_and_reset(uls) < 0) {
-		err_log("%s: fail to fill the initial buff", __FUNCTION__);
+		err_log("%s: fail to fill the initial buff", __func__);
 		return -1;
 	}
 

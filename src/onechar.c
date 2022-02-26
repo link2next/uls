@@ -181,7 +181,7 @@ uls_insert_onechar_tokdef_map
 	uls_assert(j < tokgrp->tokdef_vx_1char.n);
 
 	if (slots_vx[j] != nilptr) {
-		err_log("%s: the slot for '0x%X already occupied!", __FUNCTION__, uch);
+		err_log("%s: the slot for '0x%X already occupied!", __func__, uch);
 	}
 
 	slots_vx[j] = e_vx;

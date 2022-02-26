@@ -138,7 +138,7 @@ print_tokdef_constants(uls_lex_ptr_t uls,
 		cnst_symbol = "#define";
 		asgn_symbol = end_symbol = "";
 
-	} else if ((flags & ULS_FL_CPP_GEN) || (flags & ULS_FL_CPPCLI_GEN)) {
+	} else if (flags & ULS_FL_CPP_GEN) {
 		cnst_symbol = "static const int";
 
 	} else if (flags & ULS_FL_JAVA_GEN) {
@@ -184,9 +184,7 @@ print_tokdef_enum_constants(uls_lex_ptr_t uls,
 	if (n_tokdef_ary_prn > 0) prev_tok_id = slots_vx[0]->tok_id;
 	else prev_tok_id = -1;
 
-	if (flags & ULS_FL_CPPCLI_GEN) {
-		cptr = "enum class";
-	} else if (flags & ULS_FL_JAVA_GEN) {
+	if (flags & ULS_FL_JAVA_GEN) {
 		cptr = "public enum";
 	} else {
 		cptr = "enum";
@@ -370,7 +368,7 @@ print_uld_source(FILE *fin_uld, int n_tabs, uls_proc_uld_line_t lineproc)
 	while (1) {
 		if ((linelen=uls_fp_gets(fin_uld, linebuff, sizeof(linebuff), 0)) <= ULS_EOF) {
 			if (linelen < ULS_EOF) {
-				err_log("%s: ulc file i/o error at %d", __FUNCTION__, lno);
+				err_log("%s: ulc file i/o error at %d", __func__, lno);
 				stat = -1;
 			} else {
 				stat = n_tok_names;
@@ -608,13 +606,9 @@ print_tokdef_cpp_header(uls_lex_ptr_t uls,
 
 	uls_sysprn("#pragma once\n\n");
 
-	if (flags & ULS_FL_CPPCLI_GEN) {
-		ns_uls="uls::polaris";
-	} else { // flags & ULS_FL_CPP_GEN
-		uls_sysprn("#include <uls/UlsLex.h>\n");
-		uls_sysprn("#include <string>\n\n");
-		ns_uls="uls::crux";
-	}
+	uls_sysprn("#include <uls/UlsLex.h>\n");
+	uls_sysprn("#include <string>\n\n");
+	ns_uls="uls::crux";
 
 	al = uls_parray_slots(uls_ptr(emit_parm->name_components.args));
 	for (n_tabs=0; n_tabs<emit_parm->n_name_components; n_tabs++) {
@@ -622,11 +616,7 @@ print_tokdef_cpp_header(uls_lex_ptr_t uls,
 		uls_sysprn_tabs(n_tabs, "namespace %s %c\n", cptr1, ch_lbrace);
 	}
 
-	if (flags & ULS_FL_CPPCLI_GEN) {
-		cptr1 = "public ref class";
-	} else { // flags & ULS_FL_CPP_GEN
-		cptr1 = "class";
-	}
+	cptr1 = "class";
 
 	uls_sysprn_tabs(n_tabs, "%s %s :", cptr1, emit_parm->class_name);
 	uls_sysprn(" public %s::UlsLex %c\n", ns_uls, ch_lbrace);
@@ -645,11 +635,7 @@ print_tokdef_cpp_header(uls_lex_ptr_t uls,
 
 	uls_sysprn("\n");
 
-	if (flags & ULS_FL_CPPCLI_GEN) {
-		cptr2 = "System::String ^";
-	} else {
-		cptr2 = "std::string &";
-	}
+	cptr2 = "std::string &";
 
 	if (flags & ULS_FL_WANT_WRAPPER) {
 		if (emit_parm->fpath_ulc != NULL) {
@@ -682,7 +668,7 @@ print_tokdef_cpp_source(uls_lex_ptr_t uls,
 	uls_ref_parray(tokdef_ary_prn,tokdef_vx), int n_tokdef_ary_prn,
 	uls_parms_emit_ptr_t emit_parm, const char *base_ulc)
 {
-	uls_flags_t flags = emit_parm->flags;
+//	uls_flags_t flags = emit_parm->flags;
 	uls_decl_parray_slots(al, argstr);
 	FILE *fin_uld;
 	const char *cptr, *cptr2, *ns_uls;
@@ -698,14 +684,8 @@ print_tokdef_cpp_source(uls_lex_ptr_t uls,
 	uls_sysprn("#include \"%s.h\"\n", emit_parm->out_fname);
 	uls_sysprn("#include <string>\n\n");
 
-	if (flags & ULS_FL_CPPCLI_GEN) {
-		ns_uls = "uls::polaris";
-		cptr2 = "System::String ^";
-		uls_sysprn("using namespace %s;\n\n", ns_uls);
-	} else {
-		ns_uls = "uls::crux";
-		cptr2 = "std::string &";
-	}
+	ns_uls = "uls::crux";
+	cptr2 = "std::string &";
 
 	al = uls_parray_slots(uls_ptr(emit_parm->name_components.args));
 	for (i=0; i<emit_parm->n_name_components; i++) {
@@ -1009,7 +989,7 @@ uls_generate_tokdef_file(uls_lex_ptr_t uls, uls_parms_emit_ptr_t emit_parm)
 	_uls_quicksort_vptr(slots_prn, n_tokdef_ary_prn, comp_by_tokid_vx);
 
 	if ((fout = uls_fp_open(emit_parm->fpath, ULS_FIO_CREAT|ULS_FIO_WRITE)) == NULL) {
-		err_log("%s: fail to create file '%s'", __FUNCTION__, emit_parm->fpath);
+		err_log("%s: fail to create file '%s'", __func__, emit_parm->fpath);
 		uls_deinit_parray(uls_ptr(tokdef_ary_prn));
 		stat = -1;
 
@@ -1019,7 +999,7 @@ uls_generate_tokdef_file(uls_lex_ptr_t uls, uls_parms_emit_ptr_t emit_parm)
 				emit_parm->class_name, emit_parm->fpath);
 
 		if (uls_sysprn_open(fout, nilptr) < 0) {
-			err_log("%s: create an output file", __FUNCTION__);
+			err_log("%s: create an output file", __func__);
 			stat = -1;
 
 		} else {
@@ -1028,7 +1008,7 @@ uls_generate_tokdef_file(uls_lex_ptr_t uls, uls_parms_emit_ptr_t emit_parm)
 			if (emit_parm->flags & ULS_FL_C_GEN) {
 				print_tokdef_c_header(uls, uls_ptr(tokdef_ary_prn), n_tokdef_ary_prn, emit_parm);
 
-			} else if (emit_parm->flags & (ULS_FL_CPP_GEN|ULS_FL_CPPCLI_GEN)) { // C++ class
+			} else if (emit_parm->flags & ULS_FL_CPP_GEN) { // C++ class
 				print_tokdef_cpp_header(uls, uls_ptr(tokdef_ary_prn), n_tokdef_ary_prn, emit_parm,
 				uls_get_namebuf_value(uls->ulc_name));
 
@@ -1051,18 +1031,18 @@ uls_generate_tokdef_file(uls_lex_ptr_t uls, uls_parms_emit_ptr_t emit_parm)
 
 	if (emit_parm->flags & ULS_FL_C_GEN) {
 		uls_strcpy(emit_parm->pathbuff + emit_parm->len_fpath, ".c");
-	} else if (emit_parm->flags & (ULS_FL_CPP_GEN | ULS_FL_CPPCLI_GEN)) {
+	} else if (emit_parm->flags & ULS_FL_CPP_GEN) {
 		uls_strcpy(emit_parm->pathbuff + emit_parm->len_fpath, ".cpp");
 	}
 	emit_parm->fpath = emit_parm->pathbuff;
 
 	if ((fout = uls_fp_open(emit_parm->fpath, ULS_FIO_CREAT|ULS_FIO_WRITE)) == NULL) {
-		err_log("%s: fail to create file '%s'", __FUNCTION__, emit_parm->fpath);
+		err_log("%s: fail to create file '%s'", __func__, emit_parm->fpath);
 		stat = -1;
 
 	} else {
 		if (uls_sysprn_open(fout, nilptr) < 0) {
-			err_log("%s: create an output file", __FUNCTION__);
+			err_log("%s: create an output file", __func__);
 			stat = -1;
 
 		} else {
@@ -1074,7 +1054,7 @@ uls_generate_tokdef_file(uls_lex_ptr_t uls, uls_parms_emit_ptr_t emit_parm)
 
 			if (emit_parm->flags & ULS_FL_C_GEN) {
 				print_tokdef_c_source(emit_parm, uls_get_namebuf_value(uls->ulc_name), 2);
-			} else if (emit_parm->flags & (ULS_FL_CPP_GEN | ULS_FL_CPPCLI_GEN)) {
+			} else if (emit_parm->flags & ULS_FL_CPP_GEN) {
 				print_tokdef_cpp_source(uls, uls_ptr(tokdef_ary_prn), n_tokdef_ary_prn, emit_parm,
 					uls_get_namebuf_value(uls->ulc_name));
 			}

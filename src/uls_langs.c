@@ -106,7 +106,7 @@ langs_proc_line(uls_lang_list_ptr_t tbl, char* line)
 	lptr = wrdx.lptr;
 
 	if ((len = uls_strlen(wrd0)) <= 1 || wrd0[len-1] != ':') {
-		err_log("%s: incorrect format!", __FUNCTION__);
+		err_log("%s: incorrect format!", __func__);
 		return -1;
 	}
 
@@ -351,7 +351,7 @@ uls_find_lang(uls_lang_list_ptr_t tbl, const char* alias)
 	int len;
 
 	if (alias == NULL || *alias == '\0') {
-		err_log("%s: invalid parameter!", __FUNCTION__);
+		err_log("%s: invalid parameter!", __func__);
 		return nilptr;
 	}
 	len = uls_strlen(alias);

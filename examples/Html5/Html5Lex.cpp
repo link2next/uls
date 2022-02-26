@@ -153,7 +153,7 @@ Html5Lex::pass_html_quote(FILE* fp, csz_str_t* txt_buf, int quote_ch)
 
 	for ( ; ; ) {
 		if ((ch=uls_fp_getc(fp)) == EOF) {
-			err_log("%s: unexpected EOF", __FUNCTION__);
+			err_log("%s: unexpected EOF", __func__);
 			stat = -1; break;
 		}
 

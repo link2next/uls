@@ -204,7 +204,7 @@ __find_tokdef_by_tokid(uls_lex_ptr_t uls, int t, int area)
 		n = uls->tokdef_vx_array.n;
 
 	} else {
-		err_log("%s: unknown area:%d", __FUNCTION__, area);
+		err_log("%s: unknown area:%d", __func__, area);
 		return nilptr;
 	}
 
@@ -362,7 +362,7 @@ make_tokdef_for_quotetype(uls_lex_ptr_t uls, uls_quotetype_ptr_t qmt, const char
 	tok_id = qmt->tok_id;
 
 	if (__find_tokdef_by_tokid(uls, tok_id, TOKDEF_AREA_BOTH) != nilptr) {
-		err_log("%s: the token-name already made for token", __FUNCTION__);
+		err_log("%s: the token-name already made for token", __func__);
 		err_log("\ttoken-name:%s, token:%d", qmt_name, tok_id);
 		return -1;
 	}
@@ -379,7 +379,7 @@ make_tokdef_for_quotetype(uls_lex_ptr_t uls, uls_quotetype_ptr_t qmt, const char
 
 	if (qmt_name[0] != '\0' && (__find_reg_tokdef_by_name(uls, qmt_name, uls_ptr(parms)) != nilptr ||
 		__find_rsvd_tokdef_by_name(uls, qmt_name) != nilptr)) {
-		err_log("%s: can't make a tok name for token", __FUNCTION__);
+		err_log("%s: can't make a tok name for token", __func__);
 		err_log("\ttoken-name:%s, token:%d", qmt_name, tok_id);
 		return -1;
 	}

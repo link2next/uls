@@ -249,10 +249,6 @@ set_lang_generated(const char* lang_name)
 	} else if (ult_streql(lang_name, "cpp") || ult_streql(lang_name, "c++")) {
 		prn_flags |= ULS_FL_CPP_GEN; // default value in Linux
 
-	} else if (ult_streql(lang_name, "cppcli") || ult_streql(lang_name, "cpp/cli") ||
-		ult_streql(lang_name, "c++.net")) {
-		prn_flags |= ULS_FL_CPPCLI_GEN; // default value in Windows
-
 	} else if (ult_streql(lang_name, "java")) {
 		prn_flags |= ULS_FL_JAVA_GEN;
 
@@ -407,7 +403,7 @@ parse_options(int argc, char* argv[])
 	char *fname, *tmp_buf;
 
 	if (ult_getcwd(home_dir, ULS_FILEPATH_MAX) < 0) {
-		err_panic("%s: fail to getcwd()", __FUNCTION__);
+		err_panic("%s: fail to getcwd()", __func__);
 	}
 
 	opt_prefix = "";
@@ -523,7 +519,7 @@ parse_options(int argc, char* argv[])
 		prn_flags |= ULS_FL_CPP_GEN;
 	}
 
-	if (prn_flags & (ULS_FL_C_GEN | ULS_FL_CPP_GEN |ULS_FL_CPPCLI_GEN)) {
+	if (prn_flags & (ULS_FL_C_GEN | ULS_FL_CPP_GEN)) {
 	} else {
 		prn_flags &= ~ULS_FL_WANT_WRAPPER;
 	}

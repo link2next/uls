@@ -41,7 +41,7 @@ __xcontext_binfd_filler(uls_xcontext_ptr_t xctx)
 	uls_regulate_rawbuf(inp);
 
 	if ((rc = inp->rawbuf.siz - inp->rawbuf_bytes) <= 0) {
-		err_log("%s: InternalError: No space to fill in buffer!", __FUNCTION__);
+		err_log("%s: InternalError: No space to fill in buffer!", __func__);
 		return 0;
 	}
 
@@ -180,7 +180,7 @@ again_1:
 
 	if ((rc=uls_input_readn(uls_ptr(inp->isource), inp->rawbuf.buf, inp->rawbuf_bytes, inp->rawbuf.siz)) < 0) {
 		if (inp->rawbuf_bytes > 0)
-			err_log("%s: redundant %d-bytes exist!", __FUNCTION__, inp->rawbuf_bytes);
+			err_log("%s: redundant %d-bytes exist!", __func__, inp->rawbuf_bytes);
 		return -1;
 
 	} else if (rc == 0) {
@@ -206,7 +206,7 @@ again_1:
 			txtptr = parms2.lptr;
 
 			if (rc2 < 0) {
-				err_log("%s: record truncated!", __FUNCTION__);
+				err_log("%s: record truncated!", __func__);
 				return -1;
 			}
 
@@ -328,7 +328,7 @@ __check_rec_boundary_reverse_order(uls_xcontext_ptr_t xctx, char* buf, int n)
 	uls_reverse_bytes((char *) &txtlen, sizeof(uls_int32));
 
 	if (txtlen < 0)
-		err_panic("%s: corrupt stream!", __FUNCTION__);
+		err_panic("%s: corrupt stream!", __func__);
 
 	txtptr = buf + ULS_BIN_RECHDR_SZ;
 	reclen = ULS_BIN_REC_SZ(txtlen);
@@ -361,7 +361,7 @@ __check_rec_boundary_bin(uls_xcontext_ptr_t xctx, uls_xctx_boundary_checker2_t c
 	int i0 = 0, reclen, n_recs, n, m2;
 
 	if ((n=inp->rawbuf_bytes) < ULS_BIN_RECHDR_SZ) {
-		err_log("%s: incorrect format error!", __FUNCTION__);
+		err_log("%s: incorrect format error!", __func__);
 		return -1;
 	}
 
@@ -377,7 +377,7 @@ __check_rec_boundary_bin(uls_xcontext_ptr_t xctx, uls_xctx_boundary_checker2_t c
 
 			str_modify(uls_ptr(inp->rawbuf), inp->rawbuf_bytes, NULL, m2);
 			if (uls_input_readn(uls_ptr(inp->isource), inp->rawbuf.buf, inp->rawbuf_bytes, reclen) < m2) {
-				err_log("%s: file error", __FUNCTION__);
+				err_log("%s: file error", __func__);
 				return -1;
 			}
 
@@ -688,7 +688,7 @@ xcontext_raw_filler(uls_xcontext_ptr_t xctx)
 			inp->rawbuf_bytes = (int) (lptr_end - lptr);
 
 			if (inp->refill(inp, len_surplus) < 0) {
-//				err_log("%s: I/O error", __FUNCTION__);
+//				err_log("%s: I/O error", __func__);
 				uls_input_reset_cursor(inp);
 				return -1;
 			}
@@ -716,7 +716,7 @@ xcontext_raw_filler(uls_xcontext_ptr_t xctx)
 			inp->rawbuf_bytes = (int) (lptr_end - lptr);
 
 			if ((rc=input_space_proc(ch_ctx, inp, ss_dst1, len_surplus, uls_ptr(parms1))) < 0) {
-				err_log("%s: I/O error", __FUNCTION__);
+				err_log("%s: I/O error", __func__);
 				return -1;
 			}
 
@@ -950,5 +950,5 @@ uls_context_set_line(uls_context_ptr_t ctx, const char* line, int len)
 
 	ctx->line = ctx->lptr = line;
 	if ((ctx->line_end=line+len) < line)
-		err_panic("%s: invalid param(len=%d)!", __FUNCTION__, len);
+		err_panic("%s: invalid param(len=%d)!", __func__, len);
 }

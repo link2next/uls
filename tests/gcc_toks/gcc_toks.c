@@ -178,7 +178,7 @@ test_gnu_c(const char **args, int n_args)
 	int i, stat=0;
 
 	if (n_args < 1) {
-		err_log("%s: invalid parameter!", __FUNCTION__);
+		err_log("%s: invalid parameter!", __func__);
 		return -1;
 	}
 

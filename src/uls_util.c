@@ -151,13 +151,13 @@ uls_get_exeloc_dir(const char* argv0, char *fpath_buf)
 #endif
 
 	if (fpath_buf == NULL) {
-		err_log("%s: invalid parameter!", __FUNCTION__);
+		err_log("%s: invalid parameter!", __func__);
 		return -1;
 	}
 
 #ifdef ULS_WINDOWS
 	if ((len = GetModuleFileNameA(NULL, fpath_buf, ULS_FILEPATH_MAX)) >= ULS_FILEPATH_MAX) {
-		err_log("%s: internal error!", __FUNCTION__);
+		err_log("%s: internal error!", __func__);
 		return -1;
 	}
 	fpath_buf[len] = '\0';
@@ -611,7 +611,7 @@ isp_insert(uls_isp_ptr_t isp, const char* str, int len)
 
 	l = isp->siz_strpool - isp->len_strpool;
 	if (len + 1 > l) {
-		err_log("%s: isp full!", __FUNCTION__);
+		err_log("%s: isp full!", __func__);
 		return NULL;
 	}
 
@@ -648,7 +648,7 @@ uls_getopts(int n_args, char* args[], const char* optfmt, uls_optproc_t proc)
 			}
 
 			if ((ptr=uls_strchr(optfmt, opt)) == NULL) {
-				err_log("%s: undefined option -%c", __FUNCTION__, opt);
+				err_log("%s: undefined option -%c", __func__, opt);
 				return -1;
 			}
 
@@ -658,7 +658,7 @@ uls_getopts(int n_args, char* args[], const char* optfmt, uls_optproc_t proc)
 				} else if (k+1 < n_args && args[k+1][0] != '-') {
 					optarg = args[++k];
 				} else {
-					err_log("%s: option -%c requires an arg.", __FUNCTION__, opt);
+					err_log("%s: option -%c requires an arg.", __func__, opt);
 					return -1;
 				}
 
@@ -673,7 +673,7 @@ uls_getopts(int n_args, char* args[], const char* optfmt, uls_optproc_t proc)
 				optarg = "";
 				if ((rc=proc(opt, optarg)) != 0) {
 					if (rc > 0) rc = 0;
-					else err_log("%s: error in -%c.", __FUNCTION__, opt);
+					else err_log("%s: error in -%c.", __func__, opt);
 					return rc;
 				}
 				j++;

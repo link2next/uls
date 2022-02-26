@@ -109,14 +109,14 @@ proc_file(char* fpath)
 	int len, stat = 0, lno = 0;
 
 	if ((cur_fin=uls_fp_open(fpath, ULS_FIO_READ)) == NULL) {
-		err_log("%s: fail to open '%s'", __FUNCTION__, fpath);
+		err_log("%s: fail to open '%s'", __func__, fpath);
 		return -1;
 	}
 
 	while (1) {
 		if ((len=uls_fp_gets(cur_fin, filebuff, sizeof(filebuff), 0)) <= ULS_EOF) {
 			if (len < ULS_EOF) {
-				err_log("%s: error to read a line", __FUNCTION__);
+				err_log("%s: error to read a line", __func__);
 				stat =-1;
 			}
 			break;

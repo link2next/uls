@@ -425,7 +425,7 @@ uls_unget_tok(uls_lex_ptr_t uls)
 	uls_context_ptr_t ctx = uls->xcontext.context;
 
 	if ((ctx->flags & ULS_CTX_FL_TOKEN_UNGOT) || __uls_tok(uls) == uls->xcontext.toknum_NONE) {
-		err_log("%s: called twice!, ignoring ...", __FUNCTION__);
+		err_log("%s: called twice!, ignoring ...", __func__);
 	} else {
 		ctx->flags |= ULS_CTX_FL_TOKEN_UNGOT;
 	}
@@ -441,7 +441,7 @@ uls_unget_lexeme(uls_lex_ptr_t uls, const char *lxm, int tok_id)
 	char *lptr;
 
 	if (lxm == NULL) {
-		err_log("%s: lxm == NULL", __FUNCTION__);
+		err_log("%s: lxm == NULL", __func__);
 		return;
 	}
 
@@ -485,7 +485,7 @@ uls_unget_ch(uls_lex_ptr_t uls, uls_uch_t uch)
 	}
 
 	if ((rc = uls_encode_utf8(uch, ch_str, ULS_UTF8_CH_MAXLEN)) <= 0) {
-		err_log("%s: incorrect unicode!", __FUNCTION__);
+		err_log("%s: incorrect unicode!", __func__);
 		return;
 	}
 
@@ -503,7 +503,7 @@ uls_unget_str(uls_lex_ptr_t uls, const char* str)
 	int len;
 
 	if (str == NULL)
-		err_panic("%s: null string NOT permitted!", __FUNCTION__);
+		err_panic("%s: null string NOT permitted!", __func__);
 	if ((len=uls_strlen(str)) == 0) return;
 
 	if (ctx->flags & ULS_CTX_FL_TOKEN_UNGOT) {

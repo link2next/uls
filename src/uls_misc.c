@@ -432,7 +432,7 @@ uls_get_simple_escape_str(char quote_ch, uls_outparam_ptr_t parms)
 				for (ch2=0,j=0; j<2; j++) {
 					if (!uls_isxdigit(ch=lptr[j+1])) {
 						if (j == 0) {
-							err_log("%s: No hexa-string format!", __FUNCTION__);
+							err_log("%s: No hexa-string format!", __func__);
 							parms->lptr = lptr;
 							return -1;
 						}
