@@ -162,17 +162,13 @@ is_keyword_twoplus(uls_kwtable_twoplus_ptr_t tbl, const char *ch_ctx, const char
 	char ch;
 	int i;
 
-	ch = *str;
-	if (ch >= ULS_SYNTAX_TABLE_SIZE || (ch_ctx[ch] & ULS_CH_2PLUS) == 0) {
-		return nilptr;
-	}
-
 	if ((tree=tbl->start) == nilptr)
 		return nilptr;
 
 	// tree->len_keyw >= 2 AND ch_ctx['\0'] == 0
 	for (i=0; i < tree->len_keyw; i++) {
-		if (ch_ctx[str[i]] == 0) {
+		ch = str[i];
+		if (ch < ULS_SYNTAX_TABLE_SIZE && ch_ctx[ch] == 0) {
 			tree = uls_get_ind_twoplus_tree(tbl, i, nilptr);
 			if (tree != nilptr && tree->len_keyw <= 0)
 				tree = tree->prev;
@@ -204,9 +200,7 @@ distribute_twoplus_toks(uls_kwtable_twoplus_ptr_t tbl, uls_strcmp_proc_t cmpfunc
 	uls_decl_parray_slots(slots_tp, tokdef_vx);
 
 	uls_tokdef_ptr_t e;
-	int i, i0, j, len_keyw;
-
-	tbl->str_ncmp = cmpfunc;
+	int i, i0, j, len_keyw; tbl->str_ncmp = cmpfunc;
 
 	if (n_tokdefs_vx <= 0) {
 		return;
