@@ -51,10 +51,7 @@ ULS_DEF_ARRAY_TYPE00(twoplus_tree, TWOPLUS_TREE_TYPE00_ULS_KWTABLE_TWOPLUS_SIZE,
 ULS_DEFINE_STRUCT(kwtable_twoplus)
 {
 	uls_decl_array_type00(tree_array, twoplus_tree, ULS_KWTABLE_TWOPLUS_SIZE);
-
 	uls_twoplus_tree_ptr_t  start;
-	uls_callback_type_this(strcmp_proc) str_ncmp;
-
 	uls_decl_parray(twoplus_mempool, tokdef_vx);
 };
 #endif // ULS_DEF_PUBLIC_TYPE
@@ -75,7 +72,7 @@ uls_twoplus_tree_ptr_t uls_get_ind_twoplus_tree(uls_kwtable_twoplus_ptr_t tbl, i
 int cmp_twoplus_by_length(const uls_voidptr_t a, const uls_voidptr_t b);
 int cmp_twoplus_vx_by_keyword(const uls_voidptr_t a, const uls_voidptr_t b);
 
-void distribute_twoplus_toks(uls_kwtable_twoplus_ptr_t tbl, uls_strcmp_proc_t cmpfunc);
+void distribute_twoplus_toks(uls_kwtable_twoplus_ptr_t tbl);
 uls_tokdef_ptr_t is_keyword_twoplus(uls_kwtable_twoplus_ptr_t tbl, const char *ch_ctx, const char* str);
 #endif
 

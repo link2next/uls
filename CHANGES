@@ -1,3 +1,11 @@
+
+  v1.8.7
+  -----------
+    o bug-fixes on
+     a) 1-char punctuation token which is explicitly defined in ulc-file 
+     b) Unicode punctuation token of length more than 2. 
+     c) uls_get_extra_tokdef()
+
   v1.8.6
   -----------
     o Added a program 'tools/ulc2yaml' to dump yaml-file from ulc-file.

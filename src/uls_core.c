@@ -552,8 +552,7 @@ ULS_QUALIFIED_METHOD(ulc_load)(uls_lex_ptr_t uls, FILE *fin_ulc, FILE *fin_ulf)
 	ulf_deinit_header(uls_ptr(ulf_hdr));
 	_uls_tool_(fp_close)(fin_ulf);
 
-	distribute_twoplus_toks(uls_ptr(uls->twoplus_table), uls->idkeyw_table.str_ncmp);
-
+	distribute_twoplus_toks(uls_ptr(uls->twoplus_table));
 	return stat;
 }
 
@@ -667,8 +666,7 @@ ULS_QUALIFIED_METHOD(ulc_load_cvt2yaml)(uls_lex_ptr_t uls, FILE *fin_ulc)
 		uls_add_kw(uls_ptr(uls->idkeyw_table), e);
 	}
 
-	distribute_twoplus_toks(uls_ptr(uls->twoplus_table), uls->idkeyw_table.str_ncmp);
-
+	distribute_twoplus_toks(uls_ptr(uls->twoplus_table));
 	return stat;
 }
 
@@ -1083,7 +1081,7 @@ ULS_QUALIFIED_METHOD(uls_gettok_raw)(uls_lex_ptr_t uls)
 			}
 		}
 
-	} else if ((ch_grp & ULS_CH_2PLUS) &&
+	} else if (((ch_grp & ULS_CH_2PLUS) || ch >= ULS_SYNTAX_TABLE_SIZE) &&
 		(e=is_keyword_twoplus(uls_ptr(uls->twoplus_table), ch_ctx, lptr)) != nilptr) {
 		/* FOUND */
 		e_vx = e->view;
@@ -1558,7 +1556,7 @@ ULS_QUALIFIED_METHOD(uls_get_extra_tokdef)(uls_lex_ptr_t uls, int tok_id)
 		return uls_get_current_extra_tokdef(uls);
 	}
 
-	if ((e_vx = uls_find_tokdef_vx(uls, __uls_tok(uls))) == nilptr)
+	if ((e_vx = uls_find_tokdef_vx(uls, tok_id)) == nilptr)
 		return nilptr;
 
 	return e_vx->extra_tokdef;

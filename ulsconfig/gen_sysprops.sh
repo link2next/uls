@@ -145,5 +145,5 @@ gen_namval_pair ULS_VERSION_DEBUG $debug_num
 if [ "$stage" = "B" ]; then
 	gen_build_sysprops src ulc_exam
 else
-	gen_inst_sysprops lib/uls share/uls
+	gen_inst_sysprops lib share/uls
 fi

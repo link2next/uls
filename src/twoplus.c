@@ -51,7 +51,7 @@ ULS_QUALIFIED_METHOD(__twoplus_bi_search)(uls_kwtable_twoplus_ptr_t tbl, const c
 		e_vx = slots_ary[mid];
 		e = e_vx->base;
 
-		if ((cond = tbl->str_ncmp(uls_get_namebuf_value(e->keyword), keyw, e->l_keyword)) < 0) {
+		if ((cond = _uls_tool_(strncmp)(uls_get_namebuf_value(e->keyword), keyw, e->l_keyword)) < 0) {
 			low = mid + 1;
 		} else if (cond > 0) {
 			high = mid - 1;
@@ -164,22 +164,17 @@ ULS_QUALIFIED_METHOD(is_keyword_twoplus)(uls_kwtable_twoplus_ptr_t tbl, const ch
 	char ch;
 	int i;
 
-	ch = *str;
-	if (ch >= ULS_SYNTAX_TABLE_SIZE || (ch_ctx[ch] & ULS_CH_2PLUS) == 0) {
-		return nilptr;
-	}
-
 	if ((tree=tbl->start) == nilptr)
 		return nilptr;
 
 	// tree->len_keyw >= 2 AND ch_ctx['\0'] == 0
 	for (i=0; i < tree->len_keyw; i++) {
-		if (ch_ctx[str[i]] == 0) {
+		ch = str[i];
+		if (ch < ULS_SYNTAX_TABLE_SIZE && ch_ctx[ch] == 0) {
 			tree = uls_get_ind_twoplus_tree(tbl, i, nilptr);
 			if (tree != nilptr && tree->len_keyw <= 0)
 				tree = tree->prev;
 			break;
-			// what if tree == nilptr ?
 		}
 	}
 
@@ -195,7 +190,7 @@ ULS_QUALIFIED_METHOD(is_keyword_twoplus)(uls_kwtable_twoplus_ptr_t tbl, const ch
 }
 
 void
-ULS_QUALIFIED_METHOD(distribute_twoplus_toks)(uls_kwtable_twoplus_ptr_t tbl, uls_strcmp_proc_t cmpfunc)
+ULS_QUALIFIED_METHOD(distribute_twoplus_toks)(uls_kwtable_twoplus_ptr_t tbl)
 {
 	uls_decl_parray_slots_init(slots_vx, tokdef_vx, uls_ptr(tbl->twoplus_mempool));
 	int n_tokdefs_vx = tbl->twoplus_mempool.n;
@@ -207,8 +202,6 @@ ULS_QUALIFIED_METHOD(distribute_twoplus_toks)(uls_kwtable_twoplus_ptr_t tbl, uls
 
 	uls_tokdef_ptr_t e;
 	int i, i0, j, len_keyw;
-
-	tbl->str_ncmp = cmpfunc;
 
 	if (n_tokdefs_vx <= 0) {
 		return;

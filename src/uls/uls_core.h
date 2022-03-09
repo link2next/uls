@@ -140,7 +140,6 @@ extern "C" {
 
 #define ULS_UCH_NONE '\0'
 #define ULS_CH_NONE ULS_UCH_NONE
-// OBSOLETE: uls_peek_ch, uls_get_ch
 #define uls_peek_ch uls_peek_uch
 #define uls_get_ch uls_get_uch
 #define uls_peekch uls_peek_uch

@@ -49,6 +49,7 @@ ULS_QUALIFIED_METHOD(__init_onechar_tokgrp)(uls_onechar_table_ptr_t tbl, int grp
 	for (i=0; i<n; i++) {
 		slots_vx[i] = nilptr;
 	}
+	tokgrp->tokdef_vx_1char.n = n;
 }
 
 void
@@ -136,12 +137,12 @@ ULS_QUALIFIED_METHOD(uls_find_1char_tokdef_map)(uls_onechar_table_ptr_t tbl,
 	static int  right_child[4] = {  2, -1,  3, -1 };
 
 	uls_tokdef_vx_ptr_t e_vx;
-	int  i_grp, level, n_tok_array;
+	int  i_grp, n_tok_array;
 	uls_onechar_tokgrp_ptr_t tokgrp;
 	uls_decl_parray_slots(slots_vx, tokdef_vx);
 	uls_uch_t uch0;
 
-	for (i_grp = 0, level = 0; i_grp >= 0 && level < 3; level++) {
+	for (i_grp = 0; i_grp >= 0; ) {
 		tokgrp = uls_get_array_slot_type00(uls_ptr(tbl->tokgrps), i_grp);
 
 		slots_vx = uls_parray_slots(uls_ptr(tokgrp->tokdef_vx_1char));
