@@ -358,10 +358,6 @@ ulc2class_options(int opt, char* optarg)
 		break;
 
 	case 's':
-		if (!opt_query) {
-			err_log("%s: Use -s with -q-option.", progname);
-			stat = -1; break;
-		}
 		opt_uld_gen = 1;
 		break;
 
@@ -651,6 +647,11 @@ main(int argc, char* argv[])
 	if ((i0=parse_options(argc, argv)) <= 0) {
 		if (i0 < 0) err_log("%s: Incorrect use of command options.", progname);
 		return i0;
+	}
+
+	if (opt_uld_gen && !opt_query) {
+		err_log("%s: Use -s with -q-option.", progname);
+		return -1;
 	}
 
 	if (opt_query && !opt_uld_gen) {

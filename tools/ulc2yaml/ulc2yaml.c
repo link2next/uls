@@ -252,14 +252,11 @@ main(int argc, char* argv[])
 		fout = stdout;
 	}
 
-	uls_set_cvt2yaml(fout);
-
-	if (uls_dump_tokdef_vx__yaml(ulc_config, prn_flags) < 0) {
+	if (uls_dump_tokdef__yaml(ulc_config, fout, prn_flags) < 0) {
 		stat = -1;
 	}
 
-	uls_set_cvt2yaml(NULL);
-
+	if (out_filepath != NULL) fclose(fout);
 	uls_mfree(ulc_config);
 	uls_mfree(out_filepath);
 

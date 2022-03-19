@@ -59,7 +59,7 @@ ULS_QUALIFIED_METHOD(check_keyw_str)(int lno, const char* str, uls_ptrtype_tool(
 	uls_litstr_t lit1;
 	uls_decl_parray_slots(slots_qmt, quotetype);
 
-	if (*str == '\0' || _uls_tool(is_pure_int_number)(str) > 0) {
+	if (*str == '\0' || _uls_tool(is_pure_integer)(str, nilptr) > 0) {
 		*buf = '\0';
 		parms->len = 0;
 		return ULS_KEYW_TYPE_USER;
@@ -167,7 +167,7 @@ ULS_QUALIFIED_METHOD(check_keyw_str)(int lno, const char* str, uls_ptrtype_tool(
 		}
 	}
 
-	if (n_ch_non_idstr == 0 || uls_get_cvt2yaml() != NULL) {
+	if (n_ch_non_idstr == 0) {
 		rc = ULS_KEYW_TYPE_IDSTR;
 	} else if (len == 1) {
 		rc = ULS_KEYW_TYPE_1CHAR;
@@ -1235,25 +1235,6 @@ ULS_QUALIFIED_METHOD(parse_id_ranges)(uls_lex_ptr_t uls, int is_first, char *lin
 		++wrds_ranges.n;
 	}
 
-	if (uls_get_cvt2yaml() != NULL && wrds_ranges.n > 0) {
-		if (is_first) {
-			uls_sysprn_tabs(0, "idfirst-chars:\n");
-		} else {
-			uls_sysprn_tabs(0, "id-chars:\n");
-		}
-
-		al = uls_parray_slots(uls_ptr(wrds_ranges));
-		for (i=0; i<wrds_ranges.n; i++) {
-			id_range = al[i];
-
-			if (id_range->x1 < id_range->x2) {
-				uls_sysprn_tabs(1, "- 0x%X 0x%X\n", id_range->x1, id_range->x2);
-			} else {
-				uls_sysprn_tabs(1, "- 0x%X\n", id_range->x1);
-			}
-		}
-	}
-
 	parse_id_ranges_internal(uls, uls_ptr(wrds_ranges), is_first);
 
 	al = uls_parray_slots(uls_ptr(wrds_ranges));
@@ -1279,17 +1260,6 @@ ULS_QUALIFIED_METHOD(read_config__ID_FIRST_CHARS)(char *line, uls_cmd_ptr_t cmd)
 	return parse_id_ranges(uls, 1, line);
 }
 
-ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(read_config__ID_FIRST_CHARS_cvt2yaml)(char *line, uls_cmd_ptr_t cmd)
-{
-	uls_cast_ptrtype_tool(outparam, parms, cmd->user_data);
-	uls_lex_ptr_t uls = (uls_lex_ptr_t) parms->data;
-//	const char* tag_nam = parms->lptr_end;
-//	int lno = parms->n;
-
-	return parse_id_ranges(uls, 1, line);
-}
-
 int
 ULS_QUALIFIED_METHOD(ulx_set_id_chars)(uls_lex_ptr_t uls, int k, int i1, int i2)
 {
@@ -1306,18 +1276,6 @@ ULS_QUALIFIED_METHOD(ulx_set_id_chars)(uls_lex_ptr_t uls, int k, int i1, int i2)
 
 ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(read_config__ID_CHARS)(char *line, uls_cmd_ptr_t cmd)
-{
-	uls_cast_ptrtype_tool(outparam, parms, cmd->user_data);
-	uls_lex_ptr_t uls = (uls_lex_ptr_t) parms->data;
-//	const char* tag_nam = parms->lptr_end;
-//	int lno = parms->n;
-
-	return parse_id_ranges(uls, 0, line);
-}
-
-
-ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(read_config__ID_CHARS_cvt2yaml)(char *line, uls_cmd_ptr_t cmd)
 {
 	uls_cast_ptrtype_tool(outparam, parms, cmd->user_data);
 	uls_lex_ptr_t uls = (uls_lex_ptr_t) parms->data;
@@ -1388,10 +1346,6 @@ ULS_QUALIFIED_METHOD(read_config__NOT_CHAR_TOK)(char *line, uls_cmd_ptr_t cmd)
 	uls_lex_ptr_t uls = (uls_lex_ptr_t) parms->data;
 	uls_type_tool(wrd) wrdx;
 	char  *wrd;
-
-	if (uls_get_cvt2yaml() != NULL) {
-		uls_sysprn_tabs(0, "not-char-tok: %s\n", line);
-	}
 
 	wrdx.lptr = line;
 	while (*(wrd=__uls_tool_(splitstr)(uls_ptr(wrdx))) != '\0') {
@@ -2337,7 +2291,7 @@ ULS_QUALIFIED_METHOD(ulc_fp_peek)(fp_list_ptr_t fp_lst, uls_ptrtype_tool(outpara
 }
 
 FILE*
-ULS_QUALIFIED_METHOD(ulc_fp_get)(uls_ptrtype_tool(outparam) parms, int do_pop)
+ULS_QUALIFIED_METHOD(ulc_fp_pop)(uls_ptrtype_tool(outparam) parms, int do_export)
 {
 	fp_list_ptr_t fp_lst = (fp_list_ptr_t ) parms->data;
 	FILE *fp;
@@ -2350,11 +2304,13 @@ ULS_QUALIFIED_METHOD(ulc_fp_get)(uls_ptrtype_tool(outparam) parms, int do_pop)
 		parms->n = fp_lst->linenum;
 		parms->data = fp_lst->prev;
 
-		if (do_pop) {
-			uls_mfree(fp_lst->tagstr);
+		if (do_export) {
 			uls_dealloc_object(fp_lst);
 		}
 	} else {
+		parms->line = NULL;
+		parms->n = -1;
+		parms->data = nilptr;
 		fp = NULL;
 	}
 
@@ -2369,7 +2325,7 @@ ULS_QUALIFIED_METHOD(release_ulc_fp_stack)(fp_list_ptr_t fp_lst)
 
 	while (fp_lst != nilptr) {
 		parms.data = fp_lst;
-		fp = ulc_fp_get(uls_ptr(parms), 1);
+		fp = ulc_fp_pop(uls_ptr(parms), 1);
 		fp_lst = (fp_list_ptr_t) parms.data;
 		_uls_tool_(fp_close)(fp);
 	}
@@ -2396,6 +2352,7 @@ ULS_QUALIFIED_METHOD(init_reserved_toks)(uls_lex_ptr_t uls)
 		e_vx->flags = ULS_VX_RSVD;
 		slots_vx[i] = e_vx;
 	}
+	uls->tokdef_vx_rsvd.n = N_RESERVED_TOKS;
 
 	uls->tokdef_vx_array.n = N_RESERVED_TOKS;
 
@@ -3021,9 +2978,8 @@ ULS_QUALIFIED_METHOD(ulc_read_header)(uls_lex_ptr_t uls, FILE* fin, ulc_header_p
 {
 	fp_list_ptr_t  fp_stack_ptr, fp_stack_top;
 	char  specname[ULC_LONGNAME_MAXSIZ+1];
-	char  linebuff[ULS_LINEBUFF_SIZ+1], *lptr;
-
-	char  ulc_lname[ULC_LONGNAME_MAXSIZ+1], *tag;
+	char  linebuff[ULS_LINEBUFF_SIZ+1], *tag, *lptr;
+	char  ulc_lname[ULC_LONGNAME_MAXSIZ+1];
 	int   linelen, lno;
 	int   rc, ulc_lname_len, len_basedir, len_specname, typ_fpath;
 	uls_type_tool(outparam) parms1;
@@ -3036,8 +2992,17 @@ ULS_QUALIFIED_METHOD(ulc_read_header)(uls_lex_ptr_t uls, FILE* fin, ulc_header_p
 	rewind(fin);
 
 	// Read Header upto '%%'
-	for (fp_stack_top = (fp_list_ptr_t) parms->data;
-		(ulc_lname_len = check_ulc_file_magic(fin, uls_ptr((uls)->config_filever), ulc_lname)) > 0; ) {
+	for (fp_stack_top = (fp_list_ptr_t) parms->data; ; ) {
+		if ((ulc_lname_len = check_ulc_file_magic(fin, uls_ptr((uls)->config_filever), ulc_lname)) <= 0) {
+			if (ulc_lname_len < 0) {
+				_uls_log(err_log)("%s: Can't find the header of ulc", fp_stack_top->tagstr);
+				return -1;
+			}
+			// BUGFIX-227: You should have considered the line having ulc_lname.
+			fp_stack_top->linenum = 1;
+			break;
+		}
+
 		if (ulc_find_fp_list(fp_stack_top, ulc_lname) != nilptr) {
 			_uls_log(err_log)("can't inherit ulc-spec %s from multiple parents", ulc_lname);
 			return -1;
@@ -3060,7 +3025,6 @@ ULS_QUALIFIED_METHOD(ulc_read_header)(uls_lex_ptr_t uls, FILE* fin, ulc_header_p
 
 		fp_stack_top->linenum = 1;
 		fp_stack_top = ulc_fp_push(fp_stack_top, fin, ulc_lname);
-		fp_stack_top->linenum = 0;
 	}
 
 	parms->data = fp_stack_ptr = fp_stack_top;
@@ -3080,7 +3044,7 @@ ULS_QUALIFIED_METHOD(ulc_read_header)(uls_lex_ptr_t uls, FILE* fin, ulc_header_p
 			fp_stack_ptr->linenum = lno;
 
 			parms1.data = fp_stack_ptr;
-			ulc_fp_get(uls_ptr(parms1), 0);
+			ulc_fp_pop(uls_ptr(parms1), 0);
 			fp_stack_ptr = (fp_list_ptr_t) parms1.data;
 
 			if (fp_stack_ptr == nilptr ||
@@ -3104,69 +3068,10 @@ ULS_QUALIFIED_METHOD(ulc_read_header)(uls_lex_ptr_t uls, FILE* fin, ulc_header_p
 	return lno;
 }
 
-int
-ULS_QUALIFIED_METHOD(ulc_read_header_cvt2yaml)(uls_lex_ptr_t uls, FILE* fin, ulc_header_ptr_t hdr, const char *tag)
-{
-	char  specname[ULC_LONGNAME_MAXSIZ+1];
-	char  linebuff[ULS_LINEBUFF_SIZ+1], *lptr;
-
-	char  ulc_lname[ULC_LONGNAME_MAXSIZ+1];
-	int   linelen, lno;
-	int   rc, ulc_lname_len, typ_fpath;
-	uls_type_tool(outparam) parms1;
-
-	linelen = _uls_tool_(fp_gets)(fin, linebuff, sizeof(linebuff), 0);
-	if (linelen <= ULS_EOF || get_ulc_fileformat_ver(linebuff, linelen, uls_ptr(hdr->filever)) < 0) {
-		_uls_log(err_log)("Can't get file format version!");
-		return -1;
-	}
-	rewind(fin);
-
-	if ((ulc_lname_len = check_ulc_file_magic(fin, uls_ptr((uls)->config_filever), ulc_lname)) > 0) {
-		parms1.line = specname;
-		typ_fpath = uls_get_spectype(ulc_lname, uls_ptr(parms1));
-//		len_basedir = parms1.n;
-//		len_specname = parms1.len;
-
-		if (typ_fpath != ULS_NAME_SPECNAME) {
-			_uls_log(err_log)("Invalid spec-name in %s.", ulc_lname);
-			return -1;
-		}
-
-		if (uls_get_cvt2yaml() != NULL) {
-			uls_sysprn_tabs(0, "inherits: %s\n", ulc_lname);
-		}
-	}
-
-	lno = 1;
-	while (1) {
-		if ((linelen=_uls_tool_(fp_gets)(fin, linebuff, sizeof(linebuff), 0)) <= ULS_EOF) {
-			if (linelen < ULS_EOF) lno = -1;
-			break;
-		}
-		++lno;
-
-		if (_uls_tool_(strncmp)(linebuff, "%%%%", 2) == 0) {
-			// The bottom of stack has been reached!
-			break;
-
-		}
-
-		if (*(lptr = _uls_tool(skip_blanks)(linebuff)) == '\0' || *lptr == '#')
-			continue;
-
-		if ((rc=read_config_var(tag, lno, uls, lptr, hdr)) <= 0) {
-			if (rc < 0) return -1;
-			break;
-		}
-	}
-
-	return lno;
-}
-
 ULS_QUALIFIED_RETTYP(uls_tokdef_vx_ptr_t)
 ULS_QUALIFIED_METHOD(ulc_proc_line)
-	(const char* tag_nam, int lno, char* lptr, uls_lex_ptr_t uls, ulc_header_ptr_t hdr, uls_ptrtype_tool(outparam) parms)
+	(const char* tag_nam, int lno,
+		char* lptr, uls_lex_ptr_t uls, ulc_header_ptr_t hdr, uls_ptrtype_tool(outparam) parms)
 {
 	char *ch_ctx = uls->ch_context;
 	char *wrd1, *wrd2, *wrd3;
@@ -3202,7 +3107,7 @@ ULS_QUALIFIED_METHOD(ulc_proc_line)
 			wrd2[len2] = '\0';
 		}
 
-		if (*wrd2 == '\0' || _uls_tool(is_pure_int_number)(wrd2) > 0) {
+		if (*wrd2 == '\0' || _uls_tool(is_pure_integer)(wrd2, nilptr) > 0) {
 			wrd3 = wrd2;
 			wrd2 = "";
 			len2 = 0;
@@ -3324,7 +3229,7 @@ ULS_QUALIFIED_METHOD(ulc_proc_line)
 		// because the current is associated with the 'e_vx_grp'.
 		// uls_streql(wrd1, e_vx_grp->name) == true
 
-	} else if ((e2_vx=__find_tokdef_by_tokid(uls, tok_id, TOKDEF_AREA_RSVD)) != nilptr && uls_get_cvt2yaml() == NULL) {
+	} else if ((e2_vx=__find_tokdef_by_tokid(uls, tok_id, TOKDEF_AREA_RSVD)) != nilptr) {
 		_uls_log(err_log)("%s<%d>: Aliasing of reserved-tok isn't permitted!", tag_nam, lno);
 		_uls_log(err_log)("\treserved-tok:%s", wrd1);
 		return nilptr;
@@ -3484,42 +3389,3 @@ ULS_QUALIFIED_METHOD(finalize_ulc_lexattr)()
 {
 	uls_deinit_array_type00(uls_ptr(ulc_cmd_list), cmd);
 }
-
-void
-ULS_QUALIFIED_METHOD(change_ulc_lexattr)(int forYamlCvt)
-{
-	uls_cmd_ptr_t lexattr;
-
-	if (forYamlCvt) {
-		lexattr = uls_get_array_slot_type00(uls_ptr(ulc_cmd_list), 4);
-		lexattr->proc = uls_ref_callback_this(read_config__ID_CHARS_cvt2yaml);
-
-		lexattr = uls_get_array_slot_type00(uls_ptr(ulc_cmd_list), 5);
-		lexattr->proc = uls_ref_callback_this(read_config__ID_FIRST_CHARS_cvt2yaml);
-	} else {
-		lexattr = uls_get_array_slot_type00(uls_ptr(ulc_cmd_list), 4);
-		lexattr->proc = uls_ref_callback_this(read_config__ID_CHARS);
-
-		lexattr = uls_get_array_slot_type00(uls_ptr(ulc_cmd_list), 5);
-		lexattr->proc = uls_ref_callback_this(read_config__ID_FIRST_CHARS);
-	}
-}
-
-void
-ULS_QUALIFIED_METHOD(uls_set_cvt2yaml)(FILE *fout)
-{
-	_uls_sysinfo_(fp_cvt2yaml) = fout;
-
-	if (fout != NULL) {
-		change_ulc_lexattr(1);
-	} else {
-		change_ulc_lexattr(0);
-	}
-}
-
-FILE *
-ULS_QUALIFIED_METHOD(uls_get_cvt2yaml)(void)
-{
-	return _uls_sysinfo_(fp_cvt2yaml);
-}
-

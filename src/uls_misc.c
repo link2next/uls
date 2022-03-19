@@ -276,11 +276,11 @@ ULS_QUALIFIED_METHOD(uls_quick_sort)(uls_native_vptr_t ary, int n_ary, int elmt_
 
 	for (i=0; i<n_ary; i++) {
 		obj4sort = slots_obj[i] = uls_alloc_object(uls_obj4sort_t);
-
 		obj4sort->vptr = (char *) ary + i * elmt_size;
 		obj4sort->idx = i;
 		obj4sort->cmpfunc = cmpfunc;
 	}
+	obj4_sort_ary.n = n_ary;
 
 	_uls_quicksort_vptr(slots_obj, n_ary, sortcmp_obj4sort);
 

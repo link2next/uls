@@ -85,6 +85,7 @@ ULS_QUALIFIED_METHOD(uls_init_escmap)(uls_escmap_ptr_t map)
 	map->flags = 0;
 	map->esc_sym = ULS_ESCMAP_DFL_ESCSYM;
 	uls_init_parray(uls_ptr(map->escstr_list), escstr, ULS_ESCMAP_MAPSIZE);
+	map->escstr_list.n = ULS_ESCMAP_MAPSIZE;
 #ifndef ULS_DOTNET
 	uls_bzero(uls_parray_slots(uls_ptr(map->escstr_list)), ULS_ESCMAP_MAPSIZE * sizeof(uls_escstr_ptr_t));
 #endif
@@ -166,6 +167,7 @@ ULS_QUALIFIED_METHOD(uls_init_escmap_pool)(uls_escmap_pool_ptr_t escmap_pool)
 	_uls_tool(isp_init)(uls_ptr(escmap_pool->strpool), 512);
 
 	uls_init_parray(uls_ptr(escmap_pool->escstr_containers), escmap_container, ULS_ESCMAP_MAPSIZE);
+	escmap_pool->escstr_containers.n = ULS_ESCMAP_MAPSIZE;
 #ifndef ULS_DOTNET
 	uls_bzero(uls_parray_slots(uls_ptr(escmap_pool->escstr_containers)), ULS_ESCMAP_MAPSIZE * sizeof(uls_escmap_container_ptr_t));
 #endif
