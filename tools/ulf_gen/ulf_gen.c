@@ -512,8 +512,7 @@ ulf_create_file_internal(FILE *fp_list, FILE *fp_out, int i0, int n_args, char *
 
 	calc_good_hcode0(keyw_stat_list, uls_ptr(best_round_stat));
 
-	ulf_create_file(1, &best_round_stat.dflhash_stat0.init_hcode,
-		target_hashtable_size, keyw_stat_list, fp_out);
+	ulf_create_file(target_hashtable_size, keyw_stat_list, fp_out);
 
 	ulc_free_kwstat_list(keyw_stat_list);
 

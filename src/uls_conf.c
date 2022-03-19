@@ -2271,7 +2271,7 @@ ulc_fp_peek(fp_list_ptr_t fp_lst, uls_outparam_ptr_t parms)
 }
 
 FILE*
-ulc_fp_get(uls_outparam_ptr_t parms, int do_pop)
+ulc_fp_pop(uls_outparam_ptr_t parms, int do_export)
 {
 	fp_list_ptr_t fp_lst = (fp_list_ptr_t ) parms->data;
 	FILE *fp;
@@ -2284,11 +2284,13 @@ ulc_fp_get(uls_outparam_ptr_t parms, int do_pop)
 		parms->n = fp_lst->linenum;
 		parms->data = fp_lst->prev;
 
-		if (do_pop) {
-			fp_lst->tagstr = uls_mfree(fp_lst->tagstr);
+		if (do_export) {
 			uls_dealloc_object(fp_lst);
 		}
 	} else {
+		parms->line = NULL; 
+		parms->n = -1; 
+		parms->data = nilptr; 
 		fp = NULL;
 	}
 
@@ -2303,7 +2305,7 @@ release_ulc_fp_stack(fp_list_ptr_t fp_lst)
 
 	while (fp_lst != nilptr) {
 		parms.data = fp_lst;
-		fp = ulc_fp_get(uls_ptr(parms), 1);
+		fp = ulc_fp_pop(uls_ptr(parms), 1);
 		fp_lst = (fp_list_ptr_t) parms.data;
 		uls_fp_close(fp);
 	}
@@ -2956,9 +2958,9 @@ ulc_read_header(uls_lex_ptr_t uls, FILE* fin, ulc_header_ptr_t hdr, uls_outparam
 {
 	fp_list_ptr_t  fp_stack_ptr, fp_stack_top;
 	char  specname[ULC_LONGNAME_MAXSIZ+1];
-	char  linebuff[ULS_LINEBUFF_SIZ+1], *lptr;
+	char  linebuff[ULS_LINEBUFF_SIZ+1], *tag, *lptr;
 
-	char  ulc_lname[ULC_LONGNAME_MAXSIZ+1], *tag;
+	char  ulc_lname[ULC_LONGNAME_MAXSIZ+1];
 	int   linelen, lno;
 	int   rc, ulc_lname_len, len_basedir, len_specname, typ_fpath;
 	uls_outparam_t parms1;
@@ -2971,8 +2973,18 @@ ulc_read_header(uls_lex_ptr_t uls, FILE* fin, ulc_header_ptr_t hdr, uls_outparam
 	rewind(fin);
 
 	// Read Header upto '%%'
-	for (fp_stack_top = (fp_list_ptr_t) parms->data;
-		(ulc_lname_len = check_ulc_file_magic(fin, uls_ptr((uls)->config_filever), ulc_lname)) > 0; ) {
+	for (fp_stack_top = (fp_list_ptr_t) parms->data; ; ) {
+		if ((ulc_lname_len = check_ulc_file_magic(fin,
+			uls_ptr((uls)->config_filever), ulc_lname)) <= 0) { 
+			if (ulc_lname_len < 0) {
+				err_log("%s: Can't find the header of ulc", fp_stack_top->tagstr);
+				return -1;
+			}
+
+			fp_stack_top->linenum = 1;
+			break;
+		}
+
 		if (ulc_find_fp_list(fp_stack_top, ulc_lname) != nilptr) {
 			err_log("can't inherit ulc-spec %s from multiple parents", ulc_lname);
 			return -1;
@@ -2994,7 +3006,6 @@ ulc_read_header(uls_lex_ptr_t uls, FILE* fin, ulc_header_ptr_t hdr, uls_outparam
 		}
 		fp_stack_top->linenum = 1;
 		fp_stack_top = ulc_fp_push(fp_stack_top, fin, ulc_lname);
-		fp_stack_top->linenum = 0;
 	}
 
 	parms->data = fp_stack_ptr = fp_stack_top;
@@ -3014,7 +3025,7 @@ ulc_read_header(uls_lex_ptr_t uls, FILE* fin, ulc_header_ptr_t hdr, uls_outparam
 			fp_stack_ptr->linenum = lno;
 
 			parms1.data = fp_stack_ptr;
-			ulc_fp_get(uls_ptr(parms1), 0);
+			ulc_fp_pop(uls_ptr(parms1), 0);
 			fp_stack_ptr = (fp_list_ptr_t) parms1.data;
 
 			if (fp_stack_ptr == nilptr ||
@@ -3039,8 +3050,8 @@ ulc_read_header(uls_lex_ptr_t uls, FILE* fin, ulc_header_ptr_t hdr, uls_outparam
 }
 
 uls_tokdef_vx_ptr_t
-ulc_proc_line
-	(const char* tagstr, int lno, char* lptr, uls_lex_ptr_t uls, ulc_header_ptr_t hdr, uls_outparam_ptr_t parms)
+ulc_proc_line(const char* tagstr, int lno,
+	char* lptr, uls_lex_ptr_t uls, ulc_header_ptr_t hdr, uls_outparam_ptr_t parms)
 {
 	char *ch_ctx = uls->ch_context;
 	char *wrd1, *wrd2, *wrd3;

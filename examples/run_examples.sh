@@ -94,7 +94,7 @@ test_1case()
 		$cmdline > $tmpfile1
 	fi
 
-	if [ $? != 0 ] || [ ! -f "$tmpfile1" ]; then
+	if [ $? != 0 -o ! -f "$tmpfile1" ]; then
 		echo "fail to exec $test_prog";
 		return 1
 	fi

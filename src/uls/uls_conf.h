@@ -184,7 +184,7 @@ fp_list_ptr_t ulc_find_fp_list(fp_list_ptr_t fp_stack_top, const char *ulc_name)
 fp_list_ptr_t ulc_fp_push(fp_list_ptr_t fp_lst, FILE *fp, const char* str);
 FILE* ulc_fp_peek(fp_list_ptr_t fp_lst, uls_outparam_ptr_t parms);
 
-FILE* ulc_fp_get(uls_outparam_ptr_t parms, int do_export);
+FILE* ulc_fp_pop(uls_outparam_ptr_t parms, int do_export);
 void release_ulc_fp_stack(fp_list_ptr_t fp_lst);
 
 void init_reserved_toks(uls_lex_ptr_t uls);

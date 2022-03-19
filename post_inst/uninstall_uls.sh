@@ -177,4 +177,3 @@ del_tree "$etc_dir"
 if [ "$sysdir_installed" = "no" ]; then
 	del_tree $ULS_HOME
 fi
-

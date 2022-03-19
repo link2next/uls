@@ -1,10 +1,7 @@
 include ../cfg.mk
 
-ACLOCAL_AMFLAGS = -I m4
-
 bin_PROGRAMS = DumpToks
 DumpToks_SOURCES = DumpToks.cpp
-
 DumpToks_CPPFLAGS = -I$(uls_inc_dir)
 DumpToks_LDADD = -L$(uls_lib_dir) -lulscpp -luls
 

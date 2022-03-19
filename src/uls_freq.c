@@ -69,26 +69,13 @@ ulf_read_config_var(int lno, char* lptr, ulf_header_ptr_t hdr)
 {
 	const char  *wrd;
 	int len, stat = 0;
-	uls_outparam_t parms;
 	uls_version_t ver;
 	uls_wrd_t wrdx;
 
 	wrdx.lptr = lptr;
 	wrd = _uls_splitstr(uls_ptr(wrdx));
 
-	if (uls_streql(wrd, "INITIAL_HASHCODE:")) {
-		wrd = _uls_splitstr(uls_ptr(wrdx));
-		if (wrd[0] == '0' && wrd[1] == 'x') {
-			parms.lptr = wrd + 2;
-			hdr->init_hcode = uls_skip_atox(uls_ptr(parms));
-			wrd = parms.lptr;
-		} else {
-			parms.lptr = wrd;
-			hdr->init_hcode = uls_skip_atou(uls_ptr(parms));
-			wrd = parms.lptr;
-		}
-
-	} else if (uls_streql(wrd, "HASH_ALGORITHM:")) {
+	if (uls_streql(wrd, "HASH_ALGORITHM:")) {
 		wrd = _uls_splitstr(uls_ptr(wrdx));
 
 		len = uls_str_toupper(wrd, (char *) wrd, -1);
@@ -220,8 +207,6 @@ ulf_init_header(ulf_header_ptr_t hdr)
 	uls_version_make(uls_ptr(hdr->filever), 0, 0, 0);
 	uls_version_make(uls_ptr(hdr->hfunc_ver), 0, 0, 0);
 
-	hdr->init_hcode = 0;
-
 	uls_init_namebuf(hdr->hash_algorithm, ULS_LEXSTR_MAXSIZ);
 	uls_set_namebuf_value(hdr->hash_algorithm, ULS_HASH_ALGORITHM);
 
@@ -272,7 +257,7 @@ ulf_load(uls_tokdef_ptr_t tok_info_lst, int n_tok_info_lst,
 	}
 
 	if (uls_streql(hdr->hash_algorithm, ULS_HASH_ALGORITHM)) {
-		kw_tbl->dflhash_stat.init_hcode = hdr->init_hcode;
+		kw_tbl->dflhash_stat.init_hcode = 0x82E02B00;
 		hashfunc = nilptr; // use the default hash-func as it is.
 		hash_stat = uls_ptr(kw_tbl->dflhash_stat); // the params for the default hahs-func.
 	} else {
@@ -323,14 +308,12 @@ keyw_stat_comp_by_freq(const uls_voidptr_t a, const uls_voidptr_t b)
 }
 
 int
-ulf_create_file(int n_hcodes, uls_uint32 *hcodes,
-	int htab_siz, uls_keyw_stat_list_ptr_t kwslst, FILE* fout)
+ulf_create_file(int htab_siz, uls_keyw_stat_list_ptr_t kwslst, FILE* fout)
 {
 	uls_ref_parray_init(lst, keyw_stat, uls_ptr(kwslst->lst));
 	uls_decl_parray_slots(slots_lst, keyw_stat);
 	uls_keyw_stat_ptr_t kwstat;
 	int i;
-
 
 	if (htab_siz <= 0) return -1;
 
@@ -350,12 +333,6 @@ ulf_create_file(int n_hcodes, uls_uint32 *hcodes,
 	uls_sysprn(".%d\n", ULF_VERSION_HASHFUNC_DEBUG);
 
 	uls_sysprn("HASH_TABLE_SIZE: %d\n", htab_siz);
-
-	uls_sysprn("INITIAL_HASHCODE: ");
-	for (i=0; i<n_hcodes; i++) {
-		uls_sysprn(" 0x%08X", hcodes[i]);
-	}
-	uls_sysprn("\n");
 
 	uls_sysprn("\n%%%%\n\n");
 

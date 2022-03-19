@@ -43,8 +43,6 @@ extern "C" {
 _ULS_DEFINE_STRUCT(ulf_header)
 {
 	uls_version_t filever;
-	uls_uint32    init_hcode;
-
 	uls_def_namebuf(hash_algorithm, ULS_LEXSTR_MAXSIZ);
 	uls_version_t hfunc_ver;
 	int           hash_table_size;
@@ -67,8 +65,7 @@ uls_keyw_stat_list_ptr_t ulf_load(uls_tokdef_ptr_t tok_info_lst, int n_tok_info_
 int keyw_stat_comp_by_freq(const uls_voidptr_t a, const uls_voidptr_t b);
 #endif
 
-ULS_DLL_EXTERN int ulf_create_file(int n_hcodes, uls_uint32 *hcodes,
-	int htab_siz, uls_keyw_stat_list_ptr_t kwslst, FILE* fout);
+ULS_DLL_EXTERN int ulf_create_file(int htab_siz, uls_keyw_stat_list_ptr_t kwslst, FILE* fout);
 
 #ifdef _ULS_CPLUSPLUS
 }

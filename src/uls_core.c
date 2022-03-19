@@ -365,8 +365,9 @@ ulc_load(uls_lex_ptr_t uls, FILE *fin_ulc, FILE *fin_ulf)
 	ulc_header_t  uls_config;
 	fp_list_ptr_t  ulc_fp_stack;
 	char     linebuff[ULS_LINEBUFF_SIZ__ULC+1], *lptr;
+	char     *tagstr;
 	int      linelen, lno;
-	int      i, stat = 0;
+	int      i, rc, stat = 0;
 	int      n, n_idtok_list, tok_id;
 
 	uls_tokdef_ptr_t e, e_link, idtok_list;
@@ -378,7 +379,7 @@ ulc_load(uls_lex_ptr_t uls, FILE *fin_ulc, FILE *fin_ulf)
 	int n_lst;
 
 	ulf_header_t ulf_hdr;
-	uls_outparam_t parms;
+	uls_outparam_t parms, parms2;
 
 	uls_version_make(uls_ptr(uls_config.filever), 0, 0, 0);
 
@@ -398,10 +399,10 @@ ulc_load(uls_lex_ptr_t uls, FILE *fin_ulc, FILE *fin_ulf)
 	ulc_fp_stack = ulc_fp_push(nilptr, fin_ulc, uls->ulc_name);
 
 	parms.data = ulc_fp_stack;
-	lno = ulc_read_header(uls, fin_ulc, uls_ptr(uls_config), uls_ptr(parms));
+	rc = ulc_read_header(uls, fin_ulc, uls_ptr(uls_config), uls_ptr(parms));
 	ulc_fp_stack = (fp_list_ptr_t) parms.data;
 
-	if (lno < 0) {
+	if (rc < 0) {
 		err_log("fail to read the header of uls-spec.");
 		release_ulc_fp_stack(ulc_fp_stack);
 		uls_fp_close(fin_ulf);
@@ -416,12 +417,14 @@ ulc_load(uls_lex_ptr_t uls, FILE *fin_ulc, FILE *fin_ulf)
 	}
 
 	parms.data = ulc_fp_stack;
-	fin_ulc = ulc_fp_get(uls_ptr(parms), 1);
+	fin_ulc = ulc_fp_pop(uls_ptr(parms), 1);
 	ulc_fp_stack = (fp_list_ptr_t) parms.data;
+	tagstr = parms.line;
 	lno = parms.n;
 
 	while (1) {
 		if ((linelen=uls_fp_gets(fin_ulc, linebuff, sizeof(linebuff), 0)) <= ULS_EOF) {
+			uls_mfree(tagstr);
 			if (linelen < ULS_EOF) {
 				err_log("%s: ulc file i/o error at %d", __func__, lno);
 				stat = -1;
@@ -432,8 +435,9 @@ ulc_load(uls_lex_ptr_t uls, FILE *fin_ulc, FILE *fin_ulf)
 			if (ulc_fp_stack == nilptr) break;
 
 			parms.data = ulc_fp_stack;
-			fin_ulc = ulc_fp_get(uls_ptr(parms), 1);
+			fin_ulc = ulc_fp_pop(uls_ptr(parms), 1);
 			ulc_fp_stack = (fp_list_ptr_t) parms.data;
+			tagstr = parms.line;
 			lno = parms.n;
 			continue;
 		}
@@ -444,12 +448,12 @@ ulc_load(uls_lex_ptr_t uls, FILE *fin_ulc, FILE *fin_ulf)
 			continue;
 
 		if ((e_vx=ulc_proc_line(uls->ulc_name,
-			lno, lptr, uls, uls_ptr(uls_config), uls_ptr(parms))) == nilptr) {
+			lno, lptr, uls, uls_ptr(uls_config), uls_ptr(parms2))) == nilptr) {
 			stat = -1;
 			break;
 		}
 
-		e = (uls_tokdef_ptr_t) parms.data;
+		e = (uls_tokdef_ptr_t) parms2.data;
 
 		tok_id = e_vx->tok_id;
 

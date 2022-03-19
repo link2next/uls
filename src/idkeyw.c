@@ -132,9 +132,8 @@ __init_kwtable_buckets(uls_kwtable_ptr_t tbl, int n_slots)
 	if (n_slots > 0) {
 		uls_init_parray(uls_ptr(tbl->bucket_head), tokdef, n_slots);
 		slots_bh = uls_parray_slots(uls_ptr(tbl->bucket_head));
-		for (i=0; i<n_slots; i++) {
-			slots_bh[i] = nilptr;
-		}
+		for (i=0; i<n_slots; i++) slots_bh[i] = nilptr;
+		tbl->bucket_head.n = n_slots;
 
 		tbl->dflhash_stat.n_slots = n_slots;
 		tbl->dflhash_stat.n_shifts = uls_range_of_bits(n_slots) - 8;
@@ -174,7 +173,7 @@ __export_kwtable(uls_kwtable_ptr_t tbl, uls_ref_parray(lst, keyw_stat), int n_ls
 			++k;
 		}
 	}
-
+	lst->n = k;
 	_uls_quicksort_vptr(slots_lst, k, keyw_stat_comp_by_keyw);
 	return k;
 }

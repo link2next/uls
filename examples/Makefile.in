@@ -319,7 +319,6 @@ ULS_SYSPROPS = /usr/local/etc/uls/uls.sysprops
 TMP_SYSPROPS = /tmp/uls_sysprops.txt
 ulc2class_exe = $(top_builddir)/tools/ulc2class/ulc2class
 tests_libpath = $(top_builddir)/src:$(top_builddir)/ulscpp
-ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = test_1st tokseq yacc \
 	DumpToks Css3 Html5 Shell Mkf Natural
 
