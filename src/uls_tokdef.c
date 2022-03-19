@@ -102,7 +102,7 @@ uls_init_tokdef_vx(uls_tokdef_vx_ptr_t e_vx, int tok_id, const char* name, uls_t
 
 	if (e != nilptr) {
 		e->view = e_vx;
-		e->name = uls_get_namebuf_value(e_vx->name);
+		e->name = e_vx->name;
 	}
 }
 
@@ -168,7 +168,7 @@ find_tokdef_name(uls_tokdef_vx_ptr_t e_vx_leader, const char* name, uls_outparam
 	uls_tokdef_name_ptr_t e, e_prev=nilptr;
 
 	for (e=e_vx_leader->tokdef_names; e != nilptr; e = e->prev) {
-		if (uls_streql(uls_get_namebuf_value(e->name), name)) {
+		if (uls_streql(e->name, name)) {
 			break;
 		}
 		e_prev = e;
@@ -200,7 +200,7 @@ append_tokdef_name_to_group(uls_tokdef_vx_ptr_t e_vx_leader, uls_tokdef_name_ptr
 	uls_tokdef_name_ptr_t e, e_prev=nilptr;
 
 	for (e=e_vx_leader->tokdef_names; e != nilptr; e = e->prev) {
-		if (uls_streql(uls_get_namebuf_value(e->name), uls_get_namebuf_value(e_nam->name))) {
+		if (uls_streql(e->name, e_nam->name)) {
 			return 0;
 		}
 		e_prev = e;
@@ -216,7 +216,7 @@ search_tokdef_group(uls_tokdef_vx_ptr_t e_vx_leader, const char* keyw)
 	uls_tokdef_ptr_t e;
 
 	for (e=e_vx_leader->base; e != nilptr; e = e->next) {
-		if (uls_streql(uls_get_namebuf_value(e->keyword), keyw)) {
+		if (uls_streql(e->keyword, keyw)) {
 			return e;
 		}
 	}

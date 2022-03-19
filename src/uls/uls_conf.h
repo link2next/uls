@@ -111,7 +111,7 @@ ULS_DECL_STATIC int set_config__QUOTE_TYPE__token(int tok_id, const char *tok_na
 	uls_outparam_ptr_t parms);
 ULS_DECL_STATIC void __set_config_quoute_type(uls_quotetype_ptr_t qmt,
 	const char *mark1, int len_mark1, int lfs_mark1, const char *mark2, int len_mark2, int lfs_mark2);
-ULS_DECL_STATIC int __read_config__QUOTE_TYPE(char *line, uls_quotetype_ptr_t qmt, uls_lex_ptr_t uls, const char* tag_nam, int lno);
+ULS_DECL_STATIC int __read_config__QUOTE_TYPE(char *line, uls_quotetype_ptr_t qmt, uls_lex_ptr_t uls, const char* tagstr, int lno);
 
 ULS_DECL_STATIC int read_config__COMMENT_TYPE(char *line, uls_cmd_ptr_t cmd);
 ULS_DECL_STATIC int read_config__QUOTE_TYPE(char *line, uls_cmd_ptr_t cmd);
@@ -147,7 +147,7 @@ ULS_DECL_STATIC int is_commstart_valid(uls_lex_ptr_t uls, int k);
 ULS_DECL_STATIC int is_quotestart_valid(uls_lex_ptr_t uls, int k);
 ULS_DECL_STATIC void __set_config_comment_type(uls_commtype_ptr_t cmt, int flags,
 	const char *mark1, int len_mark1, int lfs_mark1, const char *mark2, int len_mark2, int lfs_mark2);
-ULS_DECL_STATIC int read_config_var(const char* tag_nam, int lno, uls_lex_ptr_t uls,
+ULS_DECL_STATIC int read_config_var(const char* tagstr, int lno, uls_lex_ptr_t uls,
 	char* lptr, ulc_header_ptr_t hdr);
 
 ULS_DECL_STATIC int get_ulf_filepath(const char* dirpath, int len_dirpath,
@@ -229,7 +229,7 @@ ULS_DLL_EXTERN int ulc_add_searchpath(const char *pathlist, int front);
 ULS_DLL_EXTERN int ulc_prepend_searchpath_pwd(void);
 
 ULS_DLL_EXTERN int ulc_read_header(uls_lex_ptr_t uls, FILE* fin, ulc_header_ptr_t hdr, uls_outparam_ptr_t parms);
-ULS_DLL_EXTERN uls_tokdef_vx_ptr_t ulc_proc_line(const char* tag_nam, int lno, char* lptr, uls_lex_ptr_t uls, ulc_header_ptr_t hdr,
+ULS_DLL_EXTERN uls_tokdef_vx_ptr_t ulc_proc_line(const char* tagstr, int lno, char* lptr, uls_lex_ptr_t uls, ulc_header_ptr_t hdr,
 	uls_outparam_ptr_t parms);
 
 ULS_DLL_EXTERN uls_xcontext_ptr_t _uls_get_xcontext(uls_lex_ptr_t uls);

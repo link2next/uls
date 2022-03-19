@@ -117,7 +117,6 @@ typedef void        *uls_native_vptr_t;
 #define uls_def_namebuf(nam,siz) char  nam[siz+1]
 #define uls_init_namebuf(nam,siz) nam[0]='\0'
 #define uls_deinit_namebuf(nam)
-#define uls_get_namebuf_value(nam) (nam)
 #define uls_get_namebuf_length(nam) uls_strlen(nam)
 #define uls_set_namebuf_value(nam,str) uls_set_nambuf_raw(nam,sizeof(nam),str,-1)
 #define uls_set_namebuf_value_2(nam,str,len) uls_set_nambuf_raw(nam,sizeof(nam),str,len)

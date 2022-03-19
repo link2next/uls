@@ -44,7 +44,7 @@ comp_vx_by_toknam(const uls_voidptr_t a, const uls_voidptr_t b)
 	const uls_tokdef_vx_ptr_t e1 = (const uls_tokdef_vx_ptr_t) a;
 	const uls_tokdef_vx_ptr_t e2 = (const uls_tokdef_vx_ptr_t) b;
 
-	return uls_strcmp(uls_get_namebuf_value(e1->name), uls_get_namebuf_value(e2->name));
+	return uls_strcmp(e1->name, e2->name);
 }
 
 ULS_DECL_STATIC int
@@ -54,7 +54,7 @@ srch_vx_by_toknam(const uls_voidptr_t a, const uls_voidptr_t b)
 	const char *name = parms->lptr;
 	const uls_tokdef_vx_ptr_t e = (const uls_tokdef_vx_ptr_t ) a;
 
-	return uls_strcmp(uls_get_namebuf_value(e->name), name);
+	return uls_strcmp(e->name, name);
 }
 
 ULS_DECL_STATIC void
@@ -82,7 +82,7 @@ __change_tok_nam(uls_tokdef_vx_ptr_t e0_vx, const char* name, const char* name2)
 		return -1;
 	}
 
-	if (name == NULL || uls_streql(uls_get_namebuf_value(e0_vx->name), name)) {
+	if (name == NULL || uls_streql(e0_vx->name, name)) {
 		uls_set_namebuf_value(e0_vx->name, name2);
 		stat = 1; // found & changed!
 
@@ -298,7 +298,7 @@ uld_prepare_names(uls_lex_ptr_t uls)
 	for (n=n_slots_vx,i=k=0; i<n; ) {
 		e_vx = slots_vx[i];
 
-		if (uls_get_namebuf_value(e_vx->name)[0] == '\0') {
+		if (e_vx->name[0] == '\0') {
 			// exchange slots_vx[i](==e_vx) and slots_vx[n-1](==e2_vx).
 			e2_vx = slots_vx[--n];
 			slots_vx[n] = e_vx;
@@ -352,7 +352,7 @@ uld_post_names(uld_names_map_ptr_t names_map)
 
 	e_vx = slots_vx[0];
 	prev_tok_id = e_vx->tok_id;
-	prev_tok_nam = uls_get_namebuf_value(e_vx->name);
+	prev_tok_nam = e_vx->name;
 
 	for (i=1; ; i++) {
 		if (i >= n_slots_vx) {
@@ -369,13 +369,13 @@ uld_post_names(uld_names_map_ptr_t names_map)
 		e_vx = slots_vx[i];
 
 		if (e_vx->tok_id == prev_tok_id) {
-			err_log("tok-id confliction: %s :: %s", uls_get_namebuf_value(e_vx->name), prev_tok_nam);
+			err_log("tok-id confliction: %s :: %s", e_vx->name, prev_tok_nam);
 			stat = -1;
 			break;
 		}
 
 		prev_tok_id = e_vx->tok_id;
-		prev_tok_nam = uls_get_namebuf_value(e_vx->name);
+		prev_tok_nam = e_vx->name;
 	}
 
 	uls_dealloc_object(names_map);
@@ -411,12 +411,12 @@ uld_export_names(uls_lex_ptr_t uls)
 	uls_tokdef_vx_ptr_t e_vx;
 	int i;
 
-	uls_printf("#@%s\n#\n", uls_get_namebuf_value(uls->ulc_name));
+	uls_printf("#@%s\n#\n", uls->ulc_name);
 	for (i=0; i < uls->tokdef_vx_array.n; i++) {
 		e_vx = slots_vx[i];
 
-		if (uls_get_namebuf_value(e_vx->name)[0] != '\0')
-			uls_printf("#%16s %d\n", uls_get_namebuf_value(e_vx->name), e_vx->tok_id);
+		if (e_vx->name[0] != '\0')
+			uls_printf("#%16s %d\n", e_vx->name, e_vx->tok_id);
 	}
 }
 
@@ -434,11 +434,11 @@ uld_export_extra_names(uls_lex_ptr_t uls, uls_outparam_ptr_t parms)
 	for (i=k=0; i<n; i++) {
 		e_vx = slots_vx[i];
 
-		if (uls_get_namebuf_value(e_vx->name)[0] != '\0' && (e_vx->flags & ULS_VX_TOKID_CHANGED)) {
+		if (e_vx->name[0] != '\0' && (e_vx->flags & ULS_VX_TOKID_CHANGED)) {
 			uls_array_alloc_slot_type10(lst_names, nam_tok, k);
 
 			nam_tok = uls_array_get_slot_type10(lst_names, k);
-			nam_tok->name = uls_get_namebuf_value(e_vx->name);
+			nam_tok->name = e_vx->name;
 			nam_tok->tok_id = e_vx->tok_id;
 			k++;
 		}

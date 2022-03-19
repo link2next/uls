@@ -61,7 +61,7 @@ extern "C" {
 #define uls_tempfile_fp(tmp) ((tmp)->fp)
 #define uls_tempfile_fd(tmp) ((tmp)->fd)
 #define uls_tempfile_is_open(tmp) ((tmp)->len_filepath>0)
-#define uls_tempfile_path(tmpfile) uls_get_namebuf_value((tmpfile)->filepath)
+#define uls_tempfile_path(tmpfile) (tmpfile)->filepath
 #define uls_tempfile_pathlen(tmpfile) ((tmpfile)->len_filepath)
 
 #define ST_MODE_NOENT    0

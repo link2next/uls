@@ -455,7 +455,7 @@ write_ostream_header(uls_ostream_ptr_t ostr,
 		return -1;
 	}
 
-	len = uls_snprintf(linebuff, sizeof(linebuff), "SPEC: %s", uls_get_namebuf_value(ostr->header.specname));
+	len = uls_snprintf(linebuff, sizeof(linebuff), "SPEC: %s", ostr->header.specname);
 	if ((k = writeline_istr_hdr(ulshdr, ULS_BIN_HDR_SZ, k, linebuff, len)) < 0) {
 		return -1;
 	}
@@ -471,7 +471,7 @@ write_ostream_header(uls_ostream_ptr_t ostr,
 		return -1;
 	}
 
-	len = uls_snprintf(linebuff, sizeof(linebuff), "TAG: %s", uls_get_namebuf_value(ostr->header.subname));
+	len = uls_snprintf(linebuff, sizeof(linebuff), "TAG: %s", ostr->header.subname);
 	if ((k = writeline_istr_hdr(ulshdr, ULS_BIN_HDR_SZ, k, linebuff, len)) < 0) {
 		return -1;
 	}
@@ -518,7 +518,7 @@ __uls_bind_ostream
 	(uls_ostream_ptr_t ostr, const char *specname, uls_lex_ptr_t uls, uls_outparam_ptr_t parms)
 {
 	if (uls != nilptr) {
-		uls_set_namebuf_value(ostr->header.specname, uls_get_namebuf_value(uls->ulc_name));
+		uls_set_namebuf_value(ostr->header.specname, uls->ulc_name);
 		if (uld_export_extra_names(uls, parms) < 0) {
 			return -1;
 		}

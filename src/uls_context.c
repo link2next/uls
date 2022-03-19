@@ -406,7 +406,7 @@ is_commtype_start(uls_xcontext_ptr_t xctx, const char *ptr, int len)
 
 		if (len < cmt->len_start_mark) continue;
 
-		str = uls_get_namebuf_value(cmt->start_mark);
+		str = cmt->start_mark;
 		if (ptr[0] == str[0]) {
 			if (cmt->len_start_mark == 1 || !uls_strncmp(ptr+1,str+1, cmt->len_start_mark-1)) {
 				return cmt;
@@ -427,7 +427,7 @@ uls_xcontext_quotetype_start_mark(uls_xcontext_ptr_t xctx, int tok_id)
 		return NULL;
 	}
 
-	return uls_get_namebuf_value(qmt->start_mark);
+	return qmt->start_mark;
 }
 
 uls_quotetype_ptr_t
@@ -443,7 +443,7 @@ uls_xcontext_find_quotetype(uls_xcontext_ptr_t xctx, const char *ptr, int len)
 
 		if (len < qmt->len_start_mark) continue;
 
-		str = uls_get_namebuf_value(qmt->start_mark);
+		str = qmt->start_mark;
 		if (ptr[0] == str[0]) {
 			if (qmt->len_start_mark == 1 || !uls_strncmp(ptr+1,str+1, qmt->len_start_mark-1)) {
 				return qmt;
@@ -883,7 +883,7 @@ uls_xcontext_delete_litstr_analyzer(uls_xcontext_ptr_t xctx, const char* prefix)
 		}
 
 		qmt = slots_qmt[i];
-		if (uls_streql(uls_get_namebuf_value(qmt->start_mark), prefix)) {
+		if (uls_streql(qmt->start_mark, prefix)) {
 			break;
 		}
 	}
@@ -917,7 +917,7 @@ uls_xcontext_change_litstr_analyzer(uls_xcontext_ptr_t xctx,
 	for (i=0; i<xctx->quotetypes->n; i++) {
 		qmt = slots_qmt[i];
 
-		if (uls_streql(uls_get_namebuf_value(qmt->start_mark), prefix)) {
+		if (uls_streql(qmt->start_mark, prefix)) {
 			qmt->litstr_analyzer = lit_analyzer;
 			qmt->litstr_context = dat;
 			stat = 0;

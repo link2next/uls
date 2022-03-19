@@ -201,7 +201,7 @@ make_keyw_stat_for_load(uls_tokdef_ptr_t tok_info_lst, int n_tok_info_lst, ulf_h
 		e->link = nilptr;
 
 		kwstat = slots_lst[i] = uls_alloc_object(uls_keyw_stat_t);
-		kwstat->keyw = uls_get_namebuf_value(e->keyword);
+		kwstat->keyw = e->keyword;
 		kwstat->freq = -1;
 		kwstat->keyw_info = e;
 
@@ -271,12 +271,12 @@ ulf_load(uls_tokdef_ptr_t tok_info_lst, int n_tok_info_lst,
 		return nilptr;
 	}
 
-	if (uls_streql(uls_get_namebuf_value(hdr->hash_algorithm), ULS_HASH_ALGORITHM)) {
+	if (uls_streql(hdr->hash_algorithm, ULS_HASH_ALGORITHM)) {
 		kw_tbl->dflhash_stat.init_hcode = hdr->init_hcode;
 		hashfunc = nilptr; // use the default hash-func as it is.
 		hash_stat = uls_ptr(kw_tbl->dflhash_stat); // the params for the default hahs-func.
 	} else {
-		err_log("%s: unknown hash-algorithm '%s'", __func__, uls_get_namebuf_value(hdr->hash_algorithm));
+		err_log("%s: unknown hash-algorithm '%s'", __func__, hdr->hash_algorithm);
 		ulc_free_kwstat_list(kwslst);
 		return nilptr;
 	}

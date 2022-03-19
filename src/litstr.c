@@ -345,7 +345,7 @@ dfl_lit_analyzer_escape0(uls_litstr_ptr_t lit)
 		return ULS_LITPROC_ERROR;
 	}
 
-	if (uls_strncmp(lptr, uls_get_namebuf_value(qmt->end_mark), qmt->len_end_mark) == 0) {
+	if (uls_strncmp(lptr, qmt->end_mark, qmt->len_end_mark) == 0) {
 		lit->lptr = lptr += qmt->len_end_mark;
 		return ULS_LITPROC_ENDOFQUOTE;
 	}

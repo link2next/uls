@@ -92,7 +92,7 @@ ult_guess_specname_from_istream(uls_istream_ptr_t istr, uls_outparam_ptr_t parms
 		specname[0] = '\0';
 		len = 0;
 	} else {
-		strcpy(specname, uls_get_namebuf_value(istr->header.specname));
+		strcpy(specname, istr->header.specname);
 		len = (int) strlen(specname);
 		// 'specname' is not nil-string.
 	}

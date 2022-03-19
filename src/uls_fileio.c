@@ -255,7 +255,7 @@ __open_tempfile(uls_tempfile_ptr_t tmpfile)
 
 		uls_set_namebuf_value(tmpfile->filepath, filepath_buf);
 
-		if ((fd_out = uls_fd_open(uls_get_namebuf_value(tmpfile->filepath),
+		if ((fd_out = uls_fd_open(tmpfile->filepath,
 			ULS_FIO_CREAT|ULS_FIO_RDWR|ULS_FIO_EXCL)) >= 0) {
 			tmpfile->len_filepath = len;
 			tmpfile->fd = fd_out;
@@ -548,7 +548,7 @@ __uls_close_tempfile(uls_tempfile_ptr_t tmpfile, const char* filepath)
 {
 	int stat = 1;
 
-	if (uls_get_namebuf_value(tmpfile->filepath) == filepath) {
+	if (tmpfile->filepath == filepath) {
 		err_log("%s: invalid filepath!", __func__);
 		return -4;
 	}
@@ -559,20 +559,20 @@ __uls_close_tempfile(uls_tempfile_ptr_t tmpfile, const char* filepath)
 		uls_fd_close(tmpfile->fd);
 	}
 
-	if (uls_dirent_exist(uls_get_namebuf_value(tmpfile->filepath)) != ST_MODE_FILE) {
-		err_log("%s: can' find the tempfile %s!", __func__, uls_get_namebuf_value(tmpfile->filepath));
+	if (uls_dirent_exist(tmpfile->filepath) != ST_MODE_FILE) {
+		err_log("%s: can' find the tempfile %s!", __func__, tmpfile->filepath);
 		stat = -3;
 
 	} else if (filepath == NULL) {
-		if (uls_unlink(uls_get_namebuf_value(tmpfile->filepath)) < 0) {
+		if (uls_unlink(tmpfile->filepath) < 0) {
 			err_log("%s: unlink error!", __func__);
 			stat = -2;
 		} else {
 			stat = 2;
 		}
 
-	} else if (uls_movefile(uls_get_namebuf_value(tmpfile->filepath), filepath) < 0) {
-		err_log("can't move the temp-file '%s' to '%s'.", uls_get_namebuf_value(tmpfile->filepath), filepath);
+	} else if (uls_movefile(tmpfile->filepath, filepath) < 0) {
+		err_log("can't move the temp-file '%s' to '%s'.", tmpfile->filepath, filepath);
 		stat = -1;
 	}
 

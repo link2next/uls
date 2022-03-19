@@ -112,7 +112,7 @@ input_skip_comment(uls_commtype_ptr_t cmt, uls_input_ptr_t inp, uls_outparam_ptr
 	lptr = inp->rawbuf_ptr;
 	lptr_end = lptr + inp->rawbuf_bytes;
 
-	mark = uls_get_namebuf_value(cmt->end_mark);
+	mark = cmt->end_mark;
 	len_mark = cmt->len_end_mark;
 
 	for ( ; ; lptr++) {
@@ -171,7 +171,7 @@ input_quote_proc(uls_input_ptr_t inp, uls_quotetype_ptr_t qmt, csz_str_ptr_t ss_
 	lptr = inp->rawbuf_ptr;
 	lptr_end = lptr + inp->rawbuf_bytes;
 
-	n_bytes_req = uls_strlen(uls_get_namebuf_value(qmt->end_mark));
+	n_bytes_req = uls_strlen(qmt->end_mark);
 
 	for ( ; ; ) {
 		if (lptr_end < lptr + n_bytes_req) {

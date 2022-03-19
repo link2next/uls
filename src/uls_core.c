@@ -62,7 +62,7 @@ find_prefix_radix(uls_outparam_ptr_t parms, uls_lex_ptr_t uls, const char *str)
 	for (i=0; i<uls->n_numcnst_prefixes; i++) {
 		numpfx = uls_array_get_slot_type00(uls_ptr(uls->numcnst_prefixes), i);
 
-		if (!uls_strncmp(str, uls_get_namebuf_value(numpfx->prefix), numpfx->l_prefix)) {
+		if (!uls_strncmp(str, numpfx->prefix, numpfx->l_prefix)) {
 			parms->n1 = numpfx->l_prefix;
 			parms->n2 = radix = numpfx->radix;
 			break;
@@ -421,7 +421,7 @@ ulc_load(uls_lex_ptr_t uls, FILE *fin_ulc, FILE *fin_ulf)
 
 	init_reserved_toks(uls);
 
-	ulc_fp_stack = ulc_fp_push(nilptr, fin_ulc, uls_get_namebuf_value(uls->ulc_name));
+	ulc_fp_stack = ulc_fp_push(nilptr, fin_ulc, uls->ulc_name);
 
 	parms.data = ulc_fp_stack;
 	lno = ulc_read_header(uls, fin_ulc, uls_ptr(uls_config), uls_ptr(parms));
@@ -469,7 +469,7 @@ ulc_load(uls_lex_ptr_t uls, FILE *fin_ulc, FILE *fin_ulf)
 			*lptr == '#' || (lptr[0]=='/' && lptr[1]=='/'))
 			continue;
 
-		if ((e_vx=ulc_proc_line(uls_get_namebuf_value(uls->ulc_name),
+		if ((e_vx=ulc_proc_line(uls->ulc_name,
 			lno, lptr, uls, uls_ptr(uls_config), uls_ptr(parms))) == nilptr) {
 			stat = -1;
 			break;
@@ -697,12 +697,12 @@ uls_spec_compatible(uls_lex_ptr_t uls, const char* specname, uls_version_ptr_t f
 	char  ver_str1[ULS_VERSION_STR_MAXLEN+1];
 	char  ver_str2[ULS_VERSION_STR_MAXLEN+1];
 
-	if (!uls_streql(uls_get_namebuf_value(uls->ulc_name), specname) ||
+	if (!uls_streql(uls->ulc_name, specname) ||
 		!uls_vers_compatible(uls_ptr(uls->stream_filever), filever)) {
 		uls_version_make_string(uls_ptr(uls->stream_filever), ver_str1);
 		uls_version_make_string(filever, ver_str2);
 		err_log("%s: Unsupported or not compatible:", __func__);
-		err_log("\t'%s'(%s)", uls_get_namebuf_value(uls->ulc_name), ver_str1);
+		err_log("\t'%s'(%s)", uls->ulc_name, ver_str1);
 		err_log("\t'%s'(%s)", specname, ver_str2);
 		stat = 0;
 	}
@@ -1069,7 +1069,7 @@ uls_tok2keyw(uls_lex_ptr_t uls, int t)
 		}
 	} else {
 		if ((e = e_vx->base) == nilptr) str = "";
-		else str = uls_get_namebuf_value(e->keyword);
+		else str = e->keyword;
 	}
 
 	return str;
@@ -1088,7 +1088,7 @@ uls_tok2name(uls_lex_ptr_t uls, int t)
 			str = NULL;
 		}
 	} else {
-		str = uls_get_namebuf_value(e_vx->name);
+		str = e_vx->name;
 	}
 
 	return str;

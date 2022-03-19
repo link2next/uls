@@ -95,7 +95,7 @@ check_istr_compatibility(uls_istream_ptr_t istr, uls_lex_ptr_t uls)
 		return 1;
 	}
 
-	specname = uls_get_namebuf_value(istr->header.specname);
+	specname = istr->header.specname;
 	if (!uls_check_stream_ver(uls_ptr(istr->header), uls)) {
 		err_log("%s: Unsupported version: ", specname);
 		return 0;
@@ -158,7 +158,7 @@ uls_check_stream_ver(uls_stream_header_ptr_t hdr, uls_lex_ptr_t uls)
 	int stat;
 
 	if (hdr->filetype == ULS_STREAM_RAW ||
-		uls_spec_compatible(uls, uls_get_namebuf_value(hdr->specname), uls_ptr(hdr->filever))) {
+		uls_spec_compatible(uls, hdr->specname, uls_ptr(hdr->filever))) {
 		stat = 1;
 	} else {
 		stat = 0;
@@ -541,7 +541,7 @@ parse_uls_hdr(char* line, int fd_in, uls_istream_ptr_t istr)
 			return -1;
 		}
 
-		uls_fprintf(fp_out, "#@%s\n", uls_get_namebuf_value(istr->header.specname));
+		uls_fprintf(fp_out, "#@%s\n", istr->header.specname);
 		bufptr2 = remap_buff;
 		for (i_lines=0; i_lines < uld_n_lines; i_lines++) {
 			len2 = uls_readline_buffer(bufptr2, remap_size);
@@ -558,7 +558,7 @@ parse_uls_hdr(char* line, int fd_in, uls_istream_ptr_t istr)
 
 		if (istr->uls == nilptr) {
 			uls_snprintf(filepath_buf, ULS_TEMP_FILEPATH_MAXSIZ,
-				"%s.uld", uls_get_namebuf_value(istr->uld_file.filepath));
+				"%s.uld", istr->uld_file.filepath);
 			uls_close_tempfile(uls_ptr(istr->uld_file), filepath_buf);
 
 //			err_log("Reading uld-file for '%s'...", filepath_buf);
@@ -613,7 +613,7 @@ uls_open_istream(int fd)
 		istr->len_firstline = len;
 
 		//    in order to compare it with the UTF-BOM
-		fpos = get_rawfile_subtype(uls_get_namebuf_value(istr->firstline), istr->len_firstline, uls_ptr(parms));
+		fpos = get_rawfile_subtype(istr->firstline, istr->len_firstline, uls_ptr(parms));
 		istr->header.subtype = parms.n1;
 		istr->header.reverse = parms.n2;
 
@@ -662,7 +662,7 @@ uls_open_istream(int fd)
 	}
 
 	if (istr->uls == nilptr) {
-		spec_name = uls_get_namebuf_value(istr->header.specname);
+		spec_name = istr->header.specname;
 //		err_log("Searching for '%s'...", spec_name);
 		istr->uls = uls_create(spec_name);
 	}

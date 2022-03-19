@@ -167,7 +167,7 @@ __export_kwtable(uls_kwtable_ptr_t tbl, uls_ref_parray(lst, keyw_stat), int n_ls
 
 			kwstat = slots_lst[k] = uls_alloc_object(uls_keyw_stat_t);
 
-			kwstat->keyw = uls_get_namebuf_value(e->keyword);
+			kwstat->keyw = e->keyword;
 			kwstat->freq = -1;  // unknown
 			kwstat->keyw_info = e;
 
@@ -241,7 +241,7 @@ uls_find_kw(uls_kwtable_ptr_t tbl, uls_outparam_ptr_t parms)
 
 	for (e=slots_bh[hash_id]; e!=nilptr; e=e->link) {
 		if (l_idstr == e->l_keyword &&
-			tbl->str_ncmp(idstr, uls_get_namebuf_value(e->keyword), l_idstr) == 0) {
+			tbl->str_ncmp(idstr, e->keyword, l_idstr) == 0) {
 			e_found = e;
 			break;
 		}
@@ -258,7 +258,7 @@ uls_add_kw(uls_kwtable_ptr_t tbl, uls_tokdef_ptr_t e0)
 	uls_tokdef_ptr_t e;
 	uls_outparam_t parms;
 
-	parms.lptr = uls_get_namebuf_value(e0->keyword);
+	parms.lptr = e0->keyword;
 	parms.len = e0->l_keyword;
 	e = uls_find_kw(tbl, uls_ptr(parms));
 	hash_id = parms.n;

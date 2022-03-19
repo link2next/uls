@@ -102,10 +102,10 @@ filter_to_print_tokdef(uls_lex_ptr_t uls, uls_tokdef_ptr_t e, int flags)
 	uls_tokdef_vx_ptr_t e_vx = e->view;
 	int stat = 1;
 
-	if (e_vx->tok_id == uls->xcontext.toknum_LINENUM || uls_get_namebuf_value(e_vx->name)[0] == '\0') {
+	if (e_vx->tok_id == uls->xcontext.toknum_LINENUM || e_vx->name[0] == '\0') {
 		stat = 0; // filtered
 
-	} else if (is_reserved_tok(uls, uls_get_namebuf_value(e_vx->name)) >= 0) {
+	} else if (is_reserved_tok(uls, e_vx->name) >= 0) {
 		if ((flags & ULS_FL_WANT_RESERVED_TOKS) == 0) stat = 0;
 
 	} else if (e->keyw_type == ULS_KEYW_TYPE_LITERAL) {
@@ -154,13 +154,13 @@ print_tokdef_constants(uls_lex_ptr_t uls,
 
 		if (e0_vx->tok_id % 10 == 0 || i == N_RESERVED_TOKS) uls_sysprn("\n");
 
-		uls_snprintf(toknam_str, sizeof(toknam_str), "%s%s", tok_pfx, uls_get_namebuf_value(e0_vx->name));
+		uls_snprintf(toknam_str, sizeof(toknam_str), "%s%s", tok_pfx, e0_vx->name);
 
 		uls_sysprn_tabs(n_tabs, "%s %16s %s", cnst_symbol, toknam_str, asgn_symbol);
 		uls_sysprn(" %d%s\n", e0_vx->tok_id, end_symbol);
 
 		for (e_nam = e0_vx->tokdef_names; e_nam != nilptr; e_nam = e_nam->prev) {
-			uls_snprintf(toknam_str, sizeof(toknam_str), "%s%s", tok_pfx, uls_get_namebuf_value(e_nam->name));
+			uls_snprintf(toknam_str, sizeof(toknam_str), "%s%s", tok_pfx, e_nam->name);
 			uls_sysprn_tabs(n_tabs, "%s %16s %s", cnst_symbol, toknam_str, asgn_symbol);
 			uls_sysprn(" %d%s\n", e0_vx->tok_id, end_symbol);
 		}
@@ -201,7 +201,7 @@ print_tokdef_enum_constants(uls_lex_ptr_t uls,
 
 		e0_vx = slots_vx[i];
 
-		uls_snprintf(toknam_str, sizeof(toknam_str), "%s%s", tok_pfx, uls_get_namebuf_value(e0_vx->name));
+		uls_snprintf(toknam_str, sizeof(toknam_str), "%s%s", tok_pfx, e0_vx->name);
 
 		sect_lead = (e0_vx->tok_id % 10 == 0);
 		if (sect_lead || prev_tok_id + 1 != e0_vx->tok_id) {
@@ -218,7 +218,7 @@ print_tokdef_enum_constants(uls_lex_ptr_t uls,
 		}
 
 		for (e_nam = e0_vx->tokdef_names; e_nam != nilptr; e_nam = e_nam->prev) {
-			uls_sysprn("\t%24s = %d", uls_get_namebuf_value(e_nam->name), e0_vx->tok_id);
+			uls_sysprn("\t%24s = %d", e_nam->name, e0_vx->tok_id);
 			if (e_nam->prev != nilptr) {
 				uls_sysprn(",\n");
 			} else { // last one
@@ -977,7 +977,7 @@ uls_generate_tokdef_file(uls_lex_ptr_t uls, uls_parms_emit_ptr_t emit_parm)
 	for (i=0; i < uls->tokdef_vx_array.n; i++) {
 		e_vx = slots_vx[i];
 
-		if (uls_get_namebuf_value(e_vx->name)[0] == '\0') {
+		if (e_vx->name[0] == '\0') {
 			continue;
 		}
 
@@ -1010,11 +1010,11 @@ uls_generate_tokdef_file(uls_lex_ptr_t uls, uls_parms_emit_ptr_t emit_parm)
 
 			} else if (emit_parm->flags & ULS_FL_CPP_GEN) { // C++ class
 				print_tokdef_cpp_header(uls, uls_ptr(tokdef_ary_prn), n_tokdef_ary_prn, emit_parm,
-				uls_get_namebuf_value(uls->ulc_name));
+				uls->ulc_name);
 
 			} else if (emit_parm->flags & ULS_FL_JAVA_GEN) { // Java class
 				print_tokdef_java(uls, uls_ptr(tokdef_ary_prn), n_tokdef_ary_prn, emit_parm,
-					uls_get_namebuf_value(uls->ulc_name));
+					uls->ulc_name);
 			}
 
 			uls_sysprn_close();
@@ -1053,10 +1053,10 @@ uls_generate_tokdef_file(uls_lex_ptr_t uls, uls_parms_emit_ptr_t emit_parm)
 			emit_source_head(emit_parm->ulc_name);
 
 			if (emit_parm->flags & ULS_FL_C_GEN) {
-				print_tokdef_c_source(emit_parm, uls_get_namebuf_value(uls->ulc_name), 2);
+				print_tokdef_c_source(emit_parm, uls->ulc_name, 2);
 			} else if (emit_parm->flags & ULS_FL_CPP_GEN) {
 				print_tokdef_cpp_source(uls, uls_ptr(tokdef_ary_prn), n_tokdef_ary_prn, emit_parm,
-					uls_get_namebuf_value(uls->ulc_name));
+					uls->ulc_name);
 			}
 
 			uls_sysprn_close();

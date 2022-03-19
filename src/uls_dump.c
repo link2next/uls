@@ -46,7 +46,7 @@ ulc_dump_tokdef_sorted(uls_lex_ptr_t uls)
 
 		if (e_vx->base != nilptr) {
 			uls_printf("\t[%2d]", i);
-			uls_printf(" %d keyw'%s'\n", e_vx->tok_id, uls_get_namebuf_value(e_vx->base->keyword));
+			uls_printf(" %d keyw'%s'\n", e_vx->tok_id, e_vx->base->keyword);
 		} else {
 			uls_printf("\t[%2d] %d\n", i, e_vx->tok_id);
 		}
@@ -68,7 +68,7 @@ ulc_dump_tokdef_sorted(uls_lex_ptr_t uls)
 
 		if (e2_vx->base != nilptr) {
 			uls_printf("\t[%3d] keyw'%s' ==  %s\n", e_vx->tok_id,
-				uls_get_namebuf_value(e_vx->base->keyword), str);
+				e_vx->base->keyword, str);
 		} else {
 			uls_printf("\t[%3d] keyw'%s'\n", e_vx->tok_id, str);
 		}
@@ -120,8 +120,8 @@ uls_dump_quote(uls_lex_ptr_t uls)
 	for (i=0; i<uls->quotetypes.n; i++) {
 		qmt = slots_qmt[i];
 		uls_printf("\t\t%d] %s ~ %s", i,
-			uls_get_namebuf_value(qmt->start_mark), uls_get_namebuf_value(qmt->end_mark));
-		uls_printf(" '%s' %d\n", uls_get_namebuf_value(qmt->tokdef_vx->name), qmt->tok_id);
+			qmt->start_mark, qmt->end_mark);
+		uls_printf(" '%s' %d\n", qmt->tokdef_vx->name, qmt->tok_id);
 	}
 
 	uls_printf("\n");
@@ -158,10 +158,10 @@ uls_dump_2char(uls_lex_ptr_t uls)
 			e_vx = slots_tp[i];
 
 			if ((e = e_vx->base) == nilptr) {
-				uls_printf("\t'%s' --> %d\n", uls_get_namebuf_value(e->keyword), e_vx->tok_id);
+				uls_printf("\t'%s' --> %d\n", e->keyword, e_vx->tok_id);
 			} else {
 				uls_printf("\t'%s' --> %-10s %d\n",
-					uls_get_namebuf_value(e->keyword), uls_get_namebuf_value(e_vx->name), e_vx->tok_id);
+					e->keyword, e_vx->name, e_vx->tok_id);
 			}
 		}
 	}
@@ -268,7 +268,7 @@ uls_dump_tokdef_rsvd(uls_lex_ptr_t uls)
 	slots_rsv = uls_parray_slots(uls_ptr(uls->tokdef_vx_rsvd));
 	for (i=0; i < N_RESERVED_TOKS; i++) {
 		e_vx = slots_rsv[i];
-		uls_printf("\t%-10s: %2d\n", uls_get_namebuf_value(e_vx->name), e_vx->tok_id);
+		uls_printf("\t%-10s: %2d\n", e_vx->name, e_vx->tok_id);
 	}
 }
 
@@ -287,21 +287,21 @@ uls_dump_tokdef_vx(uls_lex_ptr_t uls)
 
 		if ((e = e0_vx->base) != nilptr) {
 			uls_printf("%3d] %s '%s' :", e0_vx->tok_id,
-				uls_get_namebuf_value(e0_vx->name), uls_get_namebuf_value(e->keyword));
+				e0_vx->name, e->keyword);
 			e = e->next;
 		} else {
-			uls_printf("%3d] %s :", e0_vx->tok_id, uls_get_namebuf_value(e0_vx->name));
+			uls_printf("%3d] %s :", e0_vx->tok_id, e0_vx->name);
 		}
 
 		if ((e_nam = e0_vx->tokdef_names) != nilptr) {
 			for ( ; e_nam != nilptr; e_nam = e_nam->prev) {
-				uls_printf(" %s", uls_get_namebuf_value(e_nam->name));
+				uls_printf(" %s", e_nam->name);
 			}
 		}
 		uls_printf("\n");
 
 		for ( ; e != nilptr; e = e->next) {
-			uls_printf("\t'%s'\n", uls_get_namebuf_value(e->keyword));
+			uls_printf("\t'%s'\n", e->keyword);
 		}
 	}
 }
@@ -318,12 +318,12 @@ uls_dump_tokdef_names(uls_lex_ptr_t uls)
 	for (i=0; i < uls->tokdef_vx_array.n; i++) {
 		e0_vx = slots_vx[i];
 
-		uls_printf("%3d] %s\n", e0_vx->tok_id, uls_get_namebuf_value(e0_vx->name));
+		uls_printf("%3d] %s\n", e0_vx->tok_id, e0_vx->name);
 
 		if ((e_nam = e0_vx->tokdef_names) != nilptr) {
 			uls_printf("\tNAMES:");
 			for ( ; e_nam != nilptr; e_nam = e_nam->prev) {
-				uls_printf(" %s", uls_get_namebuf_value(e_nam->name));
+				uls_printf(" %s", e_nam->name);
 			}
 			uls_printf("\n");
 		}
@@ -362,7 +362,7 @@ uls_dump_kwtable(uls_kwtable_ptr_t tbl)
 		for ( ; e != nilptr; e = e->link) {
 			e_vx = e->view;
 			uls_printf("\t'%s' --> %-10s %d\n",
-				uls_get_namebuf_value(e->keyword), uls_get_namebuf_value(e->view->name), e_vx->tok_id);
+				e->keyword, e->view->name, e_vx->tok_id);
 		}
 	}
 }

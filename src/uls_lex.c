@@ -54,8 +54,8 @@ __uls_change_stream_hdr(uls_lex_ptr_t uls, uls_istream_ptr_t istr, int flags)
 		start_lno = 1;
 	}
 
-	uls_init_line_in_input(inp, uls_get_namebuf_value(istr->firstline), istr->len_firstline, ipos);
-	uls_context_set_tag(ctx, uls_get_namebuf_value(istr->filepath), start_lno);
+	uls_init_line_in_input(inp, istr->firstline, istr->len_firstline, ipos);
+	uls_context_set_tag(ctx, istr->filepath, start_lno);
 	return 0;
 }
 
@@ -245,7 +245,7 @@ uls_push_istream(uls_lex_ptr_t uls, uls_istream_ptr_t istr,
 		return -1;
 	}
 
-	uls_set_tag(uls, uls_get_namebuf_value(istr->filepath), -1);
+	uls_set_tag(uls, istr->filepath, -1);
 	++istr->ref_cnt; // grab it!!
 
 	if (__uls_change_stream_hdr(uls, istr, flags) < 0) {
@@ -255,7 +255,7 @@ uls_push_istream(uls_lex_ptr_t uls, uls_istream_ptr_t istr,
 
 	if (__uls_bind_istream_tmpls(istr, uls, tmpl_list) < 0) {
 		err_log("can't put stream %s on the stack of %s.",
-			uls_get_namebuf_value(istr->filepath), uls_get_namebuf_value(uls->ulc_name));
+			istr->filepath, uls->ulc_name);
 		uls_pop(uls);
 		return -1;
 	}
@@ -302,7 +302,7 @@ uls_push_istream_2(uls_lex_ptr_t uls, uls_istream_ptr_t istr,
 		return -1;
 	}
 
-	uls_set_tag(uls, uls_get_namebuf_value(istr->filepath), -1);
+	uls_set_tag(uls, istr->filepath, -1);
 	++istr->ref_cnt;
 
 	if (tmpl_nams != nilptr) {
@@ -319,7 +319,7 @@ uls_push_istream_2(uls_lex_ptr_t uls, uls_istream_ptr_t istr,
 
 	if (__uls_bind_istream_tmpls(istr, uls, uls_ptr(tmpl_list)) < 0) {
 		err_log("can't put stream %s on the stack of %s.",
-			uls_get_namebuf_value(istr->filepath), uls_get_namebuf_value(uls->ulc_name));
+			istr->filepath, uls->ulc_name);
 		uls_deinit_tmpls(uls_ptr(tmpl_list));
 		uls_pop(uls);
 		return -1;

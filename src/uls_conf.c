@@ -148,8 +148,8 @@ check_keyw_str(int lno, const char* str, uls_outparam_ptr_t parms)
 	if (n_ch_comms > 0) {
 		for (i=0; i<uls->n1_commtypes; i++) {
 			cmt = uls_array_get_slot_type01(uls_ptr(uls->commtypes), i);
-			if (uls_strstr(buf, uls_get_namebuf_value(cmt->start_mark)) != NULL) {
-				err_log("#%d: keyword has the comment-string '%s'", lno, uls_get_namebuf_value(cmt->start_mark));
+			if (uls_strstr(buf, cmt->start_mark) != NULL) {
+				err_log("#%d: keyword has the comment-string '%s'", lno, cmt->start_mark);
 				return -1;
 			}
 		}
@@ -159,8 +159,8 @@ check_keyw_str(int lno, const char* str, uls_outparam_ptr_t parms)
 		slots_qmt = uls_parray_slots(uls_ptr(uls->quotetypes));
 		for (i=0; i<uls->quotetypes.n; i++) {
 			qmt = slots_qmt[i];
-			if (uls_strstr(buf, uls_get_namebuf_value(qmt->start_mark)) != NULL) {
-				err_log("#%d: keyword has the quote-string '%s'", lno, uls_get_namebuf_value(qmt->start_mark));
+			if (uls_strstr(buf, qmt->start_mark) != NULL) {
+				err_log("#%d: keyword has the quote-string '%s'", lno, qmt->start_mark);
 				return -1;
 			}
 		}
@@ -228,7 +228,7 @@ __find_rsvd_tokdef_by_name(uls_lex_ptr_t uls, const char* name)
 
 	for (i=0; i<N_RESERVED_TOKS; i++) {
 		e_vx = slots_rsv[i];
-		if (uls_streql(uls_get_namebuf_value(e_vx->name), name)) {
+		if (uls_streql(e_vx->name, name)) {
 			e0_vx = e_vx;
 			break;
 		}
@@ -250,7 +250,7 @@ __find_reg_tokdef_by_name(uls_lex_ptr_t uls, const char* name, uls_outparam_ptr_
 	for (i=N_RESERVED_TOKS; i < uls->tokdef_vx_array.n; i++) {
 		e_vx = slots_vx[i];
 
-		if (uls_streql(uls_get_namebuf_value(e_vx->name), name)) {
+		if (uls_streql(e_vx->name, name)) {
 			parms->data = nilptr;
 			return e_vx;
 		}
@@ -260,7 +260,7 @@ __find_reg_tokdef_by_name(uls_lex_ptr_t uls, const char* name, uls_outparam_ptr_
 		e_vx = slots_vx[i];
 
 		for (e_nam=e_vx->tokdef_names; e_nam != nilptr; e_nam = e_nam->prev) {
-			if (uls_streql(uls_get_namebuf_value(e_nam->name), name)) {
+			if (uls_streql(e_nam->name, name)) {
 				parms->data = e_nam;
 				return e_vx;
 			}
@@ -280,7 +280,7 @@ __find_tokdef_by_keyw(uls_lex_ptr_t uls, char* keyw)
 
 	for (i=0; i<uls->tokdef_array.n; i++) {
 		e = slots_tok[i];
-		if (uls_streql(uls_get_namebuf_value(e->keyword), keyw)) {
+		if (uls_streql(e->keyword, keyw)) {
 			return e;
 		}
 	}
@@ -300,7 +300,7 @@ is_str_contained_in_commtypes(uls_lex_ptr_t uls, const char *str)
 		cmt = uls_array_get_slot_type01(uls_ptr(uls->commtypes), i);
 		// cmt->len_start_mark > 0
 
-		if (l_str <= cmt->len_start_mark && !uls_strncmp(str, uls_get_namebuf_value(cmt->start_mark), l_str)) {
+		if (l_str <= cmt->len_start_mark && !uls_strncmp(str, cmt->start_mark, l_str)) {
 			return 1;
 		}
 	}
@@ -322,7 +322,7 @@ is_str_contained_in_quotetypes(uls_lex_ptr_t uls, const char *str)
 		qmt = slots_qmt[i];
 		// qmt->len_start_mark > 0
 
-		if (l_str <= qmt->len_start_mark && !uls_strncmp(str, uls_get_namebuf_value(qmt->start_mark), l_str)) {
+		if (l_str <= qmt->len_start_mark && !uls_strncmp(str, qmt->start_mark, l_str)) {
 			return 1;
 		}
 	}
@@ -370,7 +370,7 @@ make_tokdef_for_quotetype(uls_lex_ptr_t uls, uls_quotetype_ptr_t qmt, const char
 	e = uls_create_tokdef();
 	e->keyw_type = ULS_KEYW_TYPE_LITERAL;
 
-	uls_set_namebuf_value(e->keyword, uls_get_namebuf_value(qmt->start_mark));
+	uls_set_namebuf_value(e->keyword, qmt->start_mark);
 	e->l_keyword = qmt->len_start_mark;
 
 	realloc_tokdef_array(uls, 1, 1);
@@ -527,7 +527,7 @@ ULS_DECL_STATIC int
 is_commstart_valid(uls_lex_ptr_t uls, int k)
 {
 	uls_commtype_ptr_t cmt, cmt0 = uls_array_get_slot_type01(uls_ptr(uls->commtypes), k);
-	char *str = uls_get_namebuf_value(cmt0->start_mark);
+	char *str = cmt0->start_mark;
 	int i, l_str = cmt0->len_start_mark;
 
 	for (i=0; i<uls->n1_commtypes; i++) {
@@ -536,7 +536,7 @@ is_commstart_valid(uls_lex_ptr_t uls, int k)
 		cmt = uls_array_get_slot_type01(uls_ptr(uls->commtypes), i);
 		// cmt->len_start_mark > 0
 
-		if (cmt->len_start_mark == l_str && uls_streql(uls_get_namebuf_value(cmt->start_mark), str)) {
+		if (cmt->len_start_mark == l_str && uls_streql(cmt->start_mark, str)) {
 			return 0;
 		}
 	}
@@ -555,7 +555,7 @@ is_quotestart_valid(uls_lex_ptr_t uls, int k)
 	slots_qmt = uls_parray_slots(uls_ptr(uls->quotetypes));
 	qmt0 = slots_qmt[k];
 
-	str = uls_get_namebuf_value(qmt0->start_mark);
+	str = qmt0->start_mark;
 	l_str = qmt0->len_start_mark;
 
 	for (i=0; i<uls->quotetypes.n; i++) {
@@ -565,7 +565,7 @@ is_quotestart_valid(uls_lex_ptr_t uls, int k)
 		// qmt->len_start_mark > 0
 
 		if (qmt->len_start_mark == l_str &&
-			uls_streql(uls_get_namebuf_value(qmt->start_mark), str)) {
+			uls_streql(qmt->start_mark, str)) {
 			return 0;
 		}
 	}
@@ -638,7 +638,7 @@ read_config__COMMENT_TYPE(char *line, uls_cmd_ptr_t cmd)
 {
 	uls_outparam_ptr_t parms = (uls_outparam_ptr_t) cmd->user_data;
 	uls_lex_ptr_t uls = (uls_lex_ptr_t) parms->data;
-	const char* tag_nam = parms->lptr_end, *cptr;
+	const char* tagstr = parms->lptr_end, *cptr;
 	int lno = parms->n;
 	uls_wrd_t wrdx;
 	int  j, k, len, cmt_flags=0;
@@ -666,7 +666,7 @@ read_config__COMMENT_TYPE(char *line, uls_cmd_ptr_t cmd)
 			} else if (uls_streql(wrd, "nested")) {
 				cmt_flags |= ULS_COMM_NESTED;
 			} else {
-				err_log("%s<%d>: unknown attribute for a comment type", tag_nam, lno);
+				err_log("%s<%d>: unknown attribute for a comment type", tagstr, lno);
 				err_log(" attribute '%s'", wrd);
 				return -1;
 			}
@@ -678,7 +678,7 @@ read_config__COMMENT_TYPE(char *line, uls_cmd_ptr_t cmd)
 	if ((len=uls_strlen(wrd)) == 0 || len > ULS_COMM_MARK_MAXSIZ ||
 		!canbe_commtype_mark(wrd, uls_ptr(parms1))) {
 		err_log("%s<%d>: Too short or long comment (start) mark, or not permitted chars.",
-			tag_nam, lno);
+			tagstr, lno);
 		err_log("\t:'%s'", wrd);
 		return -1;
 	}
@@ -693,7 +693,7 @@ read_config__COMMENT_TYPE(char *line, uls_cmd_ptr_t cmd)
 		if ((len=uls_strlen(wrd = _uls_splitstr(uls_ptr(wrdx))))==0 || len > ULS_COMM_MARK_MAXSIZ ||
 			!canbe_commtype_mark(wrd, uls_ptr(parms2))) {
 			err_log("%s<%d>: Too short or long comment (end) mark, or not permitted chars.",
-				tag_nam, lno);
+				tagstr, lno);
 			err_log("\t:'%s'", wrd);
 			return -1;
 		}
@@ -704,14 +704,14 @@ read_config__COMMENT_TYPE(char *line, uls_cmd_ptr_t cmd)
 		if (j >= uls->n1_commtypes) {
 			// not found: add it as new one.
 			if (uls->n1_commtypes >= ULS_N_MAX_COMMTYPES) {
-				err_log("%s<%d>: Too many comment types", tag_nam, lno);
+				err_log("%s<%d>: Too many comment types", tagstr, lno);
 				return -1;
 			}
 			k = uls->n1_commtypes++;
 			break;
 		}
 		cmt = uls_array_get_slot_type01(uls_ptr(uls->commtypes), j);
-		cptr = uls_get_namebuf_value(cmt->start_mark);
+		cptr = cmt->start_mark;
 		if (cmt_flags & ULS_COMM_COLUMN0) {
 			++cptr; // next to '\n'
 		}
@@ -726,8 +726,8 @@ read_config__COMMENT_TYPE(char *line, uls_cmd_ptr_t cmd)
 	__set_config_comment_type(cmt, cmt_flags, cmt_mark1, parms1.len, parms1.n, cmt_mark2, parms2.len, parms2.n);
 
 	if (!is_commstart_valid(uls, k)) {
-		err_log("%s<%d>: the comm-start-mark is collided with previous defined comment-type.", tag_nam, lno);
-		err_log("\t:'%s'", uls_get_namebuf_value(cmt->start_mark));
+		err_log("%s<%d>: the comm-start-mark is collided with previous defined comment-type.", tagstr, lno);
+		err_log("\t:'%s'", cmt->start_mark);
 		return -1;
 	}
 
@@ -867,7 +867,7 @@ set_config__QUOTE_TYPE__token(int tok_id, const char *tok_nam, int l_tok_nam,
 {
 	int k = parms->n1;
 	int lno = parms->n2;
-	const char* tag_nam = parms->lptr_end;
+	const char* tagstr = parms->lptr_end;
 
 	uls_decl_parray_slots(slots_qmt, quotetype);
 	uls_quotetype_ptr_t qmt2;
@@ -880,7 +880,7 @@ set_config__QUOTE_TYPE__token(int tok_id, const char *tok_nam, int l_tok_nam,
 
 		qmt2 = slots_qmt[j];
 		if (qmt2->tok_id == tok_id) {
-			err_log("%s:%d: The quotation tok-id already used by other token", tag_nam, lno);
+			err_log("%s:%d: The quotation tok-id already used by other token", tagstr, lno);
 			err_log("\t:tok-id:%d", tok_id);
 			return -1;
 		}
@@ -890,13 +890,13 @@ set_config__QUOTE_TYPE__token(int tok_id, const char *tok_nam, int l_tok_nam,
 	if (l_tok_nam > 0) {
 		/* token-name */
 		if (tok_nam[0] != '\0' && canbe_tokname(tok_nam) <= 0) {
-			err_log("%s:%d Nil-string or too long token constant!", tag_nam, lno);
+			err_log("%s:%d Nil-string or too long token constant!", tagstr, lno);
 			err_log("\t:%s", tok_nam);
 			return -1;
 		}
 
 		if (make_tokdef_for_quotetype(uls, qmt, tok_nam) < 0) {
-			err_log("%s:%d fail to make tokdef for the quotation type!", tag_nam, lno);
+			err_log("%s:%d fail to make tokdef for the quotation type!", tagstr, lno);
 			err_log("\t:%s", tok_nam);
 			return -1;
 		}
@@ -965,7 +965,7 @@ ulx_set_quote_type(uls_lex_ptr_t uls, int tok_id, const char *tok_nam,
 
 ULS_DECL_STATIC int
 __read_config__QUOTE_TYPE(char *line,
-	uls_quotetype_ptr_t qmt, uls_lex_ptr_t uls, const char* tag_nam, int lno)
+	uls_quotetype_ptr_t qmt, uls_lex_ptr_t uls, const char* tagstr, int lno)
 {
 	char   *wrd, *ch_ctx = uls->ch_context;
 	int  j, k, len, tok_id, tok_id_specified;
@@ -982,7 +982,7 @@ __read_config__QUOTE_TYPE(char *line,
 	char qmt_mark2[ULS_QUOTE_MARK_MAXSIZ+1];
 
 	parms.line = tok_name;
-	parms.lptr_end = tag_nam;
+	parms.lptr_end = tagstr;
 	parms.n2 = lno;
 
 	wrdx.lptr = line;
@@ -999,7 +999,7 @@ __read_config__QUOTE_TYPE(char *line,
 	if ((len=uls_strlen(wrd=_uls_splitstr(uls_ptr(wrdx)))) == 0 || len > ULS_QUOTE_MARK_MAXSIZ ||
 		!canbe_quotetype_mark(ch_ctx, wrd, uls_ptr(parms1))) {
 		err_log("%s<%d>: Too short or long quote (start) mark, or not permitted chars.",
-			tag_nam, lno);
+			tagstr, lno);
 		err_log("\t:'%s'", wrd);
 		return -1;
 	}
@@ -1010,7 +1010,7 @@ __read_config__QUOTE_TYPE(char *line,
 		if ((len=uls_strlen(wrd=_uls_splitstr(uls_ptr(wrdx)))) == 0 || len > ULS_QUOTE_MARK_MAXSIZ ||
 			!canbe_quotetype_mark(ch_ctx, wrd, uls_ptr(parms2))) {
 			err_log("%s<%d>: Too short or long quote (end) mark, or not permitted chars.",
-				tag_nam, lno);
+				tagstr, lno);
 			err_log("\t:'%s'", wrd);
 			return -1;
 		}
@@ -1036,7 +1036,7 @@ __read_config__QUOTE_TYPE(char *line,
 		if (j >= uls->quotetypes.n) {
 			// not found: add it as new one.
 			if (uls->quotetypes.n >= ULS_N_MAX_QUOTETYPES) {
-				err_log("%s<%d>: Too many quote types", tag_nam, lno);
+				err_log("%s<%d>: Too many quote types", tagstr, lno);
 				return -1;
 			}
 			k = uls->quotetypes.n++;
@@ -1044,7 +1044,7 @@ __read_config__QUOTE_TYPE(char *line,
 			break;
 		}
 		qmt2 = slots_qmt[j];
-		if (uls_streql(qmt_mark1, uls_get_namebuf_value(qmt2->start_mark))) {
+		if (uls_streql(qmt_mark1, qmt2->start_mark)) {
 			uls_destroy_quotetype(qmt2);
 			slots_qmt[j] = qmt;
 			k = j;
@@ -1055,21 +1055,21 @@ __read_config__QUOTE_TYPE(char *line,
 
 	parms.n1 = k;
 	parms.n2 = lno;
-	parms.lptr_end = tag_nam;
+	parms.lptr_end = tagstr;
 	if (set_config__QUOTE_TYPE__token(tok_id, tok_name, l_tok_name, qmt, uls, uls_ptr(parms)) < 0) {
 		return -1;
 	}
 
 	if ((qmt->escmap=uls_parse_escmap(wrdx.lptr, uls_ptr(uls->escstr_pool))) == nilptr) {
 		err_log("%s<%d>: Invalid format of escape-mapping of literal string.",
-			tag_nam, lno);
+			tagstr, lno);
 		return -1;
 	}
 
 	if (!is_quotestart_valid(uls, k)) {
 		err_log("%s<%d>:  the start-mark is collided with previous defined quote-type. skipping, ...",
-			tag_nam, lno);
-		err_log("\t:'%s'", uls_get_namebuf_value(qmt->start_mark));
+			tagstr, lno);
+		err_log("\t:'%s'", qmt->start_mark);
 		return -1;
 	}
 
@@ -1081,14 +1081,14 @@ read_config__QUOTE_TYPE(char *line, uls_cmd_ptr_t cmd)
 {
 	uls_outparam_ptr_t parms = (uls_outparam_ptr_t) cmd->user_data;
 	uls_lex_ptr_t uls = (uls_lex_ptr_t) parms->data;
-	const char* tag_nam = parms->lptr_end;
+	const char* tagstr = parms->lptr_end;
 	int lno = parms->n, stat = 0;
 	uls_quotetype_ptr_t qmt;
 
 	qmt = uls_create_quotetype();
 	qmt->litstr_analyzer = uls_ref_callback(dfl_lit_analyzer_escape0);
 
-	if (__read_config__QUOTE_TYPE(line, qmt, uls, tag_nam, lno) < 0) {
+	if (__read_config__QUOTE_TYPE(line, qmt, uls, tagstr, lno) < 0) {
 		stat = -1;
 		uls_destroy_quotetype(qmt);
 	}
@@ -1253,7 +1253,7 @@ read_config__ID_FIRST_CHARS(char *line, uls_cmd_ptr_t cmd)
 {
 	uls_outparam_ptr_t parms = (uls_outparam_ptr_t) cmd->user_data;
 	uls_lex_ptr_t uls = (uls_lex_ptr_t) parms->data;
-//	const char* tag_nam = parms->lptr_end;
+//	const char* tagstr = parms->lptr_end;
 //	int lno = parms->n;
 
 	return parse_id_ranges(uls, 1, line);
@@ -1278,7 +1278,7 @@ read_config__ID_CHARS(char *line, uls_cmd_ptr_t cmd)
 {
 	uls_outparam_ptr_t parms = (uls_outparam_ptr_t) cmd->user_data;
 	uls_lex_ptr_t uls = (uls_lex_ptr_t) parms->data;
-//	const char* tag_nam = parms->lptr_end;
+//	const char* tagstr = parms->lptr_end;
 //	int lno = parms->n;
 
 	return parse_id_ranges(uls, 0, line);
@@ -1304,7 +1304,7 @@ read_config__RENAME(char *line, uls_cmd_ptr_t cmd)
 {
 	uls_outparam_ptr_t parms = (uls_outparam_ptr_t) cmd->user_data;
 	uls_lex_ptr_t uls = (uls_lex_ptr_t) parms->data;
-	const char* tag_nam = parms->lptr_end;
+	const char* tagstr = parms->lptr_end;
 	int stat = 0, lno = parms->n;
 	uls_wrd_t wrdx;
 	char  *wrd, *wrd2;
@@ -1314,12 +1314,12 @@ read_config__RENAME(char *line, uls_cmd_ptr_t cmd)
 	if (*(wrd = _uls_splitstr(uls_ptr(wrdx))) == '\0' ||
 		*(wrd2 = _uls_splitstr(uls_ptr(wrdx))) == '\0' ||
 		uls_strlen(wrd2) > ULS_LEXSTR_MAXSIZ) {
-		err_log("%s<%d>: Invalid 'RENAME' line!", tag_nam, lno);
+		err_log("%s<%d>: Invalid 'RENAME' line!", tagstr, lno);
 		return -1;
 	}
 
 	if (ulx_set_rename(uls, wrd, wrd2) < 0) {
-		err_log("%s<%d>: Invalid 'RENAME'!", tag_nam, lno);
+		err_log("%s<%d>: Invalid 'RENAME'!", tagstr, lno);
 		err_log("\t:'%s'", wrd);
 		stat = -1;
 	}
@@ -1369,7 +1369,7 @@ read_config__CASE_SENSITIVE(char *line, uls_cmd_ptr_t cmd)
 {
 	uls_outparam_ptr_t parms = (uls_outparam_ptr_t) cmd->user_data;
 	uls_lex_ptr_t uls = (uls_lex_ptr_t) parms->data;
-	const char* tag_nam = parms->lptr_end;
+	const char* tagstr = parms->lptr_end;
 	int lno = parms->n, is_sensitive, stat = 0;
 	uls_wrd_t wrdx;
 	char  *wrd;
@@ -1383,7 +1383,7 @@ read_config__CASE_SENSITIVE(char *line, uls_cmd_ptr_t cmd)
 		is_sensitive = 1;
 	} else {
 		err_log("%s<%d>: Incorrect value of CASE_SENSITIVE. Specify it by true/false.",
-			tag_nam, lno);
+			tagstr, lno);
 		is_sensitive = -1;
 	}
 
@@ -1464,7 +1464,7 @@ ulx_add_config_number_prefixes(uls_lex_ptr_t uls, char *wrd, int len, int radix,
 
 	numpfx = uls_array_get_slot_type00(uls_ptr(uls->numcnst_prefixes), slot_id);
 	uls_init_namebuf(numpfx->prefix, ULS_MAXLEN_NUMBER_PREFIX);
-	uls_strncpy(uls_get_namebuf_value(numpfx->prefix), wrd, len);
+	uls_strncpy(numpfx->prefix, wrd, len);
 	numpfx->l_prefix = len;
 	numpfx->radix = radix;
 }
@@ -1524,7 +1524,7 @@ read_config__DECIMAL_SEPARATOR(char *line, uls_cmd_ptr_t cmd)
 {
 	uls_outparam_ptr_t parms = (uls_outparam_ptr_t) cmd->user_data;
 	uls_lex_ptr_t uls = (uls_lex_ptr_t) parms->data;
-	const char* tag_nam = parms->lptr_end;
+	const char* tagstr = parms->lptr_end;
 	int lno = parms->n;
 
 	uls_wrd_t wrdx;
@@ -1535,7 +1535,7 @@ read_config__DECIMAL_SEPARATOR(char *line, uls_cmd_ptr_t cmd)
 	if (*(wrd = _uls_splitstr(uls_ptr(wrdx))) != '\0') {
 		uch = *wrd;
 		if (!uls_isgraph(uch) || uls_isalnum(uch) || uch == '-' || uch == '.') {
-			err_log("%s<%d>: Invalid decimal separator!", tag_nam, lno);
+			err_log("%s<%d>: Invalid decimal separator!", tagstr, lno);
 			return -1;
 		}
 	}
@@ -1600,13 +1600,13 @@ read_config__PREPEND_INPUT(char *line, uls_cmd_ptr_t cmd)
 	uls_outparam_ptr_t parms = (uls_outparam_ptr_t) cmd->user_data;
 	uls_lex_ptr_t uls = (uls_lex_ptr_t) parms->data;
 	uls_wrd_t wrdx;
-	const char* tag_nam = parms->lptr_end;
+	const char* tagstr = parms->lptr_end;
 	int len, len2, lfs_is_not_token = 0, lno = parms->n, stat = 0;
 	char *buff2 = NULL, *line2, *wrd;
 
 	line = skip_blanks(line);
 	if (*line == '\0') {
-		err_log("%s<%d>: empty value. give a string.", tag_nam, lno);
+		err_log("%s<%d>: empty value. give a string.", tagstr, lno);
 		return -1;
 	}
 
@@ -1618,10 +1618,10 @@ read_config__PREPEND_INPUT(char *line, uls_cmd_ptr_t cmd)
 		wrdx.siz = len + 1;
 		wrdx.lptr = line + 1;
 		if ((len2=uls_get_escape_str('"', uls_ptr(wrdx))) < 0) {
-			err_log("%s<%d>: an double-quoted string unterminated", tag_nam, lno);
+			err_log("%s<%d>: an double-quoted string unterminated", tagstr, lno);
 			stat = -1;
 		} else if (len2 == 0) {
-			err_log("%s<%d>: an empty double-quoted string", tag_nam, lno);
+			err_log("%s<%d>: an empty double-quoted string", tagstr, lno);
 		}
 
 		wrd = _uls_splitstr(uls_ptr(wrdx));
@@ -1630,7 +1630,7 @@ read_config__PREPEND_INPUT(char *line, uls_cmd_ptr_t cmd)
 		} else if (uls_streql(wrd, "false")) {
 			lfs_is_not_token = 0;
 		} else {
-			err_log("%s<%d>: specify true or false.", tag_nam, lno);
+			err_log("%s<%d>: specify true or false.", tagstr, lno);
 		}
 
 	} else if (*line == '\'') {
@@ -1639,7 +1639,7 @@ read_config__PREPEND_INPUT(char *line, uls_cmd_ptr_t cmd)
 		for (--len2; len2 >= 0; len2--) {
 			if (!uls_isspace(line2[len2])) {
 				if (line2[len2] != '\'') {
-					err_log("%s<%d>: an single-quoted string unterminated", tag_nam, lno);
+					err_log("%s<%d>: an single-quoted string unterminated", tagstr, lno);
 					return -3;
 				} else {
 					line2[len2] = '\0';
@@ -1648,10 +1648,10 @@ read_config__PREPEND_INPUT(char *line, uls_cmd_ptr_t cmd)
 			}
 		}
 		if (len2 <= 0) {
-			err_log("%s<%d>: an empty single-quoted string", tag_nam, lno);
+			err_log("%s<%d>: an empty single-quoted string", tagstr, lno);
 		}
 	} else {
-		err_log("%s<%d>: PREPEND_INPUT must be started by quotation, '\\' or '\"'.", tag_nam, lno);
+		err_log("%s<%d>: PREPEND_INPUT must be started by quotation, '\\' or '\"'.", tagstr, lno);
 		stat = -2;
 	}
 
@@ -1663,7 +1663,7 @@ read_config__PREPEND_INPUT(char *line, uls_cmd_ptr_t cmd)
 }
 
 ULS_DECL_STATIC int
-read_config_var(const char* tag_nam, int lno, uls_lex_ptr_t uls,
+read_config_var(const char* tagstr, int lno, uls_lex_ptr_t uls,
 	char* lptr, ulc_header_ptr_t hdr)
 {
 	char  *wrd;
@@ -1673,7 +1673,7 @@ read_config_var(const char* tag_nam, int lno, uls_lex_ptr_t uls,
 	uls_wrd_t wrdx;
 
 	parms1.n = lno;
-	parms1.lptr_end = tag_nam;
+	parms1.lptr_end = tagstr;
 	parms1.data = uls;
 	parms1.proc = hdr;
 
@@ -1688,7 +1688,7 @@ read_config_var(const char* tag_nam, int lno, uls_lex_ptr_t uls,
 
 	rc = uls_cmd_run(uls_array_slots_type00(uls_ptr(ulc_cmd_list)), ULC_N_LEXATTRS, wrd, lptr, uls_ptr(parms1));
 	if (rc < 0) {
-		err_log("%s<%d>: unknown attribute in ULS-spec", tag_nam, lno);
+		err_log("%s<%d>: unknown attribute in ULS-spec", tagstr, lno);
 		err_log("\tattribute:'%s'", wrd);
 		stat = -1;
 	}
@@ -1781,7 +1781,7 @@ set_chrmap(uls_lex_ptr_t uls, int tok_id, int keyw_type, char ch_kwd)
 	case ULS_KEYW_TYPE_USER:
 		if (tok_id >= 0 && tok_id < ULS_SYNTAX_TABLE_SIZE) {
 			if (ch_ctx[tok_id] & ULS_CH_1) {
-//				err_log("%s<%d>: Overriding char-token,", tag_nam, lno);
+//				err_log("%s<%d>: Overriding char-token,", tagstr, lno);
 //				err_log("\t%d('%c') ...", tok_id, tok_id);
 				ch_ctx[tok_id] &= ~ULS_CH_1;
 			}
@@ -1808,7 +1808,7 @@ is_reserved_tok(uls_lex_ptr_t uls, char* name)
 
 	for (i=0; i<N_RESERVED_TOKS; i++) {
 		e_vx = slots_rsv[i];
-		if (uls_streql(uls_get_namebuf_value(e_vx->name), name)) {
+		if (uls_streql(e_vx->name, name)) {
 			return i;
 		}
 	}
@@ -1829,17 +1829,17 @@ check_rsvd_toks(uls_lex_ptr_t uls)
 		for (j=i+1; j<N_RESERVED_TOKS; j++) {
 			e_vx = slots_rsv[j];
 
-			if (uls_streql(uls_get_namebuf_value(e0_vx->name), uls_get_namebuf_value(e_vx->name))) {
+			if (uls_streql(e0_vx->name, e_vx->name)) {
 				err_log("The name '%s' is already used by '%s'.",
-					uls_get_namebuf_value(e_vx->name), uls_get_namebuf_value(e0_vx->name));
+					e_vx->name, e0_vx->name);
 				stat = -1;
 				break;
 			}
 
 			if (e0_vx->tok_id == e_vx->tok_id) {
 				err_log("The token %s:%d is already used",
-					uls_get_namebuf_value(e0_vx->name), e0_vx->tok_id);
-				err_log("\tby %s:%d.", uls_get_namebuf_value(e_vx->name), e_vx->tok_id);
+					e0_vx->name, e0_vx->tok_id);
+				err_log("\tby %s:%d.", e_vx->name, e_vx->tok_id);
 				stat = -1;
 				break;
 			}
@@ -2439,9 +2439,9 @@ classify_char_group(uls_lex_ptr_t uls, ulc_header_ptr_t uls_conf)
 
 	for (i=0; i<uls->n1_commtypes; i++) {
 		cmt = uls_array_get_slot_type01(uls_ptr(uls->commtypes), i);
-		if (is_str_contained_in_quotetypes(uls, uls_get_namebuf_value(cmt->start_mark))) {
+		if (is_str_contained_in_quotetypes(uls, cmt->start_mark)) {
 			err_log("comment-type '%s' is not proper as it contained in one of the quote-types[]",
-				uls_get_namebuf_value(cmt->start_mark));
+				cmt->start_mark);
 			return -1;
 		}
 	}
@@ -2449,22 +2449,22 @@ classify_char_group(uls_lex_ptr_t uls, ulc_header_ptr_t uls_conf)
 	slots_qmt = uls_parray_slots(uls_ptr(uls->quotetypes));
 	for (i=0; i<uls->quotetypes.n; i++) {
 		qmt = slots_qmt[i];
-		if (is_str_contained_in_commtypes(uls, uls_get_namebuf_value(qmt->start_mark))) {
+		if (is_str_contained_in_commtypes(uls, qmt->start_mark)) {
 			err_log("quote-type '%s' is not proper as it contained in one of the comm-types[]",
-				uls_get_namebuf_value(qmt->start_mark));
+				qmt->start_mark);
 			return -1;
 		}
 	}
 
 	for (i=0; i<uls->n1_commtypes; i++) {
 		cmt = uls_array_get_slot_type01(uls_ptr(uls->commtypes), i);
-		ch = uls_get_namebuf_value(cmt->start_mark)[0];
+		ch = cmt->start_mark[0];
 		if (ch < ULS_SYNTAX_TABLE_SIZE) ch_ctx[ch] |= ULS_CH_COMM;
 	}
 
 	for (i=0; i<uls->quotetypes.n; i++) {
 		qmt = slots_qmt[i];
-		ch = uls_get_namebuf_value(qmt->start_mark)[0];
+		ch = qmt->start_mark[0];
 		if (ch < ULS_SYNTAX_TABLE_SIZE) ch_ctx[ch] |= ULS_CH_QUOTE;
 	}
 
@@ -3054,7 +3054,7 @@ ulc_read_header(uls_lex_ptr_t uls, FILE* fin, ulc_header_ptr_t hdr, uls_outparam
 
 uls_tokdef_vx_ptr_t
 ulc_proc_line
-	(const char* tag_nam, int lno, char* lptr, uls_lex_ptr_t uls, ulc_header_ptr_t hdr, uls_outparam_ptr_t parms)
+	(const char* tagstr, int lno, char* lptr, uls_lex_ptr_t uls, ulc_header_ptr_t hdr, uls_outparam_ptr_t parms)
 {
 	char *ch_ctx = uls->ch_context;
 	char *wrd1, *wrd2, *wrd3;
@@ -3077,7 +3077,7 @@ ulc_proc_line
 /* token-name */
 	wrd1 = _uls_splitstr(uls_ptr(wrdx));
 	if (canbe_tokname(wrd1) <= 0) {
-		err_log("%s<%d>: Nil-string or too long token constant.", tag_nam, lno);
+		err_log("%s<%d>: Nil-string or too long token constant.", tagstr, lno);
 		err_log("\ttoken-name:'%s'", wrd1);
 		return nilptr;
 	}
@@ -3107,8 +3107,8 @@ ulc_proc_line
 		}
 
 		if ((e2_vx=__find_tokdef_by_tokid(uls, tok_id, TOKDEF_AREA_REGULAR)) != nilptr) {
-			err_log("In %s<%d>,", tag_nam, lno);
-			err_log("\tthe token-id %s is already used by %s.", wrd1, uls_get_namebuf_value(e2_vx->name));
+			err_log("In %s<%d>,", tagstr, lno);
+			err_log("\tthe token-id %s is already used by %s.", wrd1, e2_vx->name);
 			return nilptr;
 		}
 
@@ -3135,7 +3135,7 @@ ulc_proc_line
 	len2 = parms1.len;
 
 	if (keyw_type < 0) {
-		err_log("%s<%d>: Invalid keyword", tag_nam, lno);
+		err_log("%s<%d>: Invalid keyword", tagstr, lno);
 		err_log("\t:keyword:'%s'", wrd2);
 		return nilptr;
 	}
@@ -3161,7 +3161,7 @@ ulc_proc_line
 			} else {
 				// There exists a previously defined tok-def(e_vx_grp) with same keyword.
 				if (e_keyw->view != e_vx_grp) {
-					err_log("%s<%d>: the name is alrealy defined in another line.", tag_nam, lno);
+					err_log("%s<%d>: the name is alrealy defined in another line.", tagstr, lno);
 					err_log("\tname: '%s' of '%s'", wrd1, wrd2);
 					return nilptr;
 				}
@@ -3193,9 +3193,9 @@ ulc_proc_line
 	if (e_vx_grp != nilptr) {
 		// Either name or keyword is the same as the one of 'e_vx_grp'.
 		if (e_vx_grp->tok_id != tok_id) {
-			err_log("%s<%d>: The keyword conflicts with the previous designation for token.", tag_nam, lno);
+			err_log("%s<%d>: The keyword conflicts with the previous designation for token.", tagstr, lno);
 			err_log("\tkeyword:'%s'", wrd2);
-			err_log("\ttoken %s(%d)", uls_get_namebuf_value(e_vx_grp->name), e_vx_grp->tok_id);
+			err_log("\ttoken %s(%d)", e_vx_grp->name, e_vx_grp->tok_id);
 			return nilptr;
 		}
 
@@ -3213,14 +3213,14 @@ ulc_proc_line
 		// uls_streql(wrd1, e_vx_grp->name) == true
 
 	} else if ((e2_vx=__find_tokdef_by_tokid(uls, tok_id, TOKDEF_AREA_RSVD)) != nilptr) {
-		err_log("%s<%d>: Aliasing of reserved-tok isn't permitted!", tag_nam, lno);
+		err_log("%s<%d>: Aliasing of reserved-tok isn't permitted!", tagstr, lno);
 		err_log("\treserved-tok:%s", wrd1);
 		return nilptr;
 
 	} else if ((e2_vx=__find_tokdef_by_tokid(uls, tok_id, TOKDEF_AREA_REGULAR)) != nilptr) {
 		e_vx_grp = e2_vx;
 
-		if (uls_get_namebuf_value(e2_vx->name)[0] == '\0') {
+		if (e2_vx->name[0] == '\0') {
 			e2_vx->l_name = uls_set_namebuf_value(e2_vx->name, wrd1);
 			if (wrd2[0] == '\0') { // user-defined token name
 				return e_vx_grp;
@@ -3276,7 +3276,7 @@ ulc_proc_line
 			}
 		} else {
 			e->view = e_vx;
-			e->name = uls_get_namebuf_value(e_vx->name);
+			e->name = e_vx->name;
 			slots_tok[uls->tokdef_array.n++] = e;
 			slots_vx[uls->tokdef_vx_array.n++] = e_vx;
 		}
@@ -3285,10 +3285,10 @@ ulc_proc_line
 		e->view = e_vx = e_vx_grp;
 
 		if (e_nam != nilptr) {
-			e->name = uls_get_namebuf_value(e_nam->name);
+			e->name = e_nam->name;
 			append_tokdef_name_to_group(e_vx_grp, e_nam);
 		} else {
-			e->name = uls_get_namebuf_value(e_vx_grp->name);
+			e->name = e_vx_grp->name;
 		}
 
 		slots_tok[uls->tokdef_array.n++] = e;

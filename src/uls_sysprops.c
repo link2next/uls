@@ -90,7 +90,7 @@ __get_system_property(uls_sysinfo_ptr_t sysinfo, const char* name)
 
 	for (i=0; i<sysinfo->n_properties; i++) {
 		sys_prop = uls_array_get_slot_type00(uls_ptr(sysinfo->properties), i);
-		if (uls_streql(name, uls_get_namebuf_value(sys_prop->name))) {
+		if (uls_streql(name, sys_prop->name)) {
 			return sys_prop;
 		}
 	}

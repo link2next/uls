@@ -49,7 +49,7 @@ __twoplus_bi_search(uls_kwtable_twoplus_ptr_t tbl, const char* keyw,
 		e_vx = slots_ary[mid];
 		e = e_vx->base;
 
-		if ((cond = tbl->str_ncmp(uls_get_namebuf_value(e->keyword), keyw, e->l_keyword)) < 0) {
+		if ((cond = tbl->str_ncmp(e->keyword, keyw, e->l_keyword)) < 0) {
 			low = mid + 1;
 		} else if (cond > 0) {
 			high = mid - 1;
@@ -92,7 +92,7 @@ cmp_twoplus_vx_by_keyword(const uls_voidptr_t a, const uls_voidptr_t b)
 	// return -1 if keyword1 < keyword2
 	// return  1 if keyword1 > keyword2
 	// return  0 if keyword1 == keyword2
-	return uls_strcmp(uls_get_namebuf_value(e1->keyword), uls_get_namebuf_value(e2->keyword));
+	return uls_strcmp(e1->keyword, e2->keyword);
 }
 
 void
@@ -217,7 +217,7 @@ distribute_twoplus_toks(uls_kwtable_twoplus_ptr_t tbl, uls_strcmp_proc_t cmpfunc
 		len_keyw = e->l_keyword;
 
 		if ((tree=uls_get_ind_twoplus_tree(tbl, len_keyw, nilptr)) == nilptr)
-			err_panic("%s: get tree index for '%s'", uls_get_namebuf_value(e_vx->name));
+			err_panic("%s: get tree index for '%s'", e_vx->name);
 
 		tree->len_keyw = len_keyw;
 
