@@ -99,7 +99,6 @@ ULS_DECL_STATIC int sortcmp_obj4sort(const uls_voidptr_t a, const uls_voidptr_t 
 
 #ifdef ULS_DECL_PROTECTED_PROC
 int splitint(const char* line, uls_outparam_ptr_t parms);
-int canbe_tokname(const char *str);
 
 const char* uls_skip_multiline_comment(uls_parm_line_ptr_t parm_ln);
 const char* uls_skip_singleline_comment(uls_parm_line_ptr_t parm_ln);

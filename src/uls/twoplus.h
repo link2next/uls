@@ -41,7 +41,7 @@ ULS_DEFINE_STRUCT(twoplus_tree)
 	int len_keyw;
 
 	uls_decl_parray(twoplus_sorted, tokdef_vx);
-	uls_twoplus_tree_ptr_t prev;
+	uls_twoplus_tree_ptr_t next;
 };
 ULS_DEF_ARRAY_TYPE00(twoplus_tree, TWOPLUS_TREE_TYPE00_ULS_KWTABLE_TWOPLUS_SIZE, ULS_KWTABLE_TWOPLUS_SIZE);
 

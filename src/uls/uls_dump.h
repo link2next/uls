@@ -36,6 +36,8 @@
 extern "C" {
 #endif
 
+void print_tokdef_vx_char(uls_uch_t uch, uls_tokdef_vx_ptr_t e_vx);
+
 ULS_DLL_EXTERN void ulc_dump_tokdef_sorted(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN void uls_dump_char_context(uls_lex_ptr_t uls);
 

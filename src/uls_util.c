@@ -863,7 +863,7 @@ initialize_uls_util(void)
 		}
 
 		_uls_sysinfo_(home_dir) = uls_add_system_property("ULS_HOME", homedir);
-		uls_mfree(homedir);
+		homedir = uls_mfree(homedir);
 #else
 		err_log("ULS: don't know the installed directory.");
 		return -1;

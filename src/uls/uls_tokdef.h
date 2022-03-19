@@ -59,7 +59,7 @@ ULS_DEFINE_STRUCT(tokdef_name)
 	uls_flags_t flags; // ULS_VX_TOKNAM_CHANGED
 	uls_def_namebuf(name, ULS_LEXSTR_MAXSIZ);
 	uls_tokdef_vx_ptr_t view;
-	uls_tokdef_name_ptr_t prev;
+	uls_tokdef_name_ptr_t next;
 };
 ULS_DEF_PARRAY(tokdef_name);
 
@@ -97,13 +97,11 @@ ULS_DEFINE_STRUCT_BEGIN(tokdef)
 ULS_DEF_PARRAY(tokdef);
 
 #ifdef ULS_DECL_PROTECTED_PROC
-void print_tokdef_vx_char(uls_uch_t uch, uls_tokdef_vx_ptr_t e_vx);
 void uls_init_tokdef_vx(uls_tokdef_vx_ptr_t e_vx, int tok_id, const char* name, uls_tokdef_ptr_t e);
 void uls_deinit_tokdef_vx(uls_tokdef_vx_ptr_t e_vx);
 #endif
 
 int __is_in_ilist(int *ilst, int n_ilst, int val);
-
 uls_tokdef_ptr_t uls_create_tokdef(void);
 void uls_destroy_tokdef(uls_tokdef_ptr_t e);
 
@@ -114,12 +112,13 @@ void uls_destroy_tokdef_vx(uls_tokdef_vx_ptr_t e_vx);
 uls_tokdef_name_ptr_t alloc_tokdef_name(const char *name, uls_tokdef_vx_ptr_t view);
 void dealloc_tokdef_name(uls_tokdef_name_ptr_t e_nam);
 
-uls_tokdef_name_ptr_t find_tokdef_name(uls_tokdef_vx_ptr_t e_vx_leader, const char* name, uls_outparam_ptr_t parms);
-void insert_tokdef_name_to_group(uls_tokdef_vx_ptr_t e_vx_leader, uls_tokdef_name_ptr_t e_nam_prev, uls_tokdef_name_ptr_t e_nam);
-int append_tokdef_name_to_group(uls_tokdef_vx_ptr_t e_vx_leader, uls_tokdef_name_ptr_t e_nam);
+int canbe_tokname(const char *str);
+int append_tokdef_name_to_group(uls_tokdef_vx_ptr_t e_vx, uls_tokdef_name_ptr_t e_nam);
 
-uls_tokdef_ptr_t search_tokdef_group(uls_tokdef_vx_ptr_t e_vx_leader, const char* keyw);
-void append_tokdef_to_group(uls_tokdef_vx_ptr_t e_vx_leader, uls_tokdef_ptr_t e_target);
+uls_tokdef_name_ptr_t find_tokdef_name(uls_tokdef_vx_ptr_t e_vx, const char* name, uls_outparam_ptr_t parms);
+void insert_tokdef_name_to_group(uls_tokdef_vx_ptr_t e_vx, uls_tokdef_name_ptr_t e_nam_next, uls_tokdef_name_ptr_t e_nam);
+uls_tokdef_ptr_t search_tokdef_group(uls_tokdef_vx_ptr_t e_vx, const char* keyw);
+void append_tokdef_to_group(uls_tokdef_vx_ptr_t e_vx, uls_tokdef_ptr_t e_target);
 
 #ifdef _ULS_CPLUSPLUS
 }

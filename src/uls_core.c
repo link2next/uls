@@ -173,32 +173,6 @@ make_eoi_lexeme(uls_lex_ptr_t uls)
 	ctx->s_val_len = ctx->s_val_uchars = 0;
 }
 
-ULS_DECL_STATIC uls_tokdef_vx_ptr_t
-__uls_onechar_lexeme(uls_lex_ptr_t uls, uls_uch_t uch, const char *lptr, int len)
-{
-	uls_context_ptr_t ctx = uls->xcontext.context;
-	uls_tokdef_vx_ptr_t e_vx;
-
-	if ((e_vx = uls_find_1char_tokdef_vx(uls_ptr(uls->onechar_table), uch, nilptr)) == nilptr) {
-		if (uch < ULS_SYNTAX_TABLE_SIZE && (uls->ch_context[uch] & ULS_CH_1)) {
-			e_vx = ctx->anonymous_uchar_vx;
-			e_vx->tok_id = (int) uch;
-		} else {
-			e_vx = set_err_tok(uls, "Unknown unicode char!");
-			return e_vx;
-		}
-	}
-
-	ctx->tok = e_vx->tok_id;
-	str_append(uls_ptr(ctx->tokbuf), 0, lptr, len);
-
-	ctx->s_val = ctx->tokbuf.buf;
-	ctx->s_val_len = len;
-	ctx->s_val_uchars = 1;
-
-	return e_vx;
-}
-
 ULS_DECL_STATIC _ULS_INLINE int
 __uls_is_real(const char *ptr)
 {
@@ -596,7 +570,7 @@ uls_init_fp(uls_lex_ptr_t uls, const char *specname,
 	uls->tokdef_vx = nilptr;
 
 	__init_kwtable(uls_ptr(uls->idkeyw_table));
-	uls_init_onechar_table(uls_ptr(uls->onechar_table));
+	uls_init_1char_table(uls_ptr(uls->onechar_table));
 	uls_init_2char_table(uls_ptr(uls->twoplus_table));
 
 	uls_init_escmap_pool(uls_ptr(uls->escstr_pool));
@@ -607,7 +581,7 @@ uls_init_fp(uls_lex_ptr_t uls, const char *specname,
 	if ((rc = ulc_load(uls, fin_ulc, fin_ulf)) < 0) {
 		// fin_ulc, fin_ulf consumed
 		uls_xcontext_deinit(uls_ptr(uls->xcontext));
-		uls_deinit_onechar_table(uls_ptr(uls->onechar_table));
+		uls_deinit_1char_table(uls_ptr(uls->onechar_table));
 		uls_deinit_2char_table(uls_ptr(uls->twoplus_table));
 		return -1;
 	}
@@ -642,7 +616,7 @@ uls_dealloc_lex(uls_lex_ptr_t uls)
 	uls_deinit_escmap_pool(uls_ptr(uls->escstr_pool));
 
 	uls_deinit_2char_table(uls_ptr(uls->twoplus_table));
-	uls_deinit_onechar_table(uls_ptr(uls->onechar_table));
+	uls_deinit_1char_table(uls_ptr(uls->onechar_table));
 	uls_deinit_kwtable(uls_ptr(uls->idkeyw_table));
 
 	free_tokdef_array(uls);
@@ -836,6 +810,32 @@ set_err_tok(uls_lex_ptr_t uls, const char* errmsg)
 	return slots_rsv[ERR_TOK_IDX];
 }
 
+
+ULS_DECL_STATIC uls_tokdef_vx_ptr_t
+__uls_onechar_lexeme(uls_lex_ptr_t uls, uls_uch_t uch, const char *lptr, int len)
+{
+	uls_context_ptr_t ctx = uls->xcontext.context;
+	uls_tokdef_vx_ptr_t e_vx;
+
+	if ((e_vx = uls_find_1char_tokdef_vx(uls_ptr(uls->onechar_table), uch, nilptr)) == nilptr) {
+		if (uch < ULS_SYNTAX_TABLE_SIZE && (uls->ch_context[uch] & ULS_CH_1)) {
+			e_vx = ctx->anonymous_uchar_vx;
+			e_vx->tok_id = (int) uch;
+		} else {
+			e_vx = set_err_tok(uls, "Unknown unicode char!");
+			return e_vx;
+		}
+	}
+
+	ctx->tok = e_vx->tok_id;
+	str_append(uls_ptr(ctx->tokbuf), 0, lptr, len);
+
+	ctx->s_val = ctx->tokbuf.buf;
+	ctx->s_val_len = len;
+	ctx->s_val_uchars = 1;
+
+	return e_vx;
+}
 int
 uls_gettok_raw(uls_lex_ptr_t uls)
 {
@@ -1409,10 +1409,22 @@ uls_get_tag2(uls_lex_ptr_t uls, int* ptr_n_bytes)
 	return tagstr;
 }
 
-uls_voidptr_t
-uls_get_current_extra_tokdef(uls_lex_ptr_t uls)
+uls_tokdef_vx_ptr_t
+set_extra_tokdef_vx(uls_lex_ptr_t uls, int tok_id, uls_voidptr_t extra_tokdef)
 {
-	return uls->tokdef_vx->extra_tokdef;
+	uls_tokdef_vx_ptr_t e_vx;
+
+	if ((e_vx = uls_find_tokdef_vx(uls, tok_id)) == nilptr) {
+		if (tok_id >= 0 && tok_id < ULS_SYNTAX_TABLE_SIZE &&
+			(uls->ch_context[tok_id] & ULS_CH_1)) {
+			e_vx = uls_insert_1char_tokdef_uch(uls_ptr(uls->onechar_table), tok_id);
+		} else {
+			return nilptr;
+		}
+	}
+
+	e_vx->extra_tokdef = extra_tokdef;
+	return e_vx;
 }
 
 uls_voidptr_t
@@ -1442,6 +1454,12 @@ uls_set_extra_tokdef(uls_lex_ptr_t uls, int tok_id, uls_voidptr_t extra_tokdef)
 	}
 
 	return rval;
+}
+
+uls_voidptr_t
+uls_get_current_extra_tokdef(uls_lex_ptr_t uls)
+{
+	return uls->tokdef_vx->extra_tokdef;
 }
 
 void
@@ -1640,7 +1658,7 @@ uls_set_line(uls_lex_ptr_t uls, const char* line, int len, int flags)
 }
 
 int
-uls_cardinal_toknam(char* toknam, uls_lex_ptr_t uls, int tok_id)
+uls_cardinal_toknam(char* tok_nam, uls_lex_ptr_t uls, int tok_id)
 {
 	uls_xcontext_ptr_t xctx = uls_ptr(uls->xcontext);
 	const char *ptr;
@@ -1648,52 +1666,52 @@ uls_cardinal_toknam(char* toknam, uls_lex_ptr_t uls, int tok_id)
 	int has_lxm=1;
 
 	if (tok_id == xctx->toknum_ID) {
-		uls_strcpy(toknam, "ID");
+		uls_strcpy(tok_nam, "ID");
 
 	} else if (tok_id == xctx->toknum_NUMBER) {
-		uls_strcpy(toknam, "NUMBER");
+		uls_strcpy(tok_nam, "NUMBER");
 
 	} else if (tok_id == xctx->toknum_TMPL) {
-		uls_strcpy(toknam, "TMPL");
+		uls_strcpy(tok_nam, "TMPL");
 
 	} else if (tok_id == xctx->toknum_EOI) {
-		uls_strcpy(toknam, "EOI");
+		uls_strcpy(tok_nam, "EOI");
 		has_lxm = 0;
 
 	} else if (tok_id == xctx->toknum_EOF) {
-		uls_strcpy(toknam, "EOF");
+		uls_strcpy(tok_nam, "EOF");
 
 	} else if (tok_id == xctx->toknum_LINK) {
-		uls_strcpy(toknam, "LINK");
+		uls_strcpy(tok_nam, "LINK");
 		has_lxm = 0;
 
 	} else if (tok_id == '\n') {
-		uls_strcpy(toknam, "LF");
+		uls_strcpy(tok_nam, "LF");
 		has_lxm = 0;
 
 	} else if (tok_id == '\t') {
-		uls_strcpy(toknam, "TAB");
+		uls_strcpy(tok_nam, "TAB");
 		has_lxm = 0;
 
 	} else if ((qmt=uls_find_quotetype_by_tokid(uls_ptr(uls->quotetypes), uls->quotetypes.n, tok_id)) != nilptr) {
 		if (qmt->tok_id == xctx->toknum_NONE) {
-			uls_strcpy(toknam, "NONE");
+			uls_strcpy(tok_nam, "NONE");
 			has_lxm = 0;
 		} else {
-			uls_strcpy(toknam, "LITSTR");
+			uls_strcpy(tok_nam, "LITSTR");
 		}
 
 	} else if ((ptr=uls_tok2name(uls, tok_id)) != NULL) {
-		uls_strcpy(toknam, ptr);
+		uls_strcpy(tok_nam, ptr);
 
 	} else if (tok_id>=0 && tok_id<ULS_SYNTAX_TABLE_SIZE && uls_isprint(tok_id)) {
-		uls_snprintf(toknam, ULS_CARDINAL_TOKNAM_SIZ, "%3d", tok_id);
+		uls_snprintf(tok_nam, ULS_CARDINAL_TOKNAM_SIZ, "%3d", tok_id);
 		if (!(uls->ch_context[tok_id] & ULS_CH_1)) {
 			has_lxm = 0;
 		}
 
 	} else {
-		uls_snprintf(toknam, ULS_CARDINAL_TOKNAM_SIZ, "%5d", tok_id);
+		uls_snprintf(tok_nam, ULS_CARDINAL_TOKNAM_SIZ, "%5d", tok_id);
 		has_lxm = 0;
 	}
 
@@ -1725,10 +1743,10 @@ uls_get_number_prefix(uls_outparam_ptr_t parms, char *prefix)
 }
 
 int
-uls_cardinal_toknam_deco(char *toknam_buff, const char *toknam)
+uls_cardinal_toknam_deco(char *toknam_buff, const char *tok_nam)
 {
 	int len;
-	len = uls_snprintf(toknam_buff, ULS_CARDINAL_TOKNAM_SIZ+1, "[%7s]", toknam);
+	len = uls_snprintf(toknam_buff, ULS_CARDINAL_TOKNAM_SIZ+1, "[%7s]", tok_nam);
 	return len;
 }
 
@@ -1737,11 +1755,11 @@ uls_cardinal_toknam_deco_lxmpfx(char *toknam_buff, char *lxmpfx, uls_lex_ptr_t u
 	int tok_id, uls_outparam_ptr_t parms)
 {
 	uls_xcontext_ptr_t xctx = uls_ptr(uls->xcontext);
-	char toknam[ULS_CARDINAL_TOKNAM_SIZ+1];
+	char tok_nam[ULS_CARDINAL_TOKNAM_SIZ+1];
 	int  has_lxm;
 
-	has_lxm = uls_cardinal_toknam(toknam, uls, tok_id);
-	uls_cardinal_toknam_deco(toknam_buff, toknam);
+	has_lxm = uls_cardinal_toknam(tok_nam, uls, tok_id);
+	uls_cardinal_toknam_deco(toknam_buff, tok_nam);
 
 	if (tok_id == xctx->toknum_NUMBER) {
 		uls_get_number_prefix(parms, lxmpfx);
@@ -2055,7 +2073,7 @@ uls_lexeme_lld(uls_lex_ptr_t uls)
 	if (sizeof(long long) == sizeof(uls_int64)) {
 		lld_val = (long long) uls_lexeme_int64(uls);
 
-	} else 	if (sizeof(long long) == sizeof(uls_int32)) {
+	} else if (sizeof(long long) == sizeof(uls_int32)) {
 		lld_val = (long long) uls_lexeme_int32(uls);
 
 	} else {
@@ -2141,37 +2159,37 @@ _uls_toknum_TMPL(uls_lex_ptr_t uls)
 int
 _uls_is_ch_space(uls_lex_ptr_t uls, uls_uch_t uch)
 {
-	return uls_is_ch_space(uls, uch);
+	return uls_is_uch_space(uls, uch);
 }
 
 int
 _uls_is_ch_idfirst(uls_lex_ptr_t uls, uls_uch_t uch)
 {
-	return uls_is_ch_idfirst(uls, uch);
+	return uls_is_uch_idfirst(uls, uch);
 }
 
 int
 _uls_is_ch_id(uls_lex_ptr_t uls, uls_uch_t uch)
 {
-	return uls_is_ch_id(uls, uch);
+	return uls_is_uch_id(uls, uch);
 }
 
 int
 _uls_is_ch_quote(uls_lex_ptr_t uls, uls_uch_t uch)
 {
-	return uls_is_ch_quote(uls, uch);
+	return uls_is_uch_quote(uls, uch);
 }
 
 int
 _uls_is_ch_1ch_token(uls_lex_ptr_t uls, uls_uch_t uch)
 {
-	return uls_is_ch_1ch_token(uls, uch);
+	return uls_is_uch_1ch(uls, uch);
 }
 
 int
 _uls_is_ch_2ch_token(uls_lex_ptr_t uls, uls_uch_t uch)
 {
-	return uls_is_ch_2ch_token(uls, uch);
+	return uls_is_uch_2ch(uls, uch);
 }
 
 int

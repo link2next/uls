@@ -56,14 +56,6 @@ extern "C" {
 // the flags of uls_xcontext_t
 #define ULS_XCTX_FL_IGNORE_LF   0x01
 
-#define uls_is_ch_space(uls, uch)     (uch < ULS_SYNTAX_TABLE_SIZE && (uls)->ch_context[uch] == 0)
-#define uls_is_ch_idfirst(uls, uch)   (uch < ULS_SYNTAX_TABLE_SIZE && (uls)->ch_context[uch] & ULS_CH_IDFIRST)
-#define uls_is_ch_id(uls, uch)        (uch < ULS_SYNTAX_TABLE_SIZE && (uls)->ch_context[uch] & ULS_CH_ID)
-#define uls_is_ch_quote(uls, uch)     (uch < ULS_SYNTAX_TABLE_SIZE && (uls)->ch_context[uch] & ULS_CH_QUOTE)
-#define uls_is_ch_1ch_token(uls, uch) (uch < ULS_SYNTAX_TABLE_SIZE && (uls)->ch_context[uch] & ULS_CH_1)
-#define uls_is_ch_2ch_token(uls, uch) (uch < ULS_SYNTAX_TABLE_SIZE && (uls)->ch_context[uch] & ULS_CH_2PLUS)
-#define uls_is_ch_comm(uls, uch)      (uch < ULS_SYNTAX_TABLE_SIZE && (uls)->ch_context[uch] & ULS_CH_COMM)
-
 #define uls_context_get_tag(ctx) (csz_text(uls_ptr((ctx)->tag)))
 #define uls_context_get_taglen(ctx) (csz_length(uls_ptr((ctx)->tag)))
 

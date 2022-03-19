@@ -168,7 +168,6 @@ int uls_is_char_id(uls_lex_ptr_t uls, const char* lptr, uls_uch_t *ptr_uch);
 
 uls_tokdef_vx_ptr_t uls_find_tokdef_vx(uls_lex_ptr_t uls, int t);
 uls_tokdef_vx_ptr_t uls_find_tokdef_vx_force(uls_lex_ptr_t uls, int t);
-uls_tokdef_vx_ptr_t set_extra_tokdef_vx(uls_lex_ptr_t uls, int tok_id, uls_voidptr_t extra_tokdef);
 
 FILE* ulc_search_for_fp(int typ_fpath, const char* fpath, uls_outparam_ptr_t parms);
 FILE* uls_get_ulc_path(int typ_fpath, const char* fpath, int len_dpath, const char* specname, int len_specname, uls_outparam_ptr_t parms);

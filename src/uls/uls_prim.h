@@ -89,12 +89,7 @@ extern "C" {
 #define byte_offset(i_bit)  ((i_bit) & (BYTE_SIZE_BITS-1))
 #define BYTE_LEFT_MOST_1    (1<<(BYTE_SIZE_BITS-1))
 
-#define ULS_INT_MAX \
-  ( \
-  	((unsigned int) -1) & ~( \
-  		(unsigned int) 0x1 << (sizeof(int)*8-1) \
-  	) \
-  )
+#define ULS_INT_MAX (~((int)1 << (sizeof(int)*8-1)))
 #define ULS_INT_MIN (-ULS_INT_MAX-1)
 
 #ifdef ULS_WINDOWS

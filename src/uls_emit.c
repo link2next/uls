@@ -100,26 +100,26 @@ ULS_DECL_STATIC int
 filter_to_print_tokdef(uls_lex_ptr_t uls, uls_tokdef_ptr_t e, int flags)
 {
 	uls_tokdef_vx_ptr_t e_vx = e->view;
-	int stat = 1;
+	int filtered = 0;
 
 	if (e_vx->tok_id == uls->xcontext.toknum_LINENUM || e_vx->name[0] == '\0') {
-		stat = 0; // filtered
+		filtered = 1;
 
 	} else if (is_reserved_tok(uls, e_vx->name) >= 0) {
-		if ((flags & ULS_FL_WANT_RESERVED_TOKS) == 0) stat = 0;
+		if ((flags & ULS_FL_WANT_RESERVED_TOKS) == 0) filtered = 1;
 
 	} else if (e->keyw_type == ULS_KEYW_TYPE_LITERAL) {
-		if ((flags & ULS_FL_WANT_QUOTE_TOKS) == 0) stat = 0;
+		if ((flags & ULS_FL_WANT_QUOTE_TOKS) == 0) filtered = 1;
 
 	} else {
-		if ((flags & ULS_FL_WANT_REGULAR_TOKS) == 0) stat = 0;
+		if ((flags & ULS_FL_WANT_REGULAR_TOKS) == 0) filtered = 1;
 	}
 
-	if (!stat) {
+	if (filtered) {
 //		err_log("'%s' filtered for printing header file.", e->view->name);
 	}
 
-	return stat;
+	return filtered;
 }
 
 ULS_DECL_STATIC void
@@ -155,11 +155,10 @@ print_tokdef_constants(uls_lex_ptr_t uls,
 		if (e0_vx->tok_id % 10 == 0 || i == N_RESERVED_TOKS) uls_sysprn("\n");
 
 		uls_snprintf(toknam_str, sizeof(toknam_str), "%s%s", tok_pfx, e0_vx->name);
-
 		uls_sysprn_tabs(n_tabs, "%s %16s %s", cnst_symbol, toknam_str, asgn_symbol);
 		uls_sysprn(" %d%s\n", e0_vx->tok_id, end_symbol);
 
-		for (e_nam = e0_vx->tokdef_names; e_nam != nilptr; e_nam = e_nam->prev) {
+		for (e_nam = e0_vx->tokdef_names; e_nam != nilptr; e_nam = e_nam->next) {
 			uls_snprintf(toknam_str, sizeof(toknam_str), "%s%s", tok_pfx, e_nam->name);
 			uls_sysprn_tabs(n_tabs, "%s %16s %s", cnst_symbol, toknam_str, asgn_symbol);
 			uls_sysprn(" %d%s\n", e0_vx->tok_id, end_symbol);
@@ -217,9 +216,9 @@ print_tokdef_enum_constants(uls_lex_ptr_t uls,
 			break;
 		}
 
-		for (e_nam = e0_vx->tokdef_names; e_nam != nilptr; e_nam = e_nam->prev) {
+		for (e_nam = e0_vx->tokdef_names; e_nam != nilptr; e_nam = e_nam->next) {
 			uls_sysprn("\t%24s = %d", e_nam->name, e0_vx->tok_id);
-			if (e_nam->prev != nilptr) {
+			if (e_nam->next != nilptr) {
 				uls_sysprn(",\n");
 			} else { // last one
 				uls_sysprn("\n");
@@ -974,14 +973,14 @@ uls_generate_tokdef_file(uls_lex_ptr_t uls, uls_parms_emit_ptr_t emit_parm)
 	slots_prn = uls_parray_slots(uls_ptr(tokdef_ary_prn));
 	n_tokdef_ary_prn = 0;
 
-	for (i=0; i < uls->tokdef_vx_array.n; i++) {
+	for (i = 0; i < uls->tokdef_vx_array.n; i++) {
 		e_vx = slots_vx[i];
 
 		if (e_vx->name[0] == '\0') {
 			continue;
 		}
 
-		if ((e = e_vx->base) == nilptr || filter_to_print_tokdef(uls, e, emit_parm->flags)) {
+		if ((e = e_vx->base) == nilptr || !filter_to_print_tokdef(uls, e, emit_parm->flags)) {
 				slots_prn[n_tokdef_ary_prn++] = e_vx;
 		}
 	}

@@ -118,7 +118,7 @@ int dfl_lit_analyzer_escape2(uls_litstr_ptr_t lit);
 #endif
 
 int canbe_commtype_mark(char* wrd, uls_outparam_ptr_t parms);
-int canbe_quotetype_mark(char *chr_tbl, char* wrd, uls_outparam_ptr_t parms);
+int canbe_quotetype_mark(char *ch_ctx, char* wrd, uls_outparam_ptr_t parms);
 
 uls_quotetype_ptr_t uls_create_quotetype(void);
 void uls_destroy_quotetype(uls_quotetype_ptr_t qmt);

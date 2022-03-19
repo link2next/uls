@@ -69,27 +69,6 @@ splitint(const char* line, uls_outparam_ptr_t parms)
 	return n;
 }
 
-int
-canbe_tokname(const char *str)
-{
-	int i, val;
-	char ch;
-
-	for (i=0; (ch=str[i])!='\0'; i++) {
-		if (i > 0) {
-			val = uls_isalnum(ch) || (ch == '_');
-		} else {
-			val = uls_isalpha(ch) || (ch == '_');
-		}
-		if (val == 0) return 0;
-	}
-
-	if (i > ULS_LEXSTR_MAXSIZ)
-		return 0;
-
-	return i;
-}
-
 const char*
 uls_skip_multiline_comment(uls_parm_line_ptr_t parm_ln)
 {

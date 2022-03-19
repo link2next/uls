@@ -200,8 +200,7 @@ __create_ostream(int fd)
 
 	if (fd < 0) return nilptr;
 
-	ostr = uls_alloc_object(uls_ostream_t);
-	uls_initial_zerofy_object(ostr);
+	ostr = uls_alloc_object_clear(uls_ostream_t);
 	__init_ostream(ostr);
 
 	ostr->fd = fd;

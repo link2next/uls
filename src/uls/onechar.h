@@ -72,8 +72,8 @@ ULS_DECL_STATIC void __init_onechar_tokgrp(uls_onechar_table_ptr_t tbl, int grp_
 void uls_init_onechar_tokgrp(uls_onechar_tokgrp_ptr_t tokgrp);
 void uls_deinit_onechar_tokgrp(uls_onechar_tokgrp_ptr_t tokgrp);
 
-void uls_init_onechar_table(uls_onechar_table_ptr_t tbl);
-void uls_deinit_onechar_table(uls_onechar_table_ptr_t tbl);
+void uls_init_1char_table(uls_onechar_table_ptr_t tbl);
+void uls_deinit_1char_table(uls_onechar_table_ptr_t tbl);
 
 uls_tokdef_vx_ptr_t uls_find_1char_tokdef_map(uls_onechar_table_ptr_t tbl, uls_uch_t uch, uls_tokdef_outparam_ptr_t outparam);
 void uls_insert_onechar_tokdef_map(uls_onechar_tokgrp_ptr_t tokgrp, uls_uch_t uch, uls_tokdef_vx_ptr_t e_vx);

@@ -287,8 +287,8 @@ ULS_DLL_EXTERN int uls_set_isrc(uls_lex_ptr_t uls,
 ULS_DLL_EXTERN int uls_push_line(uls_lex_ptr_t uls, const char* line, int len, int flags);
 ULS_DLL_EXTERN int uls_set_line(uls_lex_ptr_t uls, const char* line, int len, int flags);
 
-ULS_DLL_EXTERN int uls_cardinal_toknam(char* toknam, uls_lex_ptr_t uls, int tok_id);
-ULS_DLL_EXTERN int uls_cardinal_toknam_deco(char *toknam_buff, const char *toknam);
+ULS_DLL_EXTERN int uls_cardinal_toknam(char* tok_nam, uls_lex_ptr_t uls, int tok_id);
+ULS_DLL_EXTERN int uls_cardinal_toknam_deco(char *toknam_buff, const char *tok_nam);
 ULS_DLL_EXTERN int uls_cardinal_toknam_deco_lxmpfx(char *toknam_buff, char *lxmpfx, uls_lex_ptr_t uls,
 	int tok_id, uls_outparam_ptr_t parms);
 ULS_DLL_EXTERN int uls_get_number_prefix(uls_outparam_ptr_t parms, char *prefix);
@@ -321,10 +321,12 @@ ULS_DLL_EXTERN double uls_lexeme_double(uls_lex_ptr_t uls);
 
 ULS_DLL_EXTERN int uls_is_quote_tok(uls_lex_ptr_t uls, int tok_id);
 
-ULS_DLL_EXTERN uls_voidptr_t uls_get_current_extra_tokdef(uls_lex_ptr_t uls);
+uls_tokdef_vx_ptr_t set_extra_tokdef_vx(uls_lex_ptr_t uls, int tok_id, uls_voidptr_t extra_tokdef);
 ULS_DLL_EXTERN uls_voidptr_t uls_get_extra_tokdef(uls_lex_ptr_t uls, int tok_id);
-ULS_DLL_EXTERN void uls_set_current_extra_tokdef(uls_lex_ptr_t uls, uls_voidptr_t extra_tokdef);
 ULS_DLL_EXTERN int uls_set_extra_tokdef(uls_lex_ptr_t uls, int tok_id, uls_voidptr_t extra_tokdef);
+
+ULS_DLL_EXTERN uls_voidptr_t uls_get_current_extra_tokdef(uls_lex_ptr_t uls);
+ULS_DLL_EXTERN void uls_set_current_extra_tokdef(uls_lex_ptr_t uls, uls_voidptr_t extra_tokdef);
 
 ULS_DLL_EXTERN int _uls_const_WANT_EOFTOK(void);
 ULS_DLL_EXTERN int _uls_const_DO_DUP(void);
@@ -340,6 +342,14 @@ ULS_DLL_EXTERN int _uls_toknum_NONE(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN int _uls_toknum_ID(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN int _uls_toknum_NUMBER(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN int _uls_toknum_TMPL(uls_lex_ptr_t uls);
+
+#define uls_is_uch_space(uls, uch)     (uch < ULS_SYNTAX_TABLE_SIZE && (uls)->ch_context[uch] == 0)
+#define uls_is_uch_idfirst(uls, uch)   (uch < ULS_SYNTAX_TABLE_SIZE && (uls)->ch_context[uch] & ULS_CH_IDFIRST)
+#define uls_is_uch_id(uls, uch)        (uch < ULS_SYNTAX_TABLE_SIZE && (uls)->ch_context[uch] & ULS_CH_ID)
+#define uls_is_uch_quote(uls, uch)     (uch < ULS_SYNTAX_TABLE_SIZE && (uls)->ch_context[uch] & ULS_CH_QUOTE)
+#define uls_is_uch_1ch(uls, uch) (uch < ULS_SYNTAX_TABLE_SIZE && (uls)->ch_context[uch] & ULS_CH_1)
+#define uls_is_uch_2ch(uls, uch) (uch < ULS_SYNTAX_TABLE_SIZE && (uls)->ch_context[uch] & ULS_CH_2PLUS)
+#define uls_is_uch_comm(uls, uch)      (uch < ULS_SYNTAX_TABLE_SIZE && (uls)->ch_context[uch] & ULS_CH_COMM)
 
 ULS_DLL_EXTERN int _uls_is_ch_space(uls_lex_ptr_t uls, uls_uch_t uch);
 ULS_DLL_EXTERN int _uls_is_ch_idfirst(uls_lex_ptr_t uls, uls_uch_t uch);

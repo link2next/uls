@@ -150,7 +150,7 @@ uls_dump_2char(uls_lex_ptr_t uls)
 	uls_printf("\n");
 
 	uls_printf("2+CHAR types:");
-	for (tree=uls->twoplus_table.start; tree != nilptr; tree=tree->prev) {
+	for (tree=uls->twoplus_table.start; tree != nilptr; tree=tree->next) {
 		uls_printf("\t[LEN=%d]\n", tree->len_keyw);
 
 		slots_tp = uls_parray_slots(uls_ptr(tree->twoplus_sorted));
@@ -200,6 +200,57 @@ uls_dump_utf8(uls_lex_ptr_t uls)
 	for (i=0; i<uls->id_charset.n; i++) {
 		ran = uls_array_get_slot_type01(uls_ptr(uls->id_charset), i);
 		uls_printf("%2d] 0x%04X - 0x%04X\n", i, ran->x1, ran->x2);
+	}
+}
+
+void
+uls_dump_tokdef_vx(uls_lex_ptr_t uls)
+{
+	uls_decl_parray_slots_init(slots_vx, tokdef_vx, uls_ptr(uls->tokdef_vx_array));
+	uls_tokdef_vx_ptr_t e0_vx;
+	uls_tokdef_name_ptr_t e_nam;
+	uls_tokdef_ptr_t e;
+	int i;
+
+	uls_printf(" ********** The list of tokens by tok-id **************\n");
+	for (i=0; i < uls->tokdef_vx_array.n; i++) {
+		e0_vx = slots_vx[i];
+
+		if ((e = e0_vx->base) != nilptr) {
+			uls_printf("%3d] %s '%s' :", e0_vx->tok_id,
+				e0_vx->name, e->keyword);
+			e = e->next;
+		} else {
+			uls_printf("%3d] %s :", e0_vx->tok_id, e0_vx->name);
+		}
+
+		if ((e_nam = e0_vx->tokdef_names) != nilptr) {
+			for ( ; e_nam != nilptr; e_nam = e_nam->next) {
+				uls_printf(" %s", e_nam->name);
+			}
+		}
+		uls_printf("\n");
+
+		for ( ; e != nilptr; e = e->next) {
+			uls_printf("\t'%s'\n", e->keyword);
+		}
+	}
+}
+
+void
+print_tokdef_vx_char(uls_uch_t uch, uls_tokdef_vx_ptr_t e_vx)
+{
+	int tokid = e_vx->tok_id;
+
+	if (uls_isgraph(uch)) {
+		uls_printf("\t'%c' (%3u)", uch, uch);
+		if (uch != tokid) {
+			uls_printf("  --> %d\n", tokid);
+		} else {
+			uls_printf("\n");
+		}
+	} else {
+		uls_printf("\t    (%3u)  --> %d\n", uch, tokid);
 	}
 }
 
@@ -273,40 +324,6 @@ uls_dump_tokdef_rsvd(uls_lex_ptr_t uls)
 }
 
 void
-uls_dump_tokdef_vx(uls_lex_ptr_t uls)
-{
-	uls_decl_parray_slots_init(slots_vx, tokdef_vx, uls_ptr(uls->tokdef_vx_array));
-	uls_tokdef_vx_ptr_t e0_vx;
-	uls_tokdef_name_ptr_t e_nam;
-	uls_tokdef_ptr_t e;
-	int i;
-
-	uls_printf(" ********** The list of tokens by tok-id **************\n");
-	for (i=0; i < uls->tokdef_vx_array.n; i++) {
-		e0_vx = slots_vx[i];
-
-		if ((e = e0_vx->base) != nilptr) {
-			uls_printf("%3d] %s '%s' :", e0_vx->tok_id,
-				e0_vx->name, e->keyword);
-			e = e->next;
-		} else {
-			uls_printf("%3d] %s :", e0_vx->tok_id, e0_vx->name);
-		}
-
-		if ((e_nam = e0_vx->tokdef_names) != nilptr) {
-			for ( ; e_nam != nilptr; e_nam = e_nam->prev) {
-				uls_printf(" %s", e_nam->name);
-			}
-		}
-		uls_printf("\n");
-
-		for ( ; e != nilptr; e = e->next) {
-			uls_printf("\t'%s'\n", e->keyword);
-		}
-	}
-}
-
-void
 uls_dump_tokdef_names(uls_lex_ptr_t uls)
 {
 	uls_decl_parray_slots_init(slots_vx, tokdef_vx, uls_ptr(uls->tokdef_vx_array));
@@ -322,7 +339,7 @@ uls_dump_tokdef_names(uls_lex_ptr_t uls)
 
 		if ((e_nam = e0_vx->tokdef_names) != nilptr) {
 			uls_printf("\tNAMES:");
-			for ( ; e_nam != nilptr; e_nam = e_nam->prev) {
+			for ( ; e_nam != nilptr; e_nam = e_nam->next) {
 				uls_printf(" %s", e_nam->name);
 			}
 			uls_printf("\n");

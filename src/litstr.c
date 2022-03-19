@@ -212,7 +212,7 @@ canbe_commtype_mark(char* wrd, uls_outparam_ptr_t parms)
 }
 
 int
-canbe_quotetype_mark(char *chr_tbl, char* wrd, uls_outparam_ptr_t parms)
+canbe_quotetype_mark(char *ch_ctx, char* wrd, uls_outparam_ptr_t parms)
 {
 	char *buff = parms->line;
 	uls_wrd_t wrdx;
@@ -235,7 +235,7 @@ canbe_quotetype_mark(char *chr_tbl, char* wrd, uls_outparam_ptr_t parms)
 
 	ch = buff[0];
 	if ((i == 1 && ch == '.') ||
-		(ch < ULS_SYNTAX_TABLE_SIZE && (chr_tbl[ch] & ULS_CH_IDFIRST))) {
+		(ch < ULS_SYNTAX_TABLE_SIZE && (ch_ctx[ch] & ULS_CH_IDFIRST))) {
 		return 0;
 	}
 

@@ -55,8 +55,7 @@ __create_istream(int fd)
 {
 	uls_istream_ptr_t istr;
 
-	istr = uls_alloc_object(uls_istream_t);
-	uls_initial_zerofy_object(istr);
+	istr = uls_alloc_object_clear(uls_istream_t);
 	__init_istream(istr);
 
 	istr->fd = fd;

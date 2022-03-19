@@ -259,7 +259,7 @@ __find_reg_tokdef_by_name(uls_lex_ptr_t uls, const char* name, uls_outparam_ptr_
 	for (i=N_RESERVED_TOKS; i < uls->tokdef_vx_array.n; i++) {
 		e_vx = slots_vx[i];
 
-		for (e_nam=e_vx->tokdef_names; e_nam != nilptr; e_nam = e_nam->prev) {
+		for (e_nam=e_vx->tokdef_names; e_nam != nilptr; e_nam = e_nam->next) {
 			if (uls_streql(e_nam->name, name)) {
 				parms->data = e_nam;
 				return e_vx;
@@ -1955,24 +1955,6 @@ uls_find_tokdef_vx_force(uls_lex_ptr_t uls, int t)
 		}
 	}
 
-	return e_vx;
-}
-
-uls_tokdef_vx_ptr_t
-set_extra_tokdef_vx(uls_lex_ptr_t uls, int tok_id, uls_voidptr_t extra_tokdef)
-{
-	uls_tokdef_vx_ptr_t e_vx;
-
-	if ((e_vx = uls_find_tokdef_vx(uls, tok_id)) == nilptr) {
-		if (tok_id >= 0 && tok_id < ULS_SYNTAX_TABLE_SIZE &&
-			(uls->ch_context[tok_id] & ULS_CH_1)) {
-			e_vx = uls_insert_1char_tokdef_uch(uls_ptr(uls->onechar_table), tok_id);
-		} else {
-			return nilptr;
-		}
-	}
-
-	e_vx->extra_tokdef = extra_tokdef;
 	return e_vx;
 }
 

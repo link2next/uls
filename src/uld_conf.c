@@ -98,7 +98,7 @@ __change_tok_nam(uls_tokdef_vx_ptr_t e0_vx, const char* name, const char* name2)
 ULS_DECL_STATIC int
 add_aliases_to_token(uls_tokdef_vx_ptr_t e0_vx, const char *wrd, uls_wrd_ptr_t wrdx)
 {
-	uls_tokdef_name_ptr_t e_nam, e_nam_prev;
+	uls_tokdef_name_ptr_t e_nam, e_nam_next;
 	uls_outparam_t parms1;
 	int n;
 
@@ -108,12 +108,12 @@ add_aliases_to_token(uls_tokdef_vx_ptr_t e0_vx, const char *wrd, uls_wrd_ptr_t w
 		}
 
 		e_nam = find_tokdef_name(e0_vx, wrd, uls_ptr(parms1));
-		e_nam_prev = (uls_tokdef_name_ptr_t) parms1.data;
+		e_nam_next = (uls_tokdef_name_ptr_t) parms1.data;
 
 		if (e_nam == nilptr) {
 			e_nam = alloc_tokdef_name(wrd, e0_vx);
 			e_nam->flags |= ULS_VX_TOKNAM_CHANGED;
-			insert_tokdef_name_to_group(e0_vx, e_nam_prev, e_nam);
+			insert_tokdef_name_to_group(e0_vx, e_nam_next, e_nam);
 		}
 
 		wrd = _uls_splitstr(wrdx);
@@ -126,7 +126,7 @@ int
 uld_pars_line(int lno, uls_wrd_ptr_t wrdx, uld_line_ptr_t tok_names)
 {
 	const char *name, *name2, *wrd;
-	int tok_id, tok_id_changed, stat=0;
+	int tok_id, changed, stat=0;
 
 	name = _uls_splitstr(wrdx); // token-name
 
@@ -144,16 +144,16 @@ uld_pars_line(int lno, uls_wrd_ptr_t wrdx, uld_line_ptr_t tok_names)
 	}
 
 	if (is_pure_integer(wrd, &tok_id) > 0) {
-		tok_id_changed = 1;
+		changed = 1;
 		wrd = _uls_splitstr(wrdx);
 	} else {
 		tok_id = 0;
-		tok_id_changed = 0;
+		changed = 0;
 	}
 
 	tok_names->name = name;
 	tok_names->name2 = name2;
-	tok_names->tokid_changed = tok_id_changed;
+	tok_names->tokid_changed = changed;
 	tok_names->tokid = tok_id;
 	tok_names->aliases = wrd;
 
