@@ -103,14 +103,14 @@ typedef void        *uls_native_vptr_t;
 #define uls_initial_zerofy_object(obj) uls_bzero(obj,sizeof(*(obj)))
 #define uls_alloc_object(typ) (typ*)uls_malloc(sizeof(typ))
 #define uls_alloc_object_clear(typ) (typ*)uls_malloc_clear(sizeof(typ))
-#define uls_dealloc_object(obj) uls_mfree(obj)
+#define uls_dealloc_object(obj) (obj) = uls_mfree(obj)
 
 // arraytype
 #define _uls_type_array(typ) typ*
 #define _uls_decl_array(name,typ) _uls_type_array(typ) name
 #define _uls_cast_array_type(typ) (_uls_type_array(typ))
 #define _uls_init_array(n,typ) (typ*)uls_malloc_clear((n)*sizeof(typ))
-#define _uls_deinit_array(ary) uls_mfree(ary)
+#define _uls_deinit_array(ary) (ary) = uls_mfree(ary)
 #define _uls_resize_array(ary,typ,n) (ary)=(typ*)uls_mrealloc(ary,(n)*sizeof(typ))
 
 // name-buffer
@@ -216,7 +216,7 @@ typedef void        *uls_native_vptr_t;
 	} while (0)
 
 #define uls_deinit_array_type01(ary,typnam) do { \
-		uls_mfree((ary)->slots); (ary)->n = 0; \
+		(ary)->slots = uls_mfree((ary)->slots); (ary)->n = 0; \
 	} while (0)
 
 #define uls_init_array_type01a(ary,typnam,nn) do { int i; \
@@ -250,7 +250,7 @@ typedef void        *uls_native_vptr_t;
 	} while (0)
 #define uls_deinit_array_type10(ary,typnam) do { \
 		uls_resize_array_type10(ary,typnam,0); \
-		uls_mfree((ary)->slots); (ary)->n = (ary)->n_alloc = 0; \
+		(ary)->slots = uls_mfree((ary)->slots); (ary)->n = (ary)->n_alloc = 0; \
 	} while (0)
 #define uls_resize_array_type10(ary,typnam,nn_alloc) do { \
 		int i; for (i=(nn_alloc); i<(ary)->n; i++) { _uls_dealloc_iary_slot((ary)->slots,i,none,typnam,uls_type_this); } \
@@ -281,7 +281,7 @@ typedef void        *uls_native_vptr_t;
 		(a)->n = 0; (a)->n_alloc = nn; \
 	} while(0)
 #define uls_deinit_parray(a) do { \
-		uls_mfree((a)->slots); \
+		(a)->slots = uls_mfree((a)->slots); \
 		(a)->n = (a)->n_alloc = 0; \
 	} while(0)
 #define uls_resize_parray(a,typnam,nn)  do { \

@@ -131,6 +131,7 @@ uls::deinitMutex(uls::MutexType mtx)
 		err_panic("error: mutex destroy\n");
 
 	uls_mfree(mtx->mtx_pthr);
+	mtx->mtx_pthr = NULL;
 }
 
 // <brief>

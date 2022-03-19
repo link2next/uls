@@ -914,7 +914,7 @@ _uls_const_TMPLS_DUP(void)
 uls_istream_ptr_t
 ulsjava_open_istream_file(const void *filepath, int len_filepath)
 {
-	const char *ustr = uls_strdup((const char *)filepath, len_filepath);
+	char *ustr = uls_strdup((const char *)filepath, len_filepath);
 	uls_istream_ptr_t istr;
 
 	istr = uls_open_istream_file(ustr);

@@ -269,7 +269,6 @@ main(int argc, char* argv[])
 	}
 
 	uls_destroy(gcc_lex);
-
 	uls_mfree(lbuff);
 
 	return 0;

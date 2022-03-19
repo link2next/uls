@@ -1571,6 +1571,7 @@ ulx_set_prepended_input(uls_lex_ptr_t uls, const char *line, int len, int lfs_is
 	int i, n;
 
 	uls_mfree(uls->xcontext.prepended_input);
+	uls->xcontext.prepended_input = NULL;
 	if (line == NULL || *line == '\0') {
 		uls->xcontext.len_prepended_input = uls->xcontext.lfs_prepended_input = 0;
 		return;
@@ -1658,6 +1659,7 @@ read_config__PREPEND_INPUT(char *line, uls_cmd_ptr_t cmd)
 	if (stat >= 0) {
 		ulx_set_prepended_input(uls, line2, len2, lfs_is_not_token);
 	}
+
 	uls_mfree(buff2);
 	return stat;
 }
@@ -2067,7 +2069,8 @@ uls_get_ulc_path(int typ_fpath, const char* fpath, int len_dpath,
 	const char* specname, int len_specname, uls_outparam_ptr_t parms)
 {
 	char fpath_buff[ULC_LONGNAME_MAXSIZ+5], ulf_filepath[ULS_FILEPATH_MAX+1], ch;
-	const char *filepath, *dirpath;
+	const char *filepath;
+	char *dirpath;
 	int  len_dirpath, k;
 	FILE  *fp_ulc;
 	uls_outparam_t parms1;
@@ -2206,7 +2209,7 @@ ulc_get_searchpath_by_specpath(int is_abspath,
 			uls_copy_argstr(arg, exeloc, -1);
 			++n;
 		}
-		uls_mfree(exeloc);
+		exeloc = uls_mfree(exeloc);
 
 		if (_uls_sysinfo_(ULC_SEARCH_PATH) != NULL) {
 			title[n] = "SEARCH_PATH";
@@ -2300,7 +2303,7 @@ ulc_fp_get(uls_outparam_ptr_t parms, int do_pop)
 		parms->data = fp_lst->prev;
 
 		if (do_pop) {
-			uls_mfree(fp_lst->tagstr);
+			fp_lst->tagstr = uls_mfree(fp_lst->tagstr);
 			uls_dealloc_object(fp_lst);
 		}
 	} else {
@@ -2744,6 +2747,7 @@ void
 ulc_set_searchpath(const char *pathlist)
 {
 	uls_mfree(_uls_sysinfo_(ULC_SEARCH_PATH));
+	_uls_sysinfo_(ULC_SEARCH_PATH) = NULL;
 	if (pathlist != NULL) {
 		_uls_sysinfo_(ULC_SEARCH_PATH) = uls_strdup(pathlist, -1);
 	}

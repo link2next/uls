@@ -295,7 +295,7 @@ __uls_change_line(uls_lex_ptr_t uls, const char* line, int len, int flags)
 		ptr = uls_malloc_buffer(xctx->len_prepended_input + len + 1);
 		uls_memcopy(ptr, xctx->prepended_input, xctx->len_prepended_input);
 		uls_memcopy(ptr + xctx->len_prepended_input, line, len);
-		if (flags & ULS_MEMFREE_LINE) uls_mfree(line);
+		if (flags & ULS_MEMFREE_LINE) line = uls_mfree((char *) line);
 
 		parm->lptr = line = ptr;
 		parm->len = len = xctx->len_prepended_input + len;
@@ -2264,7 +2264,7 @@ _uls_number_suffix(uls_lex_ptr_t uls, uls_outparam_ptr_t parms)
 uls_lex_ptr_t
 ulsjava_create(uls_native_vptr_t confname, int len_confname)
 {
-	const char *ustr = uls_strdup((const char *)confname, len_confname);
+	char *ustr = uls_strdup((const char *)confname, len_confname);
 	uls_lex_ptr_t  uls;
 
 	uls = uls_create(ustr);
@@ -2276,8 +2276,8 @@ ulsjava_create(uls_native_vptr_t confname, int len_confname)
 void
 ulsjava_dump_tok(uls_lex_ptr_t uls, const void *pfx, int len_pfx, const void *suff, int len_suff)
 {
-	const char *ustr1 = uls_strdup((const char *)pfx, len_pfx);
-	const char *ustr2 = uls_strdup((const char *)suff, len_suff);
+	char *ustr1 = uls_strdup((const char *)pfx, len_pfx);
+	char *ustr2 = uls_strdup((const char *)suff, len_suff);
 
 	uls_dump_tok(uls, ustr1, ustr2);
 
@@ -2288,7 +2288,7 @@ ulsjava_dump_tok(uls_lex_ptr_t uls, const void *pfx, int len_pfx, const void *su
 void
 ulsjava_set_tag(uls_lex_ptr_t uls, const void *tag, int len_tag, int lineno)
 {
-	const char *ustr = uls_strdup((const char *)tag, len_tag);
+	char *ustr = uls_strdup((const char *)tag, len_tag);
 
 	uls_set_tag(uls, ustr, lineno);
 	uls_mfree(ustr);

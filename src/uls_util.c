@@ -574,8 +574,7 @@ isp_deinit(uls_isp_ptr_t isp)
 	isp->len_strpool = 0;
 
 	if (isp->siz_strpool > 0) {
-		uls_mfree(isp->buff);
-		isp->buff = NULL;
+		isp->buff = uls_mfree(isp->buff);
 	}
 }
 

@@ -286,7 +286,7 @@ ulsstream_options(int opt, char* optarg)
 			uls_mfree(cmdline_filter);
 			cmdline_filter = cmdl;
 		}
-		uls_mfree(argv0);
+		argv0 = uls_mfree(argv0);
 #else
 		err_log("%s: fdf not supported!", __func__);
 		stat = -1;

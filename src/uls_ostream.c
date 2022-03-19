@@ -932,8 +932,8 @@ uls_ostream_ptr_t
 ulsjava_create_ostream_file(const void *filepath, int len_filepath, uls_lex_ptr_t uls,
 	const void *subname, int len_subname)
 {
-	const char *ustr1 = uls_strdup((const char *)filepath, len_filepath);
-	const char *ustr2 = uls_strdup((const char *)subname, len_subname);
+	char *ustr1 = uls_strdup((const char *)filepath, len_filepath);
+	char *ustr2 = uls_strdup((const char *)subname, len_subname);
 	uls_ostream_ptr_t ostr;
 
 	ostr = uls_create_ostream_file(ustr1, uls, ustr2);
@@ -946,7 +946,7 @@ ulsjava_create_ostream_file(const void *filepath, int len_filepath, uls_lex_ptr_
 int
 ulsjava_print_tok(uls_ostream_ptr_t ostr, int tokid, const void *tokstr, int len_tokstr)
 {
-	const char *ustr = uls_strdup((const char *)tokstr, len_tokstr);
+	char *ustr = uls_strdup((const char *)tokstr, len_tokstr);
 	int rc;
 
 	rc = uls_print_tok(ostr, tokid, ustr);
@@ -958,7 +958,7 @@ ulsjava_print_tok(uls_ostream_ptr_t ostr, int tokid, const void *tokstr, int len
 int
 ulsjava_print_tok_linenum(uls_ostream_ptr_t ostr, int lno, const void *tag, int len_tag)
 {
-	const char *ustr = uls_strdup((const char *)tag, len_tag);
+	char *ustr = uls_strdup((const char *)tag, len_tag);
 	int rc;
 
 	rc = uls_print_tok_linenum(ostr, lno, ustr);

@@ -132,7 +132,7 @@ __reset_csz_pool(void)
 	for (e=csz_global->active_list; e!=nilptr; e=e_next) {
 		e_next = e->next;
 
-		uls_mfree(e->line);
+		e->line = uls_mfree(e->line);
 		e->size = 0;
 
 		e->next = csz_global->inactive_list;

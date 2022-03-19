@@ -69,7 +69,6 @@ extern "C" {
 
 #define uls_malloc_buffer(n) (char *) uls_malloc(n)
 #define uls_malloc_buffer_clear(n) (char *) uls_malloc_clear(n)
-#define uls_mfree(a) do { __uls_mfree((void *)(a)); (a)=NULL; } while (0)
 
 #ifdef ULS_DO_ASSERT
 #define uls_assert(x) do { \
@@ -291,7 +290,7 @@ ULS_DLL_EXTERN void uls_bzero(void *dstbuf, int n);
 ULS_DLL_EXTERN void *uls_malloc(unsigned int n_bytes);
 ULS_DLL_EXTERN void *uls_malloc_clear(unsigned int n_bytes);
 ULS_DLL_EXTERN void *uls_mrealloc(void *ptr, unsigned int n_bytes);
-ULS_DLL_EXTERN void *__uls_mfree(void *ptr);
+ULS_DLL_EXTERN void *uls_mfree(void *ptr);
 
 ULS_DLL_EXTERN char* uls_strdup(const char* str, int len);
 ULS_DLL_EXTERN void* uls_memcopy(void *dst, const void* src, int n);

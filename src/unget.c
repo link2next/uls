@@ -518,7 +518,7 @@ uls_unget_str(uls_lex_ptr_t uls, const char* str)
 void
 ulsjava_unget_str(uls_lex_ptr_t uls, const uls_native_vptr_t str, int len_str)
 {
-	const char *ustr = uls_strdup((const char *)str, len_str);
+	char *ustr = uls_strdup((const char *)str, len_str);
 
 	uls_unget_str(uls, ustr);
 	uls_mfree(ustr);
@@ -527,7 +527,7 @@ ulsjava_unget_str(uls_lex_ptr_t uls, const uls_native_vptr_t str, int len_str)
 void
 ulsjava_unget_lexeme(uls_lex_ptr_t uls, const uls_native_vptr_t lxm, int len_lxm, int tok_id)
 {
-	const char *ustr = uls_strdup((const char *)lxm, len_lxm);
+	char *ustr = uls_strdup((const char *)lxm, len_lxm);
 
 	uls_unget_lexeme(uls, ustr, tok_id);
 	uls_mfree(ustr);

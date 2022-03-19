@@ -289,7 +289,7 @@ uls_deinit_lang_list(uls_lang_list_ptr_t tbl)
 	uls_deinit_array_type10(uls_ptr(tbl->langs), lang);
 	uls_deinit_array_type10(uls_ptr(tbl->alias_pool), alias);
 
-	uls_mfree(tbl->str_pool);
+	tbl->str_pool = uls_mfree(tbl->str_pool);
 }
 
 uls_lang_list_ptr_t

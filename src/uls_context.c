@@ -616,7 +616,7 @@ uls_xcontext_deinit(uls_xcontext_ptr_t xctx)
 	xctx->commtypes = nilptr;
 	xctx->n2_commtypes = 0;
 
-	uls_mfree(xctx->prepended_input);
+	xctx->prepended_input = uls_mfree(xctx->prepended_input);
 	xctx->len_prepended_input = xctx->lfs_prepended_input = 0;
 	xctx->quotetypes = nilptr;
 

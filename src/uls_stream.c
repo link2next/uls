@@ -43,8 +43,8 @@ uls_init_tmpl(uls_tmpl_ptr_t tmpl)
 void
 uls_deinit_tmpl(uls_tmpl_ptr_t tmpl)
 {
-	uls_mfree(tmpl->name_buff);
-	uls_mfree(tmpl->sval_buff);
+	tmpl->name_buff = uls_mfree(tmpl->name_buff);
+	tmpl->sval_buff = uls_mfree(tmpl->sval_buff);
 }
 
 void
@@ -351,7 +351,7 @@ uls_set_tmpl_value(uls_tmpl_list_ptr_t tmpl_list, const char* name, const char *
 	}
 
 	if (tmpl_list->flags & ULS_TMPLS_DUP) {
-		uls_mfree(tmpl->sval_buff);
+		tmpl->sval_buff = uls_mfree(tmpl->sval_buff);
 		if (val != NULL) {
 			tmpl->sval_buff = uls_strdup(val,-1);
 		}

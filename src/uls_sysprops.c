@@ -65,12 +65,10 @@ __init_system_info(uls_sysinfo_ptr_t sysinfo, int poolsiz)
 	sysinfo->LDOUBLE_SIZE_BITS = sysinfo->LDOUBLE_SIZE_BYTES*8;
 	sysinfo->LDOUBLE_MENTISA_STARTBIT = 1 + sysinfo->LDOUBLE_EXPOSIZE_BITS;
 
-	uls_mfree(sysinfo->ULC_SEARCH_PATH);
-	sysinfo->ULC_SEARCH_PATH = NULL;
+	sysinfo->ULC_SEARCH_PATH = uls_mfree(sysinfo->ULC_SEARCH_PATH);
 
 	if (sysinfo->n_alloc_strpool > 0) {
-		uls_mfree(sysinfo->strpool);
-		sysinfo->strpool = NULL;
+		sysinfo->strpool = uls_mfree(sysinfo->strpool);
 	}
 
 	if (poolsiz > 0) {

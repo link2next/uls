@@ -594,7 +594,7 @@ ulsjava_push_line(uls_lex_ptr_t uls, const void *line, int len_line, int flags)
 int
 ulsjava_push_file(uls_lex_ptr_t uls, const void *filepath, int len_filepath, int flags)
 {
-	const char *ustr = uls_strdup((const char*)filepath, len_filepath);
+	char *ustr = uls_strdup((const char*)filepath, len_filepath);
 	int rc;
 
 	rc = uls_push_file(uls, ustr, flags);
@@ -614,7 +614,7 @@ ulsjava_set_line(uls_lex_ptr_t uls, const void *line, int len_line, int flags)
 int
 ulsjava_set_file(uls_lex_ptr_t uls, const void *filepath, int len_filepath, int flags)
 {
-	const char *ustr = uls_strdup((const char*)filepath, len_filepath);
+	char *ustr = uls_strdup((const char*)filepath, len_filepath);
 	int rc;
 
 	rc = uls_set_file(uls, ustr, flags);

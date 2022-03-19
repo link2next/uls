@@ -484,7 +484,7 @@ void
 uls_ungrab_linecheck(uls_source_ptr_t isrc)
 {
 	uls_outparam_ptr_t parm = (uls_outparam_ptr_t) isrc->usrc;
-	uls_mfree(parm->lptr);
+	uls_mfree((char *) parm->lptr);
 	uls_dealloc_object(parm);
 }
 

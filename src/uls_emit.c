@@ -944,9 +944,9 @@ uls_init_parms_emit(uls_parms_emit_ptr_t emit_parm,
 int
 uls_deinit_parms_emit(uls_parms_emit_ptr_t emit_parm)
 {
-	uls_mfree(emit_parm->pathbuff);
-	uls_mfree(emit_parm->fname_buff);
-	uls_mfree(emit_parm->ename_buff);
+	emit_parm->pathbuff = uls_mfree(emit_parm->pathbuff);
+	emit_parm->fname_buff = uls_mfree(emit_parm->fname_buff);
+	emit_parm->ename_buff = uls_mfree(emit_parm->ename_buff);
 
 	if (emit_parm->n_name_components >= 0) {
 		uls_deinit_arglst(uls_ptr(emit_parm->name_components));

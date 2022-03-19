@@ -1225,12 +1225,12 @@ __lf_deinit_convspec_map(uls_lf_map_ptr_t lf_map)
 
 	for (i=0; i < ULS_LF_PERCENT_NAMESIZ; i++) {
 		tbl = lf_map->sorted + i;
-		uls_mfree(tbl->proc_tab);
+		tbl->proc_tab = uls_mfree(tbl->proc_tab);
 		tbl->n_used = tbl->n_allocd = 0;
 	}
 
 	tbl = uls_ptr(lf_map->linear);
-	uls_mfree(tbl->proc_tab);
+	tbl->proc_tab = uls_mfree(tbl->proc_tab);
 	tbl->n_used = tbl->n_allocd = 0;
 }
 

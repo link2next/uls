@@ -1128,7 +1128,7 @@ uls_init_nambuf(uls_nambuf_ptr_t arg, int siz)
 void
 uls_deinit_nambuf(uls_nambuf_ptr_t arg)
 {
-	uls_mfree(arg->str);
+	arg->str = uls_mfree(arg->str);
 	arg->buf_siz = arg->len = 0;
 }
 
@@ -1246,7 +1246,7 @@ uls_mrealloc(void *ptr, unsigned int n_bytes)
 }
 
 void*
-__uls_mfree(void *ptr)
+uls_mfree(void *ptr)
 {
 	if (ptr != NULL) free(ptr);
 	return NULL;
@@ -1503,7 +1503,7 @@ uls_init_argstr(uls_argstr_ptr_t arg, int siz)
 void
 uls_deinit_argstr(uls_argstr_ptr_t arg)
 {
-	uls_mfree(arg->buf);
+	arg->buf = uls_mfree(arg->buf);
 	arg->buf_siz = 0;
 
 	arg->str = arg->buf = NULL;
