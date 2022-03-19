@@ -1,10 +1,7 @@
 include ../cfg.mk
 
-ACLOCAL_AMFLAGS = -I m4
-
 bin_PROGRAMS = ShellToks
 ShellToks_SOURCES = ShellToks.cpp ShellLex.cpp
-
 ShellToks_CPPFLAGS = -I$(uls_inc_dir)
 ShellToks_LDADD = -L$(uls_lib_dir) -lulscpp -lulscompat -luls
 
