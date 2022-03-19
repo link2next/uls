@@ -143,8 +143,7 @@ uld_pars_line(int lno, uls_wrd_ptr_t wrdx, uld_line_ptr_t tok_names)
 		wrd = _uls_splitstr(wrdx);
 	}
 
-	if (is_pure_int_number(wrd) > 0) {
-		tok_id = uls_atoi(wrd);
+	if (is_pure_integer(wrd, &tok_id) > 0) {
 		tok_id_changed = 1;
 		wrd = _uls_splitstr(wrdx);
 	} else {

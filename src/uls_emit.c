@@ -1023,9 +1023,9 @@ uls_generate_tokdef_file(uls_lex_ptr_t uls, uls_parms_emit_ptr_t emit_parm)
 		uls_fp_close(fout);
 	}
 
-	uls_deinit_parray(uls_ptr(tokdef_ary_prn));
 
 	if (stat < 0 || (emit_parm->flags & ULS_FL_WANT_WRAPPER) == 0) {
+		uls_deinit_parray(uls_ptr(tokdef_ary_prn));
 		return stat;
 	}
 
@@ -1065,5 +1065,6 @@ uls_generate_tokdef_file(uls_lex_ptr_t uls, uls_parms_emit_ptr_t emit_parm)
 		uls_fp_close(fout);
 	}
 
+	uls_deinit_parray(uls_ptr(tokdef_ary_prn));
 	return stat;
 }

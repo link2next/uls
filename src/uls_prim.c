@@ -463,9 +463,9 @@ read_hexa_char(char* ptr)
 }
 
 int
-is_pure_int_number(const char* lptr)
+is_pure_integer(const char* lptr, int *ptr_num)
 {
-	int minus=0, pure=1, n;
+	int minus=0, pure=1, num = 0, n_bytes;
 	const char* lptr0;
 	char ch;
 
@@ -474,20 +474,26 @@ is_pure_int_number(const char* lptr)
 		++lptr;
 	}
 
-	lptr0 = lptr;
-	for ( ; (ch=*lptr) !='\0'; lptr++) {
+	for (lptr0 = lptr; (ch=*lptr) !='\0'; lptr++) {
 		if (!uls_isdigit(ch)) {
 			pure = 0;
 			break;
 		}
+		num = num * 10 + (ch - '0');
 	}
 
-	if ((n = (int) (lptr - lptr0)) > 0) {
-		if (minus) ++n;
-		if (!pure) n = -n;
+	if ((n_bytes = (int) (lptr - lptr0)) > 0) {
+		if (minus) {
+			num = -num;
+			++n_bytes;
+		}
+		if (!pure) n_bytes = -n_bytes;
+		if (ptr_num != NULL) {
+			*ptr_num = num;
+		}
 	}
 
-	return n;
+	return n_bytes;
 }
 
 int

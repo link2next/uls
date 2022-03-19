@@ -1,4 +1,12 @@
 
+  v1.8.8
+  -----------
+    o bug-fixes on
+     a) generating cpp source file from ulc-file 
+     b) using ulf-file, together with ulc-file 
+     c) adding uld alias from uld-file 
+     d) line numbering in ulc files
+
   v1.8.7
   -----------
     o bug-fixes on

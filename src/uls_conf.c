@@ -58,7 +58,7 @@ check_keyw_str(int lno, const char* str, uls_outparam_ptr_t parms)
 	uls_litstr_t lit1;
 	uls_decl_parray_slots(slots_qmt, quotetype);
 
-	if (*str == '\0' || is_pure_int_number(str) > 0) {
+	if (*str == '\0' || is_pure_integer(str, NULL) > 0) {
 		*buf = '\0';
 		parms->len = 0;
 		return ULS_KEYW_TYPE_USER;
@@ -3090,7 +3090,7 @@ ulc_proc_line
 			wrd2[len2] = '\0';
 		}
 
-		if (*wrd2 == '\0' || is_pure_int_number(wrd2) > 0) {
+		if (*wrd2 == '\0' || is_pure_integer(wrd2, NULL) > 0) {
 			wrd3 = wrd2;
 			wrd2 = "";
 			len2 = 0;

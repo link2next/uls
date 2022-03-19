@@ -248,7 +248,7 @@ int uls_isxdigit(int c);
 char uls_toupper(int c);
 char uls_tolower(int c);
 
-int is_pure_int_number(const char* lptr);
+int is_pure_integer(const char* lptr, int *ptr_num);
 int is_pure_word(const char* lptr, int must_id);
 int uls_atoi(const char *str);
 
