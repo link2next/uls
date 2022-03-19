@@ -1315,8 +1315,6 @@ uls_lf_init(uls_lf_ptr_t uls_lf, uls_lf_map_ptr_t lf_map, uls_voidptr_t x_dat, u
 	csz_init(uls_ptr(uls_lf->wbuf1), ULS_MAXSZ_NUMSTR);
 	csz_init(uls_ptr(uls_lf->wbuf2), ULS_MAXSZ_NUMSTR);
 
-	uls_lf->shell = nilptr;
-
 	return 0;
 }
 

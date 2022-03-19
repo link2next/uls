@@ -276,8 +276,6 @@ uls_init_tmpls(uls_tmpl_list_ptr_t tmpl_list, int n_alloc, int flags)
 	}
 
 	uls_init_array_type10(uls_ptr(tmpl_list->tmpls), tmpl, n_alloc);
-	tmpl_list->shell = nilptr;
-
 	return 0;
 }
 
@@ -285,10 +283,7 @@ int
 uls_deinit_tmpls(uls_tmpl_list_ptr_t tmpl_list)
 {
 	uls_deinit_array_type10(uls_ptr(tmpl_list->tmpls), tmpl);
-
-	tmpl_list->shell = nilptr;
 	tmpl_list->flags &= ULS_FL_STATIC;
-
 	return 0;
 }
 

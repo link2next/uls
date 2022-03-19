@@ -550,7 +550,7 @@ ulc_load(uls_lex_ptr_t uls, FILE *fin_ulc, FILE *fin_ulf)
 	ulf_deinit_header(uls_ptr(ulf_hdr));
 	uls_fp_close(fin_ulf);
 
-	distribute_twoplus_toks(uls_ptr(uls->twoplus_table), uls->idkeyw_table.str_ncmp);
+	distribute_2char_toks(uls_ptr(uls->twoplus_table), uls->idkeyw_table.str_ncmp);
 
 	return stat;
 }
@@ -597,20 +597,18 @@ uls_init_fp(uls_lex_ptr_t uls, const char *specname,
 
 	__init_kwtable(uls_ptr(uls->idkeyw_table));
 	uls_init_onechar_table(uls_ptr(uls->onechar_table));
-	uls_init_kwtable_twoplus(uls_ptr(uls->twoplus_table));
+	uls_init_2char_table(uls_ptr(uls->twoplus_table));
 
 	uls_init_escmap_pool(uls_ptr(uls->escstr_pool));
 
 	uls_xcontext_init(uls_ptr(uls->xcontext), uls_ref_callback(uls_gettok_raw));
 	uls->xcontext.context->flags |= ULS_CTX_FL_EOF | ULS_CTX_FL_GETTOK_RAW;
 
-	uls->shell = nilptr;
-
 	if ((rc = ulc_load(uls, fin_ulc, fin_ulf)) < 0) {
 		// fin_ulc, fin_ulf consumed
 		uls_xcontext_deinit(uls_ptr(uls->xcontext));
 		uls_deinit_onechar_table(uls_ptr(uls->onechar_table));
-		uls_deinit_kwtable_twoplus(uls_ptr(uls->twoplus_table));
+		uls_deinit_2char_table(uls_ptr(uls->twoplus_table));
 		return -1;
 	}
 
@@ -643,7 +641,7 @@ uls_dealloc_lex(uls_lex_ptr_t uls)
 
 	uls_deinit_escmap_pool(uls_ptr(uls->escstr_pool));
 
-	uls_deinit_kwtable_twoplus(uls_ptr(uls->twoplus_table));
+	uls_deinit_2char_table(uls_ptr(uls->twoplus_table));
 	uls_deinit_onechar_table(uls_ptr(uls->onechar_table));
 	uls_deinit_kwtable(uls_ptr(uls->idkeyw_table));
 
@@ -684,7 +682,6 @@ uls_dealloc_lex(uls_lex_ptr_t uls)
 
 	if (uls->flags & ULS_FL_STATIC) {
 		uls->onechar_table.tokdefs_etc_list = nilptr;
-		uls->shell = nilptr;
 	} else {
 		uls_dealloc_object(uls);
 	}

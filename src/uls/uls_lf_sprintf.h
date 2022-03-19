@@ -153,8 +153,6 @@ ULS_DEFINE_STRUCT(lf)
 	uls_voidptr_t g_dat;
 	csz_str_t wbuf1;
 	csz_str_t wbuf2;
-
-	uls_voidptr_t shell;
 };
 
 ULS_DEFINE_STRUCT_BEGIN(lf_context)

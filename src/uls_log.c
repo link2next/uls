@@ -264,7 +264,6 @@ uls_init_log(uls_log_ptr_t log, uls_lf_map_ptr_t lf_map, uls_lex_ptr_t uls)
 		return -1;
 	}
 
-	log->shell = nilptr;
 	return 0;
 }
 
@@ -282,7 +281,6 @@ uls_deinit_log(uls_log_ptr_t log)
 
 	log->log_port = nilptr;
 	log->log_puts = uls_lf_puts_null;
-	log->shell = nilptr;
 
 	uls_deinit_mutex(uls_ptr(log->mtx));
 }

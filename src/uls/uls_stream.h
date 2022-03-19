@@ -104,7 +104,6 @@ ULS_DEFINE_STRUCT(tmpl_list)
 {
 	int flags;
 	uls_decl_array_type10(tmpls, tmpl);
-	uls_voidptr_t shell;
 };
 
 ULS_DEFINE_STRUCT(tmplvar)

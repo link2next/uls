@@ -71,7 +71,6 @@ ULS_DEFINE_STRUCT(log)
 	uls_uint32    log_mask;
 
 	uls_lf_ptr_t  lf;
-	uls_voidptr_t shell;
 };
 
 #if defined(__ULS_LOG__)

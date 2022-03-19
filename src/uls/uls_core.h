@@ -104,9 +104,8 @@ ULS_DEFINE_STRUCT_BEGIN(lex)
 
 	uls_xcontext_t xcontext;
 	uls_context_ptr_t context_tower;
-
-	uls_voidptr_t shell;
 };
+
 #define ULS_WANT_EOFTOK  0x01
 #define ULS_DO_DUP       0x02
 #define ULS_MEMFREE_LINE 0x04
