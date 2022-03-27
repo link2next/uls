@@ -158,7 +158,7 @@ make_eof_lexeme(uls_lex_ptr_t uls)
 	ctx->s_val_uchars = ustr_num_chars(ctx->s_val, k, nilptr);
 }
 
-ULS_DECL_STATIC void
+ULS_DECL_STATIC uls_context_ptr_t 
 make_eoi_lexeme(uls_lex_ptr_t uls)
 {
 	uls_context_ptr_t ctx = uls->xcontext.context;
@@ -171,6 +171,8 @@ make_eoi_lexeme(uls_lex_ptr_t uls)
 	str_putc(uls_ptr(ctx->tokbuf), 0, '\0');
 	ctx->s_val = ctx->tokbuf.buf;
 	ctx->s_val_len = ctx->s_val_uchars = 0;
+
+	return ctx;
 }
 
 ULS_DECL_STATIC _ULS_INLINE int
@@ -1493,10 +1495,8 @@ uls_get_tok(uls_lex_ptr_t uls)
 	}
 
 	if (ctx->tok == uls->xcontext.toknum_EOF) {
-		ctx = uls_pop(uls);
-
-		if (uls_is_context_initial(uls)) {
-			make_eoi_lexeme(uls);
+		if ((ctx = uls_pop(uls)) == nilptr) {
+			ctx = make_eoi_lexeme(uls);
 			return ctx->tok;
 		}
 	}
@@ -1517,10 +1517,8 @@ uls_get_tok(uls_lex_ptr_t uls)
 			}
 		}
 
-		ctx = uls_pop(uls);
-
-		if (uls_is_context_initial(uls)) {
-			make_eoi_lexeme(uls);
+		if ((ctx = uls_pop(uls)) == nilptr) {
+			ctx = make_eoi_lexeme(uls);
 			break;
 		}
 	}
