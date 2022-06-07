@@ -138,6 +138,7 @@ ULS_QUALIFIED_METHOD(uld_pars_line)(int lno, uls_ptrtype_tool(wrd) wrdx, uld_lin
 		_uls_log(err_log)("\t:'%s' to ''", name);
 		return -1;
 	}
+	wrdx->lptr = _uls_tool(skip_blanks)(wrdx->lptr);
 
 	if (_uls_tool(is_pure_integer)(wrd, nilptr) > 0) {
 		tok_id = _uls_tool_(atoi)(wrd);
@@ -146,7 +147,7 @@ ULS_QUALIFIED_METHOD(uld_pars_line)(int lno, uls_ptrtype_tool(wrd) wrdx, uld_lin
 
 	} else {
 		if (canbe_tokname(wrd) <= 0) {
-			_uls_log(err_log)("#%d: %s can't be used as token-name", lno);
+			_uls_log(err_log)("#%d: %s can't be used as token-name.", lno, wrd);
 			return -1;
 		}
 		name2 = wrd;
@@ -154,7 +155,7 @@ ULS_QUALIFIED_METHOD(uld_pars_line)(int lno, uls_ptrtype_tool(wrd) wrdx, uld_lin
 		tok_id = 0;
 		changed = 0;
 
-		lptr = _uls_tool(skip_blanks)(wrdx->lptr);
+		lptr = wrdx->lptr;
 		if ((rc=_uls_tool(is_pure_integer)(lptr, uls_ptr(parms1))) != 0) {
 			tok_id = parms1.n;
 			changed = 1;

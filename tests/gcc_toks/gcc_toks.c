@@ -144,7 +144,7 @@ lex_input_file(const char *fpath)
 		return -1;
 	}
 
-	uls_set_tag(gcc_lex, fpath, 1);
+	uls_set_tag(gcc_lex, fpath, -1);
 
 	for ( ; ; ) {
 		if ((t=uls_get_tok(gcc_lex)) == TOK_EOI || t == TOK_ERR) {

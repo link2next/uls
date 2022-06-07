@@ -171,7 +171,6 @@ ULS_DECL_STATIC _ULS_INLINE int __uls_is_real(const char *ptr);
 ULS_DECL_STATIC _ULS_INLINE double __uls_lexeme_unsigned_double(const char *ptr);
 ULS_DECL_STATIC uls_uint32 __uls_lexeme_uint32(const char *ptr);
 ULS_DECL_STATIC uls_uint64 __uls_lexeme_uint64(const char *ptr);
-
 ULS_DECL_STATIC int __uls_change_line(uls_lex_ptr_t uls, const char* line, int len, int flags);
 #endif // ULS_DECL_PRIVATE_PROC
 
