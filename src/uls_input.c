@@ -306,11 +306,11 @@ ULS_QUALIFIED_METHOD(uls_input_reset)(uls_input_ptr_t inp, int bufsiz, int flags
 		_uls_tool(str_free)(uls_ptr(inp->rawbuf));
 	}
 
+	uls_input_reset_cursor(inp);
+
 	if (flags >= 0) {
 		if (flags & ULS_INP_FL_REFILL_NULL) {
 			inp->refill = uls_ref_callback_this(uls_input_refill_null);
-		} else if (uls_input_isset_fl(inp, ULS_INP_FL_READONLY)) {
-			inp->refill = uls_ref_callback_this(uls_input_refill_buffer);
 		} else {
 			inp->refill = uls_ref_callback_this(uls_input_refill_buffer);
 		}
@@ -360,7 +360,6 @@ void
 ULS_QUALIFIED_METHOD(uls_deinit_input)(uls_input_ptr_t inp)
 {
 	uls_input_reset(inp, 0, ULS_INP_FL_REFILL_NULL);
-	uls_input_reset_cursor(inp);
 	uls_input_change_filler(inp, nilptr, nilptr, nilptr);
 	uls_deinit_isource(uls_ptr(inp->isource));
 }
@@ -384,20 +383,22 @@ ULS_QUALIFIED_METHOD(uls_destroy_input)(uls_input_ptr_t inp)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_input_readn)(uls_source_ptr_t isrc, char *buf, int buflen0, int bufsiz)
+ULS_QUALIFIED_METHOD(uls_input_read)(uls_source_ptr_t isrc, char *buf, int buflen0, int bufsiz)
 {
 	int buflen = buflen0;
 	int rc;
 
-	uls_assert(buflen < bufsiz);
+	if (isrc->flags & ULS_ISRC_FL_ERR) return -1;
 	if (isrc->flags & ULS_ISRC_FL_EOF) return 0;
+	if (buflen >= bufsiz) return 0;
 
 	do {
 		if ((rc=isrc->usrc_fillbuff(isrc, buf, buflen, bufsiz)) < 0) {
 			isrc->flags |= ULS_ISRC_FL_EOF | ULS_ISRC_FL_ERR;
 			return -1;
-		} else if (rc == 0) {
-			isrc->flags |= ULS_ISRC_FL_EOF;
+		}
+
+		if (rc == 0) {
 			break;
 		}
 
@@ -410,38 +411,40 @@ ULS_QUALIFIED_METHOD(uls_input_readn)(uls_source_ptr_t isrc, char *buf, int bufl
 int
 ULS_QUALIFIED_METHOD(uls_input_refill_null)(uls_input_ptr_t inp, int n_bytes)
 {
-	return 0;
+	inp->isource.flags |= ULS_ISRC_FL_EOF;
+	return inp->rawbuf_bytes;
 }
 
 int
 ULS_QUALIFIED_METHOD(uls_input_refill_buffer)(uls_input_ptr_t inp, int n_bytes)
 {
-	int rc;
+	int n, rc;
 
-	if (uls_regulate_rawbuf(inp) < 0) {
-		return -1;
-	}
+	if (n_bytes <= inp->rawbuf_bytes) return inp->rawbuf_bytes;
+	uls_regulate_rawbuf(inp);
 
-	if (n_bytes < ULS_UTF8_CH_MAXLEN) {
-		n_bytes = ULS_UTF8_CH_MAXLEN;
-	}
-
-	if (n_bytes > inp->rawbuf.siz) {
-		if (uls_resize_rawbuf(inp, n_bytes - inp->rawbuf.siz) < 0) {
+	if ((n = inp->rawbuf_bytes + ULS_UTF8_CH_MAXLEN) > inp->rawbuf.siz) {
+		if (uls_resize_rawbuf(inp, n - inp->rawbuf.siz) < 0) {
 			return -1;
 		}
 	}
 
-	if ((rc=uls_input_readn(uls_ptr(inp->isource), inp->rawbuf.buf, inp->rawbuf_bytes, inp->rawbuf.siz)) < 0) {
-		return -1;
-	}
+	for ( ; ; ) {
+		if ((rc = uls_input_read(uls_ptr(inp->isource),
+			inp->rawbuf.buf, inp->rawbuf_bytes, inp->rawbuf.siz)) < 0) {
+			return -1;
+		}
 
-	inp->rawbuf_bytes += rc;
+		if ((inp->rawbuf_bytes += rc) >= n_bytes || (inp->isource.flags & ULS_ISRC_FL_EOF)) {
+			break;
+		}
+		_uls_tool_(msleep)(15);
+	}
 
 	return inp->rawbuf_bytes;
 }
 
-int
+void
 ULS_QUALIFIED_METHOD(uls_regulate_rawbuf)(uls_input_ptr_t inp)
 {
 	int n_bytes = inp->rawbuf_bytes;
@@ -452,8 +455,6 @@ ULS_QUALIFIED_METHOD(uls_regulate_rawbuf)(uls_input_ptr_t inp)
 		}
 		inp->rawbuf_ptr = inp->rawbuf.buf;
 	}
-
-	return n_bytes;
 }
 
 int
@@ -504,19 +505,49 @@ int
 ULS_QUALIFIED_METHOD(uls_fill_fd_source_utf8)(uls_source_ptr_t isrc, char* buf, int buflen, int bufsiz)
 {
 	const uls_ptrtype_tool(utf_inbuf) inp = (const uls_ptrtype_tool(utf_inbuf)) isrc->usrc;
-	return _uls_tool_(fill_utf8buf)(inp, buf, buflen, bufsiz);
+	int rc;
+
+	rc = _uls_tool_(fill_utf8buf)(inp, buf, buflen, bufsiz);
+	if (rc < 0) {
+		isrc->flags |= ULS_ISRC_FL_ERR;
+	} else if (rc == 0) {
+		if (inp->is_eof > 0) {
+			isrc->flags |= ULS_ISRC_FL_EOF;
+		}
+	}
+	return rc;
 }
 
 int
 ULS_QUALIFIED_METHOD(uls_fill_fd_source_utf16)(uls_source_ptr_t isrc, char* buf, int buflen, int bufsiz)
 {
 	const uls_ptrtype_tool(utf_inbuf) inp = (const uls_ptrtype_tool(utf_inbuf)) isrc->usrc;
-	return _uls_tool_(fill_utf8buf)(inp, buf, buflen, bufsiz);
+	int rc;
+
+	rc =  _uls_tool_(fill_utf8buf)(inp, buf, buflen, bufsiz);
+	if (rc < 0) {
+		isrc->flags |= ULS_ISRC_FL_ERR;
+	} else if (rc == 0) {
+		if (inp->is_eof > 0) {
+			isrc->flags |= ULS_ISRC_FL_EOF;
+		}
+	}
+	return rc;
 }
 
 int
 ULS_QUALIFIED_METHOD(uls_fill_fd_source_utf32)(uls_source_ptr_t isrc, char* buf, int buflen, int bufsiz)
 {
 	const uls_ptrtype_tool(utf_inbuf) inp = (const uls_ptrtype_tool(utf_inbuf)) isrc->usrc;
-	return _uls_tool_(fill_utf8buf)(inp, buf, buflen, bufsiz);
+	int rc;
+
+	rc =  _uls_tool_(fill_utf8buf)(inp, buf, buflen, bufsiz);
+	if (rc < 0) {
+		isrc->flags |= ULS_ISRC_FL_ERR;
+	} else if (rc == 0) {
+		if (inp->is_eof > 0) {
+			isrc->flags |= ULS_ISRC_FL_EOF;
+		}
+	}
+	return rc;
 }

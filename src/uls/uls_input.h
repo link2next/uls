@@ -96,9 +96,7 @@ ULS_DEFINE_STRUCT_BEGIN(source)
 	uls_callback_type_this(ungrab_isource) usrc_ungrab;
 };
 
-#define ULS_INP_FL_READONLY    0x0001
 #define ULS_INP_FL_REFILL_NULL 0x0100
-
 ULS_DEFINE_STRUCT_BEGIN(input)
 {
 	uls_flags_t flags;
@@ -143,8 +141,8 @@ void uls_input_change_filler_null(uls_input_ptr_t inp);
 void uls_input_change_filler(uls_input_ptr_t inp,
 	uls_voidptr_t isrc, uls_fill_isource_t fill_rawbuf, uls_ungrab_isource_t ungrab_proc);
 
-int uls_input_readn(uls_source_ptr_t isrc, char *buf, int buflen0, int bufsiz);
-int uls_regulate_rawbuf(uls_input_ptr_t inp);
+int uls_input_read(uls_source_ptr_t isrc, char *buf, int buflen0, int bufsiz);
+void uls_regulate_rawbuf(uls_input_ptr_t inp);
 int uls_resize_rawbuf(uls_input_ptr_t inp, int delta);
 
 int uls_input_refill_null(uls_input_ptr_t inp, int n_bytes);

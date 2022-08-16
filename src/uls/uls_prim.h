@@ -306,6 +306,8 @@ void uls_deinit_nambuf(uls_nambuf_ptr_t arg);
 int uls_set_nambuf(uls_nambuf_ptr_t arg, const char *name, int name_len);
 int uls_set_nambuf_raw(char *argbuf, int argbuf_siz, const char *name, int name_len);
 
+void uls_msleep(int msecs);
+
 ULS_DLL_EXTERN void uls_memset(void *dstbuf, char ch, int n);
 ULS_DLL_EXTERN void uls_bzero(void *dstbuf, int n);
 
@@ -342,12 +344,12 @@ ULS_DLL_EXTERN int uls_append_arglst(uls_arglst_ptr_t arglst, uls_argstr_ptr_t a
 
 ULS_DLL_EXTERN int ustr_num_chars(const char *str, int len, uls_outparam_ptr_t parms);
 
-ULS_DLL_EXTERN int uls_encode_utf8(uls_uch_t uch, char* utf8buf, int siz_utf8buf);
+ULS_DLL_EXTERN int uls_encode_utf8(uls_uch_t uch, char* utf8buf);
 ULS_DLL_EXTERN int uls_decode_utf8(const char *utf8buf, int siz_utf8buf, uls_uch_t *p_val);
-ULS_DLL_EXTERN int uls_encode_utf16(uls_uch_t uch, uls_uint16 *buf);
-ULS_DLL_EXTERN int uls_decode_utf16(uls_uint16 *buf, int buf_len, uls_uch_t *p_uch);
+ULS_DLL_EXTERN int uls_encode_utf16(uls_uch_t uch, uls_uint16 *utf16buf);
+ULS_DLL_EXTERN int uls_decode_utf16(const uls_uint16 *buf, int buf_len, uls_uch_t *p_uch);
 ULS_DLL_EXTERN int uls_encode_utf32(uls_uch_t uch, uls_uint32 *buf);
-ULS_DLL_EXTERN int uls_decode_utf32(uls_uint32 buf, uls_uch_t *p_uch);
+ULS_DLL_EXTERN int uls_decode_utf32(const uls_uint32 buf, uls_uch_t *p_uch);
 
 ULS_DLL_EXTERN ULS_DECL_EXTERN_STATIC void uls_init_mutex(uls_mutex_t mtx);
 ULS_DLL_EXTERN ULS_DECL_EXTERN_STATIC void uls_deinit_mutex(uls_mutex_t mtx);

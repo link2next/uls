@@ -88,11 +88,13 @@ ULS_QUALIFIED_METHOD(check_keyw_str)(int lno, const char* str, uls_ptrtype_tool(
 				if (uch <= 0x7F && case_insensitive) {
 					uch = _uls_tool_(toupper)(uch);
 				}
-				if ((rc = _uls_tool_(encode_utf8)(uch, buf+len, ULS_LEXSTR_MAXSIZ-len)) <= 0) {
+
+				if ((rc = _uls_tool_(encode_utf8)(uch, NULL)) <= 0 || len + rc > ULS_LEXSTR_MAXSIZ) {
 					_uls_log(err_log)("#%d: encoding error!", lno);
 					return -1;
 				}
-				len += rc;
+
+				len += rc = _uls_tool_(encode_utf8)(uch, buf+len);
 				ptr = lit1.lptr;
 			}
 

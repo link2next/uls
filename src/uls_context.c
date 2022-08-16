@@ -47,7 +47,7 @@ ULS_QUALIFIED_METHOD(__xcontext_binfd_filler)(uls_xcontext_ptr_t xctx)
 		return 0;
 	}
 
-	if ((n=uls_input_readn(uls_ptr(inp->isource), inp->rawbuf.buf, inp->rawbuf_bytes, inp->rawbuf.siz)) <= 0) {
+	if ((n=uls_input_read(uls_ptr(inp->isource), inp->rawbuf.buf, inp->rawbuf_bytes, inp->rawbuf.siz)) <= 0) {
 		if (n==0) {
 			xctx->context->flags |= ULS_CTX_FL_EOF;
 		} else {
@@ -177,15 +177,14 @@ ULS_QUALIFIED_METHOD(__xcontext_txtfd_filler)(uls_xcontext_ptr_t xctx, uls_ptrty
 	uls_regulate_rawbuf(inp);
 
 again_1:
-	n = inp->rawbuf.siz - inp->rawbuf_bytes;
-	lptr = inp->rawbuf.buf + inp->rawbuf_bytes;
-
-	if ((rc=uls_input_readn(uls_ptr(inp->isource), inp->rawbuf.buf, inp->rawbuf_bytes, inp->rawbuf.siz)) < 0) {
+	if ((rc=uls_input_read(uls_ptr(inp->isource), inp->rawbuf.buf, inp->rawbuf_bytes, inp->rawbuf.siz)) < 0) {
 		if (inp->rawbuf_bytes > 0)
 			_uls_log(err_log)("%s: redundant %d-bytes exist!", __FUNCTION__, inp->rawbuf_bytes);
 		return -1;
 
-	} else if (rc == 0) {
+	}
+
+	if (rc == 0) {
 		if (inp->rawbuf_bytes == 0) {
 			parms->n = n_recs;
 			return 0;
@@ -378,7 +377,7 @@ ULS_QUALIFIED_METHOD(__check_rec_boundary_bin)(uls_xcontext_ptr_t xctx, uls_xctx
 			m2 = reclen - n;  // need m2 more bytes to complete a record.
 
 			_uls_tool(str_modify)(uls_ptr(inp->rawbuf), inp->rawbuf_bytes, NULL, m2);
-			if (uls_input_readn(uls_ptr(inp->isource), inp->rawbuf.buf, inp->rawbuf_bytes, reclen) < m2) {
+			if (uls_input_read(uls_ptr(inp->isource), inp->rawbuf.buf, inp->rawbuf_bytes, reclen) < m2) {
 				_uls_log(err_log)("%s: file error", __FUNCTION__);
 				return -1;
 			}
@@ -601,7 +600,6 @@ ULS_QUALIFIED_METHOD(uls_xcontext_init)(uls_xcontext_ptr_t xctx, uls_gettok_t ge
 
 	xctx->context = uls_alloc_object(uls_context_t); // initial-context
 	uls_init_context(xctx->context, gettok, xctx->toknum_NONE);
-	uls_input_set_fl(xctx->context->input, ULS_INP_FL_READONLY);
 }
 
 void
@@ -810,7 +808,7 @@ ULS_QUALIFIED_METHOD(xcontext_raw_filler)(uls_xcontext_ptr_t xctx)
 	lexseg = uls_get_array_slot_type10(uls_ptr(ctx->lexsegs), n_segs);
 	uls_reset_lexseg(lexseg, offset1, csz_length(ss_dst1) - offset1, -1, -1, nilptr);
 
-	_uls_tool(csz_add_eos)(ss_dst1);
+	_uls_tool(csz_text)(ss_dst1);
 	ctx->n_lexsegs = n_segs;
 	lexseg = uls_get_array_slot_type10(uls_ptr(ctx->lexsegs), 0);
 

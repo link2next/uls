@@ -145,7 +145,8 @@ ULS_QUALIFIED_METHOD(uls_get_escape_str)(char quote_ch, uls_ptrtype_tool(wrd) wr
 	char ch;
 
 	for ( ; ; ) {
-		if (k + ULS_UTF8_CH_MAXLEN >= siz_outbuff) { // buffer overflow
+		if (k + ULS_UTF8_CH_MAXLEN > siz_outbuff) {
+			// buffer overflow
 			return -1;
 		}
 
@@ -158,7 +159,7 @@ ULS_QUALIFIED_METHOD(uls_get_escape_str)(char quote_ch, uls_ptrtype_tool(wrd) wr
 				outbuff[k++] = '\\';
 				outbuff[k++] = *lptr++;
 			} else {
-				if ((rc = _uls_tool_(encode_utf8)(uch, outbuff + k, -1)) <= 0) {
+				if ((rc = _uls_tool_(encode_utf8)(uch, outbuff + k)) <= 0) {
 					return -1;
 				}
 				k += rc;
@@ -338,7 +339,7 @@ ULS_QUALIFIED_METHOD(dfl_lit_analyzer_escape0)(uls_litstr_ptr_t lit)
 	uls_quotetype_ptr_t qmt = lit_ctx->qmt;
 	uls_escmap_ptr_t escmap = qmt->escmap;
 
-	char buff[ULS_UTF8_CH_MAXLEN+1];
+	char buff[ULS_UTF8_CH_MAXLEN];
 	int rc, len, j;
 	uls_uch_t uch;
 
@@ -354,7 +355,6 @@ ULS_QUALIFIED_METHOD(dfl_lit_analyzer_escape0)(uls_litstr_ptr_t lit)
 
 	if (len > ULS_UTF8_CH_MAXLEN) len = ULS_UTF8_CH_MAXLEN;
 	for (j=0; j<len; j++) buff[j] = lptr[j];
-	buff[j] = '\0';
 
 	if ((rc = _uls_tool_(decode_utf8)(buff, j, &uch)) <= 0) {
 //		_uls_log(err_log)("%s: encoding error!", __FUNCTION__);
@@ -414,7 +414,7 @@ ULS_QUALIFIED_METHOD(dfl_lit_analyzer_escape1)(uls_litstr_ptr_t lit)
 	uls_quotetype_ptr_t qmt = lit_ctx->qmt;
 	uls_escmap_ptr_t escmap = qmt->escmap;
 
-	char buff[ULS_UTF8_CH_MAXLEN+1];
+	char buff[ULS_UTF8_CH_MAXLEN];
 	int len, len1, j, map_flags;
 	uls_uch_t uch;
 
@@ -425,7 +425,6 @@ ULS_QUALIFIED_METHOD(dfl_lit_analyzer_escape1)(uls_litstr_ptr_t lit)
 
 	if (len > ULS_UTF8_CH_MAXLEN) len = ULS_UTF8_CH_MAXLEN;
 	for (j=0; j<len; j++) buff[j] = lptr[j];
-	buff[j] = '\0';
 
 	if ((len1 = _uls_tool_(decode_utf8)(buff, j, &uch)) <= 0) {
 //		_uls_log(err_log)("%s: unterminated literal-string", __FUNCTION__);
@@ -457,7 +456,7 @@ ULS_QUALIFIED_METHOD(dfl_lit_analyzer_escape1)(uls_litstr_ptr_t lit)
 		lit_ctx->litstr_proc = uls_ref_callback_this(dfl_lit_analyzer_escape2);
 
 	} else {
-		if ((len = _uls_tool_(encode_utf8)(lit->uch, buff, ULS_UTF8_CH_MAXLEN)) <= 0) {
+		if ((len = _uls_tool_(encode_utf8)(lit->uch, buff)) <= 0) {
 //			_uls_log(err_log)("%s: encoding error!", __FUNCTION__);
 			return ULS_LITPROC_ERROR;
 		}
@@ -524,7 +523,7 @@ ULS_QUALIFIED_METHOD(dfl_lit_analyzer_escape2)(uls_litstr_ptr_t lit)
 	uch = __dec_escaped_char_cont('\0', lit);
 
 	if (map_flags & ULS_FL_ESCSTR_MAPUNICODE) {
-		if ((rc = _uls_tool_(encode_utf8)(uch, buff, ULS_UTF8_CH_MAXLEN)) <= 0) {
+		if ((rc = _uls_tool_(encode_utf8)(uch, buff)) <= 0) {
 			return ULS_LITPROC_ERROR;
 		}
 		for (j=0; j<rc; j++) {

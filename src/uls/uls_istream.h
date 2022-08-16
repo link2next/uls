@@ -57,7 +57,7 @@ ULS_DEFINE_STRUCT(istream)
 #ifdef ULS_FDF_SUPPORT
 	fdf_t   *fdf; // fd ---> fdf --->
 #endif
-	uls_def_namebuf(firstline, ULS_MAGICCODE_SIZE); // for magic-code-string
+	char    *firstline;
 	int     len_firstline;
 	int     start_off;
 

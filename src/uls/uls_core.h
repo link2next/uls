@@ -197,7 +197,7 @@ int uls_fillbuff_and_reset(uls_lex_ptr_t uls);
 
 int uls_gettok_raw(uls_lex_ptr_t uls);
 
-int __uls_change_isrc(uls_lex_ptr_t uls, int bufsiz, uls_voidptr_t isrc,
+int __uls_change_isrc(uls_lex_ptr_t uls, int bufsiz, uls_voidptr_t usrc,
   uls_fill_isource_t fill_rawbuf, uls_ungrab_isource_t ungrab_proc);
 uls_context_ptr_t uls_push_context(uls_lex_ptr_t uls, uls_context_ptr_t ctx_new);
 #endif // ULS_DECL_PROTECTED_PROC
