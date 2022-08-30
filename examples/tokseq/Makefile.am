@@ -9,3 +9,6 @@ $(tokseq_OBJECTS) : tokseq_lex.h
 
 tokseq_lex.h tokseq_lex.c : tokseq.uld
 	$(ulc2class_exe) --lang=c -f tokseq_lex -pTOK_ $<
+
+clean-local:
+	-rm -f a?.uls

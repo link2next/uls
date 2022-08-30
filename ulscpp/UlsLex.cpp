@@ -676,14 +676,19 @@ bool UlsLex::finishUldMap()
 void UlsLex::changeUldNames(const char *name, const char*name2, int tokid_valid, int tokid, const char *aliases)
 {
 	uld_line_t tok_names;
+	char *buff;
 
  	tok_names.name = name;
 	tok_names.name2 = name2;
 	tok_names.tokid_changed = tokid_valid;
 	tok_names.tokid = tokid;
-	tok_names.aliases = aliases;
+
+	if (aliases == NULL) aliases = "";
+	buff = uls_strdup(aliases, -1);
+	tok_names.aliases = buff;
 
 	uld_change_names(names_map, &tok_names);
+	uls_mfree(buff);
 }
 
 // <brief>
