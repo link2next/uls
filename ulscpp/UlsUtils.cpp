@@ -75,28 +75,6 @@ UlsAuw::~UlsAuw()
 	free(auwstr_buf);
 }
 
-char*
-UlsAuw::mbstr2mbstr(const char *mbstr, int mode, int slot_no)
-{
-	char *mbstr2;
-
-	if (slot_no >= siz_auwstr_buf) {
-		err_panic("Internal error slot_no = %d/%d", slot_no, siz_auwstr_buf);
-	}
-
-	if (mode == CVT_MBSTR_USTR) {
-		mbstr2 = uls_astr2ustr(mbstr, -1, auwstr_buf + slot_no);
-	}
-	else if (mode == CVT_MBSTR_ASTR) {
-		mbstr2 = uls_ustr2astr(mbstr, -1, auwstr_buf + slot_no);
-	}
-	else {
-		mbstr2 = NULL;
-	}
-
-	return mbstr2;
-}
-
 char *
 UlsAuw::wstr2mbstr(const wchar_t *wstr, int mode, int slot_no)
 {
@@ -108,9 +86,6 @@ UlsAuw::wstr2mbstr(const wchar_t *wstr, int mode, int slot_no)
 
 	if (mode == CVT_MBSTR_USTR) {
 		mbstr2 = uls_wstr2ustr(wstr, -1, auwstr_buf + slot_no);
-	}
-	else if (mode == CVT_MBSTR_ASTR) {
-		mbstr2 = uls_wstr2astr(wstr, -1, auwstr_buf + slot_no);
 	}
 	else {
 		mbstr2 = NULL;
@@ -130,9 +105,6 @@ UlsAuw::mbstr2wstr(const char *mbstr, int mode, int slot_no)
 
 	if (mode == CVT_MBSTR_USTR) {
 		wstr2 = uls_ustr2wstr(mbstr, -1, auwstr_buf + slot_no);
-	}
-	else if (mode == CVT_MBSTR_ASTR) {
-		wstr2 = uls_astr2wstr(mbstr, -1, auwstr_buf + slot_no);
 	}
 	else {
 		wstr2 = NULL;

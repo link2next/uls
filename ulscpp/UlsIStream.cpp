@@ -224,8 +224,8 @@ uls::crux::UlsTmplList::setValue(const char *tnam, const char *tval)
 	insert(tnam, tval);
 
 	wchar_t *wstr0, *wstr1;
-	_ULSCPP_NSTR2WSTR(tnam, wstr0, 0);
-	_ULSCPP_NSTR2WSTR(tval, wstr1, 1);
+	_ULSCPP_USTR2WSTR(tnam, wstr0, 0);
+	_ULSCPP_USTR2WSTR(tval, wstr1, 1);
 
 	insert(wstr0, wstr1);
 
@@ -244,8 +244,8 @@ uls::crux::UlsTmplList::setValue(const wchar_t *wtnam, const wchar_t *wtval)
 	insert(wtnam, wtval);
 
 	const char *nstr0, *nstr1;
-	_ULSCPP_WSTR2NSTR(wtnam, nstr0, 0);
-	_ULSCPP_WSTR2NSTR(wtval, nstr1, 1);
+	_ULSCPP_WSTR2USTR(wtnam, nstr0, 0);
+	_ULSCPP_WSTR2USTR(wtval, nstr1, 1);
 
 	insert(nstr0, nstr1);
 
@@ -272,8 +272,8 @@ uls::crux::UlsTmplList::exportTmpls(uls_tmpl_list_t *tmpl_list)
 		std::pair<string,string> pp=*it;
 
 		const char *ustr0, *ustr1;
-		_ULSCPP_NSTR2USTR(pp.first.c_str(), ustr0, 0);
-		_ULSCPP_NSTR2USTR(pp.second.c_str(), ustr1, 1);
+		ustr0 = pp.first.c_str();
+		ustr1 = pp.second.c_str();
 
 		uls_add_tmpl(tmpl_list, ustr0, ustr1);
 		++n;
@@ -341,7 +341,7 @@ uls::crux::UlsIStream::UlsIStream(string filepath, UlsTmplList *uls_tmpls)
 {
 	const char *ustr;
 
-	_ULSCPP_NSTR2USTR(filepath.c_str(), ustr, 0);
+	ustr = filepath.c_str();
 	initUlsIStream_ustr(ustr, uls_tmpls);
 }
 

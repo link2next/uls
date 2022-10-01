@@ -87,10 +87,6 @@ ULS_DLL_EXTERN int ulsjava_push_file(uls_lex_ptr_t uls, const void *filepath, in
 ULS_DLL_EXTERN int ulsjava_set_line(uls_lex_ptr_t uls, const void *line, int len, int flags);
 ULS_DLL_EXTERN int ulsjava_set_file(uls_lex_ptr_t uls, const void *filepath, int len_filepath, int flags);
 
-ULS_DLL_EXTERN int _uls_MBCS(void);
-ULS_DLL_EXTERN int _uls_const_MBCS_UTF8(void);
-ULS_DLL_EXTERN int _uls_const_MBCS_MS_MBCS(void);
-
 ULS_DLL_EXTERN void uls_skip_white_spaces(uls_lex_ptr_t uls);
 #endif // ULS_DECL_PUBLIC_PROC
 

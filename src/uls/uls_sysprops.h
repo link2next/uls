@@ -65,7 +65,7 @@ ULS_DEFINE_STRUCT(sysinfo)
 
 	const char *etc_dir, *home_dir, *ulcs_dir;
 	char *ULC_SEARCH_PATH;
-	int  encoding, codepage, multibytes;
+	int  codepage, multibytes;
 
 	uls_decl_array_type00(properties, sysprop, ULS_N_SYSPROPS);
 	int n_properties;

@@ -50,7 +50,6 @@ uls_wputstr(const wchar_t *wstr)
 #else
 	austr = uls_wstr2ustr(wstr, -1, uls_ptr(csz));
 #endif
-
 	if (austr == NULL) {
 		err_wlog(L"encoding error!");
 	} else {
@@ -390,7 +389,7 @@ uls_set_warg_list(uls_warg_list_t *wlist, char **args, int n_args)
 		return;
 	}
 
-	wlist->wargs = (uls_warg_t*) uls_malloc(n_args * sizeof(uls_warg_t));
+	wlist->wargs = (uls_warg_t *) uls_malloc(n_args * sizeof(uls_warg_t));
 	wlist->n_wargs = n_args;
 
 	csz_init(&csz, -1);

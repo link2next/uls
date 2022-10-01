@@ -207,43 +207,6 @@ test_uls_xdef(LPTSTR fpath)
 }
 
 int
-uls_fill_FILE_source(uls_source_t* isrc, char* buf, int buflen, int bufsiz)
-{
-	FILE  *fp = (FILE *) isrc->usrc;
-	return fread(buf + buflen, sizeof(char), bufsiz - buflen, fp);
-}
-
-static void
-uls_ungrab_FILE_source(uls_source_t* isrc)
-{
-	FILE  *fp = (FILE *) isrc->usrc;
-	uls_fp_close(fp);
-}
-
-void
-test_uls_isrc(LPTSTR fpath)
-{
-	FILE   *fp;
-
-	if ((fp=uls_fp_wopen(fpath, ULS_FIO_READ)) == NULL) {
-		err_wlog(_T(" file open error"));
-		return;
-	}
-
-	uls_push_isrc(sample_lex, (void *) fp,
-		uls_fill_FILE_source, uls_ungrab_FILE_source);
-
-	uls_set_tag_wstr(sample_lex, fpath, 1);
-
-	for ( ; ; ) {
-		if (uls_get_wtok(sample_lex) == TOK_EOI) break;
-
-		uls_wprintf(_T("%3d"), uls_get_lineno(sample_lex));
-		uls_dump_tok_wstr(sample_lex, _T("\t"), _T("\n"));
-	}
-}
-
-int
 main(int argc, char *argv[])
 {
 	LPTSTR *targv;
@@ -280,9 +243,6 @@ main(int argc, char *argv[])
 		break;
 	case 2:
 		test_uls_xdef(input_file);
-		break;
-	case 3:
-		test_uls_isrc(input_file);
 		break;
 	default:
 		break;

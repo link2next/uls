@@ -54,7 +54,7 @@ static int load_pairs(uls_lex_ptr_t uls)
 	tok_names.name2 = "NULL";
 	tok_names.tokid_changed = 1;
 	tok_names.tokid = 130;
-	tok_names.aliases = "IDENT";
+	tok_names.aliases = "IDENT ID_ALIAS";
 	uld_change_names(names_map, uls_ptr(tok_names));
 
 	 }

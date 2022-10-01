@@ -43,10 +43,6 @@ ULS_QUALIFIED_METHOD(__init_system_info)(uls_sysinfo_ptr_t sysinfo, int poolsiz)
 	sysinfo->ulcs_dir = NULL;
 	sysinfo->ULS_BYTE_ORDER = uls_host_byteorder();
 
-	sysinfo->encoding = ULS_MBCS_UNKNOWN;
-	sysinfo->codepage = -1;
-	sysinfo->multibytes = 2;
-
 	sysinfo->LDBL_IEEE754_FMT = uls_check_longdouble_fmt(sysinfo->ULS_BYTE_ORDER);
 	if (sysinfo->LDBL_IEEE754_FMT == ULS_IEEE754_BINARY64) {
 		sysinfo->LDOUBLE_SIZE_BYTES = DOUBLE_SIZE_BYTES;

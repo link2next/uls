@@ -805,7 +805,7 @@ ULS_QUALIFIED_METHOD(initialize_uls_util)(void)
 	char pathbuff[ULS_FILEPATH_MAX+1];
 	const char *fpath, *cptr;
 
-	int rc, mbs, len;
+	int rc, len;
 	uls_type_tool(outparam) parms;
 	unsigned int a;
 
@@ -890,22 +890,16 @@ ULS_QUALIFIED_METHOD(initialize_uls_util)(void)
 	}
 
 	if (uls_streql(cptr, "utf8")) {
-		_uls_sysinfo_(encoding) = ULS_MBCS_UTF8;
-
+		_uls_sysinfo_(codepage) = 0; // UTF-8
+		_uls_sysinfo_(multibytes) = 0;
 	} else {
 		parms.lptr = cptr;
-		rc = get_ms_codepage(uls_ptr(parms));
-		mbs = parms.n;
-
-		if (rc >= 0) {
-			_uls_sysinfo_(encoding) = ULS_MBCS_MS_MBCS;
-			_uls_sysinfo_(codepage) = rc;
-			_uls_sysinfo_(multibytes) = mbs;
-
-		} else {
+		if ((rc = get_ms_codepage(uls_ptr(parms))) <= 0) {
 			_uls_log(err_log)("%s: unknown file-encoding %s", cptr);
 			return -1;
 		}
+		_uls_sysinfo_(codepage) = rc;
+		_uls_sysinfo_(multibytes) = parms.n;
 	}
 
 	return 0;

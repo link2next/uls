@@ -24,7 +24,7 @@
       $ test_1st test_1st_sam.txt
 
 
-  Building from the source code on Linux/macOS
+  Building from the source files on Linux/macOS
   ------------------
      $ ./configure [--prefix=<INST_DIR>] [--with-etc-dir=<ADMIN_DIR>]
      $ make
@@ -37,7 +37,7 @@
   2) You can also change the admin-directory using the option of 'configure'
       For instance, if you want it to be '/opt/uls_1_8/etc',
            run 'configure' like this:
-           ./configure --with-etc-dir='/opt/uls_1_8/etc'
+           $ ./configure --with-etc-dir='/opt/uls_1_8/etc'
       The default admin-directory is '/usr/local/etc/uls'.
 
   3) After installation, There'll be directories named 'bin', 'lib', include', and 'share'

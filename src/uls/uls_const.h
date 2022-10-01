@@ -230,10 +230,6 @@
 #define ULS_UTF8_CH_MAXLEN    4
 #define ULS_UTF16_CH_MAXLEN   2
 
-#define ULS_MBCS_UNKNOWN  -1
-#define ULS_MBCS_UTF8      0
-#define ULS_MBCS_MS_MBCS   1
-
 #define UTF8_CODEPOINT_END          0x1FFFFF
 #define UTF16_CODEPOINT_END         0x10FFFF
 #define UTF16_CODEPOINT_RSVD_START  0xD800

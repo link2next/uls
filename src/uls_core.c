@@ -2075,18 +2075,6 @@ ULS_QUALIFIED_METHOD(_uls_const_DO_DUP)(void)
 	return ULS_DO_DUP;
 }
 
-int
-ULS_QUALIFIED_METHOD(_uls_const_FILE_MS_MBCS)(void)
-{
-	return ULS_FILE_MS_MBCS;
-}
-
-int
-ULS_QUALIFIED_METHOD(_uls_const_FILE_UTF8)(void)
-{
-	return ULS_FILE_UTF8;
-}
-
 uls_uch_t
 ULS_QUALIFIED_METHOD(_uls_const_NEXTCH_NONE)(void)
 {

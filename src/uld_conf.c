@@ -138,8 +138,8 @@ ULS_QUALIFIED_METHOD(uld_pars_line)(int lno, uls_ptrtype_tool(wrd) wrdx, uld_lin
 		_uls_log(err_log)("\t:'%s' to ''", name);
 		return -1;
 	}
-	wrdx->lptr = _uls_tool(skip_blanks)(wrdx->lptr);
 
+	wrdx->lptr = _uls_tool(skip_blanks)(wrdx->lptr);
 	if (_uls_tool(is_pure_integer)(wrd, nilptr) > 0) {
 		tok_id = _uls_tool_(atoi)(wrd);
 		changed = 1;

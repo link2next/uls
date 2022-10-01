@@ -141,7 +141,6 @@ ULS_QUALIFIED_METHOD(check_keyw_str)(int lno, const char* str, uls_ptrtype_tool(
 
 			if (ch < ULS_SYNTAX_TABLE_SIZE && (ch_ctx[ch] & ULS_CH_QUOTE)) ++n_ch_quotes;
 			if (ch < ULS_SYNTAX_TABLE_SIZE && (ch_ctx[ch] & ULS_CH_COMM)) ++n_ch_comms;
-
 		} while (*(ptr += rc) != '\0');
 
 		n_ch_non_idstr = 1;

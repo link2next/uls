@@ -276,7 +276,6 @@ ULS_QUALIFIED_METHOD(uls_set_istream)(uls_lex_ptr_t uls, uls_istream_ptr_t istr,
 	}
 
 	uls_pop(uls);
-
 	return uls_push_istream(uls, istr, tmpl_list, flags);
 }
 
@@ -623,24 +622,6 @@ ULS_QUALIFIED_METHOD(ulsjava_set_file)(uls_lex_ptr_t uls, const void *filepath, 
 	uls_mfree(ustr);
 
 	return rc;
-}
-
-int
-ULS_QUALIFIED_METHOD(_uls_MBCS)(void)
-{
-	return _uls_sysinfo_(encoding);
-}
-
-int
-ULS_QUALIFIED_METHOD(_uls_const_MBCS_UTF8)(void)
-{
-	return ULS_MBCS_UTF8;
-}
-
-int
-ULS_QUALIFIED_METHOD(_uls_const_MBCS_MS_MBCS)(void)
-{
-	return ULS_MBCS_MS_MBCS;
 }
 
 void
