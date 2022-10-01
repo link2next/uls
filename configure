@@ -17260,7 +17260,20 @@ _ACEOF
 
 fi
 
-for ac_header in fcntl.h libintl.h limits.h locale.h malloc.h stddef.h stdlib.h string.h unistd.h wchar.h
+for ac_header in fcntl.h libintl.h limits.h locale.h malloc.h
+do :
+  as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
+ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
+if eval test \"x\$"$as_ac_Header"\" = x"yes"; then :
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_header" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+
+done
+
+for ac_header in stddef.h stdlib.h string.h unistd.h wchar.h
 do :
   as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
 ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
@@ -17858,7 +17871,31 @@ $as_echo "#define realloc rpl_realloc" >>confdefs.h
 fi
 
 
-for ac_func in atexit dup2 getcwd memmove memset mkdir modf setlocale strchr strcasecmp strdup strerror strstr strrchr strtol strtoul
+for ac_func in atexit dup2 getcwd memmove memset mkdir modf setlocale
+do :
+  as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
+ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
+if eval test \"x\$"$as_ac_var"\" = x"yes"; then :
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+done
+
+for ac_func in strchr strcasecmp strdup strerror strstr strrchr strtol strtoul
+do :
+  as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
+ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
+if eval test \"x\$"$as_ac_var"\" = x"yes"; then :
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+done
+
+for ac_func in readlink realpath
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
@@ -17928,7 +17965,7 @@ fi
 
 
 
-ac_config_files="$ac_config_files Makefile ulsconfig/Makefile ulc_exam/Makefile src/Makefile ulscompat/Makefile ulscpp/Makefile tools/Makefile tools/ulstools/Makefile tools/ulc2class/Makefile tools/ulf_gen/Makefile tools/uls_stream/Makefile tools/ulc2yaml/Makefile doc/Makefile doc/man/Makefile tests/Makefile tests/cpp_hello/Makefile tests/dump_toks/Makefile tests/id_stat/Makefile tests/getch/Makefile tests/line/Makefile tests/log/Makefile tests/many_kwrds/Makefile tests/nest/Makefile tests/strings/Makefile tests/tok_remap/Makefile tests/two_lex/Makefile tests/test_tree/Makefile tests/gcc_toks/Makefile tests/wdump_toks/Makefile examples/Makefile examples/test_1st/Makefile examples/tokseq/Makefile examples/yacc/Makefile examples/DumpToks/Makefile examples/Css3/Makefile examples/Html5/Makefile examples/Shell/Makefile examples/Mkf/Makefile examples/Natural/Makefile post_inst/Makefile"
+ac_config_files="$ac_config_files Makefile ulsconfig/Makefile ulc_exam/Makefile src/Makefile ulscompat/Makefile ulscpp/Makefile tools/Makefile tools/ulstools/Makefile tools/ulc2class/Makefile tools/ulf_gen/Makefile tools/uls_stream/Makefile doc/Makefile doc/man/Makefile tests/Makefile tests/cpp_hello/Makefile tests/dump_toks/Makefile tests/id_stat/Makefile tests/getch/Makefile tests/line/Makefile tests/log/Makefile tests/many_kwrds/Makefile tests/nest/Makefile tests/strings/Makefile tests/tok_remap/Makefile tests/two_lex/Makefile tests/test_tree/Makefile tests/gcc_toks/Makefile tests/wdump_toks/Makefile examples/Makefile examples/test_1st/Makefile examples/tokseq/Makefile examples/yacc/Makefile examples/DumpToks/Makefile examples/Css3/Makefile examples/Html5/Makefile examples/Shell/Makefile examples/Mkf/Makefile examples/Natural/Makefile examples/ulc2yaml/Makefile post_inst/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -19055,7 +19092,6 @@ do
     "tools/ulc2class/Makefile") CONFIG_FILES="$CONFIG_FILES tools/ulc2class/Makefile" ;;
     "tools/ulf_gen/Makefile") CONFIG_FILES="$CONFIG_FILES tools/ulf_gen/Makefile" ;;
     "tools/uls_stream/Makefile") CONFIG_FILES="$CONFIG_FILES tools/uls_stream/Makefile" ;;
-    "tools/ulc2yaml/Makefile") CONFIG_FILES="$CONFIG_FILES tools/ulc2yaml/Makefile" ;;
     "doc/Makefile") CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
     "doc/man/Makefile") CONFIG_FILES="$CONFIG_FILES doc/man/Makefile" ;;
     "tests/Makefile") CONFIG_FILES="$CONFIG_FILES tests/Makefile" ;;
@@ -19083,6 +19119,7 @@ do
     "examples/Shell/Makefile") CONFIG_FILES="$CONFIG_FILES examples/Shell/Makefile" ;;
     "examples/Mkf/Makefile") CONFIG_FILES="$CONFIG_FILES examples/Mkf/Makefile" ;;
     "examples/Natural/Makefile") CONFIG_FILES="$CONFIG_FILES examples/Natural/Makefile" ;;
+    "examples/ulc2yaml/Makefile") CONFIG_FILES="$CONFIG_FILES examples/ulc2yaml/Makefile" ;;
     "post_inst/Makefile") CONFIG_FILES="$CONFIG_FILES post_inst/Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;

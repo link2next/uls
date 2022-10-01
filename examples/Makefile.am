@@ -1,7 +1,8 @@
 include $(top_srcdir)/uls.config
 
 SUBDIRS = test_1st tokseq yacc \
-	DumpToks Css3 Html5 Shell Mkf Natural
+	DumpToks Css3 Html5 Shell Mkf Natural \
+	ulc2yaml
 
 check: all
 	@bash ./run_examples.sh $(etc_dir)

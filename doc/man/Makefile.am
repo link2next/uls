@@ -12,3 +12,6 @@ uls_stream.1: $(top_builddir)/tools/uls_stream/uls_stream
 
 check:
 	touch $(dist_man_MANS)
+
+clean-local:
+	-rm -f $(dist_man_MANS)

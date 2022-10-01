@@ -34,7 +34,6 @@
 
 #include "uls.h"
 #include "uls/uls_util.h"
-
 #include "uls/uls_sysprops.h"
 #include "uls/uls_langs.h"
 #include "uls/uls_conf.h"
@@ -42,13 +41,12 @@
 #include "uls/uls_emit.h"
 #include "uls/uls_dump.h"
 
+#include <string.h>
 #include <ctype.h>
 
 #define THIS_PROGNAME "ulc2yaml"
-#include "ult_utils.h"
 
 const char *progname;
-char home_dir[ULS_FILEPATH_MAX+1];
 char *out_filepath;
 char specname[128];
 
@@ -134,7 +132,7 @@ ulc2yaml_options(int opt, char* optarg)
 
 	switch (opt) {
 	case 'o':
-		out_filepath = ult_strdup(optarg);
+		out_filepath = uls_strdup(optarg, -1);
 		uls_path_normalize(out_filepath, out_filepath);
 		break;
 
@@ -173,18 +171,10 @@ ulc2yaml_options(int opt, char* optarg)
 static int
 parse_options(int argc, char* argv[])
 {
+	int  i0;
 #ifdef HAVE_GETOPT
-	int  opt, longindex;
-#endif
-	int  rc, len, i0, mask, len_fname, len_filepath, len_dirpath2;
-	char the_rootdir[2] = { ULS_FILEPATH_DELIM, '\0' };
-	char *fname, *tmp_buf;
+	int  rc, opt, longindex;
 
-	if (ult_getcwd(home_dir, ULS_FILEPATH_MAX) < 0) {
-		err_panic("%s: fail to getcwd()", __FUNCTION__);
-	}
-
-#ifdef HAVE_GETOPT
 	while ((opt=getopt_long(argc, argv, ULC2YAML_OPTSTR, longopts, &longindex)) != -1) {
 		if ((rc=ulc2yaml_options(opt, optarg)) != 0) {
 			if (rc > 0) rc = 0;
@@ -201,7 +191,7 @@ parse_options(int argc, char* argv[])
 	if (i0 < argc) {
 		uls_outparam_t parms;
 
-		ulc_config = ult_strdup(argv[i0++]);
+		ulc_config = uls_strdup(argv[i0++], -1);
 		parms.line = specname;
 		if ((typ_fpath = uls_get_spectype(ulc_config, uls_ptr(parms))) < 0) {
 			err_log("%s: Invalid name for spec-name", ulc_config);
@@ -217,7 +207,7 @@ parse_options(int argc, char* argv[])
 int
 main(int argc, char* argv[])
 {
-	int i0, rc, stat=0;
+	int i0, stat=0;
 	FILE *fout;
 
 	initialize_uls();
