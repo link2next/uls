@@ -687,6 +687,12 @@ main(int argc, char* argv[])
 		uld_file = NULL;
 	}
 
+	if (prn_flags & ULS_FL_VERBOSE) {
+		if (typ_fpath != ULS_NAME_FILEPATH_ULD) {
+			ulc_list_searchpath(ulc_config);
+		}
+	}
+
 	if ((sam_lex=uls_create(ulc_config)) == uls_nil) {
 		err_log("%s: Failed to open the configuration file %s.", progname, ulc_config);
 		if (typ_fpath != ULS_NAME_FILEPATH_ULD) {

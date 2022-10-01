@@ -1,4 +1,12 @@
 
+  v1.8.12
+  -----------
+    o bug-fixes on
+     a) the generated cpp source files from uld-file 
+    o Delete the debris of ANSI-encoding api, which is not supported any more.
+    o Fixed the example of uls_push_isrc in tests/dump_toks 
+    o Moved ulc2yaml from 'tests' to 'examples' directory. 
+
   v1.8.11
   -----------
     o bug-fixes on

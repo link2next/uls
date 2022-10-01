@@ -960,10 +960,6 @@ ULS_QUALIFIED_METHOD(print_tokdef_java)(uls_lex_ptr_t uls,
 		uls_sysprn_tabs(n_tabs, "finishUldMap();\n");
 	}
 	--n_tabs;
-	uls_sysprn_tabs(n_tabs, "}\n\n");
-
-	uls_sysprn_tabs(n_tabs, "protected void finalize() %c\n", ch_lbrace);
-	uls_sysprn_tabs(n_tabs, "\tsuper.finalize();\n");
 	uls_sysprn_tabs(n_tabs, "}\n");
 
 	--n_tabs;
@@ -1133,12 +1129,6 @@ ULS_QUALIFIED_METHOD(uls_generate_tokdef_file)(uls_lex_ptr_t uls, uls_parms_emit
 	int   i, n_tokdef_ary_prn, n_alloc_tokdef_ary_prn;
 	uls_decl_parray(tokdef_ary_prn, tokdef_vx);
 	uls_decl_parray_slots(slots_prn, tokdef_vx);
-
-	if (emit_parm->fpath_uld != NULL &&
-		(emit_parm->flags & (ULS_FL_C_GEN | ULS_FL_CPP_GEN)) == 0) {
-		_uls_log(err_log)("%s: Currently, Not Support for Generating source files other than c/c++ from uld files ", __func__);
-		return -1;
-	}
 
 	n_alloc_tokdef_ary_prn = uls->tokdef_vx_array.n;
 	uls_init_parray(uls_ptr(tokdef_ary_prn), tokdef_vx, n_alloc_tokdef_ary_prn);

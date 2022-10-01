@@ -945,11 +945,10 @@ ULS_QUALIFIED_METHOD(uls_gettok_raw)(uls_lex_ptr_t uls)
 		}
 
 	} else if (((ch_grp & ULS_CH_2PLUS) || ch >= ULS_SYNTAX_TABLE_SIZE) &&
-		(e=is_keyword_twoplus(uls_ptr(uls->twoplus_table), ch_ctx, lptr)) != nilptr) {
+		(e_vx=is_keyword_twoplus(uls_ptr(uls->twoplus_table), ch_ctx, lptr)) != nilptr) {
 		/* FOUND */
-		e_vx = e->view;
+		e = e_vx->base; // assert: e != nilptr
 		ctx->tok = e_vx->tok_id;
-
 		rc = e->l_keyword;
 
 		_uls_tool(str_append)(uls_ptr(ctx->tokbuf), 0, lptr, rc);

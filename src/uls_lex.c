@@ -98,17 +98,7 @@ ULS_QUALIFIED_METHOD(uls_select_isrc_filler)(uls_context_ptr_t ctx, uls_istream_
 	uls_voidptr_t dat;
 
 	if (istr->header.filetype == ULS_STREAM_RAW) {
-		if (subtype == UTF_INPUT_FORMAT_8) {
-			fill_isrc = uls_ref_callback_this(uls_fill_fd_source_utf8);
-		} else if (subtype == UTF_INPUT_FORMAT_16) {
-			fill_isrc = uls_ref_callback_this(uls_fill_fd_source_utf16);
-		} else if (subtype == UTF_INPUT_FORMAT_32) {
-			fill_isrc = uls_ref_callback_this(uls_fill_fd_source_utf32);
-		} else {
-			subtype = UTF_INPUT_FORMAT_8;
-			fill_isrc = uls_ref_callback_this(uls_fill_fd_source_utf8);
-		}
-
+		fill_isrc = uls_ref_callback_this(uls_fill_fd_source_utf8);
 		bufsiz0 = ULS_FDBUF_INITSIZE;
 
 		mode = subtype;

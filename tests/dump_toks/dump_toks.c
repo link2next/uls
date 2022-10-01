@@ -239,8 +239,45 @@ test_uls_xdef(char* fpath)
 int
 uls_fill_FILE_source(uls_source_t* isrc, char* buf, int buflen, int bufsiz)
 {
+	static unsigned char utf8buf[ULS_UTF8_CH_MAXLEN];
+	static int len_utf8buf;
+
+	int buflen0 = buflen;
 	FILE  *fp = (FILE *) isrc->usrc;
-	return fread(buf + buflen, sizeof(char), bufsiz - buflen, fp);
+	int i, j, rc, n_bytes;
+
+	if (len_utf8buf > 0) {
+		for (j = 0 ; j < len_utf8buf; j++) {
+			buf[buflen + j] = utf8buf[j];
+		}
+	}
+
+	if ((buflen += len_utf8buf) >= bufsiz) {
+		return buflen - buflen0;
+	}
+
+	if ((n_bytes = fread(buf + buflen, sizeof(char), bufsiz - buflen, fp)) <= 0) {
+		if (n_bytes < 0 || ferror(fp) || !feof(fp)) {
+			n_bytes = -1;
+		}
+		return n_bytes;
+	}
+
+	for (i = buflen; i < n_bytes; i += rc) {
+		if ((rc = uls_decode_utf8(buf + i, n_bytes - i, NULL)) <= 0) {
+			if (rc < -ULS_UTF8_CH_MAXLEN || feof(fp)) {
+				return -2;
+			}
+			len_utf8buf = n_bytes - i;
+			for (j = 0; j < len_utf8buf; j++) {
+				utf8buf[j] = buf[i + j];
+			}
+			break;
+		}
+
+	}
+
+	return i - buflen0;
 }
 
 static void
@@ -254,7 +291,10 @@ void
 test_uls_isrc(char* fpath)
 {
 	uls_lex_t *uls = sample_lex;
+	const char *tokstr;
+	unsigned char ch;
 	FILE   *fp;
+	int j, t;
 
 	if ((fp=uls_fp_open(fpath, ULS_FIO_READ)) == NULL) {
 		err_log(" file open error");
@@ -267,10 +307,15 @@ test_uls_isrc(char* fpath)
 	uls_set_tag(uls, fpath, 1);
 
 	for ( ; ; ) {
-		if (uls_get_tok(uls) == TOK_EOI) break;
+		if ((t = uls_get_tok(uls)) == TOK_EOI) break;
 
-		uls_printf("%3d", uls_get_lineno(uls));
-		uls_dumpln_tok(uls);
+		uls_printf("#%d(%6d) :", uls_get_lineno(uls), t);
+
+           tokstr = uls_lexeme(uls);
+           for (j=0; (ch = tokstr[j]) != '\0'; j++) {
+		uls_printf(" %2x", ch);
+           }
+           uls_printf("\n");
 	}
 }
 
