@@ -1140,7 +1140,7 @@ bool UlsLex::is_ch_space(uls_uch_t uch)
 // <return>bool</return>
 bool UlsLex::is_ch_idfirst(uls_uch_t uch)
 {
-	return uls_is_ch_idfirst(&lex, uch) ? true : false;
+	return uls_canbe_ch_idfirst(&lex, uch) ? true : false;
 }
 
 // <brief>
@@ -1151,7 +1151,7 @@ bool UlsLex::is_ch_idfirst(uls_uch_t uch)
 // <return>bool</return>
 bool UlsLex::is_ch_id(uls_uch_t uch)
 {
-	return uls_is_ch_id(&lex, uch) ? true : false;
+	return uls_canbe_ch_id(&lex, uch) ? true : false;
 }
 
 // <brief>
@@ -1162,7 +1162,7 @@ bool UlsLex::is_ch_id(uls_uch_t uch)
 // <return>bool</return>
 bool UlsLex::is_ch_quote(uls_uch_t uch)
 {
-	return uls_is_ch_quote(&lex, uch) ? true : false;
+	return uls_canbe_ch_quote(&lex, uch) ? true : false;
 }
 
 // <brief>
@@ -1185,7 +1185,7 @@ bool UlsLex::is_ch_1ch_token(uls_uch_t uch)
 // <return>bool</re turn>
 bool UlsLex::is_ch_2ch_token(uls_uch_t uch)
 {
-	return uls_is_ch_2ch_token(&lex, uch) ? true : false;
+	return uls_canbe_ch_2ch_token(&lex, uch) ? true : false;
 }
 
 // <brief>
@@ -1196,7 +1196,7 @@ bool UlsLex::is_ch_2ch_token(uls_uch_t uch)
 // <return>bool</return>
 bool UlsLex::is_ch_comm(uls_uch_t uch)
 {
-	return uls_is_ch_comm(&lex, uch) ? true : false;
+	return uls_canbe_ch_comm(&lex, uch) ? true : false;
 }
 
 // <brief>

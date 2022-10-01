@@ -326,6 +326,7 @@ ULS_QUALIFIED_METHOD(uls_push_istream_2)(uls_lex_ptr_t uls, uls_istream_ptr_t is
 	}
 
 	if (uls_fillbuff_and_reset(uls) < 0) {
+		uls_pop(uls);
 		return -1;
 	}
 

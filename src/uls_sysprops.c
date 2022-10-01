@@ -190,7 +190,7 @@ ULS_QUALIFIED_METHOD(uls_destroy_sysinfo)(uls_sysinfo_ptr_t sysinfo)
 int
 ULS_QUALIFIED_METHOD(uls_load_system_properties)(const char *fpath, uls_sysinfo_ptr_t sysinfo)
 {
-	const char utf8_bom[3] = { (char) 0xEF, (char) 0xBB, (char) 0xBF };
+	const char utf8_bom[3] = { 0xEF, 0xBB, 0xBF };
 	FILE *fp;
 	char linebuff[ULS_LINEBUFF_SIZ+1];
 	char *line, *name;

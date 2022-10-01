@@ -1789,12 +1789,8 @@ ULS_QUALIFIED_METHOD(set_chrmap)(uls_lex_ptr_t uls, int tok_id, int keyw_type, c
 
 	case ULS_KEYW_TYPE_IDSTR:
 	case ULS_KEYW_TYPE_USER:
-		if (tok_id >= 0 && tok_id < ULS_SYNTAX_TABLE_SIZE) {
-			if (ch_ctx[tok_id] & ULS_CH_1) {
-//				_uls_log(err_log)("%s<%d>: Overriding char-token,", tag_nam, lno);
-//				_uls_log(err_log)("\t%d('%c') ...", tok_id, tok_id);
-				ch_ctx[tok_id] &= ~ULS_CH_1;
-			}
+		if (_uls_tool_(isprint)(tok_id) && (ch_ctx[tok_id] & ULS_CH_1)) {
+//			_uls_log(err_log)("User token overrides char-token('%c'),", tok_id, tok_id);
 		}
 		break;
 
@@ -2423,33 +2419,6 @@ ULS_QUALIFIED_METHOD(classify_char_group)(uls_lex_ptr_t uls, ulc_header_ptr_t ul
 	uls_decl_parray_slots(slots_qmt, quotetype);
 	int  ch, i; // ch should not be char of type.
 
-	/* '\0' : An exceptional char, which is used only space char. */
-	if (ch_ctx['\0'] != 0) {
-		_uls_log(err_log)("The null char can't be used as other usage, 0x%X", ch_ctx['\0']);
-		ch_ctx['\0'] = 0;
-	}
-
-	/* ' ' : ~VISIBLE */
-	if (ch_ctx[' '] != 0) {
-		_uls_log(err_log)("The space char can't be used as other usage, 0x%X", ch_ctx[' ']);
-		ch_ctx[' '] = 0;
-	}
-
-	if (uls->xcontext.toknum_EOI >= 0 && uls->xcontext.toknum_EOI < ULS_SYNTAX_TABLE_SIZE)
-		ch_ctx[uls->xcontext.toknum_EOI] &= ~ULS_CH_1;
-
-	if (uls->xcontext.toknum_EOF >= 0 && uls->xcontext.toknum_EOF < ULS_SYNTAX_TABLE_SIZE)
-		ch_ctx[uls->xcontext.toknum_EOF] &= ~ULS_CH_1;
-
-	if (uls->xcontext.toknum_ID >= 0 && uls->xcontext.toknum_ID < ULS_SYNTAX_TABLE_SIZE)
-		ch_ctx[uls->xcontext.toknum_ID] &= ~ULS_CH_1;
-
-	if (uls->xcontext.toknum_NUMBER >= 0 && uls->xcontext.toknum_NUMBER < ULS_SYNTAX_TABLE_SIZE)
-		ch_ctx[uls->xcontext.toknum_NUMBER] &= ~ULS_CH_1;
-
-	if (uls->xcontext.toknum_ERR >= 0 && uls->xcontext.toknum_ERR < ULS_SYNTAX_TABLE_SIZE)
-		ch_ctx[uls->xcontext.toknum_ERR] &= ~ULS_CH_1;
-
 	for (i=0; i<uls->n1_commtypes; i++) {
 		cmt = uls_get_array_slot_type01(uls_ptr(uls->commtypes), i);
 		if (is_str_contained_in_quotetypes(uls, uls_get_namebuf_value(cmt->start_mark))) {
@@ -2479,6 +2448,18 @@ ULS_QUALIFIED_METHOD(classify_char_group)(uls_lex_ptr_t uls, ulc_header_ptr_t ul
 		qmt = slots_qmt[i];
 		ch = uls_get_namebuf_value(qmt->start_mark)[0];
 		if (ch < ULS_SYNTAX_TABLE_SIZE) ch_ctx[ch] |= ULS_CH_QUOTE;
+	}
+
+	/* '\0' : An exceptional char, which is used only space char. */
+	if (ch_ctx['\0'] != 0) {
+		_uls_log(err_log)("The null char can't be used as other usage, 0x%X", ch_ctx['\0']);
+		ch_ctx['\0'] = 0;
+	}
+
+	/* ' ' : ~VISIBLE */
+	if (ch_ctx[' '] != 0) {
+		_uls_log(err_log)("The space char can't be used as other usage, 0x%X", ch_ctx[' ']);
+		ch_ctx[' '] = 0;
 	}
 
 	return 0;
@@ -3078,7 +3059,6 @@ ULS_QUALIFIED_METHOD(ulc_proc_line)
 	(const char* tag_nam, int lno,
 		char* lptr, uls_lex_ptr_t uls, ulc_header_ptr_t hdr, uls_ptrtype_tool(outparam) parms)
 {
-	char *ch_ctx = uls->ch_context;
 	char *wrd1, *wrd2, *wrd3;
 	char wrdbuf2[ULS_LEXSTR_MAXSIZ+1];
 	int  len2, tok_id, rsv_idx, keyw_type;
@@ -3132,10 +3112,6 @@ ULS_QUALIFIED_METHOD(ulc_proc_line)
 			_uls_log(err_log)("In %s<%d>,", tag_nam, lno);
 			_uls_log(err_log)("\tthe token-id %s is already used by %s.", wrd1, uls_get_namebuf_value(e2_vx->name));
 			return nilptr;
-		}
-
-		if (tok_id >= 0 && tok_id < ULS_SYNTAX_TABLE_SIZE) {
-			ch_ctx[tok_id] &= ~ULS_CH_1;
 		}
 
 		slots_rsv = uls_parray_slots(uls_ptr(uls->tokdef_vx_rsvd));

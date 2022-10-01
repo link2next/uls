@@ -177,11 +177,15 @@ ULS_QUALIFIED_METHOD(uls_get_exeloc_dir)(const char* argv0, char *fpath_buf)
 
 	_uls_tool(csz_deinit)(uls_ptr(ustr_csz));
 #else
+
 	if (argv0 == NULL) {
-		if ((len = (int) readlink("/proc/self/exe", fpath_buf, ULS_FILEPATH_MAX+1)) < 0) {
-			return -1;
-		}
-		fpath_buf[len] = '\0';
+#ifdef HAVE_READLINK
+                len = (int) readlink("/proc/self/exe", fpath_buf, ULS_FILEPATH_MAX+1);
+#else
+                len = -1;
+#endif
+                if (len < 0) return -1;
+                fpath_buf[len] = '\0';
 	} else {
 		if (argv0[0] == ULS_FILEPATH_DELIM) {
 			len = _uls_tool_(strcpy)(fpath_buf, argv0);
@@ -194,23 +198,23 @@ ULS_QUALIFIED_METHOD(uls_get_exeloc_dir)(const char* argv0, char *fpath_buf)
 		}
 	}
 
+#ifdef HAVE_REALPATH
 	if ((ptr=realpath(fpath_buf, NULL)) != NULL) {
 		len = _uls_tool_(strcpy)(fpath_buf, ptr);
 		free(ptr);
-
-		ptr = (char *) _uls_tool_(strchr_r)(fpath_buf, ULS_FILEPATH_DELIM);
-		uls_assert(ptr != NULL);
-		if (fpath_buf < ptr) {
-			*ptr = '\0';
-			len = (int) (ptr - fpath_buf);
-		} else {
-			*++ptr = '\0';
-			len = 1;
-		}
-	} else {
-		len = -1;
 	}
 #endif
+	ptr = (char *) _uls_tool_(strchr_r)(fpath_buf, ULS_FILEPATH_DELIM);
+	if (ptr == NULL) return -3;
+
+	if (fpath_buf < ptr) {
+		*ptr = '\0';
+		len = (int) (ptr - fpath_buf);
+	} else {
+		*++ptr = '\0';
+		len = 1;
+	}
+#endif // ULS_WINDOWS
 	return len;
 }
 
