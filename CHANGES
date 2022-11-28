@@ -1,4 +1,9 @@
 
+  v1.8.13
+  -----------
+    o The support of Java is included in the main source tree. 
+    o The user guide(uls_ug-0.8.1.pdf) has been updated
+
   v1.8.12
   -----------
     o bug-fixes on

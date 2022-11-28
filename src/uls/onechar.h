@@ -75,9 +75,6 @@ ULS_DECL_STATIC void __init_onechar_tokgrp(uls_onechar_table_ptr_t tbl, int grp_
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC
-void uls_init_onechar_tokgrp(uls_onechar_tokgrp_ptr_t tokgrp);
-void uls_deinit_onechar_tokgrp(uls_onechar_tokgrp_ptr_t tokgrp);
-
 void uls_init_onechar_table(uls_onechar_table_ptr_t tbl);
 void uls_deinit_onechar_table(uls_onechar_table_ptr_t tbl);
 

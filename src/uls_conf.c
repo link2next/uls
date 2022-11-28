@@ -2226,6 +2226,7 @@ ULS_QUALIFIED_METHOD(ulc_get_searchpath_by_specpath)(int is_abspath,
 		_uls_tool_(copy_argstr)(arg, ULS_OS_SHARE_DFLDIR, -1);
 		++n;
 	}
+	searchpath_list->args.n = n;
 
 	if (nameof_searchpath != nilptr) {
 		al_args = uls_parray_slots(uls_ptr(nameof_searchpath->args));

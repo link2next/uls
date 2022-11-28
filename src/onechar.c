@@ -53,27 +53,9 @@ ULS_QUALIFIED_METHOD(__init_onechar_tokgrp)(uls_onechar_table_ptr_t tbl, int grp
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_init_onechar_tokgrp)(uls_onechar_tokgrp_ptr_t tokgrp)
-{
-	tokgrp->uch0 = 0;
-	uls_init_parray(uls_ptr(tokgrp->tokdef_vx_1char), tokdef_vx, 0);
-}
-
-void
-ULS_QUALIFIED_METHOD(uls_deinit_onechar_tokgrp)(uls_onechar_tokgrp_ptr_t tokgrp)
-{
-	uls_deinit_parray(uls_ptr(tokgrp->tokdef_vx_1char));
-}
-
-void
 ULS_QUALIFIED_METHOD(uls_init_onechar_table)(uls_onechar_table_ptr_t tbl)
 {
-	int i;
-
 	uls_init_array_type00(uls_ptr(tbl->tokgrps), onechar_tokgrp, ULS_N_ONECHAR_TOKGRPS);
-	for (i=0; i<ULS_N_ONECHAR_TOKGRPS; i++) {
-		uls_init_onechar_tokgrp(uls_get_array_slot_type00(uls_ptr(tbl->tokgrps),i));
-	}
 
 	uls_init_parray(uls_ptr(tbl->tokdef_vx_pool_1ch), tokdef_vx, 0);
 
@@ -84,7 +66,7 @@ ULS_QUALIFIED_METHOD(uls_init_onechar_table)(uls_onechar_table_ptr_t tbl)
 	__init_onechar_tokgrp(tbl, 1, ':', 7);
 
 	// GROUP-2: '[' ~ '`'
-	__init_onechar_tokgrp(tbl, 2, '[', 6);
+	__init_onechar_tokgrp(tbl, 2, '[', 6); 
 
 	// GROUP-3: '{' ~ '~'
 	__init_onechar_tokgrp(tbl, 3, '{', 4);
@@ -96,8 +78,9 @@ void
 ULS_QUALIFIED_METHOD(uls_deinit_onechar_table)(uls_onechar_table_ptr_t tbl)
 {
 	uls_onechar_tokdef_etc_ptr_t  e_etc, e_etc_next;
-	uls_tokdef_vx_ptr_t e_vx;
 	uls_decl_parray_slots(slots_vx, tokdef_vx);
+	uls_onechar_tokgrp_ptr_t tokgrp;
+	uls_tokdef_vx_ptr_t e_vx;
 	int i;
 
 	for (e_etc = tbl->tokdefs_etc_list; e_etc != nilptr; e_etc = e_etc_next) {
@@ -116,7 +99,8 @@ ULS_QUALIFIED_METHOD(uls_deinit_onechar_table)(uls_onechar_table_ptr_t tbl)
 	uls_deinit_parray(uls_ptr(tbl->tokdef_vx_pool_1ch));
 
 	for (i=0; i<ULS_N_ONECHAR_TOKGRPS; i++) {
-		uls_deinit_onechar_tokgrp(uls_get_array_slot_type00(uls_ptr(tbl->tokgrps),i));
+		tokgrp = uls_get_array_slot_type00(uls_ptr(tbl->tokgrps), i);
+		uls_deinit_parray(uls_ptr(tokgrp->tokdef_vx_1char));
 	}
 	uls_deinit_array_type00(uls_ptr(tbl->tokgrps), onechar_tokgrp);
 }

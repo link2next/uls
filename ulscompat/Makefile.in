@@ -259,6 +259,9 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
 GREP = @GREP@
+HAVE_JAVA = @HAVE_JAVA@
+HAVE_JAVAC = @HAVE_JAVAC@
+HAVE_JAVAH = @HAVE_JAVAH@
 HELP2MAN = @HELP2MAN@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
@@ -312,6 +315,9 @@ am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
 am__tar = @am__tar@
 am__untar = @am__untar@
+ax_etc_dir = @ax_etc_dir@
+ax_jdk_cppflags = @ax_jdk_cppflags@
+ax_jdk_ldflags = @ax_jdk_ldflags@
 bindir = @bindir@
 build = @build@
 build_alias = @build_alias@
@@ -323,7 +329,6 @@ datadir = @datadir@
 datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
-etc_dir = @etc_dir@
 exec_prefix = @exec_prefix@
 host = @host@
 host_alias = @host_alias@
@@ -356,7 +361,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 uls_ver_major = 1
 uls_ver_minor = 8
-uls_ver_debug = 12
+uls_ver_debug = 13
 uls_ver = $(uls_ver_major).$(uls_ver_minor).$(uls_ver_debug)
 so_current = 1
 so_revision = 0
@@ -372,7 +377,7 @@ libulscompat_la_SOURCES = ulscompat.c \
 
 noinst_HEADERS = 
 include_HEADERS = 
-libulscompat_la_CPPFLAGS = -D_ULS_IMPLDLL -DULS_ETC_DIR=\"$(etc_dir)\" \
+libulscompat_la_CPPFLAGS = -D_ULS_IMPLDLL -DULS_ETC_DIR=\"$(ax_etc_dir)\" \
 	-include $(CONFIG_HEADER) -I$(top_srcdir) -I$(top_srcdir)/src
 
 libulscompat_la_CFLAGS = -funsigned-char -Wall -Wno-char-subscripts -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast

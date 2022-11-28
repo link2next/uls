@@ -168,7 +168,6 @@ _uls_explode_wstr(uls_wrd_ptr_t uw, wchar_t delim_wch, uls_arglst_ptr_t arglst)
 		for (wlptr1=wlptr; ; wlptr++) {
 			if ((wch=*wlptr) == L'\0') {
 				wlen = (int) (wlptr - wlptr1);
-
 				if (wlptr != wlptr1) {
 					if ((arg=al[k]) == NULL) {
 						al[k] = arg = uls_create_argstr();
@@ -180,8 +179,7 @@ _uls_explode_wstr(uls_wrd_ptr_t uw, wchar_t delim_wch, uls_arglst_ptr_t arglst)
 					++k;
 				}
 
-				uw->lptr = (char *) wlptr;
-				return k;
+				goto end_1;
 			}
 
 			if (wch == delim_wch || (delim_wch == L' ' && wch == L'\t')) {
@@ -201,7 +199,9 @@ _uls_explode_wstr(uls_wrd_ptr_t uw, wchar_t delim_wch, uls_arglst_ptr_t arglst)
 		}
 	}
 
+ end_1:
 	uw->lptr = (char *) wlptr;
+	arglst->args.n = k;
 	return k;
 }
 

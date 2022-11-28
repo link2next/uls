@@ -553,8 +553,8 @@ ULS_QUALIFIED_METHOD(ulc_load)(uls_lex_ptr_t uls, FILE *fin_ulc, FILE *fin_ulf)
 	return stat;
 }
 
-int
-ULS_QUALIFIED_METHOD(uls_init_fp)(uls_lex_ptr_t uls, const char *specname,
+ULS_DECL_STATIC int
+ULS_QUALIFIED_METHOD(__uls_init_fp)(uls_lex_ptr_t uls, const char *specname,
 	FILE *fin_ulc, FILE *fin_ulf)
 {
 	uls_context_ptr_t ctx;
@@ -1306,7 +1306,7 @@ ULS_QUALIFIED_METHOD(uls_init)(uls_lex_ptr_t uls, const char* confname)
 
 	uls_init_parray(uls_ptr(uls->quotetypes), quotetype, ULS_N_MAX_QUOTETYPES);
 
-	if ((rc = uls_init_fp(uls, specname, fin_ulc, fin_ulf)) < 0) {
+	if ((rc = __uls_init_fp(uls, specname, fin_ulc, fin_ulf)) < 0) {
 		_uls_tool_(fp_close)(fin_uld);
 		return -1;
 	} else {
@@ -1622,7 +1622,6 @@ ULS_QUALIFIED_METHOD(uls_push_line)(uls_lex_ptr_t uls, const char* line, int len
 
 	if (uls_fillbuff_and_reset(uls) < 0) {
 		_uls_log(err_log)("%s: fail to fill the initial buff", __FUNCTION__);
-		uls_pop(uls);
 		return -1;
 	}
 

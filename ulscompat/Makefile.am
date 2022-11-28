@@ -8,7 +8,7 @@ libulscompat_la_SOURCES = ulscompat.c \
 noinst_HEADERS = 
 include_HEADERS =
 
-libulscompat_la_CPPFLAGS = -D_ULS_IMPLDLL -DULS_ETC_DIR=\"$(etc_dir)\" \
+libulscompat_la_CPPFLAGS = -D_ULS_IMPLDLL -DULS_ETC_DIR=\"$(ax_etc_dir)\" \
 	-include $(CONFIG_HEADER) -I$(top_srcdir) -I$(top_srcdir)/src
 libulscompat_la_CFLAGS  = -funsigned-char -Wall -Wno-char-subscripts -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast
 libulscompat_la_LIBADD  = $(top_builddir)/src/libuls.la

@@ -121,7 +121,6 @@ ULS_QUALIFIED_METHOD(load_uch_ranges_list)(void)
 	}
 
 	al_wrds = uls_parray_slots(uls_ptr(wrdlst.args));
-
 	// n_lines: # of records
 	n_lines = _uls_tool_(atoi)(al_wrds[0]->str);
 	uls_init_array_tool_type01(uls_ptr(id_range_list1), uch_range, n_lines);

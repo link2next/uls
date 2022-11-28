@@ -170,32 +170,32 @@ test_unget(void)
 
 	uls_set_line(sample_lex, "hello world", -1, 0);
 
-/* 1 */
+	/* 1 */
 	dump_next_tok(0);
 	xdef = uls_get_current_extra_tokdef(sample_lex);
 	uls_printf(" --- xdef[tokID] = 0x%X\n", xdef);
 
-/* 2 */
+	/* 2 */
 	uls_unget_tok(sample_lex);
 	dump_next_tok(0);
 	xdef = uls_get_current_extra_tokdef(sample_lex);
 	uls_printf(" --- xdef[tokID] = 0x%X\n", xdef);
 
-/* 3 */
+	/* 3 */
 	uls_skip_blanks(sample_lex);
 	uls_unget_str(sample_lex, "hello");
 	dump_next_tok(1);
 
-/* 4 */
+	/* 4 */
 	uls_unget_str(sample_lex, "hello");
 	uls_unget_ch(sample_lex, 'w');
 	dump_next_tok(1);
 
-/* 5 */
+	/* 5 */
 	uls_unget_lexeme(sample_lex, ".314", tokNUM);
 	dump_next_tok(1);
 
-/* 6 */
+	/* 6 */
 	uls_unget_lexeme(sample_lex, " world hello ", tokDQUOTE);
 	dump_next_tok(1);
 

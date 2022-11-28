@@ -5,12 +5,12 @@
   Quick Start - Linux
   ------------------
    On Debian platforms like Debian, Ubuntu, Mint, two deb-files is provided.
-      o uls_x.y.z_amd64.deb: for 64-bit mach(x86_64, amd64)
-      o uls_x.y.z_i386.deb: for 32-bit mach
+      uls-x.y.z-amd64.deb: for 64-bit mach(x86_64, amd64)
+
    To install the deb-file, download the proper file on the site(http://www.sourceforge.net/projects/uls).
 
    Enter the command as follows.
-      sudo gdebi uls_x.y.z_amd64.deb
+      sudo gdebi uls-x.y.z-amd64.deb
 
    To test the ULS, setup the examples of ULS by entering the command 'setup_uls_examples'.
       setup_uls_examples <dest-dir>
@@ -40,7 +40,10 @@
            $ ./configure --with-etc-dir='/opt/uls_1_8/etc'
       The default admin-directory is '/usr/local/etc/uls'.
 
-  3) After installation, There'll be directories named 'bin', 'lib', include', and 'share'
+  3) If you want not to install the java-api of uls, specify the option '--disable-java' 
+       $ ./configure --disable-java
+
+  4) After installation, There'll be directories named 'bin', 'lib', include', and 'share'
        below the directory <PREFIX>.
     The 'bin' contains uls a few of utilities doing the following function.
        o ulc2class  : converts ulc-file into header file,
@@ -63,8 +66,6 @@
 
        o libulscpp : the c++ wrapper for libuls.
 
-       o UlsDotNet.dll : used in .NET for Windows C#.
-
     The 'share' contains sample ulc-files, such as java.ulc, sql.ulc python3.ulc, and man pages.
 
   4) To uninstall the package, run 'uninstall_uls' in the 'bin' directory:
@@ -76,9 +77,9 @@
    How to install ULS-libraries into your system
 
    On Windows platforms,
-     There is a self-extracting install program, uls-windows-{x64,i686}.exe
+     There is a self-extracting install program, uls-windows-1.8.x-x64.exe
          in the home-site(http://www.sourceforge.net/projects/uls).
-     It contains the binaries which are targeted onto i386 and x86_64.
+     It contains the binaries which are targeted on x86_64.
      Download and run it.
 
     After installation, the path for uls utilities should be appened to the environment variable 'PATH'.
@@ -91,23 +92,24 @@
        o UlfGen -h
 
 
-  Source build - Windows
+  Building UlsWin from Source files - Windows
   ---------------------
    1) How to build it from sources
     The ULS-windows version is distributed with solution-files(*.sln) and
        project-files(*.vcproj) in directory 'UlsWin'.
 
-     a) After unpacking the source distribution (uls-x.y.z.tar.xz),
+     a) After unpacking the source distribution (uls-windows-x.y.z.tar.xz),
            run VisualStudio by clicking UlsWin\UlsWin.sln.
+     b) Choose 'Release/x64' configuration
+     c) Build it 
 
-     b) Either 'Release/x64' configuration
-           should be chosen according to your arch-type(64bit).
+   2) Install binaries 
+     a) Run setupBinaries.bat 
+     b) Run installUlsWinStep1.bat 
+     c) Run installUlsWinStep2.bat with admin privilege.
 
-     c) When the build-process is finished, all the executables and libraries will be located
-           in UlsWin\Release\x64.
-
-   2) To build C++ examples,
-     a) To see how the installed version works well, open 'UlsExamples.sln' in the UlsCpp\UlsExamples directory.
+   3) To build C++ examples,
+     a) To see how the installed version works well, open 'UlsExamples.sln' in the UlsExamples directory.
         To link the example programs with the Uls libraries and run executables,
           it's necessary to inform the linker of the location of the libraries.
         Check and modify the 'Additional Library Directories' in 'Configuration Properties' of each projects.
@@ -116,51 +118,21 @@
      b) Choose the configuration Release/x64 according to your build system.
 
      c) The solution produces the executables, DumpToks.exe, Css3Toks.exe,
-           Html5Toks.exe, ShellToks.exe, MkfToks.exe, and TokSeq.exe in UlsCpp\UlsExamples\Release\x64.
+           Html5Toks.exe, ShellToks.exe, MkfToks.exe, and TokSeq.exe in UlsExamples\x64\Release
 
 
   Demos - Windows
   ---------------------
    Now You can run the executables in the directory named 'UlsWin' in the desktop.
     Go to the directory 'Demos' in 'UlsWin'.
-       o double-click the 'run_css3_demo.bat'.
-       o double-click the 'run_html5_demo.bat'.
-       o double-click the 'run_shell_demo.bat'.
-       o double-click the 'run_mkf_demo.bat'.
-       o double-click the 'run_tokseq_demo.bat'.
+       o double-click the 'run_cpp_css3_demo.bat'.
+       o double-click the 'run_cpp_html5_demo.bat'.
+       o double-click the 'run_cpp_shell_demo.bat'.
+       o double-click the 'run_cpp_mkf_demo.bat'.
+       o double-click the 'run_cpp_tokseq_demo.bat'.
 
-
-  For C# Users
-  ---------------------
-    The project UlsCs is a C# wrapper class library for UlsDotNet.dll and UlsCsHello is an example project to use it.
-    To use the C# Uls library, the uls core library, UlsDotNet.dll, should be installed using 'setup.bat'.
-
-     1) Getting the libraray files.
-       a) To get the library UlsCs.dll from the source code, open the file 'UlsWin.sln' as
-         the Uls C# library is contained in the solution.
-
-       b) There's a project folder named 'UlsCsharp', 'UlsCs', and 'UlsCsHello' in it.
-
-    Once the installationg complete, you can test the library with a basic C# program,
-       the UlsCsHello.exe in 'UlsWin\UlsCsharp\UlsCsHello\bin\Release'.
-       o UlsCsHello ..\..\input1.txt ..\..\sample1.ulc or
-       o double-click the 'run_cs_hello_demo.bat'.
-
-    After installing it with 'UlsWin\setup.bat', you can examine it using the projects
-       in 'UlsWin\UlsCsharp\UlsCsExamples'.
-
-    2) Building examples from source.
-      To make the example executables from the source code,
-         open the solution file 'UlsCsExamples.sln' in 'UlsCsharp\UlsCsExamples'.
-
-       c) Be sure that there is no error in the library referencing to the UlsCs.dll in running UlsCsHello.
-          Make sure that the external reference of 'UlsCs.dll' is correct in the property popup window.
-
-       d) Choose the build configuration 'Release'--'Any CPU'.
-           Build the solution!
-
-    3) Test
-      Entering each project folder 'Css3Toks', 'DumpToks', 'Html5Toks', and 'ShellToks',
+    For C# Users
+      Entering each project folder 'Css3Toks', 'DumpToks', 'Html5Toks', and 'ShellToks' in CsExamples,
        try running the project ouputs as follows
        o double-click the 'run_cs_css3_demo.bat'.
        o double-click the 'run_cs_dump_demo.bat'.
@@ -170,31 +142,8 @@
 
   For Java Developers
   ---------------------
-    After installing Uls(linux/windows), launch the Elipse MARS or KEPLER (ver3.8.0 or later).
-    Click the menu item 'Import...' in 'File'.
-    Select 'General' -- 'Existing Projects into Workspace' and 'Next' button.
-    Browse the source directory 'UlsJava' in 'Select root directory' and click 'Finish' button.
-
-    If there's an error for 'JRE ... unbound', do the following steps.
-       a) Right-button click of mouse on the 'UlsJava' solution in 'Project Explorer'
-          and click 'Properties'.
-       b) Choose the 'Java Build Path' and 'JRE System Library[...]' in the tab-menu 'Libraries'.
-       c) Click the button 'Edit...' and select the JRE version installed in your system.
-
-    To run test the java programs,
-       a) Right-button click of mouse on the 'UlsJava' solution in 'Project Explorer'
-       b) Select 'Run As' -- 'Java Application'.
-       c) 'UlsDump - uls.tests' should execute the following command.
-          java uls.tests.UlsDump.class input1.txt
-       d) 'UlsTestStream - uls.tests' should execute the following command.
-          java uls.tests.UlsTestStream.class T="unsigned long long" tmpl_ex.uls
-
-    To run test the java programs in terminal,
-       in the directory 'UlsJava'
-       a) java -cp ./bin;./libs/jna-3.5.2.jar uls.tests.UlsDump input1.txt
-       b) java -cp ./bin;./libs/jna-3.5.2.jar uls.tests.UlsTestStream T="unsigned long long" tmpl_ex.uls
-		or in Windows,
-       c) java -cp uls_java.jar;jna-3.5.2.jar uls.tests.UlsDump input1.txt
+    Read README in the subdirectory ulsjni for Linux users
+    Read README in the subdirectory vs2022/UlsJava for Windows users
 
 
  Uninstall
@@ -202,5 +151,4 @@
     In order to uninstall ULS on Windows, go to the folder UlsWin in the desktop.
     Run the batch file named 'uninstall_uls.bat'.
     In Ubuntu, run the dpkg: dpkg -P uls
-
 

@@ -248,7 +248,7 @@ main(int argc, char *argv[])
 		break;
 	}
 
-	uls_destroy(sample_lex);
+	uls_destroy_wstr(sample_lex);
 	ULS_PUT_WARGS_LIST(argc, targv);
 
 	return 0;

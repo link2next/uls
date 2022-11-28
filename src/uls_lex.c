@@ -224,6 +224,8 @@ int
 ULS_QUALIFIED_METHOD(uls_push_istream)(uls_lex_ptr_t uls, uls_istream_ptr_t istr,
 	uls_tmpl_list_ptr_t tmpl_list, int flags)
 {
+	int stat = 0;
+
 	if (istr == nilptr) {
 		_uls_log(err_log)("%s: invalid parameter!", __FUNCTION__);
 		return -1;
@@ -236,25 +238,32 @@ ULS_QUALIFIED_METHOD(uls_push_istream)(uls_lex_ptr_t uls, uls_istream_ptr_t istr
 	}
 
 	uls_set_tag(uls, uls_get_namebuf_value(istr->filepath), -1);
-	++istr->ref_cnt; // grab it!!
 
 	if (__uls_change_stream_hdr(uls, istr, flags) < 0) {
-		uls_pop(uls);
-		return -1;
+		stat = -1; goto end_1;
 	}
 
-	if (__uls_bind_istream_tmpls(istr, uls, tmpl_list) < 0) {
+	if (uls_bind_istream(istr, uls) < 0) {
+		_uls_log(err_log)("%s: not compatible uls-file.", __FUNCTION__);
+		stat = -1; goto end_1;
+	}
+
+	if (uls_bind_tmpls(istr, tmpl_list) < 0) {
 		_uls_log(err_log)("can't put stream %s on the stack of %s.",
 			uls_get_namebuf_value(istr->filepath), uls_get_namebuf_value(uls->ulc_name));
-		uls_pop(uls);
-		return -1;
+		stat = -1; goto end_1;
 	}
 
 	if (uls_fillbuff_and_reset(uls) < 0) {
-		return -1;
+		stat = -1; goto end_1;
 	}
 
+	++istr->ref_cnt; // grab it!!
 	return 0;
+
+ end_1:
+ 	uls_pop(uls);
+	return stat;
 }
 
 int
@@ -266,6 +275,7 @@ ULS_QUALIFIED_METHOD(uls_set_istream)(uls_lex_ptr_t uls, uls_istream_ptr_t istr,
 	}
 
 	uls_pop(uls);
+
 	return uls_push_istream(uls, istr, tmpl_list, flags);
 }
 
@@ -275,7 +285,7 @@ ULS_QUALIFIED_METHOD(uls_push_istream_2)(uls_lex_ptr_t uls, uls_istream_ptr_t is
 	const char** tmpl_nams, const char** tmpl_vals, int n_tmpls, int flags)
 {
 	uls_tmpl_list_t tmpl_list;
-	int i, stat=0;
+	int i, stat = 0;
 
 	if (istr == nilptr) {
 		_uls_log(err_log)("%s: invalid parameter!", __FUNCTION__);
@@ -288,18 +298,15 @@ ULS_QUALIFIED_METHOD(uls_push_istream_2)(uls_lex_ptr_t uls, uls_istream_ptr_t is
 		return -1;
 
 	if (__uls_change_stream_hdr(uls, istr, flags) < 0) {
-		uls_pop(uls);
-		return -1;
+		stat = -1; goto end_2;
 	}
 
 	uls_set_tag(uls, uls_get_namebuf_value(istr->filepath), -1);
-	++istr->ref_cnt;
 
 	if (tmpl_nams != nilptr) {
 		uls_init_tmpls(uls_ptr(tmpl_list), n_tmpls, ULS_TMPLS_DUP);
 		for (i=0; i<n_tmpls; i++) {
 			if (uls_add_tmpl(uls_ptr(tmpl_list), tmpl_nams[i], tmpl_vals[i]) < 0) {
-				uls_pop(uls);
 				stat = -1; goto end_1;
 			}
 		}
@@ -307,21 +314,29 @@ ULS_QUALIFIED_METHOD(uls_push_istream_2)(uls_lex_ptr_t uls, uls_istream_ptr_t is
 		uls_init_tmpls(uls_ptr(tmpl_list), 0, ULS_TMPLS_DUP);
 	}
 
-	if (__uls_bind_istream_tmpls(istr, uls, uls_ptr(tmpl_list)) < 0) {
+	if (uls_bind_istream(istr, uls) < 0) {
+		_uls_log(err_log)("%s: not compatible uls-file.", __FUNCTION__);
+		stat = -1; goto end_1;
+	}
+
+	if (uls_bind_tmpls(istr, uls_ptr(tmpl_list)) < 0) {
 		_uls_log(err_log)("can't put stream %s on the stack of %s.",
 			uls_get_namebuf_value(istr->filepath), uls_get_namebuf_value(uls->ulc_name));
-		uls_deinit_tmpls(uls_ptr(tmpl_list));
-		uls_pop(uls);
-		return -1;
+		stat = -1; goto end_1;
 	}
 
 	if (uls_fillbuff_and_reset(uls) < 0) {
-		uls_pop(uls);
-		return -1;
+		stat = -1; goto end_1;
 	}
+
+	uls_deinit_tmpls(uls_ptr(tmpl_list));
+	++istr->ref_cnt;
+	return 0;
 
  end_1:
 	uls_deinit_tmpls(uls_ptr(tmpl_list));
+ end_2:
+ 	uls_pop(uls);
 	return stat;
 }
 #endif

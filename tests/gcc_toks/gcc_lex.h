@@ -100,6 +100,7 @@
 #define  TOK_BITXOR_ASGN  80
 #define  TOK_LSHIFT_ASGN  81
 #define  TOK_RSHIFT_ASGN  82
+#define     TOK_ELLIPSIS  83
 #define    TOK_EXTENSION  128
 #define     TOK_RESTRICT  129
 
