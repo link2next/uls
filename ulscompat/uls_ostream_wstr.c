@@ -31,9 +31,7 @@
     Stanley Hong <link2next@gmail.com>, Jul 2015.
   </author>
 */
-#include "uls/uls_lex.h"
-#include "uls/uls_util.h"
-#include "uls/uls_auw.h"
+
 #include "uls/uls_ostream_wstr.h"
 #include "uls/uls_wlog.h"
 

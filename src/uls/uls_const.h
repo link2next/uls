@@ -39,24 +39,38 @@
 #include "uls/uls_config.h"
 #endif
 
+#ifdef ULS_WINDOWS
+#ifdef ULS_DOTNET
+#define _T(a) a
+#endif
+#else
+#ifdef ULS_USE_WSTR
+#define _T(a) L##a
+#define TEXT(a) L##a
+#else
+#define _T(a) a
+#define TEXT(a) a
+#endif
+#endif // ULS_WINDOWS
+
 #define TMP_SYSPROPS_FNAME   "uls_sysprops.txt"
 #define TMP_ID_RANGES_FNAME  "uls_id_ranges.txt"
 #define TMP_LANGS_FNAME      "uls_langs.txt"
 #define ULS_ULCNAME_DELIM    '/'
 
-#define ULS_VERSION_STR      "1.8.13"
-#define ULC2CLASS_PROGVER    "v2.7.0"
-#define ULF_GEN_PROGVER      "v1.6.0"
-#define ULS_STREAM_PROGVER   "v2.6.0"
-#define ULC2YAML_PROGVER     "v1.0.0"
+#define ULS_VERSION_STR      _T("1.8.14")
+#define ULC2CLASS_PROGVER    _T("v2.7.0")
+#define ULF_GEN_PROGVER      _T("v1.6.0")
+#define ULS_STREAM_PROGVER   _T("v2.6.0")
+#define ULC2YAML_PROGVER     _T("v1.0.0")
 
-#define ULS_INITIAL_NAME     "ULS(Unified Lexical Scheme)"
-#define ULS_AUTHOR           "Stanley Hong (link2next@gmail.com)"
-#define ULS_GREETING         ULS_INITIAL_NAME " " ULS_VERSION_STR ", written by " ULS_AUTHOR "."
-#define ULS_URL              "https://sourceforge.net/projects/uls"
-#define ULS_LICENSE_NAME     "The MIT License (MIT)"
+#define ULS_INITIAL_NAME     _T("ULS(Unified Lexical Scheme)")
+#define ULS_AUTHOR           _T("Stanley Hong (link2next@gmail.com)")
+#define ULS_GREETING         ULS_INITIAL_NAME _T(" ") ULS_VERSION_STR _T(", written by ") ULS_AUTHOR _T(".")
+#define ULS_URL              _T("https://sourceforge.net/projects/uls")
+#define ULS_LICENSE_NAME     _T("The MIT License (MIT)")
 #define ULS_COPYRIGHT_YEAR_START    2011
-#define ULS_COPYRIGHT_YEAR_CURRENT  2022
+#define ULS_COPYRIGHT_YEAR_CURRENT  2023
 
 #ifdef ULS_WINDOWS
 #define ULS_REG_HOME         L"HKLM:SOFTWARE\\UlsWin"
@@ -64,10 +78,8 @@
 #define ULS_SYSPROPS_FNAME   TMP_SYSPROPS_FNAME
 #define ULS_ID_RANGES_FNAME  TMP_ID_RANGES_FNAME
 #define ULS_LANGS_FNAME      TMP_LANGS_FNAME
-#define ULS_FILEPATH_DELIM   '\\'
-#define ULS_FILEPATH_DELIM_WCH L'\\'
-#define ULS_DIRLIST_DELIM    ';'
-#define ULS_DIRLIST_DELIM_WCH L';'
+#define ULS_FILEPATH_DELIM   _T('\\')
+#define ULS_DIRLIST_DELIM    _T(';')
 #define ULS_OS_TEMP_DIR      "C:\\Windows\\Temp"
 #define ULS_SHARE_DFLDIR     "C:\\Program Files\\Common Files\\UlsWin"
 #define ULS_ETC_DIR          "C:\\Program Files\\Common Files\\UlsWin"
@@ -77,10 +89,8 @@
 #define ULS_SYSPROPS_FNAME   "uls.sysprops"
 #define ULS_ID_RANGES_FNAME  "uls.id_ranges"
 #define ULS_LANGS_FNAME      "uls.langs"
-#define ULS_FILEPATH_DELIM   '/'
-#define ULS_FILEPATH_DELIM_WCH L'/'
-#define ULS_DIRLIST_DELIM    ':'
-#define ULS_DIRLIST_DELIM_WCH L':'
+#define ULS_FILEPATH_DELIM   _T('/')
+#define ULS_DIRLIST_DELIM    _T(':')
 #define ULS_OS_TEMP_DIR      "/tmp"
 #define ULS_SHARE_DFLDIR     "/usr/share/uls"
 #define ULS_ETC_DFLDIR       "/usr/local/etc/uls"

@@ -140,7 +140,10 @@ ULS_DLL_EXTERN uls_quotetype_ptr_t uls_get_litstr__quoteinfo(uls_litstr_ptr_t li
 ULS_DLL_EXTERN uls_voidptr_t uls_get_litstr__user_data(uls_litstr_ptr_t lit);
 ULS_DLL_EXTERN uls_litstr_context_ptr_t uls_get_litstr__context(uls_litstr_ptr_t lit);
 
-#endif
+ULS_DLL_EXTERN void uls_litstr_putc(uls_litstr_context_ptr_t lit_ctx, char ch);
+ULS_DLL_EXTERN void uls_litstr_puts(uls_litstr_context_ptr_t lit_ctx, const char *str, int len);
+
+#endif // ULS_DECL_PUBLIC_PROC
 
 #ifdef _ULS_CPLUSPLUS
 }

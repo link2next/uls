@@ -2,8 +2,9 @@ include ../cfg.mk
 
 bin_PROGRAMS = EngToks
 EngToks_SOURCES = EngToks.cpp EngLex.cpp
+#EngToks_CPPFLAGS = -I$(uls_inc_dir) -DULS_USE_WSTR
 EngToks_CPPFLAGS = -I$(uls_inc_dir)
-EngToks_LDADD = -L$(uls_lib_dir) -lulscpp -lulscompat -luls
+EngToks_LDADD = -L$(uls_lib_dir) -lulscpp
 
 $(EngToks_SOURCES): EngLexBasis.h
 

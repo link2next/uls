@@ -533,8 +533,6 @@ main(int argc, char* argv[])
 	int i0, i, conf_fname_len, stat = 0;
 	int cse_insen;
 
-	initialize_uls();
-
 	progname = THIS_PROGNAME;
 	if (argc <= 1) {
 		usage_brief();

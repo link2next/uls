@@ -152,6 +152,7 @@ ULS_QUALIFIED_METHOD(_initialize_uls)(void)
 	if (__initialize_uls() < 0) {
 		_uls_tool_(appl_exit)(1);
 	}
+
 #ifndef ULS_WINDOWS
 	if (!set_uls_locale()) {
 		_uls_log(err_log)("Fail to set locale utf8!");
@@ -173,18 +174,9 @@ ULS_QUALIFIED_METHOD(_finalize_uls)(void)
 }
 
 void
-ULS_QUALIFIED_METHOD(initialize_uls_static)(void)
-{
-	_initialize_uls();
-}
-
-void
 ULS_QUALIFIED_METHOD(initialize_uls)(void)
 {
-	initialize_uls_static();
-#ifdef ULS_NO_SUPPORT_FINALCALL
-	atexit(__finalize_uls);
-#endif
+	_initialize_uls();
 }
 
 void

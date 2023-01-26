@@ -31,10 +31,12 @@
     Stanley Hong <link2next@gmail.com>, Jan 2015.
   </author>
 */
-#include "uls/uls_util_wstr.h"
-#include "uls/uls_wlog.h"
-#include "uls/uls_fileio.h"
 
+#include "uls/uls_lf_swprintf.h"
+#include "uls/uls_fileio_wstr.h"
+#include "uls/uls_util_wstr.h"
+#include "uls/uls_wprint.h"
+#include "uls/uls_wlog.h"
 
 void
 uls_wputstr(const wchar_t *wstr)
@@ -50,6 +52,7 @@ uls_wputstr(const wchar_t *wstr)
 #else
 	austr = uls_wstr2ustr(wstr, -1, uls_ptr(csz));
 #endif
+
 	if (austr == NULL) {
 		err_wlog(L"encoding error!");
 	} else {
@@ -58,6 +61,216 @@ uls_wputstr(const wchar_t *wstr)
 	}
 
 	csz_deinit(uls_ptr(csz));
+}
+
+void
+ult_dump_bin_wstr(const wchar_t *wstr)
+{
+	wchar_t wch, wbuff[8];
+	unsigned char ch1;
+	int i, j, k;
+
+	for (i = 0; (wch = wstr[i]) != L'\0'; i++) {
+		k = 0;
+		for (j = 3; j > 0; j--) {
+			ch1 = (unsigned char) ( (wch >> (j * 4)) & 0x0F );
+			if (k > 0 || ch1 != 0) wbuff[k++] = uls_nibble2ascii(ch1);
+		}
+		ch1 = (unsigned char) (wch & 0x0F);
+		wbuff[k++] = uls_nibble2ascii(ch1);
+		wbuff[k] = L'\0';
+
+		uls_wprintf(L" %s", wbuff);
+	}
+}
+
+int
+uls_wstr2int(const wchar_t *wstr)
+{
+	int i, minus, n = 0;
+	wchar_t wch;
+
+	if (wstr[0] == L'-') {
+		minus = 1;
+		i = 1;
+	} else {
+		minus = 0;
+		i = 0;
+	}
+
+	for ( ; ; i++) {
+		if ((wch=wstr[i]) > L'9' || wch < L'0')
+			break;
+		n = wch - L'0' + n * 10;
+	}
+
+	if (minus) n = -n;
+	return n;
+}
+
+int
+uls_wstrlen(const wchar_t* wstr)
+{
+	const wchar_t* wptr;
+
+	for (wptr = wstr; *wptr != L'\0'; wptr++)
+		/* NOTHING */;
+
+	return (int) (wptr - wstr);
+}
+
+int
+uls_wstreql(const wchar_t *wstr1, const wchar_t *wstr2)
+{
+	const wchar_t *ptr1=wstr1, *ptr2=wstr2;
+	wchar_t wch1, wch2;
+	int i, stat = 1; // true
+
+	for (i=0; ; i++, ptr1++, ptr2++) {
+		wch1 = *ptr1;
+		wch2 = *ptr2;
+
+		if (wch1 != wch2) {
+			stat = 0; // false
+			break;
+		}
+
+		if (wch1 == L'\0') break;
+	}
+
+	return stat;
+}
+
+int
+uls_wstrcpy(wchar_t *wbufptr, const wchar_t *wstr)
+{
+	const wchar_t *ptr;
+	wchar_t wch;
+
+	for (ptr=wstr; (wch=*ptr) != '\0'; ptr++) {
+		*wbufptr++ = wch;
+	}
+
+	*wbufptr = L'\0';
+	return (int) (ptr - wstr);
+}
+
+int
+uls_wstrcmp(const wchar_t *wstr1, const wchar_t *wstr2)
+{
+	const wchar_t *ptr1=wstr1, *ptr2=wstr2;
+	wchar_t wch1, wch2;
+	int i, stat = 0;
+
+	for (i=0; ; i++, ptr1++, ptr2++) {
+		wch1 = *ptr1;
+		wch2 = *ptr2;
+
+		if (wch1 != wch2) {
+			stat = (int) wch1 - (int) wch2;
+			break;
+		}
+
+		if (wch1 == L'\0') break;
+	}
+
+	return stat;
+}
+
+wchar_t*
+ult_skip_blanks_wstr(const wchar_t* lptr)
+{
+	wchar_t wch;
+
+	for ( ; (wch=*lptr)==L' ' || wch==L'\t'; lptr++)
+		/* nothing */;
+	return (wchar_t *) lptr;
+}
+
+wchar_t*
+ult_splitstr_wstr(wchar_t** p_wstr, int *p_wlen)
+{
+	wchar_t   *wstr = *p_wstr;
+	wchar_t   wch, *ptr, *ptr0;
+	int wlen;
+
+	ptr0 = ptr = ult_skip_blanks_wstr(wstr);
+
+	for (wlen = 0; (wch=*ptr) != L'\0'; ptr++) {
+		if (wch == L' ' || wch == L'\t') {
+			wlen = (int) (ptr - ptr0);
+			*ptr++ = L'\0';
+			break;
+		}
+	}
+
+	if (p_wlen != NULL) *p_wlen = wlen;
+	*p_wstr = ptr;
+	return ptr0;
+}
+
+wchar_t*
+ult_split_litstr_wstr(wchar_t *wstr, wchar_t qch)
+{
+	wchar_t   wch, *wptr, *wptr1;
+	int esc_ch = 0;
+
+	for (wptr1 = wptr = wstr; ; wptr++) {
+		wch = *wptr;
+		if (!uls_isprint(wch)) { // ctrl-ch or '\0'
+			if (wch != '\0') ++wptr;
+			break;
+		}
+
+		if (esc_ch) {
+			*wptr1++ = wch;
+			esc_ch = 0;
+		} else if (wch == L'\\') {
+			esc_ch = 1;
+		} else if (wch == qch) {
+			++wptr;
+			break;
+		} else {
+			*wptr1++ = wch;
+		}
+	}
+
+	*wptr1 = L'\0';
+	return wptr;
+}
+
+wchar_t*
+uls_wfilename(const wchar_t *wfilepath, int* len_fname)
+{
+	const wchar_t *ptr, *ptr0;
+	const wchar_t *wfilename;
+	int  len_wfilename, len, i;
+	wchar_t  wch;
+
+	if (wfilepath == NULL) return NULL;
+	for (ptr0 = NULL, ptr = wfilepath; (wch=*ptr) != L'\0'; ptr++) {
+		if (wch == ULS_FILEPATH_DELIM) ptr0 = ptr;
+	}
+
+	if (ptr0 != NULL) {
+		wfilename = ptr0 + 1;
+	} else {
+		wfilename = wfilepath;
+	}
+
+	len_wfilename = len = uls_wstrlen(wfilename);
+	for (i = len_wfilename - 1; i >= 0; i--) {
+		if (wfilename[i] == '.') {
+			len = i;
+			break;
+		}
+	}
+
+	if (len_fname != NULL) {
+		*len_fname = len;
+	}
+
+	return (wchar_t *) wfilename;
 }
 
 int
@@ -168,6 +381,7 @@ _uls_explode_wstr(uls_wrd_ptr_t uw, wchar_t delim_wch, uls_arglst_ptr_t arglst)
 		for (wlptr1=wlptr; ; wlptr++) {
 			if ((wch=*wlptr) == L'\0') {
 				wlen = (int) (wlptr - wlptr1);
+
 				if (wlptr != wlptr1) {
 					if ((arg=al[k]) == NULL) {
 						al[k] = arg = uls_create_argstr();
@@ -235,7 +449,7 @@ int
 uls_getopts_wstr(int n_args, wchar_t* wargs[], const wchar_t* optwfmt, uls_woptproc_t wproc)
 {
 	const wchar_t  *cwptr;
-	wchar_t        *optwarg, *optwstr;
+	wchar_t        *optwarg, *optwstr, nullbuff[4] = { '\0', };
 	int            rc, opt, i, j, k;
 
 	for (i=1; i<n_args; i=k+1) {
@@ -248,7 +462,7 @@ uls_getopts_wstr(int n_args, wchar_t* wargs[], const wchar_t* optwfmt, uls_woptp
 			}
 
 			if ((cwptr=uls_wstrchr(optwfmt, opt)) == NULL) {
-				err_wlog(L"%s: undefined option -%c", __FUNCTION__, opt);
+				err_wlog(L"uls_getopts: undefined option -%c", opt);
 				return -1;
 			}
 
@@ -258,22 +472,22 @@ uls_getopts_wstr(int n_args, wchar_t* wargs[], const wchar_t* optwfmt, uls_woptp
 				} else if (k+1 < n_args && wargs[k+1][0] != L'-') {
 					optwarg = wargs[++k];
 				} else {
-					err_wlog(L"%s: option -%c requires an arg.", __FUNCTION__, opt);
+					err_wlog(L"uls_getopts: option -%c requires an arg.", opt);
 					return -1;
 				}
 
-				if ((rc=wproc(opt, optwarg)) != 0) {
+				if ((rc = wproc(opt, optwarg)) != 0) {
 					if (rc > 0) rc = 0;
-					else err_wlog(L"%s: error in -%c.", __FUNCTION__, opt);
+					else err_wlog(L"uls_getopts: An Error in processing the option -%c.", opt);
 					return rc;
 				}
 				break;
 
 			} else {
-				optwarg = L"";
-				if ((rc=wproc(opt, optwarg)) != 0) {
+				optwarg = nullbuff;
+				if ((rc = wproc(opt, optwarg)) != 0) {
 					if (rc > 0) rc = 0;
-					else err_wlog(L"%s: error in -%c.", __FUNCTION__, opt);
+					else err_wlog(L"uls_getopts: error in -%c.", opt);
 					return rc;
 				}
 				j++;

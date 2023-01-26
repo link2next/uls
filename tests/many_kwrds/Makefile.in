@@ -310,7 +310,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 uls_ver_major = 1
 uls_ver_minor = 8
-uls_ver_debug = 13
+uls_ver_debug = 14
 uls_ver = $(uls_ver_major).$(uls_ver_minor).$(uls_ver_debug)
 so_current = 1
 so_revision = 0
@@ -322,6 +322,8 @@ tests_libpath = $(top_builddir)/src:$(top_builddir)/ulscpp
 ACLOCAL_AMFLAGS = -I m4
 many_kwrds_SOURCES = many_kwrds.c
 many_kwrds_CFLAGS = -Wall
+#many_kwrds_CPPFLAGS = -DULS_USE_WSTR -I$(top_srcdir)/ulscompat -I$(top_srcdir)/src
+#many_kwrds_LDADD = $(top_builddir)/ulscompat/libulscompat.la $(top_builddir)/src/libuls.la
 many_kwrds_CPPFLAGS = -I$(top_srcdir)/src
 many_kwrds_LDADD = $(top_builddir)/src/libuls.la
 all: all-am

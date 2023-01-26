@@ -185,7 +185,6 @@ ULS_DLL_EXTERN int uls_dirent_exist(const char *path);
 ULS_DLL_EXTERN int uls_fd_open(const char* fpath, int mode);
 ULS_DLL_EXTERN void uls_fd_close(int fd);
 ULS_DLL_EXTERN void uls_put_binstr(const char* str, int len, int fd);
-ULS_DLL_EXTERN void uls_putstr(const char* str);
 
 ULS_DLL_EXTERN int uls_fgetc_ascii_str(uls_voidptr_t dat, char *buf, int buf_siz);
 ULS_DLL_EXTERN int consume_ms_mbcs_onechar(uls_voidptr_t dat, char *buf, int buf_siz);

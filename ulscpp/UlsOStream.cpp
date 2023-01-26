@@ -149,7 +149,7 @@ uls::crux::UlsOStream::getCore(void)
 // <parm name="tokstr">the lexeme associated with the 'tokid'</parm>
 // <return>none</return>
 void
-uls::crux::UlsOStream::printTok(int tokid, string& tokstr)
+uls::crux::UlsOStream::printTok(int tokid, const string& tokstr)
 {
 	const char *ustr;
 	int len, rc;
@@ -163,7 +163,7 @@ uls::crux::UlsOStream::printTok(int tokid, string& tokstr)
 }
 
 void
-uls::crux::UlsOStream::printTok(int tokid, std::wstring& wtokstr)
+uls::crux::UlsOStream::printTok(int tokid, const std::wstring& wtokstr)
 {
 	const char *ustr;
 	int len, rc;
@@ -181,7 +181,7 @@ uls::crux::UlsOStream::printTok(int tokid, std::wstring& wtokstr)
 // <parm name="tagstr">the tag of the source file.</parm>
 // <return>none</return>
 void
-uls::crux::UlsOStream::printTokLineNum(int lno, string& tagstr)
+uls::crux::UlsOStream::printTokLineNum(int lno, const string& tagstr)
 {
 	const char *ustr;
 	int len, rc;
@@ -194,7 +194,7 @@ uls::crux::UlsOStream::printTokLineNum(int lno, string& tagstr)
 }
 
 void
-uls::crux::UlsOStream::printTokLineNum(int lno, std::wstring& wtagstr)
+uls::crux::UlsOStream::printTokLineNum(int lno, const std::wstring& wtagstr)
 {
 	const char *ustr;
 	int len, rc;

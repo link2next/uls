@@ -31,10 +31,8 @@
     Stanley Hong <link2next@gmail.com>, Jan 2015.
   </author>
 */
-#include "uls/uls_util.h"
-#include "uls/uls_fileio.h"
-#include "uls/uls_auw.h"
 
+#include "uls/uls_fileio_wstr.h"
 #include "uls/uls_wlog.h"
 
 int
@@ -78,31 +76,31 @@ uls_fp_wopen(const wchar_t* wfpath, int mode)
 int
 uls_fp_gets_wstr(FILE *fp, wchar_t *wbuf, int wbuf_siz, int flags)
 {
-	char *abuf = NULL;
-	int asiz=0, alen;
+	char *ubuf = NULL;
+	int usiz=0, ulen;
 
 	wchar_t *wstr;
 	int wlen;
 	csz_str_t csz_wstr;
 
-	asiz = (1 + wbuf_siz) * 4;
-	abuf = uls_malloc(asiz);
-	csz_init(uls_ptr(csz_wstr), asiz);
+	usiz = (1 + wbuf_siz) * 4;
+	ubuf = uls_malloc(usiz);
+	csz_init(uls_ptr(csz_wstr), usiz);
 
-	if ((alen = uls_fp_gets(fp, abuf, asiz, flags)) <= ULS_EOF) {
+	if ((ulen = uls_fp_gets(fp, ubuf, usiz, flags)) <= ULS_EOF) {
 		csz_deinit(uls_ptr(csz_wstr));
-		uls_mfree(abuf);
-		return alen;
+		uls_mfree(ubuf);
+		return ulen;
 	}
 
-	if ((wstr = uls_ustr2wstr(abuf, alen, uls_ptr(csz_wstr))) == NULL) {
+	if ((wstr = uls_ustr2wstr(ubuf, ulen, uls_ptr(csz_wstr))) == NULL) {
 		err_wlog(L"encoding error!");
 		csz_deinit(uls_ptr(csz_wstr));
-		uls_mfree(abuf);
+		uls_mfree(ubuf);
 		return ULS_EOF - 4;
 	}
 
-	uls_mfree(abuf);
+	uls_mfree(ubuf);
 
 	if ((wlen = auw_csz_wlen(uls_ptr(csz_wstr))) >= wbuf_siz) {
 		csz_deinit(uls_ptr(csz_wstr));
@@ -155,6 +153,57 @@ uls_fd_open_wstr(const wchar_t* wfpath, int mode)
 		rval = -1;
 	} else {
 		rval = uls_fd_open(ustr, mode);
+	}
+
+	csz_deinit(uls_ptr(csz));
+	return rval;
+}
+
+int
+uls_getcwd_wstr(wchar_t* wbuf, int wbuf_siz)
+{
+	char *ubuf;
+	int usiz, ulen;
+
+	wchar_t *wstr;
+	int wlen = -1;
+	csz_str_t csz_wstr;
+
+	usiz = (1 + wbuf_siz) * 4;
+	ubuf = uls_malloc(usiz);
+	csz_init(uls_ptr(csz_wstr), usiz);
+
+	if ((ulen = uls_getcwd(ubuf, usiz)) >= 0) {
+		if ((wstr = uls_ustr2wstr(ubuf, ulen, uls_ptr(csz_wstr))) == NULL ||
+			(wlen = auw_csz_wlen(uls_ptr(csz_wstr))) >= wbuf_siz) {
+			err_wlog(L"getcwd: buffer overflow!");
+			wlen = -1;
+		} else {
+			uls_memcopy(wbuf, wstr, wlen * sizeof(wchar_t));
+			wbuf[wlen] = L'\0';
+		}
+	}
+
+	csz_deinit(uls_ptr(csz_wstr));
+	uls_mfree(ubuf);
+
+	return wlen;
+}
+
+int
+uls_chdir_wstr(const wchar_t* wpath)
+{
+	csz_str_t csz;
+	char *ustr;
+	int  rval;
+
+	csz_init(uls_ptr(csz), -1);
+
+	if ((ustr = uls_wstr2ustr(wpath, -1, uls_ptr(csz))) == NULL) {
+		err_wlog(L"invalid param!");
+		rval = -1;
+	} else {
+		rval = uls_chdir(ustr);
 	}
 
 	csz_deinit(uls_ptr(csz));

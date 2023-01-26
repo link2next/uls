@@ -40,7 +40,7 @@ const char *progname;
 int  opt_mode;
 int  opt_verbose;
 
-uls_lex_t *ulc_lex;
+uls_lex_ptr_t ulc_lex;
 char *outfile_xml;
 FILE *fout_xml;
 
@@ -135,14 +135,14 @@ currentline(void)
 	return yyline;
 }
 
-static uls_uch_t
+static uls_wch_t
 ulc2xml_peek_ch(int *ptr_is_quote)
 {
-	uls_uch_t uch;
+	uls_wch_t wch;
 	uls_nextch_detail_t detail;
 	int is_quote = 0;
 
-	if ((uch = uls_peek_uch(ulc_lex, &detail)) == ULS_UCH_NONE && detail.qmt != NULL) {
+	if ((wch = uls_peek_uch(ulc_lex, &detail)) == ULS_UCH_NONE && detail.qmt != NULL) {
 		is_quote = 1;
 	}
 
@@ -150,17 +150,17 @@ ulc2xml_peek_ch(int *ptr_is_quote)
 		*ptr_is_quote = is_quote;
 	}
 
-	return uch;
+	return wch;
 }
 
-static uls_uch_t
+static uls_wch_t
 ulc2xml_get_ch(int *ptr_is_quote)
 {
-	uls_uch_t uch;
+	uls_wch_t wch;
 	uls_nextch_detail_t detail;
 	int is_quote = 0;
 
-	if ((uch = uls_get_uch(ulc_lex, &detail)) == ULS_UCH_NONE && detail.qmt != NULL) {
+	if ((wch = uls_get_uch(ulc_lex, &detail)) == ULS_UCH_NONE && detail.qmt != NULL) {
 		is_quote = 1;
 	}
 
@@ -168,13 +168,13 @@ ulc2xml_get_ch(int *ptr_is_quote)
 		*ptr_is_quote = is_quote;
 	}
 
-	return uch;
+	return wch;
 }
 
 int yylex(void)
 {
 	int i, tok, is_quote;
-	uls_uch_t uch;
+	uls_wch_t wch;
 
 	tok = uls_get_tok(ulc_lex);
 	if (tok == TOK_EOI) return 0;
@@ -198,12 +198,12 @@ int yylex(void)
 	} else if (tok < 128) {
 		yy_lexeme_str[0] = tok;
 		for (i=1; i<ULC2XML_ID_MAXLEN; ) {
-			if ((uch = ulc2xml_peek_ch(&is_quote)) == ULS_UCH_NONE || is_quote ||
-				uch == ' ' || uch == '\n') {
+			if ((wch = ulc2xml_peek_ch(&is_quote)) == ULS_UCH_NONE || is_quote ||
+				wch == ' ' || wch == '\n') {
 				break;
 			}
-			uch = ulc2xml_get_ch(&is_quote);
-			yy_lexeme_str[i++] = (char) uch;
+			wch = ulc2xml_get_ch(&is_quote);
+			yy_lexeme_str[i++] = (char) wch;
 		}
 		yy_lexeme_str[i] = '\0';
 
@@ -235,9 +235,7 @@ main(int argc, char* argv[])
 {
 	char *input_file;
 	int i0;
-#ifdef _ULS_WANT_STATIC_LIBS
-	initialize_uls();
-#endif
+
 	if ((i0=parse_options(argc, argv)) <= 0) {
 		return i0;
 	}

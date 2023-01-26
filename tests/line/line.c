@@ -45,23 +45,23 @@
 
 #define FILEBUFF_SIZ  4095
 
-const char *progname;
+LPCTSTR progname;
 int  test_mode = -1;
 int  opt_verbose;
-const char *config_name;
-char *input_file;
+LPCTSTR config_name;
+LPTSTR input_file;
 uls_lex_t *sample_lex;
 
 static FILE   *cur_fin;
-static char   filebuff[FILEBUFF_SIZ+1];
+static TCHAR   filebuff[FILEBUFF_SIZ+1];
 
 int
-proc_file(char* filepath)
+proc_file(LPTSTR filepath)
 {
 	int len, stat = 0, lno = 0;
 
 	if ((cur_fin=uls_fp_open(filepath, ULS_FIO_READ)) == NULL) {
-		err_log("%s: fail to open '%s'", __FUNCTION__, filepath);
+		err_log(_T("%s: fail to open '%s'"), __FUNCTION__, filepath);
 		return -1;
 	}
 
@@ -69,14 +69,14 @@ proc_file(char* filepath)
 	while (1) {
 		if ((len=uls_fp_gets(cur_fin, filebuff, sizeof(filebuff), 0)) <= ULS_EOF) {
 			if (len < ULS_EOF) {
-				err_log("%s: error to read a line", __FUNCTION__);
+				err_log(_T("%s: error to read a line"), __FUNCTION__);
 				stat =-1;
 			}
 			break;
 		}
 		filebuff[len++] = '\n'; filebuff[len] = '\0';
 
-		uls_push_line(sample_lex, filebuff, strlen(filebuff), ULS_DO_DUP);
+		uls_push_line(sample_lex, filebuff, ult_str_length(filebuff), ULS_DO_DUP);
 
 		while (uls_get_tok(sample_lex) != tokEOI) {
 			uls_dumpln_tok(sample_lex);
@@ -101,20 +101,20 @@ dump_toks(void)
 void
 test_stage_1(void)
 {
-	char linebuff[81];
+	TCHAR linebuff[81];
 	int  len, i;
 
-	strcpy(linebuff, "hello ULS world");
-	len = strlen(linebuff);
+	ult_str_copy(linebuff, _T("hello ULS world"));
+	len = ult_str_length(linebuff);
 
 	for (i=0; i<len; i+=3) {
-		uls_printf("***** session-%d:\n", i);
+		uls_printf(_T("***** session-%d:\n"), i);
 		uls_set_line(sample_lex, linebuff, i, 0);
 		dump_toks();
 	}
 
-	linebuff[2] = '\0';
-	uls_printf("***** session-x:\n");
+	linebuff[2] = _T('\0');
+	uls_printf(_T("***** session-x:\n"));
 	uls_set_line(sample_lex, linebuff, len, 0);
 	dump_toks();
 }
@@ -122,146 +122,146 @@ test_stage_1(void)
 void
 test_stage_3(void)
 {
-	char linebuff[81];
+	TCHAR linebuff[81];
 
-	strcpy(linebuff, "hello ULS-world");
+	ult_str_copy(linebuff, _T("hello ULS-world"));
 
 	uls_set_line(sample_lex, linebuff, -1, 0);
 
 	uls_get_tok(sample_lex);
-	uls_dump_tok(sample_lex, " 1stToken:\n\t", "\n");
+	uls_dump_tok(sample_lex, _T(" 1stToken:\n\t"), _T("\n"));
 
-	uls_unget_str(sample_lex, "ungetc");
-
-	uls_get_tok(sample_lex);
-	uls_dump_tok(sample_lex, " 2ndToken:\n\t", "\n");
+	uls_unget_str(sample_lex, _T("ungetc"));
 
 	uls_get_tok(sample_lex);
-	uls_dump_tok(sample_lex, " 3rdToken:\n\t", "\n");
+	uls_dump_tok(sample_lex, _T(" 2ndToken:\n\t"), _T("\n"));
+
+	uls_get_tok(sample_lex);
+	uls_dump_tok(sample_lex, _T(" 3rdToken:\n\t"), _T("\n"));
 }
 
 void
 test_stage_4(void)
 {
-	char linebuff[81];
+	TCHAR linebuff[81];
 	uls_uch_t uch;
 
-	strcpy(linebuff, "7094ULS-world");
+	ult_str_copy(linebuff, _T("7094ULS-world"));
 
 	uls_set_line(sample_lex, linebuff, -1, 0);
 
 	uls_get_tok(sample_lex);
-	uls_dump_tok(sample_lex, " 1stToken:\n\t", "\n");
+	uls_dump_tok(sample_lex, _T(" 1stToken:\n\t"), _T("\n"));
 
 	uls_unget_tok(sample_lex);
 
 	uch = uls_getch(sample_lex, NULL);
-	uls_printf(" getch: '%c'\n", (char) uch);
+	uls_printf(_T(" getch: '%c'\n"), (char) uch);
 
 	uls_get_tok(sample_lex);
-	uls_dump_tok(sample_lex, " 2ndToken:\n\t", "\n");
+	uls_dump_tok(sample_lex, _T(" 2ndToken:\n\t"), _T("\n"));
 
 	uls_get_tok(sample_lex);
-	uls_dump_tok(sample_lex, " 3rdToken:\n\t", "\n");
+	uls_dump_tok(sample_lex, _T(" 3rdToken:\n\t"), _T("\n"));
 }
 
 void
 test_stage_5(void)
 {
-	char linebuff[81];
+	TCHAR linebuff[81];
 
-	strcpy(linebuff, "hello ULS-world");
+	ult_str_copy(linebuff, _T("hello ULS-world"));
 
 	uls_set_line(sample_lex, linebuff, -1, 0);
 
 	uls_get_tok(sample_lex);
-	uls_dump_tok(sample_lex, " 1stToken:\n\t", "\n");
+	uls_dump_tok(sample_lex, _T(" 1stToken:\n\t"), _T("\n"));
 
-	uls_unget_lexeme(sample_lex, "ga", tokNONE);
-	uls_unget_lexeme(sample_lex, "gb gc", tokID);
-
-	uls_get_tok(sample_lex);
-	uls_dump_tok(sample_lex, " 2ndToken:\n\t", "\n");
+	uls_unget_lexeme(sample_lex, _T("ga"), tokNONE);
+	uls_unget_lexeme(sample_lex, _T("gb gc"), tokID);
 
 	uls_get_tok(sample_lex);
-	uls_dump_tok(sample_lex, " 3rdToken:\n\t", "\n");
+	uls_dump_tok(sample_lex, _T(" 2ndToken:\n\t"), _T("\n"));
+
+	uls_get_tok(sample_lex);
+	uls_dump_tok(sample_lex, _T(" 3rdToken:\n\t"), _T("\n"));
 }
 
 void
 test_uls_line(uls_lex_t *uls)
 {
-	char *linebuff;
+	LPTSTR linebuff;
 
-	uls_push_line(uls, "hello world", -1, 0);
-
-	for ( ; ; ) {
-		if (uls_get_tok(uls) == tokEOI) break;
-
-		uls_printf("%3d", uls_get_lineno(uls));
-		uls_dumpln_tok(uls);
-	}
-
-	uls_push_line(uls, "hello world", -1, ULS_DO_DUP);
+	uls_push_line(uls, _T("hello world"), -1, 0);
 
 	for ( ; ; ) {
 		if (uls_get_tok(uls) == tokEOI) break;
 
-		uls_printf("%3d", uls_get_lineno(uls));
+		uls_printf(_T("%3d"), uls_get_lineno(uls));
 		uls_dumpln_tok(uls);
 	}
 
-	linebuff = (char *) malloc(128);
-	strcpy(linebuff, "hello world");
+	uls_push_line(uls, _T("hello world"), -1, ULS_DO_DUP);
+
+	for ( ; ; ) {
+		if (uls_get_tok(uls) == tokEOI) break;
+
+		uls_printf(_T("%3d"), uls_get_lineno(uls));
+		uls_dumpln_tok(uls);
+	}
+
+	linebuff = (LPTSTR) malloc(128 * sizeof(TCHAR));
+	ult_str_copy(linebuff, _T("hello world"));
 	uls_push_line(uls, linebuff, -1, ULS_MEMFREE_LINE);
 
 	for ( ; ; ) {
 		if (uls_get_tok(uls) == tokEOI) break;
 
-		uls_printf("%3d", uls_get_lineno(uls));
+		uls_printf(_T("%3d"), uls_get_lineno(uls));
 		uls_dumpln_tok(uls);
 	}
 }
 
 static void usage(void)
 {
-	err_log("%s v1.0", progname);
-	err_log("  Dumps tokens in inputfiles");
-	err_log("  according to the token defintions in %s", config_name);
-	err_log("  Uses uls_set_line() to set the input source");
-	err_log("");
-	err_log(" Usage:");
-	err_log("\t%s [-c <config-file>]  <inputfile>", progname);
-	err_log("");
-	err_log("  For example,");
-	err_log("      %s input1.txt", progname);
-	err_log("  A default config-file used, %s if you don't specifiy the config-file.", config_name);
+	err_log(_T("%s v1.0"), progname);
+	err_log(_T("  Dumps tokens in inputfiles"));
+	err_log(_T("  according to the token defintions in %s"), config_name);
+	err_log(_T("  Uses uls_set_line() to set the input source"));
+	err_log(_T(""));
+	err_log(_T(" Usage:"));
+	err_log(_T("\t%s [-c <config-file>]  <inputfile>"), progname);
+	err_log(_T(""));
+	err_log(_T("  For example,"));
+	err_log(_T("      %s input1.txt"), progname);
+	err_log(_T("  A default config-file used, %s if you don't specifiy the config-file."), config_name);
 }
 
 static int
-options(int opt, char* optarg)
+options(int opt, LPTSTR optarg)
 {
 	int stat = 0;
 
 	switch (opt) {
-	case 'c':
+	case _T('c'):
 		config_name = optarg;
 		break;
 
-	case 'm':
-		test_mode = atoi(optarg);
+	case _T('m'):
+		test_mode = ult_str2int(optarg);
 		break;
 
-	case 'v':
+	case _T('v'):
 		opt_verbose = 1;
 		break;
 
-	case 'h':
+	case _T('h'):
 		usage();
 		stat = 1;
 		break;
 
 	default:
-		err_log("undefined option -%c", opt);
+		err_log(_T("undefined option -%c"), opt);
 		usage();
 		stat = -1;
 		break;
@@ -271,27 +271,26 @@ options(int opt, char* optarg)
 }
 
 int
-main(int argc, char* argv[])
+_tmain(int n_targv, LPTSTR *targv)
 {
 	int i, i0;
 
-	initialize_uls();
-	progname = uls_filename(argv[0], NULL);
-	config_name = "sample.ulc";
+	progname = uls_split_filepath(targv[0], NULL);
+	config_name = _T("sample.ulc");
 
-	if ((i0=uls_getopts(argc, argv, "c:m:vh", options)) <= 0) {
+	if ((i0=uls_getopts(n_targv, targv, _T("c:m:vh"), options)) <= 0) {
 		return i0;
 	}
 
 	if ((sample_lex = uls_create(config_name)) == NULL) {
-		err_log("can't create uls-object");
+		err_log(_T("can't create uls-object"));
 		return -1;
 	}
 
 	switch (test_mode) {
 	case 0:
-		for (i=i0; i<argc; i++) {
-			input_file = argv[i];
+		for (i=i0; i<n_targv; i++) {
+			input_file = targv[i];
 			uls_set_tag(sample_lex, input_file, 1);
 			proc_file(input_file);
 		}
@@ -302,9 +301,9 @@ main(int argc, char* argv[])
 		break;
 
 	case 2:
-		for (i=i0; i<argc; i++) {
+		for (i=i0; i<n_targv; i++) {
 			// shell style
-			input_file = argv[i];
+			input_file = targv[i];
 			uls_set_tag(sample_lex, input_file, 1);
 			proc_file(input_file);
 		}
@@ -335,3 +334,15 @@ main(int argc, char* argv[])
 	return 0;
 }
 
+int
+main(int argc, char *argv[])
+{
+	LPTSTR *targv;
+	int stat;
+
+	ULS_GET_WARGS_LIST(argc, argv, targv);
+	stat = _tmain(argc, targv);
+	ULS_PUT_WARGS_LIST(argc, targv);
+
+	return stat;
+}

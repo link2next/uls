@@ -947,7 +947,7 @@ ULS_QUALIFIED_METHOD(uls_gettok_raw)(uls_lex_ptr_t uls)
 	} else if (((ch_grp & ULS_CH_2PLUS) || ch >= ULS_SYNTAX_TABLE_SIZE) &&
 		(e_vx=is_keyword_twoplus(uls_ptr(uls->twoplus_table), ch_ctx, lptr)) != nilptr) {
 		/* FOUND */
-		e = e_vx->base; // assert: e != nilptr
+		e = e_vx->base;
 		ctx->tok = e_vx->tok_id;
 		rc = e->l_keyword;
 
@@ -1167,31 +1167,6 @@ ULS_QUALIFIED_METHOD(_uls_put_tokid_list)(uls_lex_ptr_t uls, uls_ptrtype_tool(ou
 	uls_mfree(outbuf);
 }
 
-#ifndef ULS_DOTNET
-
-int
-ulsjava_get_tokid_list(uls_lex_t* uls, int **ptr_outbuf)
-{
-	uls_type_tool(outparam) parms;
-	int n;
-
-	n = _uls_get_tokid_list(uls, uls_ptr(parms));
-	*ptr_outbuf = parms.native_data;
-
-	return n;
-}
-
-void
-ulsjava_put_tokid_list(uls_lex_t* uls, int **ptr_outbuf)
-{
-	uls_type_tool(outparam) parms;
-
-	parms.native_data = *ptr_outbuf;
-	_uls_put_tokid_list(uls, uls_ptr(parms));
-}
-
-#endif
-
 ULS_QUALIFIED_RETTYP(uls_tokid_simple_list_ptr_t)
 ULS_QUALIFIED_METHOD(_uls_get_tokid_list_2)(uls_lex_ptr_t uls)
 {
@@ -1391,22 +1366,6 @@ ULS_QUALIFIED_METHOD(uls_is_quote_tok)(uls_lex_ptr_t uls, int tok_id)
 	qmt = uls_find_quotetype_by_tokid(uls_ptr(uls->quotetypes), uls->quotetypes.n, tok_id);
 	return qmt != nilptr ? 1 : 0;
 }
-
-#ifndef ULS_DOTNET
-const char*
-ULS_QUALIFIED_METHOD(uls_get_tag2)(uls_lex_ptr_t uls, int* ptr_n_bytes)
-{
-	const char *tagstr;
-	uls_type_tool(outparam) parms;
-
-	tagstr = _uls_get_tag2(uls, uls_ptr(parms));
-	if (ptr_n_bytes != NULL) {
-		*ptr_n_bytes = parms.len;
-	}
-
-	return tagstr;
-}
-#endif // ULS_DOTNET
 
 uls_voidptr_t
 ULS_QUALIFIED_METHOD(uls_get_current_extra_tokdef)(uls_lex_ptr_t uls)
@@ -2274,3 +2233,59 @@ ULS_QUALIFIED_METHOD(ulsjava_set_tag)(uls_lex_ptr_t uls, const void *tag, int le
 	uls_set_tag(uls, ustr, lineno);
 	uls_mfree(ustr);
 }
+
+#ifndef ULS_DOTNET
+
+const char*
+ULS_QUALIFIED_METHOD(uls_get_tag2)(uls_lex_ptr_t uls, int* ptr_n_bytes)
+{
+	const char *tagstr;
+	uls_type_tool(outparam) parms;
+
+	tagstr = _uls_get_tag2(uls, uls_ptr(parms));
+	if (ptr_n_bytes != NULL) {
+		*ptr_n_bytes = parms.len;
+	}
+
+	return tagstr;
+}
+
+const char*
+ULS_QUALIFIED_METHOD(uls_get_eoftag)(uls_lex_ptr_t uls, int *ptr_len_tag)
+{
+	uls_type_tool(outparam) parms1;
+	const char *ptr;
+
+	if (__uls_tok(uls) != uls->xcontext.toknum_EOF)
+		return NULL;
+
+	ptr = __uls_eof_tag(__uls_lexeme(uls), uls_ptr(parms1));
+	if (ptr_len_tag != NULL) {
+		*ptr_len_tag = parms1.len;
+	}
+
+	return ptr;
+}
+
+int
+ulsjava_get_tokid_list(uls_lex_t* uls, int **ptr_outbuf)
+{
+	uls_type_tool(outparam) parms;
+	int n;
+
+	n = _uls_get_tokid_list(uls, uls_ptr(parms));
+	*ptr_outbuf = parms.native_data;
+
+	return n;
+}
+
+void
+ulsjava_put_tokid_list(uls_lex_t* uls, int **ptr_outbuf)
+{
+	uls_type_tool(outparam) parms;
+
+	parms.native_data = *ptr_outbuf;
+	_uls_put_tokid_list(uls, uls_ptr(parms));
+}
+
+#endif

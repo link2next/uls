@@ -519,7 +519,6 @@ ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(__uls_bind_ostream)
 	(uls_ostream_ptr_t ostr, const char *specname, uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) parms)
 {
-	// assert: uls != NULL
 	uls_set_namebuf_value(ostr->header.specname, uls_get_namebuf_value(uls->ulc_name));
 
 	if (uld_export_extra_names(uls, parms) < 0) {

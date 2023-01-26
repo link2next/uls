@@ -32,24 +32,98 @@
 */
 
 #include "Html5Lex.h"
+#include <iostream>
+
+#include <uls/UlsUtils.h>
 #include <uls/uls_fileio.h>
 
 using namespace std;
+using namespace uls::crux;
 using namespace uls::collection;
 
+StringBuilder::StringBuilder()
+{
+	siz_mBuff = 32;
+	mBuff = (LPTSTR) malloc(siz_mBuff * sizeof(TCHAR));
+	sync = true;
+}
+
+StringBuilder::~StringBuilder()
+{
+	if (siz_mBuff > 0) {
+		free(mBuff);
+		mBuff = NULL;
+		siz_mBuff = 0;
+	}
+}
+
+int
+StringBuilder::len()
+{
+	return (int) m_stream.tellp();
+}
+
+void
+StringBuilder::clear()
+{
+	m_stream.str(_T(""));
+	m_stream.clear();
+	m_sbuff = _T("");
+	sync = true;
+}
+
+std::tstring&
+StringBuilder::str()
+{
+	if (sync == false) {
+		m_sbuff = m_stream.str();
+		sync = true;
+	}
+
+	return m_sbuff;
+}
+
+void
+StringBuilder::append(LPCTSTR str, int len)
+{
+	if (len < 0) {
+		len = uls::strLength(str);
+		m_stream << str;
+	} else if (len > 0) {
+		if (len >= siz_mBuff) {
+			siz_mBuff = len + 1;
+			mBuff = (LPTSTR) realloc(mBuff, siz_mBuff * sizeof(TCHAR));
+		}
+		uls::memcopy(mBuff, str, len * sizeof(TCHAR));
+		mBuff[len] = _T('\0');
+		m_stream << mBuff;
+	}
+	sync = false;
+}
+
+void
+StringBuilder::append(TCHAR ch)
+{
+	TCHAR buff[4];
+
+	buff[0] = ch;
+	buff[1] = _T('\0');
+	m_stream << buff;
+	sync = false;
+}
 // <brief>
 // Sets the input file to be tokenized.
 // </brief>
 // <parm name="fpath">The path of file</parm>
 // <return>0 if it succeeds, otherwise -1</return>
 int
-Html5Lex::setFile(string fpath)
+Html5Lex::setFile(tstring fpath)
 {
 	FILE *fp;
 
-	if (fpath != "") {
-		if ((fp=uls_fp_open(fpath.c_str(), ULS_FIO_READ)) == NULL) {
-			err_log("%s: file open error", fpath.c_str());
+	if (fpath != _T("")) {
+		if ((fp = uls::fileOpenReadolnly(fpath.c_str())) == NULL) {
+			_tcerr << fpath << _T(": file open error") << _tendl;
 			return -1;
 		}
 	} else {
@@ -60,29 +134,22 @@ Html5Lex::setFile(string fpath)
 	prepare_html_text = 1;
 
 	tok_id = NONE;
-	tok_str = "";
+	tok_str = _T("");
 
 	return 0;
 }
 
-Html5Lex::Html5Lex(string& config_name)
+Html5Lex::Html5Lex(tstring& config_name)
 	: Html5LexBasis(config_name)
 {
-	csz_init(&tokbuf, 128);
-	csz_init(&txt_buf, 4096);
-
-	string fpath = "";
-	setFile(fpath);
+	setFile(_T(""));
 	tok_ungot = false;
 }
 
 Html5Lex::~Html5Lex()
 {
-	csz_deinit(&txt_buf);
-	csz_deinit(&tokbuf);
-
 	if (fin_html != NULL) {
-		uls_fp_close(fin_html);
+		fclose(fin_html);
 		fin_html = NULL;
 	}
 }
@@ -93,20 +160,20 @@ Html5Lex::~Html5Lex()
 // If it's empty, sets *is_trivial to 1.
 // </brief>
 // <parm name="fp">The FILE pointer of input file</parm>
-// <parm name="txt_buf">the text found is stored in this</parm>
+// <parm name="txt">the text found is stored in this</parm>
 // <parm name="is_trivial">check whether the found text is empty or not</parm>
 // <return>'<' if it's found, otherwise EOF</return>
 int
-Html5Lex::run_to_tagbegin(FILE* fp, csz_str_t* txt_buf, int *is_trivial)
+Html5Lex::run_to_tagbegin(FILE* fp, int *is_trivial)
 {
 	int escape = 0;
 	int ch, bTrivial = 1;
-	char tch;
+	TCHAR tch;
 
-	for ( ; (ch = uls_fp_getc(fp)) != EOF; ) {
+	for ( ; (ch = fgetc(fp)) != EOF; ) {
 		if (escape) {
-			tch = (char) ch;
-			csz_append(txt_buf, (const char *) &tch, sizeof(char));
+			tch = (TCHAR) ch;
+			txtbuf.append(tch);
 			escape = 0;
 
 		} else if (ch == '<') {
@@ -116,21 +183,19 @@ Html5Lex::run_to_tagbegin(FILE* fp, csz_str_t* txt_buf, int *is_trivial)
 			escape = 1;
 
 			tch = '\\';
-			csz_append(txt_buf, (const char *) &tch, sizeof(char));
-
+			txtbuf.append(tch);
 			bTrivial = 0;
 		}
 
 		if (ch != '\n') {
-			tch = (char) ch;
-			csz_append(txt_buf, (const char *) &tch, sizeof(char));
-
+			tch = (TCHAR) ch;
+			txtbuf.append(tch);
 			if (ch != ' ' && ch != '\t') bTrivial = 0;
 		}
 	}
 
-	tch = '\0';
-	csz_append(txt_buf, (const char *) &tch, sizeof(char));
+	tch = _T('\0');
+	txtbuf.append(tch);
 
 	*is_trivial = bTrivial;
 
@@ -139,43 +204,43 @@ Html5Lex::run_to_tagbegin(FILE* fp, csz_str_t* txt_buf, int *is_trivial)
 
 // <brief>
 // This processs the quotation strings in HTML-element.
-// The found strings is stored in 'txt_buf'.
+// The found strings is stored in 'txt'.
 // </brief>
 // <parm name="fp">The FILE pointer of input file</parm>
-// <parm name="txt_buf">the text found is stored in this</parm>
+// <parm name="txt">the text found is stored in this</parm>
 // <parm name="quote_ch">The single or double quotation mark</parm>
 // <return>0 if success, ohterwise -1</return>
 int
-Html5Lex::pass_html_quote(FILE* fp, csz_str_t* txt_buf, int quote_ch)
+Html5Lex::pass_html_quote(FILE* fp, int quote_ch)
 {
 	int   ch, stat = 0, escape = 0;
-	char tch;
+	TCHAR tch;
 
 	for ( ; ; ) {
-		if ((ch=uls_fp_getc(fp)) == EOF) {
-			err_log("%s: unexpected EOF", __FUNCTION__);
+		if ((ch = fgetc(fp)) == EOF) {
+			_tcerr << _T("pass_html_quote: unexpected EOF") << _tendl;
 			stat = -1; break;
 		}
 
 		if (escape) {
-			tch = (char) ch;
-			csz_append(txt_buf, (const char *) &tch, sizeof(char));
+			tch = (TCHAR) ch;
+			txtbuf.append(tch);
 			escape = 0;
 
 		} else {
 			if (ch == quote_ch) {
-				tch = (char) ch;
-				csz_append(txt_buf, (const char *) &tch, sizeof(char));
+				tch = (TCHAR) ch;
+				txtbuf.append(tch);
 				break;
 
 			} else if (ch=='\\') {
 				tch = '\\';
-				csz_append(txt_buf, (const char *) &tch, sizeof(char));
+				txtbuf.append(tch);
 				escape = 1;
 
 			} else {
-				tch = (char) ch;
-				csz_append(txt_buf, (const char *) &tch, sizeof(char));
+				tch = (TCHAR) ch;
+				txtbuf.append(tch);
 			}
 		}
 	}
@@ -189,34 +254,34 @@ Html5Lex::pass_html_quote(FILE* fp, csz_str_t* txt_buf, int quote_ch)
 // If it's empty, sets *is_trivial to 1.
 // </brief>
 // <parm name="fp">The FILE pointer of input file</parm>
-// <parm name="txt_buf">The found html-element is stored in this</parm>
+// <parm name="txt">The found html-element is stored in this</parm>
 // <return>0, 1 if success, ohterwise -1</return>
 int
-Html5Lex::run_to_tagend(FILE* fp, csz_str_t* txt_buf)
+Html5Lex::run_to_tagend(FILE* fp)
 {
 	int stat = 1;
 	int ch;
-	char tch;
+	TCHAR tch;
 
 	for ( ; ; ) {
-		if ((ch=uls_fp_getc(fp)) == EOF) {
-			err_log("unexpected terminating file!");
+		if ((ch = fgetc(fp)) == EOF) {
+			_tcerr << _T("Unexpected terminating file!") << _tendl;
 			stat = -1;
 			break;
 		}
 
 		if (ch == '\'' || ch == '"') {
-			tch = (char) ch;
-			csz_append(txt_buf, (const char *) &tch, sizeof(char));
+			tch = (TCHAR) ch;
+			txtbuf.append(tch);
 
-			if (pass_html_quote(fp, txt_buf, ch) < 0) {
-				err_log("unexpected html element!");
+			if (pass_html_quote(fp, ch) < 0) {
+				_tcerr << _T("unexpected html element!") << _tendl;
 				stat = -1;
 				break;
 			}
 		} else {
-			tch = (char) ch;
-			csz_append(txt_buf, (const char *) &tch, sizeof(char));
+			tch = (TCHAR) ch;
+			txtbuf.append(tch);
 
 			if (ch == '>') {
 				stat = 0;
@@ -226,7 +291,7 @@ Html5Lex::run_to_tagend(FILE* fp, csz_str_t* txt_buf)
 	}
 
 	tch = '\0';
-	csz_append(txt_buf, (const char *) &tch, sizeof(char));
+	txtbuf.append(tch);
 
 	return stat;
 }
@@ -239,18 +304,18 @@ Html5Lex::run_to_tagend(FILE* fp, csz_str_t* txt_buf)
 // <parm name="len">The length of 'str'</parm>
 // <return>the length of the concatenated string</return>
 int
-Html5Lex::concat_lexeme(const char * str, int len)
+Html5Lex::concat_lexeme(LPCTSTR str, int len)
 {
 	Html5LexBasis::getTok();
-	string *lxm;
+	tstring *lxm;
 
-	Html5LexBasis::getTokStr(&lxm);
+	UlsLex::getTokStr(&lxm);
 
-	csz_reset(&tokbuf);
-	csz_append(&tokbuf, (const char *) str, len * sizeof(char));
-	csz_append(&tokbuf, (const char *) lxm->c_str(), (int) lxm->length() * sizeof(char));
+	tokbuf.clear();
+	tokbuf.append(str, len);
+	tokbuf.append(lxm->c_str());
 
-	return csz_length(&tokbuf);
+	return tokbuf.len();
 }
 
 // <brief>
@@ -262,9 +327,9 @@ Html5Lex::get_token(void)
 {
 	int ich;
 	int tok, is_trivial;
-	string *lxm;
-	uls_uch_t uch;
-	char tch;
+	tstring *lxm;
+	uls_wch_t wch;
+	TCHAR tch;
 
 	if (tok_ungot == true) {
 		tok_ungot = false;
@@ -273,16 +338,16 @@ Html5Lex::get_token(void)
 
 	if (prepare_html_text < 0) {
 		tok_id = EOI;
-		tok_str = "";
+		tok_str = _T("");
 		return;
 	}
 
 	if (prepare_html_text) {
 again_1:
-		csz_reset(&txt_buf);
+		txtbuf.clear();
 
 		// From here, to '<' may be a html text.
-		if ((ich=run_to_tagbegin(fin_html, &txt_buf, &is_trivial)) == EOF) {
+		if ((ich=run_to_tagbegin(fin_html, &is_trivial)) == EOF) {
 			// The text from here to EOF is just space.
 			prepare_html_text = -1;
 		} else {
@@ -290,34 +355,35 @@ again_1:
 		}
 
 		tok_id = TEXT;
-		if (csz_length(&txt_buf) > 0 && !is_trivial) {
+		if (txtbuf.len() > 0 && !is_trivial) {
 			// Non-trivial text exists.
-			tok_str = string(csz_text(&txt_buf));
+			tok_str = txtbuf.str();
 			tok_id = TEXT;
 			return;
 		}
 
 		if (ich == EOF) {
 			tok_id = EOI;
-			tok_str = "";
+			tok_str = _T("");
 			return;
 		}
 	}
 
 	if (tok_id == TEXT) {
 		// If the current token was HTML-TEXT, ...
-		csz_reset(&txt_buf);
+		txtbuf.clear();
 
-		tch = '<';
-		csz_append(&txt_buf, (const char *) &tch, sizeof(char));
+		tch = _T('<');
+		txtbuf.append(tch);
 
-		if (run_to_tagend(fin_html, &txt_buf) < 0) {
+		if (run_to_tagend(fin_html) < 0) {
 			tok_id = ERR;
-			tok_str = "";
+			tok_str = _T("");
 			return;
 		}
 
-		pushLine(csz_text(&txt_buf), csz_length(&txt_buf));
+		tstring str1 = txtbuf.str();
+		pushLine(str1.c_str(), str1.length());
 
 		if ((tok = Html5LexBasis::getTok()) != '<') {
 			goto again_1;
@@ -325,40 +391,40 @@ again_1:
 
 		tok = Html5LexBasis::getTok();
 
-		if (tok == '/') { // The end mark of HTML-Element '/>' detected.
+		if (tok == _T('/')) { // The end mark of HTML-Element '/>' detected.
 			tok_id = TAGEND;
 			tok = Html5LexBasis::getTok();
-			Html5LexBasis::getTokStr(&lxm);
+			UlsLex::getTokStr(&lxm);
 			tok_str = *lxm;
 
 		} else {
 			tok_id = TAGBEGIN;
-			if (tok == '!') { // '<!'
-				if ((uch = Html5LexBasis::peekCh(NULL)) == '-') {
-					uch = Html5LexBasis::getCh(NULL);
-					if ((uch = Html5LexBasis::peekCh(NULL)) == '-') {
+			if (tok == _T('!')) { // '<!'
+				if ((wch = Html5LexBasis::peekCh(NULL)) == _T('-')) {
+					wch = Html5LexBasis::getCh(NULL);
+					if ((wch = Html5LexBasis::peekCh(NULL)) == _T('-')) {
 						// '<--'
 						// skip html comment
 						goto again_1;
 					} else {
 						tok_id = ERR;
-						tok_str = "";
+						tok_str = _T("");
 						return;
 					}
 				} else {
-					concat_lexeme("!", 1);
+					concat_lexeme(_T("!"), 1);
 					tok = Html5LexBasis::getTokNum();
-					tok_str = string(csz_text(&tokbuf));
+					tok_str = tokbuf.str();
 				}
 			} else {
-				Html5LexBasis::getTokStr(&lxm);
+				UlsLex::getTokStr(&lxm);
 				tok_str = *lxm;
 			}
 		}
 
 		if (tok != ID) {
 			tok_id = ERR;
-			tok_str = "";
+			tok_str = _T("");
 			prepare_html_text = -2;
 			return;
 		}
@@ -367,21 +433,21 @@ again_1:
 	}
 
 	tok = Html5LexBasis::getTok();
-	Html5LexBasis::getTokStr(&lxm);
+	UlsLex::getTokStr(&lxm);
 	tok_str = *lxm;
 
 	if (tok == '-') {
-		if ((uch=Html5LexBasis::peekCh(NULL)) == '.' || isdigit(uch)) {
+		if ((wch=Html5LexBasis::peekCh(NULL)) == _T('.') || isdigit(wch)) {
 			tok = NUM;
-			concat_lexeme("-", 1);
+			concat_lexeme(_T("-"), 1);
 			tok_id = tok;
-			tok_str = string(csz_text(&txt_buf));
+			tok_str = txtbuf.str();
 			return;
 		}
-	} else if (tok == '/' && Html5LexBasis::peekCh(NULL) == '>') {
+	} else if (tok == _T('/') && Html5LexBasis::peekCh(NULL) == _T('>')) {
 		tok = TAGEND;
-		tok_str = "";
-	} else if (tok == '>') {
+		tok_str = _T("");
+	} else if (tok == _T('>')) {
 		goto again_1;
 	}
 
@@ -401,21 +467,6 @@ int
 Html5Lex::getTokNum(void)
 {
 	return tok_id;
-}
-
-std::string&
-Html5Lex::getTokStr(void)
-{
-	return tok_str;
-}
-
-// <brief>
-// This is a virtual method, inherited from 'UlsLex' class.
-// We don't need this method yet to process HTML5 files.
-// </brief>
-string Html5Lex::getKeywordStr(int t)
-{
-	return string("<unknown>");
 }
 
 void

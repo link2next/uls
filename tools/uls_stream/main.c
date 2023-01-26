@@ -460,8 +460,6 @@ main(int argc, char* argv[])
 	FILE *fp_out, *fp_list;
 	uls_outparam_t parms;
 
-	initialize_uls();
-
 	progname = THIS_PROGNAME;
 	if (argc <= 1) {
 		usage_brief();

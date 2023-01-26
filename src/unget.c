@@ -82,7 +82,6 @@ ULS_QUALIFIED_METHOD(__alloc_lexseg_and_zbuf)(uls_context_ptr_t ctx, uls_lexseg_
 	k1 = csz_length(uls_ptr(ctx->zbuf1));
 
 	siz1 = ULS_UNGETS_BUFSIZ + len;
-	if (siz1 < 0) siz1 = 0;
 	ctx->line = lptr = _uls_tool(csz_modify)(uls_ptr(ctx->zbuf1), k1, NULL, siz1 + 1);
 
 	ctx->lptr = lptr += ULS_UNGETS_BUFSIZ;
@@ -95,6 +94,7 @@ ULS_QUALIFIED_METHOD(__alloc_lexseg_and_zbuf)(uls_context_ptr_t ctx, uls_lexseg_
 			lptr = _uls_tool(csz_modify)(uls_ptr(ctx->zbuf2), k2, NULL, qlen + 1);
 			if (qlen < 0) qlen = _uls_tool_(strlen)(qstr);
 			_uls_tool_(memcopy)(lptr, qstr, qlen);
+			lptr[qlen] = '\0';
 		} else {
 			k2 = 0;
 			qlen = 0;

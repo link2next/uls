@@ -50,6 +50,97 @@
 #endif
 #endif
 
+unsigned char
+ULS_QUALIFIED_METHOD(uls_nibble2ascii)(unsigned char ch)
+{
+	if (ch >= 0 && ch <= 9)
+		ch += '0';
+	else
+		ch += 'a' - 10;
+
+	return ch;
+}
+
+void
+ULS_QUALIFIED_METHOD(uls_putstr)(const char* str)
+{
+	uls_put_binstr(str, -1, _uls_stdio_fd(1));
+}
+
+int
+ULS_QUALIFIED_METHOD(ult_str2int)(const char *str)
+{
+	return _uls_tool_(atoi)(str);
+}
+
+int
+ULS_QUALIFIED_METHOD(ult_str_length)(const char *str)
+{
+	return _uls_tool_(strlen)(str);
+}
+
+int
+ULS_QUALIFIED_METHOD(ult_str_equal)(const char *str1, const char *str2)
+{
+	return uls_streql(str1, str2);
+}
+
+int
+ULS_QUALIFIED_METHOD(ult_str_copy)(char *bufptr, const char *str)
+{
+	return uls_strcpy(bufptr, str);
+}
+
+int
+ULS_QUALIFIED_METHOD(ult_str_compare)(const char* str1, const char* str2)
+{
+	return uls_strcmp(str1, str2);
+}
+
+char*
+ULS_QUALIFIED_METHOD(ult_skip_blanks)(const char* lptr)
+{
+	return skip_blanks(lptr);
+}
+
+char*
+ULS_QUALIFIED_METHOD(ult_splitstr)(char** p_str, int *p_len)
+{
+	uls_wrd_t wrdx;
+	char *wrd;
+
+	wrdx.lptr = *p_str;
+	wrd = _uls_splitstr(uls_ptr(wrdx));
+	*p_str = wrdx.lptr;
+
+	if (p_len != NULL) *p_len = wrdx.len;
+	return wrd;
+}
+
+char*
+ULS_QUALIFIED_METHOD(ult_split_litstr)(char *str, char qch)
+{
+	return split_litstr(str, qch);
+}
+
+void
+ULS_QUALIFIED_METHOD(ult_dump_bin)(const char *str)
+{
+	unsigned char ch, ch1;
+	unsigned char buff[4];
+	int i, k;
+
+	for (i = 0; (ch = str[i]) != '\0'; i++) {
+		k = 0;
+		if ((ch1 = ch >> 4) != 0)
+			buff[k++] = uls_nibble2ascii(ch1);;
+		buff[k++] = uls_nibble2ascii(ch & 0x0F);
+		buff[k] = '\0';
+
+		_uls_log_(printf)(" %s", (char *) buff);
+	}
+}
+
 void
 ULS_QUALIFIED_METHOD(uls_print_bytes)(const char* srcptr, int n_bytes)
 {
@@ -632,6 +723,13 @@ ULS_QUALIFIED_METHOD(isp_insert)(uls_isp_ptr_t isp, const char* str, int len)
 }
 
 #ifndef ULS_DOTNET
+char*
+ULS_QUALIFIED_METHOD(uls_split_filepath)(const char* filepath, int* len_fname)
+{
+
+	return uls_filename(filepath, len_fname);
+}
+
 /**
  * Parsing command line arguments.
  * e.g. i0 = uls_getopts(argc, argv, "lqf:s:o:v", options);
@@ -641,8 +739,8 @@ ULS_QUALIFIED_METHOD(isp_insert)(uls_isp_ptr_t isp, const char* str, int len)
 int
 ULS_QUALIFIED_METHOD(uls_getopts)(int n_args, char* args[], const char* optfmt, uls_optproc_t proc)
 {
-	const char  *ptr;
-	char        *optarg, *optstr;
+	const char  *cptr;
+	char *optarg, *optstr, nullbuff[4] = { '\0', };
 	int         rc, opt, i, j, k;
 
 	for (i=1; i<n_args; i=k+1) {
@@ -650,37 +748,37 @@ ULS_QUALIFIED_METHOD(uls_getopts)(int n_args, char* args[], const char* optfmt, 
 
 		optstr = uls_ptr(args[i][1]);
 		for (k=i,j=0; (opt=optstr[j]) != '\0'; ) {
-			if (opt=='?') {
+			if (opt == '?') {
 				return 0; // call usage();
 			}
 
-			if ((ptr=_uls_tool_(strchr)(optfmt, opt)) == NULL) {
-				_uls_log(err_log)("%s: undefined option -%c", __FUNCTION__, opt);
+			if ((cptr=_uls_tool_(strchr)(optfmt, opt)) == NULL) {
+				_uls_log(err_log)("%s: undefined option -%c", __func__, opt);
 				return -1;
 			}
 
-			if (ptr[1] == ':') { /* the option 'opt' needs a arg-val */
+			if (cptr[1] == ':') { /* the option 'opt' needs a arg-val */
 				if (optstr[j+1]!='\0') {
 					optarg = optstr + (j+1);
 				} else if (k+1 < n_args && args[k+1][0] != '-') {
 					optarg = args[++k];
 				} else {
-					_uls_log(err_log)("%s: option -%c requires an arg.", __FUNCTION__, opt);
+					_uls_log(err_log)("%s: option -%c requires an arg.", __func__, opt);
 					return -1;
 				}
 
-				if ((rc=proc(opt, optarg)) != 0) {
+				if ((rc = proc(opt, optarg)) != 0) {
 					if (rc > 0) rc = 0;
-					else _uls_log(err_log)("error in processing the option -%c, %s.", opt, optarg);
+					else _uls_log(err_log)("An Error in processing the option -%c, %s.", opt, optarg);
 					return rc;
 				}
 				break;
 
 			} else {
-				optarg = "";
-				if ((rc=proc(opt, optarg)) != 0) {
+				optarg = nullbuff;
+				if ((rc = proc(opt, optarg)) != 0) {
 					if (rc > 0) rc = 0;
-					else _uls_log(err_log)("%s: error in -%c.", __FUNCTION__, opt);
+					else _uls_log(err_log)("%s: error in -%c.", __func__, opt);
 					return rc;
 				}
 				j++;
@@ -826,6 +924,7 @@ ULS_QUALIFIED_METHOD(initialize_uls_util)(void)
 
 	initialize_primitives();
 	initialize_csz();
+
 #ifndef ULS_DOTNET
 	initialize_uls_lf();
 	uls_add_default_convspecs(uls_lf_get_default());

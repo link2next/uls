@@ -325,6 +325,18 @@ ULS_QUALIFIED_METHOD(uls_get_litstr__context)(uls_litstr_ptr_t lit)
 	return uls_ptr(lit->context);
 }
 
+void
+ULS_QUALIFIED_METHOD(uls_litstr_putc)(uls_litstr_context_ptr_t lit_ctx, char ch)
+{
+	_uls_tool(csz_putc)(lit_ctx->ss_dst, ch);
+}
+
+void
+ULS_QUALIFIED_METHOD(uls_litstr_puts)(uls_litstr_context_ptr_t lit_ctx, const char *str, int len)
+{
+	_uls_tool(csz_append)(lit_ctx->ss_dst, str, len);
+}
+
 int
 ULS_QUALIFIED_METHOD(nothing_lit_analyzer)(uls_litstr_ptr_t lit)
 {

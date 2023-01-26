@@ -50,7 +50,7 @@ namespace uls {
 			static const int           DQUOTE = 34;
 			static const int           SQUOTE = 39;
 
-			Html5LexBasis(std::string &ulc_fpath)
+			Html5LexBasis(std::tstring& ulc_fpath)
 				 : uls::crux::UlsLex(ulc_fpath) {}
 		};
 	}
