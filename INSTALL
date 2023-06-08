@@ -26,7 +26,9 @@
 
   Building from the source files on Linux/macOS
   ------------------
-     $ ./configure [--prefix=<INST_DIR>] [--with-etc-dir=<ADMIN_DIR>]
+     $ configure [--prefix=<INST_DIR>] [--with-etc-dir=<ADMIN_DIR>]
+         To exclude java api, enter
+         $ configure --disable-java
      $ make
      $ make check
      $ sudo make install // install it using admin privilege.
@@ -40,7 +42,7 @@
            $ ./configure --with-etc-dir='/opt/uls_1_8/etc'
       The default admin-directory is '/usr/local/etc/uls'.
 
-  3) If you want not to install the java-api of uls, specify the option '--disable-java' 
+  3) If you want not to install the java-api of uls, specify the option '--disable-java'
        $ ./configure --disable-java
 
   4) After installation, There'll be directories named 'bin', 'lib', include', and 'share'
@@ -101,11 +103,11 @@
      a) After unpacking the source distribution (uls-windows-x.y.z.tar.xz),
            run VisualStudio by clicking UlsWin\UlsWin.sln.
      b) Choose 'Release/x64' configuration
-     c) Build it 
+     c) Build it
 
-   2) Install binaries 
-     a) Run setupBinaries.bat 
-     b) Run installUlsWinStep1.bat 
+   2) Install binaries
+     a) Run setupBinaries.bat
+     b) Run installUlsWinStep1.bat
      c) Run installUlsWinStep2.bat with admin privilege.
 
    3) To build C++ examples,
@@ -142,8 +144,31 @@
 
   For Java Developers
   ---------------------
-    Read README in the subdirectory ulsjni for Linux users
-    Read README in the subdirectory vs2022/UlsJava for Windows users
+   The followings jdks are tested:
+     a) oracle-jdk on MacOS
+       jdk-11.0.18_macos-x64_bin.dmg
+       After installing, it's necessary to set the environment variables:
+          Set the environment variable JAVA_HOME
+          Prepend the path '$JAVA_HOME/bin' in the environment PATH.
+     b) openjdk on Linux(Mint)
+       To install it, enter
+       $ sudo apt install openjdk-8-jdk-headless
+       $ sudo apt install openjdk-8-jdk
+       You may use oracle-jdk as well.
+     c) oracle-jdk-11 on Windows 10
+       Read README in the subdirectory vs2022/UlsJava for Windows users
+
+  To build & test on Linux/MacOS:
+  	$ configure
+
+  	To exclude java api, enter instead
+  	$ configure --disable-java
+
+     Compile the source files:
+  	$ make
+
+     Try to test the programs:
+  	$ make check
 
 
  Uninstall

@@ -427,7 +427,7 @@ ULS_QUALIFIED_METHOD(uls_unget_tok)(uls_lex_ptr_t uls)
 	uls_context_ptr_t ctx = uls->xcontext.context;
 
 	if ((ctx->flags & ULS_CTX_FL_TOKEN_UNGOT) || __uls_tok(uls) == uls->xcontext.toknum_NONE) {
-		_uls_log(err_log)("%s: called twice!, ignoring ...", __FUNCTION__);
+		_uls_log(err_log)("%s: called twice!, ignoring ...", __func__);
 	} else {
 		ctx->flags |= ULS_CTX_FL_TOKEN_UNGOT;
 	}
@@ -443,7 +443,7 @@ ULS_QUALIFIED_METHOD(uls_unget_lexeme)(uls_lex_ptr_t uls, const char *lxm, int t
 	char *lptr;
 
 	if (lxm == NULL) {
-		_uls_log(err_log)("%s: lxm == NULL", __FUNCTION__);
+		_uls_log(err_log)("%s: lxm == NULL", __func__);
 		return;
 	}
 
@@ -487,7 +487,7 @@ ULS_QUALIFIED_METHOD(uls_unget_ch)(uls_lex_ptr_t uls, uls_uch_t uch)
 	}
 
 	if ((rc = _uls_tool_(encode_utf8)(uch, ch_str)) <= 0) {
-		_uls_log(err_log)("%s: incorrect unicode!", __FUNCTION__);
+		_uls_log(err_log)("%s: incorrect unicode!", __func__);
 		return;
 	}
 
@@ -505,7 +505,7 @@ ULS_QUALIFIED_METHOD(uls_unget_str)(uls_lex_ptr_t uls, const char* str)
 	int len;
 
 	if (str == NULL)
-		_uls_log(err_panic)("%s: null string NOT permitted!", __FUNCTION__);
+		_uls_log(err_panic)("%s: null string NOT permitted!", __func__);
 	if ((len=_uls_tool_(strlen)(str)) == 0) return;
 
 	if (ctx->flags & ULS_CTX_FL_TOKEN_UNGOT) {

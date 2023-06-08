@@ -86,7 +86,7 @@ ULS_QUALIFIED_METHOD(get_number)(uls_lex_ptr_t uls, uls_context_ptr_t ctx, uls_p
 	char ch;
 
 	parms1.flags = 0;
-	parms1.uch = numsep;
+	parms1.wch = numsep;
 
  	if (*lptr == '-') {
 		parms1.flags |= ULS_NUM_FL_MINUS;
@@ -114,7 +114,7 @@ ULS_QUALIFIED_METHOD(get_number)(uls_lex_ptr_t uls, uls_context_ptr_t ctx, uls_p
 			k = _uls_tool(num2stdfmt_0)(uls_ptr(parms1), tokbuf, k0);
 		}
 	} else if (_uls_tool_(isdigit)(ch) || ch == '.') {
-		k = _uls_tool(num2stdfmt)(uls_ptr(parms1), tokbuf, k0);
+		k = _uls_tool(uls_num2stdfmt)(uls_ptr(parms1), tokbuf, k0);
 	} else {
 		k = -1;
 	}
@@ -431,7 +431,7 @@ ULS_QUALIFIED_METHOD(ulc_load)(uls_lex_ptr_t uls, FILE *fin_ulc, FILE *fin_ulf)
 	}
 
 	if (classify_char_group(uls, uls_ptr(uls_config)) < 0) {
-		_uls_log(err_log)("%s: lex-conf file not consistent!", __FUNCTION__);
+		_uls_log(err_log)("%s: lex-conf file not consistent!", __func__);
 		release_ulc_fp_stack(ulc_fp_stack);
 		_uls_tool_(fp_close)(fin_ulf);
 		return -1;
@@ -447,7 +447,7 @@ ULS_QUALIFIED_METHOD(ulc_load)(uls_lex_ptr_t uls, FILE *fin_ulc, FILE *fin_ulf)
 		if ((linelen=_uls_tool_(fp_gets)(fin_ulc, linebuff, sizeof(linebuff), 0)) <= ULS_EOF) {
 			uls_mfree(tagstr);
 			if (linelen < ULS_EOF) {
-				_uls_log(err_log)("%s: ulc file i/o error at %d", __FUNCTION__, lno);
+				_uls_log(err_log)("%s: ulc file i/o error at %d", __func__, lno);
 				stat = -1;
 				break;
 			}
@@ -507,7 +507,7 @@ ULS_QUALIFIED_METHOD(ulc_load)(uls_lex_ptr_t uls, FILE *fin_ulc, FILE *fin_ulf)
 	}
 
 	if (classify_tok_group(uls) < 0) {
-		_uls_log(err_log)("%s: lex-conf file not consistent!", __FUNCTION__);
+		_uls_log(err_log)("%s: lex-conf file not consistent!", __func__);
 		_uls_tool_(fp_close)(fin_ulf);
 		return -1;
 	}
@@ -700,7 +700,7 @@ ULS_QUALIFIED_METHOD(uls_spec_compatible)(uls_lex_ptr_t uls, const char* specnam
 		!uls_vers_compatible(uls_ptr(uls->stream_filever), filever)) {
 		_uls_tool_(version_make_string)(uls_ptr(uls->stream_filever), ver_str1);
 		_uls_tool_(version_make_string)(filever, ver_str2);
-		_uls_log(err_log)("%s: Unsupported or not compatible:", __FUNCTION__);
+		_uls_log(err_log)("%s: Unsupported or not compatible:", __func__);
 		_uls_log(err_log)("\t'%s'(%s)", uls_get_namebuf_value(uls->ulc_name), ver_str1);
 		_uls_log(err_log)("\t'%s'(%s)", specname, ver_str2);
 		stat = 0;
@@ -718,7 +718,7 @@ ULS_QUALIFIED_METHOD(uls_fillbuff)(uls_lex_ptr_t uls)
 	int rc;
 
 	if ((ctx->flags & ULS_CTX_FL_ERR) || (inp->isource.flags & ULS_ISRC_FL_ERR)) {
-		_uls_log(err_log)("%s: called again after I/O failed!", __FUNCTION__);
+		_uls_log(err_log)("%s: called again after I/O failed!", __func__);
 		return -1;
 	}
 
@@ -738,7 +738,7 @@ ULS_QUALIFIED_METHOD(uls_fillbuff)(uls_lex_ptr_t uls)
 
 	ctx->lptr = ctx->line = line =_uls_tool(csz_text)(uls_ptr(ctx->zbuf1));
 	if ((ctx->line_end=line+rc) < line) {
-		_uls_log(err_panic)("%s: invalid string length, %d.", __FUNCTION__, rc);
+		_uls_log(err_panic)("%s: invalid string length, %d.", __func__, rc);
 		return -1;
 	}
 
@@ -1016,7 +1016,7 @@ ULS_QUALIFIED_METHOD(__uls_change_isrc)(uls_lex_ptr_t uls, int bufsiz, uls_voidp
 	uls_context_set_tag(ctx, NULL, start_lno);
 
 	if (uls_fillbuff_and_reset(uls) < 0) {
-		_uls_log(err_log)("%s: fail to fill the initial buff", __FUNCTION__);
+		_uls_log(err_log)("%s: fail to fill the initial buff", __func__);
 		return -1;
 	}
 
@@ -1207,7 +1207,7 @@ ULS_QUALIFIED_METHOD(uls_init)(uls_lex_ptr_t uls, const char* confname)
 	uls_type_tool(outparam) parms1;
 
 	if (uls == nilptr || confname == NULL) {
-		_uls_log(err_log)("%s: invalid parameter!", __FUNCTION__);
+		_uls_log(err_log)("%s: invalid parameter!", __func__);
 		return -1;
 	}
 
@@ -1327,7 +1327,7 @@ int
 ULS_QUALIFIED_METHOD(uls_destroy)(uls_lex_ptr_t uls)
 {
 	if (uls == nilptr || uls->ref_cnt <= 0) {
-		_uls_log(err_log)("%s: called for invalid object!", __FUNCTION__);
+		_uls_log(err_log)("%s: called for invalid object!", __func__);
 		return -1;
 	}
 
@@ -1580,7 +1580,7 @@ ULS_QUALIFIED_METHOD(uls_push_line)(uls_lex_ptr_t uls, const char* line, int len
 	}
 
 	if (uls_fillbuff_and_reset(uls) < 0) {
-		_uls_log(err_log)("%s: fail to fill the initial buff", __FUNCTION__);
+		_uls_log(err_log)("%s: fail to fill the initial buff", __func__);
 		return -1;
 	}
 
@@ -1787,19 +1787,19 @@ ULS_QUALIFIED_METHOD(uls_is_zero)(uls_lex_ptr_t uls)
 const char*
 ULS_QUALIFIED_METHOD(uls_number_suffix)(uls_lex_ptr_t uls)
 {
-	const char *ptr;
+	const char *cptr;
 	char ch;
 
 	if (__uls_tok(uls) != uls->xcontext.toknum_NUMBER)
 		return "";
 
-	for (ptr=__uls_lexeme(uls); (ch=*ptr)!='\0'; ptr++) {
+	for (cptr=__uls_lexeme(uls); (ch=*cptr)!='\0'; cptr++) {
 		if (ch == ' ') {
-			++ptr; break;
+			++cptr; break;
 		}
 	}
 
-	return ptr;
+	return cptr;
 }
 
 const char*
@@ -1903,7 +1903,6 @@ ULS_QUALIFIED_METHOD(uls_lexeme_int64)(uls_lex_ptr_t uls)
 	}
 
 	i64_val = __uls_lexeme_uint64(ptr);
-
 	return minus ? - (uls_int64) i64_val : i64_val;
 }
 

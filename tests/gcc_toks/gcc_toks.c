@@ -35,7 +35,6 @@
 #include "uls/uls_lex.h"
 #include "uls/uls_log.h"
 #include "uls/uls_util.h"
-#include "uls/uls_init.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -158,7 +157,7 @@ lex_input_file(LPCTSTR fpath)
 			continue;
 		}
 
-		tokstr = uls_lexeme(gcc_lex);
+		tokstr = uls_tokstr(gcc_lex);
 		if (t == TOK_WCOORD) {
 			proc_file_coord(tokstr);
 			continue;
@@ -178,7 +177,7 @@ test_gnu_c(LPTSTR *args, int n_args)
 	int i, stat=0;
 
 	if (n_args < 1) {
-		err_log(_T("%s: invalid parameter!"), __FUNCTION__);
+		err_log(_T("%s: invalid parameter!"), __func__);
 		return -1;
 	}
 
@@ -213,7 +212,7 @@ lex_input_line()
 			break;
 		}
 
-		tokstr = uls_lexeme(gcc_lex);
+		tokstr = uls_tokstr(gcc_lex);
 		if (t == TOK_WCOORD) {
 			proc_file_coord(tokstr);
 			continue;

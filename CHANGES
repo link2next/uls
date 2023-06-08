@@ -1,4 +1,12 @@
 
+  v1.8.16
+  -----------
+    o Tested on MacOS(Ventura)
+    o bug-fixes on
+      a) converting decimal-string to hexa as token string
+      b) infinite looping as getting input buffer since v1.8.12
+    o If you use the api uls_push_isrc(), refer to tests/dump_toks/dump_toks.c
+
   v1.8.14
   -----------
     o Restored & Reinforced the incomplete wide string system of uls.

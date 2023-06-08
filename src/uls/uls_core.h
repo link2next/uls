@@ -77,7 +77,6 @@ extern "C" {
 #define uls_tokid uls_tok
 #define uls_toknum uls_tok
 #define uls_token uls_tok
-
 #define uls_token_id uls_tok
 #define uls_tok_id uls_tok
 
@@ -158,7 +157,6 @@ extern "C" {
 
 #if defined(__ULS_CORE__) || defined(ULS_DECL_PRIVATE_PROC)
 ULS_DECL_STATIC _ULS_INLINE void __ready_to_use_lexseg(uls_context_ptr_t ctx);
-
 ULS_DECL_STATIC int find_prefix_radix(uls_ptrtype_tool(outparam) parms, uls_lex_ptr_t uls, const char *str);
 ULS_DECL_STATIC int get_number(uls_lex_ptr_t uls, uls_context_ptr_t ctx, uls_ptrtype_tool(parm_line) parm_ln);
 ULS_DECL_STATIC void make_eof_lexeme(uls_lex_ptr_t uls);

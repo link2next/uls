@@ -222,13 +222,6 @@ bool
 uls::crux::UlsTmplList::setValue(const char *tnam, const char *tval)
 {
 	insert(tnam, tval);
-
-	wchar_t *wstr0, *wstr1;
-	_ULSCPP_USTR2WSTR(tnam, wstr0, 0);
-	_ULSCPP_USTR2WSTR(tval, wstr1, 1);
-
-	insert(wstr0, wstr1);
-
 	return true;
 }
 

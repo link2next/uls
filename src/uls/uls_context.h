@@ -54,7 +54,7 @@ extern "C" {
 #define ULS_CTX_FL_EXTERN_TOKBUF   0x20
 #define ULS_CTX_FL_ERR             0x40
 #define ULS_CTX_FL_GETTOK_RAW      0x80
-#define ULS_CTX_FL_FILL_RAW        0x100
+#define ULS_CTX_FL_FILL_RAW       0x100
 
 // the flags of uls_xcontext_t
 #define ULS_XCTX_FL_IGNORE_LF   0x01

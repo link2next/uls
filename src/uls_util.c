@@ -244,13 +244,13 @@ ULS_QUALIFIED_METHOD(uls_get_exeloc_dir)(const char* argv0, char *fpath_buf)
 #endif
 
 	if (fpath_buf == NULL) {
-		_uls_log(err_log)("%s: invalid parameter!", __FUNCTION__);
+		_uls_log(err_log)("%s: invalid parameter!", __func__);
 		return -1;
 	}
 
 #ifdef ULS_WINDOWS
 	if ((len = GetModuleFileNameA(NULL, fpath_buf, ULS_FILEPATH_MAX)) >= ULS_FILEPATH_MAX) {
-		_uls_log(err_log)("%s: internal error!", __FUNCTION__);
+		_uls_log(err_log)("%s: internal error!", __func__);
 		return -1;
 	}
 	fpath_buf[len] = '\0';
@@ -708,7 +708,7 @@ ULS_QUALIFIED_METHOD(isp_insert)(uls_isp_ptr_t isp, const char* str, int len)
 
 	l = isp->siz_strpool - isp->len_strpool;
 	if (len + 1 > l) {
-		_uls_log(err_log)("%s: isp full!", __FUNCTION__);
+		_uls_log(err_log)("%s: isp full!", __func__);
 		return NULL;
 	}
 
@@ -769,7 +769,7 @@ ULS_QUALIFIED_METHOD(uls_getopts)(int n_args, char* args[], const char* optfmt, 
 
 				if ((rc = proc(opt, optarg)) != 0) {
 					if (rc > 0) rc = 0;
-					else _uls_log(err_log)("An Error in processing the option -%c, %s.", opt, optarg);
+					else _uls_log(err_log)("An error in processing the option -%c, %s.", opt, optarg);
 					return rc;
 				}
 				break;

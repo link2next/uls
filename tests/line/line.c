@@ -36,7 +36,6 @@
 #include "uls/uls_log.h"
 #include "uls/uls_util.h"
 #include "uls/uls_fileio.h"
-#include "uls/uls_init.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -61,7 +60,7 @@ proc_file(LPTSTR filepath)
 	int len, stat = 0, lno = 0;
 
 	if ((cur_fin=uls_fp_open(filepath, ULS_FIO_READ)) == NULL) {
-		err_log(_T("%s: fail to open '%s'"), __FUNCTION__, filepath);
+		err_log(_T("%s: fail to open '%s'"), __func__, filepath);
 		return -1;
 	}
 
@@ -69,7 +68,7 @@ proc_file(LPTSTR filepath)
 	while (1) {
 		if ((len=uls_fp_gets(cur_fin, filebuff, sizeof(filebuff), 0)) <= ULS_EOF) {
 			if (len < ULS_EOF) {
-				err_log(_T("%s: error to read a line"), __FUNCTION__);
+				err_log(_T("%s: error to read a line"), __func__);
 				stat =-1;
 			}
 			break;
@@ -192,6 +191,7 @@ test_uls_line(uls_lex_t *uls)
 {
 	LPTSTR linebuff;
 
+	/* 1 */
 	uls_push_line(uls, _T("hello world"), -1, 0);
 
 	for ( ; ; ) {
@@ -201,6 +201,7 @@ test_uls_line(uls_lex_t *uls)
 		uls_dumpln_tok(uls);
 	}
 
+	/* 2 */
 	uls_push_line(uls, _T("hello world"), -1, ULS_DO_DUP);
 
 	for ( ; ; ) {
@@ -210,6 +211,7 @@ test_uls_line(uls_lex_t *uls)
 		uls_dumpln_tok(uls);
 	}
 
+	/* 3 */
 	linebuff = (LPTSTR) malloc(128 * sizeof(TCHAR));
 	ult_str_copy(linebuff, _T("hello world"));
 	uls_push_line(uls, linebuff, -1, ULS_MEMFREE_LINE);

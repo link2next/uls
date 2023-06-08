@@ -161,7 +161,7 @@ ULS_DEFINE_STRUCT(outparam)
 
 	char *line;
 	const char *lptr, *lptr_end;
-	uls_uch_t uch;
+	uls_uch_t wch;
 
 	uls_native_vptr_t native_data;
 	uls_voidptr_t data;
@@ -236,6 +236,7 @@ void err_panic_primitive(const char* fmt, ...);
 int is_octal_char(char ch);
 int is_hexa_char(char ch);
 int is_num_radix(uls_uch_t ch, int radix);
+char num2char_radix(int val);
 char read_hexa_char(char* ptr);
 
 int uls_index_range(uls_outparam_ptr_t parms, int i2_limit);
@@ -254,6 +255,9 @@ void finalize_primitives(void);
 #endif // ULS_DECL_PROTECTED_PROC
 
 #ifdef ULS_DECL_PUBLIC_PROC
+
+const char* uls_get_standard_number_prefix(int radix);
+int uls_find_standard_prefix_radix(const char *line, int *ptr_radix);
 
 int uls_isgraph(int c);
 int uls_isprint(int c);

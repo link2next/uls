@@ -108,7 +108,7 @@ ULS_QUALIFIED_METHOD(langs_proc_line)(uls_lang_list_ptr_t tbl, char* line)
 	lptr = wrdx.lptr;
 
 	if ((len = _uls_tool_(strlen)(wrd0)) <= 1 || wrd0[len-1] != ':') {
-		_uls_log(err_log)("%s: incorrect format!", __FUNCTION__);
+		_uls_log(err_log)("%s: incorrect format!", __func__);
 		return -1;
 	}
 
@@ -354,7 +354,7 @@ ULS_QUALIFIED_METHOD(uls_find_lang)(uls_lang_list_ptr_t tbl, const char* alias)
 	int len;
 
 	if (alias == NULL || *alias == '\0') {
-		_uls_log(err_log)("%s: invalid parameter!", __FUNCTION__);
+		_uls_log(err_log)("%s: invalid parameter!", __func__);
 		return nilptr;
 	}
 	len = _uls_tool_(strlen)(alias);

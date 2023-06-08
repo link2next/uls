@@ -114,7 +114,7 @@ ULS_QUALIFIED_METHOD(make_tokpkt_seqence)(uls_lex_ptr_t uls, const char* line, u
 	len = _uls_tool_(strlen)(line);
 
 	if (uls_push_line(uls, line, len, 0) < 0) {
-		_uls_log(err_log)("%s: can't push string line", __FUNCTION__);
+		_uls_log(err_log)("%s: can't push string line", __func__);
 		return -1;
 	}
 
@@ -348,7 +348,7 @@ ULS_QUALIFIED_METHOD(uls_bind_tmpls)(uls_istream_ptr_t istr, uls_tmpl_list_ptr_t
 
 	// filetype == ULS_STREAM_BIN_BE, ULS_STREAM_BIN_LE
 	if ((tmpls_pool = uls_import_tmpls(tmpl_list, uls)) == nilptr) {
-		_uls_log(err_log)("%s: can't analyze the tmpls array!", __FUNCTION__);
+		_uls_log(err_log)("%s: can't analyze the tmpls array!", __func__);
 		return -1;
 	}
 
@@ -366,9 +366,7 @@ ULS_QUALIFIED_METHOD(uls_fill_fd_stream)(uls_source_ptr_t isrc, char* buf, int b
 	int rc;
 
 	rc = _uls_tool_(readn)(istr->fd, buf + buflen, bufsiz - buflen);
-	if (rc < 0) {
-		isrc->flags |= ULS_ISRC_FL_ERR;
-	} else if (rc == 0) {
+	if (rc == 0) {
 		isrc->flags |= ULS_ISRC_FL_EOF;
 	}
 
@@ -446,7 +444,6 @@ ULS_QUALIFIED_METHOD(uls_gettok_bin)(uls_lex_ptr_t uls)
 	ctx->s_val_uchars = _uls_tool(ustr_num_chars)(ctx->s_val, txtlen, nilptr);
 
 	uls->tokdef_vx = uls_find_tokdef_vx_force(uls, tok_id);
-
 	return 0;
 }
 
@@ -596,12 +593,12 @@ ULS_QUALIFIED_METHOD(uls_open_istream)(int fd)
 	int bufsiz;
 
 	if (fd < 0) {
-		_uls_log(err_log)("%s: invalid parameter!", __FUNCTION__);
+		_uls_log(err_log)("%s: invalid parameter!", __func__);
 		return nilptr;
 	}
 
 	if ((istr = __create_istream(fd)) == nilptr) {
-		_uls_log(err_log)("%s: malloc error", __FUNCTION__);
+		_uls_log(err_log)("%s: malloc error", __func__);
 		return nilptr;
 	}
 
@@ -687,17 +684,17 @@ ULS_QUALIFIED_METHOD(uls_open_istream_file)(const char* fpath)
 	int fd;
 
 	if (fpath == NULL) {
-		_uls_log(err_log)("%s: invalid parameter!", __FUNCTION__);
+		_uls_log(err_log)("%s: invalid parameter!", __func__);
 		return nilptr;
 	}
 
 	if ((fd = _uls_tool_(fd_open)(fpath, ULS_FIO_READ)) < 0) {
-		_uls_log(err_log)("%s: can't open '%s'!", __FUNCTION__, fpath);
+		_uls_log(err_log)("%s: can't open '%s'!", __func__, fpath);
 		return nilptr;
 	}
 
 	if ((istr = uls_open_istream(fd)) == nilptr) {
-		_uls_log(err_log)("%s: can't conjecture the type of file %s!", __FUNCTION__, fpath);
+		_uls_log(err_log)("%s: can't conjecture the type of file %s!", __func__, fpath);
 		_uls_tool_(fd_close)(fd);
 		return nilptr;
 	}
@@ -715,14 +712,14 @@ ULS_QUALIFIED_METHOD(uls_open_istream_fp)(FILE *fp)
 	int fd;
 
 	if (fp == NULL || fp == __uls_tool_(stdio_fp)(1) || fp == __uls_tool_(stdio_fp)(2)) {
-		_uls_log(err_log)("%s: invalid parameter!", __FUNCTION__);
+		_uls_log(err_log)("%s: invalid parameter!", __func__);
 		return nilptr;
 	}
 
 	fd = uls_fp_fileno(fp);
 
 	if ((istr = uls_open_istream(fd)) == nilptr) {
-		_uls_log(err_log)("%s: can't conjecture the type of file!", __FUNCTION__);
+		_uls_log(err_log)("%s: can't conjecture the type of file!", __func__);
 		return nilptr;
 	}
 
@@ -777,7 +774,7 @@ ULS_QUALIFIED_METHOD(uls_open_istream_filter_fp)(fdf_t* fdf, FILE *fp)
 	int  fd;
 
 	if (fp == NULL) {
-		_uls_log(err_log)("%s: invalid parameter!", __FUNCTION__);
+		_uls_log(err_log)("%s: invalid parameter!", __func__);
 		return nilptr;
 	}
 
@@ -814,9 +811,9 @@ void
 ULS_QUALIFIED_METHOD(uls_destroy_istream)(uls_istream_ptr_t istr)
 {
 	if (istr == nilptr || istr->ref_cnt <= 0) {
-		_uls_log(err_log)("%s: called for invalid object!", __FUNCTION__);
+		_uls_log(err_log)("%s: called for invalid object!", __func__);
 		if (istr != nilptr) {
-			_uls_log(err_log)("%s: ref_cnt(istr)=%d", __FUNCTION__, istr->ref_cnt);
+			_uls_log(err_log)("%s: ref_cnt(istr)=%d", __func__, istr->ref_cnt);
 		}
 		return;
 	}
@@ -837,7 +834,7 @@ ULS_QUALIFIED_METHOD(uls_destroy_istream)(uls_istream_ptr_t istr)
 #ifdef ULS_FDF_SUPPORT
 	if (istr->fdf != nilptr) {
 		if (fdf_close(istr->fdf) < 0)
-			_uls_log(err_log)("%s: fail to reap filter procs.", __FUNCTION__);
+			_uls_log(err_log)("%s: fail to reap filter procs.", __func__);
 		istr->fdf = nilptr;
 	}
 #endif

@@ -130,6 +130,7 @@ test_uls(LPCTSTR fpath)
 	}
 
 	uls_set_tag(sam1_lex, fpath, 1);
+
 	for (i=0; ; ) {
 		if (uls_get_tok(sam1_lex) == T1_EOI) break;
 

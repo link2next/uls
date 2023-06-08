@@ -210,7 +210,7 @@ ULS_QUALIFIED_METHOD(__find_tokdef_by_tokid)(uls_lex_ptr_t uls, int t, int area)
 		n = uls->tokdef_vx_array.n;
 
 	} else {
-		_uls_log(err_log)("%s: unknown area:%d", __FUNCTION__, area);
+		_uls_log(err_log)("%s: unknown area:%d", __func__, area);
 		return nilptr;
 	}
 
@@ -368,7 +368,7 @@ ULS_QUALIFIED_METHOD(make_tokdef_for_quotetype)(uls_lex_ptr_t uls, uls_quotetype
 	tok_id = qmt->tok_id;
 
 	if (__find_tokdef_by_tokid(uls, tok_id, TOKDEF_AREA_BOTH) != nilptr) {
-		_uls_log(err_log)("%s: the token-name already made for token", __FUNCTION__);
+		_uls_log(err_log)("%s: the token-name already made for token", __func__);
 		_uls_log(err_log)("\ttoken-name:%s, token:%d", qmt_name, tok_id);
 		return -1;
 	}
@@ -385,7 +385,7 @@ ULS_QUALIFIED_METHOD(make_tokdef_for_quotetype)(uls_lex_ptr_t uls, uls_quotetype
 
 	if (qmt_name[0] != '\0' && (__find_reg_tokdef_by_name(uls, qmt_name, uls_ptr(parms)) != nilptr ||
 		__find_rsvd_tokdef_by_name(uls, qmt_name) != nilptr)) {
-		_uls_log(err_log)("%s: can't make a tok name for token", __FUNCTION__);
+		_uls_log(err_log)("%s: can't make a tok name for token", __func__);
 		_uls_log(err_log)("\ttoken-name:%s, token:%d", qmt_name, tok_id);
 		return -1;
 	}
@@ -1505,8 +1505,10 @@ ULS_QUALIFIED_METHOD(read_config__NUMBER_PREFIXES)(char *line, uls_cmd_ptr_t cmd
 		}
 
 		*lptr++ = '\0';
-		if ((r = _uls_tool_(atoi)(lptr)) < 2 || r > 36) {
-			_uls_log(err_log)("NUMBER_PREFIXES: assertion failed, 2 <= radix <= 36!", wrd);
+		r = _uls_tool_(atoi)(lptr);
+		if (_uls_tool_(get_standard_number_prefix)(r) == NULL) {
+			_uls_log(err_log)("NUMBER_PREFIXES: Not supported radix %d!", r);
+			_uls_log(err_log)("  Supported number radicies = { 2, 3, 4, 8, 16 }");
 			return -3;
 		}
 

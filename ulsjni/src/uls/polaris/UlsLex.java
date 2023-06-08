@@ -137,6 +137,13 @@ public class UlsLex implements AutoCloseable {
 			}
 		} else if (os_name.indexOf("Mac")>=0) {
 			sysprops_fpath = "/Applications/";
+
+			sysprops_fpath1 = sysprops_fpath + sysprops_fname;
+			File file1 = new File(sysprops_fpath1);
+			if (file1.exists() == false || file1.isFile() == false) {
+				sysprops_fpath = "/tmp/";
+				sysprops_fname = "uls_sysprops.txt";
+			}
 		} else {
 			sysprops_fpath = "/tmp/";
 		}

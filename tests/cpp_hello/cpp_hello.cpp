@@ -187,7 +187,7 @@ bool test_simple_streaming(tstring& input_file, tstring& out_dir)
 	int t;
 
 	uls_file = out_dir;
-	uls_file += _T('/');
+	uls_file += ULS_FILEPATH_DELIM;
 	uls_file += _T("a2.uls");
 
 	UlsOStream *ofile = new UlsOStream(uls_file, lex, _T("<<tag>>"));

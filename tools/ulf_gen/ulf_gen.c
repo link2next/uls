@@ -227,7 +227,7 @@ parse_options(int argc, char* argv[])
 	int   i0;
 
 	if (ult_getcwd(home_dir, sizeof(home_dir)) < 0)
-		err_panic("%s: fail to getcwd()", __FUNCTION__);
+		err_panic("%s: fail to getcwd()", __func__);
 
 	target_hashtable_size = ULF_HASH_TABLE_SIZE;
 
@@ -262,7 +262,7 @@ parse_options(int argc, char* argv[])
 		}
 
 		if ((fp_list=uls_fp_open(filelist, ULS_FIO_READ)) == NULL) {
-			err_log("%s: fail to read '%s'", __FUNCTION__, filelist);
+			err_log("%s: fail to read '%s'", __func__, filelist);
 			return -1;
 		}
 
@@ -324,7 +324,7 @@ proc_filelist(FILE *fin, uls_keyw_stat_list_t *ks_lst)
 	while (1) {
 		if ((len=uls_fp_gets(fin, linebuff, sizeof(linebuff), 0)) <= ULS_EOF) {
 			if (len < ULS_EOF) {
-				err_log("%s: io-error", __FUNCTION__);
+				err_log("%s: io-error", __func__);
 				stat = -1;
 			}
 			break;
@@ -570,12 +570,12 @@ main(int argc, char* argv[])
 	ulf_hashfunc = uls_get_hashfunc(ULS_HASH_ALGORITHM, cse_insen);
 
 	if ((fp_out=uls_fp_open(out_file, ULS_FIO_CREAT)) == NULL) {
-		err_log("%s: fail to create '%s'", __FUNCTION__, out_file);
+		err_log("%s: fail to create '%s'", __func__, out_file);
 		stat = -1;
 	} else {
 		err_log("Gathering the statistics of keywords usage, ...");
 		if (ulf_create_file_internal(fp_list, fp_out, i0, argc, argv) < 0) {
-			err_log("%s: internal error!'", __FUNCTION__);
+			err_log("%s: internal error!'", __func__);
 			stat = -1;
 		} else {
 			err_log("Writing the frequencies of keywords to %s, ...", out_file);

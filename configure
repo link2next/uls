@@ -18121,7 +18121,7 @@ fi
 if test "${with_jdk_incdir+set}" = set; then :
   withval=$with_jdk_incdir;  ax_jdk_cppflags="-I$withval"
 else
-   ax_jdk_cppflags="-I$ax_java_home/include -I$ax_java_home/include/linux"
+   ax_jdk_cppflags="-I$ax_java_home/include -I$ax_java_home/include/linux -I$ax_java_home/include/darwin"
 
 fi
 

@@ -82,7 +82,7 @@ AC_ARG_WITH([jdk-incdir],
 		[Specify the include directory of jdk.])
 	],
 	[ ax_jdk_cppflags="-I$withval" ],
-	[ ax_jdk_cppflags="-I$ax_java_home/include -I$ax_java_home/include/linux" ]
+	[ ax_jdk_cppflags="-I$ax_java_home/include -I$ax_java_home/include/linux -I$ax_java_home/include/darwin" ]
 	)
 AC_SUBST([ax_jdk_cppflags])
 

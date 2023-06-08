@@ -93,14 +93,14 @@ test_get_ch(void)
 {
 	int tok_id, is_quote;
 	uls_nextch_detail_t detail;
-	uls_uch_t uch;
+	uls_uch_t wch;
 
 	uls_set_file(sample_lex, input_file, 0);
-	// uls_set_line(sample_lex, "hello world"), -1, 0);
+	// uls_set_line(sample_lex, "hello world", -1, 0);
 
 	while (1) {
 		is_quote = 0;
-		if ((uch = uls_get_uch(sample_lex, &detail)) == ULS_UCH_NONE) {
+		if ((wch = uls_get_uch(sample_lex, &detail)) == ULS_UCH_NONE) {
 			if (detail.tok == tokEOI || detail.tok == tokEOF) {
 				break;
 			}
@@ -113,7 +113,7 @@ test_get_ch(void)
 			tok_id = uls_get_tok(sample_lex);
 			uls_printf(_T(" str = '%s' (%d)\n"), uls_lexeme(sample_lex), tok_id);
 		} else {
-			uls_printf(_T(" ch = '%c'\n"), (char) uch);
+			uls_printf(_T(" ch = '%c'\n"), (char) wch);
 		}
 	}
 	uls_dismiss_input(sample_lex);

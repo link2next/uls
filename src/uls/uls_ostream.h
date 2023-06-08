@@ -114,14 +114,12 @@ ULS_DLL_EXTERN int uls_destroy_ostream(uls_ostream_ptr_t ostr);
 
 ULS_DLL_EXTERN int __uls_print_tok(uls_ostream_ptr_t ostr, int tokid, const char* tokstr, int l_tokstr);
 ULS_DLL_EXTERN int uls_print_tok(uls_ostream_ptr_t ostr, int tokid, const char* tokstr);
-
 ULS_DLL_EXTERN int __uls_print_tok_linenum(uls_ostream_ptr_t ostr, int lno, const char* tag, int tag_len);
 ULS_DLL_EXTERN int uls_print_tok_linenum(uls_ostream_ptr_t ostr, int lno, const char* tag);
 
 ULS_DLL_EXTERN int uls_start_stream(uls_ostream_ptr_t ostr, int flags);
 
 ULS_DLL_EXTERN int _uls_const_LINE_NUMBERING(void);
-
 ULS_DLL_EXTERN uls_ostream_ptr_t ulsjava_create_ostream_file(const void *filepath, int len_filepath,
 	uls_lex_ptr_t uls, const void *subname, int len_subname);
 ULS_DLL_EXTERN int ulsjava_print_tok(uls_ostream_ptr_t ostr, int tokid, const void *tokstr, int len_tokstr);

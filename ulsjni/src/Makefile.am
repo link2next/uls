@@ -12,7 +12,8 @@ SRCS1 = \
 	uls/polaris/UlsStream.java \
 	uls/polaris/UlsTmplList.java \
 	uls/polaris/UlsIStream.java \
-	uls/polaris/UlsOStream.java 
+	uls/polaris/UlsOStream.java
+
 SRCS2 = $(SRCS1) \
 	uls/tests/UlsDump.java \
 	uls/tests/UlsTestStream.java
@@ -24,7 +25,7 @@ JNI_HFILES_FNAME = $(subst /,_,$(JNI_HFILES_1))
 JNI_HFILES_FPATH = $(patsubst %,$(ULSJNI_INCDIR)/%.h,$(JNI_HFILES_FNAME))
 JNI_HFILES_DOTS = $(subst /,.,$(JNI_HFILES_1))
 
-all: $(OBJS2) $(JNI_HFILES_FPATH)
+all: $(JNI_HFILES_FPATH) $(OBJS2)
 
 $(LIBPROG): $(OBJS2)
 	jar -cf $(LIBPROG) -C $(ULSJNI_BINDIR) uls
@@ -32,7 +33,11 @@ $(LIBPROG): $(OBJS2)
 # java --> jni-header
 define rule_java2hfile
 $(ULSJNI_INCDIR)/$1: $2
-	javah -o $(ULSJNI_INCDIR)/$1 $3
+	@if which javah > /dev/null; then \
+		javah -o $(ULSJNI_INCDIR)/$1 $3; \
+	else \
+		javac -h $(ULSJNI_INCDIR) $2; \
+	fi
 endef
 $(foreach T,$(JNI_HFILES_DOTS),$(eval $(call rule_java2hfile,$(subst .,_,$(T)).h,$(subst .,/,$(T)).java,$(T))))
 

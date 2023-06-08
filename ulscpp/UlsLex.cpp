@@ -265,57 +265,6 @@ uls::close_fd(int fd)
 	uls_fd_close(fd);
 }
 
-void
-UlsLex::initialize(void)
-{
-	if (ulscpp_inited == true) return;
-
-	if (ulscpp_convspec_nmap != NULL) return;
-	ulscpp_convspec_nmap = uls_lf_create_convspec_map(0);
-
-	if (ulscpp_convspec_nmap == NULL) {
-		err_panic("fail to initialize uls");
-	}
-
-	uls_add_default_log_convspecs(ulscpp_convspec_nmap);
-
-	ulscpp_convspec_wmap = uls_lf_create_convspec_wmap(0);
-	uls_add_default_log_convspecs(ulscpp_convspec_wmap);
-
-	ulscpp_inited = true;
-}
-
-void
-UlsLex::finalize(void)
-{
-	if (ulscpp_inited == false) return;
-
-	if (ulscpp_convspec_nmap != NULL) {
-		uls_lf_destroy_convspec_map(ulscpp_convspec_nmap);
-		ulscpp_convspec_nmap = NULL;
-	}
-
-	if (ulscpp_convspec_wmap != NULL) {
-		uls_lf_destroy_convspec_wmap(ulscpp_convspec_wmap);
-	}
-
-	ulscpp_inited = false;
-}
-
-void
-uls::crux::UlsLex_initialize(void)
-{
-	initialize_uls();
-	UlsLex::initialize();
-}
-
-void
-uls::crux::UlsLex_finalize(void)
-{
-	UlsLex::finalize();
-	finalize_uls();
-}
-
 // <brief>
 // This procedure lists the search directories for ulc file, which is suffixed by 'ulc'.
 // uls_create() or uls_init() will search the directories for ulc file in same order as this dumpSearchPathOfUlc().
@@ -459,6 +408,48 @@ uls::crux::LexemeAsDouble(const string& lxm)
 	return atof(ptr);
 }
 
+//
+//
+// UlsLex
+//
+//
+void
+UlsLex::initialize()
+{
+	if (ulscpp_inited == true) return;
+
+	if (ulscpp_convspec_nmap != NULL) return;
+	ulscpp_convspec_nmap = uls_lf_create_convspec_map(0);
+
+	if (ulscpp_convspec_nmap == NULL) {
+		err_panic("fail to initialize uls");
+	}
+
+	uls_add_default_log_convspecs(ulscpp_convspec_nmap);
+
+	ulscpp_convspec_wmap = uls_lf_create_convspec_wmap(0);
+	uls_add_default_log_convspecs(ulscpp_convspec_wmap);
+
+	ulscpp_inited = true;
+}
+
+void
+UlsLex::finalize()
+{
+	if (ulscpp_inited == false) return;
+
+	if (ulscpp_convspec_nmap != NULL) {
+		uls_lf_destroy_convspec_map(ulscpp_convspec_nmap);
+		ulscpp_convspec_nmap = NULL;
+	}
+
+	if (ulscpp_convspec_wmap != NULL) {
+		uls_lf_destroy_convspec_wmap(ulscpp_convspec_wmap);
+	}
+
+	ulscpp_inited = false;
+}
+
 double
 uls::crux::LexemeAsDouble(const wstring& wlxm)
 {
@@ -473,12 +464,6 @@ uls::crux::LexemeAsDouble(const wstring& wlxm)
 
 	return fval;
 }
-
-//
-//
-// UlsLex
-//
-//
 
 // <brief>
 // In case the paramenter 'lxm' is a floating point number,
@@ -1347,7 +1332,6 @@ void UlsLex::update_token_lex(void)
 	wchar_t *wstr;
 
 	lxm_id = uls_tok(&lex);
-
 	nstr = uls_lexeme(&lex);
 	lxm_nstr = nstr;
 
@@ -1384,9 +1368,9 @@ int UlsLex::getTok(void)
 }
 
 void
-UlsLex::getTokStr(string **p_lxm)
+UlsLex::getTokStr(string **pp_lxm)
 {
-	*p_lxm = &lxm_nstr;
+	*pp_lxm = &lxm_nstr;
 }
 
 void

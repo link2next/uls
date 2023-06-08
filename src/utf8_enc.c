@@ -153,7 +153,7 @@ ULS_QUALIFIED_METHOD(uls_fill_utf8buf)(uls_utf_inbuf_ptr_t inp, char* utf8buf, i
 
 				if ((rc = uls_fill_utf8str(&uch, 1,
 					utf8buf + len_utf8buf, siz_utf8buf - len_utf8buf, &n_bytes)) < 0) {
-					_uls_log(err_log)("%s: An incorrect uch exists", __FUNCTION__);
+					_uls_log(err_log)("%s: An incorrect uch exists", __func__);
 					return -2;
 				} else if (rc == 0) {
 					inp->wch_buffered = uch;
@@ -176,7 +176,7 @@ ULS_QUALIFIED_METHOD(uls_fill_utf8buf)(uls_utf_inbuf_ptr_t inp, char* utf8buf, i
 
 		if (uls_fill_utf8str(uchbuf, n_words,
 			utf8buf + len_utf8buf, siz_utf8buf - len_utf8buf, &n_bytes) < n_words) {
-			_uls_log(err_log)("%s: An incorrect uch exists", __FUNCTION__);
+			_uls_log(err_log)("%s: An incorrect uch exists", __func__);
 			return -1;
 		}
 
@@ -191,7 +191,7 @@ ULS_QUALIFIED_METHOD(uls_utf_init_inbuf)(uls_utf_inbuf_ptr_t inp,
 	char *buf, int bufsiz, int mode)
 {
 	if (bufsiz <= 0) {
-		_uls_log(err_panic)("%s: invalid paramerter 'bufsiz'", __FUNCTION__);
+		_uls_log(err_panic)("%s: invalid paramerter 'bufsiz'", __func__);
 	}
 
 	uls_initial_zerofy_object(inp);

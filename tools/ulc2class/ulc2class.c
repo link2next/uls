@@ -410,7 +410,7 @@ parse_options(int argc, char* argv[])
 	char *fname, *tmp_buf;
 
 	if (ult_getcwd(home_dir, ULS_FILEPATH_MAX) < 0) {
-		err_panic("%s: fail to getcwd()", __FUNCTION__);
+		err_panic("%s: fail to getcwd()", __func__);
 	}
 
 	opt_prefix = "";

@@ -271,7 +271,7 @@ ULS_QUALIFIED_METHOD(writeline_istr_hdr)(char *buf, int bufsiz, int k, const cha
 
 	k2 = k + linelen + 1; // +1 for '\n'
 	if (k2 > bufsiz) {
-		_uls_log(err_log)("%s: uls-header size overflow!", __FUNCTION__);
+		_uls_log(err_log)("%s: uls-header size overflow!", __func__);
 		return -1;
 	}
 
@@ -382,7 +382,7 @@ ULS_QUALIFIED_METHOD(do_end_of_uls_hdr)(char *buff, int buflen)
 	const char *mesg2 = "FIXED HEADER SIZE UPTO 512-bytes";
 
 	if (buflen > len1) {
-		_uls_log(err_log)("%s: uls-header size overflow!", __FUNCTION__);
+		_uls_log(err_log)("%s: uls-header size overflow!", __func__);
 		return -1;
 	}
 
@@ -402,15 +402,15 @@ ULS_QUALIFIED_METHOD(save_istr_hdrbuf)(char *ulshdr, int buflen, int fd)
 	int stat = 0;
 
 	if (do_end_of_uls_hdr(ulshdr, buflen) < 0) {
-		_uls_log(err_log)("%s: failed to format the header", __FUNCTION__);
+		_uls_log(err_log)("%s: failed to format the header", __func__);
 		stat = -1;
 
 	} else if (uls_fd_seek(fd, 0, SEEK_SET) != 0) {
-		_uls_log(err_log)("%s: error to seek file", __FUNCTION__);
+		_uls_log(err_log)("%s: error to seek file", __func__);
 		stat = -1;
 
 	} if (uls_fd_write(fd, ulshdr, ULS_BIN_HDR_SZ) < ULS_BIN_HDR_SZ) {
-		_uls_log(err_log)("%s: error to write file", __FUNCTION__);
+		_uls_log(err_log)("%s: error to write file", __func__);
 		stat = -1;
 	}
 
@@ -659,7 +659,7 @@ int
 ULS_QUALIFIED_METHOD(uls_print_tok_eoi)(uls_ostream_ptr_t ostr)
 {
 	uls_lex_ptr_t uls = (uls_lex_ptr_t) ostr->uls;
-	return uls_print_tok(ostr, uls_toknum_eoi(uls), NULL);
+	return __uls_print_tok(ostr, uls_toknum_eoi(uls), "", 0);
 }
 
 ULS_QUALIFIED_RETTYP(uls_ostream_ptr_t)
@@ -677,7 +677,7 @@ ULS_QUALIFIED_METHOD(__uls_create_ostream)
 	}
 
 	if ((ostr = __create_ostream(fd_out)) == nilptr) {
-		_uls_log(err_log)("%s: malloc error", __FUNCTION__);
+		_uls_log(err_log)("%s: malloc error", __func__);
 		return nilptr;
 	}
 
@@ -700,7 +700,7 @@ ULS_QUALIFIED_METHOD(__uls_create_ostream)
 	}
 
 	if (__uls_bind_ostream(ostr, nilptr, uls, uls_ptr(parms)) < 0) {
-		_uls_log(err_log)("%s: binding error!", __FUNCTION__);
+		_uls_log(err_log)("%s: binding error!", __func__);
 		__destroy_ostream(ostr);
 		return nilptr;
 	}
@@ -710,7 +710,7 @@ ULS_QUALIFIED_METHOD(__uls_create_ostream)
 	uld_unexport_extra_names(lst_names);
 
 	if (rc < 0) {
-		_uls_log(err_log)("%s: can't bind!", __FUNCTION__);
+		_uls_log(err_log)("%s: can't bind!", __func__);
  		__uls_unbind_ostream(ostr);
  		__destroy_ostream(ostr);
  		return nilptr;
@@ -758,7 +758,7 @@ int
 ULS_QUALIFIED_METHOD(uls_destroy_ostream)(uls_ostream_ptr_t ostr)
 {
 	if (ostr == nilptr || ostr->ref_cnt <= 0) {
-		_uls_log(err_log)("%s: called for invalid object! ref-cnt invalid", __FUNCTION__);
+		_uls_log(err_log)("%s: called for invalid object! ref-cnt invalid", __func__);
 		return -1;
 	}
 
@@ -859,7 +859,7 @@ ULS_QUALIFIED_METHOD(uls_start_stream)(uls_ostream_ptr_t ostr, int flags)
 
 	numbering = flags & ULS_LINE_NUMBERING;
 	if ((uls=ostr->uls) == nilptr) {
-		_uls_log(err_log)("%s: The 'uls' improper, binding error!", __FUNCTION__);
+		_uls_log(err_log)("%s: The 'uls' improper, binding error!", __func__);
 		return -1;
 	}
 
@@ -940,9 +940,10 @@ int
 ULS_QUALIFIED_METHOD(ulsjava_print_tok)(uls_ostream_ptr_t ostr, int tokid, const void *tokstr, int len_tokstr)
 {
 	const char *ustr = _uls_tool_(strdup)((const char *)tokstr, len_tokstr);
-	int rc;
+	int len, rc;
 
-	rc = uls_print_tok(ostr, tokid, ustr);
+	len = _uls_tool_(strlen)(ustr);
+	rc = __uls_print_tok(ostr, tokid, ustr, len);
 	uls_mfree(ustr);
 
 	return rc;
@@ -952,9 +953,10 @@ int
 ULS_QUALIFIED_METHOD(ulsjava_print_tok_linenum)(uls_ostream_ptr_t ostr, int lno, const void *tag, int len_tag)
 {
 	const char *ustr = _uls_tool_(strdup)((const char *)tag, len_tag);
-	int rc;
+	int len, rc;
 
-	rc = uls_print_tok_linenum(ostr, lno, ustr);
+	len = _uls_tool_(strlen)(ustr);
+	rc = __uls_print_tok_linenum(ostr, lno, ustr, len);
 	uls_mfree(ustr);
 
 	return rc;

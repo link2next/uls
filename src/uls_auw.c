@@ -466,14 +466,14 @@ ULS_QUALIFIED_METHOD(uls_astr2ustr_ptr)(const char *astr, int alen, auw_outparam
 wchar_t*
 ULS_QUALIFIED_METHOD(uls_astr2wstr)(const char *astr, int alen, csz_str_ptr_t csz_wstr)
 {
-	_uls_log(err_panic)("%s: Not Supported on this platform", __FUNCTION__);
+	_uls_log(err_panic)("%s: Not Supported on this platform", __func__);
 	return NULL;
 }
 
 char*
 ULS_QUALIFIED_METHOD(uls_wstr2astr)(const wchar_t *wstr, int wlen, csz_str_ptr_t csz)
 {
-	_uls_log(err_panic)("%s: Not Supported on this platform", __FUNCTION__);
+	_uls_log(err_panic)("%s: Not Supported on this platform", __func__);
 	return NULL;
 }
 
@@ -601,14 +601,14 @@ ULS_QUALIFIED_METHOD(uls_wstr2ustr)(const wchar_t *wstr, int wlen, csz_str_ptr_t
 char*
 ULS_QUALIFIED_METHOD(uls_ustr2astr)(const char *ustr, int ulen, csz_str_ptr_t csz)
 {
-	_uls_log(err_panic)("%s: Not Supported on the platform", __FUNCTION__);
+	_uls_log(err_panic)("%s: Not Supported on the platform", __func__);
 	return NULL;
 }
 
 char*
 ULS_QUALIFIED_METHOD(uls_astr2ustr)(const char *astr, int alen, csz_str_ptr_t csz)
 {
-	_uls_log(err_panic)("%s: Not Supported on the platform", __FUNCTION__);
+	_uls_log(err_panic)("%s: Not Supported on the platform", __func__);
 	return NULL;
 }
 
@@ -616,14 +616,14 @@ ULS_QUALIFIED_METHOD(uls_astr2ustr)(const char *astr, int alen, csz_str_ptr_t cs
 const char*
 ULS_QUALIFIED_METHOD(uls_ustr2astr_ptr)(const char *ustr, int ulen, auw_outparam_ptr_t auw)
 {
-	_uls_log(err_panic)("%s: Not Supported on the platform", __FUNCTION__);
+	_uls_log(err_panic)("%s: Not Supported on the platform", __func__);
 	return NULL;
 }
 
 const char*
 ULS_QUALIFIED_METHOD(uls_astr2ustr_ptr)(const char *astr, int alen, auw_outparam_ptr_t auw)
 {
-	_uls_log(err_panic)("%s: Not Supported on the platform", __FUNCTION__);
+	_uls_log(err_panic)("%s: Not Supported on the platform", __func__);
 	return NULL;
 }
 

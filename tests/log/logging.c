@@ -36,7 +36,6 @@
 #include "uls/uls_lex.h"
 #include "uls/uls_log.h"
 #include "uls/uls_util.h"
-#include "uls/uls_init.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -125,7 +124,7 @@ dump_tstr(LPCTSTR tstr, int len)
 }
 
 void
-test_sprintf(uls_lex_t* uls, uls_log_t* log)
+test_sprintf(uls_lex_ptr_t uls, uls_log_t* log)
 {
 	TCHAR buff[128];
 	int len, i, ui;

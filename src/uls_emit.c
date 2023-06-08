@@ -436,7 +436,7 @@ ULS_QUALIFIED_METHOD(print_uld_source)(FILE *fin_uld, int n_tabs, uls_proc_uld_l
 	while (1) {
 		if ((linelen=_uls_tool_(fp_gets)(fin_uld, linebuff, sizeof(linebuff), 0)) <= ULS_EOF) {
 			if (linelen < ULS_EOF) {
-				_uls_log(err_log)("%s: ulc file i/o error at %d", __FUNCTION__, lno);
+				_uls_log(err_log)("%s: ulc file i/o error at %d", __func__, lno);
 				stat = -1;
 			} else {
 				stat = n_tok_names;
@@ -769,7 +769,7 @@ ULS_QUALIFIED_METHOD(print_tokdef_cpp_source)(uls_lex_ptr_t uls,
 		_uls_log_(sysprn)("using namespace %s;\n\n", ns_uls);
 	} else {
 		ns_uls = "uls::crux";
-		cptr2 = "std::tstring &";
+		cptr2 = "std::tstring&";
 	}
 
 	al = uls_parray_slots(uls_ptr(emit_parm->name_components.args));
@@ -781,7 +781,7 @@ ULS_QUALIFIED_METHOD(print_tokdef_cpp_source)(uls_lex_ptr_t uls,
 	if (emit_parm->n_name_components > 0) ++n_tabs;
 
 	if (emit_parm->fpath_ulc != NULL) {
-		uls_sysprn_tabs(n_tabs, "%s::%s(%sulc_file)\n", emit_parm->class_name, emit_parm->class_name, cptr2);
+		uls_sysprn_tabs(n_tabs, "%s::%s(%s ulc_file)\n", emit_parm->class_name, emit_parm->class_name, cptr2);
 		uls_sysprn_tabs(n_tabs+1, ": %s::UlsLex(ulc_file) %c\n", ns_uls, ch_lbrace);
 	} else {
 		uls_sysprn_tabs(n_tabs, "%s::%s()\n", emit_parm->class_name, emit_parm->class_name);
@@ -1150,7 +1150,7 @@ ULS_QUALIFIED_METHOD(uls_generate_tokdef_file)(uls_lex_ptr_t uls, uls_parms_emit
 	_uls_quicksort_vptr(slots_prn, n_tokdef_ary_prn, comp_by_tokid_vx);
 
 	if ((fout = _uls_tool_(fp_open)(emit_parm->fpath, ULS_FIO_CREAT|ULS_FIO_WRITE)) == NULL) {
-		_uls_log(err_log)("%s: fail to create file '%s'", __FUNCTION__, emit_parm->fpath);
+		_uls_log(err_log)("%s: fail to create file '%s'", __func__, emit_parm->fpath);
 		uls_deinit_parray(uls_ptr(tokdef_ary_prn));
 		stat = -1;
 
@@ -1160,7 +1160,7 @@ ULS_QUALIFIED_METHOD(uls_generate_tokdef_file)(uls_lex_ptr_t uls, uls_parms_emit
 				emit_parm->class_name, emit_parm->fpath);
 
 		if (_uls_log_(sysprn_open)(fout, nilptr) < 0) {
-			_uls_log(err_log)("%s: create an output file", __FUNCTION__);
+			_uls_log(err_log)("%s: create an output file", __func__);
 			stat = -1;
 
 		} else {
@@ -1202,12 +1202,12 @@ ULS_QUALIFIED_METHOD(uls_generate_tokdef_file)(uls_lex_ptr_t uls, uls_parms_emit
 	emit_parm->fpath = emit_parm->pathbuff;
 
 	if ((fout = _uls_tool_(fp_open)(emit_parm->fpath, ULS_FIO_CREAT|ULS_FIO_WRITE)) == NULL) {
-		_uls_log(err_log)("%s: fail to create file '%s'", __FUNCTION__, emit_parm->fpath);
+		_uls_log(err_log)("%s: fail to create file '%s'", __func__, emit_parm->fpath);
 		stat = -1;
 
 	} else {
 		if (_uls_log_(sysprn_open)(fout, nilptr) < 0) {
-			_uls_log(err_log)("%s: create an output file", __FUNCTION__);
+			_uls_log(err_log)("%s: create an output file", __func__);
 			stat = -1;
 
 		} else {
