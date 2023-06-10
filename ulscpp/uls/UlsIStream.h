@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -48,6 +48,7 @@ namespace uls {
 		class ULSCPP_DLL_EXTERN UlsTmplList {
 			UlsAuw *auwcvt;
 			std::map<std::string,std::string> *hashtbl;
+			std::map<std::wstring,std::wstring> *whashtbl;
 
 			// <brief>
 			// Append a pair <tnam, tval> to the list, increasing the length of the list.
@@ -56,6 +57,7 @@ namespace uls {
 			// <parm name="tval">the value of the 'tnam'</parm>
 			// <return>none</return>
 			void insert(const char *tnam, const char *tval);
+			void insert(const wchar_t *tnam, const wchar_t *tval);
 
 		public:
 			// <brief>
@@ -79,6 +81,7 @@ namespace uls {
 			// </brief>
 			// <return>true/false</return>
 			bool exist(std::string& tnam);
+			bool exist(std::wstring& tnam);
 
 			// <brief>
 			// It returns the length of the internal (template variable) list.
@@ -96,7 +99,9 @@ namespace uls {
 			// <parm name="tval">the value of the 'tnam', output parameter</parm>
 			// <return></return>
 			bool getValue(std::string& tnam, std::string& tval);
+			bool getValue(std::wstring& wtnam, std::wstring& wtval);
 			const char *getValue(const char*tnam);
+			const wchar_t *getValue(const wchar_t *wtnam);
 
 			// <brief>
 			// This modifies the pair <tnam, tval> in the list if the item named 'tnam' exists.
@@ -105,7 +110,9 @@ namespace uls {
 			// <parm name="tval">the value of the 'tnam'</parm>
 			// <return>none</return>
 			bool setValue(std::string& tnam, std::string& tval);
+			bool setValue(std::wstring& wtnam, std::wstring& wtval);
 			bool setValue(const char *tnam, const char *tval);
+			bool setValue(const wchar_t *nam, const wchar_t *tval);
 
 			// <brief>
 			// Dumps the internal list of pairs <tnam,tval> to stdout.
@@ -145,6 +152,7 @@ namespace uls {
 			// <parm name="filepath">inputs of UlsLex</parm>
 			// <parm name="uls_tmpls">A list of template variables having its values too.</parm>
 			UlsIStream(std::string filepath, UlsTmplList *uls_tmpls=NULL);
+			UlsIStream(std::wstring filepath, UlsTmplList *uls_tmpls=NULL);
 
 			// <brief>
 			// The destuctor of UlsIStream.

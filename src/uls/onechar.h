@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -30,41 +30,47 @@
 #ifndef __ULS_ONECHAR_H__
 #define __ULS_ONECHAR_H__
 
+#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_tokdef.h"
+#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
-ULS_DEFINE_STRUCT(onechar_tokgrp)
+#ifdef ULS_DEF_PUBLIC_TYPE
+
+ULS_DEFINE_STRUCT(uls_onechar_tokgrp)
 {
 	uls_uch_t uch0;
 	uls_decl_parray(tokdef_vx_1char, tokdef_vx);
 };
-ULS_DEF_ARRAY_TYPE00(onechar_tokgrp, ONECHAR_TOKGRP_TYPE00_ULS_N_ONECHAR_TOKGRPS, ULS_N_ONECHAR_TOKGRPS);
+ULS_DEF_ARRAY_THIS_TYPE01(onechar_tokgrp, N_ONECHAR_TOKGRPS);
 
-ULS_DEFINE_STRUCT(onechar_tokdef_etc)
+ULS_DEFINE_STRUCT(uls_onechar_tokdef_etc)
 {
 	uls_uch_t uch;
 	uls_tokdef_vx_ptr_t tokdef_vx;
 	uls_onechar_tokdef_etc_ptr_t next;
 };
 
-ULS_DEFINE_STRUCT(onechar_table)
+ULS_DEFINE_STRUCT(uls_onechar_table)
 {
-	uls_decl_array_type00(tokgrps, onechar_tokgrp, ULS_N_ONECHAR_TOKGRPS);
+	uls_decl_array_this_type01(tokgrps, onechar_tokgrp, N_ONECHAR_TOKGRPS);
 	uls_onechar_tokdef_etc_ptr_t tokdefs_etc_list;
 
 	uls_decl_parray(tokdef_vx_pool_1ch, tokdef_vx);
 };
 
-ULS_DEFINE_STRUCT(tokdef_outparam)
+ULS_DEFINE_STRUCT(uls_tokdef_outparam)
 {
 	uls_tokdef_vx_ptr_t e_vx;
 	uls_onechar_tokgrp_ptr_t tokgrp;
 };
 
-#if defined(__ULS_ONECHAR__)
+#endif // ULS_DEF_PUBLIC_TYPE
+
+#if defined(__ULS_ONECHAR__) || defined(ULS_DECL_PRIVATE_PROC)
 ULS_DECL_STATIC void __init_onechar_tokgrp(uls_onechar_table_ptr_t tbl, int grp_id, uls_uch_t uch0, int n);
 #endif
 
@@ -72,8 +78,8 @@ ULS_DECL_STATIC void __init_onechar_tokgrp(uls_onechar_table_ptr_t tbl, int grp_
 void uls_init_onechar_tokgrp(uls_onechar_tokgrp_ptr_t tokgrp);
 void uls_deinit_onechar_tokgrp(uls_onechar_tokgrp_ptr_t tokgrp);
 
-void uls_init_1char_table(uls_onechar_table_ptr_t tbl);
-void uls_deinit_1char_table(uls_onechar_table_ptr_t tbl);
+void uls_init_onechar_table(uls_onechar_table_ptr_t tbl);
+void uls_deinit_onechar_table(uls_onechar_table_ptr_t tbl);
 
 uls_tokdef_vx_ptr_t uls_find_1char_tokdef_map(uls_onechar_table_ptr_t tbl, uls_uch_t uch, uls_tokdef_outparam_ptr_t outparam);
 void uls_insert_onechar_tokdef_map(uls_onechar_tokgrp_ptr_t tokgrp, uls_uch_t uch, uls_tokdef_vx_ptr_t e_vx);

@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -35,22 +35,26 @@
 #ifndef __ULS_SYSPROPS_H__
 #define __ULS_SYSPROPS_H__
 
+#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_prim.h"
+#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
+#ifdef ULS_DEF_PUBLIC_TYPE
+#define ULS_N_SYSPROPS  16
 #define ULS_PROPPOOL_DFLSIZ 256
 
-ULS_DEFINE_STRUCT(sysprop)
+ULS_DEFINE_STRUCT(uls_sysprop)
 {
-	uls_def_namebuf(name, ULS_LEXSTR_MAXSIZ);
+	_uls_def_namebuf(name, ULS_LEXSTR_MAXSIZ);
 	int stridx;
 };
-ULS_DEF_ARRAY_TYPE00(sysprop, SYSPROP_TYPE00_ULS_N_SYSPROPS, ULS_N_SYSPROPS);
+ULS_DEF_ARRAY_THIS_TYPE01(sysprop, ULS_N_SYSPROPS);
 
-ULS_DEFINE_STRUCT(sysinfo)
+ULS_DEFINE_STRUCT(uls_sysinfo)
 {
 	int initialized;
 	int ULS_BYTE_ORDER;
@@ -63,25 +67,28 @@ ULS_DEFINE_STRUCT(sysinfo)
 	char *ULC_SEARCH_PATH;
 	int  encoding, codepage, multibytes;
 
-	uls_decl_array_type00(properties, sysprop, ULS_N_SYSPROPS);
+	uls_decl_array_this_type01(properties, sysprop, ULS_N_SYSPROPS);
 	int n_properties;
 
 	int  n_strpool, n_alloc_strpool;
 	char *strpool;
 };
+#endif // ULS_DEF_PUBLIC_TYPE
 
-#if defined(__ULS_SYSPROPS__)
+#if defined(ULS_DOTNET) || defined(__ULS_SYSPROPS__)
 #define EXTERNAL
 #else
 #define EXTERNAL extern
 #endif
 
+#if !defined(ULS_DOTNET) || defined(ULS_DEF_PUBLIC_DATA)
 EXTERNAL uls_sysinfo_ptr_t uls_sysinfo;
+#endif
 
-#if defined(__ULS_SYSPROPS__)
+#if defined(__ULS_SYSPROPS__) || defined(ULS_DECL_PRIVATE_PROC)
 ULS_DECL_STATIC int __init_system_info(uls_sysinfo_ptr_t sysinfo, int poolsiz);
 ULS_DECL_STATIC uls_sysprop_ptr_t __get_system_property(uls_sysinfo_ptr_t sysinfo, const char* name);
-ULS_DECL_STATIC char* get_nameval_pair(uls_parm_line_ptr_t parm_ln);
+ULS_DECL_STATIC char* get_nameval_pair(_uls_tool_ptrtype_(parm_line) parm_ln);
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC
@@ -102,10 +109,14 @@ void uls_arch2be_array(char* ary, int n);
 void uls_arch2le_array(char* ary, int n);
 #endif
 
+#ifdef ULS_DECL_PUBLIC_PROC
 ULS_DLL_EXTERN const char* uls_add_system_property(const char* name, const char* val);
 ULS_DLL_EXTERN const char* uls_get_system_property(const char* name);
+#endif
 
+#ifndef ULS_DOTNET
 #define _uls_sysinfo_(attr) uls_sysinfo->attr
+#endif
 
 #undef EXTERNAL
 #ifdef _ULS_CPLUSPLUS

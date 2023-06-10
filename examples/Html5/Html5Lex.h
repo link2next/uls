@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -51,18 +51,18 @@ namespace collection
 
 		FILE *fin_html;
 
-		std::string tok_str;
+		std::tstring tok_str;
 		int tok_id;
 		bool tok_ungot;
 
 		int run_to_tagbegin(FILE* fp, csz_str_t* txt_buf, int *is_trivial);
 		int pass_html_quote(FILE* fp, csz_str_t* txt_buf, int quote_ch);
 		int run_to_tagend(FILE* fp, csz_str_t* txt_buf);
-		int concat_lexeme(const char * str, int len);
+		int concat_lexeme(LPCTSTR str, int len);
 		void get_token(void);
 
 	public:
-		Html5Lex(std::string& config_name);
+		Html5Lex(std::tstring& config_name);
 		~Html5Lex();
 
 		// <brief>
@@ -73,17 +73,17 @@ namespace collection
 		virtual int getTok(void);
 
 		virtual int getTokNum(void);
-		virtual std::string& getTokStr(void);
+		virtual std::tstring& getTokStr(void);
 
 		void ungetTok(void);
-		std::string getKeywordStr(int t);
+		std::tstring getKeywordStr(int t);
 
 		// <brief>
 		// Sets the input file to be tokenized.
 		// </brief>
 		// <parm name="fpath">The path of file</parm>
 		// <return>none</return>
-		int setFile(std::string fpath);
+		int setFile(std::tstring fpath);
 	};
 }
 }

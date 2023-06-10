@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -35,10 +35,11 @@
 #ifndef __ULS_PRIM_H__
 #define __ULS_PRIM_H__
 
+#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_type.h"
 #include <stdio.h>
 
-#ifndef USE_ULSNETJAVA
+#if !defined(ULS_DOTNET) && !defined(USE_ULSNETJAVA)
 #ifdef ULS_WINDOWS
 #include <tchar.h>
 #include <io.h>
@@ -48,8 +49,8 @@
 #else
 #include <winnls.h>
 #endif
-#endif
-#endif
+#endif // ULS_WINDOWS
+#endif // !defined(ULS_DOTNET) && !defined(USE_ULSNETJAVA)
 
 #ifdef HAVE_PTHREAD
 #include <pthread.h>
@@ -60,27 +61,35 @@
 #include <wchar.h>
 #endif
 
+#endif // ULS_EXCLUDE_HFILES
+
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
+#ifdef ULS_DECL_GLOBAL_TYPES
 #define DECLARE_ULS_MUTEX(name) uls_mutex_struct_t name
 #define EXTERN_ULS_MUTEX(name) extern uls_mutex_struct_t name
 
-#define uls_malloc_buffer(n) (char *) uls_malloc(n)
-#define uls_malloc_buffer_clear(n) (char *) uls_malloc_clear(n)
+#define uls_malloc_buffer(n) (char *) _uls_tool_(malloc)(n)
+#define uls_malloc_buffer_clear(n) (char *) _uls_tool_(malloc_clear)(n)
+#define uls_mfree(a) do { _uls_tool(__uls_mfree)((void *)(a)); (a)=NULL; } while (0)
+#endif // ULS_DECL_GLOBAL_TYPES
 
-#ifdef ULS_DO_ASSERT
+#ifdef ULS_DECL_PUBLIC_TYPE
+#ifdef ULS_NO_ASSERT
+#define uls_assert(x)
+#else
 #define uls_assert(x) do { \
   if ((x)==0) { \
-    err_log_primitive("assertion failed:%s(#%d)", __FILE__, __LINE__); \
-    err_panic_primitive(#x); \
+    _uls_log_primitive(err_log)("assertion failed:%s(#%d)", __FILE__, __LINE__); \
+    _uls_log_primitive(err_panic)(#x); \
   } \
 } while (0)
-#else
-#define uls_assert(x)
 #endif
+#endif // ULS_DECL_PUBLIC_TYPE
 
+#ifdef ULS_DECL_PROTECTED_TYPE
 #define ULS_MEMSET_CHUNKSIZE 32
 
 #define BYTE_SIZE_LOG_BITS  3
@@ -89,7 +98,12 @@ extern "C" {
 #define byte_offset(i_bit)  ((i_bit) & (BYTE_SIZE_BITS-1))
 #define BYTE_LEFT_MOST_1    (1<<(BYTE_SIZE_BITS-1))
 
-#define ULS_INT_MAX (~((int)1 << (sizeof(int)*8-1)))
+#define ULS_INT_MAX \
+  ( \
+  	((unsigned int) -1) & ~( \
+  		(unsigned int) 0x1 << (sizeof(int)*8-1) \
+  	) \
+  )
 #define ULS_INT_MIN (-ULS_INT_MAX-1)
 
 #ifdef ULS_WINDOWS
@@ -101,6 +115,38 @@ extern "C" {
 #ifndef O_BINARY
 #define O_BINARY 0
 #endif
+#endif // ULS_WINDOWS
+  
+#ifdef ULS_WINDOWS
+#ifdef ULS_USE_WSTR
+#define tstring wstring
+typedef wchar_t *LPTARGV[];
+#else
+#define tstring string
+typedef char *LPTARGV[];
+#endif
+#else // ULS_WINDOWS
+#ifdef ULS_USE_WSTR
+#ifndef _T
+#define _T(a) L##a
+#define TEXT(a) L##a
+typedef wchar_t TCHAR;
+typedef wchar_t *LPTSTR;
+typedef const wchar_t *LPCTSTR;
+#endif
+#define tstring wstring
+#else // ULS_USE_WSTR
+#ifndef _T
+#define _T(a) a
+#define TEXT(a) a
+typedef char TCHAR;
+typedef char *LPTSTR;
+typedef const char *LPCTSTR;
+#endif
+#define tstring string
+#endif //ULS_USE_WSTR
+typedef char *LPTARGV[];
+#define _tmain main
 #endif // ULS_WINDOWS
 
 #ifdef _ULS_IMPLDLL
@@ -117,18 +163,22 @@ extern "C" {
 #define ULS_LF_SHIFT_BASE_BIN   1
 #define ULS_LF_SHIFT_BASE_HEX   4
 
+#endif // ULS_DECL_PROTECTED_TYPE
+
+#ifdef ULS_DEF_PUBLIC_TYPE
+
 #if defined(HAVE_PTHREAD)
-ULS_DEFINE_STRUCT(mutex_struct)
+ULS_DEFINE_STRUCT(uls_mutex_struct)
 {
 	pthread_mutex_t *mtx_pthr;
 };
 #elif defined(ULS_WINDOWS)
-ULS_DEFINE_STRUCT(mutex_struct)
+ULS_DEFINE_STRUCT(uls_mutex_struct)
 {
-	void *hndl; // HANDLE
+	HANDLE hndl;
 };
 #else
-ULS_DEFINE_STRUCT(mutex_struct)
+ULS_DEFINE_STRUCT(uls_mutex_struct)
 {
 	int hndl;
 };
@@ -136,7 +186,7 @@ ULS_DEFINE_STRUCT(mutex_struct)
 
 typedef uls_mutex_struct_ptr_t uls_mutex_t;
 
-ULS_DEFINE_STRUCT(outparam)
+ULS_DEFINE_STRUCT(uls_outparam)
 {
 	int n, n1, n2, len, flags;
 	unsigned int x1, x2;
@@ -150,50 +200,44 @@ ULS_DEFINE_STRUCT(outparam)
 	uls_voidptr_t proc;
 };
 
-ULS_DEFINE_STRUCT(parm_line)
+ULS_DEFINE_STRUCT(uls_parm_line)
 {
 	char *line;
 	const char *lptr, *lptr_end;
 	int len;
 };
 
-ULS_DEFINE_STRUCT(nambuf)
+ULS_DEFINE_STRUCT(uls_nambuf)
 {
 	char *str;
 	int len, buf_siz;
 };
 
-ULS_DEFINE_STRUCT(wrd)
+ULS_DEFINE_STRUCT(uls_wrd)
 {
 	char *wrd, *lptr;
-	int len, siz;
+	int len;
 };
 
-ULS_DEFINE_STRUCT(argstr)
+ULS_DEFINE_STRUCT(uls_argstr)
 {
 	char *buf, *str;
 	int len, buf_siz;
 };
-ULS_DEF_PARRAY(argstr);
+ULS_DEF_PARRAY_THIS(argstr);
 
-ULS_DEFINE_STRUCT(arglst)
+ULS_DEFINE_STRUCT(uls_arglst)
 {
 	uls_decl_parray(args, argstr);
 };
 
-ULS_DEFINE_STRUCT(uch_range)
-{
-	uls_uch_t x1;
-	uls_uch_t x2;
-};
-ULS_DEF_ARRAY_TYPE01(uch_range);
-ULS_DEF_PARRAY(uch_range);
+#endif // ULS_DEF_PUBLIC_TYPE
 
-#if defined(__ULS_PRIM__)
+#if defined(__ULS_PRIM__) || defined(ULS_DEF_PRIVATE_DATA)
 ULS_DECL_STATIC uls_mutex_struct_t uls_global_mtx;
 #endif
 
-#if defined(__ULS_PRIM__)
+#if defined(__ULS_PRIM__) || defined(ULS_DECL_PRIVATE_PROC)
 ULS_DECL_STATIC _ULS_INLINE int __find_first_1bit(char ch, int j1, int j2);
 #endif
 
@@ -202,19 +246,21 @@ int uls_lf_number_u(char *numstr, unsigned int num, int base_shift);
 int uls_lf_number_lu(char *numstr, unsigned long num, int base_shift);
 int uls_lf_number_Lu(char *numstr, unsigned long long num, int base_shift);
 
+#ifndef ULS_DOTNET
 void err_log_puts(const char* mesg, int len);
 int uls_vsnprintf_primitive(char *buf,  int bufsiz, const char* fmt, va_list args);
 int uls_snprintf_primitive(char *buf,  int bufsiz, const char* fmt, ...);
 int err_vlog_primitive(const char* fmt, va_list args);
 void err_log_primitive(const char* fmt, ...);
 void err_panic_primitive(const char* fmt, ...);
+#endif
 
 int is_octal_char(char ch);
 int is_hexa_char(char ch);
 int is_num_radix(uls_uch_t ch, int radix);
 char read_hexa_char(char* ptr);
 
-int uls_index_range(uls_outparam_ptr_t parms, int i2_limit);
+int uls_index_range(_uls_tool_ptrtype_(outparam) parms, int i2_limit);
 void uls_clear_bits(char* srcptr, uls_uint32 start_bit, uls_uint32 end_bit);
 int uls_find_first_1bit(char* srcptr,
 	uls_uint32 start_bit, uls_uint32 end_bit, uls_uint32* found_bit);
@@ -229,6 +275,8 @@ void finalize_primitives(void);
 
 #endif // ULS_DECL_PROTECTED_PROC
 
+#ifdef ULS_DECL_PUBLIC_PROC
+
 int uls_isgraph(int c);
 int uls_isprint(int c);
 int uls_iscntrl(int c);
@@ -242,19 +290,19 @@ int uls_isxdigit(int c);
 char uls_toupper(int c);
 char uls_tolower(int c);
 
-int is_pure_integer(const char* lptr, int *ptr_num);
+int is_pure_int_number(const char* lptr);
 int is_pure_word(const char* lptr, int must_id);
 int uls_atoi(const char *str);
 
 void uls_get_xrange(const char* wrd, uls_uint32* ptr_x1, uls_uint32* ptr_x2);
-int get_range_aton(uls_outparam_ptr_t parms);
+int get_range_aton(_uls_tool_ptrtype_(outparam) parms);
 int uls_range_of_bits(uls_uint32 n);
 
 int uls_host_byteorder(void);
 void uls_reverse_bytes(char* ary, int n);
 
-int uls_strcmp(const char* str1, const char* str2);
-int uls_strncmp(const char* str1, const char* str2, int n);
+int uls_strcmp(const char* str, const char* str2);
+int uls_strncmp(const char* str, const char* str2, int n);
 int uls_strcasecmp(const char* str1, const char* str2);
 
 char* uls_strchr(const char* lptr, char ch0);
@@ -265,10 +313,10 @@ int uls_str_tolower(const char* src, char *dst, int len);
 int uls_str_toupper(const char* src, char *dst, int len);
 int uls_memcmp(const void *src1, const void *src2, int n);
 
-unsigned int uls_skip_atou(uls_outparam_ptr_t parms);
-unsigned int uls_skip_atox(uls_outparam_ptr_t parms);
+unsigned int uls_skip_atou(_uls_tool_ptrtype_(outparam) parms);
+unsigned int uls_skip_atox(_uls_tool_ptrtype_(outparam) parms);
 
-char* split_clause(uls_outparam_ptr_t parms);
+char* split_clause(_uls_tool_ptrtype_(outparam) parms);
 char* split_litstr(char *str, char qch);
 
 int uls_fp_getline(FILE* fp, char* buf, int buf_siz);
@@ -285,7 +333,7 @@ ULS_DLL_EXTERN void uls_bzero(void *dstbuf, int n);
 ULS_DLL_EXTERN void *uls_malloc(unsigned int n_bytes);
 ULS_DLL_EXTERN void *uls_malloc_clear(unsigned int n_bytes);
 ULS_DLL_EXTERN void *uls_mrealloc(void *ptr, unsigned int n_bytes);
-ULS_DLL_EXTERN void *uls_mfree(void *ptr);
+ULS_DLL_EXTERN void *__uls_mfree(void *ptr);
 
 ULS_DLL_EXTERN char* uls_strdup(const char* str, int len);
 ULS_DLL_EXTERN void* uls_memcopy(void *dst, const void* src, int n);
@@ -298,22 +346,21 @@ ULS_DLL_EXTERN int uls_strncpy(char* bufptr, const char* ptr, int n);
 
 ULS_DLL_EXTERN char* skip_blanks(const char* lptr);
 ULS_DLL_EXTERN int str_trim_end(char* str, int len);
-ULS_DLL_EXTERN char* _uls_splitstr(uls_wrd_ptr_t uw);
-ULS_DLL_EXTERN int _uls_explode_str(uls_wrd_ptr_t uw, char delim_ch, int dupstr, uls_arglst_ptr_t arglst);
-ULS_DLL_EXTERN char* _uls_filename(uls_outparam_ptr_t parms);
+ULS_DLL_EXTERN char* _uls_splitstr(_uls_tool_ptrtype_(wrd) uw);
+ULS_DLL_EXTERN int _uls_explode_str(_uls_tool_ptrtype_(wrd) uw, char delim_ch, int dupstr, _uls_tool_ptrtype_(arglst) arglst);
+ULS_DLL_EXTERN char* _uls_filename(_uls_tool_ptrtype_(outparam) parms);
 
 ULS_DLL_EXTERN uls_argstr_ptr_t uls_create_argstr(void);
 ULS_DLL_EXTERN void uls_destroy_argstr(uls_argstr_ptr_t arg);
 ULS_DLL_EXTERN void uls_set_argstr(uls_argstr_ptr_t arg, char *name, int name_len);
 ULS_DLL_EXTERN char *uls_copy_argstr(uls_argstr_ptr_t arg, const char *name, int name_len);
 
-ULS_DLL_EXTERN void uls_init_arglst(uls_arglst_ptr_t arglst, int siz);
-ULS_DLL_EXTERN void uls_deinit_arglst(uls_arglst_ptr_t arglst);
-ULS_DLL_EXTERN void uls_reset_arglst(uls_arglst_ptr_t arglst);
-ULS_DLL_EXTERN void uls_resize_arglst(uls_arglst_ptr_t arglst, int n1_alloc);
-ULS_DLL_EXTERN int uls_append_arglst(uls_arglst_ptr_t arglst, uls_argstr_ptr_t arg);
+ULS_DLL_EXTERN void uls_init_arglst(_uls_tool_ptrtype_(arglst) arglst, int siz);
+ULS_DLL_EXTERN void uls_deinit_arglst(_uls_tool_ptrtype_(arglst) arglst);
+ULS_DLL_EXTERN void uls_reset_arglst(_uls_tool_ptrtype_(arglst) arglst);
+ULS_DLL_EXTERN int uls_append_arglst(_uls_tool_ptrtype_(arglst) arglst, uls_argstr_ptr_t arg);
 
-ULS_DLL_EXTERN int ustr_num_chars(const char *str, int len, uls_outparam_ptr_t parms);
+ULS_DLL_EXTERN int ustr_num_chars(const char *str, int len, _uls_tool_ptrtype_(outparam) parms);
 
 ULS_DLL_EXTERN int uls_encode_utf8(uls_uch_t uch, char* utf8buf, int siz_utf8buf);
 ULS_DLL_EXTERN int uls_decode_utf8(const char *utf8buf, int siz_utf8buf, uls_uch_t *p_val);
@@ -322,18 +369,21 @@ ULS_DLL_EXTERN int uls_decode_utf16(uls_uint16 *buf, int buf_len, uls_uch_t *p_u
 ULS_DLL_EXTERN int uls_encode_utf32(uls_uch_t uch, uls_uint32 *buf);
 ULS_DLL_EXTERN int uls_decode_utf32(uls_uint32 buf, uls_uch_t *p_uch);
 
-ULS_DLL_EXTERN void uls_init_mutex(uls_mutex_t mtx);
-ULS_DLL_EXTERN void uls_deinit_mutex(uls_mutex_t mtx);
-ULS_DLL_EXTERN void uls_lock_mutex(uls_mutex_t mtx);
-ULS_DLL_EXTERN void uls_unlock_mutex(uls_mutex_t mtx);
+ULS_DLL_EXTERN ULS_DECL_EXTERN_STATIC void uls_init_mutex(uls_mutex_t mtx);
+ULS_DLL_EXTERN ULS_DECL_EXTERN_STATIC void uls_deinit_mutex(uls_mutex_t mtx);
+ULS_DLL_EXTERN ULS_DECL_EXTERN_STATIC void uls_lock_mutex(uls_mutex_t mtx);
+ULS_DLL_EXTERN ULS_DECL_EXTERN_STATIC void uls_unlock_mutex(uls_mutex_t mtx);
 
+#ifndef ULS_DOTNET
 ULS_DLL_EXTERN void *uls_zalloc(unsigned int n_bytes);
 ULS_DLL_EXTERN char *uls_splitstr(char** p_str);
 ULS_DLL_EXTERN int uls_explode_str(char **ptr_line, char delim_ch, char** args, int n_args);
 ULS_DLL_EXTERN char *uls_filename(const char *filepath, int* len_fname);
+#endif
 
 ULS_DLL_EXTERN void uls_sys_lock(void);
 ULS_DLL_EXTERN void uls_sys_unlock(void);
+#endif // ULS_DECL_PUBLIC_PROC
 
 #ifdef _ULS_CPLUSPLUS
 }

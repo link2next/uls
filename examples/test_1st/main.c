@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -106,7 +106,7 @@ test_uls_creating(int argc, char* argv[], int i0)
 	int i;
 
 	if ((simple_lex = uls_create(config_name)) == NULL) {
-		err_log("%s: can't init uls-object of '%s'", __func__, config_name);
+		err_log("%s: can't init uls-object of '%s'", __FUNCTION__, config_name);
 		ulc_list_searchpath("simple");
 		return -1;
 	}

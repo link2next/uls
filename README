@@ -13,7 +13,7 @@
   -------------
 
    ULS has the following key features.
-     o It can tokenize the input file which encoded by UTF-8.
+     o It can tokenize the input file which encoded by UTF-8, UTF-16, UTF-32.
        The input files may contain the words in localized language as identifier.
 
      o It can map the tokens that you defined to any number of all range of 32-integer.
@@ -109,6 +109,7 @@
   ------------
    On Debian platforms like Debian, Ubuntu, Mint, two deb-files is provided. 
       o uls_1.x.y_amd64.deb: for 64-bit mach(x86_64, amd64)
+      o uls_1.x.y_i686.deb: for 32-bit mach
    To install the deb-file, download the proper file on the site(http://www.sourceforge.net/projects/uls).
 
    Enter the command as follows.
@@ -123,32 +124,15 @@
       2. make
    Refer to the section 'Demos' below to examine the executions.
 
-   ULS The installation process of ULS from code sources conforms
-      the GNU conventional process on Linux platform.
-      1 To configure the package,
-         $ ./configure
+   ULS The installation process of ULS from code sources on Linux platforms is routine.
+      1. ./configure
+      2. make
+      3. make check
+      4. sudo make install
 
-        The default installation directory is '/usr/local', which is arranged by 'configure' script.
-        If you want to install ULS to directory other than '/usr/local',
-             add the 'prefix' option to it:
-         $ configure --prefix=<install_dir>
-
-      2. To build the package,
-         $ make
-
-      3. To test it, 
-         $ make check
-
-      4. To install it,
-         $ sudo make install
-
-      5. To test the installed package,
-         $ cd examples
-         $ make
-         $ make check 
-
-      6. To uninstall the package,
-         $ <install_dir>/bin/uninstall_uls
+   The default installation directory is '/usr/local', which is arranged by 'configure' script.
+   If you want to install ULS to directory other than '/usr/local', start 'configure' with typing
+      'configure --prefix=<dir-you-want-install>'.
 
    On Windows platforms(Windows7 or 10),
      There's a directory called UlsWin in the source code. 
@@ -218,7 +202,6 @@
   Licensing
   ---------
    ULS is provided under 'The MIT License (MIT)'.
-
 
   Contacts
   --------

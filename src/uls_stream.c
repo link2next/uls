@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -27,13 +27,15 @@
  *
  *  This file is part of ULS, Unified Lexical Scheme.
  */
+#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_stream.h"
 #include "uls/uls_misc.h"
 #include "uls/uls_sysprops.h"
 #include "uls/uls_log.h"
+#endif
 
 void
-uls_init_tmpl(uls_tmpl_ptr_t tmpl)
+ULS_QUALIFIED_METHOD(uls_init_tmpl)(uls_tmpl_ptr_t tmpl)
 {
 	tmpl->name = tmpl->sval = NULL;
 	tmpl->name_buff = tmpl->sval_buff = NULL;
@@ -41,83 +43,83 @@ uls_init_tmpl(uls_tmpl_ptr_t tmpl)
 }
 
 void
-uls_deinit_tmpl(uls_tmpl_ptr_t tmpl)
+ULS_QUALIFIED_METHOD(uls_deinit_tmpl)(uls_tmpl_ptr_t tmpl)
 {
-	tmpl->name_buff = uls_mfree(tmpl->name_buff);
-	tmpl->sval_buff = uls_mfree(tmpl->sval_buff);
+	uls_mfree(tmpl->name_buff);
+	uls_mfree(tmpl->sval_buff);
 }
 
 void
-uls_init_stream_header(uls_stream_header_ptr_t hdr)
+ULS_QUALIFIED_METHOD(uls_init_stream_header)(uls_stream_header_ptr_t hdr)
 {
-	uls_init_version(uls_ptr(hdr->filever));
-	uls_init_namebuf(hdr->specname, ULC_LONGNAME_MAXSIZ);
+	_uls_tool_(init_version)(uls_ptr(hdr->filever));
+	_uls_init_namebuf(hdr->specname, ULC_LONGNAME_MAXSIZ);
 
 	hdr->filetype = ULS_STREAM_RAW;
 	hdr->subtype = hdr->reverse = 0;
 
-	uls_init_namebuf(hdr->subname, ULS_STREAM_SUBNAME_SIZE);
-	uls_init_namebuf(hdr->ctime, ULS_STREAM_CTIME_SIZE);
+	_uls_init_namebuf(hdr->subname, ULS_STREAM_SUBNAME_SIZE);
+	_uls_init_namebuf(hdr->ctime, ULS_STREAM_CTIME_SIZE);
 }
 
 void
-uls_deinit_stream_header(uls_stream_header_ptr_t hdr)
+ULS_QUALIFIED_METHOD(uls_deinit_stream_header)(uls_stream_header_ptr_t hdr)
 {
-	uls_deinit_version(uls_ptr(hdr->filever));
-	uls_deinit_namebuf(hdr->specname);
-	uls_deinit_namebuf(hdr->subname);
-	uls_deinit_namebuf(hdr->ctime);
+	_uls_tool_(deinit_version)(uls_ptr(hdr->filever));
+	_uls_deinit_namebuf(hdr->specname);
+	_uls_deinit_namebuf(hdr->subname);
+	_uls_deinit_namebuf(hdr->ctime);
 }
 
 void
-uls_reorder_bytes_null(char *binpkt, int len_binpkt)
+ULS_QUALIFIED_METHOD(uls_reorder_bytes_null)(char *binpkt, int len_binpkt)
 {
 	/* NOTHING */
 }
 
 void
-uls_reorder_bytes_binle(char *binpkt, int len_binpkt)
+ULS_QUALIFIED_METHOD(uls_reorder_bytes_binle)(char *binpkt, int len_binpkt)
 {
 	char *hdrbuf = binpkt;
 	if (_uls_sysinfo_(ULS_BYTE_ORDER) == ULS_BIG_ENDIAN) {
-		uls_reverse_bytes(hdrbuf, sizeof(uls_int32));
-		uls_reverse_bytes(hdrbuf + sizeof(uls_int32), sizeof(uls_int32));
+		_uls_tool_(reverse_bytes)(hdrbuf, sizeof(uls_int32));
+		_uls_tool_(reverse_bytes)(hdrbuf + sizeof(uls_int32), sizeof(uls_int32));
 	}
 }
 
 void
-uls_reorder_bytes_binbe(char *binpkt, int len_binpkt)
+ULS_QUALIFIED_METHOD(uls_reorder_bytes_binbe)(char *binpkt, int len_binpkt)
 {
 	char *hdrbuf = binpkt;
 
 	if (_uls_sysinfo_(ULS_BYTE_ORDER) == ULS_LITTLE_ENDIAN) {
-		uls_reverse_bytes(hdrbuf, sizeof(uls_int32));
-		uls_reverse_bytes(hdrbuf + sizeof(uls_int32), sizeof(uls_int32));
+		_uls_tool_(reverse_bytes)(hdrbuf, sizeof(uls_int32));
+		_uls_tool_(reverse_bytes)(hdrbuf + sizeof(uls_int32), sizeof(uls_int32));
 	}
 }
 
 void
-uls_dump_tmpls(uls_tmpl_list_ptr_t tmpl_list)
+ULS_QUALIFIED_METHOD(uls_dump_tmpls)(uls_tmpl_list_ptr_t tmpl_list)
 {
 	uls_tmpl_ptr_t tmpl;
 	int i;
 
-	printf("%s:\n", __func__);
+	printf("%s:\n", __FUNCTION__);
 
 	if (tmpl_list == nilptr) {
-		printf("%s: tmpl_list == NULL!\n", __func__);
+		printf("%s: tmpl_list == NULL!\n", __FUNCTION__);
 		return;
 	}
 
 	for (i=0; i<tmpl_list->tmpls.n; i++) {
-		tmpl = uls_array_get_slot_type10(uls_ptr(tmpl_list->tmpls), i);
+		tmpl = uls_get_array_slot_type10(uls_ptr(tmpl_list->tmpls), i);
 		printf("\t%d] %s  '%s'\n", i, tmpl->name, tmpl->sval);
 	}
 	printf("\n");
 }
 
-uls_tmpl_ptr_t
-uls_find_tmpl(uls_tmpl_list_ptr_t tmpl_list, const char* name)
+ULS_QUALIFIED_RETTYP(uls_tmpl_ptr_t)
+ULS_QUALIFIED_METHOD(uls_find_tmpl)(uls_tmpl_list_ptr_t tmpl_list, const char* name)
 {
 	uls_tmpl_ptr_t tmpl;
 	int i;
@@ -125,7 +127,7 @@ uls_find_tmpl(uls_tmpl_list_ptr_t tmpl_list, const char* name)
 	if (name == NULL) return nilptr;
 
 	for (i=0; i<tmpl_list->tmpls.n; i++) {
-		tmpl = uls_array_get_slot_type10(uls_ptr(tmpl_list->tmpls), i);
+		tmpl = uls_get_array_slot_type10(uls_ptr(tmpl_list->tmpls), i);
 		if (uls_streql(tmpl->name, name)) {
 			return tmpl;
 		}
@@ -134,16 +136,17 @@ uls_find_tmpl(uls_tmpl_list_ptr_t tmpl_list, const char* name)
 	return nilptr;
 }
 
-uls_tmplvar_ptr_t
-uls_search_tmpls(uls_ref_array_type10(tmpls,tmplvar), const char* name)
+ULS_QUALIFIED_RETTYP(uls_tmplvar_ptr_t)
+ULS_QUALIFIED_METHOD(uls_search_tmpls)(uls_ref_array_this_type10(tmpls,tmplvar), const char* name)
 {
 	uls_tmplvar_ptr_t tmpl;
 	int i;
 
+	// assert: name != NULL
 	if (tmpls == nilptr) return nilptr;
 
 	for (i=0; i<tmpls->n; i++) {
-		tmpl = uls_array_get_slot_type10(tmpls, i);
+		tmpl = uls_get_array_slot_type10(tmpls, i);
 		// tmpl != NULL
 
 		if (uls_streql(tmpl->name, name))
@@ -154,34 +157,34 @@ uls_search_tmpls(uls_ref_array_type10(tmpls,tmplvar), const char* name)
 }
 
 void
-uls_init_tmpl_pool(uls_tmpl_pool_ptr_t tmpls_pool, int n_tmpls, int n_alloc)
+ULS_QUALIFIED_METHOD(uls_init_tmpl_pool)(uls_tmpl_pool_ptr_t tmpls_pool, int n_tmpls, int n_alloc)
 {
 	int i;
 
-	uls_init_array_type10(uls_ptr(tmpls_pool->tmplvars), tmplvar, n_tmpls);
+	uls_init_array_this_type10(uls_ptr(tmpls_pool->tmplvars), tmplvar, n_tmpls);
 	for (i=0; i<n_tmpls; i++) {
-		uls_array_alloc_slot_type10(uls_ptr(tmpls_pool->tmplvars), tmplvar, i);
+		uls_alloc_array_this_slot_type10(uls_ptr(tmpls_pool->tmplvars), tmplvar, i);
 	}
 	tmpls_pool->tmplvars.n = n_tmpls;
 
-	uls_init_array_type10(uls_ptr(tmpls_pool->pkt_ary), rd_packet, n_alloc);
+	uls_init_array_this_type10(uls_ptr(tmpls_pool->pkt_ary), rd_packet, n_alloc);
 	tmpls_pool->n_pkt_ary_delta =  n_alloc;
 
-	csz_init(uls_ptr(tmpls_pool->str_pool), 512);
+	_uls_tool(csz_init)(uls_ptr(tmpls_pool->str_pool), 512);
 }
 
 void
-uls_deinit_tmpl_pool(uls_tmpl_pool_ptr_t tmpls_pool)
+ULS_QUALIFIED_METHOD(uls_deinit_tmpl_pool)(uls_tmpl_pool_ptr_t tmpls_pool)
 {
 	if (tmpls_pool == nilptr) return;
 
-	uls_deinit_array_type10(uls_ptr(tmpls_pool->tmplvars), tmplvar);
-	uls_deinit_array_type10(uls_ptr(tmpls_pool->pkt_ary), rd_packet);
-	csz_deinit(uls_ptr(tmpls_pool->str_pool));
+	uls_deinit_array_this_type10(uls_ptr(tmpls_pool->tmplvars), tmplvar);
+	uls_deinit_array_this_type10(uls_ptr(tmpls_pool->pkt_ary), rd_packet);
+	_uls_tool(csz_deinit)(uls_ptr(tmpls_pool->str_pool));
 }
 
-uls_tmpl_pool_ptr_t
-uls_create_tmpl_pool(int n_tmpls, int n_alloc)
+ULS_QUALIFIED_RETTYP(uls_tmpl_pool_ptr_t)
+ULS_QUALIFIED_METHOD(uls_create_tmpl_pool)(int n_tmpls, int n_alloc)
 {
 	uls_tmpl_pool_ptr_t tmpls_pool;
 
@@ -192,7 +195,7 @@ uls_create_tmpl_pool(int n_tmpls, int n_alloc)
 }
 
 void
-uls_destroy_tmpl_pool(uls_tmpl_pool_ptr_t tmpls_pool)
+ULS_QUALIFIED_METHOD(uls_destroy_tmpl_pool)(uls_tmpl_pool_ptr_t tmpls_pool)
 {
 	if (tmpls_pool == nilptr) return;
 	uls_deinit_tmpl_pool(tmpls_pool);
@@ -200,7 +203,7 @@ uls_destroy_tmpl_pool(uls_tmpl_pool_ptr_t tmpls_pool)
 }
 
 void
-uls_init_rd_packet(uls_rd_packet_ptr_t pkt)
+ULS_QUALIFIED_METHOD(uls_init_rd_packet)(uls_rd_packet_ptr_t pkt)
 {
 	pkt->tok_id = 0;
 	pkt->len_tokstr = 0;
@@ -208,12 +211,12 @@ uls_init_rd_packet(uls_rd_packet_ptr_t pkt)
 }
 
 void
-uls_deinit_rd_packet(uls_rd_packet_ptr_t pkt)
+ULS_QUALIFIED_METHOD(uls_deinit_rd_packet)(uls_rd_packet_ptr_t pkt)
 {
 }
 
 void
-uls_set_rd_packet(uls_rd_packet_ptr_t pkt, int tok_id, int txtlen, const char* txtptr)
+ULS_QUALIFIED_METHOD(uls_set_rd_packet)(uls_rd_packet_ptr_t pkt, int tok_id, int txtlen, const char* txtptr)
 {
 	pkt->tok_id = tok_id;
 	pkt->len_tokstr = txtlen;
@@ -221,7 +224,7 @@ uls_set_rd_packet(uls_rd_packet_ptr_t pkt, int tok_id, int txtlen, const char* t
 }
 
 void
-add_rd_packet_to_tmpls_pool(int tok_id, int txtlen, const char* txtptr, uls_tmpl_pool_ptr_t tmpls_pool)
+ULS_QUALIFIED_METHOD(add_rd_packet_to_tmpls_pool)(int tok_id, int txtlen, const char* txtptr, uls_tmpl_pool_ptr_t tmpls_pool)
 {
 	uls_rd_packet_ptr_t pkt;
 	int siz;
@@ -229,18 +232,18 @@ add_rd_packet_to_tmpls_pool(int tok_id, int txtlen, const char* txtptr, uls_tmpl
 	if (tmpls_pool->pkt_ary.n >= tmpls_pool->pkt_ary.n_alloc) {
 		siz = tmpls_pool->pkt_ary.n_alloc + 1;
 		siz = uls_roundup(siz, tmpls_pool->n_pkt_ary_delta);
-		uls_resize_array_type10(uls_ptr(tmpls_pool->pkt_ary), rd_packet, siz);
+		uls_resize_array_this_type10(uls_ptr(tmpls_pool->pkt_ary), rd_packet, siz);
 	}
 
-	uls_array_alloc_slot_type10(uls_ptr(tmpls_pool->pkt_ary), rd_packet, tmpls_pool->pkt_ary.n);
-	pkt = uls_array_get_slot_type10(uls_ptr(tmpls_pool->pkt_ary), tmpls_pool->pkt_ary.n);
+	uls_alloc_array_this_slot_type10(uls_ptr(tmpls_pool->pkt_ary), rd_packet, tmpls_pool->pkt_ary.n);
+	pkt = uls_get_array_slot_type10(uls_ptr(tmpls_pool->pkt_ary), tmpls_pool->pkt_ary.n);
 
 	uls_set_rd_packet(pkt, tok_id, txtlen, txtptr);
 	++tmpls_pool->pkt_ary.n;
 }
 
 void
-uls_init_tmplvar(uls_tmplvar_ptr_t tvar)
+ULS_QUALIFIED_METHOD(uls_init_tmplvar)(uls_tmplvar_ptr_t tvar)
 {
 	tvar->name = NULL;
 	tvar->sval = NULL;
@@ -249,24 +252,24 @@ uls_init_tmplvar(uls_tmplvar_ptr_t tvar)
 }
 
 void
-uls_deinit_tmplvar(uls_tmplvar_ptr_t tvar)
+ULS_QUALIFIED_METHOD(uls_deinit_tmplvar)(uls_tmplvar_ptr_t tvar)
 {
 }
 
-int
-_uls_const_STREAM_BIN_LE(void)
+ULS_DLL_EXTERN int
+ULS_QUALIFIED_METHOD(_uls_const_STREAM_BIN_LE)(void)
 {
 	return ULS_STREAM_BIN_LE;
 }
 
-int
-_uls_const_STREAM_BIN_BE(void)
+ULS_DLL_EXTERN int
+ULS_QUALIFIED_METHOD(_uls_const_STREAM_BIN_BE)(void)
 {
 	return ULS_STREAM_BIN_BE;
 }
 
-int
-uls_init_tmpls(uls_tmpl_list_ptr_t tmpl_list, int n_alloc, int flags)
+ULS_DLL_EXTERN int
+ULS_QUALIFIED_METHOD(uls_init_tmpls)(uls_tmpl_list_ptr_t tmpl_list, int n_alloc, int flags)
 {
 	if (n_alloc < 0) return -1;
 
@@ -275,20 +278,25 @@ uls_init_tmpls(uls_tmpl_list_ptr_t tmpl_list, int n_alloc, int flags)
 		tmpl_list->flags |= ULS_TMPLS_DUP;
 	}
 
-	uls_init_array_type10(uls_ptr(tmpl_list->tmpls), tmpl, n_alloc);
+	uls_init_array_this_type10(uls_ptr(tmpl_list->tmpls), tmpl, n_alloc);
+	tmpl_list->shell = nilptr;
+
 	return 0;
 }
 
-int
-uls_deinit_tmpls(uls_tmpl_list_ptr_t tmpl_list)
+ULS_DLL_EXTERN int
+ULS_QUALIFIED_METHOD(uls_deinit_tmpls)(uls_tmpl_list_ptr_t tmpl_list)
 {
-	uls_deinit_array_type10(uls_ptr(tmpl_list->tmpls), tmpl);
+	uls_deinit_array_this_type10(uls_ptr(tmpl_list->tmpls), tmpl);
+
+	tmpl_list->shell = nilptr;
 	tmpl_list->flags &= ULS_FL_STATIC;
+
 	return 0;
 }
 
-uls_tmpl_list_ptr_t
-uls_create_tmpls(int n_alloc, int flags)
+ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_tmpl_list_ptr_t)
+ULS_QUALIFIED_METHOD(uls_create_tmpls)(int n_alloc, int flags)
 {
 	uls_tmpl_list_ptr_t tmpl_list;
 
@@ -303,14 +311,14 @@ uls_create_tmpls(int n_alloc, int flags)
 	return tmpl_list;
 }
 
-void
-uls_reset_tmpls(uls_tmpl_list_ptr_t tmpl_list, int n_alloc)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(uls_reset_tmpls)(uls_tmpl_list_ptr_t tmpl_list, int n_alloc)
 {
-	uls_resize_array_type10(uls_ptr(tmpl_list->tmpls), tmpl, n_alloc);
+	uls_resize_array_this_type10(uls_ptr(tmpl_list->tmpls), tmpl, n_alloc);
 }
 
-int
-uls_destroy_tmpls(uls_tmpl_list_ptr_t tmpl_list)
+ULS_DLL_EXTERN int
+ULS_QUALIFIED_METHOD(uls_destroy_tmpls)(uls_tmpl_list_ptr_t tmpl_list)
 {
 	if (uls_deinit_tmpls(tmpl_list) < 0) {
 		return -1;
@@ -322,8 +330,8 @@ uls_destroy_tmpls(uls_tmpl_list_ptr_t tmpl_list)
 	return 0;
 }
 
-const char*
-uls_get_tmpl_value(uls_tmpl_list_ptr_t tmpl_list, const char* name)
+ULS_DLL_EXTERN const char*
+ULS_QUALIFIED_METHOD(uls_get_tmpl_value)(uls_tmpl_list_ptr_t tmpl_list, const char* name)
 {
 	uls_tmpl_ptr_t tmpl;
 
@@ -334,8 +342,8 @@ uls_get_tmpl_value(uls_tmpl_list_ptr_t tmpl_list, const char* name)
 	return tmpl->sval;
 }
 
-int
-uls_set_tmpl_value(uls_tmpl_list_ptr_t tmpl_list, const char* name, const char *val)
+ULS_DLL_EXTERN int
+ULS_QUALIFIED_METHOD(uls_set_tmpl_value)(uls_tmpl_list_ptr_t tmpl_list, const char* name, const char *val)
 {
 	uls_tmpl_ptr_t tmpl;
 
@@ -346,9 +354,9 @@ uls_set_tmpl_value(uls_tmpl_list_ptr_t tmpl_list, const char* name, const char *
 	}
 
 	if (tmpl_list->flags & ULS_TMPLS_DUP) {
-		tmpl->sval_buff = uls_mfree(tmpl->sval_buff);
+		uls_mfree(tmpl->sval_buff);
 		if (val != NULL) {
-			tmpl->sval_buff = uls_strdup(val,-1);
+			tmpl->sval_buff = _uls_tool_(strdup)(val,-1);
 		}
 		tmpl->sval = tmpl->sval_buff;
 	} else {
@@ -358,8 +366,8 @@ uls_set_tmpl_value(uls_tmpl_list_ptr_t tmpl_list, const char* name, const char *
 	return 0;
 }
 
-int
-uls_add_tmpl(uls_tmpl_list_ptr_t tmpl_list, const char *name, const char *val)
+ULS_DLL_EXTERN int
+ULS_QUALIFIED_METHOD(uls_add_tmpl)(uls_tmpl_list_ptr_t tmpl_list, const char *name, const char *val)
 {
 	uls_tmpl_ptr_t tmpl;
 	int k;
@@ -371,18 +379,18 @@ uls_add_tmpl(uls_tmpl_list_ptr_t tmpl_list, const char *name, const char *val)
 	}
 
 	if ((k = tmpl_list->tmpls.n) >= tmpl_list->tmpls.n_alloc) {
-		err_log("Full of tmpl array[%d]", tmpl_list->tmpls.n_alloc);
+		_uls_log(err_log)("Full of tmpl array[%d]", tmpl_list->tmpls.n_alloc);
 		return -1;
 	}
 
-	uls_array_alloc_slot_type10(uls_ptr(tmpl_list->tmpls), tmpl, k);
-	tmpl = uls_array_get_slot_type10(uls_ptr(tmpl_list->tmpls), k);
+	uls_alloc_array_this_slot_type10(uls_ptr(tmpl_list->tmpls), tmpl, k);
+	tmpl = uls_get_array_slot_type10(uls_ptr(tmpl_list->tmpls), k);
 	tmpl->idx = k;
 
 	if (tmpl_list->flags & ULS_TMPLS_DUP) {
-		tmpl->name = tmpl->name_buff = uls_strdup(name, -1);
+		tmpl->name = tmpl->name_buff = _uls_tool_(strdup)(name, -1);
 		if (val != NULL) {
-			tmpl->sval = tmpl->sval_buff = uls_strdup(val,-1);
+			tmpl->sval = tmpl->sval_buff = _uls_tool_(strdup)(val,-1);
 		} else {
 			tmpl->sval = tmpl->sval_buff = NULL;
 		}
@@ -395,12 +403,12 @@ uls_add_tmpl(uls_tmpl_list_ptr_t tmpl_list, const char *name, const char *val)
 	return k;
 }
 
-int
-ulsjava_add_tmpl(uls_tmpl_list_ptr_t tmpl_list,
+ULS_DLL_EXTERN int
+ULS_QUALIFIED_METHOD(ulsjava_add_tmpl)(uls_tmpl_list_ptr_t tmpl_list,
 	const void *name, int len_name,  const void *val, int len_val)
 {
-	char *ustr1 = uls_strdup((const char *)name, len_name);
-	char *ustr2 = uls_strdup((const char *)val, len_val);
+	char *ustr1 = _uls_tool_(strdup)((const char *)name, len_name);
+	char *ustr2 = _uls_tool_(strdup)((const char *)val, len_val);
 	int rc;
 
 	rc = uls_add_tmpl(tmpl_list, ustr1, ustr2);

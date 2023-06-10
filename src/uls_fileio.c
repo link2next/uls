@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -31,6 +31,7 @@
     Stanley Hong <link2next@gmail.com>, June 2015.
   </author>
 */
+#ifndef ULS_EXCLUDE_HFILES
 #define __ULS_FILEIO__
 #include "uls/uls_fileio.h"
 #include "uls/uls_auw.h"
@@ -47,8 +48,10 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#endif
+
 ULS_DECL_STATIC int
-__uls_fd_create_check(const char* fpath, uls_outparam_ptr_t parms)
+ULS_QUALIFIED_METHOD(__uls_fd_create_check)(const char* fpath, uls_outparam_ptr_t parms)
 {
 	int mode = parms->n1;
 	int ftype, mode2, perm2;
@@ -98,7 +101,7 @@ __uls_fd_create_check(const char* fpath, uls_outparam_ptr_t parms)
 }
 
 ULS_DECL_STATIC int
-__uls_fd_open_check(uls_outparam_ptr_t parms)
+ULS_QUALIFIED_METHOD(__uls_fd_open_check)(uls_outparam_ptr_t parms)
 {
 	int mode = parms->n1, mode2;
 
@@ -130,7 +133,7 @@ __uls_fd_open_check(uls_outparam_ptr_t parms)
 
 #ifdef ULS_WINDOWS
 ULS_DECL_STATIC int
-__uls_fd_create(const char* fpath, int mode)
+ULS_QUALIFIED_METHOD(__uls_fd_create)(const char* fpath, int mode)
 {
 	const char *astr;
 	int fd, mode2, perm2;
@@ -159,7 +162,7 @@ __uls_fd_create(const char* fpath, int mode)
 }
 
 ULS_DECL_STATIC int
-__uls_fd_open(const char* fpath, int mode)
+ULS_QUALIFIED_METHOD(__uls_fd_open)(const char* fpath, int mode)
 {
 	const char *astr;
 	int fd, mode2;
@@ -186,7 +189,7 @@ __uls_fd_open(const char* fpath, int mode)
 #else
 
 ULS_DECL_STATIC int
-__uls_fd_create(const char* fpath, int mode)
+ULS_QUALIFIED_METHOD(__uls_fd_create)(const char* fpath, int mode)
 {
 	int fd, mode2, perm2=0644;
 	uls_outparam_t parms;
@@ -204,7 +207,7 @@ __uls_fd_create(const char* fpath, int mode)
 }
 
 ULS_DECL_STATIC int
-__uls_fd_open(const char* fpath, int mode)
+ULS_QUALIFIED_METHOD(__uls_fd_open)(const char* fpath, int mode)
 {
 	int fd, mode2;
 	uls_outparam_t parms;
@@ -215,7 +218,7 @@ __uls_fd_open(const char* fpath, int mode)
 	mode2 = parms.n2;
 
 	if ((fd = open(fpath, mode2)) < 0) {
-	 	err_log("can't open '%s'", fpath);
+	 	_uls_log(err_log)("can't open '%s'", fpath);
 	 	return -1;
 	}
 
@@ -225,7 +228,7 @@ __uls_fd_open(const char* fpath, int mode)
 #endif
 
 ULS_DECL_STATIC int
-__open_tempfile(uls_tempfile_ptr_t tmpfile)
+ULS_QUALIFIED_METHOD(__open_tempfile)(uls_tempfile_ptr_t tmpfile)
 {
 	int fd_out, len, i=0;
 	const char *basedir;
@@ -235,7 +238,7 @@ __open_tempfile(uls_tempfile_ptr_t tmpfile)
 
 	if ((basedir=getenv("TEMP")) == NULL || uls_dirent_exist_astr(basedir) != ST_MODE_DIR) {
 		if (uls_dirent_exist(ULS_OS_TEMP_DIR) != ST_MODE_DIR)
-			err_panic("ULS: can't make temporary directory, '%s'!", ULS_OS_TEMP_DIR);
+			_uls_log(err_panic)("ULS: can't make temporary directory, '%s'!", ULS_OS_TEMP_DIR);
 		basedir = ULS_OS_TEMP_DIR;
 	}
 
@@ -250,12 +253,12 @@ __open_tempfile(uls_tempfile_ptr_t tmpfile)
 #endif
 
 	while (1) {
-		len = uls_snprintf(filepath_buf, ULS_TEMP_FILEPATH_MAXSIZ,
+		len = _uls_log_(snprintf)(filepath_buf, ULS_TEMP_FILEPATH_MAXSIZ,
 			"%s%c_ULStmpfile0x%x", basedir, ULS_FILEPATH_DELIM, rand());
 
-		uls_set_namebuf_value(tmpfile->filepath, filepath_buf);
+		 _uls_set_namebuf_value(tmpfile->filepath, filepath_buf);
 
-		if ((fd_out = uls_fd_open(tmpfile->filepath,
+		if ((fd_out = uls_fd_open(_uls_get_namebuf_value(tmpfile->filepath),
 			ULS_FIO_CREAT|ULS_FIO_RDWR|ULS_FIO_EXCL)) >= 0) {
 			tmpfile->len_filepath = len;
 			tmpfile->fd = fd_out;
@@ -276,13 +279,13 @@ __open_tempfile(uls_tempfile_ptr_t tmpfile)
 }
 
 int
-uls_readn(int fd, uls_native_vptr_t vptr, int n)
+ULS_QUALIFIED_METHOD(uls_readn)(int fd, uls_native_vptr_t vptr, int n)
 {
 	char *ptr = (char *) vptr;
 	int	nleft, rc;
 
 	if (n <= 0) {
-		err_log("%s: invalid parameter n=%d!", __func__, n);
+		_uls_log(err_log)("%s: invalid parameter n=%d!", __FUNCTION__, n);
 		return -3;
 	}
 
@@ -293,7 +296,7 @@ uls_readn(int fd, uls_native_vptr_t vptr, int n)
 //				usleep(100000);
 				continue;
 			} else {
-				err_log("%s: %s", __func__, strerror(errno));
+				_uls_log(err_log)("%s: %s", __FUNCTION__, strerror(errno));
 			}
 			return -1;
 		} else if (rc==0) {
@@ -308,13 +311,13 @@ uls_readn(int fd, uls_native_vptr_t vptr, int n)
 }
 
 int
-uls_writen(int fd, uls_native_vptr_t vptr, int n)
+ULS_QUALIFIED_METHOD(uls_writen)(int fd, uls_native_vptr_t vptr, int n)
 {
 	char *ptr = (char *) vptr;
 	int	 nleft, rc;
 
 	if (n < 0) {
-		err_log("%s: invalid parameter n=%d!", __func__, n);
+		_uls_log(err_log)("%s: invalid parameter n=%d!", __FUNCTION__, n);
 		return -3;
 	}
 
@@ -325,7 +328,7 @@ uls_writen(int fd, uls_native_vptr_t vptr, int n)
 //				usleep(100000);
 				continue;
 			} else {
-				err_log("%s: %s", __func__, strerror(errno));
+				_uls_log(err_log)("%s: %s", __FUNCTION__, strerror(errno));
 			}
 			return -1;
 		} else if (rc==0) {
@@ -340,12 +343,12 @@ uls_writen(int fd, uls_native_vptr_t vptr, int n)
 }
 
 int
-uls_readline(int fd, char* ptr, int n)
+ULS_QUALIFIED_METHOD(uls_readline)(int fd, char* ptr, int n)
 {
 	int  i, rc;
 
 	if (n < 1 || ptr==NULL || fd < 0) {
-		err_log(" invalid param, n=%d", n);
+		_uls_log(err_log)(" invalid param, n=%d", n);
 		return -1;
 	}
 
@@ -353,7 +356,7 @@ uls_readline(int fd, char* ptr, int n)
 
 	for (i=0; ; i++) {
 		if (i >= n) {
-//			err_log("too long line, truncating, ...");
+//			_uls_log(err_log)("too long line, truncating, ...");
 			break;
 		}
 
@@ -377,7 +380,7 @@ uls_readline(int fd, char* ptr, int n)
 #ifdef ULS_WINDOWS
 
 int
-uls_chdir(const char* path)
+ULS_QUALIFIED_METHOD(uls_chdir)(const char* path)
 {
 	const char *astr;
 	int rval;
@@ -399,7 +402,7 @@ uls_chdir(const char* path)
 }
 
 int
-uls_getcwd(char* buf, int buf_siz)
+ULS_QUALIFIED_METHOD(uls_getcwd)(char* buf, int buf_siz)
 {
 	char  *ptr;
 	const char *ustr;
@@ -425,7 +428,7 @@ uls_getcwd(char* buf, int buf_siz)
 }
 
 int
-uls_unlink(const char *filepath)
+ULS_QUALIFIED_METHOD(uls_unlink)(const char *filepath)
 {
 	const char *astr;
 	int rval;
@@ -449,14 +452,14 @@ uls_unlink(const char *filepath)
 #else // ~ULS_WINDOWS
 
 int
-uls_chdir(const char* path)
+ULS_QUALIFIED_METHOD(uls_chdir)(const char* path)
 {
 	if (path == NULL) return -1;
 	return chdir(path);
 }
 
 int
-uls_getcwd(char* buf, int buf_siz)
+ULS_QUALIFIED_METHOD(uls_getcwd)(char* buf, int buf_siz)
 {
 	const char *ptr;
 
@@ -466,7 +469,7 @@ uls_getcwd(char* buf, int buf_siz)
 }
 
 int
-uls_unlink(const char *filepath)
+ULS_QUALIFIED_METHOD(uls_unlink)(const char *filepath)
 {
 	if (filepath == NULL) return -1;
 	return unlink(filepath);
@@ -475,14 +478,14 @@ uls_unlink(const char *filepath)
 #endif // ULS_WINDOWS
 
 int
-uls_copyfile_fd(int fd_in, int fd_out)
+ULS_QUALIFIED_METHOD(uls_copyfile_fd)(int fd_in, int fd_out)
 {
 	int rc, stat = 1;
 	char buf[512];
 
 	while (stat > 0) {
 		if ((rc=uls_readn(fd_in, buf, sizeof(buf))) < 0) {
-			err_log("%s: error in reading ..", __func__);
+			_uls_log(err_log)("%s: error in reading ..", __FUNCTION__);
 			stat = -1;
 			break;
 		} else if (rc < sizeof(buf)) {
@@ -491,7 +494,7 @@ uls_copyfile_fd(int fd_in, int fd_out)
 		}
 
 		if (uls_writen(fd_out, buf, rc) < rc) {
-			err_log("%s: error in writing after writing %d ..", __func__, rc);
+			_uls_log(err_log)("%s: error in writing after writing %d ..", __FUNCTION__, rc);
 			stat = -2;
 		}
 	}
@@ -500,7 +503,7 @@ uls_copyfile_fd(int fd_in, int fd_out)
 }
 
 int
-uls_copyfile(const char* filepath1, const char* filepath2)
+ULS_QUALIFIED_METHOD(uls_copyfile)(const char* filepath1, const char* filepath2)
 {
 	int  fd_in, fd_out;
 	int  rc;
@@ -522,7 +525,7 @@ uls_copyfile(const char* filepath1, const char* filepath2)
 }
 
 int
-uls_movefile(const char* fpath1, const char* fpath2)
+ULS_QUALIFIED_METHOD(uls_movefile)(const char* fpath1, const char* fpath2)
 {
 	if (fpath1 == NULL || *fpath1 == '\0') return -1;
 	if (fpath2 == NULL || *fpath2 == '\0') return -1;
@@ -532,24 +535,24 @@ uls_movefile(const char* fpath1, const char* fpath2)
 	}
 
 	if (uls_copyfile(fpath1, fpath2) < 0) {
-		err_log("%s:(copy-file) error", __func__);
+		_uls_log(err_log)("%s:(copy-file) error", __FUNCTION__);
 		return -1;
 	}
 
 	if (uls_unlink(fpath1) < 0) {
-		err_log("%s:(unlink) error", __func__);
+		_uls_log(err_log)("%s:(unlink) error", __FUNCTION__);
 		return -1;
 	}
 	return 0;
 }
 
 ULS_DECL_STATIC int
-__uls_close_tempfile(uls_tempfile_ptr_t tmpfile, const char* filepath)
+ULS_QUALIFIED_METHOD(__uls_close_tempfile)(uls_tempfile_ptr_t tmpfile, const char* filepath)
 {
 	int stat = 1;
 
-	if (tmpfile->filepath == filepath) {
-		err_log("%s: invalid filepath!", __func__);
+	if (_uls_get_namebuf_value(tmpfile->filepath) == filepath) {
+		_uls_log(err_log)("%s: invalid filepath!", __FUNCTION__);
 		return -4;
 	}
 
@@ -559,20 +562,20 @@ __uls_close_tempfile(uls_tempfile_ptr_t tmpfile, const char* filepath)
 		uls_fd_close(tmpfile->fd);
 	}
 
-	if (uls_dirent_exist(tmpfile->filepath) != ST_MODE_FILE) {
-		err_log("%s: can' find the tempfile %s!", __func__, tmpfile->filepath);
+	if (uls_dirent_exist(_uls_get_namebuf_value(tmpfile->filepath)) != ST_MODE_FILE) {
+		_uls_log(err_log)("%s: can' find the tempfile %s!", __FUNCTION__, _uls_get_namebuf_value(tmpfile->filepath));
 		stat = -3;
 
 	} else if (filepath == NULL) {
-		if (uls_unlink(tmpfile->filepath) < 0) {
-			err_log("%s: unlink error!", __func__);
+		if (uls_unlink(_uls_get_namebuf_value(tmpfile->filepath)) < 0) {
+			_uls_log(err_log)("%s: unlink error!", __FUNCTION__);
 			stat = -2;
 		} else {
 			stat = 2;
 		}
 
-	} else if (uls_movefile(tmpfile->filepath, filepath) < 0) {
-		err_log("can't move the temp-file '%s' to '%s'.", tmpfile->filepath, filepath);
+	} else if (uls_movefile(_uls_get_namebuf_value(tmpfile->filepath), filepath) < 0) {
+		_uls_log(err_log)("can't move the temp-file '%s' to '%s'.", _uls_get_namebuf_value(tmpfile->filepath), filepath);
 		stat = -1;
 	}
 
@@ -583,27 +586,27 @@ __uls_close_tempfile(uls_tempfile_ptr_t tmpfile, const char* filepath)
 }
 
 void
-initialize_uls_fileio(void)
+ULS_QUALIFIED_METHOD(initialize_uls_fileio)(void)
 {
 	uls_stdio_box_ptr_t fpwrap;
 	int i;
 
-	uls_init_array_type00(uls_ptr(stdio_boxlst), stdio_box, ULS_N_BOXLST);
+	uls_init_array_this_type01(uls_ptr(stdio_boxlst), stdio_box, ULS_N_BOXLST);
 	for (i=0; i<ULS_N_BOXLST; i++) {
-		fpwrap = uls_array_get_slot_type00(uls_ptr(stdio_boxlst), i);
+		fpwrap = uls_get_array_slot_type01(uls_ptr(stdio_boxlst), i);
 		fpwrap->fp_num = i;
 		fpwrap->fp = _uls_stdio_fp(i);
 	}
 }
 
 void
-finalize_uls_fileio(void)
+ULS_QUALIFIED_METHOD(finalize_uls_fileio)(void)
 {
-	uls_deinit_array_type00(uls_ptr(stdio_boxlst), stdio_box);
+	uls_deinit_array_this_type01(uls_ptr(stdio_boxlst), stdio_box);
 }
 
-int
-_uls_stdio_fd(int fp_num)
+ULS_DLL_EXTERN int
+ULS_QUALIFIED_METHOD(_uls_stdio_fd)(int fp_num)
 {
 	int fd;
 
@@ -620,8 +623,8 @@ _uls_stdio_fd(int fp_num)
 	return fd;
 }
 
-FILE*
-_uls_stdio_fp(int fp_num)
+ULS_DLL_EXTERN FILE*
+ULS_QUALIFIED_METHOD(_uls_stdio_fp)(int fp_num)
 {
 	FILE *fp;
 
@@ -638,8 +641,8 @@ _uls_stdio_fp(int fp_num)
 	return fp;
 }
 
-uls_stdio_box_ptr_t
-_uls_stdio_fp_box(int fp_num)
+ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_stdio_box_ptr_t)
+ULS_QUALIFIED_METHOD(_uls_stdio_fp_box)(int fp_num)
 {
 	uls_stdio_box_ptr_t fpwrap;
 
@@ -647,14 +650,14 @@ _uls_stdio_fp_box(int fp_num)
 		return nilptr;
 	}
 
-	fpwrap = uls_array_get_slot_type00(uls_ptr(stdio_boxlst), fp_num);
+	fpwrap = uls_get_array_slot_type01(uls_ptr(stdio_boxlst), fp_num);
 	return fpwrap;
 }
 
 #ifdef ULS_WINDOWS
 
-int
-uls_dirent_exist_astr(const char* afpath)
+ULS_DLL_EXTERN int
+ULS_QUALIFIED_METHOD(uls_dirent_exist_astr)(const char* afpath)
 {
 	DWORD dwAttrib;
 	int rval;
@@ -669,8 +672,8 @@ uls_dirent_exist_astr(const char* afpath)
 	return rval;
 }
 
-int
-uls_dirent_exist(const char* path)
+ULS_DLL_EXTERN int
+ULS_QUALIFIED_METHOD(uls_dirent_exist)(const char* path)
 {
 	int rval;
 	const char *astr;
@@ -693,8 +696,8 @@ uls_dirent_exist(const char* path)
 
 #else
 
-int
-uls_dirent_exist(const char* path)
+ULS_DLL_EXTERN int
+ULS_QUALIFIED_METHOD(uls_dirent_exist)(const char* path)
 {
 	struct stat statbuff;
 	int rval;
@@ -724,8 +727,8 @@ uls_dirent_exist(const char* path)
 #endif
 
 #ifdef ULS_WINDOWS
-void
-uls_fd_close(int fd)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(uls_fd_close)(int fd)
 {
 	if (fd >= 0) {
 		_close(fd);
@@ -733,8 +736,8 @@ uls_fd_close(int fd)
 }
 
 #else
-void
-uls_fd_close(int fd)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(uls_fd_close)(int fd)
 {
 	if (fd >= 0) {
 		close(fd);
@@ -742,8 +745,8 @@ uls_fd_close(int fd)
 }
 #endif
 
-int
-uls_fd_open(const char* fpath, int mode)
+ULS_DLL_EXTERN int
+ULS_QUALIFIED_METHOD(uls_fd_open)(const char* fpath, int mode)
 {
 	int fd;
 
@@ -758,33 +761,34 @@ uls_fd_open(const char* fpath, int mode)
 	return fd;
 }
 
-void
-uls_put_binstr(const char* str, int len, int fd)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(uls_put_binstr)(const char* str, int len, int fd)
 {
 	if (str == NULL) {
-		err_panic_primitive("put_bin_str: invalid parameter!");
+		_uls_log_primitive(err_panic)("put_bin_str: invalid parameter!");
 	}
 
 	if (len < 0) len = uls_strlen(str);
 
 	if (uls_fd_write(fd, str, len) < 0) {
-		err_panic_primitive("put_bin_str: write error!");
+		_uls_log_primitive(err_panic)("put_bin_str: write error!");
 	}
 }
 
-void
-uls_putstr(const char* str)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(uls_putstr)(const char* str)
 {
 	uls_put_binstr(str, -1, _uls_stdio_fd(1));
 }
 
-int
-uls_fgetc_ascii_str(uls_voidptr_t dat, char *buf, int buf_siz)
+ULS_DLL_EXTERN int
+ULS_QUALIFIED_METHOD(uls_fgetc_ascii_str)(uls_voidptr_t dat, char *buf, int buf_siz)
 {
 	uls_stdio_box_ptr_t fpwrap = (uls_stdio_box_ptr_t) dat;
 	FILE *fp = fpwrap->fp;
 	int ch;
 
+	// assert: buf_siz > 0
 	if ((ch=fgetc(fp)) == EOF) {
 		if (ferror(fp) || !feof(fp)) {
 			return -1;
@@ -797,7 +801,7 @@ uls_fgetc_ascii_str(uls_voidptr_t dat, char *buf, int buf_siz)
 }
 
 ULS_DECL_STATIC int
-__consume_ms_mbcs_char_getbyte(FILE *fp, char *bufptr)
+ULS_QUALIFIED_METHOD(__consume_ms_mbcs_char_getbyte)(FILE *fp, char *bufptr)
 {
 	int ch;
 
@@ -812,8 +816,8 @@ __consume_ms_mbcs_char_getbyte(FILE *fp, char *bufptr)
 	return 1;
 }
 
-int
-consume_ms_mbcs_onechar(uls_voidptr_t dat, char *buf, int buf_siz)
+ULS_DLL_EXTERN int
+ULS_QUALIFIED_METHOD(consume_ms_mbcs_onechar)(uls_voidptr_t dat, char *buf, int buf_siz)
 {
 	uls_stdio_box_ptr_t fpwrap = (uls_stdio_box_ptr_t) dat;
 	FILE *fp = fpwrap->fp;
@@ -836,34 +840,34 @@ consume_ms_mbcs_onechar(uls_voidptr_t dat, char *buf, int buf_siz)
 	return i; // not n but i
 }
 
-void
-uls_init_fio(uls_fio_ptr_t fio, int flags)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(uls_init_fio)(uls_fio_ptr_t fio, int flags)
 {
 	fio->flags = ULS_FL_STATIC | flags;
-	fio->fgetch = uls_ref_callback(uls_fgetc_ascii_str);
+	fio->fgetch = _uls_ref_callback_this(uls_fgetc_ascii_str);
 	fio->dat = (uls_voidptr_t) _uls_stdio_fp_box(0);
 }
 
-void
-uls_deinit_fio(uls_fio_ptr_t fio)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(uls_deinit_fio)(uls_fio_ptr_t fio)
 {
 	fio->flags &= ULS_FL_STATIC;
 	fio->dat = nilptr;
 }
 
-void
-uls_reset_fio(uls_fio_ptr_t fio, uls_voidptr_t dat, uls_fgetch_t consumer)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(uls_reset_fio)(uls_fio_ptr_t fio, uls_voidptr_t dat, uls_fgetch_t consumer)
 {
 	if (consumer == nilptr) {
-		consumer = uls_ref_callback(uls_fgetc_ascii_str);
+		consumer = _uls_ref_callback_this(uls_fgetc_ascii_str);
 	}
 
 	fio->dat = dat;
 	fio->fgetch = consumer;
 }
 
-uls_fio_ptr_t
-uls_create_fio(uls_voidptr_t dat, uls_fgetch_t consumer, int flags)
+ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_fio_ptr_t)
+ULS_QUALIFIED_METHOD(uls_create_fio)(uls_voidptr_t dat, uls_fgetch_t consumer, int flags)
 {
 	uls_fio_ptr_t fio;
 
@@ -876,8 +880,8 @@ uls_create_fio(uls_voidptr_t dat, uls_fgetch_t consumer, int flags)
 	return fio;
 }
 
-void
-uls_destroy_fio(uls_fio_ptr_t fio)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(uls_destroy_fio)(uls_fio_ptr_t fio)
 {
 	if (fio == nilptr) return;
 
@@ -887,23 +891,24 @@ uls_destroy_fio(uls_fio_ptr_t fio)
 	}
 }
 
-int
-uls_fio_gets(uls_fio_ptr_t fio, char* buf, int buf_siz)
+ULS_DLL_EXTERN int
+ULS_QUALIFIED_METHOD(uls_fio_gets)(uls_fio_ptr_t fio, char* buf, int buf_siz)
 {
 	char *bufptr, *buf_end;
 	int len, rc, esc=0;
 	int ch, flags=fio->flags;
 
 	if (buf == NULL || buf_siz < 1) {
-		err_log("%s: invalid parameter buf or buf_siz=%d", __func__, buf_siz);
+		_uls_log(err_log)("%s: invalid parameter buf or buf_siz=%d", __FUNCTION__, buf_siz);
 		return ULS_EOF - 3;
 	}
 
+	// assert: buf_siz > 0
 	buf_end = buf + buf_siz;
 
 	for (bufptr=buf,rc=0; ; ) {
 		if ((bufptr+=rc) >= buf_end) {
-			err_log("%s: Too long line(>%d)! return error!", __func__, buf_siz);
+			_uls_log(err_log)("%s: Too long line(>%d)! return error!", __FUNCTION__, buf_siz);
 			len = ULS_EOF - 2;
 			break;
 		}
@@ -960,10 +965,10 @@ uls_fio_gets(uls_fio_ptr_t fio, char* buf, int buf_siz)
 	return len;
 }
 
-uls_file_ptr_t
-uls_open_filp(const char *filepath, int mode)
+ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_file_ptr_t)
+ULS_QUALIFIED_METHOD(uls_open_filp)(const char *filepath, int mode)
 {
-	uls_callback_type(fgetch) consumer;
+	_uls_callback_type_this_(fgetch) consumer;
 	uls_stdio_box_ptr_t p_fpwrap;
 	uls_file_ptr_t filp;
 	FILE *fp;
@@ -977,9 +982,9 @@ uls_open_filp(const char *filepath, int mode)
 	}
 
 	if (mode & ULS_FIO_MS_MBCS) {
-		consumer = uls_ref_callback(consume_ms_mbcs_onechar);
+		consumer = _uls_ref_callback_this(consume_ms_mbcs_onechar);
 	} else {
-		consumer = uls_ref_callback(uls_fgetc_ascii_str);
+		consumer = _uls_ref_callback_this(uls_fgetc_ascii_str);
 	}
 
 	uls_init_fio(uls_ptr(filp->fio), mode);
@@ -993,8 +998,8 @@ uls_open_filp(const char *filepath, int mode)
 	return filp;
 }
 
-void
-uls_close_filp(uls_file_ptr_t filp)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(uls_close_filp)(uls_file_ptr_t filp)
 {
 	uls_stdio_box_ptr_t p_fpwrap;
 
@@ -1007,8 +1012,8 @@ uls_close_filp(uls_file_ptr_t filp)
 	uls_dealloc_object(filp);
 }
 
-int
-uls_filp_gets(uls_file_ptr_t filp, char* buf, int buf_siz)
+ULS_DLL_EXTERN int
+ULS_QUALIFIED_METHOD(uls_filp_gets)(uls_file_ptr_t filp, char* buf, int buf_siz)
 {
 	uls_stdio_box_ptr_t p_fpwrap = uls_ptr(filp->fpwrap);
 	FILE *fp = p_fpwrap->fp;
@@ -1025,8 +1030,8 @@ uls_filp_gets(uls_file_ptr_t filp, char* buf, int buf_siz)
 	return len;
 }
 
-FILE*
-uls_fp_open(const char *filepath, int mode)
+ULS_DLL_EXTERN FILE*
+ULS_QUALIFIED_METHOD(uls_fp_open)(const char *filepath, int mode)
 {
 	FILE* fp;
 	char modestr[8];
@@ -1048,7 +1053,7 @@ uls_fp_open(const char *filepath, int mode)
 	mode = parms.n1;
 
 	if (rc < 0) {
-		err_log("%s: invalid mode", __func__);
+		_uls_log(err_log)("%s: invalid mode", __FUNCTION__);
 		return NULL;
 	}
 
@@ -1076,7 +1081,7 @@ uls_fp_open(const char *filepath, int mode)
 	auw_init_outparam(uls_ptr(buf_csz));
 
 	if ((astr = uls_ustr2astr_ptr(filepath, -1,  uls_ptr(buf_csz))) == NULL) {
-		err_log("%s: encoding error!", __func__);
+		_uls_log(err_log)("%s: encoding error!", __FUNCTION__);
 		fp = NULL;
 	} else {
 		fp = fopen(astr, modestr);
@@ -1090,8 +1095,8 @@ uls_fp_open(const char *filepath, int mode)
 	return fp;
 }
 
-int
-uls_fp_gets(FILE *fp, char* buf, int buf_siz, int flags)
+ULS_DLL_EXTERN int
+ULS_QUALIFIED_METHOD(uls_fp_gets)(FILE *fp, char* buf, int buf_siz, int flags)
 {
 	uls_fio_t fio;
 	uls_stdio_box_t fpwrap;
@@ -1110,8 +1115,8 @@ uls_fp_gets(FILE *fp, char* buf, int buf_siz, int flags)
 	return rc;
 }
 
-void
-uls_fp_close(FILE *fp)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(uls_fp_close)(FILE *fp)
 {
 	if (fp != NULL) {
 		if (fp != _uls_stdio_fp(2) && fp != _uls_stdio_fp(1) && fp != _uls_stdio_fp(0)) {
@@ -1120,36 +1125,36 @@ uls_fp_close(FILE *fp)
 	}
 }
 
-int
-uls_fp_getc(FILE *fp)
+ULS_DLL_EXTERN int
+ULS_QUALIFIED_METHOD(uls_fp_getc)(FILE *fp)
 {
 	return getc(fp);
 }
 
-void
-uls_fp_putc(FILE *fp, char ch)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(uls_fp_putc)(FILE *fp, char ch)
 {
 	putc(ch, fp);
 }
 
-void
-uls_init_tempfile(uls_tempfile_ptr_t tmpfile)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(uls_init_tempfile)(uls_tempfile_ptr_t tmpfile)
 {
 	tmpfile->flags = ULS_FL_STATIC;
-	uls_init_namebuf(tmpfile->filepath, ULS_TEMP_FILEPATH_MAXSIZ);
+	_uls_init_namebuf(tmpfile->filepath, ULS_TEMP_FILEPATH_MAXSIZ);
 	tmpfile->len_filepath = 0;
 	tmpfile->fd = -1;
 	tmpfile->fp = NULL;
 }
 
-void
-uls_deinit_tempfile(uls_tempfile_ptr_t tmpfile)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(uls_deinit_tempfile)(uls_tempfile_ptr_t tmpfile)
 {
 	uls_close_tempfile(tmpfile, NULL);
 }
 
-uls_tempfile_ptr_t
-uls_create_tempfile(void)
+ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_tempfile_ptr_t)
+ULS_QUALIFIED_METHOD(uls_create_tempfile)(void)
 {
 	uls_tempfile_ptr_t tmpfile;
 
@@ -1159,15 +1164,15 @@ uls_create_tempfile(void)
 	return tmpfile;
 }
 
-int
-uls_open_tempfile(uls_tempfile_ptr_t tmpfile)
+ULS_DLL_EXTERN int
+ULS_QUALIFIED_METHOD(uls_open_tempfile)(uls_tempfile_ptr_t tmpfile)
 {
 	int fd;
 
 	uls_sys_lock();
 
 	if (tmpfile->len_filepath > 0) {
-		err_log("The tempfile already used!");
+		_uls_log(err_log)("The tempfile already used!");
 		fd = -1;
 	} else {
 		fd = __open_tempfile(tmpfile);
@@ -1178,8 +1183,8 @@ uls_open_tempfile(uls_tempfile_ptr_t tmpfile)
 	return fd;
 }
 
-FILE*
-uls_fopen_tempfile(uls_tempfile_ptr_t tmpfile)
+ULS_DLL_EXTERN FILE*
+ULS_QUALIFIED_METHOD(uls_fopen_tempfile)(uls_tempfile_ptr_t tmpfile)
 {
 	int fd_out;
 	FILE *fp_out;
@@ -1192,7 +1197,7 @@ uls_fopen_tempfile(uls_tempfile_ptr_t tmpfile)
 	uls_sys_lock();
 	if (tmpfile->len_filepath > 0) {
 		uls_sys_unlock();
-		err_log("The tempfile already used!");
+		_uls_log(err_log)("The tempfile already used!");
 		return NULL;
 	}
 
@@ -1209,22 +1214,22 @@ uls_fopen_tempfile(uls_tempfile_ptr_t tmpfile)
 	return fp_out;
 }
 
-int
-uls_close_tempfile(uls_tempfile_ptr_t tmpfile, const char* filepath)
+ULS_DLL_EXTERN int
+ULS_QUALIFIED_METHOD(uls_close_tempfile)(uls_tempfile_ptr_t tmpfile, const char* filepath)
 {
 	int stat = 0;
 	uls_sys_lock();
 
 	if (tmpfile->len_filepath > 0) {
 		if (__uls_close_tempfile(tmpfile, filepath) < 0) {
-			err_log("%s: failed to deinit tempfile!", __func__);
+			_uls_log(err_log)("%s: failed to deinit tempfile!", __FUNCTION__);
 			stat = -1;
 		}
 		tmpfile->len_filepath = 0;
 	}
 
 	if (tmpfile->len_filepath >= 0) {
-		uls_deinit_namebuf(tmpfile->filepath);
+		_uls_deinit_namebuf(tmpfile->filepath);
 		tmpfile->len_filepath = -1;
 	}
 
@@ -1232,8 +1237,8 @@ uls_close_tempfile(uls_tempfile_ptr_t tmpfile, const char* filepath)
 	return stat;
 }
 
-void
-uls_destroy_tempfile(uls_tempfile_ptr_t tmpfile)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(uls_destroy_tempfile)(uls_tempfile_ptr_t tmpfile)
 {
 	if (tmpfile == nilptr) return;
 	uls_deinit_tempfile(tmpfile);

@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -30,25 +30,31 @@
 #ifndef __ULS_UNGET_H__
 #define __ULS_UNGET_H__
 
+#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_conf.h"
+#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
+#ifdef ULS_DECL_GLOBAL_TYPES
 #define uls_ungettok uls_unget_tok
+#endif
 
-ULS_DEFINE_STRUCT(nextch_detail)
+#ifdef ULS_DEF_PUBLIC_TYPE
+ULS_DEFINE_STRUCT(uls_nextch_detail)
 {
 	uls_uch_t uch;
 	int len_uch;
 	uls_quotetype_ptr_t qmt;
 	int tok;
 };
+#endif
 
-#if defined(__ULS_UNGET__)
+#if defined(__ULS_UNGET__) || defined(ULS_DECL_PRIVATE_PROC)
 ULS_DECL_STATIC char* __find_first_space_char(const char* lptr, const char* lptr_end);
-ULS_DECL_STATIC int __numof_lfs(uls_outparam_ptr_t parms);
+ULS_DECL_STATIC int __numof_lfs(_uls_tool_ptrtype_(outparam) parms);
 ULS_DECL_STATIC int __alloc_lexseg_and_zbuf(uls_context_ptr_t ctx, uls_lexseg_ptr_t lexseg, int len,
 	uls_tokdef_vx_ptr_t e_vx, const char *qstr, int qlen);
 ULS_DECL_STATIC uls_context_ptr_t __push_and_alloc_line_right(uls_lex_ptr_t uls, int len,
@@ -61,9 +67,10 @@ ULS_DECL_STATIC uls_context_ptr_t __uls_unget_quote(uls_lex_ptr_t uls,
 
 #ifdef ULS_DECL_PROTECTED_PROC
 uls_context_ptr_t __uls_unget_tok(uls_lex_ptr_t uls);
-uls_uch_t uls_peekch_detail(uls_lex_ptr_t uls, uls_outparam_ptr_t parms);
+uls_uch_t uls_peekch_detail(uls_lex_ptr_t uls, _uls_tool_ptrtype_(outparam) parms);
 #endif
 
+#ifdef ULS_DECL_PUBLIC_PROC
 ULS_DLL_EXTERN void uls_unget_tok(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN void uls_unget_lexeme(uls_lex_ptr_t uls, const char *lxm, int tok_id);
 ULS_DLL_EXTERN void uls_unget_str(uls_lex_ptr_t uls, const char* str);
@@ -75,6 +82,7 @@ ULS_DLL_EXTERN uls_uch_t uls_get_uch(uls_lex_ptr_t uls, uls_nextch_detail_ptr_t 
 ULS_DLL_EXTERN void ulsjava_unget_str(uls_lex_ptr_t uls, const uls_native_vptr_t str, int len_str);
 ULS_DLL_EXTERN void ulsjava_unget_lexeme(uls_lex_ptr_t uls, const uls_native_vptr_t lxm, int len_lxm, int tok_id);
 
+#ifndef ULS_DOTNET
 ULS_DLL_EXTERN int ulsjava_peek_ch(uls_lex_t* uls, int* tok_peek);
 ULS_DLL_EXTERN int ulsjava_get_ch(uls_lex_t* uls, int* tok_peek);
 
@@ -83,6 +91,9 @@ ULS_DLL_EXTERN uls_nextch_detail_ptr_t ulsjava_get_nextch_info(uls_lex_ptr_t uls
 ULS_DLL_EXTERN void ulsjava_put_nextch_info(uls_nextch_detail_ptr_t detail_ch);
 ULS_DLL_EXTERN int ulsjava_get_uch_from_nextch(uls_nextch_detail_ptr_t detail_ch);
 ULS_DLL_EXTERN int ulsjava_get_tok_from_nextch(uls_nextch_detail_ptr_t detail_ch);
+
+#endif
+#endif
 
 #ifdef _ULS_CPLUSPLUS
 }

@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -109,14 +109,14 @@ proc_file(char* fpath)
 	int len, stat = 0, lno = 0;
 
 	if ((cur_fin=uls_fp_open(fpath, ULS_FIO_READ)) == NULL) {
-		err_log("%s: fail to open '%s'", __func__, fpath);
+		err_log("%s: fail to open '%s'", __FUNCTION__, fpath);
 		return -1;
 	}
 
 	while (1) {
 		if ((len=uls_fp_gets(cur_fin, filebuff, sizeof(filebuff), 0)) <= ULS_EOF) {
 			if (len < ULS_EOF) {
-				err_log("%s: error to read a line", __func__);
+				err_log("%s: error to read a line", __FUNCTION__);
 				stat =-1;
 			}
 			break;

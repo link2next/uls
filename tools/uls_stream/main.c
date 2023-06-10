@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -267,7 +267,7 @@ ulsstream_options(int opt, char* optarg)
 		cmdline_filter = uls_malloc(siz);
 		strcpy(cmdline_filter, cmdl);
 
-		if (ult_streql(cmdline_filter, "pass")) {
+		if (uls_streql(cmdline_filter, "pass")) {
 			break;
 		}
 
@@ -279,16 +279,16 @@ ulsstream_options(int opt, char* optarg)
 
 		if (!ult_is_absolute_path(argv0) && uls_dirent_exist(argv0) == ST_MODE_REG) {
 			if (ult_getcwd(fpath_buff, ULS_FILEPATH_MAX) < 0) {
-				err_panic("%s: fail to getcwd()", __func__);
+				err_panic("%s: fail to getcwd()", __FUNCTION__);
 			}
 			uls_snprintf(cmdline_filter, siz, "%s/%s", fpath_buff, cmdl);
 		} else {
 			uls_mfree(cmdline_filter);
 			cmdline_filter = cmdl;
 		}
-		argv0 = uls_mfree(argv0);
+		uls_mfree(argv0);
 #else
-		err_log("%s: fdf not supported!", __func__);
+		err_log("%s: fdf not supported!", __FUNCTION__);
 		stat = -1;
 #endif
 		break;
@@ -373,7 +373,7 @@ parse_options(int argc, char* argv[])
 
 	uls_endian = ult_guess_host_byteorder();
 	if (ult_getcwd(home_dir, ULS_FILEPATH_MAX) < 0) {
-		err_panic("%s: fail to getcwd()", __func__);
+		err_panic("%s: fail to getcwd()", __FUNCTION__);
 	}
 
 	target_dir = ult_strdup(".");
@@ -483,12 +483,12 @@ main(int argc, char* argv[])
 	if (ulc_config == NULL) {
 		if (filelist != NULL) {
 			if ((fp_list=uls_fp_open(filelist, ULS_FIO_READ)) == NULL) {
-				err_log("%s: fail to read '%s'", __func__, filelist);
+				err_log("%s: fail to read '%s'", __FUNCTION__, filelist);
 				return -1;
 			}
 
 			if (ult_chdir(target_dir) < 0) {
-				err_log("%s: fail to chdir %s", __func__, target_dir);
+				err_log("%s: fail to chdir %s", __FUNCTION__, target_dir);
 				uls_fp_close(fp_list);
 				return -1;
 			}
@@ -500,7 +500,7 @@ main(int argc, char* argv[])
 
 		} else {
 			if (ult_chdir(target_dir) < 0) {
-				err_log("%s: fail to chdir %s", __func__, target_dir);
+				err_log("%s: fail to chdir %s", __FUNCTION__, target_dir);
 				return -1;
 			}
 

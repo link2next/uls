@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -35,13 +35,16 @@
 #ifndef __ULS_FILEIO_H__
 #define __ULS_FILEIO_H__
 
+#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_prim.h"
 #include <stdio.h>
+#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
+#ifdef ULS_DECL_GLOBAL_TYPES
 #define ULS_EOF  -1
 
 #define ULS_FIO_READ     0x01
@@ -61,8 +64,13 @@ extern "C" {
 #define uls_tempfile_fp(tmp) ((tmp)->fp)
 #define uls_tempfile_fd(tmp) ((tmp)->fd)
 #define uls_tempfile_is_open(tmp) ((tmp)->len_filepath>0)
+
 #define uls_tempfile_path(tmpfile) ((tmpfile)->filepath)
 #define uls_tempfile_pathlen(tmpfile) ((tmpfile)->len_filepath)
+
+#endif // ULS_DECL_GLOBAL_TYPES
+
+#ifdef ULS_DECL_PUBLIC_TYPE
 
 #define ST_MODE_NOENT    0
 #define ST_MODE_REG      1
@@ -94,48 +102,52 @@ extern "C" {
 #endif
 
 #define ULS_TEMP_FILEPATH_MAXSIZ  127
+#define ULS_N_BOXLST 3
 
 ULS_DEFINE_DELEGATE_BEGIN(fgetch, int)(uls_voidptr_t dat, char *buf, int buf_siz);
 ULS_DEFINE_DELEGATE_END(fgetch);
+#endif
 
-ULS_DEFINE_STRUCT(fio)
+#ifdef ULS_DEF_PUBLIC_TYPE
+ULS_DEFINE_STRUCT(uls_fio)
 {
 	uls_flags_t flags;
-	uls_callback_type(fgetch) fgetch;
+	_uls_callback_type_this_(fgetch) fgetch;
 	uls_voidptr_t dat;
 };
 
-ULS_DEFINE_STRUCT(stdio_box)
+ULS_DEFINE_STRUCT(uls_stdio_box)
 {
 	int fp_num;
 	FILE *fp;
 };
-ULS_DEF_ARRAY_TYPE00(stdio_box, STDIO_BOX_TYPE00_ULS_N_BOXLST, ULS_N_BOXLST);
+ULS_DEF_ARRAY_THIS_TYPE01(stdio_box, ULS_N_BOXLST);
 
-ULS_DEFINE_STRUCT(file)
+ULS_DEFINE_STRUCT(uls_file)
 {
 	uls_fio_t fio;
 	uls_stdio_box_t fpwrap;
 };
 
-ULS_DEFINE_STRUCT(tempfile)
+ULS_DEFINE_STRUCT(uls_tempfile)
 {
 	uls_flags_t flags;
 
-	uls_def_namebuf(filepath, ULS_TEMP_FILEPATH_MAXSIZ);
+	_uls_def_namebuf(filepath, ULS_TEMP_FILEPATH_MAXSIZ);
 	int  len_filepath;
 
 	int  fd;
 	FILE *fp;
 };
+#endif // ULS_DEF_PUBLIC_TYPE
 
-#if defined(__ULS_FILEIO__)
-ULS_DECL_STATIC uls_decl_array_type00(stdio_boxlst, stdio_box, ULS_N_BOXLST);
+#if defined(__ULS_FILEIO__) || defined(ULS_DEF_PRIVATE_DATA)
+ULS_DECL_STATIC uls_decl_array_this_type01(stdio_boxlst, stdio_box, ULS_N_BOXLST);
 #endif
 
-#if defined(__ULS_FILEIO__)
-ULS_DECL_STATIC int __uls_fd_create_check(const char* fpath, uls_outparam_ptr_t parms);
-ULS_DECL_STATIC int __uls_fd_open_check(uls_outparam_ptr_t parms);
+#if defined(__ULS_FILEIO__) || defined(ULS_DECL_PRIVATE_PROC)
+ULS_DECL_STATIC int __uls_fd_create_check(const char* fpath, _uls_tool_ptrtype_(outparam) parms);
+ULS_DECL_STATIC int __uls_fd_open_check(_uls_tool_ptrtype_(outparam) parms);
 ULS_DECL_STATIC int __uls_fd_create(const char* fpath, int mode);
 ULS_DECL_STATIC int __uls_fd_open(const char* fpath, int mode);
 ULS_DECL_STATIC int __consume_ms_mbcs_char_getbyte(FILE *fp, char *bufptr);
@@ -151,6 +163,7 @@ ULS_DLL_EXTERN void uls_init_fio(uls_fio_ptr_t fio, int flags);
 ULS_DLL_EXTERN void uls_deinit_fio(uls_fio_ptr_t fio);
 #endif
 
+#ifdef ULS_DECL_PUBLIC_PROC
 int uls_readn(int fd, uls_native_vptr_t ptr, int n);
 int uls_writen(int fd, uls_native_vptr_t ptr, int n);
 int uls_readline(int fd, char* ptr, int n);
@@ -185,9 +198,9 @@ ULS_DLL_EXTERN void uls_destroy_fio(uls_fio_ptr_t fio);
 
 ULS_DLL_EXTERN int uls_fio_gets(uls_fio_ptr_t fio, char* buf, int buf_siz);
 
-ULS_DLL_EXTERN uls_file_ptr_t uls_open_filp(const char *filepath, int flags);
-ULS_DLL_EXTERN void uls_close_filp(uls_file_ptr_t filp);
-ULS_DLL_EXTERN int uls_filp_gets(uls_file_ptr_t filp, char* buf, int buf_siz);
+ULS_DLL_EXTERN _uls_tool_ptrtype_(file) uls_open_filp(const char *filepath, int flags);
+ULS_DLL_EXTERN void uls_close_filp(_uls_tool_ptrtype_(file) filp);
+ULS_DLL_EXTERN int uls_filp_gets(_uls_tool_ptrtype_(file) filp, char* buf, int buf_siz);
 
 ULS_DLL_EXTERN FILE* uls_fp_open(const char *filepath, int mode);
 ULS_DLL_EXTERN void uls_fp_close(FILE *fp);
@@ -202,9 +215,18 @@ ULS_DLL_EXTERN int uls_open_tempfile(uls_tempfile_ptr_t tmpfile);
 ULS_DLL_EXTERN FILE* uls_fopen_tempfile(uls_tempfile_ptr_t tmpfile);
 ULS_DLL_EXTERN int uls_close_tempfile(uls_tempfile_ptr_t tmpfile, const char* filepath);
 ULS_DLL_EXTERN void uls_destroy_tempfile(uls_tempfile_ptr_t tmpfile);
+#endif
 
 #ifdef _ULS_CPLUSPLUS
 }
+#endif
+
+#ifdef _ULS_USEDLL
+#if defined(ULS_USE_WSTR)
+#include "uls/uls_fileio_wstr.h"
+#elif defined(ULS_USE_ASTR)
+#include "uls/uls_fileio_astr.h"
+#endif
 #endif
 
 #endif // __ULS_FILEIO_H__

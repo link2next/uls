@@ -1,6 +1,6 @@
 
 SUBDIRS = ulsconfig ulc_exam \
-	src ulscpp tools \
+	src ulscompat ulscpp tools \
 	tests doc post_inst
 
 ACLOCAL_AMFLAGS = -I m4

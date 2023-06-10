@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -32,7 +32,6 @@
   </author>
 */
 
-#define ULS_DECL_PROTECTED_PROC
 #include "uls.h"
 #include "uls/uls_misc.h"
 #include "uls/uls_freq.h"
@@ -43,7 +42,7 @@
 #define THIS_PROGNAME "ulf_gen"
 #define DFL_N_SAMPLES 0xFFFF
 
-_ULS_DEFINE_STRUCT(stat_of_round)
+ULS_DEFINE_STRUCT(stat_of_round)
 {
 	uls_dflhash_state_t dflhash_stat0;
 	int   n; // # of buckets
@@ -227,7 +226,7 @@ parse_options(int argc, char* argv[])
 	int   i0;
 
 	if (ult_getcwd(home_dir, sizeof(home_dir)) < 0)
-		err_panic("%s: fail to getcwd()", __func__);
+		err_panic("%s: fail to getcwd()", __FUNCTION__);
 
 	target_hashtable_size = ULF_HASH_TABLE_SIZE;
 
@@ -262,7 +261,7 @@ parse_options(int argc, char* argv[])
 		}
 
 		if ((fp_list=uls_fp_open(filelist, ULS_FIO_READ)) == NULL) {
-			err_log("%s: fail to read '%s'", __func__, filelist);
+			err_log("%s: fail to read '%s'", __FUNCTION__, filelist);
 			return -1;
 		}
 
@@ -322,7 +321,7 @@ proc_filelist(FILE *fin, uls_keyw_stat_list_t *ks_lst)
 	while (1) {
 		if ((len=uls_fp_gets(fin, linebuff, sizeof(linebuff), 0)) <= ULS_EOF) {
 			if (len < ULS_EOF) {
-				err_log("%s: io-error", __func__);
+				err_log("%s: io-error", __FUNCTION__);
 				stat = -1;
 			}
 			break;
@@ -512,7 +511,8 @@ ulf_create_file_internal(FILE *fp_list, FILE *fp_out, int i0, int n_args, char *
 
 	calc_good_hcode0(keyw_stat_list, uls_ptr(best_round_stat));
 
-	ulf_create_file(target_hashtable_size, keyw_stat_list, fp_out);
+	ulf_create_file(1, &best_round_stat.dflhash_stat0.init_hcode,
+		target_hashtable_size, keyw_stat_list, fp_out);
 
 	ulc_free_kwstat_list(keyw_stat_list);
 
@@ -566,17 +566,14 @@ main(int argc, char* argv[])
 	ulf_hashfunc = uls_get_hashfunc(ULS_HASH_ALGORITHM, cse_insen);
 
 	if ((fp_out=uls_fp_open(out_file, ULS_FIO_CREAT)) == NULL) {
-		err_log("%s: fail to create '%s'", __func__, out_file);
+		err_log("%s: fail to create '%s'", __FUNCTION__, out_file);
 		stat = -1;
-	} else {
-		err_log("Gathering the statistics of keywords usage, ...");
-		if (ulf_create_file_internal(fp_list, fp_out, i0, argc, argv) < 0) {
-			err_log("%s: internal error!'", __func__);
-			stat = -1;
-		} else {
-			err_log("Writing the frequencies of keywords to %s, ...", out_file);
-		}
-		uls_fp_close(fp_out);
+	}
+
+	err_log("Gathering the statistics of keywords usage, ...");
+
+	if (ulf_create_file_internal(fp_list, fp_out, i0, argc, argv) < 0) {
+		stat = -1;
 	}
 
 	if (fp_list != NULL) {
@@ -584,6 +581,8 @@ main(int argc, char* argv[])
 		fp_list = NULL;
 	}
 
+	err_log("Writing the frequencies of keywords to %s, ...", out_file);
+	uls_fp_close(fp_out);
 	uls_destroy(sam_lex);
 
 	uls_mfree(filelist);

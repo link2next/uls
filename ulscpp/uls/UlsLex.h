@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -109,6 +109,7 @@ namespace uls {
 	// <parm name="confname">lexcial configuration</parm>
 	// <return>none</return>
 	void ULSCPP_DLL_EXTERN dumpSearchPathOfUlc(std::string& confname);
+	void ULSCPP_DLL_EXTERN dumpSearchPathOfUlc(std::wstring& confname);
 
 	// <brief>
 	// This will list the serach paths, preferentially the location of ulc repository.
@@ -131,8 +132,13 @@ namespace uls {
 		// <parm name="lxm">A string</parm>
 		// <return>bool</return>
 		bool ULSCPP_DLL_EXTERN isLexemeZero(std::string& lxm);
+		bool ULSCPP_DLL_EXTERN isLexemeZero(std::wstring& lxm);
+
 		bool ULSCPP_DLL_EXTERN isLexemeInt(std::string& lxm);
+		bool ULSCPP_DLL_EXTERN isLexemeInt(std::wstring& lxm);
+
 		bool ULSCPP_DLL_EXTERN isLexemeReal(std::string& lxm);
+		bool ULSCPP_DLL_EXTERN isLexemeReal(std::wstring& lxm);
 
 		// <brief>
 		// These convert the string 'lxm' to the value of int or double.
@@ -141,7 +147,10 @@ namespace uls {
 		// <parm name="lxm">A string</parm>
 		// <return>the converted values from the string.</return>
 		int ULSCPP_DLL_EXTERN LexemeAsInt(std::string& lxm);
+		int ULSCPP_DLL_EXTERN LexemeAsInt(std::wstring& lxm);
+
 		double ULSCPP_DLL_EXTERN LexemeAsDouble(std::string& lxm);
+		double ULSCPP_DLL_EXTERN LexemeAsDouble(std::wstring& lxm);
 
 		class ULSCPP_DLL_EXTERN IPrintf {
 		public:
@@ -259,6 +268,7 @@ namespace uls {
 		};
 
 		static uls_lf_map_t *ulscpp_convspec_nmap;
+		static uls_lf_map_t *ulscpp_convspec_wmap;
 
 		void UlsLex_initialize(void);
 		void UlsLex_finalize(void);
@@ -288,6 +298,7 @@ namespace uls {
 			// It's only valid until the next call of 'getTok()' or 'next()'.
 			// </brief>
 			std::string *lxm_nstr;
+			std::wstring *lxm_wstr;
 
 			std::map<int,void*> *extra_tokdefs;
 
@@ -299,6 +310,10 @@ namespace uls {
 			uls_lf_t  *str_nlf;
 			uls_lf_t  *file_nlf;
 			uls_lf_t  *prn_nlf;
+
+			uls_lf_t  *str_wlf;
+			uls_lf_t  *file_wlf;
+			uls_lf_t  *prn_wlf;
 
 			uls_mutex_struct_t sysprn_g_mtx;
 			int sysprn_opened;
@@ -316,6 +331,7 @@ namespace uls {
 			// <parm name="args">The list of args</parm>
 			// <return>none</return>
 			void vlog(const char* fmt, va_list args);
+			void vwlog(const wchar_t* fmt, va_list args);
 
 			// <brief>
 			// This checks whether the user provided extra token definition exists
@@ -334,6 +350,7 @@ namespace uls {
 			// A internal procedure to set the current token forcibly.
 			// </brief>
 			void set_token(int t, std::string& lxm);
+			void set_token(int t, std::wstring& lxm);
 
 			int prepareUldMap();
 			bool finishUldMap();
@@ -377,11 +394,13 @@ namespace uls {
 			// </brief>
 			// <parm name="ulc_file">The name/path of the lexical configuration.</parm>
 			// <return>none</return>
-			bool initUlsLex_ustr(const char *ulc_file);
+			bool initUlsLex_ustr(const char *ulc_file, bool cr2lf);
 
-			UlsLex(const char *ulc_file);
+			UlsLex(const char *ulc_file, bool cr2lf = false);
+			UlsLex(const wchar_t *ulc_wfile, bool cr2lf = false);
 
-			UlsLex(std::string& ulc_file);
+			UlsLex(std::string& ulc_file, bool cr2lf = false);
+			UlsLex(std::wstring& ulc_file, bool cr2lf = false);
 
 			// <brief>
 			// The destructor of UlsLex.
@@ -429,12 +448,16 @@ namespace uls {
 			// <parm name="fname">The new string value to be updated</parm>
 			// <return>none</return>
 			void setTag(std::string& fname);
+			void setTag(std::wstring& fname);
 
 			void setFileName(std::string& fname);
+			void setFileName(std::wstring& wfname);
 
 			void getTag(std::string& fname);
+			void getTag(std::wstring& fname);
 
 			void getFileName(std::string& fname);
+			void getFileName(std::wstring& fname);
 
 			// <brief>
 			// The field 'LineNum' is automatically updated by calling getTok() but
@@ -459,6 +482,7 @@ namespace uls {
 			// <parm name="pfx">The literal string analyzer of which the quote type is started with 'pfx'.</parm>
 			// <return>none</return>
 			void deleteLiteralAnalyzer(std::string& pfx);
+			void deleteLiteralAnalyzer(std::wstring& pfx);
 
 			// <brief>
 			// Changes the literal-string analyzer to 'proc'.
@@ -467,6 +491,7 @@ namespace uls {
 			// <parm name="pfx">The prefix of literal string that will be processed by 'proc'</parm>
 			// <return>void</return>
 			void changeLiteralAnalyzer(std::string pfx, uls_litstr_analyzer_t proc, void *data);
+			void changeLiteralAnalyzer(std::wstring pfx, uls_litstr_analyzer_t proc, void *data);
 
 			// <brief>
 			// This method will push an input string 'istr' on the top of the internal input stack.
@@ -510,12 +535,16 @@ namespace uls {
 			// <return>true/false</return>
 
 			bool pushFile(std::string& filepath, int flags=-1);
+			bool pushFile(std::wstring& wfilepath, int flags=-1);
 
 			void setFile(std::string& filepath, int flags=-1);
+			void setFile(std::wstring& filepath, int flags=-1);
 
 			void pushLine(const char* line, int len=-1, int flags=-1);
+			void pushLine(const wchar_t* line, int len=-1, int flags=-1);
 
 			void setLine(const char* line, int len=-1, int flags=-1);
+			void setLine(const wchar_t* line, int len=-1, int flags=-1);
 
 			void popCurrent(void);
 			void dismissAllInputs(void);
@@ -592,11 +621,18 @@ namespace uls {
 			// </brief>
 			// <return>the alias of string stored internally</return>
 			virtual void getTokStr(std::string** pp_lxm);
+			void getTokStr(std::wstring** pp_lxm);
 
 			void getLexeme(std::string& lxm) {
 				std::string *p_lxm;
 				getTokStr(&p_lxm);
 				lxm = *p_lxm;
+			}
+
+			void getLexeme(std::wstring& wlxm) {
+				std::wstring *p_wlxm;
+				getTokStr(&p_wlxm);
+				wlxm = *p_wlxm;
 			}
 
 			// <brief>
@@ -610,7 +646,7 @@ namespace uls {
 			}
 
 			// <brief>
-			// These methods check if the lexeme of the current token is
+			// These methods check if the lexeme of the current token is 
 			//     an integer or floating-point number, or zero.
 			// </brief>
 			// <return>true/false</return>
@@ -648,6 +684,7 @@ namespace uls {
 			// </brief>
 			// <return>none</return>
 			void setTok(int t, std::string& lxm);
+			void setTok(int t, std::wstring& lxm);
 
 			// <brief>
 			// If the current token number is not 'TokExpected', An exception will be thrown.
@@ -684,8 +721,12 @@ namespace uls {
 			// <parm name="lxm">The token string with which the token number 'tok_id' is paired.</parm>
 			// <return>none</return>
 			void ungetTok(void);
+
 			void ungetStr(std::string str);
+			void ungetStr(std::wstring str);
+
 			void ungetLexeme(std::string lxm, int tok_id);
+			void ungetLexeme(std::wstring lxm, int tok_id);
 
 			// <brief>
 			// This dumps the current token as explanatory string, which is composed of the string 'pfx',
@@ -701,6 +742,7 @@ namespace uls {
 			// The basic decription of token consists of <TokenName,TokenString>.
 			// <return>none</return>
 			void dumpTok(std::string pfx, std::string suff);
+			void dumpTok(std::wstring pfx, std::wstring suff);
 			void dumpTok(void);
 
 			// <brief>
@@ -710,15 +752,22 @@ namespace uls {
 			// </brief>
 			// <parm name="t">The token number of which keyword you want know</parm>
 			// <return>string</return>
-			void Keyword(int t, std::string *ptr_keyw);
-			void getKeywordStr(int t, std::string *ptr_keyw);
 
+			void Keyword(int t, std::string *ptr_keyw);
+			void Keyword(int t, std::wstring *ptr_keyw);
+
+			void getKeywordStr(int t, std::string *ptr_keyw);
+			void getKeywordStr(int t, std::wstring *ptr_keyw);
+			
 			// <brief>
 			// return the keyword string of the current token.
 			// </brief>
 			// <return>keyword string</return>
 			void Keyword(std::string *ptr_keyw);
+			void Keyword(std::wstring *ptr_keyw);
+
 			void getKeywordStr(std::string *ptr_keyw);
+			void getKeywordStr(std::wstring *ptr_keyw);
 
 			// <brief>
 			// This opens a file for writing messages sequentially.
@@ -727,6 +776,7 @@ namespace uls {
 			// <parm name="out_file">The output file path</parm>
 			// <return>none</return>
 			void openOutput(std::string& out_file);
+			void openOutput(std::wstring& out_file);
 
 			// <brief>
 			// This flushes the buffer of the output and closes the output file.
@@ -741,6 +791,7 @@ namespace uls {
 			// <parm name="fmt">format string</parm>
 			// <return># of bytes printed</return>
 			int print(const char* fmt, ...);
+			int print(const wchar_t* fmt, ...);
 
 			// <brief>
 			// This procedure makes a formatted string from format string 'fmt' and variable arguments list.
@@ -753,7 +804,10 @@ namespace uls {
 			// <parm name="fmt">format string</parm>
 			// <return># of bytes filled except for '\0'</return>
 			virtual int vsnprintf(char* buf, int bufsiz, const char *fmt, va_list args);
+			int vsnprintf(wchar_t* buf, int bufsiz, const wchar_t *fmt, va_list args);
+
 			int snprintf(char* buf, int bufsiz, const char *fmt, ...);
+			int snprintf(wchar_t* buf, int bufsiz, const wchar_t *fmt, ...);
 
 			// <brief>
 			// This stores the formatted string to the 'buf' with its size unknown.
@@ -763,6 +817,7 @@ namespace uls {
 			// <parm name="fmt">The template for message string</parm>
 			// <return># of bytes filled</return>
 			int sprintf(char * buf, const char *fmt, ...);
+			int sprintf(wchar_t * buf, const wchar_t *fmt, ...);
 
 			// <brief>
 			// The formatted string by 'fmt' and the arguments will be emitted to file.
@@ -771,8 +826,10 @@ namespace uls {
 			// <parm name="fmt">format string</parm>
 			// <return># of bytes written</return>
 			virtual int vfprintf(FILE* fp, const char *fmt, va_list args);
+			int vfprintf(FILE* fp, const wchar_t *fmt, va_list args);
 
 			int fprintf(FILE* fp, const char *fmt, ...);
+			int fprintf(FILE* fp, const wchar_t *fmt, ...);
 
 			// <brief>
 			// The formatted string by 'fmt' and the arguments
@@ -781,6 +838,7 @@ namespace uls {
 			// <parm name="fmt">format string</parm>
 			// <return># of bytes printed</return>
 			int printf(const char *fmt, ...);
+			int printf(const wchar_t *fmt, ...);
 
 			// <brief>
 			// Changes the associated procedure with 'percent_name', a converion specification.
@@ -790,6 +848,7 @@ namespace uls {
 			// <parm name="proc">The user provided procedure to process '%percent_name'</parm>
 			// <return>none</return>
 			virtual void changeConvSpec(const char* percent_name, uls_lf_convspec_t proc);
+			void changeConvSpec(const wchar_t* percent_name, uls_lf_convspec_t proc);
 
 			// <brief>
 			// You can use this method to change the default output interface for logging.
@@ -829,12 +888,13 @@ namespace uls {
 			// <parm name="loglvl">This message will be printed if 'loglvl' is set.</parm>
 			// <return>none</return>
 			virtual void log(int loglvl, const char* fmt, ...);
+			void log(int loglvl, const wchar_t* fmt, ...);
 
 			// <brief>
 			// Logs formatted messages
 			// You can use %t %w to print the current token, its location.
 			// No need to append '\n' to the end of line 'fmt'.
-			//
+			// 
 			// It's capable of printing the keyword string of token and input coordinate,
 			//    as well as the default conversion specifications.
 			//   a) %t: use to print the name of the current token
@@ -849,6 +909,7 @@ namespace uls {
 			// <parm name="fmt">format string</parm>
 			// <return>void</return>
 			virtual void log(const char* fmt, ...);
+			void log(const wchar_t* fmt, ...);
 
 			// <brief>
 			// This informs user of the occurrence of a system error with a formatted message.
@@ -857,6 +918,7 @@ namespace uls {
 			// <parm name="fmt">format string</parm>
 			// <return>none</return>
 			virtual void panic(const char* fmt, ...);
+			void panic(const wchar_t* fmt, ...);
 		};
 	}
 }

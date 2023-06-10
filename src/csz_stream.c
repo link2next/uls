@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -32,17 +32,21 @@
     Stanley Hong <link2next@gmail.com>, 2011.
   </author>
 */
+
+#ifndef ULS_EXCLUDE_HFILES
 #define __CSZ_STREAM__
 #include "uls/csz_stream.h"
 #include "uls/uls_log.h"
 #include <string.h>
+#endif
 
 ULS_DECL_STATIC char*
-__find_in_pool(uls_outbuf_ptr_t outbuf, int siz)
+ULS_QUALIFIED_METHOD(__find_in_pool)(uls_outbuf_ptr_t outbuf, int siz)
 {
 	csz_buf_line_ptr_t  e_prev, e, e_next;
 	char *line0;
 
+	// assert: siz != 0
 	if ((e=csz_global->active_list) == nilptr || siz > e->size) {
 		outbuf->buf = NULL;
 		outbuf->siz = 0;
@@ -76,7 +80,7 @@ __find_in_pool(uls_outbuf_ptr_t outbuf, int siz)
 }
 
 ULS_DECL_STATIC int
-__release_in_pool(char* ptr, int siz)
+ULS_QUALIFIED_METHOD(__release_in_pool)(char* ptr, int siz)
 {
 	csz_buf_line_ptr_t  e_prev, e, e0;
 
@@ -106,7 +110,7 @@ __release_in_pool(char* ptr, int siz)
 }
 
 ULS_DECL_STATIC void
-__init_csz_pool(void)
+ULS_QUALIFIED_METHOD(__init_csz_pool)(void)
 {
 	csz_buf_line_ptr_t  e;
 	int i;
@@ -125,14 +129,14 @@ __init_csz_pool(void)
 }
 
 ULS_DECL_STATIC void
-__reset_csz_pool(void)
+ULS_QUALIFIED_METHOD(__reset_csz_pool)(void)
 {
 	csz_buf_line_ptr_t  e, e_next;
 
 	for (e=csz_global->active_list; e!=nilptr; e=e_next) {
 		e_next = e->next;
 
-		e->line = uls_mfree(e->line);
+		uls_mfree(e->line);
 		e->size = 0;
 
 		e->next = csz_global->inactive_list;
@@ -143,7 +147,7 @@ __reset_csz_pool(void)
 }
 
 ULS_DECL_STATIC void
-__deinit_csz_pool(void)
+ULS_QUALIFIED_METHOD(__deinit_csz_pool)(void)
 {
 	csz_buf_line_ptr_t  e, e_next;
 
@@ -158,8 +162,9 @@ __deinit_csz_pool(void)
 }
 
 ULS_DECL_STATIC _ULS_INLINE void
-__str_modify(uls_outbuf_ptr_t outbuf, int n_delta, int k, const char* str, int len)
+ULS_QUALIFIED_METHOD(__str_modify)(uls_outbuf_ptr_t outbuf, int n_delta, int k, const char* str, int len)
 {
+	// assert: k >= 0
 	char *bufptr = outbuf->buf;
 	int  n;
 
@@ -170,13 +175,14 @@ __str_modify(uls_outbuf_ptr_t outbuf, int n_delta, int k, const char* str, int l
 		outbuf->siz = n;
 	}
 
+	// notice: k + len <= outbuf->siz
 	if (str != NULL && len > 0) {
 		uls_memcopy(bufptr+k, str, len);
 	}
 }
 
 void
-reset_csz(void)
+ULS_QUALIFIED_METHOD(reset_csz)(void)
 {
 	uls_lock_mutex(uls_ptr(csz_global->mtx));
 	__reset_csz_pool();
@@ -184,10 +190,10 @@ reset_csz(void)
 }
 
 void
-initialize_csz(void)
+ULS_QUALIFIED_METHOD(initialize_csz)(void)
 {
 	if (CSZ_STREAM_DELTA_DFL % 2 != 0)
-		err_panic_primitive("csz: internal error");
+		_uls_log_primitive(err_panic)("csz: internal error");
 
 	csz_global = uls_alloc_object(csz_global_data_t);
 
@@ -199,7 +205,7 @@ initialize_csz(void)
 }
 
 void
-finalize_csz(void)
+ULS_QUALIFIED_METHOD(finalize_csz)(void)
 {
 	uls_lock_mutex(uls_ptr(csz_global->mtx));
 	__deinit_csz_pool();
@@ -209,8 +215,8 @@ finalize_csz(void)
 	uls_dealloc_object(csz_global);
 }
 
-void
-str_init(uls_outbuf_ptr_t outbuf, int siz)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(str_init)(uls_outbuf_ptr_t outbuf, int siz)
 {
 	if (siz == 0) {
 		outbuf->buf = NULL;
@@ -223,6 +229,7 @@ str_init(uls_outbuf_ptr_t outbuf, int siz)
 		siz = uls_ceil_log2(siz, 3);
 	}
 
+	// notice: siz != 0
 	uls_lock_mutex(uls_ptr(csz_global->mtx));
 	__find_in_pool(outbuf, siz);
 	uls_unlock_mutex(uls_ptr(csz_global->mtx));
@@ -233,11 +240,12 @@ str_init(uls_outbuf_ptr_t outbuf, int siz)
 		outbuf->siz = siz;
 	}
 
+	// assert: outbuf->siz % 8 == 0
 	outbuf->siz_delta = outbuf->siz;
 }
 
 void
-str_free(uls_outbuf_ptr_t outbuf)
+ULS_QUALIFIED_METHOD(str_free)(uls_outbuf_ptr_t outbuf)
 {
 	char *line = outbuf->buf;
 
@@ -254,8 +262,8 @@ str_free(uls_outbuf_ptr_t outbuf)
 	outbuf->siz = 0;
 }
 
-void
-__str_putc(uls_outbuf_ptr_t outbuf, int n_delta, int k, char ch)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(__str_putc)(uls_outbuf_ptr_t outbuf, int n_delta, int k, char ch)
 {
 	char *bufptr = outbuf->buf;
 
@@ -267,7 +275,7 @@ __str_putc(uls_outbuf_ptr_t outbuf, int n_delta, int k, char ch)
 	}
 
 	if (k < 0)
-		err_panic_primitive("csz: misuse of index!");
+		_uls_log_primitive(err_panic)("csz: misuse of index!");
 
 	if (k >= outbuf->siz) {
 		outbuf->siz = uls_roundup(k+1, n_delta);
@@ -277,9 +285,10 @@ __str_putc(uls_outbuf_ptr_t outbuf, int n_delta, int k, char ch)
 	bufptr[k] = ch;
 }
 
-void
-str_modify(uls_outbuf_ptr_t outbuf, int k, const char* str, int len)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(str_modify)(uls_outbuf_ptr_t outbuf, int k, const char* str, int len)
 {
+	// assert: k >= 0 and len >= 0
 	if (str != NULL) {
 		if (len < 0) len = uls_strlen(str);
 	} else {
@@ -289,9 +298,10 @@ str_modify(uls_outbuf_ptr_t outbuf, int k, const char* str, int len)
 	__str_modify(outbuf, outbuf->siz_delta, k, str, len);
 }
 
-int
-str_append(uls_outbuf_ptr_t outbuf, int k, const char* str, int len)
+ULS_DLL_EXTERN int
+ULS_QUALIFIED_METHOD(str_append)(uls_outbuf_ptr_t outbuf, int k, const char* str, int len)
 {
+	// assert: k >= 0 and len >= 0
 	int k2;
 
 	if (str != NULL) {
@@ -309,9 +319,10 @@ str_append(uls_outbuf_ptr_t outbuf, int k, const char* str, int len)
 	return k2;
 }
 
-int
-str_puts(uls_outbuf_ptr_t outbuf, int k, const char* str)
+ULS_DLL_EXTERN int
+ULS_QUALIFIED_METHOD(str_puts)(uls_outbuf_ptr_t outbuf, int k, const char* str)
 {
+	// assert: k >= 0
 	int l_str;
 
 	l_str = uls_strlen(str);
@@ -320,8 +331,8 @@ str_puts(uls_outbuf_ptr_t outbuf, int k, const char* str)
 	return k + l_str;
 }
 
-void
-csz_init(csz_str_ptr_t csz, int n_delta)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(csz_init)(csz_str_ptr_t csz, int n_delta)
 {
 	str_init(uls_ptr(csz->pool), 0);
 
@@ -333,15 +344,15 @@ csz_init(csz_str_ptr_t csz, int n_delta)
 	csz->len = 0;
 }
 
-void
-csz_deinit(csz_str_ptr_t csz)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(csz_deinit)(csz_str_ptr_t csz)
 {
 	str_free(uls_ptr(csz->pool));
 	csz->len = 0;
 }
 
-csz_str_ptr_t
-csz_create(int n_delta)
+ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(csz_str_ptr_t)
+ULS_QUALIFIED_METHOD(csz_create)(int n_delta)
 {
 	csz_str_ptr_t csz;
 
@@ -351,15 +362,15 @@ csz_create(int n_delta)
 	return csz;
 }
 
-void
-csz_destroy(csz_str_ptr_t csz)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(csz_destroy)(csz_str_ptr_t csz)
 {
 	csz_deinit(csz);
 	uls_dealloc_object(csz);
 }
 
-void
-csz_reset(csz_str_ptr_t csz)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(csz_reset)(csz_str_ptr_t csz)
 {
 	int siz0 = csz->alloc_delta << 8;
 
@@ -372,9 +383,10 @@ csz_reset(csz_str_ptr_t csz)
 	csz->len = 0;
 }
 
-char*
-csz_modify(csz_str_ptr_t csz, int k, const char* str, int len)
+ULS_DLL_EXTERN char*
+ULS_QUALIFIED_METHOD(csz_modify)(csz_str_ptr_t csz, int k, const char* str, int len)
 {
+	// assert: k >= 0 and len >= 0
 	int k2;
 
 	if (str != NULL) {
@@ -389,9 +401,10 @@ csz_modify(csz_str_ptr_t csz, int k, const char* str, int len)
 	return csz_data_ptr(csz) + k;
 }
 
-char*
-csz_append(csz_str_ptr_t csz, const char* str, int len)
+ULS_DLL_EXTERN char*
+ULS_QUALIFIED_METHOD(csz_append)(csz_str_ptr_t csz, const char* str, int len)
 {
+	// assert: k >= 0 and len >= 0
 	int k;
 
 	if (str != NULL) {
@@ -413,36 +426,36 @@ csz_append(csz_str_ptr_t csz, const char* str, int len)
 	return csz->pool.buf + k;
 }
 
-void
-csz_puts(csz_str_ptr_t csz, const char* str)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(csz_puts)(csz_str_ptr_t csz, const char* str)
 {
 	int l_str = uls_strlen(str);
 	csz->len = str_append(uls_ptr(csz->pool), csz->len, str, l_str);
 }
 
-void
-csz_putc(csz_str_ptr_t csz, char ch)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(csz_putc)(csz_str_ptr_t csz, char ch)
 {
 	__str_putc(uls_ptr(csz->pool), csz->alloc_delta, csz->len, ch);
 	if (ch != '\0') ++csz->len;
 }
 
-void
-csz_add_eos(csz_str_ptr_t csz)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(csz_add_eos)(csz_str_ptr_t csz)
 {
 	__str_putc(uls_ptr(csz->pool), csz->alloc_delta, csz->len, '\0');
 	++csz->len;
 }
 
-char*
-csz_text(csz_str_ptr_t csz)
+ULS_DLL_EXTERN char*
+ULS_QUALIFIED_METHOD(csz_text)(csz_str_ptr_t csz)
 {
 	__str_putc(uls_ptr(csz->pool), csz->alloc_delta, csz->len, '\0');
 	return csz->pool.buf;
 }
 
-char*
-csz_export(csz_str_ptr_t csz)
+ULS_DLL_EXTERN char*
+ULS_QUALIFIED_METHOD(csz_export)(csz_str_ptr_t csz)
 {
 	char *ptr;
 
@@ -454,3 +467,17 @@ csz_export(csz_str_ptr_t csz)
 
 	return ptr;
 }
+
+ULS_DLL_EXTERN wchar_t*
+ULS_QUALIFIED_METHOD(uls_get_csz_wstr)(csz_str_ptr_t csz)
+{
+	wchar_t nilwbuf[1] = { L'\0' };
+	int k;
+
+	k = csz_length(csz);
+	__str_modify(uls_ptr(csz->pool), csz->alloc_delta, k, NULL, sizeof(wchar_t));
+ 	uls_memcopy(csz->pool.buf + k, (const char *) nilwbuf, sizeof(wchar_t));
+
+	return (wchar_t *) csz_data_ptr(csz);
+}
+

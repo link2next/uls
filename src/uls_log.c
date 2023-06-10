@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -35,9 +35,13 @@
 #define __ULS_LOG__
 #include "uls/uls_log.h"
 #include "uls/uls_misc.h"
+#ifdef ULS_WINDOWS
+#include "uls/uls_util_astr.h"
+#include "uls/uls_util_wstr.h"
+#endif
 
 ULS_DECL_STATIC int
-__uls_fmtproc_coord(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lex_ptr_t uls, uls_lf_context_ptr_t ctx)
+ULS_QUALIFIED_METHOD(__uls_fmtproc_coord)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lex_ptr_t uls, uls_lf_context_ptr_t ctx)
 {
 	char buf[81];
 	int len, n_chars;
@@ -53,7 +57,7 @@ __uls_fmtproc_coord(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lex_ptr_t 
 }
 
 ULS_DECL_STATIC int
-__uls_fmtproc_tokname(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lex_ptr_t uls, uls_lf_context_ptr_t ctx)
+ULS_QUALIFIED_METHOD(__uls_fmtproc_tokname)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lex_ptr_t uls, uls_lf_context_ptr_t ctx)
 {
 	const char *wrdptr;
 	int len, n_chars, t;
@@ -72,7 +76,7 @@ __uls_fmtproc_tokname(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lex_ptr_
 }
 
 ULS_DECL_STATIC int
-__uls_fmtproc_keyword(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lex_ptr_t uls, uls_lf_context_ptr_t ctx)
+ULS_QUALIFIED_METHOD(__uls_fmtproc_keyword)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lex_ptr_t uls, uls_lf_context_ptr_t ctx)
 {
 	const char *wrdptr;
 	int len, n_chars;
@@ -81,6 +85,7 @@ __uls_fmtproc_keyword(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lex_ptr_
 	if (uls == nilptr) {
 		wrdptr = "<fault>";
 	} else {
+		// notice: wrdptr != NULL
 		wrdptr = __uls_lexeme(uls);
 	}
 
@@ -91,7 +96,7 @@ __uls_fmtproc_keyword(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lex_ptr_
 }
 
 void
-initialize_uls_syserr(void)
+ULS_QUALIFIED_METHOD(initialize_uls_syserr)(void)
 {
 	uls_voidptr_t syslog;
 	uls_lf_puts_t syslog_puts;
@@ -103,12 +108,16 @@ initialize_uls_syserr(void)
 	uls_add_default_log_convspecs(uls_ptr(lf_map_logdfl));
 
 	syslog = _uls_stdio_fp(2);
+#ifdef ULS_WINDOWS
+	syslog_puts = uls_lf_aputs_file;
+#else
 	syslog_puts = uls_lf_puts_file;
+#endif
 	uls_lf_init(uls_ptr(lf_syserr), uls_ptr(lf_map_syserr), syslog, syslog_puts);
 }
 
 void
-finalize_uls_syserr(void)
+ULS_QUALIFIED_METHOD(finalize_uls_syserr)(void)
 {
 	uls_lf_deinit(uls_ptr(lf_syserr));
 
@@ -117,7 +126,7 @@ finalize_uls_syserr(void)
 }
 
 int
-uls_fmtproc_coord(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t ctx)
+ULS_QUALIFIED_METHOD(uls_fmtproc_coord)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t ctx)
 {
 	uls_lex_t  *uls;
 
@@ -126,7 +135,7 @@ uls_fmtproc_coord(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_p
 }
 
 int
-uls_fmtproc_tokname(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t ctx)
+ULS_QUALIFIED_METHOD(uls_fmtproc_tokname)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t ctx)
 {
 	uls_lex_t  *uls;
 
@@ -135,7 +144,7 @@ uls_fmtproc_tokname(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context
 }
 
 int
-uls_fmtproc_keyword(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t ctx)
+ULS_QUALIFIED_METHOD(uls_fmtproc_keyword)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t ctx)
 {
 	uls_lex_t  *uls;
 
@@ -144,40 +153,40 @@ uls_fmtproc_keyword(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context
 }
 
 int
-uls_log_fmtproc_coord(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t ctx)
+ULS_QUALIFIED_METHOD(uls_log_fmtproc_coord)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t ctx)
 {
 	uls_lex_t  *uls = (uls_lex_ptr_t) ctx->g_dat;
 	return __uls_fmtproc_coord(x_dat, puts_proc, uls, ctx);
 }
 
 int
-uls_log_fmtproc_tokname(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t ctx)
+ULS_QUALIFIED_METHOD(uls_log_fmtproc_tokname)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t ctx)
 {
 	uls_lex_t  *uls = (uls_lex_ptr_t) ctx->g_dat;
 	return __uls_fmtproc_tokname(x_dat, puts_proc, uls, ctx);
 }
 
 int
-uls_log_fmtproc_keyword(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t ctx)
+ULS_QUALIFIED_METHOD(uls_log_fmtproc_keyword)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t ctx)
 {
 	uls_lex_t  *uls = (uls_lex_ptr_t) ctx->g_dat;
 	return __uls_fmtproc_keyword(x_dat, puts_proc, uls, ctx);
 }
 
-void
-err_syslog_lock(void)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(err_syslog_lock)(void)
 {
 	uls_lf_lock(uls_ptr(lf_syserr));
 }
 
-void
-err_syslog_unlock(void)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(err_syslog_unlock)(void)
 {
 	uls_lf_unlock(uls_ptr(lf_syserr));
 }
 
-void
-err_vlog(const char* fmt, va_list args)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(err_vlog)(const char* fmt, va_list args)
 {
 	uls_voidptr_t syslog = lf_syserr.x_dat;
 	uls_lf_puts_t syslog_puts = lf_syserr.uls_lf_puts;
@@ -191,8 +200,8 @@ err_vlog(const char* fmt, va_list args)
 	uls_lf_unlock(uls_ptr(lf_syserr));
 }
 
-void
-err_log(const char* fmt, ...)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(err_log)(const char* fmt, ...)
 {
 	va_list	args;
 
@@ -201,15 +210,15 @@ err_log(const char* fmt, ...)
 	va_end(args);
 }
 
-void
-err_vpanic(const char* fmt, va_list args)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(err_vpanic)(const char* fmt, va_list args)
 {
 	err_vlog(fmt, args);
 	uls_appl_exit(1);
 }
 
-void
-err_panic(const char* fmt, ...)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(err_panic)(const char* fmt, ...)
 {
 	va_list	args;
 
@@ -220,8 +229,8 @@ err_panic(const char* fmt, ...)
 	uls_appl_exit(1);
 }
 
-void
-err_change_port(uls_voidptr_t data, uls_lf_puts_t proc)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(err_change_port)(uls_voidptr_t data, uls_lf_puts_t proc)
 {
 	uls_lf_delegate_t delegate;
 
@@ -238,8 +247,8 @@ err_change_port(uls_voidptr_t data, uls_lf_puts_t proc)
 	uls_lf_change_puts(uls_ptr(lf_syserr), uls_ptr(delegate));
 }
 
-int
-uls_init_log(uls_log_ptr_t log, uls_lf_map_ptr_t lf_map, uls_lex_ptr_t uls)
+ULS_DLL_EXTERN int
+ULS_QUALIFIED_METHOD(uls_init_log)(uls_log_ptr_t log, uls_lf_map_ptr_t lf_map, uls_lex_ptr_t uls)
 {
 	if (uls == nilptr) {
 		return -1;
@@ -264,11 +273,12 @@ uls_init_log(uls_log_ptr_t log, uls_lf_map_ptr_t lf_map, uls_lex_ptr_t uls)
 		return -1;
 	}
 
+	log->shell = nilptr;
 	return 0;
 }
 
-void
-uls_deinit_log(uls_log_ptr_t log)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(uls_deinit_log)(uls_log_ptr_t log)
 {
 	uls_lex_ptr_t uls = log->uls;
 
@@ -281,12 +291,13 @@ uls_deinit_log(uls_log_ptr_t log)
 
 	log->log_port = nilptr;
 	log->log_puts = uls_lf_puts_null;
+	log->shell = nilptr;
 
 	uls_deinit_mutex(uls_ptr(log->mtx));
 }
 
-uls_log_ptr_t
-uls_create_log(uls_lf_map_ptr_t lf_map, uls_lex_ptr_t uls)
+ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_log_ptr_t)
+ULS_QUALIFIED_METHOD(uls_create_log)(uls_lf_map_ptr_t lf_map, uls_lex_ptr_t uls)
 {
 	uls_log_ptr_t log;
 
@@ -302,8 +313,8 @@ uls_create_log(uls_lf_map_ptr_t lf_map, uls_lex_ptr_t uls)
 	return log;
 }
 
-void
-uls_destroy_log(uls_log_ptr_t log)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(uls_destroy_log)(uls_log_ptr_t log)
 {
 	uls_deinit_log(log);
 
@@ -312,8 +323,8 @@ uls_destroy_log(uls_log_ptr_t log)
 	}
 }
 
-void
-uls_log_change(uls_log_ptr_t log, uls_voidptr_t data, uls_lf_puts_t proc)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(uls_log_change)(uls_log_ptr_t log, uls_voidptr_t data, uls_lf_puts_t proc)
 {
 	uls_lf_delegate_t delegate;
 
@@ -341,8 +352,8 @@ uls_log_change(uls_log_ptr_t log, uls_voidptr_t data, uls_lf_puts_t proc)
 // <parm name="fmt">The format string, a template for printing</parm>
 // <parm name="args">The list of args</parm>
 // <return>none</return>
-void
-uls_vlog(uls_log_ptr_t log, const char* fmt, va_list args)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(uls_vlog)(uls_log_ptr_t log, const char* fmt, va_list args)
 {
 	char numbuf[N_LOGBUF_CHARS];
 	uls_voidptr_t old_gdat;
@@ -376,8 +387,8 @@ uls_vlog(uls_log_ptr_t log, const char* fmt, va_list args)
 // </brief>
 // <parm name="fmt">The template for message string</parm>
 // <return>void</return>
-void
-uls_log(uls_log_ptr_t log, const char* fmt, ...)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(uls_log)(uls_log_ptr_t log, const char* fmt, ...)
 {
 	va_list	args;
 
@@ -386,8 +397,8 @@ uls_log(uls_log_ptr_t log, const char* fmt, ...)
 	va_end(args);
 }
 
-void
-uls_vpanic(uls_log_ptr_t log, const char* fmt, va_list args)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(uls_vpanic)(uls_log_ptr_t log, const char* fmt, va_list args)
 {
 	uls_vlog(log, fmt, args);
 	uls_appl_exit(1);
@@ -399,8 +410,8 @@ uls_vpanic(uls_log_ptr_t log, const char* fmt, va_list args)
 // </brief>
 // <parm name="fmt">The template for message string</parm>
 // <return>none</return>
-void
-uls_panic(uls_log_ptr_t log, const char* fmt, ...)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(uls_panic)(uls_log_ptr_t log, const char* fmt, ...)
 {
 	va_list	args;
 
@@ -411,8 +422,8 @@ uls_panic(uls_log_ptr_t log, const char* fmt, ...)
 	uls_appl_exit(1);
 }
 
-void
-uls_set_loglevel(uls_log_ptr_t log, int lvl)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(uls_set_loglevel)(uls_log_ptr_t log, int lvl)
 {
 	if (lvl > ULS_MAX_LOGLEVEL || lvl < 0) {
 		err_log("verbose level %d dosn't exist", lvl);
@@ -429,8 +440,8 @@ uls_set_loglevel(uls_log_ptr_t log, int lvl)
 	}
 }
 
-int
-uls_loglevel_isset(uls_log_ptr_t log, int lvl)
+ULS_DLL_EXTERN int
+ULS_QUALIFIED_METHOD(uls_loglevel_isset)(uls_log_ptr_t log, int lvl)
 {
 	if (lvl > ULS_MAX_LOGLEVEL || lvl < 0) {
 		return 0;
@@ -439,8 +450,8 @@ uls_loglevel_isset(uls_log_ptr_t log, int lvl)
 	return (log->log_mask & ULS_LOGLEVEL_FLAG(lvl)) ? 1 : 0;
 }
 
-void
-uls_clear_loglevel(uls_log_ptr_t log, int lvl)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(uls_clear_loglevel)(uls_log_ptr_t log, int lvl)
 {
 	if (lvl > ULS_MAX_LOGLEVEL || lvl < 0) {
 		err_log("verbose level %d dosn't exist", lvl);
@@ -459,16 +470,16 @@ uls_clear_loglevel(uls_log_ptr_t log, int lvl)
 	}
 }
 
-void
-uls_add_default_log_convspecs(uls_lf_map_ptr_t lf_map)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(uls_add_default_log_convspecs)(uls_lf_map_ptr_t lf_map)
 {
 	uls_lf_register_convspec(lf_map, "w", uls_log_fmtproc_coord);
 	uls_lf_register_convspec(lf_map, "t", uls_log_fmtproc_tokname);
 	uls_lf_register_convspec(lf_map, "k", uls_log_fmtproc_keyword);
 }
 
-void
-uls_add_default_convspecs(uls_lf_map_ptr_t lf_map)
+ULS_DLL_EXTERN void
+ULS_QUALIFIED_METHOD(uls_add_default_convspecs)(uls_lf_map_ptr_t lf_map)
 {
 	uls_lf_register_convspec(lf_map, "w", uls_fmtproc_coord);
 	uls_lf_register_convspec(lf_map, "t", uls_fmtproc_tokname);

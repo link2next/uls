@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -24,35 +24,43 @@
 #ifndef __ULS_VERSION_H__
 #define __ULS_VERSION_H__
 
+#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_type.h"
+#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
+#ifdef ULS_DECL_GLOBAL_TYPES
 #define ULS_VERSION_CODE_LEN     3
 #define ULS_VERSION_STR_MAXLEN  11
-#define uls_vers_compatible(ver1,ver2) (uls_version_cmp_code(ver1,ver2) >= 2)
+#define uls_vers_compatible(ver1,ver2) (_uls_tool_(version_cmp_code)(ver1,ver2) >= 2)
+#endif
 
-ULS_DEFINE_STRUCT(version)
+#ifdef ULS_DEF_PUBLIC_TYPE
+ULS_DEFINE_STRUCT(uls_version)
 {
 	char  major;
 	char  minor;
 	char  debug;
 	char  sequence;
 };
+#endif
 
-ULS_DLL_EXTERN void uls_init_version(uls_version_ptr_t a);
-ULS_DLL_EXTERN void uls_deinit_version(uls_version_ptr_t a);
+#ifdef ULS_DECL_PUBLIC_PROC
+ULS_DLL_EXTERN void uls_init_version(_uls_tool_ptrtype_(version) a);
+ULS_DLL_EXTERN void uls_deinit_version(_uls_tool_ptrtype_(version) a);
 
-ULS_DLL_EXTERN void uls_version_make(uls_version_ptr_t a,
+ULS_DLL_EXTERN void uls_version_make(_uls_tool_ptrtype_(version) a,
 	char v1, char v2, char v3);
-ULS_DLL_EXTERN void uls_version_encode(const uls_version_ptr_t a, char* codstr);
-ULS_DLL_EXTERN void uls_version_decode(char* codstr, uls_version_ptr_t a);
-ULS_DLL_EXTERN void uls_version_copy(uls_version_ptr_t dst, const uls_version_ptr_t src);
-ULS_DLL_EXTERN int uls_version_make_string(const uls_version_ptr_t a, char* ver_str);
-ULS_DLL_EXTERN int uls_version_cmp_code(const uls_version_ptr_t a, const uls_version_ptr_t b);
-ULS_DLL_EXTERN int uls_version_pars_str(const char *lptr, uls_version_ptr_t a);
+ULS_DLL_EXTERN void uls_version_encode(const _uls_tool_ptrtype_(version) a, char* codstr);
+ULS_DLL_EXTERN void uls_version_decode(char* codstr, _uls_tool_ptrtype_(version) a);
+ULS_DLL_EXTERN void uls_version_copy(_uls_tool_ptrtype_(version) dst, const _uls_tool_ptrtype_(version) src);
+ULS_DLL_EXTERN int uls_version_make_string(const _uls_tool_ptrtype_(version) a, char* ver_str);
+ULS_DLL_EXTERN int uls_version_cmp_code(const _uls_tool_ptrtype_(version) a, const _uls_tool_ptrtype_(version) b);
+ULS_DLL_EXTERN int uls_version_pars_str(const char *lptr, _uls_tool_ptrtype_(version) a);
+#endif
 
 #ifdef _ULS_CPLUSPLUS
 }

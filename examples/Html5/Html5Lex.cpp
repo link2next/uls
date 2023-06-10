@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -43,13 +43,13 @@ using namespace uls::collection;
 // <parm name="fpath">The path of file</parm>
 // <return>0 if it succeeds, otherwise -1</return>
 int
-Html5Lex::setFile(string fpath)
+Html5Lex::setFile(tstring fpath)
 {
 	FILE *fp;
 
-	if (fpath != "") {
+	if (fpath != _T("")) {
 		if ((fp=uls_fp_open(fpath.c_str(), ULS_FIO_READ)) == NULL) {
-			err_log("%s: file open error", fpath.c_str());
+			err_log(_T("%s: file open error"), fpath.c_str());
 			return -1;
 		}
 	} else {
@@ -60,18 +60,18 @@ Html5Lex::setFile(string fpath)
 	prepare_html_text = 1;
 
 	tok_id = NONE;
-	tok_str = "";
+	tok_str = _T("");
 
 	return 0;
 }
 
-Html5Lex::Html5Lex(string& config_name)
+Html5Lex::Html5Lex(tstring& config_name)
 	: Html5LexBasis(config_name)
 {
 	csz_init(&tokbuf, 128);
 	csz_init(&txt_buf, 4096);
 
-	string fpath = "";
+	tstring fpath = _T("");
 	setFile(fpath);
 	tok_ungot = false;
 }
@@ -101,12 +101,12 @@ Html5Lex::run_to_tagbegin(FILE* fp, csz_str_t* txt_buf, int *is_trivial)
 {
 	int escape = 0;
 	int ch, bTrivial = 1;
-	char tch;
+	TCHAR tch;
 
 	for ( ; (ch = uls_fp_getc(fp)) != EOF; ) {
 		if (escape) {
-			tch = (char) ch;
-			csz_append(txt_buf, (const char *) &tch, sizeof(char));
+			tch = (TCHAR) ch;
+			csz_append(txt_buf, (const char *) &tch, sizeof(TCHAR));
 			escape = 0;
 
 		} else if (ch == '<') {
@@ -115,22 +115,22 @@ Html5Lex::run_to_tagbegin(FILE* fp, csz_str_t* txt_buf, int *is_trivial)
 		} else if (ch == '\\') {
 			escape = 1;
 
-			tch = '\\';
-			csz_append(txt_buf, (const char *) &tch, sizeof(char));
+			tch = _T('\\');
+			csz_append(txt_buf, (const char *) &tch, sizeof(TCHAR));
 
 			bTrivial = 0;
 		}
 
 		if (ch != '\n') {
-			tch = (char) ch;
-			csz_append(txt_buf, (const char *) &tch, sizeof(char));
+			tch = (TCHAR) ch;
+			csz_append(txt_buf, (const char *) &tch, sizeof(TCHAR));
 
 			if (ch != ' ' && ch != '\t') bTrivial = 0;
 		}
 	}
 
-	tch = '\0';
-	csz_append(txt_buf, (const char *) &tch, sizeof(char));
+	tch = _T('\0');
+	csz_append(txt_buf, (const char *) &tch, sizeof(TCHAR));
 
 	*is_trivial = bTrivial;
 
@@ -149,33 +149,33 @@ int
 Html5Lex::pass_html_quote(FILE* fp, csz_str_t* txt_buf, int quote_ch)
 {
 	int   ch, stat = 0, escape = 0;
-	char tch;
+	TCHAR tch;
 
 	for ( ; ; ) {
 		if ((ch=uls_fp_getc(fp)) == EOF) {
-			err_log("%s: unexpected EOF", __func__);
+			err_log(_T("%s: unexpected EOF"), __FUNCTION__);
 			stat = -1; break;
 		}
 
 		if (escape) {
-			tch = (char) ch;
-			csz_append(txt_buf, (const char *) &tch, sizeof(char));
+			tch = (TCHAR) ch;
+			csz_append(txt_buf, (const char *) &tch, sizeof(TCHAR));
 			escape = 0;
 
 		} else {
 			if (ch == quote_ch) {
-				tch = (char) ch;
-				csz_append(txt_buf, (const char *) &tch, sizeof(char));
+				tch = (TCHAR) ch;
+				csz_append(txt_buf, (const char *) &tch, sizeof(TCHAR));
 				break;
 
 			} else if (ch=='\\') {
-				tch = '\\';
-				csz_append(txt_buf, (const char *) &tch, sizeof(char));
+				tch = _T('\\');
+				csz_append(txt_buf, (const char *) &tch, sizeof(TCHAR));
 				escape = 1;
 
 			} else {
-				tch = (char) ch;
-				csz_append(txt_buf, (const char *) &tch, sizeof(char));
+				tch = (TCHAR) ch;
+				csz_append(txt_buf, (const char *) &tch, sizeof(TCHAR));
 			}
 		}
 	}
@@ -196,27 +196,27 @@ Html5Lex::run_to_tagend(FILE* fp, csz_str_t* txt_buf)
 {
 	int stat = 1;
 	int ch;
-	char tch;
+	TCHAR tch;
 
 	for ( ; ; ) {
 		if ((ch=uls_fp_getc(fp)) == EOF) {
-			err_log("unexpected terminating file!");
+			err_log(_T("unexpected terminating file!"));
 			stat = -1;
 			break;
 		}
 
 		if (ch == '\'' || ch == '"') {
-			tch = (char) ch;
-			csz_append(txt_buf, (const char *) &tch, sizeof(char));
+			tch = (TCHAR) ch;
+			csz_append(txt_buf, (const char *) &tch, sizeof(TCHAR));
 
 			if (pass_html_quote(fp, txt_buf, ch) < 0) {
-				err_log("unexpected html element!");
+				err_log(_T("unexpected html element!"));
 				stat = -1;
 				break;
 			}
 		} else {
-			tch = (char) ch;
-			csz_append(txt_buf, (const char *) &tch, sizeof(char));
+			tch = (TCHAR) ch;
+			csz_append(txt_buf, (const char *) &tch, sizeof(TCHAR));
 
 			if (ch == '>') {
 				stat = 0;
@@ -225,8 +225,8 @@ Html5Lex::run_to_tagend(FILE* fp, csz_str_t* txt_buf)
 		}
 	}
 
-	tch = '\0';
-	csz_append(txt_buf, (const char *) &tch, sizeof(char));
+	tch = _T('\0');
+	csz_append(txt_buf, (const char *) &tch, sizeof(TCHAR));
 
 	return stat;
 }
@@ -239,16 +239,16 @@ Html5Lex::run_to_tagend(FILE* fp, csz_str_t* txt_buf)
 // <parm name="len">The length of 'str'</parm>
 // <return>the length of the concatenated string</return>
 int
-Html5Lex::concat_lexeme(const char * str, int len)
+Html5Lex::concat_lexeme(LPCTSTR str, int len)
 {
 	Html5LexBasis::getTok();
-	string *lxm;
+	tstring *lxm;
 
 	Html5LexBasis::getTokStr(&lxm);
 
 	csz_reset(&tokbuf);
-	csz_append(&tokbuf, (const char *) str, len * sizeof(char));
-	csz_append(&tokbuf, (const char *) lxm->c_str(), (int) lxm->length() * sizeof(char));
+	csz_append(&tokbuf, (const char *) str, len * sizeof(TCHAR));
+	csz_append(&tokbuf, (const char *) lxm->c_str(), (int) lxm->length() * sizeof(TCHAR));
 
 	return csz_length(&tokbuf);
 }
@@ -262,9 +262,9 @@ Html5Lex::get_token(void)
 {
 	int ich;
 	int tok, is_trivial;
-	string *lxm;
+	tstring *lxm;
 	uls_uch_t uch;
-	char tch;
+	TCHAR tch;
 
 	if (tok_ungot == true) {
 		tok_ungot = false;
@@ -273,7 +273,7 @@ Html5Lex::get_token(void)
 
 	if (prepare_html_text < 0) {
 		tok_id = EOI;
-		tok_str = "";
+		tok_str = _T("");
 		return;
 	}
 
@@ -292,14 +292,14 @@ again_1:
 		tok_id = TEXT;
 		if (csz_length(&txt_buf) > 0 && !is_trivial) {
 			// Non-trivial text exists.
-			tok_str = string(csz_text(&txt_buf));
+			tok_str = tstring(uls_get_csz_tstr(&txt_buf));
 			tok_id = TEXT;
 			return;
 		}
 
 		if (ich == EOF) {
 			tok_id = EOI;
-			tok_str = "";
+			tok_str = _T("");
 			return;
 		}
 	}
@@ -308,16 +308,16 @@ again_1:
 		// If the current token was HTML-TEXT, ...
 		csz_reset(&txt_buf);
 
-		tch = '<';
-		csz_append(&txt_buf, (const char *) &tch, sizeof(char));
+		tch = _T('<');
+		csz_append(&txt_buf, (const char *) &tch, sizeof(TCHAR));
 
 		if (run_to_tagend(fin_html, &txt_buf) < 0) {
 			tok_id = ERR;
-			tok_str = "";
+			tok_str = _T("");
 			return;
 		}
 
-		pushLine(csz_text(&txt_buf), csz_length(&txt_buf));
+		pushLine(uls_get_csz_tstr(&txt_buf), csz_length(&txt_buf));
 
 		if ((tok = Html5LexBasis::getTok()) != '<') {
 			goto again_1;
@@ -342,13 +342,13 @@ again_1:
 						goto again_1;
 					} else {
 						tok_id = ERR;
-						tok_str = "";
+						tok_str = _T("");
 						return;
 					}
 				} else {
-					concat_lexeme("!", 1);
+					concat_lexeme(_T("!"), 1);
 					tok = Html5LexBasis::getTokNum();
-					tok_str = string(csz_text(&tokbuf));
+					tok_str = tstring(uls_get_csz_tstr(&tokbuf));
 				}
 			} else {
 				Html5LexBasis::getTokStr(&lxm);
@@ -358,7 +358,7 @@ again_1:
 
 		if (tok != ID) {
 			tok_id = ERR;
-			tok_str = "";
+			tok_str = _T("");
 			prepare_html_text = -2;
 			return;
 		}
@@ -373,14 +373,14 @@ again_1:
 	if (tok == '-') {
 		if ((uch=Html5LexBasis::peekCh(NULL)) == '.' || isdigit(uch)) {
 			tok = NUM;
-			concat_lexeme("-", 1);
+			concat_lexeme(_T("-"), 1);
 			tok_id = tok;
-			tok_str = string(csz_text(&txt_buf));
+			tok_str = tstring(uls_get_csz_tstr(&txt_buf));
 			return;
 		}
 	} else if (tok == '/' && Html5LexBasis::peekCh(NULL) == '>') {
 		tok = TAGEND;
-		tok_str = "";
+		tok_str = _T("");
 	} else if (tok == '>') {
 		goto again_1;
 	}
@@ -403,7 +403,7 @@ Html5Lex::getTokNum(void)
 	return tok_id;
 }
 
-std::string&
+std::tstring&
 Html5Lex::getTokStr(void)
 {
 	return tok_str;
@@ -413,9 +413,9 @@ Html5Lex::getTokStr(void)
 // This is a virtual method, inherited from 'UlsLex' class.
 // We don't need this method yet to process HTML5 files.
 // </brief>
-string Html5Lex::getKeywordStr(int t)
+tstring Html5Lex::getKeywordStr(int t)
 {
-	return string("<unknown>");
+	return tstring(_T("<unknown>"));
 }
 
 void

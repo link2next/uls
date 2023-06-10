@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -30,30 +30,37 @@
 #ifndef __ULS_EMIT_H__
 #define __ULS_EMIT_H__
 
+#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_tokdef.h"
 #include "uls/uld_conf.h"
+#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
+#ifdef ULS_DECL_GLOBAL_TYPES
 #define ULS_FL_WANT_REGULAR_TOKS  0x01
 #define ULS_FL_WANT_QUOTE_TOKS    0x02
 #define ULS_FL_WANT_RESERVED_TOKS 0x04
 #define ULS_FL_WANT_WRAPPER       0x08
 #define ULS_FL_ULD_FILE           0x10
-
+#define ULS_FL_STRFMT_ASTR        0x20
+#define ULS_FL_STRFMT_WSTR        0x40
 #define ULS_FL_C_GEN              0x0100
 #define ULS_FL_CPP_GEN            0x0200
-
+#define ULS_FL_CPPCLI_GEN         0x0400
+#define ULS_FL_CS_GEN             0x0800
 #define ULS_FL_JAVA_GEN           0x1000
 #define ULS_FL_LANG_GEN_MASK      0xFF00
+#endif
 
+#ifdef ULS_DEF_PUBLIC_TYPE
 #define ULS_CLASS_DEPTH          32
 ULS_DEFINE_DELEGATE_BEGIN(proc_uld_line, int)(uld_line_ptr_t tok_names, int n_tabs, const char *lptr);
 ULS_DEFINE_DELEGATE_END(proc_uld_line);
 
-ULS_DEFINE_STRUCT(parms_emit)
+ULS_DEFINE_STRUCT(uls_parms_emit)
 {
 	uls_flags_t flags;
 
@@ -70,13 +77,14 @@ ULS_DEFINE_STRUCT(parms_emit)
 	const char *fpath;
 	int len_fpath;
 
-	uls_arglst_t name_components;
+	_uls_tool_type_(arglst) name_components;
 	int n_name_components;
 
 	uls_voidptr_t ext_data;
 };
+#endif
 
-#if defined(__ULS_EMIT__)
+#if defined(__ULS_EMIT__) || defined(ULS_DECL_PRIVATE_PROC)
 ULS_DECL_STATIC void emit_source_head(const char *name);
 ULS_DECL_STATIC int comp_by_tokid_vx(const uls_voidptr_t a, const uls_voidptr_t b);
 
@@ -116,20 +124,34 @@ int print_tokdef_cpp_source(uls_lex_ptr_t uls,
 	uls_ref_parray(tokdef_ary_prn,tokdef_vx), int n_tokdef_ary_prn,
 	uls_parms_emit_ptr_t emit_parm, const char *base_ulc);
 
+int print_tokdef_cs(uls_lex_ptr_t uls,
+	uls_ref_parray(tokdef_ary_prn,tokdef_vx), int n_tokdef_ary_prn,
+	uls_parms_emit_ptr_t emit_parm, const char *base_ulc);
+
 int print_tokdef_java(uls_lex_ptr_t uls,
 	uls_ref_parray(tokdef_ary_prn,tokdef_vx), int n_tokdef_ary_prn,
 	uls_parms_emit_ptr_t emit_parm, const char *base_ulc);
 #endif
 
+#ifdef ULS_DECL_PUBLIC_PROC
 ULS_DLL_EXTERN int uls_init_parms_emit(uls_parms_emit_ptr_t emit_parm,
 	const char *out_dpath, const char *out_fname, const char *fpath_config,
 	const char* ulc_name, const char* class_path, const char *enum_name,
 	const char *tok_pfx, int flags);
 ULS_DLL_EXTERN int uls_deinit_parms_emit(uls_parms_emit_ptr_t emit_parm);
 ULS_DLL_EXTERN int uls_generate_tokdef_file(uls_lex_ptr_t uls, uls_parms_emit_ptr_t emit_parm);
+#endif
 
 #ifdef _ULS_CPLUSPLUS
 }
+#endif
+
+#ifdef _ULS_USEDLL
+#if defined(ULS_USE_WSTR)
+#include "uls/uls_emit_wstr.h"
+#elif defined(ULS_USE_ASTR)
+#include "uls/uls_emit_astr.h"
+#endif
 #endif
 
 #endif // __ULS_EMIT_H__

@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -59,7 +59,7 @@ UlsAuw::UlsAuw(int size)
 		csz_init(auwstr_buf + i, ULSCPP_DFL_CSZ_BUFFSIZE);
 	}
 }
-
+	
 // <brief>
 // The destructor of UlsLex.
 // </brief>
@@ -149,4 +149,124 @@ UlsAuw::get_slot_len(int slot_no)
 	}
 
 	return auwstr_buf[slot_no].len;
+}
+
+// <brief>
+// This is a constructor of ArgListW
+// </brief>
+ArgListW::ArgListW()
+{
+	wargs = NULL;
+	n_wargs = 0;
+}
+
+// <brief>
+// The destructor of ArgListW
+// </brief>
+ArgListW::~ArgListW()
+{
+	reset();
+}
+
+// <brief>
+// convert the list of string to wide strings.
+// </brief>
+// <parm name="args">list of string</parm>
+// <parm name="n_args"># of strings in the list</parm>
+// <return>list of wide-char string</return>
+bool
+ArgListW::setWArgList(char **args, int n_args)
+{
+	reset();
+
+	wchar_t *wstr;
+	int i, wlen;
+
+	if (n_args <= 0) {
+		return false;
+	}
+
+	UlsAuw *auw_converter = new UlsAuw(n_args);
+
+	n_wargs = n_args;
+	wargs = (wchar_t **) uls_malloc(n_args * sizeof(wchar_t *));
+
+	for (i=0; i < n_args; i++) {
+#ifdef ULS_WINDOWS
+		wstr = auw_converter->mbstr2wstr(args[i], UlsAuw::CVT_MBSTR_ASTR, i);
+#else
+		wstr = auw_converter->mbstr2wstr(args[i], UlsAuw::CVT_MBSTR_USTR, i);
+#endif
+		wlen = auw_converter->get_slot_len(i) / sizeof(wchar_t);
+		wargs[i] = (wchar_t *) uls_malloc((wlen + 1) * sizeof(wchar_t));
+		uls_memcopy(wargs[i], wstr, wlen * sizeof(wchar_t));
+		wargs[i][wlen] = L'\0';
+	}
+
+	delete auw_converter;
+	return true;
+}
+
+wchar_t*
+ArgListW::getWArg(int i)
+{
+	if (i >= n_wargs) {
+		return NULL;
+	}
+
+	return wargs[i];
+}
+
+wchar_t **
+ArgListW::exportWArgs(int *ptr_n_args)
+{
+	wchar_t **wlist = wargs;
+
+	if (ptr_n_args != NULL) {
+		*ptr_n_args = n_wargs;
+	}
+
+	wargs = NULL;
+	n_wargs = 0;
+
+	return wlist;
+}
+
+void
+ArgListW::reset()
+{
+	int i;
+
+	for (i=0; i < n_wargs; i++) {
+		uls_mfree(wargs[i]);
+	}
+
+	uls_mfree(wargs);
+}
+
+wchar_t**
+uls::get_warg_list(char **argv, int n_argv)
+{
+	wchar_t **wargv;
+
+	ArgListW * wlist = new ArgListW();
+
+	wlist->setWArgList(argv, n_argv);
+	wargv = wlist->exportWArgs(NULL);
+
+	delete wlist;
+
+	return wargv;
+}
+
+void
+uls::put_warg_list(wchar_t **wargv, int n_wargv)
+{
+	int i;
+
+	for (i=0; i < n_wargv; i++) {
+		uls_mfree(wargv[i]);
+	}
+
+	uls_mfree(wargv);
 }

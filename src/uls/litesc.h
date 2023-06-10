@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -30,12 +30,16 @@
 #ifndef __ULS_LITESC_H__
 #define __ULS_LITESC_H__
 
-#include "uls/uls_util.h"
+#ifndef ULS_EXCLUDE_HFILES
+#include "uls/uls_misc.h"
 #include "uls/csz_stream.h"
+#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
+
+#ifdef ULS_DECL_PROTECTED_TYPE
 
 #define ULS_FL_ESCSTR_MASK         0x00FF
 #define ULS_FL_ESCSTR_HEXA         0x0100
@@ -77,43 +81,45 @@ extern "C" {
 #define ULS_ESCMAP_OPTGROUP__VERBATIM (0x0000F0F0 | ULS_ESCMAP_MODERN_ESCESC)
 #define ULS_ESCMAP_OPTGROUP__MODERN    0x0000FFF0
 
-ULS_DECLARE_STRUCT(escstr);
-ULS_DECLARE_STRUCT(escmap);
+ULS_DECLARE_STRUCT(uls_escstr);
+ULS_DECLARE_STRUCT(uls_escmap);
 
-ULS_DECLARE_STRUCT(escmap_container);
-ULS_DECLARE_STRUCT(escmap_pool);
+ULS_DECLARE_STRUCT(uls_escmap_container);
+ULS_DECLARE_STRUCT(uls_escmap_pool);
 
-ULS_DECLARE_STRUCT(litesc_sysinfo);
+ULS_DECLARE_STRUCT(uls_litesc_sysinfo);
+#endif
 
-ULS_DEFINE_STRUCT(escstr)
+#ifdef ULS_DEF_PROTECTED_TYPE
+ULS_DEFINE_STRUCT(uls_escstr)
 {
 	char esc_ch;
 	const char *str;
 	int len;
 };
-ULS_DEF_PARRAY(escstr);
+ULS_DEF_PARRAY_THIS(escstr);
 
-ULS_DEFINE_STRUCT_BEGIN(escmap)
+ULS_DEFINE_STRUCT_BEGIN(uls_escmap)
 {
 	int flags;
 	char esc_sym;
 	uls_decl_parray(escstr_list, escstr);
 };
 
-ULS_DEFINE_STRUCT_BEGIN(escmap_container)
+ULS_DEFINE_STRUCT_BEGIN(uls_escmap_container)
 {
 	uls_escstr_t escstr;
 	uls_escmap_container_ptr_t next;
 };
-ULS_DEF_PARRAY(escmap_container);
+ULS_DEF_PARRAY_THIS(escmap_container);
 
-ULS_DEFINE_STRUCT_BEGIN(escmap_pool)
+ULS_DEFINE_STRUCT_BEGIN(uls_escmap_pool)
 {
-	uls_isp_t strpool;
+	_uls_tool_type_(isp) strpool;
 	uls_decl_parray(escstr_containers, escmap_container);
 };
 
-ULS_DEFINE_STRUCT_BEGIN(litesc_sysinfo)
+ULS_DEFINE_STRUCT_BEGIN(uls_litesc_sysinfo)
 {
 	uls_escmap_pool_t escmap_pool__global;
 
@@ -123,21 +129,22 @@ ULS_DEFINE_STRUCT_BEGIN(litesc_sysinfo)
 	uls_escmap_t uls_escstr__verbatim_moderate;
 	uls_escmap_t uls_escstr__modern;
 };
+#endif // ULS_DEF_PROTECTED_TYPE
 
-#if defined(__ULS_LITESC__)
+#if defined(__ULS_LITESC__) || defined(ULS_DEF_PRIVATE_DATA)
 ULS_DECL_STATIC uls_litesc_sysinfo_ptr_t uls_litesc;
 #endif
 
-#if defined(__ULS_LITESC__)
+#if defined(__ULS_LITESC__) || defined(ULS_DECL_PRIVATE_PROC)
 ULS_DECL_STATIC int get_escstr_unicode_opts(const char *lptr);
 ULS_DECL_STATIC int uls_register_hex_escstr(uls_escmap_ptr_t dst_map, uls_escmap_pool_ptr_t escmap_pool,
 	char esc_ch, int n, int zero_pad, int do_unicode);
 
-ULS_DECL_STATIC int extract_escstr_mapexpr(uls_outparam_ptr_t parms);
+ULS_DECL_STATIC int extract_escstr_mapexpr(_uls_tool_ptrtype_(outparam) parms);
 ULS_DECL_STATIC int __parse_escmap_optgrp(char *line, char esc_sym);
-ULS_DECL_STATIC int parse_escmap_optgrp(uls_escmap_ptr_t esc_map, uls_outparam_ptr_t parms);
+ULS_DECL_STATIC int parse_escmap_optgrp(uls_escmap_ptr_t esc_map, _uls_tool_ptrtype_(outparam) parms);
 
-#endif
+#endif // ULS_DECL_PRIVATE_PROC
 
 #ifdef ULS_DECL_PROTECTED_PROC
 int uls_escmap_canbe_escch(uls_uch_t uch);
@@ -167,7 +174,7 @@ int uls_register_escstr(uls_escmap_pool_ptr_t escmap_pool, uls_escmap_ptr_t map,
 int __uls_dup_escmap(uls_escmap_ptr_t src_map, uls_escmap_ptr_t dst_map, uls_escmap_pool_ptr_t escmap_pool, char esc_sym, int flags);
 uls_escmap_ptr_t uls_dup_escmap(uls_escmap_ptr_t src_map, uls_escmap_pool_ptr_t escmap_pool, char esc_sym, int flags);
 
-uls_escmap_ptr_t uls_parse_escmap_feature(uls_escmap_pool_ptr_t escmap_pool, uls_outparam_ptr_t parms);
+uls_escmap_ptr_t uls_parse_escmap_feature(uls_escmap_pool_ptr_t escmap_pool, _uls_tool_ptrtype_(outparam) parms);
 int uls_parse_escmap_mapping(uls_escmap_ptr_t esc_map, uls_escmap_pool_ptr_t escmap_pool, char *line);
 uls_escmap_ptr_t uls_parse_escmap(char *line, uls_escmap_pool_ptr_t escmap_pool);
 
@@ -176,7 +183,9 @@ void finalize_uls_litesc();
 
 #endif // ULS_DECL_PROTECTED_PROC
 
-int uls_dec_escaped_char(uls_escmap_ptr_t map, uls_outparam_ptr_t parms, csz_str_ptr_t cszbuf);
+#ifdef ULS_DECL_PUBLIC_PROC
+int uls_dec_escaped_char(uls_escmap_ptr_t map, _uls_tool_ptrtype_(outparam) parms, _uls_tool_ptrtype(csz_str) cszbuf);
+#endif
 
 #ifdef _ULS_CPLUSPLUS
 }

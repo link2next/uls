@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -24,7 +24,7 @@
 /*
   <file> EngLex.cpp </file>
   <brief>
-    Tokenize and dump English sentenses.
+    Tokenize and dump English sentenses. 
   </brief>
   <author>
     Stanley Hong <link2next@gmail.com>, Nov. 2017
@@ -46,7 +46,7 @@ namespace collection
 	class EngLex : public uls::collection::EngLexBasis {
 		csz_str_t tokbuf;
 
-		std::string tok_str;
+		std::tstring tok_str;
 		int tok_id;
 		bool tok_ungot;
 
@@ -55,7 +55,7 @@ namespace collection
 
 	public:
 
-		EngLex(std::string& config_name);
+		EngLex(std::tstring& config_name);
 		~EngLex();
 
 		// <brief>
@@ -66,12 +66,12 @@ namespace collection
 		virtual int getTok(void);
 
 		virtual int getTokNum(void);
-		virtual std::string& getTokStr(void);
+		virtual std::tstring& getTokStr(void);
 
-		int set_input_file(std::string& fpath);
+		int set_input_file(std::tstring& fpath);
 
 		void ungetTok(void);
-		std::string getKeywordStr(int t);
+		std::tstring getKeywordStr(int t);
 	};
 }
 }

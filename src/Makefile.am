@@ -2,7 +2,7 @@ include $(top_srcdir)/uls.config
 
 lib_LTLIBRARIES = libuls.la
 libuls_la_SOURCES = \
-	uls_prim.c uls_misc.c uls_util.c uls_version.c uls_auw.c uls_fileio.c \
+	uls_prim.c uls_misc.c uls_util.c uls_version.c  uls_auw.c uls_fileio.c \
 	utf8_enc.c utf_file.c uls_log.c csz_stream.c fdfilter.c \
 	uls_ieee754.c uls_lf_percent_f.c uls_lf_sprintf.c uls_print.c \
 	uls_tokdef.c twoplus.c onechar.c idkeyw.c uls_freq.c uls_conf.c uld_conf.c uls_emit.c \
@@ -12,11 +12,6 @@ libuls_la_SOURCES = \
 
 noinst_HEADERS = 
 include_HEADERS = uls.h 
-
-uls/uls_const_array00.h: array_names00.txt
-	./gen_array_names00.sh $< > $@
-
-uls_prim.c: uls/uls_const_array00.h
 
 libuls_la_CPPFLAGS = -D_ULS_IMPLDLL -DULS_SRC_DIR=\"$(PWD)\" \
 	-DULS_ETC_DIR=\"$(etc_dir)\" \
@@ -31,4 +26,3 @@ ACLOCAL_AMFLAGS = -I m4
 install: install-libLTLIBRARIES install-includeHEADERS
 	install -m755 -d "$(includedir)"/uls
 	cp -f uls/*.h "$(includedir)"/uls/
-

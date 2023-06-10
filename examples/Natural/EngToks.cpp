@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -24,7 +24,7 @@
 /*
   <file> EngToks.cpp </file>
   <brief>
-    Tokenize and dump English
+    Tokenize and dump English 
   </brief>
   <author>
     Stanley Hong <link2next@gmail.com>, Nov. 2017
@@ -39,28 +39,28 @@ using namespace uls::collection;
 
 namespace
 {
-	const char * PACKAGE_NAME = "EngToks";
-	string config_name = "eng.ulc";
+	LPCTSTR PACKAGE_NAME = _T("EngToks");
+	tstring config_name = _T("eng.ulc");
 	int  opt_verbose;
 
 	void Usage(void)
 	{
-		err_log("Where the 'simplest.ulc' is:");
+		err_log(_T("Where the 'simplest.ulc' is:"));
 		listUlcSearchPaths();
 	}
 
 	void Version(void)
 	{
 		err_log(ULS_GREETING);
-		err_log("Copyright (C) %d-%d All rights reserved.",
+		err_log(_T("Copyright (C) %d-%d All rights reserved."),
 			ULS_COPYRIGHT_YEAR_START, ULS_COPYRIGHT_YEAR_CURRENT);
-		err_log("Unless required by applicable law or agreed to in writing, software");
-		err_log("distributed under the License is distributed on an \"AS IS\" BASIS,");
-		err_log("WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.");
-		err_log("");
+		err_log(_T("Unless required by applicable law or agreed to in writing, software"));
+		err_log(_T("distributed under the License is distributed on an \"AS IS\" BASIS,"));
+		err_log(_T("WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied."));
+		err_log(_T(""));
 	}
 
-	int engtoks_options(int opt, char * optarg)
+	int engtoks_options(int opt, LPTSTR optarg)
 	{
 		int   stat = 0;
 
@@ -77,7 +77,7 @@ namespace
 			stat = 1;
 			break;
 		default:
-			err_log("undefined option -%c", opt);
+			err_log(_T("undefined option -%c"), opt);
 			stat = -1;
 			break;
 		}
@@ -93,15 +93,15 @@ namespace
 	void dumpToken(EngLex *englex)
 	{
 		int t = englex->getTokNum();
-		const char * tstr = englex->getTokStr().c_str();
+		LPCTSTR tstr = englex->getTokStr().c_str();
 
 		switch (t) {
 		case EngLex::WORD:
-			uls_printf("\t[   WORD] %s\n", tstr);
+			uls_printf(_T("\t[   WORD] %s\n"), tstr);
 			break;
 
 		case EngLex::NUM:
-			uls_printf("\t[    NUM] %s\n", tstr);
+			uls_printf(_T("\t[    NUM] %s\n"), tstr);
 			break;
 
 		default:
@@ -127,32 +127,37 @@ namespace
 }
 
 int
-main(int argc, char **argv)
+_tmain(int argc, LPTARGV argv)
 {
+	LPTSTR *targv;
 	EngLex *englex;
-	string input_file;
+	tstring input_file;
 	int   i0;
 
-	if ((i0=uls_getopts(argc, argv, "vhV", engtoks_options)) <= 0) {
+	ULS_GET_WARGS_LIST(argc, argv, targv);
+
+	if ((i0=uls_getopts(argc, targv, _T("vhV"), engtoks_options)) <= 0) {
 		return i0;
 	}
 
 	englex = new EngLex(config_name);
 
 	if (i0 < argc) {
-		input_file = argv[i0];
+		input_file = targv[i0];
 	} else {
 		Usage();
 		return 1;
 	}
 
 	if (englex->set_input_file(input_file) < 0) {
-		err_log("can't open '%s'", input_file.c_str());
+		err_log(_T("can't open '%s'"), input_file.c_str());
 	} else {
 		dumpTokens(englex);
 	}
 
 	delete englex;
+	ULS_PUT_WARGS_LIST(argc, targv);
+
 	return 0;
 }
 

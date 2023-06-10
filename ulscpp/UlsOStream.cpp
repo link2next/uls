@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -97,6 +97,19 @@ uls::crux::UlsOStream::UlsOStream
 	}
 }
 
+uls::crux::UlsOStream::UlsOStream
+	(std::wstring& wfilepath, UlsLex *lex, const wchar_t *wsubtag, bool numbering)
+{
+	const char *ustr0, *ustr1;
+
+	_ULSCPP_WSTR2USTR(wfilepath.c_str(), ustr0, 0);
+	_ULSCPP_WSTR2USTR(wsubtag, ustr1, 1);
+
+	if (makeOStream_ustr(ustr0, lex, ustr1, numbering) == false) {
+		cerr << "can't create uls (output) stream object!" << endl;
+	}
+}
+
 // <brief>
 // The destuctor of UlsOStream.
 // </brief>
@@ -148,6 +161,18 @@ uls::crux::UlsOStream::printTok(int tokid, string& tokstr)
 		cerr << "can't a print token!" << endl;
 }
 
+void
+uls::crux::UlsOStream::printTok(int tokid, std::wstring& wtokstr)
+{
+	const char *ustr;
+	int len, rc;
+
+	len = _ULSCPP_WSTR2USTR(wtokstr.c_str(), ustr, 0);
+	rc = __uls_print_tok(out_hdr, tokid, ustr, len);
+	if (rc < 0)
+		cerr << "can't a print token!" << endl;
+}
+
 // <brief>
 // print a anotation for <linenum,tag> pair.
 // </brief>
@@ -166,6 +191,17 @@ uls::crux::UlsOStream::printTokLineNum(int lno, string& tagstr)
 		cerr << "can't a print linenum-token!" << endl;
 }
 
+void
+uls::crux::UlsOStream::printTokLineNum(int lno, std::wstring& wtagstr)
+{
+	const char *ustr;
+	int len, rc;
+
+	len = _ULSCPP_WSTR2USTR(wtagstr.c_str(), ustr, 0);
+	rc = __uls_print_tok_linenum(out_hdr, lno, ustr, len);
+	if (rc < 0)
+		cerr << "can't a print linenum-token!" << endl;
+}
 // <brief>
 // Start writing the lexical streaming with input-stream 'ifile'.
 // </brief>

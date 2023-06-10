@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -35,25 +35,27 @@
 #ifndef __ULS_CONST_H__
 #define __ULS_CONST_H__
 
+#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_config.h"
+#endif
 
 #define TMP_SYSPROPS_FNAME   "uls_sysprops.txt"
 #define TMP_ID_RANGES_FNAME  "uls_id_ranges.txt"
 #define TMP_LANGS_FNAME      "uls_langs.txt"
 #define ULS_ULCNAME_DELIM    '/'
 
-#define ULS_VERSION_STR      "1.8.5"
-#define ULC2CLASS_PROGVER    "v2.7.0"
-#define ULF_GEN_PROGVER      "v1.6.0"
-#define ULS_STREAM_PROGVER   "v2.6.0"
+#define ULS_VERSION_STR      _T("1.8.3")
+#define ULC2CLASS_PROGVER    _T("v2.7.0")
+#define ULF_GEN_PROGVER      _T("v1.6.0")
+#define ULS_STREAM_PROGVER   _T("v2.6.0")
 
-#define ULS_INITIAL_NAME     "ULS(Unified Lexical Scheme)"
-#define ULS_AUTHOR           "Stanley Hong (link2next@gmail.com)"
-#define ULS_GREETING         ULS_INITIAL_NAME " " ULS_VERSION_STR ", written by " ULS_AUTHOR "."
-#define ULS_URL              "https://sourceforge.net/projects/uls"
-#define ULS_LICENSE_NAME     "The MIT License (MIT)"
+#define ULS_INITIAL_NAME     _T("ULS(Unified Lexical Scheme)")
+#define ULS_AUTHOR           _T("Stanley Hong (link2next@gmail.com)")
+#define ULS_GREETING         ULS_INITIAL_NAME _T(" ") ULS_VERSION_STR _T(", written by ") ULS_AUTHOR _T(".")
+#define ULS_URL              _T("https://sourceforge.net/projects/uls")
+#define ULS_LICENSE_NAME     _T("The MIT License (MIT)")
 #define ULS_COPYRIGHT_YEAR_START    2011
-#define ULS_COPYRIGHT_YEAR_CURRENT  2022
+#define ULS_COPYRIGHT_YEAR_CURRENT  2020
 
 #ifdef ULS_WINDOWS
 #define ULS_REG_HOME         L"HKLM:SOFTWARE\\UlsWin"
@@ -66,7 +68,7 @@
 #define ULS_DIRLIST_DELIM    ';'
 #define ULS_DIRLIST_DELIM_WCH L';'
 #define ULS_OS_TEMP_DIR      "C:\\Windows\\Temp"
-#define ULS_SHARE_DFLDIR     "C:\\Program Files\\Common Files\\UlsWin"
+#define ULS_SHARE_DFLDIR     "C:\\opt\\share\\UlsWin"
 #define ULS_ETC_DIR          "C:\\Program Files\\Common Files\\UlsWin"
 #define ULS_SYSPROPS_FPATH  ULS_ETC_DIR "\\" ULS_SYSPROPS_FNAME
 #define ULS_OS_SHARE_DFLDIR ULS_SHARE_DFLDIR
@@ -81,12 +83,12 @@
 #define ULS_OS_TEMP_DIR      "/tmp"
 #define ULS_SHARE_DFLDIR     "/usr/share/uls"
 #define ULS_ETC_DFLDIR       "/usr/local/etc/uls"
-#ifdef _ULS_IMPLDLL
+#ifdef _ULS_IMPLDLL 
 #ifndef ULS_ETC_DIR
 #error "ULS_ETC_DIR: not defined!"
 #endif
 #define ULS_SYSPROPS_FPATH  ULS_ETC_DIR "/" ULS_SYSPROPS_FNAME
-#endif // _ULS_IMPLDLL
+#endif // _ULS_IMPLDLL 
 #define ULS_OS_SHARE_DFLDIR "/usr/local/share:/usr/share"
 #endif
 
@@ -119,11 +121,11 @@
 #define ERR_TOK_IDX       8
 #define N_RESERVED_TOKS   9
 
-#define ULS_COMM_MARK_MAXSIZ       30
+#define ULS_COMM_MARK_MAXSIZ       15
 #define ULS_N_MAX_COMMTYPES        4
 #define ULS_QUOTE_MARK_MAXSIZ      7
 #define ULS_N_MAX_QUOTETYPES       8
-
+#define ULS_N_CHARSET_RANGES       8
 #define N_ULC_SEARCH_PATHS         8
 #define ULS_MAGICCODE_SIZE         80
 
@@ -135,6 +137,8 @@
 #define ULS_LINEBUFF_SIZ__ULF      127
 #define ULS_LINEBUFF_SIZ__ULS      127
 
+#define BUFSIZ_FD_SOURCE (ULS_MAGICCODE_SIZE+127)
+
 #define TOKDEF_LINES_DELTA         64
 #define TOKDEF_LINES_DELTA2        64
 
@@ -142,18 +146,17 @@
 #define ULS_FDBUF_INITSIZE         512
 #define ULS_FDBUF_SIZE             1024
 
-#define ULS_N_ONECHAR_TOKGRPS      4
+#define N_ONECHAR_TOKGRPS          4
 
 #define ULS_TXT_RECHDR_SZ          32
 #define ULS_BIN_BLKSIZ_LOG2        9
 #define ULS_BIN_BLKSIZ             (1<<ULS_BIN_BLKSIZ_LOG2)
-
+// assert: ULS_BIN_HDR_SZ % ULS_BIN_BLKSIZ == 0
 #define ULS_BIN_HDR_SZ             512
 #define ULS_BIN_RECHDR_NUM_INT32   2
 #define ULS_BIN_RECHDR_SZ (ULS_BIN_RECHDR_NUM_INT32*sizeof(uls_int32))
 #define ULS_BIN_REC_SZ(txtlen) (ULS_BIN_RECHDR_SZ+uls_roundup((txtlen)+1,4))
 
-#define ULC_N_LEXATTRS             13
 #define ULS_STREAM_SUBNAME_SIZE    31
 #define ULS_STREAM_CTIME_SIZE      20
 
@@ -174,7 +177,7 @@
 #define ULS_TWOPLUS_MAXLEN         (ULS_KWTABLE_TWOPLUS_SIZE+1)
 
 #define ULS_CNST_NILSTR_SIZE       4
-#define ULS_SYNTAX_TABLE_SIZE      128
+#define ULS_SYNTAX_TABLE_SIZE      256
 #define ULS_TOKTOWER_DFLSIZ        16
 #define ULF_HASH_TABLE_SIZE        111
 
@@ -223,18 +226,16 @@
 #define ULS_FAIL        0
 #define ULS_SUCCESS     1
 
-// Encoding
 #define ULS_UTF8_CH_MAXLEN    4
 
+#define UTF_CODEPOINT_END          0x10FFFF
+#define UTF_CODEPOINT_RSVD_START   0xD800
+#define UTF_CODEPOINT_RSVD_END     0xDFFF
+
+// encoding
 #define ULS_MBCS_UNKNOWN  -1
 #define ULS_MBCS_UTF8      0
 #define ULS_MBCS_MS_MBCS   1
-
-#define UTF8_CODEPOINT_END          0x1FFFFF
-#define UTF16_CODEPOINT_END         0x10FFFF
-#define UTF16_CODEPOINT_RSVD_START  0xD800
-#define UTF16_CODEPOINT_RSVD_END    0xDFFF
-#define UTF32_CODEPOINT_END         UTF8_CODEPOINT_END
 
 #define DOUBLE_EXPO_SIZE_BITS  11
 #define DOUBLE_EXPO_BIAS      1023
@@ -246,13 +247,5 @@
 #define ULS_DECIMAL_SEPARATOR_DFL  0x01
 #define ULS_MAXLEN_NUMBER_PREFIX  7
 #define ULS_N_MAX_NUMBER_PREFIXES 8
-
-#define ULS_N_BOXLST 3
-#define ULS_N_SYSPROPS  16
-
-#define ULS_CNST_SUFFIX_MAXSIZ   3
-#define ULS_CNST_SUFFIXES_MAXSIZ 31
-
-#include "uls_const_array00.h"
 
 #endif // __ULS_CONST_H__

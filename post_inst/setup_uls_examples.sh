@@ -144,9 +144,7 @@ if [ $? != 0 ] || [ ! -d "$doc_dir" ]; then
 	exit 1
 fi
 
-if ls -1 "$ULS_SHARE"/*.pdf 1> /dev/null 2>&1; then
-	cp -f "$ULS_SHARE"/*.pdf "$doc_dir"/
-fi
+cp -f "$ULS_SHARE"/*.pdf "$doc_dir"/
 
 gen_mkcfg_of_uls_examples "$ULS_HOME" "$dest_dir/$pkg_fname/cfg.mk"
 cd "$dest_dir/$pkg_fname"

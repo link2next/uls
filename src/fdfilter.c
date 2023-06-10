@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -39,7 +39,6 @@
 #include "uls/uls_fileio.h"
 #include "uls/uls_misc.h"
 
-#include <errno.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 
@@ -84,7 +83,7 @@ fdf_open_0(int *pipe1, int *pipe2, fdf_t *fdf, int fd)
 	int  rc;
 
 	if ((fdf->child_pid[0]=fork()) < 0) {
-		err_log("fork error!!");
+		_uls_log(err_log)("fork error!!");
 		return -1;
 	}
 
@@ -120,12 +119,12 @@ fdf_open(fdf_t *fdf, int fd)
 	if (fd < 0) return -1;
 
 	if (pipe(pipe1) < 0) {
-		err_log("can't create pipes");
+		_uls_log(err_log)("can't create pipes");
 		return -1;
 	}
 
 	if (pipe(pipe2) < 0) {
-		err_log("can't create pipes");
+		_uls_log(err_log)("can't create pipes");
 		uls_fd_close(pipe1[0]); uls_fd_close(pipe1[1]);
 		return -1;
 	}
@@ -139,7 +138,7 @@ fdf_open(fdf_t *fdf, int fd)
 	}
 
 	if ((fdf->child_pid[1]=fork()) < 0) {
-		err_log("fork error!!");
+		_uls_log(err_log)("fork error!!");
 		uls_fd_close(pipe1[0]); uls_fd_close(pipe1[1]);
 		uls_fd_close(pipe2[0]); uls_fd_close(pipe2[1]);
 		return -1;
@@ -153,7 +152,7 @@ fdf_open(fdf_t *fdf, int fd)
 
 	 	if (r_pipe != fd_stdin) {
 			if (dup2(r_pipe, fd_stdin) != fd_stdin) {
-				err_log("dup2 error (stdin)!!");
+				_uls_log(err_log)("dup2 error (stdin)!!");
 				uls_appl_exit(1);
 			}
 			uls_fd_close(r_pipe);
@@ -161,14 +160,14 @@ fdf_open(fdf_t *fdf, int fd)
 
 		if (w_pipe != fd_stdout) {
 			if (dup2(w_pipe, fd_stdout) != fd_stdout) {
-				err_log("dup2 error (stdout)!!");
+				_uls_log(err_log)("dup2 error (stdout)!!");
 				uls_appl_exit(1);
 			}
 			uls_fd_close(w_pipe);
 		}
 
 		if (uls_execv_cmdline(cmdline) < 0) {
-			err_log("execle error!");
+			_uls_log(err_log)("execle error!");
 			uls_appl_exit(1);
 		}
 		// NEVER REACHED
@@ -178,7 +177,7 @@ fdf_open(fdf_t *fdf, int fd)
 	r_pipe = pipe2[0]; w_pipe = pipe1[1];
 
 	if ((fdf->child_pid[0]=fork()) < 0) {
-		err_log("fork error!!");
+		_uls_log(err_log)("fork error!!");
 		uls_fd_close(r_pipe); uls_fd_close(w_pipe);
 		return -1;
 	}
@@ -246,7 +245,7 @@ fdf_iprovider_filelist(int fd_list, int writefd)
 	FILE *fp_lst;
 
 	if ((fp_lst=uls_fp_fdopen(fd_list, "r")) == NULL) {
-		err_log("%s: fail to fdopen!", __func__);
+		_uls_log(err_log)("%s: fail to fdopen!", __FUNCTION__);
 		return -1;
 	}
 
@@ -263,10 +262,10 @@ fdf_iprovider_filelist(int fd_list, int writefd)
 		fpath = lptr;
 		fpath[len] = '\0';
 
-		err_log("%s:", fpath);
+		_uls_log(err_log)("%s:", fpath);
 
 		if ((fdin=uls_fd_open(fpath, ULS_FIO_READ)) < 0) {
-			err_log("%s: not found!", fpath);
+			_uls_log(err_log)("%s: not found!", fpath);
 			continue;
 		}
 
@@ -275,7 +274,7 @@ fdf_iprovider_filelist(int fd_list, int writefd)
 
 		if (rc < 0) {
 			stat = -1;
-			err_log("%s: fail to process!", fpath);
+			_uls_log(err_log)("%s: fail to process!", fpath);
 		}
 	}
 
@@ -362,14 +361,14 @@ uls_proc_join_round_1(uls_pid_t *child_pid, int n_child_pid)
 			if (errno == EINTR) {
 				continue;
 			} else if (errno == ECHILD) {
-				err_log("%s: ECHILD!", __func__);
+				_uls_log(err_log)("%s: ECHILD!", __FUNCTION__);
 				for (k=0; k<n_child_pid; k++) {
 					if (child_pid[k] > 0) child_pid[k] = 0;
 				}
 				n_procs_rem = 0;
 				break;
 			} else {
-				err_log("error to waitpid()");
+				_uls_log(err_log)("error to waitpid()");
 				return -1;
 			}
 
@@ -382,7 +381,7 @@ uls_proc_join_round_1(uls_pid_t *child_pid, int n_child_pid)
 		if (WIFEXITED(status)) {
 			exit_code = WEXITSTATUS(status);
 			if (exit_code != 0) {
-				err_log("child %d exited with %d", pid, exit_code);
+				_uls_log(err_log)("child %d exited with %d", pid, exit_code);
 				child_pid[k] = -1;
 			} else {
 				child_pid[k] = 0;

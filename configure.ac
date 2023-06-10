@@ -66,6 +66,7 @@ AC_CONFIG_FILES([Makefile
         ulsconfig/Makefile
         ulc_exam/Makefile
         src/Makefile
+        ulscompat/Makefile
         ulscpp/Makefile
         tools/Makefile
         tools/ulstools/Makefile
@@ -88,6 +89,7 @@ AC_CONFIG_FILES([Makefile
         tests/two_lex/Makefile
         tests/test_tree/Makefile
         tests/gcc_toks/Makefile
+        tests/wdump_toks/Makefile
         examples/Makefile
         examples/test_1st/Makefile
         examples/tokseq/Makefile

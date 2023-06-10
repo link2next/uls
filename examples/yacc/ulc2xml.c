@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -87,7 +87,7 @@ new_tokdef(char *name, char* keyw, int tok_id)
 		ulc_file.tokdef_list = (ulc_token_def_t*) realloc(ulc_file.tokdef_list,
 			ulc_file.n_alloc_tokdef_list * sizeof(ulc_token_def_t));
 		if (ulc_file.tokdef_list == NULL) {
-			err_panic("%s: malloc error!", __func__);
+			err_panic("%s: malloc error!", __FUNCTION__);
 		}
 	}
 

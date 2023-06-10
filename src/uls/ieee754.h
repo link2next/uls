@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -35,13 +35,15 @@
 #ifndef __ULS_IEEE754_H__
 #define __ULS_IEEE754_H__
 
+#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_type.h"
+#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
-#if defined(__ULS_IEEE754__)
+#if defined(__ULS_IEEE754__) || defined(ULS_DECL_PRIVATE_PROC)
 ULS_DECL_STATIC int get_ieee754_biased_expo(char* buff, int n_bits_expo);
 ULS_DECL_STATIC void put_ieee754_biased_expo(int m_expo, char* buff, int n_bits_expo);
 #endif

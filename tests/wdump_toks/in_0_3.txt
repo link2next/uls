@@ -1,0 +1,9 @@
+
+hello
+ "hello\tworld!"
+ 
+  "hello\n\
+\tworld"
+
+  'hello\n\
+\tworld'

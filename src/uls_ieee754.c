@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -31,14 +31,16 @@
     Stanley Hong <link2next@gmail.com>, May 2011.
   </author>
 */
+#ifndef ULS_EXCLUDE_HFILES
 #define __ULS_IEEE754__
 #include "uls/ieee754.h"
 #include "uls/uls_prim.h"
 #include "uls/uls_sysprops.h"
 #include "uls/uls_log.h"
+#endif
 
 ULS_DECL_STATIC int
-get_ieee754_biased_expo(char* buff, int n_bits_expo)
+ULS_QUALIFIED_METHOD(get_ieee754_biased_expo)(char* buff, int n_bits_expo)
 {
 	char  mask, ch, ch_carry;
 	int expo, i, j2, n_bits, m;
@@ -72,7 +74,7 @@ get_ieee754_biased_expo(char* buff, int n_bits_expo)
 }
 
 ULS_DECL_STATIC void
-put_ieee754_biased_expo(int m_expo, char* buff, int n_bits_expo)
+ULS_QUALIFIED_METHOD(put_ieee754_biased_expo)(int m_expo, char* buff, int n_bits_expo)
 {
 	char  mask, ch;
 	int i, n_bits, m;
@@ -100,7 +102,7 @@ put_ieee754_biased_expo(int m_expo, char* buff, int n_bits_expo)
 }
 
 void
-uls_ieee754_bankup_bits(char* srcptr, int start_bit, int end_bit, int n_shift)
+ULS_QUALIFIED_METHOD(uls_ieee754_bankup_bits)(char* srcptr, int start_bit, int end_bit, int n_shift)
 {
 	int  i1, i2, i1_dash, i2_dash;
 	int  j1, j2, j2_dash;
@@ -129,7 +131,7 @@ uls_ieee754_bankup_bits(char* srcptr, int start_bit, int end_bit, int n_shift)
 	//
 
 	if ((end_bit + 1) % 8 != 0) {
-		err_panic("%s: invalid paramerter 'end_bit'", __func__);
+		_uls_log(err_panic)("%s: invalid paramerter 'end_bit'", __FUNCTION__);
 	}
 
 	if (n_shift <= 0 || start_bit > end_bit) return;
@@ -231,7 +233,7 @@ uls_ieee754_bankup_bits(char* srcptr, int start_bit, int end_bit, int n_shift)
 }
 
 int
-uls_ieee754_longdouble_isspecial(long double x, char* nambuf)
+ULS_QUALIFIED_METHOD(uls_ieee754_longdouble_isspecial)(long double x, char* nambuf)
 {
 	// ret-val == 1 : x is a special-value with nambuf filled.
 	// ret-val == 0 x is a finite value
@@ -276,7 +278,7 @@ uls_ieee754_longdouble_isspecial(long double x, char* nambuf)
 }
 
 long double
-uls_ieee754_modlf(long double x, long double* p_frac)
+ULS_QUALIFIED_METHOD(uls_ieee754_modlf)(long double x, long double* p_frac)
 {
 	char  buff[SIZEOF_LONG_DOUBLE];
 	char  buff2[SIZEOF_LONG_DOUBLE];

@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -31,21 +31,27 @@
     Stanley Hong <link2next@gmail.com>, July 2011.
   </author>
 */
-#ifndef __ULS_LF_SPRINTF_H__
+#if !defined(ULS_DOTNET) && !defined(__ULS_LF_SPRINTF_H__)
 #define __ULS_LF_SPRINTF_H__
 
+#ifndef ULS_EXCLUDE_HFILES
 #include "uls/csz_stream.h"
 #include <stdarg.h>
+#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
+#ifdef ULS_DECL_GLOBAL_TYPES
 #define uls_lf_map_lock(map) uls_lock_mutex(uls_ptr((map)->mtx))
 #define uls_lf_map_unlock(map) uls_unlock_mutex(uls_ptr((map)->mtx))
 
 #define uls_lf_lock(uls_lf) uls_lock_mutex(uls_ptr((uls_lf)->mtx))
 #define uls_lf_unlock(uls_lf) uls_unlock_mutex(uls_ptr((uls_lf)->mtx))
+#endif
+
+#ifdef ULS_DECL_PUBLIC_TYPE
 
 #define ULS_LF_PERCENT_NAMESIZ 3
 #define ULS_LF_N_FILLCHS 16
@@ -96,16 +102,19 @@ extern "C" {
 
 #define ULS_LF_NO_DEFAULT 0x01
 
-ULS_DECLARE_STRUCT(lf_context);
+ULS_DECLARE_STRUCT(uls_lf_context);
 
 ULS_DEFINE_DELEGATE_BEGIN(lf_puts, int)(uls_voidptr_t dat, const char* str, int len);
 ULS_DEFINE_DELEGATE_END(lf_puts);
 
 ULS_DEFINE_DELEGATE_BEGIN(lf_convspec, int)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx);
 ULS_DEFINE_DELEGATE_END(lf_convspec);
+#endif // ULS_DECL_PUBLIC_TYPE
+
+#ifdef ULS_DEF_PROTECTED_TYPE
 
 #ifdef _ULS_IMPLDLL
-ULS_DEFINE_STRUCT(buf4str)
+ULS_DEFINE_STRUCT(uls_buf4str)
 {
 	unsigned int flags;
 	char *buf, *bufptr;
@@ -113,13 +122,13 @@ ULS_DEFINE_STRUCT(buf4str)
 };
 #endif
 
-ULS_DEFINE_STRUCT(lf_convflag)
+ULS_DEFINE_STRUCT(uls_lf_convflag)
 {
 	uls_flags_t  flags;
 	int    width, precision;
 };
 
-ULS_DEFINE_STRUCT(lf_name2proc)
+ULS_DEFINE_STRUCT(uls_lf_name2proc)
 {
 	char name[ULS_LF_PERCENT_NAMESIZ+1];
 	int l_name;
@@ -127,13 +136,13 @@ ULS_DEFINE_STRUCT(lf_name2proc)
 	uls_voidptr_t user_data;
 };
 
-ULS_DEFINE_STRUCT(lf_convspec_table)
+ULS_DEFINE_STRUCT(uls_lf_convspec_table)
 {
 	uls_lf_name2proc_ptr_t proc_tab;
 	int n_used, n_allocd;
 };
 
-ULS_DEFINE_STRUCT(lf_map)
+ULS_DEFINE_STRUCT(uls_lf_map)
 {
 	uls_mutex_struct_t mtx;
 	int flags, ref_cnt;
@@ -141,8 +150,10 @@ ULS_DEFINE_STRUCT(lf_map)
 	uls_lf_convspec_table_t linear;
 	uls_lf_convspec_table_t sorted[ULS_LF_PERCENT_NAMESIZ];
 };
+#endif
 
-ULS_DEFINE_STRUCT(lf)
+#ifdef ULS_DEF_PUBLIC_TYPE
+ULS_DEFINE_STRUCT(uls_lf)
 {
 	void           *x_dat;
 	uls_lf_puts_t  uls_lf_puts;
@@ -153,9 +164,11 @@ ULS_DEFINE_STRUCT(lf)
 	uls_voidptr_t g_dat;
 	csz_str_t wbuf1;
 	csz_str_t wbuf2;
+
+	uls_voidptr_t shell;
 };
 
-ULS_DEFINE_STRUCT_BEGIN(lf_context)
+ULS_DEFINE_STRUCT_BEGIN(uls_lf_context)
 {
 	void           *g_dat;
 	uls_lf_convflag_t perfmt;
@@ -164,17 +177,19 @@ ULS_DEFINE_STRUCT_BEGIN(lf_context)
 	va_list        args;
 };
 
-ULS_DEFINE_STRUCT(lf_delegate)
+ULS_DEFINE_STRUCT(uls_lf_delegate)
 {
 	uls_voidptr_t xdat;
 	uls_lf_puts_t puts;
 };
 
-#if defined(__ULS_LF_SPRINTF__)
+#endif
+
+#if defined(__ULS_LF_SPRINTF__) || defined(ULS_DEF_PRIVATE_DATA)
 ULS_DECL_STATIC uls_lf_map_t dfl_convspec_map;
 #endif
 
-#if defined(__ULS_LF_SPRINTF__)
+#if defined(__ULS_LF_SPRINTF__) || defined(ULS_DECL_PRIVATE_PROC)
 ULS_DECL_STATIC void __uls_lf_sysputs(const char* msg);
 ULS_DECL_STATIC int __puts_proc_str(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, const char* str, int len);
 
@@ -215,15 +230,18 @@ ULS_DECL_STATIC int __replace_convspec_linear(uls_lf_convspec_table_ptr_t tbl,
 	const char* percent_name, uls_lf_convspec_t proc, uls_voidptr_t user_data);
 ULS_DECL_STATIC void load_default_convspec_map(uls_lf_map_ptr_t lf_map);
 ULS_DECL_STATIC int __uls_lf_skip_atou(const char ** p_ptr);
-#endif // __ULS_LF_SPRINTF__
+#endif // ULS_DECL_PRIVATE_PROC
 
 #ifdef ULS_DECL_PROTECTED_PROC
 int uls_lf_puts_prefix(char* str, int flags);
 int uls_lf_fill_ch(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, char ch_fill, int n);
 int uls_lf_fill_numstr(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc,
 	uls_lf_convflag_ptr_t p, const char* numstr, int l_numstr);
+int uls_lf_fill_mbstr(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc,
+	uls_lf_convflag_ptr_t p, const char* numstr, int l_numstr, int lw_numstr);
 
 int fmtproc_s(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx);
+int fmtproc_ws(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx);
 int fmtproc_c(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx);
 void __add_convspec_linear(uls_lf_convspec_table_ptr_t tbl,
 	char* percent_name, uls_lf_convspec_t proc, int tbl_ind);
@@ -232,11 +250,7 @@ void initialize_uls_lf(void);
 void finalize_uls_lf(void);
 #endif // ULS_DECL_PROTECTED_PROC
 
-ULS_DLL_EXTERN int uls_lf_fill_mbstr(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc,
-	uls_lf_convflag_ptr_t p, const char* numstr, int l_numstr, int lw_numstr);
-
-ULS_DLL_EXTERN int fmtproc_ws(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx);
-
+#ifdef ULS_DECL_PUBLIC_PROC
 ULS_DLL_EXTERN uls_lf_map_ptr_t uls_lf_get_default(void);
 
 ULS_DLL_EXTERN int uls_lf_init_convspec_map(uls_lf_map_ptr_t lf_map, int flags);
@@ -278,6 +292,7 @@ ULS_DLL_EXTERN int uls_lf_puts_csz(uls_voidptr_t x_dat, const char* wrdptr, int 
 ULS_DLL_EXTERN int uls_lf_puts_str(uls_voidptr_t x_dat, const char* wrdptr, int wrdlen);
 ULS_DLL_EXTERN int uls_lf_puts_file(uls_voidptr_t x_dat, const char* wrdptr, int wrdlen);
 ULS_DLL_EXTERN int uls_lf_puts_null(uls_voidptr_t x_dat, const char* wrdptr, int wrdlen);
+#endif // ULS_DECL_PUBLIC_PROC
 
 #ifdef _ULS_CPLUSPLUS
 }

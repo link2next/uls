@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -24,7 +24,7 @@
 /*
   <file> EngLex.cpp </file>
   <brief>
-    Tokenize and dump English sentense.
+    Tokenize and dump English sentense. 
   </brief>
   <author>
     Stanley Hong <link2next@gmail.com>, Nov. 2017
@@ -40,14 +40,14 @@ using namespace std;
 using namespace uls::crux;
 using namespace uls::collection;
 
-EngLex::EngLex(string& config_name)
+EngLex::EngLex(tstring& config_name)
 	: EngLexBasis(config_name)
 {
 	csz_init(&tokbuf, 128);
 
-	string nil_str = "";
+	tstring nil_str = _T("");
 
-	tok_str = "";
+	tok_str = _T("");
 	tok_id = NONE;
 
 	tok_ungot = false;
@@ -55,9 +55,9 @@ EngLex::EngLex(string& config_name)
 
 EngLex::~EngLex()
 {
-	string nil_str = "";
+	tstring nil_str = _T("");
 
-	tok_str = "";
+	tok_str = _T("");
 	tok_id = NONE;
 
 	csz_deinit(&tokbuf);
@@ -69,11 +69,11 @@ EngLex::~EngLex()
 // <parm name="fpath">The path of file</parm>
 // <return>0 if it succeeds, otherwise -1</return>
 int
-EngLex::set_input_file(string& fpath)
+EngLex::set_input_file(tstring& fpath)
 {
 	pushFile(fpath);
 
-	tok_str = "";
+	tok_str = _T("");
 	tok_id = NONE;
 
 	return 0;
@@ -83,16 +83,16 @@ void
 EngLex::expect_number(void)
 {
 	unsigned int num;
-	char num_buf[32];
-	char ch;
-	const char * ptr;
+	TCHAR num_buf[32];
+	TCHAR ch;
+	LPCTSTR ptr;
 	int len, i;
-	string lxm;
+	tstring lxm;
 
 	expect(NUM);
 	EngLexBasis::getLexeme(lxm);
 	num = LexemeAsInt(lxm);
-	len = uls_zprintf(&tokbuf, "%u", num);
+	len = uls_zprintf(&tokbuf, _T("%u"), num);
 }
 
 // <brief>
@@ -104,9 +104,9 @@ EngLex::get_token(void)
 {
 	int tok, len;
 	bool is_quote;
-	const char * ptr;
+	LPCTSTR ptr;
 	uls_uch_t uch;
-	string *lxm;
+	tstring *lxm;
 
 	if (tok_ungot == true) {
 		tok_ungot = false;
@@ -130,21 +130,21 @@ EngLex::get_token(void)
 	if (isalpha(uch)) {
 		tok = EngLexBasis::getTok();
 
-		ptr = (const char *) lxm->c_str();
+		ptr = (LPCTSTR) lxm->c_str();
 	 	len = (int) lxm->length();
 
 	 	tok = WORD;
-	 	csz_append(&tokbuf, (const char *) ptr, len * sizeof(char));
+	 	csz_append(&tokbuf, (const char *) ptr, len * sizeof(TCHAR));
 	}
 
 	if (tok == NONE) {
 		tok = EngLexBasis::getTok();
-		ptr = (const char *) lxm->c_str();
+		ptr = (LPCTSTR) lxm->c_str();
 	 	len = (int) lxm->length();
-	 	csz_append(&tokbuf, (const char *) ptr, len * sizeof(char));
+	 	csz_append(&tokbuf, (const char *) ptr, len * sizeof(TCHAR));
 	}
 
-	tok_str = string(csz_text(&tokbuf));
+	tok_str = tstring(uls_get_csz_tstr(&tokbuf));
 	tok_id = tok;
 }
 
@@ -162,7 +162,7 @@ EngLex::getTokNum(void)
 	return tok_id;
 }
 
-std::string&
+std::tstring&
 EngLex::getTokStr(void)
 {
 	return tok_str;
@@ -170,9 +170,9 @@ EngLex::getTokStr(void)
 
 // <brief>
 // </brief>
-string EngLex::getKeywordStr(int t)
+tstring EngLex::getKeywordStr(int t)
 {
-	return string("<unknown>");
+	return tstring(_T("<unknown>"));
 }
 
 void

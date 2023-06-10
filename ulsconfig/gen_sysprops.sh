@@ -39,6 +39,7 @@ fi
 
 uls_inst_dir=$(readlink_m "$1")
 uls_etc_dir=$(readlink_m "$2")
+
 uls_version=$3
 
 debug_num=${uls_version}
@@ -144,6 +145,5 @@ gen_namval_pair ULS_VERSION_DEBUG $debug_num
 if [ "$stage" = "B" ]; then
 	gen_build_sysprops src ulc_exam
 else
-	gen_inst_sysprops lib share/uls
+	gen_inst_sysprops lib/uls share/uls
 fi
-

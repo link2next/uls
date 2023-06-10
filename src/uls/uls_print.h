@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -32,25 +32,24 @@
   </author>
 */
 
-#ifndef __ULS_PRINT_H__
+#if !defined(ULS_DOTNET) && !defined(__ULS_PRINT_H__)
 #define __ULS_PRINT_H__
 
+#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_lf_sprintf.h"
 #include <stdio.h>
+#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
-#if defined(__ULS_PRINT__)
+#if defined(__ULS_PRINT__) || defined(ULS_DEF_PRIVATE_DATA)
 ULS_DECL_STATIC uls_lf_ptr_t dfl_str_lf;
 ULS_DECL_STATIC uls_lf_ptr_t dfl_file_lf;
 ULS_DECL_STATIC uls_lf_ptr_t dfl_csz_lf;
 ULS_DECL_STATIC uls_lf_ptr_t dfl_sysprn_lf;
 ULS_DECL_STATIC int sysprn_opened;
-#define ULS_SYSPRN_TABBUF_SIZE  64
-ULS_DECL_STATIC char sysprn_tabbuf[ULS_SYSPRN_TABBUF_SIZE];
-ULS_DECL_STATIC int  sysprn_tabsiz, sysprn_ntabs, sysprn_tabbuf_len;
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC
@@ -58,8 +57,8 @@ void initialize_uls_sysprn(void);
 void finalize_uls_sysprn(void);
 #endif
 
+#if defined(__ULS_PRINT__) || defined(ULS_DECL_PUBLIC_PROC)
 ULS_DLL_EXTERN int uls_sysprn_open(uls_voidptr_t data, uls_lf_puts_t proc);
-ULS_DLL_EXTERN void uls_sysprn_set_tabsiz(int tabsiz);
 ULS_DLL_EXTERN void uls_sysprn_close(void);
 ULS_DLL_EXTERN int uls_vsysprn(const char* fmt, va_list args);
 ULS_DLL_EXTERN int uls_sysprn(const char* fmt, ...);
@@ -109,9 +108,18 @@ ULS_DLL_EXTERN int __uls_vprintf(const char *fmt, va_list args);
 ULS_DLL_EXTERN int uls_vprintf(const char *fmt, va_list args);
 ULS_DLL_EXTERN int __uls_printf(const char *fmt, ...);
 ULS_DLL_EXTERN int uls_printf(const char *fmt, ...);
+#endif // ULS_DECL_PUBLIC_PROC
 
 #ifdef _ULS_CPLUSPLUS
 }
+#endif
+
+#ifdef _ULS_USEDLL
+#if defined(ULS_USE_WSTR)
+#include "uls/uls_wprint.h"
+#elif defined(ULS_USE_ASTR)
+#include "uls/uls_aprint.h"
+#endif
 #endif
 
 #endif // __ULS_PRINT_H__

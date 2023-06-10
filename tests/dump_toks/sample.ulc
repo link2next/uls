@@ -34,8 +34,6 @@ NEQ      !=
 EQEQ     ===
 SHFT_ASGN     <<=
 IMPORT     @import
-SNOWMAN   \u2603$ 
-EUROSIGN  \u20ac 
 
 OR       or    
 
@@ -78,7 +76,3 @@ UNSIGNED unsigned
 VOID     void
 VOLATILE volatile
 WHILE    while
-
-USERDEF1 500 
-USERDEF2
-USERDEF3 500

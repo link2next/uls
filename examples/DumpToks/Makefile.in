@@ -307,9 +307,12 @@ uls_bin_dir = $(uls_inst_dir)/bin
 uls_inc_dir = $(uls_inst_dir)/include
 uls_lib_dir = $(uls_inst_dir)/lib
 ulc2class_exe = $(uls_bin_dir)/ulc2class
-DumpToks_SOURCES = DumpToks.cpp
-DumpToks_CPPFLAGS = -I$(uls_inc_dir)
-DumpToks_LDADD = -L$(uls_lib_dir) -lulscpp -luls
+ACLOCAL_AMFLAGS = -I m4
+DumpToks_SOURCES = DumpToks.cpp 
+
+#DumpToks_CPPFLAGS = -I$(uls_inc_dir)
+DumpToks_CPPFLAGS = -DULS_USE_WSTR  -I$(uls_inc_dir)
+DumpToks_LDADD = -L$(uls_lib_dir) -lulscpp -lulscompat -luls
 all: all-am
 
 .SUFFIXES:

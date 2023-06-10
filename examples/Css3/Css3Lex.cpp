@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -36,14 +36,14 @@
 using namespace std;
 using namespace uls::collection;
 
-Css3Lex::Css3Lex(string& config_name)
+Css3Lex::Css3Lex(tstring& config_name)
 	: Css3LexBasis(config_name)
 {
 	csz_init(&tokbuf, 128);
 	prepare_url_tok = 0;
 
 	tok_id = CSS_NONE;
-	tok_str = "";
+	tok_str = _T("");
 	tok_ungot = false;
 }
 
@@ -58,7 +58,7 @@ Css3Lex::~Css3Lex()
 // <parm name="fpath">The path of file</parm>
 // <return>none</return>
 void
-Css3Lex::setFile(string fpath)
+Css3Lex::setFile(tstring fpath)
 {
 	pushFile(fpath);
 }
@@ -72,16 +72,16 @@ Css3Lex::setFile(string fpath)
 // <parm name="tok">The current token id</parm>
 // <return>the length of the result string</return>
 int
-Css3Lex::concat_lexeme(const char * str, int len, int tok)
+Css3Lex::concat_lexeme(LPCTSTR str, int len, int tok)
 {
 	Css3LexBasis::getTok();
-	string *lxm;
-
+	tstring *lxm;
+	
 	Css3LexBasis::getTokStr(&lxm);
 
 	csz_reset(&tokbuf);
-	csz_append(&tokbuf, (const char *) str, len * sizeof(char));
-	csz_append(&tokbuf, (const char *) lxm->c_str(), (int) lxm->length() * sizeof(char));
+	csz_append(&tokbuf, (const char *) str, len * sizeof(TCHAR));
+	csz_append(&tokbuf, (const char *) lxm->c_str(), (int) lxm->length() * sizeof(TCHAR));
 
 	return csz_length(&tokbuf);
 }
@@ -97,8 +97,8 @@ Css3Lex::get_token(void)
 	int tok, k;
 	int paren_lvl;
 	bool is_quote;
-	string *lxm;
-	char tch;
+	tstring *lxm;
+	TCHAR tch;
 
 	if (tok_ungot == true) {
 		tok_ungot = false;
@@ -114,7 +114,7 @@ Css3Lex::get_token(void)
 				tok_id = CSS_PATH;
 				prepare_url_tok = 0;
 			} else {
-				tok_str = "";
+				tok_str = _T("");
 				tok_id = CSS_ERR;
 			}
 			return;
@@ -129,15 +129,15 @@ Css3Lex::get_token(void)
 				break;
 			}
 
-			tch = (char) uch;
-			csz_append(&tokbuf, (const char *) &tch, sizeof(char));
+			tch = (TCHAR) uch;
+			csz_append(&tokbuf, (const char *) &tch, sizeof(TCHAR));
 
 			if (uch == '(') ++paren_lvl;
 			else if (uch == ')') --paren_lvl;
 		}
 
 		k = csz_length(&tokbuf);
-		tok_str = string(csz_text(&tokbuf));
+		tok_str = tstring(uls_get_csz_tstr(&tokbuf));
 		tok_id = CSS_PATH;
 
 		prepare_url_tok = 0;
@@ -157,15 +157,15 @@ Css3Lex::get_token(void)
 	} else if (Css3LexBasis::getTokNum() == '-') {
 		if ((uch = Css3LexBasis::peekCh(&is_quote)) == '.' || isdigit(uch)) {
 			tok = CSS_NUM;
-			concat_lexeme("-", 1, tok);
-			tok_str = string(csz_text(&tokbuf));
+			concat_lexeme(_T("-"), 1, tok);
+			tok_str = tstring(uls_get_csz_tstr(&tokbuf));
 			tok_id = CSS_NUM;
 			return;
 
 		} else if (is_ch_id(uch)) {
 			tok = CSS_ID;
-			concat_lexeme("-", 1, tok);
-			tok_str = string(csz_text(&tokbuf));
+			concat_lexeme(_T("-"), 1, tok);
+			tok_str = tstring(uls_get_csz_tstr(&tokbuf));
 			tok_id = CSS_ID;
 			return;
 		}
@@ -191,7 +191,7 @@ Css3Lex::getTokNum(void)
 	return tok_id;
 }
 
-std::string&
+std::tstring&
 Css3Lex::getTokStr(void)
 {
 	return tok_str;
@@ -202,9 +202,9 @@ Css3Lex::getTokStr(void)
 // We don't need this method yet to process CSS3 files.
 // </brief>
 // <return></return>
-string Css3Lex::getKeywordStr(int t)
+tstring Css3Lex::getKeywordStr(int t)
 {
-	return string("<unknown>");
+	return tstring(_T("<unknown>"));
 }
 
 void

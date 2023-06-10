@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -30,25 +30,33 @@
 #ifndef __ULS_FREQ_H__
 #define __ULS_FREQ_H__
 
+#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_version.h"
 #include "uls/idkeyw.h"
 #include <stdio.h>
+#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
-#define uls_is_ulf_compatible(ver,ver0) (uls_version_cmp_code(ver,ver0) >= 2)
+#ifdef ULS_DECL_GLOBAL_TYPES
+#define uls_is_ulf_compatible(ver,ver0) (_uls_tool_(version_cmp_code)(ver,ver0) >= 2)
+#endif
 
-_ULS_DEFINE_STRUCT(ulf_header)
+#ifdef ULS_DEF_PUBLIC_TYPE
+ULS_DEFINE_STRUCT(ulf_header)
 {
-	uls_version_t filever;
-	uls_def_namebuf(hash_algorithm, ULS_LEXSTR_MAXSIZ);
-	uls_version_t hfunc_ver;
+	_uls_tool_type_(version) filever;
+	uls_uint32    init_hcode;
+
+	_uls_def_namebuf(hash_algorithm, ULS_LEXSTR_MAXSIZ);
+	_uls_tool_type_(version) hfunc_ver;
 	int           hash_table_size;
 };
+#endif
 
-#if defined(__ULS_FREQ__)
+#if defined(__ULS_FREQ__) || defined(ULS_DECL_PRIVATE_PROC)
 ULS_DECL_STATIC void normalize_keyw_stat_list(uls_keyw_stat_list_ptr_t kwslst);
 ULS_DECL_STATIC int ulf_read_config_var(int lno, char* lptr, ulf_header_ptr_t hdr);
 ULS_DECL_STATIC int ulf_read_header(FILE* fin, ulf_header_ptr_t hdr);
@@ -65,7 +73,10 @@ uls_keyw_stat_list_ptr_t ulf_load(uls_tokdef_ptr_t tok_info_lst, int n_tok_info_
 int keyw_stat_comp_by_freq(const uls_voidptr_t a, const uls_voidptr_t b);
 #endif
 
-ULS_DLL_EXTERN int ulf_create_file(int htab_siz, uls_keyw_stat_list_ptr_t kwslst, FILE* fout);
+#ifdef ULS_DECL_PUBLIC_PROC
+ULS_DLL_EXTERN int ulf_create_file(int n_hcodes, uls_uint32 *hcodes,
+	int htab_siz, uls_keyw_stat_list_ptr_t kwslst, FILE* fout);
+#endif
 
 #ifdef _ULS_CPLUSPLUS
 }

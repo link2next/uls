@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -31,16 +31,18 @@
     Stanley Hong <link2next@gmail.com>, August 2011.
   </author>
 */
-#ifndef __ULS_LOG_H__
+#if !defined(ULS_DOTNET) && !defined(__ULS_LOG_H__)
 #define __ULS_LOG_H__
 
+#ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_print.h"
-#include "uls/uls_core.h"
+#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
+#ifdef ULS_DECL_GLOBAL_TYPES
 #define ULS_LOG_EMERG     0
 #define ULS_LOG_ALERT     1
 #define ULS_LOG_CRIT      2
@@ -55,11 +57,15 @@ extern "C" {
 
 #define uls_log_lock(log) uls_lock_mutex(uls_ptr((log)->mtx))
 #define uls_log_unlock(log) uls_unlock_mutex(uls_ptr((log)->mtx))
+#endif
 
+#ifdef ULS_DECL_PROTECTED_TYPE
 #define N_LOGBUF_CHARS    81
 #define ULS_MAX_LOGLEVEL  (sizeof(uls_uint32)*8 - 1)
+#endif
 
-ULS_DEFINE_STRUCT(log)
+#ifdef ULS_DEF_PUBLIC_TYPE
+ULS_DEFINE_STRUCT(uls_log)
 {
 	uls_flags_t flags;
 	uls_mutex_struct_t mtx;
@@ -71,15 +77,18 @@ ULS_DEFINE_STRUCT(log)
 	uls_uint32    log_mask;
 
 	uls_lf_ptr_t  lf;
+	uls_voidptr_t shell;
 };
 
-#if defined(__ULS_LOG__)
+#endif // ULS_DEF_PUBLIC_TYPE
+
+#if (!defined(ULS_DOTNET) && defined(__ULS_LOG__)) || defined(ULS_DEF_PRIVATE_DATA)
 ULS_DECL_STATIC uls_lf_map_t lf_map_syserr;
 ULS_DECL_STATIC uls_lf_map_t lf_map_logdfl;
 ULS_DECL_STATIC uls_lf_t lf_syserr;
 #endif
 
-#if defined(__ULS_LOG__)
+#ifdef ULS_DECL_PRIVATE_PROC
 ULS_DECL_STATIC int __uls_fmtproc_coord(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lex_ptr_t uls, uls_lf_context_ptr_t ctx);
 ULS_DECL_STATIC int __uls_fmtproc_tokname(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lex_ptr_t uls, uls_lf_context_ptr_t ctx);
 ULS_DECL_STATIC int __uls_fmtproc_keyword(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lex_ptr_t uls, uls_lf_context_ptr_t ctx);
@@ -98,6 +107,7 @@ int uls_log_fmtproc_tokname(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf
 int uls_log_fmtproc_keyword(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t ctx);
 #endif // ULS_DECL_PROTECTED_PROC
 
+#ifdef ULS_DECL_PUBLIC_PROC
 ULS_DLL_EXTERN void err_syslog_lock(void);
 ULS_DLL_EXTERN void err_syslog_unlock(void);
 
@@ -127,9 +137,18 @@ ULS_DLL_EXTERN void uls_panic(uls_log_ptr_t log, const char* fmt, ...);
 
 ULS_DLL_EXTERN void uls_add_default_log_convspecs(uls_lf_map_ptr_t lf_map);
 ULS_DLL_EXTERN void uls_add_default_convspecs(uls_lf_map_ptr_t lf_map);
+#endif // ULS_DECL_PUBLIC_PROC
 
 #ifdef _ULS_CPLUSPLUS
 }
+#endif
+
+#ifdef _ULS_USEDLL
+#if defined(ULS_USE_WSTR)
+#include "uls/uls_wlog.h"
+#elif defined(ULS_USE_ASTR)
+#include "uls/uls_alog.h"
+#endif
 #endif
 
 #endif // __ULS_LOG_H__

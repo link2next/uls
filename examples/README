@@ -4,9 +4,6 @@
 	3) run_examples.sh
 
 2. Testing programs individually.
-	It's probably needed to set the environment variable 
-          'LD_LIBRARY_PATH' to <uls-install-dir>/lib. 
-
 	1) test_1st
 		a) cd test_1st
 		b) test_1st test_1st_sam.txt

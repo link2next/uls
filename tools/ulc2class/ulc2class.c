@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -76,6 +76,8 @@ static const struct option longopts[] = {
 	{ "prefix",        required_argument, NULL, 'p' },
 	{ "query",         no_argument,       NULL, 'q' },
 	{ "output",        required_argument, NULL, 'o' },
+	{ "astr",          no_argument,       NULL, 'A' },
+	{ "wstr",          no_argument,       NULL, 'W' },
 	{ "silent",        no_argument,       NULL, 'y' },
 	{ "dump",          required_argument, NULL, 'z' },
 	{ "verbose",       no_argument,       NULL, 'v' },
@@ -86,7 +88,7 @@ static const struct option longopts[] = {
 };
 #endif
 
-#define ULC2CLASS_OPTSTR "d:f:e:l:n:g:p:qo:svVHhyz:"
+#define ULC2CLASS_OPTSTR "d:f:e:l:n:g:p:qo:svAWVHhyz:"
 
 static void usage_synopsis()
 {
@@ -204,7 +206,7 @@ static void usage_long(void)
 	uls_printf("  go Go golang\n");
 	uls_printf("  visual_basic visual-basic VisualBasic 'visual basic' 'Visual basic'\n");
 	uls_printf("  .....\n");
-	uls_printf(" Each line represents the supported names of a language.\n");
+	uls_printf(" Each line represents the supported names of a language.\n"); 
 	uls_printf(" You may select the any name in same group for your preference.\n");
 	uls_printf(" The name must be used as the argument of uls-object creator,\n");
 	uls_printf("     such as uls_create(), subclasses of UlsLex(), for configuration name.\n");
@@ -249,6 +251,13 @@ set_lang_generated(const char* lang_name)
 	} else if (ult_streql(lang_name, "cpp") || ult_streql(lang_name, "c++")) {
 		prn_flags |= ULS_FL_CPP_GEN; // default value in Linux
 
+	} else if (ult_streql(lang_name, "cppcli") || ult_streql(lang_name, "cpp/cli") || 
+		ult_streql(lang_name, "c++.net")) {
+		prn_flags |= ULS_FL_CPPCLI_GEN; // default value in Windows
+
+	} else if (ult_streql(lang_name, "cs")) {
+		prn_flags |= ULS_FL_CS_GEN;
+
 	} else if (ult_streql(lang_name, "java")) {
 		prn_flags |= ULS_FL_JAVA_GEN;
 
@@ -264,7 +273,9 @@ get_standard_suffix(void)
 {
 	const char *cptr;
 
-	if (prn_flags & ULS_FL_JAVA_GEN) {
+	if (prn_flags & ULS_FL_CS_GEN) {
+		cptr = ".cs";
+	} else if (prn_flags & ULS_FL_JAVA_GEN) {
 		cptr = ".java";
 	} else {
 		cptr = ".h";
@@ -348,6 +359,10 @@ ulc2class_options(int opt, char* optarg)
 		break;
 
 	case 's':
+		if (!opt_query) {
+			err_log("%s: Use -s with -q-option.", progname);
+			stat = -1; break;
+		}
 		opt_uld_gen = 1;
 		break;
 
@@ -367,6 +382,16 @@ ulc2class_options(int opt, char* optarg)
 
 	case 'v':
 		prn_flags |= ULS_FL_VERBOSE;
+		break;
+
+	case 'A':
+		prn_flags |= ULS_FL_STRFMT_ASTR;
+		prn_flags &= ~ULS_FL_STRFMT_WSTR;
+		break;
+
+	case 'W':
+		prn_flags &= ~ULS_FL_STRFMT_ASTR;
+		prn_flags |= ULS_FL_STRFMT_WSTR;
 		break;
 
 	case 'V':
@@ -399,7 +424,7 @@ parse_options(int argc, char* argv[])
 	char *fname, *tmp_buf;
 
 	if (ult_getcwd(home_dir, ULS_FILEPATH_MAX) < 0) {
-		err_panic("%s: fail to getcwd()", __func__);
+		err_panic("%s: fail to getcwd()", __FUNCTION__);
 	}
 
 	opt_prefix = "";
@@ -511,13 +536,22 @@ parse_options(int argc, char* argv[])
 	mask = ULS_FL_WANT_REGULAR_TOKS | ULS_FL_WANT_QUOTE_TOKS | ULS_FL_WANT_RESERVED_TOKS;
 	if (!(prn_flags & mask)) prn_flags |= mask;
 
+#ifdef ULS_WINDOWS
+	if ((prn_flags & (ULS_FL_STRFMT_ASTR | ULS_FL_STRFMT_WSTR)) == 0) {
+		prn_flags |= ULS_FL_STRFMT_ASTR;
+	}
+#endif
 	if ((prn_flags & ULS_FL_LANG_GEN_MASK) == 0) {
 		prn_flags |= ULS_FL_CPP_GEN;
 	}
 
-	if (prn_flags & (ULS_FL_C_GEN | ULS_FL_CPP_GEN)) {
+	if (prn_flags & (ULS_FL_C_GEN | ULS_FL_CPP_GEN |ULS_FL_CPPCLI_GEN)) {
 	} else {
 		prn_flags &= ~ULS_FL_WANT_WRAPPER;
+	}
+
+	if (!(prn_flags & ULS_FL_C_GEN)) {
+		prn_flags &= ~(ULS_FL_STRFMT_ASTR | ULS_FL_STRFMT_WSTR);
 	}
 
 	return i0;
@@ -631,11 +665,6 @@ main(int argc, char* argv[])
 		return i0;
 	}
 
-	if (opt_uld_gen && !opt_query) {
-		err_log("%s: Use -s with -q-option.", progname);
-		return -1;
-	}
-
 	if (opt_query && !opt_uld_gen) {
 		if (opt_class_name != NULL) {
 			return ulc_query_var(opt_class_name);
@@ -670,7 +699,7 @@ main(int argc, char* argv[])
 	}
 
 	if ((sam_lex=uls_create(ulc_config)) == uls_nil) {
-		err_log("%s: Failed to open the configuration file %s.", progname, ulc_config);
+		err_log("%s: can't open the configuration file %s.", progname, ulc_config);
 		if (typ_fpath != ULS_NAME_FILEPATH_ULD) {
 			ulc_list_searchpath(ulc_config);
 		}

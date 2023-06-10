@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -44,17 +44,17 @@ namespace collection
 	class Css3Lex : public uls::collection::Css3LexBasis {
 		csz_str_t tokbuf;
 
-		std::string tok_str;
+		std::tstring tok_str;
 		int tok_id;
 		bool tok_ungot;
 
 		int prepare_url_tok;
 
-		int concat_lexeme(const char * str, int len, int tok);
+		int concat_lexeme(LPCTSTR str, int len, int tok);
 		void get_token(void);
 
 	public:
-		Css3Lex(std::string& config_name);
+		Css3Lex(std::tstring& config_name);
 		~Css3Lex();
 
 		// <brief>
@@ -65,17 +65,17 @@ namespace collection
 		virtual int getTok(void);
 
 		virtual int getTokNum(void);
-		virtual std::string& getTokStr(void);
+		virtual std::tstring& getTokStr(void);
 
 		void ungetTok(void);
-		std::string getKeywordStr(int t);
+		std::tstring getKeywordStr(int t);
 
 		// <brief>
 		// Sets the input file to be tokenized.
 		// </brief>
 		// <parm name="fpath">The path of file</parm>
 		// <return>none</return>
-		void setFile(std::string fpath);
+		void setFile(std::tstring fpath);
 	};
 }
 }

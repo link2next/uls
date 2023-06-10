@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -41,20 +41,20 @@ conglomerate_uls_files_via_filter(int fd_list, const char* cmd_flt, uls_ostream_
 	fdf_init(uls_ptr(fdfilter), fdf_iprovider_filelist, cmd_flt);
 
 	if ((istr = uls_open_istream_filter(uls_ptr(fdfilter), fd_list)) == uls_nil) {
-		err_log("%s: can't conjecture file type!", __func__);
+		err_log("%s: can't conjecture file type!", __FUNCTION__);
 		fdf_deinit(uls_ptr(fdfilter));
 		return -2;
 	}
 
 	if (uls_push_istream(uls, istr, uls_ptr(tmpl_list), 0) < 0) {
-		err_log("%s: fail to prepare input-stream", __func__);
+		err_log("%s: fail to prepare input-stream", __FUNCTION__);
 		stat = -3; goto end_1;
 	}
 
 	uls_set_tag(uls, tag_name, -1);
 
 	if (print_tmpl_stream_file(ostr, uls) < 0) {
-		err_log("%s: fail to uls-streaming.", __func__);
+		err_log("%s: fail to uls-streaming.", __FUNCTION__);
 		stat = -4; goto end_1;
 	}
 
@@ -74,19 +74,19 @@ conglomerate_uls_file(int fd, const char *tagstr, uls_ostream_ptr_t ostr)
 	int  stat = 0;
 
 	if ((istr = uls_open_istream(fd)) == uls_nil) {
-		err_log("%s: can't conjecture file type!", __func__);
+		err_log("%s: can't conjecture file type!", __FUNCTION__);
 		return -2;
 	}
 
 	uls_set_istream_tag(istr, tagstr);
 
 	if (uls_push_istream(uls, istr, uls_ptr(tmpl_list), 0) < 0) {
-		err_log("%s: fail to prepare input-stream", __func__);
+		err_log("%s: fail to prepare input-stream", __FUNCTION__);
 		stat = -6; goto end_1;
 	}
 
 	if (print_tmpl_stream_file(ostr, uls) < 0) {
-		err_log("%s: fail to uls-streaming.", __func__);
+		err_log("%s: fail to uls-streaming.", __FUNCTION__);
 		stat = -7; goto end_1;
 	}
 
@@ -188,7 +188,7 @@ proc_filelist(const char* tgt_dir)
 		}
 		ult_fd_close(fd_list);
 #else
-		err_log("%s: fdf not supported!", __func__);
+		err_log("%s: fdf not supported!", __FUNCTION__);
 		stat = -1;
 #endif
 	} else {
@@ -221,7 +221,7 @@ proc_filelist(const char* tgt_dir)
 
 		if (uls_close_tempfile(uls_ptr(tmpfile), output_file) < 0) {
 			err_log("%s: can't move file %s into %s",
-				__func__, tmpfile.filepath, output_file);
+				__FUNCTION__, tmpfile.filepath, output_file);
 			stat = -7;
 		}
 	}

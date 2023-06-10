@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -31,13 +31,15 @@
     Stanley Hong <link2next@gmail.com>, May 2011.
   </author>
 */
+#ifndef ULS_EXCLUDE_HFILES
 #define __ULS_LF_PERCENT_F__
 #include "uls/uls_lf_percent_f.h"
 #include "uls/ieee754.h"
 #include <math.h>
+#endif
 
 ULS_DECL_STATIC void
-reverse_char_array(char* ary, int n)
+ULS_QUALIFIED_METHOD(reverse_char_array)(char* ary, int n)
 {
 	int i, j;
 	char ch;
@@ -54,7 +56,7 @@ reverse_char_array(char* ary, int n)
 }
 
 ULS_DECL_STATIC int
-unsigned2str(unsigned int n, csz_str_ptr_t ss)
+ULS_QUALIFIED_METHOD(unsigned2str)(unsigned int n, csz_str_ptr_t ss)
 {
 	int i0, len;
 
@@ -76,7 +78,7 @@ unsigned2str(unsigned int n, csz_str_ptr_t ss)
 }
 
 int
-uls_lf_digits_to_percent_f
+ULS_QUALIFIED_METHOD(uls_lf_digits_to_percent_f)
 	(char* numstr, int minus, int n_expo, int n_prec, csz_str_ptr_t ss)
 {
 	char *ptr, ch;
@@ -120,7 +122,7 @@ uls_lf_digits_to_percent_f
 }
 
 void
-uls_lf_digits_to_percent_e
+ULS_QUALIFIED_METHOD(uls_lf_digits_to_percent_e)
 	(char* numstr, int minus, int n_expo, int n_prec, csz_str_ptr_t ss)
 {
 	char *ptr;
@@ -161,7 +163,7 @@ uls_lf_digits_to_percent_e
 }
 
 void
-uls_lf_digits_to_percent_g
+ULS_QUALIFIED_METHOD(uls_lf_digits_to_percent_g)
 	(char* numstr, int minus, int n_expo, int n_prec, csz_str_ptr_t ss)
 {
 	int len;
@@ -175,8 +177,8 @@ uls_lf_digits_to_percent_g
 	}
 }
 
-int
-uls_lf_double2digits(double x, int n_precision, csz_str_ptr_t numstr)
+ULS_DLL_EXTERN int
+ULS_QUALIFIED_METHOD(uls_lf_double2digits)(double x, int n_precision, csz_str_ptr_t numstr)
 {
 	double frac, x_int;
 	double frac2;
@@ -253,8 +255,8 @@ uls_lf_double2digits(double x, int n_precision, csz_str_ptr_t numstr)
 	return n_expo;
 }
 
-int
-uls_lf_longdouble2digits(long double x, int n_precision, csz_str_ptr_t numstr)
+ULS_DLL_EXTERN int
+ULS_QUALIFIED_METHOD(uls_lf_longdouble2digits)(long double x, int n_precision, csz_str_ptr_t numstr)
 {
 	long double frac, x_int;
 	long double frac2;

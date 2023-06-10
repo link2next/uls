@@ -4,7 +4,7 @@
 
   Quick Start - Linux
   ------------------
-   On Debian platforms like Debian, Ubuntu, Mint, two deb-files is provided.
+   On Debian platforms like Debian, Ubuntu, Mint, two deb-files is provided. 
       o uls_x.y.z_amd64.deb: for 64-bit mach(x86_64, amd64)
       o uls_x.y.z_i386.deb: for 32-bit mach
    To install the deb-file, download the proper file on the site(http://www.sourceforge.net/projects/uls).
@@ -28,7 +28,7 @@
   ------------------
      $ ./configure [--prefix=<INST_DIR>] [--with-etc-dir=<ADMIN_DIR>]
      $ make
-     $ make check
+     $ make check      
      $ sudo make install // install it using admin privilege.
 
   1) Replace <PREFIX> with the file path on which ULS is installed.
@@ -47,7 +47,7 @@
                    The generated file can be used in c, c++, java, or c#.
 
        o ulfgen     : gives users the statistic information on uses of keywords of language.
-
+ 
        o uls_stream : makes binary formatted stream file from input files.
 
        o uninstall_uls: will remove the package from your system.
@@ -60,15 +60,15 @@
           This library wrap the libuls, so it calls the core api in 'libuls'.
           The wide-string API is available on both Linux and Windows.
           The ANSI-encoding API is available only on Windows.
-
+ 
        o libulscpp : the c++ wrapper for libuls.
-
+ 
        o UlsDotNet.dll : used in .NET for Windows C#.
 
     The 'share' contains sample ulc-files, such as java.ulc, sql.ulc python3.ulc, and man pages.
 
   4) To uninstall the package, run 'uninstall_uls' in the 'bin' directory:
-     $ sudo uninstall_uls
+     $ sudo uninstall_uls 
 
 
   Quick Start - Windows
@@ -76,7 +76,7 @@
    How to install ULS-libraries into your system
 
    On Windows platforms,
-     There is a self-extracting install program, uls-windows-{x64,i686}.exe
+     There is a self-extracting install program, uls-windows-{x64,i686}.exe 
          in the home-site(http://www.sourceforge.net/projects/uls).
      It contains the binaries which are targeted onto i386 and x86_64.
      Download and run it.
@@ -94,17 +94,17 @@
   Source build - Windows
   ---------------------
    1) How to build it from sources
-    The ULS-windows version is distributed with solution-files(*.sln) and
+    The ULS-windows version is distributed with solution-files(*.sln) and 
        project-files(*.vcproj) in directory 'UlsWin'.
 
      a) After unpacking the source distribution (uls-x.y.z.tar.xz),
-           run VisualStudio by clicking UlsWin\UlsWin.sln.
+           run VisualStudio 2012(or later) by clicking UlsWin\UlsWin.sln.
 
-     b) Either 'Release/x64' configuration
-           should be chosen according to your arch-type(64bit).
+     b) Either 'Release/Win32' or 'Release/x64' configuration 
+           should be chosen according to your arch-type(32bit or 64bit).
 
-     c) When the build-process is finished, all the executables and libraries will be located
-           in UlsWin\Release\x64.
+     c) When the build-process is finished, all the executables and libraries will be located 
+           in UlsWin\Release\{Win32,x64}.
 
    2) To build C++ examples,
      a) To see how the installed version works well, open 'UlsExamples.sln' in the UlsCpp\UlsExamples directory.
@@ -113,10 +113,10 @@
         Check and modify the 'Additional Library Directories' in 'Configuration Properties' of each projects.
         By default, all the projects in the UlsCpp\UlsExamples will search 'C:\Program Files\UlsWin\lib' for the libraries.
 
-     b) Choose the configuration Release/x64 according to your build system.
+     b) Choose the configuration Release/Win32 or Release/x64 according to your build system.
 
-     c) The solution produces the executables, DumpToks.exe, Css3Toks.exe,
-           Html5Toks.exe, ShellToks.exe, MkfToks.exe, and TokSeq.exe in UlsCpp\UlsExamples\Release\x64.
+     c) The solution produces the executables, DumpToks.exe, Css3Toks.exe, 
+           Html5Toks.exe, ShellToks.exe, MkfToks.exe, and TokSeq.exe in UlsCpp\UlsExamples\Release\{Win32,x64}.
 
 
   Demos - Windows
@@ -179,7 +179,7 @@
        a) Right-button click of mouse on the 'UlsJava' solution in 'Project Explorer'
           and click 'Properties'.
        b) Choose the 'Java Build Path' and 'JRE System Library[...]' in the tab-menu 'Libraries'.
-       c) Click the button 'Edit...' and select the JRE version installed in your system.
+       c) Click the button 'Edit...' and select the JRE version installed in your system. 
 
     To run test the java programs,
        a) Right-button click of mouse on the 'UlsJava' solution in 'Project Explorer'

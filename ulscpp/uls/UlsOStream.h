@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -72,6 +72,7 @@ namespace uls {
 			// </parm>
 
 			UlsOStream(std::string& filepath, UlsLex* lex, const char* subtag="", bool numbering=true);
+			UlsOStream(std::wstring& filepath, UlsLex* lex, const wchar_t *subtag = L"", bool numbering = true);
 
 			// <brief>
 			// The destuctor of UlsOStream.
@@ -98,6 +99,7 @@ namespace uls {
 			// <parm name="tokstr">the lexeme associated with the 'tokid'</parm>
 			// <return>none</return>
 			void printTok(int tokid, std::string& tokstr);
+			void printTok(int tokid, std::wstring& tokstr);
 
 			// <brief>
 			// This method prints an annotation <linenum, tag> pair to the output file.
@@ -106,6 +108,7 @@ namespace uls {
 			// <parm name="tagstr">the tag of the source file</parm>
 			// <return>none</return>
 			void printTokLineNum(int lno, std::string& tagstr);
+			void printTokLineNum(int lno, std::wstring& tagstr);
 
 			// <brief>
 			// Start writing the lexical streaming with input-stream 'ifile'.

@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -61,7 +61,7 @@ proc_file(char* filepath)
 	int len, stat = 0, lno = 0;
 
 	if ((cur_fin=uls_fp_open(filepath, ULS_FIO_READ)) == NULL) {
-		err_log("%s: fail to open '%s'", __func__, filepath);
+		err_log("%s: fail to open '%s'", __FUNCTION__, filepath);
 		return -1;
 	}
 
@@ -69,7 +69,7 @@ proc_file(char* filepath)
 	while (1) {
 		if ((len=uls_fp_gets(cur_fin, filebuff, sizeof(filebuff), 0)) <= ULS_EOF) {
 			if (len < ULS_EOF) {
-				err_log("%s: error to read a line", __func__);
+				err_log("%s: error to read a line", __FUNCTION__);
 				stat =-1;
 			}
 			break;
@@ -222,6 +222,37 @@ test_uls_line(uls_lex_t *uls)
 	}
 }
 
+int
+test_uls_line_cr2lf()
+{
+	uls_lex_t *sample_lex2, *uls;
+	char *linebuff;
+
+	sample_lex2 = uls = uls_create_cr2lf(config_name);
+
+	uls_push_line(uls, "he\n\rllo\rwo\r\nrld", -1, 0);
+	for ( ; ; ) {
+		if (uls_get_tok(uls) == tokEOI) break;
+
+		uls_printf("%3d", uls_get_lineno(uls));
+		uls_dumpln_tok(uls);
+	}
+
+	linebuff = strdup("he\n\rllo\rwo\r\nrld");
+	uls_push_line_cr2lf(uls, linebuff , -1, 0);
+	for ( ; ; ) {
+		if (uls_get_tok(uls) == tokEOI) break;
+
+		uls_printf("%3d", uls_get_lineno(uls));
+		uls_dumpln_tok(uls);
+	}
+	free(linebuff);
+
+	uls_destroy(sample_lex2);
+
+	return 0;
+}
+
 static void usage(void)
 {
 	err_log("%s v1.0", progname);
@@ -324,6 +355,10 @@ main(int argc, char* argv[])
 
 	case 6:
 		test_uls_line(sample_lex);
+		break;
+
+	case 7:
+		test_uls_line_cr2lf();
 		break;
 
 	default:

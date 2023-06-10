@@ -46,7 +46,7 @@ fi
 MAX_N_CASES=16
 test_prog=
 
-MODE_LIST="c cpp java"
+MODE_LIST="c cpp java cs"
 temp_dir="/tmp"
 
 test_1case()
