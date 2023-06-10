@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -46,7 +46,6 @@ ULS_QUALIFIED_METHOD(__find_in_pool)(uls_outbuf_ptr_t outbuf, int siz)
 	csz_buf_line_ptr_t  e_prev, e, e_next;
 	char *line0;
 
-	// assert: siz != 0
 	if ((e=csz_global->active_list) == nilptr || siz > e->size) {
 		outbuf->buf = NULL;
 		outbuf->siz = 0;
@@ -164,7 +163,6 @@ ULS_QUALIFIED_METHOD(__deinit_csz_pool)(void)
 ULS_DECL_STATIC _ULS_INLINE void
 ULS_QUALIFIED_METHOD(__str_modify)(uls_outbuf_ptr_t outbuf, int n_delta, int k, const char* str, int len)
 {
-	// assert: k >= 0
 	char *bufptr = outbuf->buf;
 	int  n;
 
@@ -175,7 +173,6 @@ ULS_QUALIFIED_METHOD(__str_modify)(uls_outbuf_ptr_t outbuf, int n_delta, int k, 
 		outbuf->siz = n;
 	}
 
-	// notice: k + len <= outbuf->siz
 	if (str != NULL && len > 0) {
 		uls_memcopy(bufptr+k, str, len);
 	}
@@ -229,7 +226,6 @@ ULS_QUALIFIED_METHOD(str_init)(uls_outbuf_ptr_t outbuf, int siz)
 		siz = uls_ceil_log2(siz, 3);
 	}
 
-	// notice: siz != 0
 	uls_lock_mutex(uls_ptr(csz_global->mtx));
 	__find_in_pool(outbuf, siz);
 	uls_unlock_mutex(uls_ptr(csz_global->mtx));
@@ -240,7 +236,6 @@ ULS_QUALIFIED_METHOD(str_init)(uls_outbuf_ptr_t outbuf, int siz)
 		outbuf->siz = siz;
 	}
 
-	// assert: outbuf->siz % 8 == 0
 	outbuf->siz_delta = outbuf->siz;
 }
 
@@ -288,7 +283,6 @@ ULS_QUALIFIED_METHOD(__str_putc)(uls_outbuf_ptr_t outbuf, int n_delta, int k, ch
 ULS_DLL_EXTERN void
 ULS_QUALIFIED_METHOD(str_modify)(uls_outbuf_ptr_t outbuf, int k, const char* str, int len)
 {
-	// assert: k >= 0 and len >= 0
 	if (str != NULL) {
 		if (len < 0) len = uls_strlen(str);
 	} else {
@@ -301,7 +295,6 @@ ULS_QUALIFIED_METHOD(str_modify)(uls_outbuf_ptr_t outbuf, int k, const char* str
 ULS_DLL_EXTERN int
 ULS_QUALIFIED_METHOD(str_append)(uls_outbuf_ptr_t outbuf, int k, const char* str, int len)
 {
-	// assert: k >= 0 and len >= 0
 	int k2;
 
 	if (str != NULL) {
@@ -322,7 +315,6 @@ ULS_QUALIFIED_METHOD(str_append)(uls_outbuf_ptr_t outbuf, int k, const char* str
 ULS_DLL_EXTERN int
 ULS_QUALIFIED_METHOD(str_puts)(uls_outbuf_ptr_t outbuf, int k, const char* str)
 {
-	// assert: k >= 0
 	int l_str;
 
 	l_str = uls_strlen(str);
@@ -386,7 +378,6 @@ ULS_QUALIFIED_METHOD(csz_reset)(csz_str_ptr_t csz)
 ULS_DLL_EXTERN char*
 ULS_QUALIFIED_METHOD(csz_modify)(csz_str_ptr_t csz, int k, const char* str, int len)
 {
-	// assert: k >= 0 and len >= 0
 	int k2;
 
 	if (str != NULL) {
@@ -404,7 +395,6 @@ ULS_QUALIFIED_METHOD(csz_modify)(csz_str_ptr_t csz, int k, const char* str, int 
 ULS_DLL_EXTERN char*
 ULS_QUALIFIED_METHOD(csz_append)(csz_str_ptr_t csz, const char* str, int len)
 {
-	// assert: k >= 0 and len >= 0
 	int k;
 
 	if (str != NULL) {

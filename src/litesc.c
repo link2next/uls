@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -30,6 +30,7 @@
 #ifndef ULS_EXCLUDE_HFILES
 #define __ULS_LITESC__
 #include "uls/litesc.h"
+#include "uls/uls_misc.h"
 #include "uls/uls_log.h"
 #endif
 
@@ -556,7 +557,7 @@ ULS_QUALIFIED_METHOD(__parse_escmap_optgrp)(char *line, char esc_sym)
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(parse_escmap_optgrp)(uls_escmap_ptr_t esc_map, _uls_tool_ptrtype_(outparam) parms)
+ULS_QUALIFIED_METHOD(parse_escmap_optgrp)(uls_escmap_ptr_t esc_map, uls_ptrtype_tool(outparam) parms)
 {
 	int flags = parms->flags;
 	int rval_flags, flags_err, stat = 0;
@@ -634,13 +635,13 @@ ULS_QUALIFIED_METHOD(parse_escmap_optgrp)(uls_escmap_ptr_t esc_map, _uls_tool_pt
 }
 
 ULS_QUALIFIED_RETTYP(uls_escmap_ptr_t)
-ULS_QUALIFIED_METHOD(uls_parse_escmap_feature)(uls_escmap_pool_ptr_t escmap_pool, _uls_tool_ptrtype_(outparam) parms)
+ULS_QUALIFIED_METHOD(uls_parse_escmap_feature)(uls_escmap_pool_ptr_t escmap_pool, uls_ptrtype_tool(outparam) parms)
 {
 	char *line = parms->line;
 	char  *wrd, *lptr, *mode_str, ch, ch_bak, esc_sym;
 	uls_escmap_ptr_t esc_map;
 	int len, flags=0;
-	_uls_tool_type_(outparam) parms1;
+	uls_type_tool(outparam) parms1;
 
 	if (*(wrd = _uls_tool(skip_blanks)(line)) == '\0') {
 		esc_map = uls_ptr(uls_litesc->uls_escstr__legacy_full);
@@ -653,10 +654,10 @@ ULS_QUALIFIED_METHOD(uls_parse_escmap_feature)(uls_escmap_pool_ptr_t escmap_pool
 	}
 
 	len = (int) (lptr - wrd);
-	// notice: len > 0
+
 	ch_bak = wrd[len];
 	wrd[len] = '\0';
-	// notice: lptr == wrd + len
+
 	mode_str = wrd;
 
 	if (uls_streql(mode_str, "verbatim0")) {
@@ -719,12 +720,12 @@ ULS_QUALIFIED_METHOD(uls_parse_escmap_feature)(uls_escmap_pool_ptr_t escmap_pool
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(extract_escstr_mapexpr)(_uls_tool_ptrtype_(outparam) parms)
+ULS_QUALIFIED_METHOD(extract_escstr_mapexpr)(uls_ptrtype_tool(outparam) parms)
 {
 	char  *lptr = (char *) parms->lptr, *lptr1;
 	int len, ret_flag = 0;
-	_uls_tool_type_(outparam) parms1;
-	_uls_tool_type_(wrd) wrdx;
+	uls_type_tool(outparam) parms1;
+	uls_type_tool(wrd) wrdx;
 
 	lptr = _uls_tool(skip_blanks)(lptr);
 	if (*lptr == '\0') return -1;
@@ -740,7 +741,7 @@ ULS_QUALIFIED_METHOD(extract_escstr_mapexpr)(_uls_tool_ptrtype_(outparam) parms)
 		++lptr;
 		parms1.lptr = lptr;
 		parms1.line = parms->line;
-		len = _uls_tool_(get_simple_escape_str)('\'', uls_ptr(parms1));
+		len = uls_get_simple_escape_str('\'', uls_ptr(parms1));
 		lptr = (char *) parms1.lptr;
 
 	} else {
@@ -755,7 +756,7 @@ ULS_QUALIFIED_METHOD(extract_escstr_mapexpr)(_uls_tool_ptrtype_(outparam) parms)
 		} else { // ret_flag == 0
 			parms1.lptr = lptr1;
 			parms1.line = parms->line;
-			len = _uls_tool_(get_simple_escape_str)('\0', uls_ptr(parms1));
+			len = uls_get_simple_escape_str('\0', uls_ptr(parms1));
 		}
 	}
 
@@ -765,7 +766,7 @@ ULS_QUALIFIED_METHOD(extract_escstr_mapexpr)(_uls_tool_ptrtype_(outparam) parms)
 		parms->flags = ret_flag;
 	}
 
-	return len; 
+	return len;
 }
 
 int
@@ -773,7 +774,7 @@ ULS_QUALIFIED_METHOD(uls_parse_escmap_mapping)(uls_escmap_ptr_t esc_map, uls_esc
 {
 	int len, rval, rval_flags, stat = 0;
 	char  *lptr, *escstr_buf, esc_ch;
-	_uls_tool_type_(outparam) parms1;
+	uls_type_tool(outparam) parms1;
 
 	len = _uls_tool_(strlen)(line);
 	escstr_buf = (char *)_uls_tool_(malloc)(len + 1);
@@ -815,7 +816,7 @@ ULS_QUALIFIED_RETTYP(uls_escmap_ptr_t)
 ULS_QUALIFIED_METHOD(uls_parse_escmap)(char *line, uls_escmap_pool_ptr_t escmap_pool)
 {
 	uls_escmap_ptr_t esc_map;
-	_uls_tool_type_(outparam) parms1;
+	uls_type_tool(outparam) parms1;
 
 	parms1.line = line;
 	esc_map = uls_parse_escmap_feature(escmap_pool, uls_ptr(parms1));
@@ -832,7 +833,7 @@ ULS_QUALIFIED_METHOD(uls_parse_escmap)(char *line, uls_escmap_pool_ptr_t escmap_
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_dec_escaped_char)(uls_escmap_ptr_t map, _uls_tool_ptrtype_(outparam) parms, _uls_tool_ptrtype(csz_str) cszbuf)
+ULS_QUALIFIED_METHOD(uls_dec_escaped_char)(uls_escmap_ptr_t map, uls_ptrtype_tool(outparam) parms, _uls_ptrtype_tool(csz_str) cszbuf)
 {
 	char esc_ch = (char) parms->x1;
 	const char *lptr1;
@@ -863,7 +864,7 @@ ULS_QUALIFIED_METHOD(uls_dec_escaped_char)(uls_escmap_ptr_t map, _uls_tool_ptrty
 		}
 
 		len = -n;
-		// notice: len < 0
+
 		parms->uch = uch;
 		parms->flags = map_flags;
 	}
@@ -918,7 +919,7 @@ ULS_QUALIFIED_METHOD(initialize_uls_litesc)()
 
 	// octal
 	rval_flags = ULS_FL_ESCSTR_MAPHEXA | ULS_FL_ESCSTR_OCTAL | 0x02;
-	// notice: octal(3) - 1 == 0x02
+
 	for (i=0; i<10; i++) {
 		esc_ch = '0' + i;
 		if (uls_add_escstr(escmap_pool, map, esc_ch, NULL, rval_flags) < 0) {

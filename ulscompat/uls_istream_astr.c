@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -106,7 +106,7 @@ uls_init_tmpls_astr(uls_tmpl_list_ptr_t tmpl_list, int n_alloc, int flags)
 	}
 
 	ext = uls_alloc_object(uls_tmpl_list_astr_t);
-	uls_init_array_this_type10(uls_ptr(ext->tmpls_aext), tmpl_astr, n_alloc);
+	uls_init_array_type10(uls_ptr(ext->tmpls_aext), tmpl_astr, n_alloc);
 	tmpl_list->shell = ext;
 
 	return 0;
@@ -117,7 +117,7 @@ uls_deinit_tmpls_astr(uls_tmpl_list_ptr_t tmpl_list)
 {
 	uls_tmpl_list_astr_ptr_t ext = (uls_tmpl_list_astr_ptr_t) tmpl_list->shell;
 
-	uls_deinit_array_this_type10(uls_ptr(ext->tmpls_aext), tmpl_astr);
+	uls_deinit_array_type10(uls_ptr(ext->tmpls_aext), tmpl_astr);
 
 	uls_dealloc_object(ext);
 	tmpl_list->shell = nilptr;
@@ -235,7 +235,7 @@ uls_add_tmpl_astr(uls_tmpl_list_ptr_t tmpl_list, const char *name, const char *v
 		return -1;
 	}
 
-	uls_alloc_array_this_slot_type10(uls_ptr(ext->tmpls_aext), tmpl_astr, k);
+	uls_alloc_array_slot_type10(uls_ptr(ext->tmpls_aext), tmpl_astr, k);
 	tmpl_ext = uls_get_array_slot_type10(uls_ptr(ext->tmpls_aext), k);
 
 	if (__set_tmpl_value_astr(tmpl_ext, name, val) < 0) {

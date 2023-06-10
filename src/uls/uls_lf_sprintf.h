@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -102,7 +102,7 @@ extern "C" {
 
 #define ULS_LF_NO_DEFAULT 0x01
 
-ULS_DECLARE_STRUCT(uls_lf_context);
+ULS_DECLARE_STRUCT(lf_context);
 
 ULS_DEFINE_DELEGATE_BEGIN(lf_puts, int)(uls_voidptr_t dat, const char* str, int len);
 ULS_DEFINE_DELEGATE_END(lf_puts);
@@ -114,7 +114,7 @@ ULS_DEFINE_DELEGATE_END(lf_convspec);
 #ifdef ULS_DEF_PROTECTED_TYPE
 
 #ifdef _ULS_IMPLDLL
-ULS_DEFINE_STRUCT(uls_buf4str)
+ULS_DEFINE_STRUCT(buf4str)
 {
 	unsigned int flags;
 	char *buf, *bufptr;
@@ -122,13 +122,13 @@ ULS_DEFINE_STRUCT(uls_buf4str)
 };
 #endif
 
-ULS_DEFINE_STRUCT(uls_lf_convflag)
+ULS_DEFINE_STRUCT(lf_convflag)
 {
 	uls_flags_t  flags;
 	int    width, precision;
 };
 
-ULS_DEFINE_STRUCT(uls_lf_name2proc)
+ULS_DEFINE_STRUCT(lf_name2proc)
 {
 	char name[ULS_LF_PERCENT_NAMESIZ+1];
 	int l_name;
@@ -136,13 +136,13 @@ ULS_DEFINE_STRUCT(uls_lf_name2proc)
 	uls_voidptr_t user_data;
 };
 
-ULS_DEFINE_STRUCT(uls_lf_convspec_table)
+ULS_DEFINE_STRUCT(lf_convspec_table)
 {
 	uls_lf_name2proc_ptr_t proc_tab;
 	int n_used, n_allocd;
 };
 
-ULS_DEFINE_STRUCT(uls_lf_map)
+ULS_DEFINE_STRUCT(lf_map)
 {
 	uls_mutex_struct_t mtx;
 	int flags, ref_cnt;
@@ -153,7 +153,7 @@ ULS_DEFINE_STRUCT(uls_lf_map)
 #endif
 
 #ifdef ULS_DEF_PUBLIC_TYPE
-ULS_DEFINE_STRUCT(uls_lf)
+ULS_DEFINE_STRUCT(lf)
 {
 	void           *x_dat;
 	uls_lf_puts_t  uls_lf_puts;
@@ -168,7 +168,7 @@ ULS_DEFINE_STRUCT(uls_lf)
 	uls_voidptr_t shell;
 };
 
-ULS_DEFINE_STRUCT_BEGIN(uls_lf_context)
+ULS_DEFINE_STRUCT_BEGIN(lf_context)
 {
 	void           *g_dat;
 	uls_lf_convflag_t perfmt;
@@ -177,7 +177,7 @@ ULS_DEFINE_STRUCT_BEGIN(uls_lf_context)
 	va_list        args;
 };
 
-ULS_DEFINE_STRUCT(uls_lf_delegate)
+ULS_DEFINE_STRUCT(lf_delegate)
 {
 	uls_voidptr_t xdat;
 	uls_lf_puts_t puts;

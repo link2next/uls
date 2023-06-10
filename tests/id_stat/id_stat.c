@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -32,11 +32,9 @@
   </author>
 */
 
-
 #include "uls/uls_lex.h"
 #include "uls/uls_log.h"
 #include "uls/uls_util.h"
-#include "uls/uls_misc.h"
 #include "uls/uls_fileio.h"
 #include "uls/uls_init.h"
 
@@ -239,7 +237,7 @@ proc_filelist(FILE *fin)
 }
 
 static int
-comp_by_idname(const uls_voidptr_t a, const uls_voidptr_t b)
+comp_by_idname(const void *a, const void *b)
 {
 	id_stat_t *a1 = (id_stat_t *) a;
 	id_stat_t *b1 = (id_stat_t *) b;
@@ -285,7 +283,7 @@ get_id_stats(int argc, char* argv[], int i0)
 		}
 	}
 
-	uls_quick_sort(id_stat_array, n_id_stat_array, sizeof(id_stat_t), comp_by_idname);
+	qsort(id_stat_array, n_id_stat_array, sizeof(id_stat_t), comp_by_idname);
 
 	for (i=0; i<n_id_stat_array; i++) {
 		e = id_stat_array + i;

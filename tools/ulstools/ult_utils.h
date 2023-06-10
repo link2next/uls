@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -52,5 +52,8 @@ int ult_fd_open_rdonly(const char* fpath);
 void ult_fd_close(int fd);
 
 const char* ult_get_suffix(const char *filepath);
+
+typedef int (*ult_sort_func_t)(const uls_voidptr_t a, const uls_voidptr_t b);
+void ult_simple_sort_vptr(uls_voidptr_t *list, int n_list, ult_sort_func_t cmp_func);
 
 #endif // __ULT_UTILS_H__

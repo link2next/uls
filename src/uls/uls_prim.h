@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -77,15 +77,15 @@ extern "C" {
 #endif // ULS_DECL_GLOBAL_TYPES
 
 #ifdef ULS_DECL_PUBLIC_TYPE
-#ifdef ULS_NO_ASSERT
-#define uls_assert(x)
-#else
+#ifdef ULS_DO_ASSERT
 #define uls_assert(x) do { \
   if ((x)==0) { \
     _uls_log_primitive(err_log)("assertion failed:%s(#%d)", __FILE__, __LINE__); \
     _uls_log_primitive(err_panic)(#x); \
   } \
 } while (0)
+#else
+#define uls_assert(x)
 #endif
 #endif // ULS_DECL_PUBLIC_TYPE
 
@@ -116,7 +116,7 @@ extern "C" {
 #define O_BINARY 0
 #endif
 #endif // ULS_WINDOWS
-  
+
 #ifdef ULS_WINDOWS
 #ifdef ULS_USE_WSTR
 #define tstring wstring
@@ -168,17 +168,17 @@ typedef char *LPTARGV[];
 #ifdef ULS_DEF_PUBLIC_TYPE
 
 #if defined(HAVE_PTHREAD)
-ULS_DEFINE_STRUCT(uls_mutex_struct)
+ULS_DEFINE_STRUCT(mutex_struct)
 {
 	pthread_mutex_t *mtx_pthr;
 };
 #elif defined(ULS_WINDOWS)
-ULS_DEFINE_STRUCT(uls_mutex_struct)
+ULS_DEFINE_STRUCT(mutex_struct)
 {
 	HANDLE hndl;
 };
 #else
-ULS_DEFINE_STRUCT(uls_mutex_struct)
+ULS_DEFINE_STRUCT(mutex_struct)
 {
 	int hndl;
 };
@@ -186,7 +186,7 @@ ULS_DEFINE_STRUCT(uls_mutex_struct)
 
 typedef uls_mutex_struct_ptr_t uls_mutex_t;
 
-ULS_DEFINE_STRUCT(uls_outparam)
+ULS_DEFINE_STRUCT(outparam)
 {
 	int n, n1, n2, len, flags;
 	unsigned int x1, x2;
@@ -200,36 +200,46 @@ ULS_DEFINE_STRUCT(uls_outparam)
 	uls_voidptr_t proc;
 };
 
-ULS_DEFINE_STRUCT(uls_parm_line)
+ULS_DEFINE_STRUCT(parm_line)
 {
 	char *line;
 	const char *lptr, *lptr_end;
 	int len;
 };
 
-ULS_DEFINE_STRUCT(uls_nambuf)
+ULS_DEFINE_STRUCT(nambuf)
 {
 	char *str;
 	int len, buf_siz;
 };
 
-ULS_DEFINE_STRUCT(uls_wrd)
+ULS_DEFINE_STRUCT(wrd)
 {
 	char *wrd, *lptr;
-	int len;
+	int len, siz;
 };
 
-ULS_DEFINE_STRUCT(uls_argstr)
+ULS_DEFINE_STRUCT(argstr)
 {
 	char *buf, *str;
 	int len, buf_siz;
 };
-ULS_DEF_PARRAY_THIS(argstr);
+ULS_DEF_PARRAY(argstr);
 
-ULS_DEFINE_STRUCT(uls_arglst)
+ULS_DEFINE_STRUCT(arglst)
 {
 	uls_decl_parray(args, argstr);
 };
+
+ULS_DEFINE_STRUCT(uch_range)
+{
+	uls_uch_t x1;
+	uls_uch_t x2;
+};
+ULS_DEF_ARRAY_TYPE01(uch_range);
+#ifndef ULS_CLASSIFY_SOURCE
+ULS_DEF_PARRAY(uch_range);
+#endif
 
 #endif // ULS_DEF_PUBLIC_TYPE
 
@@ -260,7 +270,7 @@ int is_hexa_char(char ch);
 int is_num_radix(uls_uch_t ch, int radix);
 char read_hexa_char(char* ptr);
 
-int uls_index_range(_uls_tool_ptrtype_(outparam) parms, int i2_limit);
+int uls_index_range(uls_outparam_ptr_t parms, int i2_limit);
 void uls_clear_bits(char* srcptr, uls_uint32 start_bit, uls_uint32 end_bit);
 int uls_find_first_1bit(char* srcptr,
 	uls_uint32 start_bit, uls_uint32 end_bit, uls_uint32* found_bit);
@@ -295,14 +305,14 @@ int is_pure_word(const char* lptr, int must_id);
 int uls_atoi(const char *str);
 
 void uls_get_xrange(const char* wrd, uls_uint32* ptr_x1, uls_uint32* ptr_x2);
-int get_range_aton(_uls_tool_ptrtype_(outparam) parms);
+int get_range_aton(uls_outparam_ptr_t parms);
 int uls_range_of_bits(uls_uint32 n);
 
 int uls_host_byteorder(void);
 void uls_reverse_bytes(char* ary, int n);
 
-int uls_strcmp(const char* str, const char* str2);
-int uls_strncmp(const char* str, const char* str2, int n);
+int uls_strcmp(const char* str1, const char* str2);
+int uls_strncmp(const char* str1, const char* str2, int n);
 int uls_strcasecmp(const char* str1, const char* str2);
 
 char* uls_strchr(const char* lptr, char ch0);
@@ -313,10 +323,10 @@ int uls_str_tolower(const char* src, char *dst, int len);
 int uls_str_toupper(const char* src, char *dst, int len);
 int uls_memcmp(const void *src1, const void *src2, int n);
 
-unsigned int uls_skip_atou(_uls_tool_ptrtype_(outparam) parms);
-unsigned int uls_skip_atox(_uls_tool_ptrtype_(outparam) parms);
+unsigned int uls_skip_atou(uls_outparam_ptr_t parms);
+unsigned int uls_skip_atox(uls_outparam_ptr_t parms);
 
-char* split_clause(_uls_tool_ptrtype_(outparam) parms);
+char* split_clause(uls_outparam_ptr_t parms);
 char* split_litstr(char *str, char qch);
 
 int uls_fp_getline(FILE* fp, char* buf, int buf_siz);
@@ -346,21 +356,22 @@ ULS_DLL_EXTERN int uls_strncpy(char* bufptr, const char* ptr, int n);
 
 ULS_DLL_EXTERN char* skip_blanks(const char* lptr);
 ULS_DLL_EXTERN int str_trim_end(char* str, int len);
-ULS_DLL_EXTERN char* _uls_splitstr(_uls_tool_ptrtype_(wrd) uw);
-ULS_DLL_EXTERN int _uls_explode_str(_uls_tool_ptrtype_(wrd) uw, char delim_ch, int dupstr, _uls_tool_ptrtype_(arglst) arglst);
-ULS_DLL_EXTERN char* _uls_filename(_uls_tool_ptrtype_(outparam) parms);
+ULS_DLL_EXTERN char* _uls_splitstr(uls_wrd_ptr_t uw);
+ULS_DLL_EXTERN int _uls_explode_str(uls_wrd_ptr_t uw, char delim_ch, int dupstr, uls_arglst_ptr_t arglst);
+ULS_DLL_EXTERN char* _uls_filename(uls_outparam_ptr_t parms);
 
 ULS_DLL_EXTERN uls_argstr_ptr_t uls_create_argstr(void);
 ULS_DLL_EXTERN void uls_destroy_argstr(uls_argstr_ptr_t arg);
 ULS_DLL_EXTERN void uls_set_argstr(uls_argstr_ptr_t arg, char *name, int name_len);
 ULS_DLL_EXTERN char *uls_copy_argstr(uls_argstr_ptr_t arg, const char *name, int name_len);
 
-ULS_DLL_EXTERN void uls_init_arglst(_uls_tool_ptrtype_(arglst) arglst, int siz);
-ULS_DLL_EXTERN void uls_deinit_arglst(_uls_tool_ptrtype_(arglst) arglst);
-ULS_DLL_EXTERN void uls_reset_arglst(_uls_tool_ptrtype_(arglst) arglst);
-ULS_DLL_EXTERN int uls_append_arglst(_uls_tool_ptrtype_(arglst) arglst, uls_argstr_ptr_t arg);
+ULS_DLL_EXTERN void uls_init_arglst(uls_arglst_ptr_t arglst, int siz);
+ULS_DLL_EXTERN void uls_deinit_arglst(uls_arglst_ptr_t arglst);
+ULS_DLL_EXTERN void uls_reset_arglst(uls_arglst_ptr_t arglst);
+ULS_DLL_EXTERN void uls_resize_arglst(uls_arglst_ptr_t arglst, int n1_alloc);
+ULS_DLL_EXTERN int uls_append_arglst(uls_arglst_ptr_t arglst, uls_argstr_ptr_t arg);
 
-ULS_DLL_EXTERN int ustr_num_chars(const char *str, int len, _uls_tool_ptrtype_(outparam) parms);
+ULS_DLL_EXTERN int ustr_num_chars(const char *str, int len, uls_outparam_ptr_t parms);
 
 ULS_DLL_EXTERN int uls_encode_utf8(uls_uch_t uch, char* utf8buf, int siz_utf8buf);
 ULS_DLL_EXTERN int uls_decode_utf8(const char *utf8buf, int siz_utf8buf, uls_uch_t *p_val);

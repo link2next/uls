@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -46,23 +46,23 @@ extern "C" {
 
 #ifdef ULS_DEF_PUBLIC_TYPE
 
-ULS_DEFINE_STRUCT(uls_istream)
+ULS_DEFINE_STRUCT(istream)
 {
 	uls_flags_t  flags;
 	uls_stream_header_t header;
 	int     ref_cnt;
 
-	_uls_def_namebuf(filepath, ULS_FILEPATH_MAX);
+	uls_def_namebuf(filepath, ULS_FILEPATH_MAX);
 	int     fd; /* read-only */
 #ifdef ULS_FDF_SUPPORT
 	fdf_t   *fdf; // fd ---> fdf --->
 #endif
-	_uls_def_namebuf(firstline, ULS_MAGICCODE_SIZE); // for magic-code-string
+	uls_def_namebuf(firstline, ULS_MAGICCODE_SIZE); // for magic-code-string
 	int     len_firstline;
 	int     start_off;
 
 	uls_lex_ptr_t uls;
-	_uls_tool_type_(tempfile) uld_file;
+	uls_type_tool(tempfile) uld_file;
 };
 
 #endif // ULS_DEF_PUBLIC_TYPE
@@ -81,7 +81,7 @@ ULS_DECL_STATIC int parse_uls_hdr(char* line, int fd_in, uls_istream_ptr_t istr)
 #ifdef ULS_DECL_PROTECTED_PROC
 int check_istr_compatibility(uls_istream_ptr_t istr, uls_lex_ptr_t uls);
 int uls_check_stream_ver(uls_stream_header_ptr_t hdr, uls_lex_ptr_t uls);
-int get_rawfile_subtype(char *buff, int n_bytes, _uls_tool_ptrtype_(outparam) parms);
+int get_rawfile_subtype(char *buff, int n_bytes, uls_ptrtype_tool(outparam) parms);
 
 void uls_ungrab_fd_utf(uls_source_ptr_t isrc);
 
@@ -114,7 +114,7 @@ ULS_DLL_EXTERN void uls_destroy_istream(uls_istream_ptr_t istr);
 ULS_DLL_EXTERN int uls_rewind_istream(uls_istream_ptr_t istr);
 ULS_DLL_EXTERN int uls_bind_istream(uls_istream_ptr_t istr, uls_lex_ptr_t uls);
 
-ULS_DLL_EXTERN int uls_read_tok(uls_istream_ptr_t istr, _uls_tool_ptrtype_(outparam) parms);
+ULS_DLL_EXTERN int uls_read_tok(uls_istream_ptr_t istr, uls_ptrtype_tool(outparam) parms);
 
 ULS_DLL_EXTERN int _uls_get_raw_input_subtype(FILE* fp);
 ULS_DLL_EXTERN int _uls_const_TMPLS_DUP(void);

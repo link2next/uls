@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -256,9 +256,9 @@ ULS_QUALIFIED_METHOD(__open_tempfile)(uls_tempfile_ptr_t tmpfile)
 		len = _uls_log_(snprintf)(filepath_buf, ULS_TEMP_FILEPATH_MAXSIZ,
 			"%s%c_ULStmpfile0x%x", basedir, ULS_FILEPATH_DELIM, rand());
 
-		 _uls_set_namebuf_value(tmpfile->filepath, filepath_buf);
+		uls_set_namebuf_value_this(tmpfile->filepath, filepath_buf);
 
-		if ((fd_out = uls_fd_open(_uls_get_namebuf_value(tmpfile->filepath),
+		if ((fd_out = uls_fd_open(uls_get_namebuf_value_this(tmpfile->filepath),
 			ULS_FIO_CREAT|ULS_FIO_RDWR|ULS_FIO_EXCL)) >= 0) {
 			tmpfile->len_filepath = len;
 			tmpfile->fd = fd_out;
@@ -551,7 +551,7 @@ ULS_QUALIFIED_METHOD(__uls_close_tempfile)(uls_tempfile_ptr_t tmpfile, const cha
 {
 	int stat = 1;
 
-	if (_uls_get_namebuf_value(tmpfile->filepath) == filepath) {
+	if (uls_get_namebuf_value_this(tmpfile->filepath) == filepath) {
 		_uls_log(err_log)("%s: invalid filepath!", __FUNCTION__);
 		return -4;
 	}
@@ -562,20 +562,20 @@ ULS_QUALIFIED_METHOD(__uls_close_tempfile)(uls_tempfile_ptr_t tmpfile, const cha
 		uls_fd_close(tmpfile->fd);
 	}
 
-	if (uls_dirent_exist(_uls_get_namebuf_value(tmpfile->filepath)) != ST_MODE_FILE) {
-		_uls_log(err_log)("%s: can' find the tempfile %s!", __FUNCTION__, _uls_get_namebuf_value(tmpfile->filepath));
+	if (uls_dirent_exist(uls_get_namebuf_value_this(tmpfile->filepath)) != ST_MODE_FILE) {
+		_uls_log(err_log)("%s: can' find the tempfile %s!", __FUNCTION__, uls_get_namebuf_value_this(tmpfile->filepath));
 		stat = -3;
 
 	} else if (filepath == NULL) {
-		if (uls_unlink(_uls_get_namebuf_value(tmpfile->filepath)) < 0) {
+		if (uls_unlink(uls_get_namebuf_value_this(tmpfile->filepath)) < 0) {
 			_uls_log(err_log)("%s: unlink error!", __FUNCTION__);
 			stat = -2;
 		} else {
 			stat = 2;
 		}
 
-	} else if (uls_movefile(_uls_get_namebuf_value(tmpfile->filepath), filepath) < 0) {
-		_uls_log(err_log)("can't move the temp-file '%s' to '%s'.", _uls_get_namebuf_value(tmpfile->filepath), filepath);
+	} else if (uls_movefile(uls_get_namebuf_value_this(tmpfile->filepath), filepath) < 0) {
+		_uls_log(err_log)("can't move the temp-file '%s' to '%s'.", uls_get_namebuf_value_this(tmpfile->filepath), filepath);
 		stat = -1;
 	}
 
@@ -591,9 +591,9 @@ ULS_QUALIFIED_METHOD(initialize_uls_fileio)(void)
 	uls_stdio_box_ptr_t fpwrap;
 	int i;
 
-	uls_init_array_this_type01(uls_ptr(stdio_boxlst), stdio_box, ULS_N_BOXLST);
+	uls_init_array_type00(uls_ptr(stdio_boxlst), stdio_box, ULS_N_BOXLST);
 	for (i=0; i<ULS_N_BOXLST; i++) {
-		fpwrap = uls_get_array_slot_type01(uls_ptr(stdio_boxlst), i);
+		fpwrap = uls_get_array_slot_type00(uls_ptr(stdio_boxlst), i);
 		fpwrap->fp_num = i;
 		fpwrap->fp = _uls_stdio_fp(i);
 	}
@@ -602,7 +602,7 @@ ULS_QUALIFIED_METHOD(initialize_uls_fileio)(void)
 void
 ULS_QUALIFIED_METHOD(finalize_uls_fileio)(void)
 {
-	uls_deinit_array_this_type01(uls_ptr(stdio_boxlst), stdio_box);
+	uls_deinit_array_type00(uls_ptr(stdio_boxlst), stdio_box);
 }
 
 ULS_DLL_EXTERN int
@@ -650,7 +650,7 @@ ULS_QUALIFIED_METHOD(_uls_stdio_fp_box)(int fp_num)
 		return nilptr;
 	}
 
-	fpwrap = uls_get_array_slot_type01(uls_ptr(stdio_boxlst), fp_num);
+	fpwrap = uls_get_array_slot_type00(uls_ptr(stdio_boxlst), fp_num);
 	return fpwrap;
 }
 
@@ -788,7 +788,6 @@ ULS_QUALIFIED_METHOD(uls_fgetc_ascii_str)(uls_voidptr_t dat, char *buf, int buf_
 	FILE *fp = fpwrap->fp;
 	int ch;
 
-	// assert: buf_siz > 0
 	if ((ch=fgetc(fp)) == EOF) {
 		if (ferror(fp) || !feof(fp)) {
 			return -1;
@@ -844,7 +843,7 @@ ULS_DLL_EXTERN void
 ULS_QUALIFIED_METHOD(uls_init_fio)(uls_fio_ptr_t fio, int flags)
 {
 	fio->flags = ULS_FL_STATIC | flags;
-	fio->fgetch = _uls_ref_callback_this(uls_fgetc_ascii_str);
+	fio->fgetch = uls_ref_callback_this(uls_fgetc_ascii_str);
 	fio->dat = (uls_voidptr_t) _uls_stdio_fp_box(0);
 }
 
@@ -859,7 +858,7 @@ ULS_DLL_EXTERN void
 ULS_QUALIFIED_METHOD(uls_reset_fio)(uls_fio_ptr_t fio, uls_voidptr_t dat, uls_fgetch_t consumer)
 {
 	if (consumer == nilptr) {
-		consumer = _uls_ref_callback_this(uls_fgetc_ascii_str);
+		consumer = uls_ref_callback_this(uls_fgetc_ascii_str);
 	}
 
 	fio->dat = dat;
@@ -903,7 +902,6 @@ ULS_QUALIFIED_METHOD(uls_fio_gets)(uls_fio_ptr_t fio, char* buf, int buf_siz)
 		return ULS_EOF - 3;
 	}
 
-	// assert: buf_siz > 0
 	buf_end = buf + buf_siz;
 
 	for (bufptr=buf,rc=0; ; ) {
@@ -968,7 +966,7 @@ ULS_QUALIFIED_METHOD(uls_fio_gets)(uls_fio_ptr_t fio, char* buf, int buf_siz)
 ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_file_ptr_t)
 ULS_QUALIFIED_METHOD(uls_open_filp)(const char *filepath, int mode)
 {
-	_uls_callback_type_this_(fgetch) consumer;
+	uls_callback_type_this(fgetch) consumer;
 	uls_stdio_box_ptr_t p_fpwrap;
 	uls_file_ptr_t filp;
 	FILE *fp;
@@ -982,9 +980,9 @@ ULS_QUALIFIED_METHOD(uls_open_filp)(const char *filepath, int mode)
 	}
 
 	if (mode & ULS_FIO_MS_MBCS) {
-		consumer = _uls_ref_callback_this(consume_ms_mbcs_onechar);
+		consumer = uls_ref_callback_this(consume_ms_mbcs_onechar);
 	} else {
-		consumer = _uls_ref_callback_this(uls_fgetc_ascii_str);
+		consumer = uls_ref_callback_this(uls_fgetc_ascii_str);
 	}
 
 	uls_init_fio(uls_ptr(filp->fio), mode);
@@ -1141,7 +1139,7 @@ ULS_DLL_EXTERN void
 ULS_QUALIFIED_METHOD(uls_init_tempfile)(uls_tempfile_ptr_t tmpfile)
 {
 	tmpfile->flags = ULS_FL_STATIC;
-	_uls_init_namebuf(tmpfile->filepath, ULS_TEMP_FILEPATH_MAXSIZ);
+	uls_init_namebuf_this(tmpfile->filepath, ULS_TEMP_FILEPATH_MAXSIZ);
 	tmpfile->len_filepath = 0;
 	tmpfile->fd = -1;
 	tmpfile->fp = NULL;
@@ -1229,7 +1227,7 @@ ULS_QUALIFIED_METHOD(uls_close_tempfile)(uls_tempfile_ptr_t tmpfile, const char*
 	}
 
 	if (tmpfile->len_filepath >= 0) {
-		_uls_deinit_namebuf(tmpfile->filepath);
+		uls_deinit_namebuf_this(tmpfile->filepath);
 		tmpfile->len_filepath = -1;
 	}
 

@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -53,45 +53,45 @@ extern "C" {
 #define ULS_QSTR_R_EXCLUSIVE   0x08
 #define ULS_QSTR_ASYMMETRIC    0x10
 
-ULS_DECLARE_STRUCT(uls_litstr);
-ULS_DECLARE_STRUCT(uls_litstr_context);
+ULS_DECLARE_STRUCT(litstr);
+ULS_DECLARE_STRUCT(litstr_context);
 
 ULS_DEFINE_DELEGATE_BEGIN(litstr_analyzer,int)(uls_litstr_ptr_t lit);
 ULS_DEFINE_DELEGATE_END(litstr_analyzer);
 #endif
 
 #ifdef ULS_DEF_PUBLIC_TYPE
-ULS_DEFINE_STRUCT(uls_quotetype)
+ULS_DEFINE_STRUCT(quotetype)
 {
 	int  tok_id;
 
 	uls_flags_t flags;
 	uls_tokdef_vx_ptr_t tokdef_vx;
 
-	_uls_def_namebuf(start_mark, ULS_QUOTE_MARK_MAXSIZ);
+	uls_def_namebuf(start_mark, ULS_QUOTE_MARK_MAXSIZ);
 	int  len_start_mark;
 
-	_uls_def_namebuf(end_mark, ULS_QUOTE_MARK_MAXSIZ);
+	uls_def_namebuf(end_mark, ULS_QUOTE_MARK_MAXSIZ);
 	int  len_end_mark;
 
 	uls_escmap_ptr_t escmap;
 	int  n_left_lfs, n_lfs;
 
-	_uls_callback_type_this_(litstr_analyzer) litstr_analyzer;
+	uls_callback_type_this(litstr_analyzer) litstr_analyzer;
 	uls_voidptr_t litstr_context;
 };
-ULS_DEF_PARRAY_THIS(quotetype);
+ULS_DEF_PARRAY(quotetype);
 
-ULS_DEFINE_STRUCT_BEGIN(uls_litstr_context)
+ULS_DEFINE_STRUCT_BEGIN(litstr_context)
 {
 	uls_quotetype_ptr_t qmt;
-	_uls_callback_type_this_(litstr_analyzer) litstr_proc;
+	uls_callback_type_this(litstr_analyzer) litstr_proc;
 
-	_uls_tool_ptrtype(csz_str) ss_dst;
+	_uls_ptrtype_tool(csz_str) ss_dst;
 	int n_lfs;
 };
 
-ULS_DEFINE_STRUCT_BEGIN(uls_litstr)
+ULS_DEFINE_STRUCT_BEGIN(litstr)
 {
 	char *line;
 	const char *lptr, *lptr_end;
@@ -112,9 +112,9 @@ uls_uch_t __dec_escaped_char_cont(char quote_ch, uls_litstr_ptr_t lit);
 uls_uch_t uls_get_escape_char_initial(uls_litstr_ptr_t lit);
 uls_uch_t uls_get_escape_char_cont(uls_litstr_ptr_t lit);
 
-int __uls_analyze_esc_ch(uls_litstr_ptr_t lit, uls_escmap_ptr_t escmap, _uls_tool_ptrtype(csz_str) outbuf);
+int __uls_analyze_esc_ch(uls_litstr_ptr_t lit, uls_escmap_ptr_t escmap, _uls_ptrtype_tool(csz_str) outbuf);
 uls_uch_t uls_get_escape_char(uls_litstr_ptr_t lit);
-int uls_get_escape_str(char quote_ch, char* line,  char* line2);
+int uls_get_escape_str(char quote_ch, uls_ptrtype_tool(wrd) wrdx);
 void uls_init_quotetype(uls_quotetype_ptr_t qmt);
 void uls_deinit_quotetype(uls_quotetype_ptr_t qmt);
 
@@ -127,8 +127,8 @@ int dfl_lit_analyzer_escape2(uls_litstr_ptr_t lit);
 #endif
 
 #ifdef ULS_DECL_PUBLIC_PROC
-int canbe_commtype_mark(char* wrd, _uls_tool_ptrtype_(outparam) parms);
-int canbe_quotetype_mark(char *chr_tbl, char* wrd, _uls_tool_ptrtype_(outparam) parms);
+int canbe_commtype_mark(char* wrd, uls_ptrtype_tool(outparam) parms);
+int canbe_quotetype_mark(char *chr_tbl, char* wrd, uls_ptrtype_tool(outparam) parms);
 
 uls_quotetype_ptr_t uls_create_quotetype(void);
 void uls_destroy_quotetype(uls_quotetype_ptr_t qmt);

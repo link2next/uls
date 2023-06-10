@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -45,7 +45,7 @@
 extern "C" {
 #endif
 
-ULS_DEFINE_STRUCT(uls_tmpl_wstr)
+ULS_DEFINE_STRUCT(tmpl_wstr)
 {
 	csz_str_t name_ustr;
 	csz_str_t val_ustr;
@@ -53,11 +53,11 @@ ULS_DEFINE_STRUCT(uls_tmpl_wstr)
 	wchar_t *val_wstr;
 	int val_wsiz, val_wlen;
 };
-ULS_DEF_ARRAY_THIS_TYPE10(tmpl_wstr);
+ULS_DEF_ARRAY_TYPE10(tmpl_wstr);
 
-ULS_DEFINE_STRUCT(uls_tmpl_list_wstr)
+ULS_DEFINE_STRUCT(tmpl_list_wstr)
 {
-	uls_decl_array_this_type10(tmpls_wext, tmpl_wstr);
+	uls_decl_array_type10(tmpls_wext, tmpl_wstr);
 };
 
 void __init_tmpls_wstr(uls_tmpl_wstr_ptr_t tmpl_ary, int n);

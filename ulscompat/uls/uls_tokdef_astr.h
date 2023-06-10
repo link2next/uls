@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -40,14 +40,14 @@
 extern "C" {
 #endif
 
-ULS_DEFINE_STRUCT(uls_id2astr_pair)
+ULS_DEFINE_STRUCT(id2astr_pair)
 {
   int     tok_id;
   int     n_chars;
   char    *astr;
   int     alen;
 };
-ULS_DEF_PARRAY_THIS(id2astr_pair);
+ULS_DEF_PARRAY(id2astr_pair);
 
 uls_id2astr_pair_ptr_t __find_ms_mbcs_name_in_list(uls_ref_parray(pair_list,id2astr_pair), int pair_list_len, int t);
 uls_id2astr_pair_ptr_t __add_ms_mbcs_name_in_list(uls_ref_parray(pair_list,id2astr_pair), int pair_list_len, int *ptr_pair_list_siz,

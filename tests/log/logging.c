@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -32,6 +32,7 @@
   </author>
 */
 
+#define ULS_DECL_PROTECTED_PROC
 #include "uls/uls_lex.h"
 #include "uls/uls_log.h"
 #include "uls/uls_util.h"
@@ -141,7 +142,7 @@ test_sprintf(uls_lex_t* uls, uls_log_t* log)
 	len = uls_snprintf(buff, sizeof(buff), _T(""));
 	dump_tstr(buff, len);
 
-	len = uls_snprintf(buff, sizeof(buff), _T("'%s' '%8s' %% '%-8s' -- %"), str, str, str);
+	len = uls_snprintf(buff, sizeof(buff), _T("'%s' '%8s' %% '%-8s'"), str, str, str);
 	dump_tstr(buff, len);
 
 	buff[0] = 'X'; buff[1] = 'Y'; buff[2] = 'Z';
@@ -297,7 +298,7 @@ _tmain(int argc, LPTARGV argv)
 	LPTSTR input_file;
 	int i0;
 
-#if defined(ULS_USE_WSTR) || defined(ULS_USE_ASTR) 
+#if defined(ULS_USE_WSTR) || defined(ULS_USE_ASTR)
 	initialize_ulscompat();
 #else
 	initialize_uls();

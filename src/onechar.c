@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -41,8 +41,7 @@ ULS_QUALIFIED_METHOD(__init_onechar_tokgrp)(uls_onechar_table_ptr_t tbl, int grp
 	uls_decl_parray_slots(slots_vx, tokdef_vx);
 	int i;
 
-	// assert: n > 0
-	tokgrp = uls_get_array_slot_type01(uls_ptr(tbl->tokgrps), grp_id);
+	tokgrp = uls_get_array_slot_type00(uls_ptr(tbl->tokgrps), grp_id);
 	tokgrp->uch0 = uch0;
 
 	uls_init_parray(uls_ptr(tokgrp->tokdef_vx_1char), tokdef_vx, n);
@@ -70,9 +69,9 @@ ULS_QUALIFIED_METHOD(uls_init_onechar_table)(uls_onechar_table_ptr_t tbl)
 {
 	int i;
 
-	uls_init_array_this_type01(uls_ptr(tbl->tokgrps), onechar_tokgrp, N_ONECHAR_TOKGRPS);
-	for (i=0; i<N_ONECHAR_TOKGRPS; i++) {
-		uls_init_onechar_tokgrp(uls_get_array_slot_type01(uls_ptr(tbl->tokgrps),i));
+	uls_init_array_type00(uls_ptr(tbl->tokgrps), onechar_tokgrp, ULS_N_ONECHAR_TOKGRPS);
+	for (i=0; i<ULS_N_ONECHAR_TOKGRPS; i++) {
+		uls_init_onechar_tokgrp(uls_get_array_slot_type00(uls_ptr(tbl->tokgrps),i));
 	}
 
 	uls_init_parray(uls_ptr(tbl->tokdef_vx_pool_1ch), tokdef_vx, 0);
@@ -115,10 +114,10 @@ ULS_QUALIFIED_METHOD(uls_deinit_onechar_table)(uls_onechar_table_ptr_t tbl)
 
 	uls_deinit_parray(uls_ptr(tbl->tokdef_vx_pool_1ch));
 
-	for (i=0; i<N_ONECHAR_TOKGRPS; i++) {
-		uls_deinit_onechar_tokgrp(uls_get_array_slot_type01(uls_ptr(tbl->tokgrps),i));
+	for (i=0; i<ULS_N_ONECHAR_TOKGRPS; i++) {
+		uls_deinit_onechar_tokgrp(uls_get_array_slot_type00(uls_ptr(tbl->tokgrps),i));
 	}
-	uls_deinit_array_this_type01(uls_ptr(tbl->tokgrps), onechar_tokgrp);
+	uls_deinit_array_type00(uls_ptr(tbl->tokgrps), onechar_tokgrp);
 }
 
 ULS_QUALIFIED_RETTYP(uls_tokdef_vx_ptr_t)
@@ -132,7 +131,7 @@ ULS_QUALIFIED_METHOD(uls_find_1char_tokdef_map)(uls_onechar_table_ptr_t tbl,
 	// group[3] = { '{' ... '~' }
 	//
 	//                           group  ...  group
-	//                             0   1   2   3  
+	//                             0   1   2   3
 	static int   left_child[4] = { -1, -1,  1, -1 };
 	static int  right_child[4] = {  2, -1,  3, -1 };
 
@@ -142,9 +141,8 @@ ULS_QUALIFIED_METHOD(uls_find_1char_tokdef_map)(uls_onechar_table_ptr_t tbl,
 	uls_decl_parray_slots(slots_vx, tokdef_vx);
 	uls_uch_t uch0;
 
-	// assert: ptr_tokgrp != NULL
 	for (i_grp = 0, level = 0; i_grp >= 0 && level < 3; level++) {
-		tokgrp = uls_get_array_slot_type01(uls_ptr(tbl->tokgrps), i_grp);
+		tokgrp = uls_get_array_slot_type00(uls_ptr(tbl->tokgrps), i_grp);
 
 		slots_vx = uls_parray_slots(uls_ptr(tokgrp->tokdef_vx_1char));
 		n_tok_array = tokgrp->tokdef_vx_1char.n;
@@ -179,7 +177,6 @@ ULS_QUALIFIED_METHOD(uls_insert_onechar_tokdef_map)
 	uls_decl_parray_slots_init(slots_vx, tokdef_vx, uls_ptr(tokgrp->tokdef_vx_1char));
 	int j;
 
-	// assert: tokgrp != NULL
 	uls_assert(tokgrp->uch0 <= uch);
 
 	j = uch - tokgrp->uch0;
@@ -198,7 +195,6 @@ ULS_QUALIFIED_METHOD(uls_insert_onechar_tokdef_etc)
 {
 	uls_onechar_tokdef_etc_ptr_t  e_etc;
 
-	// assert: tbl != NULL
 	uls_assert(e_vx != nilptr);
 
 	e_etc = uls_alloc_object(uls_onechar_tokdef_etc_t);
@@ -250,7 +246,6 @@ ULS_QUALIFIED_METHOD(uls_insert_1char_tokdef_vx)
 	int stat;
 
 	// why uch is needed? Can we use the e_vx->tok_id instead!?
-	// notice: The 'uch' as a char is mapped to e_vx->tok_id
 	if (uls_find_1char_tokdef_vx(tbl, uch, uls_ptr(outparam)) != nilptr) {
 		return 0;
 	}

@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -60,7 +60,7 @@ extern "C" {
 ULS_DEFINE_DELEGATE_BEGIN(proc_uld_line, int)(uld_line_ptr_t tok_names, int n_tabs, const char *lptr);
 ULS_DEFINE_DELEGATE_END(proc_uld_line);
 
-ULS_DEFINE_STRUCT(uls_parms_emit)
+ULS_DEFINE_STRUCT(parms_emit)
 {
 	uls_flags_t flags;
 
@@ -77,7 +77,7 @@ ULS_DEFINE_STRUCT(uls_parms_emit)
 	const char *fpath;
 	int len_fpath;
 
-	_uls_tool_type_(arglst) name_components;
+	uls_type_tool(arglst) name_components;
 	int n_name_components;
 
 	uls_voidptr_t ext_data;

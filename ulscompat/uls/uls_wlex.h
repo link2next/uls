@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -46,7 +46,7 @@
 extern "C" {
 #endif
 
-ULS_DEFINE_STRUCT(uls_wlex_shell)
+ULS_DEFINE_STRUCT(wlex_shell)
 {
 	uls_flags_t flags;
 
@@ -129,7 +129,6 @@ ULS_DLL_EXTERN const wchar_t* uls_get_tag2_wstr(uls_lex_ptr_t uls, int *ptr_len_
 
 #define uls_init uls_init_wstr
 #define uls_create uls_create_wstr
-#define uls_create_cr2lf uls_create_cr2lf_wstr
 #define uls_destroy uls_destroy_wstr
 
 #define uls_push_fd uls_push_fd_wstr
@@ -142,7 +141,6 @@ ULS_DLL_EXTERN const wchar_t* uls_get_tag2_wstr(uls_lex_ptr_t uls, int *ptr_len_
 
 #define uls_set_line uls_set_line_wstr
 #define uls_push_line uls_push_line_wstr
-#define uls_push_line_cr2lf uls_push_line_wstr
 
 #undef uls_get_tag
 #define uls_get_tag uls_get_tag_wstr

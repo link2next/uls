@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -257,7 +257,6 @@ ULS_QUALIFIED_METHOD(uls_astr2wstr)(const char *astr, int alen, csz_str_ptr_t cs
 	uls_outparam_t parms1;
 
 	if (astr == NULL) {
-		// BUGFIX-210: don't csz_deinit(csz_wstr) for input-param 'csz_wstr'.
 		return NULL;
 	}
 
@@ -282,7 +281,6 @@ ULS_QUALIFIED_METHOD(uls_wstr2astr)(const wchar_t* wstr, int wlen, csz_str_ptr_t
 	char *astr;
 
 	if (wstr == NULL) {
-		// BUGFIX-210: don't csz_deinit(csz) for input-param 'csz'.
 		return NULL;
 	}
 

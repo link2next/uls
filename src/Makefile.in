@@ -399,7 +399,7 @@ ulc2class_exe = $(top_builddir)/tools/ulc2class/ulc2class
 tests_libpath = $(top_builddir)/src:$(top_builddir)/ulscpp
 lib_LTLIBRARIES = libuls.la
 libuls_la_SOURCES = \
-	uls_prim.c uls_misc.c uls_util.c uls_version.c  uls_auw.c uls_fileio.c \
+	uls_prim.c uls_misc.c uls_util.c uls_version.c uls_auw.c uls_fileio.c \
 	utf8_enc.c utf_file.c uls_log.c csz_stream.c fdfilter.c \
 	uls_ieee754.c uls_lf_percent_f.c uls_lf_sprintf.c uls_print.c \
 	uls_tokdef.c twoplus.c onechar.c idkeyw.c uls_freq.c uls_conf.c uld_conf.c uls_emit.c \
@@ -1143,6 +1143,11 @@ uninstall-am: uninstall-includeHEADERS uninstall-libLTLIBRARIES
 
 .PRECIOUS: Makefile
 
+
+uls/uls_const_linux.h: array_names00.txt
+	./gen_array_names00.sh $< > $@
+
+uls_prim.c: uls/uls_const_linux.h
 
 install: install-libLTLIBRARIES install-includeHEADERS
 	install -m755 -d "$(includedir)"/uls

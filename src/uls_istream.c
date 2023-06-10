@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -40,8 +40,8 @@
 ULS_DECL_STATIC void
 ULS_QUALIFIED_METHOD(__init_istream)(uls_istream_ptr_t istr)
 {
-	_uls_init_namebuf(istr->filepath, ULS_FILEPATH_MAX);
-	_uls_init_namebuf(istr->firstline, ULS_MAGICCODE_SIZE);
+	uls_init_namebuf(istr->filepath, ULS_FILEPATH_MAX);
+	uls_init_namebuf(istr->firstline, ULS_MAGICCODE_SIZE);
 
 	uls_init_stream_header(uls_ptr(istr->header));
 
@@ -54,11 +54,10 @@ ULS_QUALIFIED_METHOD(__init_istream)(uls_istream_ptr_t istr)
 ULS_DECL_STATIC ULS_QUALIFIED_RETTYP(uls_istream_ptr_t)
 ULS_QUALIFIED_METHOD(__create_istream)(int fd)
 {
-	// assert: fd >= 0
 	uls_istream_ptr_t istr;
 
 	istr = uls_alloc_object(uls_istream_t);
-	__uls_initial_zerofy_object(istr);
+	uls_initial_zerofy_object(istr);
 	__init_istream(istr);
 
 	istr->fd = fd;
@@ -81,8 +80,8 @@ ULS_QUALIFIED_METHOD(__destroy_istream)(uls_istream_ptr_t istr)
 	_uls_tool_(deinit_tempfile)(uls_ptr(istr->uld_file));
 	uls_deinit_stream_header(uls_ptr(istr->header));
 
-	_uls_deinit_namebuf(istr->filepath);
-	_uls_deinit_namebuf(istr->firstline);
+	uls_deinit_namebuf(istr->filepath);
+	uls_deinit_namebuf(istr->firstline);
 
 	uls_dealloc_object(istr);
 }
@@ -97,7 +96,7 @@ ULS_QUALIFIED_METHOD(check_istr_compatibility)(uls_istream_ptr_t istr, uls_lex_p
 		return 1;
 	}
 
-	specname = _uls_get_namebuf_value(istr->header.specname);
+	specname = uls_get_namebuf_value(istr->header.specname);
 	if (!uls_check_stream_ver(uls_ptr(istr->header), uls)) {
 		_uls_log(err_log)("%s: Unsupported version: ", specname);
 		return 0;
@@ -109,7 +108,7 @@ ULS_QUALIFIED_METHOD(check_istr_compatibility)(uls_istream_ptr_t istr, uls_lex_p
 ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(make_tokpkt_seqence)(uls_lex_ptr_t uls, const char* line, uls_tmpl_pool_ptr_t tmpls_pool)
 {
-	_uls_tool_ptrtype(csz_str) str_pool = uls_ptr(tmpls_pool->str_pool);
+	_uls_ptrtype_tool(csz_str) str_pool = uls_ptr(tmpls_pool->str_pool);
 	const char *lxm;
 	int  n=0, tok, k, len;
 
@@ -146,7 +145,6 @@ ULS_QUALIFIED_METHOD(make_tokpkt_seqence)(uls_lex_ptr_t uls, const char* line, u
 ULS_DECL_STATIC void
 ULS_QUALIFIED_METHOD(make_eoif_lexeme_bin)(uls_context_ptr_t ctx, int tok_id, const char *txt, int txtlen)
 {
-	// NOTICE: txt[txtlen] == '\0';
 	ctx->tok = tok_id;
 	_uls_tool(str_append)(uls_ptr(ctx->tokbuf), 0, txt, txtlen);
 
@@ -161,7 +159,7 @@ ULS_QUALIFIED_METHOD(uls_check_stream_ver)(uls_stream_header_ptr_t hdr, uls_lex_
 	int stat;
 
 	if (hdr->filetype == ULS_STREAM_RAW ||
-		uls_spec_compatible(uls, _uls_get_namebuf_value(hdr->specname), uls_ptr(hdr->filever))) {
+		uls_spec_compatible(uls, uls_get_namebuf_value(hdr->specname), uls_ptr(hdr->filever))) {
 		stat = 1;
 	} else {
 		stat = 0;
@@ -171,7 +169,7 @@ ULS_QUALIFIED_METHOD(uls_check_stream_ver)(uls_stream_header_ptr_t hdr, uls_lex_
 }
 
 int
-ULS_QUALIFIED_METHOD(get_rawfile_subtype)(char *buff, int n_bytes, _uls_tool_ptrtype_(outparam) parms)
+ULS_QUALIFIED_METHOD(get_rawfile_subtype)(char *buff, int n_bytes, uls_ptrtype_tool(outparam) parms)
 {
 	int mode, reverse, fpos;
 	uls_uint16 BOM16;
@@ -221,7 +219,7 @@ ULS_QUALIFIED_METHOD(get_rawfile_subtype)(char *buff, int n_bytes, _uls_tool_ptr
 void
 ULS_QUALIFIED_METHOD(uls_ungrab_fd_utf)(uls_source_ptr_t isrc)
 {
-	_uls_tool_ptrtype_(utf_inbuf) inp = (_uls_tool_ptrtype_(utf_inbuf)) isrc->usrc;
+	uls_ptrtype_tool(utf_inbuf) inp = (uls_ptrtype_tool(utf_inbuf)) isrc->usrc;
 	uls_istream_ptr_t istr = (uls_istream_ptr_t) inp->data;
 
 	uls_destroy_istream(istr);
@@ -234,13 +232,13 @@ ULS_QUALIFIED_METHOD(uls_import_tmpls)(uls_tmpl_list_ptr_t tmpl_list, uls_lex_pt
 	uls_decl_array_slots_type10(tmpls1, tmpl);
 	uls_tmpl_ptr_t tmpl1;
 
-	uls_ref_array_this_type10(tmpls2, tmplvar);
+	uls_ref_array_type10(tmpls2, tmplvar);
 	uls_tmplvar_ptr_t tmpl2;
 	int n_tmpls;
 
 	uls_tmpl_pool_ptr_t tmpls_pool;
 	uls_rd_packet_ptr_t pkt;
-	_uls_tool_ptrtype(csz_str) str_pool;
+	_uls_ptrtype_tool(csz_str) str_pool;
 
 	char *str_ary;
 	int i, m, k;
@@ -262,7 +260,7 @@ ULS_QUALIFIED_METHOD(uls_import_tmpls)(uls_tmpl_list_ptr_t tmpl_list, uls_lex_pt
 	tmpls2 = uls_ptr(tmpls_pool->tmplvars);
 
 	for (i=0; i<n_tmpls; i++) {
-		tmpl1 = uls_get_array_this_slot(tmpls1, i);
+		tmpl1 = uls_get_array_slot(tmpls1, i);
 		tmpl2 = uls_get_array_slot_type10(tmpls2, i);
 
 		k = csz_length(str_pool);
@@ -302,7 +300,7 @@ ULS_QUALIFIED_METHOD(uls_import_tmpls)(uls_tmpl_list_ptr_t tmpl_list, uls_lex_pt
 
 	for (k=i=0; i<n_tmpls; i++) {
 		tmpl2 = uls_get_array_slot_type10(tmpls2, i);
-		tmpl1 = uls_get_array_this_slot(tmpls1, i);
+		tmpl1 = uls_get_array_slot(tmpls1, i);
 
 		m = tmpl1->idx_name;
 		tmpl2->name = str_ary + m;
@@ -389,7 +387,7 @@ ULS_QUALIFIED_METHOD(uls_gettok_bin)(uls_lex_ptr_t uls)
 	const char     *lptr, *pckptr;
 	int    tok_id, rc, txtlen;
 	uls_uint32  *hdrbuf;
-	_uls_tool_type_(outparam) parms;
+	uls_type_tool(outparam) parms;
 
  next_loop:
 	lptr = ctx->lptr;
@@ -398,7 +396,6 @@ ULS_QUALIFIED_METHOD(uls_gettok_bin)(uls_lex_ptr_t uls)
 		if ((rc=uls_clear_and_fillbuff(uls)) < 0) {
 			return 0;
 		} else if (rc > 0) {
-			// notice: actually, rc == 1
 			goto next_loop; // normal case
 		}
 
@@ -421,7 +418,6 @@ ULS_QUALIFIED_METHOD(uls_gettok_bin)(uls_lex_ptr_t uls)
 		rc = _uls_tool_(skip_atox)(uls_ptr(parms));
 		lptr = parms.lptr;
 
-		// notice: the trailed space at end of 'lptr' chars not permitted.
 		if (*lptr == '\0') lptr = NULL;
 		else ++lptr; // skip the ' '
 
@@ -454,7 +450,6 @@ ULS_QUALIFIED_METHOD(uls_gettok_bin)(uls_lex_ptr_t uls)
 ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(uls_readline_buffer)(char* buf, int bufsiz)
 {
-	// assert: bufsiz >= 0 and buf[bufsiz] == '\0'
 	int  i;
 
 	for (i=0; i < bufsiz; i++) {
@@ -469,7 +464,7 @@ ULS_QUALIFIED_METHOD(uls_readline_buffer)(char* buf, int bufsiz)
 ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(parse_uls_hdr)(char* line, int fd_in, uls_istream_ptr_t istr)
 {
-	_uls_tool_type_(wrd) wrdx;
+	uls_type_tool(wrd) wrdx;
 	char *wrd, filepath_buf[ULS_TEMP_FILEPATH_MAXSIZ + 5];
 
 	int fsubtype, fpos, uld_n_lines, i_lines, len2;
@@ -490,7 +485,7 @@ ULS_QUALIFIED_METHOD(parse_uls_hdr)(char* line, int fd_in, uls_istream_ptr_t ist
 
 	} else if (uls_streql(wrd, "SPEC:")) {
 		wrd = __uls_tool_(splitstr)(uls_ptr(wrdx));
-		_uls_set_namebuf_value(istr->header.specname, wrd);
+		uls_set_namebuf_value(istr->header.specname, wrd);
 
 	} else if (uls_streql(wrd, "TYPE:")) {
 		wrd = __uls_tool_(splitstr)(uls_ptr(wrdx));
@@ -510,11 +505,11 @@ ULS_QUALIFIED_METHOD(parse_uls_hdr)(char* line, int fd_in, uls_istream_ptr_t ist
 
 	} else if (uls_streql(wrd, "CREATION_TIME:")) {
 		wrd = __uls_tool_(splitstr)(uls_ptr(wrdx));
-		_uls_set_namebuf_value(istr->header.ctime, wrd);
+		uls_set_namebuf_value(istr->header.ctime, wrd);
 
 	} else if (uls_streql(wrd, "TAG:")) {
 		wrd = __uls_tool_(splitstr)(uls_ptr(wrdx));
-		_uls_set_namebuf_value(istr->header.subname, wrd);
+		uls_set_namebuf_value(istr->header.subname, wrd);
 
 	} else if (uls_streql(wrd, "TOKEN_REMAP:")) {
 		// #-of-lines for uld
@@ -523,7 +518,6 @@ ULS_QUALIFIED_METHOD(parse_uls_hdr)(char* line, int fd_in, uls_istream_ptr_t ist
 			_uls_log(err_log)("uld_n_lines: incorrect format!!");
 			return -1;
 		}
-		// assert: uld_n_lines >= 1
 
 		// #-of-blocks: ULS_BIN_BLKSIZ
 		wrd = __uls_tool_(splitstr)(uls_ptr(wrdx));
@@ -531,7 +525,6 @@ ULS_QUALIFIED_METHOD(parse_uls_hdr)(char* line, int fd_in, uls_istream_ptr_t ist
 			_uls_log(err_log)("remap_n_blocks: incorrect format!!");
 			return -1;
 		}
-		// assert: remap_n_blocks >= 1
 
 		fpos = (1 + remap_n_blocks) << ULS_BIN_BLKSIZ_LOG2;
 		istr->start_off = fpos;
@@ -543,14 +536,13 @@ ULS_QUALIFIED_METHOD(parse_uls_hdr)(char* line, int fd_in, uls_istream_ptr_t ist
 		}
 		remap_buff[remap_size] = '\0';
 
-		// assert: output_file != NULL
 		if ((fp_out = _uls_tool_(fopen_tempfile)(uls_ptr(istr->uld_file))) == NULL) {
 			_uls_log(err_log)("Error to reading istream");
 			uls_mfree(remap_buff);
 			return -1;
 		}
 
-		_uls_log_(fprintf)(fp_out, "#@%s\n", _uls_get_namebuf_value(istr->header.specname));
+		_uls_log_(fprintf)(fp_out, "#@%s\n", uls_get_namebuf_value(istr->header.specname));
 		bufptr2 = remap_buff;
 		for (i_lines=0; i_lines < uld_n_lines; i_lines++) {
 			len2 = uls_readline_buffer(bufptr2, remap_size);
@@ -567,7 +559,7 @@ ULS_QUALIFIED_METHOD(parse_uls_hdr)(char* line, int fd_in, uls_istream_ptr_t ist
 
 		if (istr->uls == nilptr) {
 			_uls_log_(snprintf)(filepath_buf, ULS_TEMP_FILEPATH_MAXSIZ,
-				"%s.uld", _uls_get_namebuf_value(istr->uld_file.filepath));
+				"%s.uld", uls_get_namebuf_value(istr->uld_file.filepath));
 			_uls_tool_(close_tempfile)(uls_ptr(istr->uld_file), filepath_buf);
 
 //			err_log("Reading uld-file for '%s'...", filepath_buf);
@@ -589,14 +581,13 @@ ULS_QUALIFIED_METHOD(parse_uls_hdr)(char* line, int fd_in, uls_istream_ptr_t ist
 ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_istream_ptr_t)
 ULS_QUALIFIED_METHOD(uls_open_istream)(int fd)
 {
-	// assert: ULS_LINEBUFF_SIZ__ULS >= ULS_MAGICCODE_SIZE
 	char linebuff[ULS_LINEBUFF_SIZ__ULS+1], *lptr;
 	const char *magic_code = "#34183847-D64D-C131-D754-577215664901-ULS-STREAM\n";
 	const char *spec_name;
 	int  magic_code_len = _uls_tool_(strlen)(magic_code);
 	int  len, fpos;
 	uls_istream_ptr_t istr;
-	_uls_tool_type_(outparam) parms;
+	uls_type_tool(outparam) parms;
 
 	char ulshdr[ULS_BIN_HDR_SZ + 1], *bufptr;
 	int bufsiz;
@@ -619,26 +610,23 @@ ULS_QUALIFIED_METHOD(uls_open_istream)(int fd)
 		return nilptr;
 
 	} else if (len < magic_code_len || !uls_streql(linebuff, magic_code)) { // including EOF(len==0)
-		_uls_set_namebuf_value_2(istr->firstline, linebuff, len);
+		uls_set_namebuf_value_2(istr->firstline, linebuff, len);
 		istr->len_firstline = len;
 
-		// NOTICE: The maximum required size is greater than 4-bytes
 		//    in order to compare it with the UTF-BOM
-		fpos = get_rawfile_subtype(_uls_get_namebuf_value(istr->firstline), istr->len_firstline, uls_ptr(parms));
+		fpos = get_rawfile_subtype(uls_get_namebuf_value(istr->firstline), istr->len_firstline, uls_ptr(parms));
 		istr->header.subtype = parms.n1;
 		istr->header.reverse = parms.n2;
 
 		// can lseek for regular(!) files.
 		if (uls_fd_seek(istr->fd, fpos, SEEK_SET) == fpos) {
 			// then invalidate the firstline[] read in the file.
-			_uls_set_namebuf_value(istr->firstline, "");
+			uls_set_namebuf_value(istr->firstline, "");
 			istr->len_firstline = 0;
 		}
 
 		return istr;
 	}
-
-	// assert: magic_code_len < ULS_BIN_HDR_SZ
 
 	bufptr = ulshdr + magic_code_len;
 	bufsiz = ULS_BIN_HDR_SZ - magic_code_len;
@@ -674,8 +662,7 @@ ULS_QUALIFIED_METHOD(uls_open_istream)(int fd)
 	}
 
 	if (istr->uls == nilptr) {
-		spec_name = _uls_get_namebuf_value(istr->header.specname);
-		// assert: spec_name != NULL
+		spec_name = uls_get_namebuf_value(istr->header.specname);
 //		err_log("Searching for '%s'...", spec_name);
 		istr->uls = uls_create(spec_name);
 	}
@@ -687,7 +674,7 @@ ULS_DLL_EXTERN void
 ULS_QUALIFIED_METHOD(uls_set_istream_tag)(uls_istream_ptr_t istr, const char* tag)
 {
 	if (tag != NULL) {
-		_uls_set_namebuf_value(istr->filepath, tag);
+		uls_set_namebuf_value(istr->filepath, tag);
 	}
 }
 
@@ -714,7 +701,7 @@ ULS_QUALIFIED_METHOD(uls_open_istream_file)(const char* fpath)
 	}
 
 	istr->flags |= ULS_STREAM_FDCLOSE | ULS_STREAM_REWINDABLE;
-	_uls_set_namebuf_value(istr->filepath, fpath);
+	uls_set_namebuf_value(istr->filepath, fpath);
 
 	return istr;
 }
@@ -776,7 +763,7 @@ ULS_QUALIFIED_METHOD(uls_open_istream_filter_file)(fdf_t* fdf, const char* fpath
 	}
 
 	istr->flags |= ULS_STREAM_FDCLOSE | ULS_STREAM_REWINDABLE;
-	_uls_set_namebuf_value(istr->filepath, fpath);
+	uls_set_namebuf_value(istr->filepath, fpath);
 
 	return istr;
 }
@@ -881,7 +868,7 @@ ULS_QUALIFIED_METHOD(uls_bind_istream)(uls_istream_ptr_t istr, uls_lex_ptr_t uls
 }
 
 ULS_DLL_EXTERN int
-ULS_QUALIFIED_METHOD(uls_read_tok)(uls_istream_ptr_t istr, _uls_tool_ptrtype_(outparam) parms)
+ULS_QUALIFIED_METHOD(uls_read_tok)(uls_istream_ptr_t istr, uls_ptrtype_tool(outparam) parms)
 {
 	uls_lex_ptr_t uls;
 	int t;
@@ -906,7 +893,7 @@ ULS_QUALIFIED_METHOD(_uls_get_raw_input_subtype)(FILE* fp)
 {
 	char linebuff[8];
 	int rc, subtype;
-	_uls_tool_type_(outparam) parms;
+	uls_type_tool(outparam) parms;
 
 	rc = (int) fread(linebuff, sizeof(char), sizeof(linebuff)-1, fp);
 	linebuff[rc] = '\0';

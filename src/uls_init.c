@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -53,7 +53,6 @@ ULS_QUALIFIED_METHOD(__finalize_uls)(void)
 {
 	finalize_uls_litesc();
 	finalize_ulc_lexattr();
-	finalize_uls_util();
 
 	if (uls_langs != nilptr) {
 		uls_destroy_lang_list(uls_langs);
@@ -64,7 +63,7 @@ ULS_QUALIFIED_METHOD(__finalize_uls)(void)
 
 	ulc_set_searchpath(NULL);
 #ifndef ULS_DOTNET
-	__finalize_uls_misc();
+	finalize_uls_util();
 #endif
 }
 
@@ -74,11 +73,11 @@ ULS_QUALIFIED_METHOD(__initialize_uls)(void)
 	char pathbuff[ULS_FILEPATH_MAX+1];
 
 #ifndef ULS_DOTNET
-	if (__initialize_uls_misc() < 0) {
+	if (_uls_tool(initialize_uls_util)() < 0) {
 		return -1;
 	}
 #endif
-	if (load_uch_ranges_list(-1) < 0) {
+	if (load_uch_ranges_list() < 0) {
 		_uls_log(err_log)("ULS: can't find the file for unicode id ranges!");
 		return -1;
 	}
@@ -94,7 +93,6 @@ ULS_QUALIFIED_METHOD(__initialize_uls)(void)
 		}
 	}
 
-	initialize_uls_util();
 	initialize_ulc_lexattr();
 	initialize_uls_litesc();
 

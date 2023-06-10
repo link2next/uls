@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -40,29 +40,29 @@ extern "C" {
 
 #ifdef ULS_DEF_PUBLIC_TYPE
 
-ULS_DEFINE_STRUCT(uls_onechar_tokgrp)
+ULS_DEFINE_STRUCT(onechar_tokgrp)
 {
 	uls_uch_t uch0;
 	uls_decl_parray(tokdef_vx_1char, tokdef_vx);
 };
-ULS_DEF_ARRAY_THIS_TYPE01(onechar_tokgrp, N_ONECHAR_TOKGRPS);
+ULS_DEF_ARRAY_TYPE00(onechar_tokgrp, ONECHAR_TOKGRP_TYPE00_ULS_N_ONECHAR_TOKGRPS, ULS_N_ONECHAR_TOKGRPS);
 
-ULS_DEFINE_STRUCT(uls_onechar_tokdef_etc)
+ULS_DEFINE_STRUCT(onechar_tokdef_etc)
 {
 	uls_uch_t uch;
 	uls_tokdef_vx_ptr_t tokdef_vx;
 	uls_onechar_tokdef_etc_ptr_t next;
 };
 
-ULS_DEFINE_STRUCT(uls_onechar_table)
+ULS_DEFINE_STRUCT(onechar_table)
 {
-	uls_decl_array_this_type01(tokgrps, onechar_tokgrp, N_ONECHAR_TOKGRPS);
+	uls_decl_array_type00(tokgrps, onechar_tokgrp, ULS_N_ONECHAR_TOKGRPS);
 	uls_onechar_tokdef_etc_ptr_t tokdefs_etc_list;
 
 	uls_decl_parray(tokdef_vx_pool_1ch, tokdef_vx);
 };
 
-ULS_DEFINE_STRUCT(uls_tokdef_outparam)
+ULS_DEFINE_STRUCT(tokdef_outparam)
 {
 	uls_tokdef_vx_ptr_t e_vx;
 	uls_onechar_tokgrp_ptr_t tokgrp;

@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -309,7 +309,7 @@ ULS_QUALIFIED_METHOD(uls_snprintf)(char* buf, int bufsiz, const char *fmt, ...)
 // <parm name="fmt">The template for message string</parm>
 // <return># of chars filled</return>
 ULS_DLL_EXTERN int
-ULS_QUALIFIED_METHOD(__uls_lf_vzprintf)(_uls_tool_ptrtype(csz_str) csz, uls_lf_ptr_t uls_lf, const char *fmt, va_list args)
+ULS_QUALIFIED_METHOD(__uls_lf_vzprintf)(_uls_ptrtype_tool(csz_str) csz, uls_lf_ptr_t uls_lf, const char *fmt, va_list args)
 {
 	uls_lf_delegate_t delegate;
 	int len;
@@ -324,7 +324,7 @@ ULS_QUALIFIED_METHOD(__uls_lf_vzprintf)(_uls_tool_ptrtype(csz_str) csz, uls_lf_p
 }
 
 ULS_DLL_EXTERN int
-ULS_QUALIFIED_METHOD(uls_lf_vzprintf)(_uls_tool_ptrtype(csz_str) csz, uls_lf_ptr_t uls_lf, const char *fmt, va_list args)
+ULS_QUALIFIED_METHOD(uls_lf_vzprintf)(_uls_ptrtype_tool(csz_str) csz, uls_lf_ptr_t uls_lf, const char *fmt, va_list args)
 {
 	int len;
 
@@ -336,7 +336,7 @@ ULS_QUALIFIED_METHOD(uls_lf_vzprintf)(_uls_tool_ptrtype(csz_str) csz, uls_lf_ptr
 }
 
 ULS_DLL_EXTERN int
-ULS_QUALIFIED_METHOD(__uls_lf_zprintf)(_uls_tool_ptrtype(csz_str) csz, uls_lf_ptr_t uls_lf, const char *fmt, ...)
+ULS_QUALIFIED_METHOD(__uls_lf_zprintf)(_uls_ptrtype_tool(csz_str) csz, uls_lf_ptr_t uls_lf, const char *fmt, ...)
 {
 	va_list args;
 	int len;
@@ -349,7 +349,7 @@ ULS_QUALIFIED_METHOD(__uls_lf_zprintf)(_uls_tool_ptrtype(csz_str) csz, uls_lf_pt
 }
 
 ULS_DLL_EXTERN int
-ULS_QUALIFIED_METHOD(uls_lf_zprintf)(_uls_tool_ptrtype(csz_str) csz, uls_lf_ptr_t uls_lf, const char *fmt, ...)
+ULS_QUALIFIED_METHOD(uls_lf_zprintf)(_uls_ptrtype_tool(csz_str) csz, uls_lf_ptr_t uls_lf, const char *fmt, ...)
 {
 	va_list args;
 	int len;
@@ -362,13 +362,13 @@ ULS_QUALIFIED_METHOD(uls_lf_zprintf)(_uls_tool_ptrtype(csz_str) csz, uls_lf_ptr_
 }
 
 ULS_DLL_EXTERN int
-ULS_QUALIFIED_METHOD(__uls_vzprintf)(_uls_tool_ptrtype(csz_str) csz, const char *fmt, va_list args)
+ULS_QUALIFIED_METHOD(__uls_vzprintf)(_uls_ptrtype_tool(csz_str) csz, const char *fmt, va_list args)
 {
 	return __uls_lf_vzprintf(csz, dfl_csz_lf, fmt, args);
 }
 
 ULS_DLL_EXTERN int
-ULS_QUALIFIED_METHOD(uls_vzprintf)(_uls_tool_ptrtype(csz_str) csz, const char *fmt, va_list args)
+ULS_QUALIFIED_METHOD(uls_vzprintf)(_uls_ptrtype_tool(csz_str) csz, const char *fmt, va_list args)
 {
 	int len;
 
@@ -380,7 +380,7 @@ ULS_QUALIFIED_METHOD(uls_vzprintf)(_uls_tool_ptrtype(csz_str) csz, const char *f
 }
 
 ULS_DLL_EXTERN int
-ULS_QUALIFIED_METHOD(__uls_zprintf)(_uls_tool_ptrtype(csz_str) csz, const char *fmt, ...)
+ULS_QUALIFIED_METHOD(__uls_zprintf)(_uls_ptrtype_tool(csz_str) csz, const char *fmt, ...)
 {
 	va_list args;
 	int len;
@@ -393,7 +393,7 @@ ULS_QUALIFIED_METHOD(__uls_zprintf)(_uls_tool_ptrtype(csz_str) csz, const char *
 }
 
 ULS_DLL_EXTERN int
-ULS_QUALIFIED_METHOD(uls_zprintf)(_uls_tool_ptrtype(csz_str) csz, const char *fmt, ...)
+ULS_QUALIFIED_METHOD(uls_zprintf)(_uls_ptrtype_tool(csz_str) csz, const char *fmt, ...)
 {
 	va_list args;
 	int len;

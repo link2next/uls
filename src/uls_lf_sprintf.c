@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -1189,7 +1189,7 @@ ULS_QUALIFIED_METHOD(uls_lf_register_convspec)(uls_lf_map_ptr_t lf_map, const ch
 ULS_DLL_EXTERN int
 ULS_QUALIFIED_METHOD(uls_lf_init_convspec_map)(uls_lf_map_ptr_t lf_map, int flags)
 {
-	__uls_initial_zerofy_object(lf_map);
+	uls_initial_zerofy_object(lf_map);
 
 	lf_map->flags = ULS_FL_STATIC;
 	uls_init_mutex(uls_ptr(lf_map->mtx));
@@ -1472,14 +1472,10 @@ ULS_QUALIFIED_METHOD(__uls_lf_vxprintf)(uls_lf_ptr_t uls_lf, const char* fmt, va
 
 	wrdptr = fmtptr = fmt;
 	for ( ; ; ) {
-		for ( ; ; ) {
-			if ((len = uls_decode_utf8(fmtptr, -1, NULL)) > 1) {
-				fmtptr += len;
-				continue;
+		for ( ; (ch=*fmtptr) != '\0' && ch != '%'; fmtptr += len) {
+			if ((len = uls_decode_utf8(fmtptr, -1, NULL)) <= 0) {
+				return -2;
 			}
-
-			if ((ch=*fmtptr) == '\0' || ch == '%') break;
-			fmtptr++;
 		}
 
 		if ((len = (int) (fmtptr - wrdptr)) > 0) {

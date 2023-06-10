@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -234,7 +234,6 @@ uls_explode_astr(char **ptr_aline, char delim_ach, char** args, int n_args)
 ULS_DLL_EXTERN int
 uls_getopts_astr(int n_args, char* args[], const char* optfmt, uls_optproc_t proc)
 {
-	// NOTICE: No Conversion from ANSI-string to Unicode string!
 	return uls_getopts(n_args, args, optfmt, proc);
 }
 

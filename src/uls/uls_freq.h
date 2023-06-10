@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -45,13 +45,13 @@ extern "C" {
 #endif
 
 #ifdef ULS_DEF_PUBLIC_TYPE
-ULS_DEFINE_STRUCT(ulf_header)
+_ULS_DEFINE_STRUCT(ulf_header)
 {
-	_uls_tool_type_(version) filever;
+	uls_type_tool(version) filever;
 	uls_uint32    init_hcode;
 
-	_uls_def_namebuf(hash_algorithm, ULS_LEXSTR_MAXSIZ);
-	_uls_tool_type_(version) hfunc_ver;
+	uls_def_namebuf(hash_algorithm, ULS_LEXSTR_MAXSIZ);
+	uls_type_tool(version) hfunc_ver;
 	int           hash_table_size;
 };
 #endif

@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -192,17 +192,6 @@ uls_create_astr(const char* confname)
 	}
 
 	uls->flags &= ~ULS_FL_STATIC;
-	return uls;
-}
-
-ULS_DLL_EXTERN uls_lex_ptr_t
-uls_create_cr2lf_astr(const char* confname)
-{
-	uls_lex_ptr_t uls;
-
-	uls = uls_create_astr(confname);
-	uls->xcontext.flags |= ULS_XCTX_FL_CR2LF;
-
 	return uls;
 }
 

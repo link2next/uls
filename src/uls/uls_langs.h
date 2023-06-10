@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -44,33 +44,33 @@ extern "C" {
 #ifdef ULS_DEF_PROTECTED_TYPE
 #define ULC_ALIAS_HASHTABLE_SIZ  101
 
-ULS_DECLARE_STRUCT(uls_lang_list);
+ULS_DECLARE_STRUCT(lang_list);
 
-ULS_DEFINE_STRUCT(uls_alias)
+ULS_DEFINE_STRUCT(alias)
 {
 	char *name;
 	int len, lst_id;
 	uls_alias_ptr_t next;
 };
 
-ULS_DEF_PARRAY_THIS(alias);
+ULS_DEF_PARRAY(alias);
 #ifndef ULS_CLASSIFY_SOURCE
-ULS_DEF_ARRAY_THIS_TYPE10(alias);
+ULS_DEF_ARRAY_TYPE10(alias);
 #endif
 
-ULS_DEFINE_STRUCT(uls_lang)
+ULS_DEFINE_STRUCT(lang)
 {
 	uls_alias_ptr_t e0;
 	int idx_alias_list, n_alias_list;
 	uls_lang_list_ptr_t parent;
 };
-ULS_DEF_ARRAY_THIS_TYPE10(lang);
+ULS_DEF_ARRAY_TYPE10(lang);
 
-ULS_DEFINE_STRUCT_BEGIN(uls_lang_list)
+ULS_DEFINE_STRUCT_BEGIN(lang_list)
 {
 	uls_decl_parray(hashtbl, alias); // ULC_ALIAS_HASHTABLE_SIZ
-	uls_decl_array_this_type10(langs, lang);
-	uls_decl_array_this_type10(alias_pool, alias);
+	uls_decl_array_type10(langs, lang);
+	uls_decl_array_type10(alias_pool, alias);
 
 	char *str_pool;
 	int siz_str_pool, n_str_pool;
@@ -92,7 +92,7 @@ EXTERNAL uls_lang_list_ptr_t uls_langs;
 ULS_DECL_STATIC unsigned int ulc_alias_hashfunc(const char *str, int n);
 ULS_DECL_STATIC int strdup_cnst(uls_lang_list_ptr_t tbl, const char *str);
 
-ULS_DECL_STATIC uls_lang_ptr_t uls_append_lang(uls_lang_list_ptr_t tbl, _uls_tool_ptrtype_(outparam) parms);
+ULS_DECL_STATIC uls_lang_ptr_t uls_append_lang(uls_lang_list_ptr_t tbl, uls_ptrtype_tool(outparam) parms);
 ULS_DECL_STATIC int langs_proc_line(uls_lang_list_ptr_t tbl, char* line);
 ULS_DECL_STATIC void construct_ulc_lang_db(uls_lang_list_ptr_t tbl);
 ULS_DECL_STATIC _ULS_INLINE int __is_langs_needed_quote(const char* name);

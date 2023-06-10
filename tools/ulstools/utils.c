@@ -7,10 +7,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -92,7 +92,7 @@ ult_guess_specname_from_istream(uls_istream_ptr_t istr, uls_outparam_ptr_t parms
 		specname[0] = '\0';
 		len = 0;
 	} else {
-		strcpy(specname, _uls_get_namebuf_value(istr->header.specname));
+		strcpy(specname, uls_get_namebuf_value(istr->header.specname));
 		len = (int) strlen(specname);
 		// 'specname' is not nil-string.
 	}
@@ -289,4 +289,34 @@ ult_get_suffix(const char *filepath)
 	}
 
 	return suff;
+}
+
+static int
+ult_find_index_minimum(uls_voidptr_t *list, int i0, int n_list, ult_sort_func_t cmp_func)
+{
+	int i, i_min;
+
+	i_min = i0;
+	for (i=i0+1; i<n_list; i++) {
+		if (cmp_func(list[i], list[i_min]) < 0) {
+			i_min = i0;
+		}
+	}
+	return i_min;
+}
+
+void
+ult_simple_sort_vptr(uls_voidptr_t *list, int n_list, ult_sort_func_t cmp_func)
+{
+	uls_voidptr_t a;
+	int i, i_min;
+
+	for (i=0; i < n_list - 1; i++) {
+		i_min = ult_find_index_minimum(list, i+1, n_list, cmp_func);
+		if (i != i_min) {
+			a = list[i];
+			list[i] = list[i_min];
+			list[i_min] = a;
+		}
+	}
 }
