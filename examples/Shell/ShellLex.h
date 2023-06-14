@@ -46,18 +46,18 @@ namespace collection
 	class ShellLex : public uls::collection::ShellLexBasis {
 		csz_str_t tokbuf;
 
-		std::tstring tok_str;
+		std::string tok_str;
 		int tok_id;
 		bool tok_ungot;
 
-		LPCTSTR tcschr(LPCTSTR tstr, TCHAR tch);
+		const char * tcschr(const char * tstr, char tch);
 		int expect_number(void);
 		void expect_redir(void);
 		void get_token(void);
 
 	public:
 
-		ShellLex(std::tstring& config_name);
+		ShellLex(std::string& config_name);
 		~ShellLex();
 
 		// <brief>
@@ -68,17 +68,17 @@ namespace collection
 		virtual int getTok(void);
 
 		virtual int getTokNum(void);
-		virtual std::tstring& getTokStr(void);
+		virtual std::string& getTokStr(void);
 
 		void ungetTok(void);
-		std::tstring getKeywordStr(int t);
+		std::string getKeywordStr(int t);
 
 		// <brief>
 		// Sets the input file to be tokenized.
 		// </brief>
 		// <parm name="fpath">The path of file</parm>
 		// <return>none</return>
-		int source(std::tstring& fpath);
+		int source(std::string& fpath);
 
 	};
 }

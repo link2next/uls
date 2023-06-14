@@ -117,38 +117,6 @@ extern "C" {
 #endif
 #endif // ULS_WINDOWS
 
-#ifdef ULS_WINDOWS
-#ifdef ULS_USE_WSTR
-#define tstring wstring
-typedef wchar_t *LPTARGV[];
-#else
-#define tstring string
-typedef char *LPTARGV[];
-#endif
-#else // ULS_WINDOWS
-#ifdef ULS_USE_WSTR
-#ifndef _T
-#define _T(a) L##a
-#define TEXT(a) L##a
-typedef wchar_t TCHAR;
-typedef wchar_t *LPTSTR;
-typedef const wchar_t *LPCTSTR;
-#endif
-#define tstring wstring
-#else // ULS_USE_WSTR
-#ifndef _T
-#define _T(a) a
-#define TEXT(a) a
-typedef char TCHAR;
-typedef char *LPTSTR;
-typedef const char *LPCTSTR;
-#endif
-#define tstring string
-#endif //ULS_USE_WSTR
-typedef char *LPTARGV[];
-#define _tmain main
-#endif // ULS_WINDOWS
-
 #ifdef _ULS_IMPLDLL
 #define _IS_CH_DIGIT(c) (c>='0' && c<='9')
 #define _IS_CH_LOWER(c) (c>='a' && c<='z')
@@ -175,7 +143,7 @@ ULS_DEFINE_STRUCT(mutex_struct)
 #elif defined(ULS_WINDOWS)
 ULS_DEFINE_STRUCT(mutex_struct)
 {
-	HANDLE hndl;
+	void *hndl; // HANDLE
 };
 #else
 ULS_DEFINE_STRUCT(mutex_struct)

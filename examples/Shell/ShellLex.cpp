@@ -39,19 +39,19 @@
 using namespace std;
 using namespace uls::collection;
 
-ShellLex::ShellLex(tstring& config_name)
+ShellLex::ShellLex(string& config_name)
 	: ShellLexBasis(config_name)
 {
 	csz_init(&tokbuf, 128);
 
-	tstring nil_str = _T("");
+	string nil_str = "";
 	source(nil_str);
 	tok_ungot = false;
 }
 
 ShellLex::~ShellLex()
 {
-	tstring nil_str = _T("");
+	string nil_str = "";
 	source(nil_str);
 
 	csz_deinit(&tokbuf);
@@ -63,13 +63,13 @@ ShellLex::~ShellLex()
 // <parm name="fpath">The path of file</parm>
 // <return>0 if it succeeds, otherwise -1</return>
 int
-ShellLex::source(tstring& fpath)
+ShellLex::source(string& fpath)
 {
-	if (fpath != _T("")) {
+	if (fpath != "") {
 		pushFile(fpath);
 	}
 
-	tok_str = _T("");
+	tok_str = "";
 	tok_id = NONE;
 
 	return 0;
@@ -78,10 +78,10 @@ ShellLex::source(tstring& fpath)
 int
 ShellLex::expect_number(void)
 {
-	LPCTSTR ptr;
-	TCHAR  tch;
+	const char * ptr;
+	char  tch;
 	int tok, len;
-	tstring *lxm;
+	string *lxm;
 
 	tok = ShellLexBasis::getTok();
 	expect(NUM);
@@ -90,13 +90,13 @@ ShellLex::expect_number(void)
 	ptr = lxm->c_str();
 	len = (int) lxm->length();
 
-	tch = _T('0');
-	csz_append(&tokbuf, (const char *) &tch, sizeof(TCHAR));
+	tch = '0';
+	csz_append(&tokbuf, (const char *) &tch, sizeof(char));
 
-	tch = _T('x');
-	csz_append(&tokbuf, (const char *) &tch, sizeof(TCHAR));
+	tch = 'x';
+	csz_append(&tokbuf, (const char *) &tch, sizeof(char));
 
-	csz_append(&tokbuf, (const char *) ptr, len * sizeof(TCHAR));
+	csz_append(&tokbuf, (const char *) ptr, len * sizeof(char));
 
 	return tok;
 }
@@ -106,7 +106,7 @@ ShellLex::expect_redir(void)
 {
 	bool is_quote;
 	uls_uch_t uch;
-	TCHAR tch;
+	char tch;
 
 	while ((uch=ShellLexBasis::getCh(&is_quote)) != ULS_UCH_NONE && !is_quote) {
 		if (isspace(uch)) {
@@ -114,14 +114,14 @@ ShellLex::expect_redir(void)
 			break;
 		}
 
-		tch = (TCHAR) uch;
-		csz_append(&tokbuf, (const char *) &tch, sizeof(TCHAR));
+		tch = (char) uch;
+		csz_append(&tokbuf, (const char *) &tch, sizeof(char));
 	}
 
-	tok_str = tstring(uls_get_csz_tstr(&tokbuf));
+	tok_str = string(csz_text(&tokbuf));
 }
 
-#define SHELL_SPECIAL_CHARS _T("$+-_./=\\!*?~")
+#define SHELL_SPECIAL_CHARS "$+-_./=\\!*?~"
 
 // <brief>
 // This is a virtual method to be implemented, inherited from 'UlsLex' class.
@@ -130,12 +130,12 @@ ShellLex::expect_redir(void)
 void
 ShellLex::get_token(void)
 {
-	tstring *lxm;
+	string *lxm;
 	int tok, len;
 	bool is_quote;
 	uls_uch_t uch;
-	LPCTSTR ptr;
-	TCHAR tch;
+	const char * ptr;
+	char tch;
 
 	if (tok_ungot == true) {
 		tok_ungot = false;
@@ -156,8 +156,8 @@ ShellLex::get_token(void)
 	if (uch == '-') { // Is '-' the minus sign?
 		ShellLexBasis::getCh(NULL);
 
-		tch = _T('-');
-		csz_append(&tokbuf, (const char *) &tch, sizeof(TCHAR));
+		tch = '-';
+		csz_append(&tokbuf, (const char *) &tch, sizeof(char));
 
 		uch = ShellLexBasis::peekCh(&is_quote);
 		if (isdigit(uch)) {
@@ -177,17 +177,17 @@ ShellLex::get_token(void)
 		tok = ShellLexBasis::getTok();
 		ShellLexBasis::getTokStr(&lxm);
 
-		ptr = (LPCTSTR) lxm->c_str();
+		ptr = (const char *) lxm->c_str();
 	 	len = (int) lxm->length();
-	 	csz_append(&tokbuf, (const char *) ptr, len * sizeof(TCHAR));
+	 	csz_append(&tokbuf, (const char *) ptr, len * sizeof(char));
 
 		uch = ShellLexBasis::peekCh(&is_quote);
 
 	} else if (uch == '&') {
 		ShellLexBasis::getCh(NULL);
 
-		tch = _T('&');
-		csz_append(&tokbuf, (const char *) &tch, sizeof(TCHAR));
+		tch = '&';
+		csz_append(&tokbuf, (const char *) &tch, sizeof(char));
 
 		tok = '&';
 		uch = ShellLexBasis::peekCh(&is_quote);
@@ -199,7 +199,7 @@ ShellLex::get_token(void)
 	if (is_quote) {
 		ShellLexBasis::getTok();
 		if (tok == NONE) tok = ShellLexBasis::getTokNum();
-		tok_str = tstring(uls_get_csz_tstr(&tokbuf));
+		tok_str = string(csz_text(&tokbuf));
 		tok_id = tok;
 		return;
 	}
@@ -210,7 +210,7 @@ ShellLex::get_token(void)
 		return;
 	}
 
-	if (isalnum(uch) || tcschr(_T("'\"`") SHELL_SPECIAL_CHARS, (TCHAR) uch) != NULL) {
+	if (isalnum(uch) || tcschr("'\"`" SHELL_SPECIAL_CHARS, (char) uch) != NULL) {
 		// 'Shell-Script word' is to be processed, ...
 		do {
 			if (isdigit(uch)) {
@@ -220,31 +220,31 @@ ShellLex::get_token(void)
 				ShellLexBasis::getTok();
 				ShellLexBasis::getTokStr(&lxm);
 
-				ptr = (LPCTSTR) lxm->c_str();
+				ptr = (const char *) lxm->c_str();
 			 	len = (int) lxm->length();
-			 	csz_append(&tokbuf, (const char *) ptr, len * sizeof(TCHAR));
+			 	csz_append(&tokbuf, (const char *) ptr, len * sizeof(char));
 
 			} else if (uch == '"' || uch == '\'' || uch == '`') {
 	 			ShellLexBasis::getTok();
 				ShellLexBasis::getTokStr(&lxm);
 
-	 			ptr = (LPCTSTR) lxm->c_str();
+	 			ptr = (const char *) lxm->c_str();
 	 			len = (int) lxm->length();
 
-				tch = (TCHAR) uch;
-				csz_append(&tokbuf, (const char *) &tch, sizeof(TCHAR));
+				tch = (char) uch;
+				csz_append(&tokbuf, (const char *) &tch, sizeof(char));
 
-	 			csz_append(&tokbuf, (const char *) ptr, len * sizeof(TCHAR));
+	 			csz_append(&tokbuf, (const char *) ptr, len * sizeof(char));
 
-	 			tch = (TCHAR) uch;
-				csz_append(&tokbuf, (const char *) &tch, sizeof(TCHAR));
+	 			tch = (char) uch;
+				csz_append(&tokbuf, (const char *) &tch, sizeof(char));
 
 	 		} else {
-	 			if (tcschr(SHELL_SPECIAL_CHARS _T("@#(){}"), (TCHAR) uch) == NULL) break;
+	 			if (tcschr(SHELL_SPECIAL_CHARS "@#(){}", (char) uch) == NULL) break;
 				ShellLexBasis::getCh(NULL);
 
-				tch = (TCHAR) uch;
-				csz_append(&tokbuf, (const char *) &tch, sizeof(TCHAR));
+				tch = (char) uch;
+				csz_append(&tokbuf, (const char *) &tch, sizeof(char));
 			}
 	 	} while ((uch=ShellLexBasis::peekCh(&is_quote)) != ULS_UCH_NONE);
 
@@ -255,12 +255,12 @@ ShellLex::get_token(void)
 		tok = ShellLexBasis::getTok();
 		ShellLexBasis::getTokStr(&lxm);
 
-		ptr = (LPCTSTR) lxm->c_str();
+		ptr = (const char *) lxm->c_str();
 	 	len = (int) lxm->length();
-	 	csz_append(&tokbuf, (const char *) ptr, len * sizeof(TCHAR));
+	 	csz_append(&tokbuf, (const char *) ptr, len * sizeof(char));
 	}
 
-	tok_str = tstring(uls_get_csz_tstr(&tokbuf));
+	tok_str = string(csz_text(&tokbuf));
 	tok_id = tok;
 }
 
@@ -278,7 +278,7 @@ ShellLex::getTokNum(void)
 	return tok_id;
 }
 
-std::tstring&
+std::string&
 ShellLex::getTokStr(void)
 {
 	return tok_str;
@@ -288,9 +288,9 @@ ShellLex::getTokStr(void)
 // This is a virtual method, inherited from 'UlsLex' class.
 // But we don't need this method yet to process 'Shell-Script' files.
 // </brief>
-tstring ShellLex::getKeywordStr(int t)
+string ShellLex::getKeywordStr(int t)
 {
-	return tstring(_T("<unknown>"));
+	return string("<unknown>");
 }
 
 void
@@ -299,12 +299,12 @@ ShellLex::ungetTok(void)
 	tok_ungot = true;
 }
 
-LPCTSTR
-ShellLex::tcschr(LPCTSTR tstr, TCHAR tch)
+const char *
+ShellLex::tcschr(const char * tstr, char tch)
 {
 	int i;
 
-	for (i=0; tstr[i] != _T('\0'); i++) {
+	for (i=0; tstr[i] != '\0'; i++) {
 		if (tstr[i] == tch) {
 			return tstr + i;
 		}

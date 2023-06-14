@@ -654,10 +654,8 @@ ULS_QUALIFIED_METHOD(uls_parse_escmap_feature)(uls_escmap_pool_ptr_t escmap_pool
 	}
 
 	len = (int) (lptr - wrd);
-
 	ch_bak = wrd[len];
 	wrd[len] = '\0';
-
 	mode_str = wrd;
 
 	if (uls_streql(mode_str, "verbatim0")) {
@@ -864,7 +862,6 @@ ULS_QUALIFIED_METHOD(uls_dec_escaped_char)(uls_escmap_ptr_t map, uls_ptrtype_too
 		}
 
 		len = -n;
-
 		parms->uch = uch;
 		parms->flags = map_flags;
 	}

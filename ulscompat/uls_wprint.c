@@ -34,9 +34,6 @@
 #define __ULS_WPRINT__
 #include "uls/uls_wprint.h"
 #include "uls/uls_fileio.h"
-#ifdef ULS_WINDOWS
-#include "uls/uls_util_astr.h"
-#endif
 #include "uls/uls_util_wstr.h"
 
 ULS_DECL_STATIC uls_lf_ptr_t str_wlf, file_wlf, csz_wlf;
@@ -54,11 +51,7 @@ initialize_uls_wprint(void)
 	uls_lf_puts_t proc_str, proc_file, proc_csz;
 
 	proc_str = uls_lf_wputs_str;
-#ifdef ULS_WINDOWS
-	proc_file = uls_lf_aputs_file;
-#else
 	proc_file = uls_lf_puts_file;
-#endif
 	proc_csz = uls_lf_wputs_csz;
 
 	str_wlf = uls_wlf_create(nilptr, nilptr, proc_str);
@@ -84,11 +77,7 @@ uls_sysprn_wopen(uls_voidptr_t data, uls_lf_puts_t proc)
 	uls_lf_delegate_t delegate;
 
 	if (proc == nilptr && data != nilptr) {
-#ifdef ULS_WINDOWS
-		proc = uls_lf_aputs_file;
-#else
 		proc = uls_lf_puts_file;
-#endif
 	}
 
 	if (wsysprn_opened) {
@@ -402,11 +391,8 @@ __uls_lf_vfwprintf(FILE* fp, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, va_list a
 	int wlen;
 
 	delegate.xdat = fp;
-#ifdef ULS_WINDOWS
-	delegate.puts = uls_lf_aputs_file;
-#else
 	delegate.puts = uls_lf_puts_file;
-#endif
+
 	__uls_lf_change_puts(uls_lf, uls_ptr(delegate));
 	wlen = __uls_lf_vxwprintf(uls_lf, wfmt, args);
 	__uls_lf_change_puts(uls_lf, uls_ptr(delegate));

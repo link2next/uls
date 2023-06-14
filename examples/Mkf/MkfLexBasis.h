@@ -59,7 +59,7 @@ namespace uls {
 			static const int        COLONASGN = 132;
 			static const int         DBLCOLON = 133;
 
-			MkfLexBasis(std::tstring &ulc_fpath)
+			MkfLexBasis(std::string &ulc_fpath)
 				 : uls::crux::UlsLex(ulc_fpath) {}
 		};
 	}

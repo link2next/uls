@@ -292,13 +292,13 @@ test_log_threads(void)
 }
 
 int
-_tmain(int argc, LPTARGV argv)
+main(int argc, char *argv[])
 {
 	LPTSTR *targv;
 	LPTSTR input_file;
 	int i0;
 
-#if defined(ULS_USE_WSTR) || defined(ULS_USE_ASTR)
+#ifdef ULS_USE_WSTR
 	initialize_ulscompat();
 #else
 	initialize_uls();

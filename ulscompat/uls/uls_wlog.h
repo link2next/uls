@@ -69,24 +69,4 @@ ULS_DLL_EXTERN void uls_wpanic(uls_log_ptr_t log, const wchar_t* wfmt, ...);
 }
 #endif
 
-#ifdef _ULS_USE_ULSCOMPAT
-#ifdef ULS_USE_WSTR
-#define uls_init_log uls_init_wlog
-#define uls_deinit_log uls_deinit_wlog
-
-#define uls_create_log uls_create_wlog
-#define uls_destroy_log uls_destroy_wlog
-
-#define err_vlog err_vwlog
-#define err_log err_wlog
-#define err_vpanic err_vwpanic
-#define err_panic err_wpanic
-
-#define uls_vlog uls_vwlog
-#define uls_log uls_wlog
-#define uls_vpanic uls_vwpanic
-#define uls_panic uls_wpanic
-#endif
-#endif
-
 #endif // __ULS_WLOG_H__

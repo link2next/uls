@@ -44,17 +44,17 @@ namespace collection
 	class Css3Lex : public uls::collection::Css3LexBasis {
 		csz_str_t tokbuf;
 
-		std::tstring tok_str;
+		std::string tok_str;
 		int tok_id;
 		bool tok_ungot;
 
 		int prepare_url_tok;
 
-		int concat_lexeme(LPCTSTR str, int len, int tok);
+		int concat_lexeme(const char * str, int len, int tok);
 		void get_token(void);
 
 	public:
-		Css3Lex(std::tstring& config_name);
+		Css3Lex(std::string& config_name);
 		~Css3Lex();
 
 		// <brief>
@@ -65,17 +65,17 @@ namespace collection
 		virtual int getTok(void);
 
 		virtual int getTokNum(void);
-		virtual std::tstring& getTokStr(void);
+		virtual std::string& getTokStr(void);
 
 		void ungetTok(void);
-		std::tstring getKeywordStr(int t);
+		std::string getKeywordStr(int t);
 
 		// <brief>
 		// Sets the input file to be tokenized.
 		// </brief>
 		// <parm name="fpath">The path of file</parm>
 		// <return>none</return>
-		void setFile(std::tstring fpath);
+		void setFile(std::string fpath);
 	};
 }
 }

@@ -314,12 +314,8 @@ ULS_DLL_EXTERN uls_xcontext_ptr_t _uls_get_xcontext(uls_lex_ptr_t uls);
 }
 #endif
 
-#ifdef _ULS_USEDLL
-#if defined(ULS_USE_WSTR)
+#ifdef ULS_USE_WSTR
 #include "uls/uls_conf_wstr.h"
-#elif defined(ULS_USE_ASTR)
-#include "uls/uls_conf_astr.h"
-#endif
 #endif
 
 #endif // __ULS_CONF_H__

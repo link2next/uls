@@ -118,7 +118,7 @@ ULS_QUALIFIED_METHOD(uls_dump_tmpls)(uls_tmpl_list_ptr_t tmpl_list)
 	printf("\n");
 }
 
-ULS_QUALIFIED_RETTYP(uls_tmpl_ptr_t)
+ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_tmpl_ptr_t)
 ULS_QUALIFIED_METHOD(uls_find_tmpl)(uls_tmpl_list_ptr_t tmpl_list, const char* name)
 {
 	uls_tmpl_ptr_t tmpl;

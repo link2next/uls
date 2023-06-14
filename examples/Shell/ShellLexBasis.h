@@ -83,7 +83,7 @@ namespace uls {
 			static const int         NOQUOTE1 = 92;
 			static const int           IQUOTE = 96;
 
-			ShellLexBasis(std::tstring &ulc_fpath)
+			ShellLexBasis(std::string &ulc_fpath)
 				 : uls::crux::UlsLex(ulc_fpath) {}
 		};
 	}

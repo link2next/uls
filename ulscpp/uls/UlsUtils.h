@@ -33,9 +33,6 @@
 #pragma once
 
 #include <uls/csz_stream.h>
-#ifdef ULS_WINDOWS
-#include <uls/uls_util_astr.h>
-#endif
 #include <uls/uls_util_wstr.h>
 
 namespace uls {

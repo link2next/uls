@@ -132,12 +132,8 @@ ULS_DLL_EXTERN int ulsjava_print_tok_linenum(uls_ostream_ptr_t ostr, int lno, co
 }
 #endif
 
-#ifdef _ULS_USEDLL
-#if defined(ULS_USE_WSTR)
+#ifdef ULS_USE_WSTR
 #include "uls/uls_ostream_wstr.h"
-#elif defined(ULS_USE_ASTR)
-#include "uls/uls_ostream_astr.h"
-#endif
 #endif
 
 #endif // __ULS_OSTREAM_H__

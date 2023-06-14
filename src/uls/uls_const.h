@@ -44,16 +44,16 @@
 #define TMP_LANGS_FNAME      "uls_langs.txt"
 #define ULS_ULCNAME_DELIM    '/'
 
-#define ULS_VERSION_STR      _T("1.9.0")
-#define ULC2CLASS_PROGVER    _T("v2.7.0")
-#define ULF_GEN_PROGVER      _T("v1.6.0")
-#define ULS_STREAM_PROGVER   _T("v2.6.0")
+#define ULS_VERSION_STR      "1.8.5"
+#define ULC2CLASS_PROGVER    "v2.7.0"
+#define ULF_GEN_PROGVER      "v1.6.0"
+#define ULS_STREAM_PROGVER   "v2.6.0"
 
-#define ULS_INITIAL_NAME     _T("ULS(Unified Lexical Scheme)")
-#define ULS_AUTHOR           _T("Stanley Hong (link2next@gmail.com)")
-#define ULS_GREETING         ULS_INITIAL_NAME _T(" ") ULS_VERSION_STR _T(", written by ") ULS_AUTHOR _T(".")
-#define ULS_URL              _T("https://sourceforge.net/projects/uls")
-#define ULS_LICENSE_NAME     _T("The MIT License (MIT)")
+#define ULS_INITIAL_NAME     "ULS(Unified Lexical Scheme)"
+#define ULS_AUTHOR           "Stanley Hong (link2next@gmail.com)"
+#define ULS_GREETING         ULS_INITIAL_NAME " " ULS_VERSION_STR ", written by " ULS_AUTHOR "."
+#define ULS_URL              "https://sourceforge.net/projects/uls"
+#define ULS_LICENSE_NAME     "The MIT License (MIT)"
 #define ULS_COPYRIGHT_YEAR_START    2011
 #define ULS_COPYRIGHT_YEAR_CURRENT  2022
 
@@ -149,7 +149,6 @@
 #define ULS_TXT_RECHDR_SZ          32
 #define ULS_BIN_BLKSIZ_LOG2        9
 #define ULS_BIN_BLKSIZ             (1<<ULS_BIN_BLKSIZ_LOG2)
-
 #define ULS_BIN_HDR_SZ             512
 #define ULS_BIN_RECHDR_NUM_INT32   2
 #define ULS_BIN_RECHDR_SZ (ULS_BIN_RECHDR_NUM_INT32*sizeof(uls_int32))

@@ -309,10 +309,8 @@ uls_lib_dir = $(uls_inst_dir)/lib
 ulc2class_exe = $(uls_bin_dir)/ulc2class
 ACLOCAL_AMFLAGS = -I m4
 tokseq_SOURCES = main.c tokseq_lex.c
-
-#tokseq_CPPFLAGS = -I$(uls_inc_dir)
-tokseq_CPPFLAGS = -DULS_USE_WSTR -I$(uls_inc_dir)
-tokseq_LDADD = -L$(uls_lib_dir) -lulscompat -luls 
+tokseq_CPPFLAGS = -I$(uls_inc_dir)
+tokseq_LDADD = -L$(uls_lib_dir) -lulscompat -luls
 all: all-am
 
 .SUFFIXES:

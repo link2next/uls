@@ -1,8 +1,15 @@
 
+  v1.8.5
+  -----------
+    o Changed the 'character set' properties of Visual Studio projects 
+       from 'Multibytes' to 'Unicode'.
+    o Use utf-8 string instead of ANSI-string.
+        Add the option '/utf-8' in properties of projects to build your own cpp-applications 
+
   v1.8.4
   -----------
     o The feature of pre-processing input files by converting CR to LF is deleted
-    o Refactoring the structures of arrays shared by C & C#
+    o Refactoring the structure of arrays shared by C & C#
     o a few bug fixes related to unicode encoding, line-numbering of tokens.
 
  v1.8.3

@@ -160,10 +160,4 @@ ULS_DLL_EXTERN char* csz_export(csz_str_ptr_t csz);
 }
 #endif
 
-#ifdef ULS_USE_WSTR
-#define uls_get_csz_tstr(csz) uls_get_csz_wstr(csz)
-#else
-#define uls_get_csz_tstr(csz) csz_text(csz)
-#endif
-
 #endif // __CSZ_STREAM_H__

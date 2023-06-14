@@ -145,8 +145,6 @@ void uls_reorder_bytes_null(char *binpkt, int len_binpkt);
 void uls_reorder_bytes_binle(char *binpkt, int len_binpkt);
 void uls_reorder_bytes_binbe(char *binpkt, int len_binpkt);
 
-uls_tmpl_ptr_t uls_find_tmpl(uls_tmpl_list_ptr_t tmpl_list, const char* name);
-
 uls_tmplvar_ptr_t uls_search_tmpls(uls_ref_array_type10(tmpls, tmplvar), const char* name);
 
 void uls_init_tmpl_pool(uls_tmpl_pool_ptr_t tmpls_pool, int n_tmpls, int n_alloc);
@@ -165,6 +163,9 @@ void uls_deinit_tmplvar(uls_tmplvar_ptr_t tvar);
 #endif // ULS_DECL_PROTECTED_PROC
 
 #ifdef ULS_DECL_PUBLIC_PROC
+
+ULS_DLL_EXTERN uls_tmpl_ptr_t uls_find_tmpl(uls_tmpl_list_ptr_t tmpl_list, const char* name);
+
 ULS_DLL_EXTERN int _uls_const_STREAM_BIN_LE(void);
 ULS_DLL_EXTERN int _uls_const_STREAM_BIN_BE(void);
 

@@ -61,11 +61,4 @@ ULS_DLL_EXTERN int uls_deinit_parms_emit_wstr(uls_parms_emit_ptr_t emit_parm);
 }
 #endif
 
-#ifdef _ULS_USE_ULSCOMPAT
-#ifdef ULS_USE_WSTR
-#define uls_init_parms_emit uls_init_parms_emit_wstr
-#define uls_deinit_parms_emit uls_deinit_parms_emit_wstr
-#endif
-#endif
-
 #endif // __ULS_EMIT_WSTR_H__

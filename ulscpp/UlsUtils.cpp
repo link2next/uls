@@ -192,11 +192,7 @@ ArgListW::setWArgList(char **args, int n_args)
 	wargs = (wchar_t **) uls_malloc(n_args * sizeof(wchar_t *));
 
 	for (i=0; i < n_args; i++) {
-#ifdef ULS_WINDOWS
-		wstr = auw_converter->mbstr2wstr(args[i], UlsAuw::CVT_MBSTR_ASTR, i);
-#else
 		wstr = auw_converter->mbstr2wstr(args[i], UlsAuw::CVT_MBSTR_USTR, i);
-#endif
 		wlen = auw_converter->get_slot_len(i) / sizeof(wchar_t);
 		wargs[i] = (wchar_t *) uls_malloc((wlen + 1) * sizeof(wchar_t));
 		uls_memcopy(wargs[i], wstr, wlen * sizeof(wchar_t));

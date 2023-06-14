@@ -142,21 +142,7 @@
 #if defined(_ULS_IMPLDLL) || defined(_ULSCPP_IMPLDLL)
 #define _ULS_INTERNAL_USE_ONLY
 #else
-#define _ULS_USE_ULSCOMPAT
-#endif
-
-#if defined(_ULS_USE_ULSCOMPAT)
 #define _ULS_USEDLL
-#endif
-
-#ifdef _ULS_USEDLL
-#if defined(_UNICODE)
-#define ULS_USE_WSTR
-#elif defined(_MBCS)
-#ifndef ULS_USE_USTR
-#define ULS_USE_ASTR
-#endif
-#endif // _UNICODE
 #endif
 
 #define ULS_DECL_BASIC_TYPES

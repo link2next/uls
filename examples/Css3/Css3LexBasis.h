@@ -60,7 +60,7 @@ namespace uls {
 			static const int       CSS_DQUOTE = 34;
 			static const int       CSS_SQUOTE = 39;
 
-			Css3LexBasis(std::tstring &ulc_fpath)
+			Css3LexBasis(std::string &ulc_fpath)
 				 : uls::crux::UlsLex(ulc_fpath) {}
 		};
 	}
