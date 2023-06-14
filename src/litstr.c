@@ -298,14 +298,14 @@ ULS_QUALIFIED_METHOD(uls_find_quotetype_by_tokid)(uls_ref_parray(quotetypes,quot
 	return nilptr;
 }
 
-ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_quotetype_ptr_t)
+ULS_QUALIFIED_RETTYP(uls_quotetype_ptr_t)
 ULS_QUALIFIED_METHOD(uls_get_litstr__quoteinfo)(uls_litstr_ptr_t lit)
 {
 	uls_litstr_context_ptr_t litctx = uls_ptr(lit->context);
 	return litctx->qmt;
 }
 
-ULS_DLL_EXTERN uls_voidptr_t
+uls_voidptr_t
 ULS_QUALIFIED_METHOD(uls_get_litstr__user_data)(uls_litstr_ptr_t lit)
 {
 	uls_litstr_context_ptr_t litctx = uls_ptr(lit->context);
@@ -319,7 +319,7 @@ ULS_QUALIFIED_METHOD(uls_get_litstr__user_data)(uls_litstr_ptr_t lit)
 	return qmt->litstr_context;
 }
 
-ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_litstr_context_ptr_t)
+ULS_QUALIFIED_RETTYP(uls_litstr_context_ptr_t)
 ULS_QUALIFIED_METHOD(uls_get_litstr__context)(uls_litstr_ptr_t lit)
 {
 	return uls_ptr(lit->context);

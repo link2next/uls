@@ -578,7 +578,7 @@ ULS_QUALIFIED_METHOD(parse_uls_hdr)(char* line, int fd_in, uls_istream_ptr_t ist
 	return 0;
 }
 
-ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_istream_ptr_t)
+ULS_QUALIFIED_RETTYP(uls_istream_ptr_t)
 ULS_QUALIFIED_METHOD(uls_open_istream)(int fd)
 {
 	char linebuff[ULS_LINEBUFF_SIZ__ULS+1], *lptr;
@@ -670,7 +670,7 @@ ULS_QUALIFIED_METHOD(uls_open_istream)(int fd)
 	return istr;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_set_istream_tag)(uls_istream_ptr_t istr, const char* tag)
 {
 	if (tag != NULL) {
@@ -678,7 +678,7 @@ ULS_QUALIFIED_METHOD(uls_set_istream_tag)(uls_istream_ptr_t istr, const char* ta
 	}
 }
 
-ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_istream_ptr_t)
+ULS_QUALIFIED_RETTYP(uls_istream_ptr_t)
 ULS_QUALIFIED_METHOD(uls_open_istream_file)(const char* fpath)
 {
 	uls_istream_ptr_t istr;
@@ -706,7 +706,7 @@ ULS_QUALIFIED_METHOD(uls_open_istream_file)(const char* fpath)
 	return istr;
 }
 
-ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_istream_ptr_t)
+ULS_QUALIFIED_RETTYP(uls_istream_ptr_t)
 ULS_QUALIFIED_METHOD(uls_open_istream_fp)(FILE *fp)
 {
 	uls_istream_ptr_t istr;
@@ -730,7 +730,7 @@ ULS_QUALIFIED_METHOD(uls_open_istream_fp)(FILE *fp)
 }
 
 #ifdef ULS_FDF_SUPPORT
-ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_istream_ptr_t)
+ULS_QUALIFIED_RETTYP(uls_istream_ptr_t)
 ULS_QUALIFIED_METHOD(uls_open_istream_filter)(fdf_t* fdf, int fd)
 {
 	uls_istream_ptr_t istr;
@@ -749,7 +749,7 @@ ULS_QUALIFIED_METHOD(uls_open_istream_filter)(fdf_t* fdf, int fd)
 	return istr;
 }
 
-ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_istream_ptr_t)
+ULS_QUALIFIED_RETTYP(uls_istream_ptr_t)
 ULS_QUALIFIED_METHOD(uls_open_istream_filter_file)(fdf_t* fdf, const char* fpath)
 {
 	uls_istream_ptr_t istr;
@@ -768,7 +768,7 @@ ULS_QUALIFIED_METHOD(uls_open_istream_filter_file)(fdf_t* fdf, const char* fpath
 	return istr;
 }
 
-ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_istream_ptr_t)
+ULS_QUALIFIED_RETTYP(uls_istream_ptr_t)
 ULS_QUALIFIED_METHOD(uls_open_istream_filter_fp)(fdf_t* fdf, FILE *fp)
 {
 	uls_istream_ptr_t istr;
@@ -792,7 +792,7 @@ ULS_QUALIFIED_METHOD(uls_open_istream_filter_fp)(fdf_t* fdf, FILE *fp)
 
 #endif
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_rewind_istream)(uls_istream_ptr_t istr)
 {
 	int fpos = istr->start_off;
@@ -808,7 +808,7 @@ ULS_QUALIFIED_METHOD(uls_rewind_istream)(uls_istream_ptr_t istr)
 	return 0;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_destroy_istream)(uls_istream_ptr_t istr)
 {
 	if (istr == nilptr || istr->ref_cnt <= 0) {
@@ -843,7 +843,7 @@ ULS_QUALIFIED_METHOD(uls_destroy_istream)(uls_istream_ptr_t istr)
 	__destroy_istream(istr);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_bind_istream)(uls_istream_ptr_t istr, uls_lex_ptr_t uls)
 {
 	if (istr->uls == uls) {
@@ -867,7 +867,7 @@ ULS_QUALIFIED_METHOD(uls_bind_istream)(uls_istream_ptr_t istr, uls_lex_ptr_t uls
 	return 0;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_read_tok)(uls_istream_ptr_t istr, uls_ptrtype_tool(outparam) parms)
 {
 	uls_lex_ptr_t uls;
@@ -888,7 +888,7 @@ ULS_QUALIFIED_METHOD(uls_read_tok)(uls_istream_ptr_t istr, uls_ptrtype_tool(outp
 	return __uls_lexeme_len(uls);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(_uls_get_raw_input_subtype)(FILE* fp)
 {
 	char linebuff[8];
@@ -905,13 +905,13 @@ ULS_QUALIFIED_METHOD(_uls_get_raw_input_subtype)(FILE* fp)
 	return subtype;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(_uls_const_TMPLS_DUP)(void)
 {
 	return ULS_TMPLS_DUP;
 }
 
-ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_istream_ptr_t)
+ULS_QUALIFIED_RETTYP(uls_istream_ptr_t)
 ULS_QUALIFIED_METHOD(ulsjava_open_istream_file)(const void *filepath, int len_filepath)
 {
 	const char *ustr = _uls_tool_(strdup)((const char *)filepath, len_filepath);

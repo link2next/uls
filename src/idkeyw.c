@@ -380,7 +380,7 @@ ULS_QUALIFIED_METHOD(ulc_free_kwstat_list)(uls_keyw_stat_list_ptr_t kwslst)
 	uls_dealloc_object(kwslst);
 }
 
-ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_hashfunc_t)
+ULS_QUALIFIED_RETTYP(uls_hashfunc_t)
 ULS_QUALIFIED_METHOD(uls_get_hashfunc)(const char* hashname, int case_insensitive)
 {
 	uls_hashfunc_t hashfunc;

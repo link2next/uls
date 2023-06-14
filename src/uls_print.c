@@ -63,7 +63,7 @@ ULS_QUALIFIED_METHOD(finalize_uls_sysprn)(void)
 // </brief>
 // <parm name="out_file">The output file path</parm>
 // <return>none</return>
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_sysprn_open)(uls_voidptr_t data, uls_lf_puts_t proc)
 {
 	uls_lf_delegate_t delegate;
@@ -85,16 +85,42 @@ ULS_QUALIFIED_METHOD(uls_sysprn_open)(uls_voidptr_t data, uls_lf_puts_t proc)
 
 	uls_lf_lock(dfl_sysprn_lf);
 	__uls_lf_change_puts(dfl_sysprn_lf, uls_ptr(delegate));
+
 	sysprn_opened = 1;
+	uls_sysprn_set_tabsiz(0);
 
 	return 0;
+}
+
+void
+ULS_QUALIFIED_METHOD(uls_sysprn_set_tabsiz)(int tabsiz)
+{
+	char ch_tab;
+
+	if (!sysprn_opened) return;
+
+	if (tabsiz > 0) {
+		if (tabsiz > ULS_SYSPRN_TABBUF_SIZE) {
+			tabsiz = ULS_SYSPRN_TABBUF_SIZE;
+		}
+		ch_tab = ' ';
+	} else {
+		ch_tab = '\t';
+		tabsiz = 1;
+	}
+
+	sysprn_ntabs = ULS_SYSPRN_TABBUF_SIZE / tabsiz;
+	sysprn_tabsiz = tabsiz;
+	sysprn_tabbuf_len = sysprn_tabsiz * sysprn_ntabs;
+
+	_uls_tool_(memset)(sysprn_tabbuf, ch_tab, sysprn_tabbuf_len);
 }
 
 // <brief>
 // Closes the output file used by uls_sysprn() or uls_wprint().
 // </brief>
 // <return>none</return>
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_sysprn_close)(void)
 {
 	uls_lf_delegate_t delegate;
@@ -115,13 +141,13 @@ ULS_QUALIFIED_METHOD(uls_sysprn_close)(void)
 // </brief>
 // <parm name="fmt">The template for message string</parm>
 // <return># of chars printed</return>
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_vsysprn)(const char* fmt, va_list args)
 {
 	return __uls_lf_vxprintf(dfl_sysprn_lf, fmt, args);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_sysprn)(const char* fmt, ...)
 {
 	va_list	args;
@@ -134,28 +160,26 @@ ULS_QUALIFIED_METHOD(uls_sysprn)(const char* fmt, ...)
 	return len;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_sysprn_puttabs)(int n)
 {
 	uls_voidptr_t sysprn = dfl_sysprn_lf->x_dat;
 	uls_lf_puts_t sysprn_puts = dfl_sysprn_lf->uls_lf_puts;
-	int i, buf_len;
-	char buf[16];
+	int i, buf_len = sysprn_tabbuf_len;
 
-	buf_len = sizeof(buf) - 1;
-	uls_memset(buf, '\t', buf_len);
-	buf[buf_len] = '\0';
+	if (n <= 0) return;
 
-	for (i=0; i<n/buf_len; i++)
-		sysprn_puts(sysprn, buf, buf_len);
+	for (i=0; i < n / sysprn_ntabs; i++) {
+		sysprn_puts(sysprn, sysprn_tabbuf, buf_len);
+	}
 
-	if ((i=n % buf_len) > 0) {
-		buf[i] = '\0';
-		sysprn_puts(sysprn, buf, i);
+	if ((i = n % sysprn_ntabs) > 0) {
+		buf_len = i * sysprn_tabsiz;
+		sysprn_puts(sysprn, sysprn_tabbuf, buf_len);
 	}
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_sysprn_tabs)(int n_tabs, char *fmt, ...)
 {
 	va_list args;
@@ -175,7 +199,7 @@ ULS_QUALIFIED_METHOD(uls_sysprn_tabs)(int n_tabs, char *fmt, ...)
 // <parm name="fmt">The template for message string</parm>
 // <return># of chars filled except for '\0'</return>
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(__uls_lf_vsnprintf)(char* buf, int bufsiz, uls_lf_ptr_t uls_lf, const char *fmt, va_list args)
 {
 	uls_buf4str_t stdbuf;
@@ -205,7 +229,7 @@ ULS_QUALIFIED_METHOD(__uls_lf_vsnprintf)(char* buf, int bufsiz, uls_lf_ptr_t uls
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_lf_vsnprintf)(char* buf, int bufsiz, uls_lf_ptr_t uls_lf, const char *fmt, va_list args)
 {
 	int len;
@@ -217,7 +241,7 @@ ULS_QUALIFIED_METHOD(uls_lf_vsnprintf)(char* buf, int bufsiz, uls_lf_ptr_t uls_l
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(__uls_lf_snprintf)(char* buf, int bufsiz, uls_lf_ptr_t uls_lf, const char *fmt, ...)
 {
 	va_list args;
@@ -230,7 +254,7 @@ ULS_QUALIFIED_METHOD(__uls_lf_snprintf)(char* buf, int bufsiz, uls_lf_ptr_t uls_
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_lf_snprintf)(char* buf, int bufsiz, uls_lf_ptr_t uls_lf, const char *fmt, ...)
 {
 	va_list args;
@@ -251,13 +275,13 @@ ULS_QUALIFIED_METHOD(uls_lf_snprintf)(char* buf, int bufsiz, uls_lf_ptr_t uls_lf
 // <parm name="fmt">The template for message string</parm>
 // <return># of chars filled except for '\0'</return>
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(__uls_vsnprintf)(char* buf, int bufsiz, const char *fmt, va_list args)
 {
 	return __uls_lf_vsnprintf(buf, bufsiz, dfl_str_lf, fmt, args);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_vsnprintf)(char* buf, int bufsiz, const char *fmt, va_list args)
 {
 	int len;
@@ -269,7 +293,7 @@ ULS_QUALIFIED_METHOD(uls_vsnprintf)(char* buf, int bufsiz, const char *fmt, va_l
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(__uls_snprintf)(char* buf, int bufsiz, const char *fmt, ...)
 {
 	va_list args;
@@ -282,7 +306,7 @@ ULS_QUALIFIED_METHOD(__uls_snprintf)(char* buf, int bufsiz, const char *fmt, ...
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_snprintf)(char* buf, int bufsiz, const char *fmt, ...)
 {
 	va_list args;
@@ -301,7 +325,7 @@ ULS_QUALIFIED_METHOD(uls_snprintf)(char* buf, int bufsiz, const char *fmt, ...)
 // <parm name="buf">The output buffer for the formatted string</parm>
 // <parm name="fmt">The template for message string</parm>
 // <return># of chars filled</return>
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(__uls_lf_vzprintf)(_uls_ptrtype_tool(csz_str) csz, uls_lf_ptr_t uls_lf, const char *fmt, va_list args)
 {
 	uls_lf_delegate_t delegate;
@@ -316,7 +340,7 @@ ULS_QUALIFIED_METHOD(__uls_lf_vzprintf)(_uls_ptrtype_tool(csz_str) csz, uls_lf_p
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_lf_vzprintf)(_uls_ptrtype_tool(csz_str) csz, uls_lf_ptr_t uls_lf, const char *fmt, va_list args)
 {
 	int len;
@@ -328,7 +352,7 @@ ULS_QUALIFIED_METHOD(uls_lf_vzprintf)(_uls_ptrtype_tool(csz_str) csz, uls_lf_ptr
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(__uls_lf_zprintf)(_uls_ptrtype_tool(csz_str) csz, uls_lf_ptr_t uls_lf, const char *fmt, ...)
 {
 	va_list args;
@@ -341,7 +365,7 @@ ULS_QUALIFIED_METHOD(__uls_lf_zprintf)(_uls_ptrtype_tool(csz_str) csz, uls_lf_pt
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_lf_zprintf)(_uls_ptrtype_tool(csz_str) csz, uls_lf_ptr_t uls_lf, const char *fmt, ...)
 {
 	va_list args;
@@ -354,13 +378,13 @@ ULS_QUALIFIED_METHOD(uls_lf_zprintf)(_uls_ptrtype_tool(csz_str) csz, uls_lf_ptr_
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(__uls_vzprintf)(_uls_ptrtype_tool(csz_str) csz, const char *fmt, va_list args)
 {
 	return __uls_lf_vzprintf(csz, dfl_csz_lf, fmt, args);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_vzprintf)(_uls_ptrtype_tool(csz_str) csz, const char *fmt, va_list args)
 {
 	int len;
@@ -372,7 +396,7 @@ ULS_QUALIFIED_METHOD(uls_vzprintf)(_uls_ptrtype_tool(csz_str) csz, const char *f
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(__uls_zprintf)(_uls_ptrtype_tool(csz_str) csz, const char *fmt, ...)
 {
 	va_list args;
@@ -385,7 +409,7 @@ ULS_QUALIFIED_METHOD(__uls_zprintf)(_uls_ptrtype_tool(csz_str) csz, const char *
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_zprintf)(_uls_ptrtype_tool(csz_str) csz, const char *fmt, ...)
 {
 	va_list args;
@@ -404,7 +428,7 @@ ULS_QUALIFIED_METHOD(uls_zprintf)(_uls_ptrtype_tool(csz_str) csz, const char *fm
 // <parm name="fp">The pointer of FILE to be wrriten</parm>
 // <parm name="fmt">The template for message string</parm>
 // <return># of chars written</return>
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(__uls_lf_vfprintf)(FILE* fp, uls_lf_ptr_t uls_lf, const char *fmt, va_list args)
 {
 	uls_lf_delegate_t delegate;
@@ -419,7 +443,7 @@ ULS_QUALIFIED_METHOD(__uls_lf_vfprintf)(FILE* fp, uls_lf_ptr_t uls_lf, const cha
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_lf_vfprintf)(FILE* fp, uls_lf_ptr_t uls_lf, const char *fmt, va_list args)
 {
 	int len;
@@ -431,7 +455,7 @@ ULS_QUALIFIED_METHOD(uls_lf_vfprintf)(FILE* fp, uls_lf_ptr_t uls_lf, const char 
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(__uls_lf_fprintf)(FILE* fp, uls_lf_ptr_t uls_lf, const char *fmt, ...)
 {
 	va_list args;
@@ -444,7 +468,7 @@ ULS_QUALIFIED_METHOD(__uls_lf_fprintf)(FILE* fp, uls_lf_ptr_t uls_lf, const char
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_lf_fprintf)(FILE* fp, uls_lf_ptr_t uls_lf, const char *fmt, ...)
 {
 	va_list args;
@@ -457,13 +481,13 @@ ULS_QUALIFIED_METHOD(uls_lf_fprintf)(FILE* fp, uls_lf_ptr_t uls_lf, const char *
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(__uls_vfprintf)(FILE* fp, const char *fmt, va_list args)
 {
 	return uls_lf_vxprintf_generic(fp, dfl_file_lf, fmt, args);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_vfprintf)(FILE* fp, const char *fmt, va_list args)
 {
 	int len;
@@ -475,7 +499,7 @@ ULS_QUALIFIED_METHOD(uls_vfprintf)(FILE* fp, const char *fmt, va_list args)
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(__uls_fprintf)(FILE* fp, const char *fmt, ...)
 {
 	va_list args;
@@ -488,7 +512,7 @@ ULS_QUALIFIED_METHOD(__uls_fprintf)(FILE* fp, const char *fmt, ...)
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_fprintf)(FILE* fp, const char *fmt, ...)
 {
 	va_list args;
@@ -506,13 +530,13 @@ ULS_QUALIFIED_METHOD(uls_fprintf)(FILE* fp, const char *fmt, ...)
 // </brief>
 // <parm name="fmt">The template for message string</parm>
 // <return># of chars printed</return>
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(__uls_lf_vprintf)(uls_lf_ptr_t uls_lf, const char *fmt, va_list args)
 {
 	return __uls_lf_vfprintf(_uls_stdio_fp(1), uls_lf, fmt, args);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_lf_vprintf)(uls_lf_ptr_t uls_lf, const char *fmt, va_list args)
 {
 	int len;
@@ -524,7 +548,7 @@ ULS_QUALIFIED_METHOD(uls_lf_vprintf)(uls_lf_ptr_t uls_lf, const char *fmt, va_li
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(__uls_lf_printf)(uls_lf_ptr_t uls_lf, const char *fmt, ...)
 {
 	va_list args;
@@ -537,7 +561,7 @@ ULS_QUALIFIED_METHOD(__uls_lf_printf)(uls_lf_ptr_t uls_lf, const char *fmt, ...)
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_lf_printf)(uls_lf_ptr_t uls_lf, const char *fmt, ...)
 {
 	va_list args;
@@ -555,13 +579,13 @@ ULS_QUALIFIED_METHOD(uls_lf_printf)(uls_lf_ptr_t uls_lf, const char *fmt, ...)
 // </brief>
 // <parm name="fmt">The template for message string</parm>
 // <return># of chars printed</return>
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(__uls_vprintf)(const char *fmt, va_list args)
 {
 	return __uls_vfprintf(_uls_stdio_fp(1), fmt, args);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_vprintf)(const char *fmt, va_list args)
 {
 	int len;
@@ -573,7 +597,7 @@ ULS_QUALIFIED_METHOD(uls_vprintf)(const char *fmt, va_list args)
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(__uls_printf)(const char *fmt, ...)
 {
 	va_list args;
@@ -586,7 +610,7 @@ ULS_QUALIFIED_METHOD(__uls_printf)(const char *fmt, ...)
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_printf)(const char *fmt, ...)
 {
 	va_list args;

@@ -260,7 +260,7 @@ ULS_QUALIFIED_METHOD(build_heaptree_vptr)(uls_heaparray_ptr_t hh,
 }
 
 #ifndef ULS_DOTNET
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_quick_sort)(uls_native_vptr_t ary, int n_ary, int elmt_size, uls_sort_cmpfunc_t cmpfunc)
 {
 	uls_decl_parray(obj4_sort_ary, obj4sort);
@@ -304,7 +304,7 @@ ULS_QUALIFIED_METHOD(uls_quick_sort)(uls_native_vptr_t ary, int n_ary, int elmt_
 	uls_deinit_parray(uls_ptr(obj4_sort_ary));
 }
 
-ULS_DLL_EXTERN uls_voidptr_t
+uls_voidptr_t
 ULS_QUALIFIED_METHOD(uls_bi_search)(const uls_voidptr_t keyw,
 	uls_native_vptr_t ary, int n_ary, int elmt_size, uls_bi_comp_t cmpfunc)
 {
@@ -331,7 +331,7 @@ ULS_QUALIFIED_METHOD(uls_bi_search)(const uls_voidptr_t keyw,
 }
 #endif // ULS_DOTNET
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_quick_sort_vptr)(_uls_decl_array(ary,uls_voidptr_t),
 	int n_ary, uls_sort_cmpfunc_t cmpfunc)
 {
@@ -354,7 +354,7 @@ ULS_QUALIFIED_METHOD(uls_quick_sort_vptr)(_uls_decl_array(ary,uls_voidptr_t),
 	heap_array.n_ary = heap_array.ary_siz;
 }
 
-ULS_DLL_EXTERN uls_voidptr_t
+uls_voidptr_t
 ULS_QUALIFIED_METHOD(uls_bi_search_vptr)(const uls_voidptr_t keyw,
 	_uls_decl_array(ary,uls_voidptr_t), int n_ary, uls_bi_comp_t cmpfunc)
 {
@@ -479,6 +479,52 @@ ULS_QUALIFIED_METHOD(uls_get_simple_escape_str)(char quote_ch, uls_ptrtype_tool(
 	return k;
 }
 
+int
+ULS_QUALIFIED_METHOD(uls_get_simple_unescape_char)(int ch)
+{
+	int ch2;
+
+	switch (ch) {
+	case '\n': ch2 = 'n'; break;
+	case '\t': ch2 = 't'; break;
+	case '\r': ch2 = 'r'; break;
+	case '\b': ch2 = 'b'; break;
+	case '\a': ch2 = 'a'; break;
+	case '\f': ch2 = 'f'; break;
+	case '\v': ch2 = 'v'; break;
+	case '\\': ch2 = '\\'; break;
+	case '\'': ch2 = '\''; break;
+	case '"': ch2 = '"'; break;
+	case '\0': ch2 = '0'; break;
+	default :
+		ch2 = -1;
+		break;
+	}
+
+	return ch2;
+}
+
+int
+ULS_QUALIFIED_METHOD(uls_get_simple_unescape_str)(uls_ptrtype_tool(outparam) parms)
+{
+	char* outbuf = parms->line;
+	const char *lptr;
+	int ch, ch2;
+	int k = 0;
+
+	for (lptr = parms->lptr; (ch=*lptr) != '\0'; lptr++) {
+		if ((ch2 = uls_get_simple_unescape_char(ch)) < 0) {
+			outbuf[k++] = ch;
+		} else {
+			outbuf[k++] = '\\';
+			outbuf[k++] = ch2;
+		}
+	}
+
+	outbuf[k] = '\0';
+	return k;
+}
+
 FILE*
 ULS_QUALIFIED_METHOD(uls_get_spec_fp)(const char* dirpath_list, const char* fpath, uls_ptrtype_tool(outparam) parms)
 {
@@ -536,7 +582,7 @@ ULS_QUALIFIED_METHOD(uls_get_spec_fp)(const char* dirpath_list, const char* fpat
 	return fp_in;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_cmd_run)(uls_array_ref_slots_type00(cmdlst,cmd), int n_cmdlst, const char* keyw,
 	char *line, uls_voidptr_t data)
 {

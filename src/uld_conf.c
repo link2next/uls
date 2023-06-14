@@ -289,7 +289,7 @@ ULS_QUALIFIED_METHOD(uls_deinit_nam_tok)(uls_nam_tok_ptr_t nam_tok)
 {
 }
 
-ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uld_names_map_ptr_t)
+ULS_QUALIFIED_RETTYP(uld_names_map_ptr_t)
 ULS_QUALIFIED_METHOD(uld_prepare_names)(uls_lex_ptr_t uls)
 {
 	uls_decl_parray_slots_init(slots_vx, tokdef_vx, uls_ptr(uls->tokdef_vx_array));
@@ -320,7 +320,7 @@ ULS_QUALIFIED_METHOD(uld_prepare_names)(uls_lex_ptr_t uls)
 	return names_map;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uld_change_names)(uld_names_map_ptr_t names_map, uld_line_ptr_t tnd)
 {
 	uls_tokdef_vx_ptr_t e_vx;
@@ -340,7 +340,7 @@ ULS_QUALIFIED_METHOD(uld_change_names)(uld_names_map_ptr_t names_map, uld_line_p
 	return 0;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uld_post_names)(uld_names_map_ptr_t names_map)
 {
 	uls_lex_ptr_t uls = names_map->uls;
@@ -385,14 +385,14 @@ ULS_QUALIFIED_METHOD(uld_post_names)(uld_names_map_ptr_t names_map)
 	return stat;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uld_change_tok_id)(uls_tokdef_vx_ptr_t e_vx, int tok_id)
 {
 	__change_tok_id(e_vx, tok_id);
 	return 0;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uld_change_tok_names)(uls_tokdef_vx_ptr_t e_vx, const char* name2, const char *line_aliases)
 {
 	if (name2 != NULL && __change_tok_nam(e_vx, NULL, name2) < 0) {
@@ -406,7 +406,7 @@ ULS_QUALIFIED_METHOD(uld_change_tok_names)(uls_tokdef_vx_ptr_t e_vx, const char*
 	return 0;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uld_export_names)(uls_lex_ptr_t uls)
 {
 	uls_decl_parray_slots_init(slots_vx, tokdef_vx, uls_ptr(uls->tokdef_vx_array));
@@ -422,7 +422,7 @@ ULS_QUALIFIED_METHOD(uld_export_names)(uls_lex_ptr_t uls)
 	}
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uld_export_extra_names)(uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) parms)
 {
 	uls_decl_parray_slots_init(slots_vx, tokdef_vx, uls_ptr(uls->tokdef_vx_array));
@@ -452,7 +452,7 @@ ULS_QUALIFIED_METHOD(uld_export_extra_names)(uls_lex_ptr_t uls, uls_ptrtype_tool
 	return 0;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uld_unexport_extra_names)(uls_ref_array_type10(lst_names,nam_tok))
 {
 	uls_deinit_array_type10(lst_names, nam_tok);

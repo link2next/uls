@@ -37,7 +37,7 @@
 #include "uls/uls_wlog.h"
 
 
-ULS_DLL_EXTERN int
+int
 uls_is_valid_specpath_wstr(const wchar_t* wconfname)
 {
 	char *ustr;
@@ -58,7 +58,7 @@ uls_is_valid_specpath_wstr(const wchar_t* wconfname)
 	return rval;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_get_spectype_wstr(const wchar_t *wfpath, uls_outparam_ptr_t parms)
 {
 	wchar_t* specwname = (wchar_t *) parms->line;
@@ -105,7 +105,7 @@ uls_get_spectype_wstr(const wchar_t *wfpath, uls_outparam_ptr_t parms)
 	return stat;
 }
 
-ULS_DLL_EXTERN void
+void
 ulc_list_searchpath_wstr(const wchar_t* confname)
 {
 	char *ustr;
@@ -122,7 +122,7 @@ ulc_list_searchpath_wstr(const wchar_t* confname)
 	csz_deinit(uls_ptr(csz));
 }
 
-ULS_DLL_EXTERN void
+void
 ulc_set_searchpath_wstr(const wchar_t *pathlist)
 {
 	char *ustr;
@@ -139,7 +139,7 @@ ulc_set_searchpath_wstr(const wchar_t *pathlist)
 	csz_deinit(uls_ptr(csz));
 }
 
-ULS_DLL_EXTERN int
+int
 ulc_add_searchpath_wstr(const wchar_t *pathlist, int front)
 {
 	char *ustr;

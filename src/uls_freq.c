@@ -189,9 +189,6 @@ ULS_QUALIFIED_METHOD(make_keyw_stat_for_load)(uls_tokdef_ptr_t tok_info_lst, int
 	uls_tokdef_ptr_t e, e_link;
 	int   i, n_lst;
 
-	// tok_info_lst may be NULL and n_tok_info_lst == 0
-	// set the default values for ulf
-
 	kwslst = uls_alloc_object(uls_keyw_stat_list_t);
 
 	// the length of tok_info_lst linked by e:link is same as 'n_tok_info_lst'
@@ -327,7 +324,7 @@ ULS_QUALIFIED_METHOD(keyw_stat_comp_by_freq)(const uls_voidptr_t a, const uls_vo
 	return a1->freq - b1->freq;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(ulf_create_file)(int n_hcodes, uls_uint32 *hcodes,
 	int htab_siz, uls_keyw_stat_list_ptr_t kwslst, FILE* fout)
 {

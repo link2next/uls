@@ -605,7 +605,7 @@ ULS_QUALIFIED_METHOD(finalize_uls_fileio)(void)
 	uls_deinit_array_type00(uls_ptr(stdio_boxlst), stdio_box);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(_uls_stdio_fd)(int fp_num)
 {
 	int fd;
@@ -623,7 +623,7 @@ ULS_QUALIFIED_METHOD(_uls_stdio_fd)(int fp_num)
 	return fd;
 }
 
-ULS_DLL_EXTERN FILE*
+FILE*
 ULS_QUALIFIED_METHOD(_uls_stdio_fp)(int fp_num)
 {
 	FILE *fp;
@@ -641,7 +641,7 @@ ULS_QUALIFIED_METHOD(_uls_stdio_fp)(int fp_num)
 	return fp;
 }
 
-ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_stdio_box_ptr_t)
+ULS_QUALIFIED_RETTYP(uls_stdio_box_ptr_t)
 ULS_QUALIFIED_METHOD(_uls_stdio_fp_box)(int fp_num)
 {
 	uls_stdio_box_ptr_t fpwrap;
@@ -656,7 +656,7 @@ ULS_QUALIFIED_METHOD(_uls_stdio_fp_box)(int fp_num)
 
 #ifdef ULS_WINDOWS
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_dirent_exist_astr)(const char* afpath)
 {
 	DWORD dwAttrib;
@@ -672,7 +672,7 @@ ULS_QUALIFIED_METHOD(uls_dirent_exist_astr)(const char* afpath)
 	return rval;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_dirent_exist)(const char* path)
 {
 	int rval;
@@ -696,7 +696,7 @@ ULS_QUALIFIED_METHOD(uls_dirent_exist)(const char* path)
 
 #else
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_dirent_exist)(const char* path)
 {
 	struct stat statbuff;
@@ -727,7 +727,7 @@ ULS_QUALIFIED_METHOD(uls_dirent_exist)(const char* path)
 #endif
 
 #ifdef ULS_WINDOWS
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_fd_close)(int fd)
 {
 	if (fd >= 0) {
@@ -736,7 +736,7 @@ ULS_QUALIFIED_METHOD(uls_fd_close)(int fd)
 }
 
 #else
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_fd_close)(int fd)
 {
 	if (fd >= 0) {
@@ -745,7 +745,7 @@ ULS_QUALIFIED_METHOD(uls_fd_close)(int fd)
 }
 #endif
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_fd_open)(const char* fpath, int mode)
 {
 	int fd;
@@ -761,7 +761,7 @@ ULS_QUALIFIED_METHOD(uls_fd_open)(const char* fpath, int mode)
 	return fd;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_put_binstr)(const char* str, int len, int fd)
 {
 	if (str == NULL) {
@@ -775,13 +775,13 @@ ULS_QUALIFIED_METHOD(uls_put_binstr)(const char* str, int len, int fd)
 	}
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_putstr)(const char* str)
 {
 	uls_put_binstr(str, -1, _uls_stdio_fd(1));
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_fgetc_ascii_str)(uls_voidptr_t dat, char *buf, int buf_siz)
 {
 	uls_stdio_box_ptr_t fpwrap = (uls_stdio_box_ptr_t) dat;
@@ -815,7 +815,7 @@ ULS_QUALIFIED_METHOD(__consume_ms_mbcs_char_getbyte)(FILE *fp, char *bufptr)
 	return 1;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(consume_ms_mbcs_onechar)(uls_voidptr_t dat, char *buf, int buf_siz)
 {
 	uls_stdio_box_ptr_t fpwrap = (uls_stdio_box_ptr_t) dat;
@@ -839,7 +839,7 @@ ULS_QUALIFIED_METHOD(consume_ms_mbcs_onechar)(uls_voidptr_t dat, char *buf, int 
 	return i; // not n but i
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_init_fio)(uls_fio_ptr_t fio, int flags)
 {
 	fio->flags = ULS_FL_STATIC | flags;
@@ -847,14 +847,14 @@ ULS_QUALIFIED_METHOD(uls_init_fio)(uls_fio_ptr_t fio, int flags)
 	fio->dat = (uls_voidptr_t) _uls_stdio_fp_box(0);
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_deinit_fio)(uls_fio_ptr_t fio)
 {
 	fio->flags &= ULS_FL_STATIC;
 	fio->dat = nilptr;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_reset_fio)(uls_fio_ptr_t fio, uls_voidptr_t dat, uls_fgetch_t consumer)
 {
 	if (consumer == nilptr) {
@@ -865,7 +865,7 @@ ULS_QUALIFIED_METHOD(uls_reset_fio)(uls_fio_ptr_t fio, uls_voidptr_t dat, uls_fg
 	fio->fgetch = consumer;
 }
 
-ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_fio_ptr_t)
+ULS_QUALIFIED_RETTYP(uls_fio_ptr_t)
 ULS_QUALIFIED_METHOD(uls_create_fio)(uls_voidptr_t dat, uls_fgetch_t consumer, int flags)
 {
 	uls_fio_ptr_t fio;
@@ -879,7 +879,7 @@ ULS_QUALIFIED_METHOD(uls_create_fio)(uls_voidptr_t dat, uls_fgetch_t consumer, i
 	return fio;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_destroy_fio)(uls_fio_ptr_t fio)
 {
 	if (fio == nilptr) return;
@@ -890,7 +890,7 @@ ULS_QUALIFIED_METHOD(uls_destroy_fio)(uls_fio_ptr_t fio)
 	}
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_fio_gets)(uls_fio_ptr_t fio, char* buf, int buf_siz)
 {
 	char *bufptr, *buf_end;
@@ -963,7 +963,7 @@ ULS_QUALIFIED_METHOD(uls_fio_gets)(uls_fio_ptr_t fio, char* buf, int buf_siz)
 	return len;
 }
 
-ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_file_ptr_t)
+ULS_QUALIFIED_RETTYP(uls_file_ptr_t)
 ULS_QUALIFIED_METHOD(uls_open_filp)(const char *filepath, int mode)
 {
 	uls_callback_type_this(fgetch) consumer;
@@ -996,7 +996,7 @@ ULS_QUALIFIED_METHOD(uls_open_filp)(const char *filepath, int mode)
 	return filp;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_close_filp)(uls_file_ptr_t filp)
 {
 	uls_stdio_box_ptr_t p_fpwrap;
@@ -1010,7 +1010,7 @@ ULS_QUALIFIED_METHOD(uls_close_filp)(uls_file_ptr_t filp)
 	uls_dealloc_object(filp);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_filp_gets)(uls_file_ptr_t filp, char* buf, int buf_siz)
 {
 	uls_stdio_box_ptr_t p_fpwrap = uls_ptr(filp->fpwrap);
@@ -1028,7 +1028,7 @@ ULS_QUALIFIED_METHOD(uls_filp_gets)(uls_file_ptr_t filp, char* buf, int buf_siz)
 	return len;
 }
 
-ULS_DLL_EXTERN FILE*
+FILE*
 ULS_QUALIFIED_METHOD(uls_fp_open)(const char *filepath, int mode)
 {
 	FILE* fp;
@@ -1093,7 +1093,7 @@ ULS_QUALIFIED_METHOD(uls_fp_open)(const char *filepath, int mode)
 	return fp;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_fp_gets)(FILE *fp, char* buf, int buf_siz, int flags)
 {
 	uls_fio_t fio;
@@ -1113,7 +1113,7 @@ ULS_QUALIFIED_METHOD(uls_fp_gets)(FILE *fp, char* buf, int buf_siz, int flags)
 	return rc;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_fp_close)(FILE *fp)
 {
 	if (fp != NULL) {
@@ -1123,19 +1123,19 @@ ULS_QUALIFIED_METHOD(uls_fp_close)(FILE *fp)
 	}
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_fp_getc)(FILE *fp)
 {
 	return getc(fp);
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_fp_putc)(FILE *fp, char ch)
 {
 	putc(ch, fp);
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_init_tempfile)(uls_tempfile_ptr_t tmpfile)
 {
 	tmpfile->flags = ULS_FL_STATIC;
@@ -1145,13 +1145,13 @@ ULS_QUALIFIED_METHOD(uls_init_tempfile)(uls_tempfile_ptr_t tmpfile)
 	tmpfile->fp = NULL;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_deinit_tempfile)(uls_tempfile_ptr_t tmpfile)
 {
 	uls_close_tempfile(tmpfile, NULL);
 }
 
-ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_tempfile_ptr_t)
+ULS_QUALIFIED_RETTYP(uls_tempfile_ptr_t)
 ULS_QUALIFIED_METHOD(uls_create_tempfile)(void)
 {
 	uls_tempfile_ptr_t tmpfile;
@@ -1162,7 +1162,7 @@ ULS_QUALIFIED_METHOD(uls_create_tempfile)(void)
 	return tmpfile;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_open_tempfile)(uls_tempfile_ptr_t tmpfile)
 {
 	int fd;
@@ -1181,7 +1181,7 @@ ULS_QUALIFIED_METHOD(uls_open_tempfile)(uls_tempfile_ptr_t tmpfile)
 	return fd;
 }
 
-ULS_DLL_EXTERN FILE*
+FILE*
 ULS_QUALIFIED_METHOD(uls_fopen_tempfile)(uls_tempfile_ptr_t tmpfile)
 {
 	int fd_out;
@@ -1212,7 +1212,7 @@ ULS_QUALIFIED_METHOD(uls_fopen_tempfile)(uls_tempfile_ptr_t tmpfile)
 	return fp_out;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_close_tempfile)(uls_tempfile_ptr_t tmpfile, const char* filepath)
 {
 	int stat = 0;
@@ -1235,7 +1235,7 @@ ULS_QUALIFIED_METHOD(uls_close_tempfile)(uls_tempfile_ptr_t tmpfile, const char*
 	return stat;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_destroy_tempfile)(uls_tempfile_ptr_t tmpfile)
 {
 	if (tmpfile == nilptr) return;

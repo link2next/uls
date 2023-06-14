@@ -729,7 +729,7 @@ ULS_QUALIFIED_METHOD(fmtproc_s)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, ul
 	return rc;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(fmtproc_ws)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx)
 {
 	int rc, ulen, wlen;
@@ -1033,7 +1033,7 @@ ULS_QUALIFIED_METHOD(uls_lf_fill_numstr)(uls_voidptr_t x_dat, uls_lf_puts_t puts
 	return nn;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_lf_fill_mbstr)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc,
 	uls_lf_convflag_ptr_t p, const char* numstr, int l_numstr, int lw_numstr)
 {
@@ -1072,13 +1072,13 @@ ULS_QUALIFIED_METHOD(uls_lf_fill_mbstr)(uls_voidptr_t x_dat, uls_lf_puts_t puts_
 	return nn;
 }
 
-ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_lf_map_ptr_t)
+ULS_QUALIFIED_RETTYP(uls_lf_map_ptr_t)
 ULS_QUALIFIED_METHOD(uls_lf_get_default)(void)
 {
 	return uls_ptr(dfl_convspec_map);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_lf_puts_csz)(uls_voidptr_t x_dat, const char* wrdptr, int wrdlen)
 {
 	if (wrdptr == NULL) {
@@ -1090,7 +1090,7 @@ ULS_QUALIFIED_METHOD(uls_lf_puts_csz)(uls_voidptr_t x_dat, const char* wrdptr, i
 	return wrdlen;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_lf_puts_str)(uls_voidptr_t x_dat, const char* wrdptr, int wrdlen)
 {
 	uls_buf4str_ptr_t lb = (uls_buf4str_ptr_t) x_dat;
@@ -1116,7 +1116,7 @@ ULS_QUALIFIED_METHOD(uls_lf_puts_str)(uls_voidptr_t x_dat, const char* wrdptr, i
 	return wrdlen;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_lf_puts_file)(uls_voidptr_t x_dat, const char* wrdptr, int wrdlen)
 {
 	FILE *fout = (FILE *) x_dat;
@@ -1133,7 +1133,7 @@ ULS_QUALIFIED_METHOD(uls_lf_puts_file)(uls_voidptr_t x_dat, const char* wrdptr, 
 	return wrdlen;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_lf_puts_null)(uls_voidptr_t x_dat, const char* wrdptr, int wrdlen)
 {
 	return 0;
@@ -1146,7 +1146,7 @@ ULS_QUALIFIED_METHOD(uls_lf_puts_null)(uls_voidptr_t x_dat, const char* wrdptr, 
 // <parm name="percent_name">A converion specification without the percent character itself.</parm>
 // <parm name="proc">The user defined procedure for processing '%percent_name'</parm>
 // <return>0 if it suceeds, otherwise -1</return>
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_lf_register_convspec)(uls_lf_map_ptr_t lf_map, const char* percent_name, uls_lf_convspec_t proc)
 {
 	uls_voidptr_t user_data=nilptr;
@@ -1181,7 +1181,7 @@ ULS_QUALIFIED_METHOD(uls_lf_register_convspec)(uls_lf_map_ptr_t lf_map, const ch
 	return 0;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_lf_init_convspec_map)(uls_lf_map_ptr_t lf_map, int flags)
 {
 	uls_initial_zerofy_object(lf_map);
@@ -1200,7 +1200,7 @@ ULS_QUALIFIED_METHOD(uls_lf_init_convspec_map)(uls_lf_map_ptr_t lf_map, int flag
 	return 0;
 }
 
-ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_lf_map_ptr_t)
+ULS_QUALIFIED_RETTYP(uls_lf_map_ptr_t)
 ULS_QUALIFIED_METHOD(uls_lf_create_convspec_map)(int flags)
 {
 	uls_lf_map_ptr_t lf_map;
@@ -1215,7 +1215,7 @@ ULS_QUALIFIED_METHOD(uls_lf_create_convspec_map)(int flags)
 	return lf_map;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(__lf_deinit_convspec_map)(uls_lf_map_ptr_t lf_map)
 {
 	uls_lf_convspec_table_ptr_t tbl;
@@ -1234,7 +1234,7 @@ ULS_QUALIFIED_METHOD(__lf_deinit_convspec_map)(uls_lf_map_ptr_t lf_map)
 	tbl->n_used = tbl->n_allocd = 0;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_lf_deinit_convspec_map)(uls_lf_map_ptr_t lf_map)
 {
 	int rc;
@@ -1263,7 +1263,7 @@ ULS_QUALIFIED_METHOD(uls_lf_deinit_convspec_map)(uls_lf_map_ptr_t lf_map)
 	return 0;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_lf_destroy_convspec_map)(uls_lf_map_ptr_t lf_map)
 {
 	int rc;
@@ -1279,7 +1279,7 @@ ULS_QUALIFIED_METHOD(uls_lf_destroy_convspec_map)(uls_lf_map_ptr_t lf_map)
 	return 0;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_lf_grab_convspec_map)(uls_lf_map_ptr_t lf_map)
 {
 	uls_lf_map_lock(lf_map);
@@ -1287,13 +1287,13 @@ ULS_QUALIFIED_METHOD(uls_lf_grab_convspec_map)(uls_lf_map_ptr_t lf_map)
 	uls_lf_map_unlock(lf_map);
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_lf_ungrab_convspec_map)(uls_lf_map_ptr_t lf_map)
 {
 	uls_lf_destroy_convspec_map(lf_map);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_lf_init)(uls_lf_ptr_t uls_lf, uls_lf_map_ptr_t lf_map, uls_voidptr_t x_dat, uls_lf_puts_t puts_proc)
 {
 	uls_lf->x_dat = x_dat;
@@ -1320,7 +1320,7 @@ ULS_QUALIFIED_METHOD(uls_lf_init)(uls_lf_ptr_t uls_lf, uls_lf_map_ptr_t lf_map, 
 	return 0;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_lf_deinit)(uls_lf_ptr_t uls_lf)
 {
 	csz_deinit(uls_ptr(uls_lf->wbuf1));
@@ -1330,7 +1330,7 @@ ULS_QUALIFIED_METHOD(uls_lf_deinit)(uls_lf_ptr_t uls_lf)
 	uls_deinit_mutex(uls_ptr(uls_lf->mtx));
 }
 
-ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_lf_ptr_t)
+ULS_QUALIFIED_RETTYP(uls_lf_ptr_t)
 ULS_QUALIFIED_METHOD(uls_lf_create)(uls_lf_map_ptr_t lf_map, uls_voidptr_t x_dat, uls_lf_puts_t puts_proc)
 {
 	uls_lf_ptr_t uls_lf;
@@ -1341,7 +1341,7 @@ ULS_QUALIFIED_METHOD(uls_lf_create)(uls_lf_map_ptr_t lf_map, uls_voidptr_t x_dat
 	return uls_lf;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_lf_destroy)(uls_lf_ptr_t uls_lf)
 {
 	uls_lf_deinit(uls_lf);
@@ -1354,7 +1354,7 @@ ULS_QUALIFIED_METHOD(uls_lf_destroy)(uls_lf_ptr_t uls_lf)
 // <parm name="uls_lf">uls-lf context</parm>
 // <parm name="puts_proc">A newly output interface</parm>
 // <return>none</return>
-ULS_DLL_EXTERN uls_voidptr_t
+uls_voidptr_t
 ULS_QUALIFIED_METHOD(__uls_lf_change_gdat)(uls_lf_ptr_t uls_lf, uls_voidptr_t gdat)
 {
 	uls_voidptr_t old_gdat;
@@ -1365,7 +1365,7 @@ ULS_QUALIFIED_METHOD(__uls_lf_change_gdat)(uls_lf_ptr_t uls_lf, uls_voidptr_t gd
 	return old_gdat;
 }
 
-ULS_DLL_EXTERN uls_voidptr_t
+uls_voidptr_t
 ULS_QUALIFIED_METHOD(uls_lf_change_gdat)(uls_lf_ptr_t uls_lf, uls_voidptr_t gdat)
 {
 	uls_voidptr_t old_gdat;
@@ -1383,7 +1383,7 @@ ULS_QUALIFIED_METHOD(uls_lf_change_gdat)(uls_lf_ptr_t uls_lf, uls_voidptr_t gdat
 // <parm name="uls_lf">uls-lf context</parm>
 // <parm name="puts_proc">A newly output interface</parm>
 // <return>none</return>
-ULS_DLL_EXTERN uls_voidptr_t
+uls_voidptr_t
 ULS_QUALIFIED_METHOD(__uls_lf_change_xdat)(uls_lf_ptr_t uls_lf, uls_voidptr_t xdat)
 {
 	uls_voidptr_t old_xdat;
@@ -1398,7 +1398,7 @@ ULS_QUALIFIED_METHOD(__uls_lf_change_xdat)(uls_lf_ptr_t uls_lf, uls_voidptr_t xd
 	return old_xdat;
 }
 
-ULS_DLL_EXTERN uls_voidptr_t
+uls_voidptr_t
 ULS_QUALIFIED_METHOD(uls_lf_change_xdat)(uls_lf_ptr_t uls_lf, uls_voidptr_t xdat)
 {
 	uls_voidptr_t old_xdat;
@@ -1416,7 +1416,7 @@ ULS_QUALIFIED_METHOD(uls_lf_change_xdat)(uls_lf_ptr_t uls_lf, uls_voidptr_t xdat
 // <parm name="uls_lf">uls-lf context</parm>
 // <parm name="puts_proc">A newly output interface</parm>
 // <return>none</return>
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(__uls_lf_change_puts)(uls_lf_ptr_t uls_lf, uls_lf_delegate_ptr_t delegate)
 {
 	uls_lf_puts_t old_proc;
@@ -1434,7 +1434,7 @@ ULS_QUALIFIED_METHOD(__uls_lf_change_puts)(uls_lf_ptr_t uls_lf, uls_lf_delegate_
 	delegate->puts = old_proc;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_lf_change_puts)(uls_lf_ptr_t uls_lf, uls_lf_delegate_ptr_t delegate)
 {
 	uls_lf_lock(uls_lf);
@@ -1442,7 +1442,7 @@ ULS_QUALIFIED_METHOD(uls_lf_change_puts)(uls_lf_ptr_t uls_lf, uls_lf_delegate_pt
 	uls_lf_unlock(uls_lf);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(__uls_lf_vxprintf)(uls_lf_ptr_t uls_lf, const char* fmt, va_list args)
 {
 	uls_voidptr_t x_dat = uls_lf->x_dat;
@@ -1534,7 +1534,7 @@ ULS_QUALIFIED_METHOD(__uls_lf_vxprintf)(uls_lf_ptr_t uls_lf, const char* fmt, va
 	return buflen;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_lf_vxprintf)(uls_lf_ptr_t uls_lf, const char* fmt, va_list args)
 {
 	int len;
@@ -1546,7 +1546,7 @@ ULS_QUALIFIED_METHOD(uls_lf_vxprintf)(uls_lf_ptr_t uls_lf, const char* fmt, va_l
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(__uls_lf_xprintf)(uls_lf_ptr_t uls_lf, const char* fmt, ...)
 {
 	va_list args;
@@ -1559,7 +1559,7 @@ ULS_QUALIFIED_METHOD(__uls_lf_xprintf)(uls_lf_ptr_t uls_lf, const char* fmt, ...
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_lf_xprintf)(uls_lf_ptr_t uls_lf, const char* fmt, ...)
 {
 	va_list args;
@@ -1572,7 +1572,7 @@ ULS_QUALIFIED_METHOD(uls_lf_xprintf)(uls_lf_ptr_t uls_lf, const char* fmt, ...)
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(__uls_lf_vxprintf_generic)(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const char* fmt, va_list args)
 {
 	uls_voidptr_t old_dat;
@@ -1588,7 +1588,7 @@ ULS_QUALIFIED_METHOD(__uls_lf_vxprintf_generic)(uls_voidptr_t x_dat, uls_lf_ptr_
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_lf_vxprintf_generic)(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const char* fmt, va_list args)
 {
 	int len;
@@ -1602,7 +1602,7 @@ ULS_QUALIFIED_METHOD(uls_lf_vxprintf_generic)(uls_voidptr_t x_dat, uls_lf_ptr_t 
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(__uls_lf_xprintf_generic)(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const char* fmt, ...)
 {
 	va_list args;
@@ -1615,7 +1615,7 @@ ULS_QUALIFIED_METHOD(__uls_lf_xprintf_generic)(uls_voidptr_t x_dat, uls_lf_ptr_t
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_lf_xprintf_generic)(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const char* fmt, ...)
 {
 	va_list args;

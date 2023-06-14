@@ -25,7 +25,7 @@
 #include "uls/uls_print.h"
 #endif
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_version_make)(uls_version_ptr_t a, char v1, char v2, char v3)
 {
 	a->major = v1;
@@ -33,7 +33,7 @@ ULS_QUALIFIED_METHOD(uls_version_make)(uls_version_ptr_t a, char v1, char v2, ch
 	a->debug = v3;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_version_encode)(const uls_version_ptr_t a, char* codstr)
 {
 	codstr[0] = a->major;
@@ -41,7 +41,7 @@ ULS_QUALIFIED_METHOD(uls_version_encode)(const uls_version_ptr_t a, char* codstr
 	codstr[2] = a->debug;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_version_decode)(char* codstr, uls_version_ptr_t a)
 {
 	a->major = codstr[0];
@@ -49,7 +49,7 @@ ULS_QUALIFIED_METHOD(uls_version_decode)(char* codstr, uls_version_ptr_t a)
 	a->debug = codstr[2];
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_version_copy)(uls_version_ptr_t dst, const uls_version_ptr_t src)
 {
 	dst->major = src->major;
@@ -57,7 +57,7 @@ ULS_QUALIFIED_METHOD(uls_version_copy)(uls_version_ptr_t dst, const uls_version_
 	dst->debug = src->debug;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_version_make_string)(const uls_version_ptr_t a, char* ver_str)
 {
 	char codstr[ULS_VERSION_CODE_LEN];
@@ -83,7 +83,7 @@ ULS_QUALIFIED_METHOD(uls_version_make_string)(const uls_version_ptr_t a, char* v
 	return k;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_version_cmp_code)(const uls_version_ptr_t a, const uls_version_ptr_t b)
 {
 	char codstr1[ULS_VERSION_CODE_LEN];
@@ -100,7 +100,7 @@ ULS_QUALIFIED_METHOD(uls_version_cmp_code)(const uls_version_ptr_t a, const uls_
 	return i;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_version_pars_str)(const char *lptr, uls_version_ptr_t a)
 {
 	char codstr[ULS_VERSION_CODE_LEN];
@@ -126,13 +126,13 @@ ULS_QUALIFIED_METHOD(uls_version_pars_str)(const char *lptr, uls_version_ptr_t a
 	return n;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_init_version)(uls_version_ptr_t a)
 {
 	uls_version_make(a, 0, 0, 0);
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_deinit_version)(uls_version_ptr_t a)
 {
 	uls_version_make(a, 0, 0, 0);

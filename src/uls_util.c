@@ -71,7 +71,7 @@ ULS_QUALIFIED_METHOD(uls_print_bytes)(const char* srcptr, int n_bytes)
 	}
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(skip_c_comment_file)(FILE* fin)
 {
 	int  ch, prev_ch;
@@ -91,7 +91,7 @@ ULS_QUALIFIED_METHOD(skip_c_comment_file)(FILE* fin)
 	return -1;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_get_current_time_yyyymmdd_hhmm)(char* buf, int buf_siz)
 {
 #ifdef ULS_WINDOWS
@@ -496,7 +496,7 @@ ULS_QUALIFIED_METHOD(uls_path_normalize)(const char* fpath, char* fpath2)
 }
 
 #ifdef ULS_WINDOWS
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_path_normalize)(const char* fpath, char* fpath2)
 {
 	const char *ptr0, *ptr;
@@ -528,7 +528,7 @@ ULS_QUALIFIED_METHOD(uls_path_normalize)(const char* fpath, char* fpath2)
 }
 #endif
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_mkdir)(const char *filepath0)
 {
 	int rval;
@@ -634,7 +634,7 @@ ULS_QUALIFIED_METHOD(isp_insert)(uls_isp_ptr_t isp, const char* str, int len)
  *     i0 < 0 if there're errors.
  *     use argv[i0], argv[i0+1] ... as strings(void of '-') arguments if i0 > 0
  */
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_getopts)(int n_args, char* args[], const char* optfmt, uls_optproc_t proc)
 {
 	const char  *ptr;
@@ -717,7 +717,7 @@ ULS_QUALIFIED_METHOD(get_ms_codepage)(uls_ptrtype_tool(outparam) parms)
 }
 
 #if defined(ULS_WINDOWS) && !defined(ULS_DOTNET)
-ULS_DLL_EXTERN char*
+char*
 ULS_QUALIFIED_METHOD(uls_win32_lookup_regval)(wchar_t* reg_dir, uls_ptrtype_tool(outparam) parms)
 {
 	wchar_t* reg_name = (wchar_t*) parms->line;

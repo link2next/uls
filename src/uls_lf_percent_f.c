@@ -177,7 +177,7 @@ ULS_QUALIFIED_METHOD(uls_lf_digits_to_percent_g)
 	}
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_lf_double2digits)(double x, int n_precision, csz_str_ptr_t numstr)
 {
 	double frac, x_int;
@@ -255,7 +255,7 @@ ULS_QUALIFIED_METHOD(uls_lf_double2digits)(double x, int n_precision, csz_str_pt
 	return n_expo;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_lf_longdouble2digits)(long double x, int n_precision, csz_str_ptr_t numstr)
 {
 	long double frac, x_int;

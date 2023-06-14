@@ -212,7 +212,7 @@ ULS_QUALIFIED_METHOD(finalize_csz)(void)
 	uls_dealloc_object(csz_global);
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(str_init)(uls_outbuf_ptr_t outbuf, int siz)
 {
 	if (siz == 0) {
@@ -257,7 +257,7 @@ ULS_QUALIFIED_METHOD(str_free)(uls_outbuf_ptr_t outbuf)
 	outbuf->siz = 0;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(__str_putc)(uls_outbuf_ptr_t outbuf, int n_delta, int k, char ch)
 {
 	char *bufptr = outbuf->buf;
@@ -280,7 +280,7 @@ ULS_QUALIFIED_METHOD(__str_putc)(uls_outbuf_ptr_t outbuf, int n_delta, int k, ch
 	bufptr[k] = ch;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(str_modify)(uls_outbuf_ptr_t outbuf, int k, const char* str, int len)
 {
 	if (str != NULL) {
@@ -292,7 +292,7 @@ ULS_QUALIFIED_METHOD(str_modify)(uls_outbuf_ptr_t outbuf, int k, const char* str
 	__str_modify(outbuf, outbuf->siz_delta, k, str, len);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(str_append)(uls_outbuf_ptr_t outbuf, int k, const char* str, int len)
 {
 	int k2;
@@ -312,7 +312,7 @@ ULS_QUALIFIED_METHOD(str_append)(uls_outbuf_ptr_t outbuf, int k, const char* str
 	return k2;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(str_puts)(uls_outbuf_ptr_t outbuf, int k, const char* str)
 {
 	int l_str;
@@ -323,7 +323,7 @@ ULS_QUALIFIED_METHOD(str_puts)(uls_outbuf_ptr_t outbuf, int k, const char* str)
 	return k + l_str;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(csz_init)(csz_str_ptr_t csz, int n_delta)
 {
 	str_init(uls_ptr(csz->pool), 0);
@@ -336,14 +336,14 @@ ULS_QUALIFIED_METHOD(csz_init)(csz_str_ptr_t csz, int n_delta)
 	csz->len = 0;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(csz_deinit)(csz_str_ptr_t csz)
 {
 	str_free(uls_ptr(csz->pool));
 	csz->len = 0;
 }
 
-ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(csz_str_ptr_t)
+ULS_QUALIFIED_RETTYP(csz_str_ptr_t)
 ULS_QUALIFIED_METHOD(csz_create)(int n_delta)
 {
 	csz_str_ptr_t csz;
@@ -354,14 +354,14 @@ ULS_QUALIFIED_METHOD(csz_create)(int n_delta)
 	return csz;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(csz_destroy)(csz_str_ptr_t csz)
 {
 	csz_deinit(csz);
 	uls_dealloc_object(csz);
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(csz_reset)(csz_str_ptr_t csz)
 {
 	int siz0 = csz->alloc_delta << 8;
@@ -375,7 +375,7 @@ ULS_QUALIFIED_METHOD(csz_reset)(csz_str_ptr_t csz)
 	csz->len = 0;
 }
 
-ULS_DLL_EXTERN char*
+char*
 ULS_QUALIFIED_METHOD(csz_modify)(csz_str_ptr_t csz, int k, const char* str, int len)
 {
 	int k2;
@@ -392,7 +392,7 @@ ULS_QUALIFIED_METHOD(csz_modify)(csz_str_ptr_t csz, int k, const char* str, int 
 	return csz_data_ptr(csz) + k;
 }
 
-ULS_DLL_EXTERN char*
+char*
 ULS_QUALIFIED_METHOD(csz_append)(csz_str_ptr_t csz, const char* str, int len)
 {
 	int k;
@@ -416,35 +416,35 @@ ULS_QUALIFIED_METHOD(csz_append)(csz_str_ptr_t csz, const char* str, int len)
 	return csz->pool.buf + k;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(csz_puts)(csz_str_ptr_t csz, const char* str)
 {
 	int l_str = uls_strlen(str);
 	csz->len = str_append(uls_ptr(csz->pool), csz->len, str, l_str);
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(csz_putc)(csz_str_ptr_t csz, char ch)
 {
 	__str_putc(uls_ptr(csz->pool), csz->alloc_delta, csz->len, ch);
 	if (ch != '\0') ++csz->len;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(csz_add_eos)(csz_str_ptr_t csz)
 {
 	__str_putc(uls_ptr(csz->pool), csz->alloc_delta, csz->len, '\0');
 	++csz->len;
 }
 
-ULS_DLL_EXTERN char*
+char*
 ULS_QUALIFIED_METHOD(csz_text)(csz_str_ptr_t csz)
 {
 	__str_putc(uls_ptr(csz->pool), csz->alloc_delta, csz->len, '\0');
 	return csz->pool.buf;
 }
 
-ULS_DLL_EXTERN char*
+char*
 ULS_QUALIFIED_METHOD(csz_export)(csz_str_ptr_t csz)
 {
 	char *ptr;
@@ -458,7 +458,7 @@ ULS_QUALIFIED_METHOD(csz_export)(csz_str_ptr_t csz)
 	return ptr;
 }
 
-ULS_DLL_EXTERN wchar_t*
+wchar_t*
 ULS_QUALIFIED_METHOD(uls_get_csz_wstr)(csz_str_ptr_t csz)
 {
 	wchar_t nilwbuf[1] = { L'\0' };

@@ -48,6 +48,7 @@
 #define ULC2CLASS_PROGVER    "v2.7.0"
 #define ULF_GEN_PROGVER      "v1.6.0"
 #define ULS_STREAM_PROGVER   "v2.6.0"
+#define ULC2YAML_PROGVER     "v1.0.0"
 
 #define ULS_INITIAL_NAME     "ULS(Unified Lexical Scheme)"
 #define ULS_AUTHOR           "Stanley Hong (link2next@gmail.com)"
@@ -144,7 +145,7 @@
 #define ULS_FDBUF_INITSIZE         512
 #define ULS_FDBUF_SIZE             1024
 
-#define ULS_N_ONECHAR_TOKGRPS          4
+#define ULS_N_ONECHAR_TOKGRPS      4
 
 #define ULS_TXT_RECHDR_SZ          32
 #define ULS_BIN_BLKSIZ_LOG2        9
@@ -154,7 +155,7 @@
 #define ULS_BIN_RECHDR_SZ (ULS_BIN_RECHDR_NUM_INT32*sizeof(uls_int32))
 #define ULS_BIN_REC_SZ(txtlen) (ULS_BIN_RECHDR_SZ+uls_roundup((txtlen)+1,4))
 
-#define ULC_N_LEXATTRS             14
+#define ULC_N_LEXATTRS             13
 #define ULS_STREAM_SUBNAME_SIZE    31
 #define ULS_STREAM_CTIME_SIZE      20
 

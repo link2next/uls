@@ -118,7 +118,7 @@ ULS_QUALIFIED_METHOD(uls_dump_tmpls)(uls_tmpl_list_ptr_t tmpl_list)
 	printf("\n");
 }
 
-ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_tmpl_ptr_t)
+ULS_QUALIFIED_RETTYP(uls_tmpl_ptr_t)
 ULS_QUALIFIED_METHOD(uls_find_tmpl)(uls_tmpl_list_ptr_t tmpl_list, const char* name)
 {
 	uls_tmpl_ptr_t tmpl;
@@ -255,19 +255,19 @@ ULS_QUALIFIED_METHOD(uls_deinit_tmplvar)(uls_tmplvar_ptr_t tvar)
 {
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(_uls_const_STREAM_BIN_LE)(void)
 {
 	return ULS_STREAM_BIN_LE;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(_uls_const_STREAM_BIN_BE)(void)
 {
 	return ULS_STREAM_BIN_BE;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_init_tmpls)(uls_tmpl_list_ptr_t tmpl_list, int n_alloc, int flags)
 {
 	if (n_alloc < 0) return -1;
@@ -283,7 +283,7 @@ ULS_QUALIFIED_METHOD(uls_init_tmpls)(uls_tmpl_list_ptr_t tmpl_list, int n_alloc,
 	return 0;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_deinit_tmpls)(uls_tmpl_list_ptr_t tmpl_list)
 {
 	uls_deinit_array_type10(uls_ptr(tmpl_list->tmpls), tmpl);
@@ -294,7 +294,7 @@ ULS_QUALIFIED_METHOD(uls_deinit_tmpls)(uls_tmpl_list_ptr_t tmpl_list)
 	return 0;
 }
 
-ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_tmpl_list_ptr_t)
+ULS_QUALIFIED_RETTYP(uls_tmpl_list_ptr_t)
 ULS_QUALIFIED_METHOD(uls_create_tmpls)(int n_alloc, int flags)
 {
 	uls_tmpl_list_ptr_t tmpl_list;
@@ -310,13 +310,13 @@ ULS_QUALIFIED_METHOD(uls_create_tmpls)(int n_alloc, int flags)
 	return tmpl_list;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_reset_tmpls)(uls_tmpl_list_ptr_t tmpl_list, int n_alloc)
 {
 	uls_resize_array_type10(uls_ptr(tmpl_list->tmpls), tmpl, n_alloc);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_destroy_tmpls)(uls_tmpl_list_ptr_t tmpl_list)
 {
 	if (uls_deinit_tmpls(tmpl_list) < 0) {
@@ -329,7 +329,7 @@ ULS_QUALIFIED_METHOD(uls_destroy_tmpls)(uls_tmpl_list_ptr_t tmpl_list)
 	return 0;
 }
 
-ULS_DLL_EXTERN const char*
+const char*
 ULS_QUALIFIED_METHOD(uls_get_tmpl_value)(uls_tmpl_list_ptr_t tmpl_list, const char* name)
 {
 	uls_tmpl_ptr_t tmpl;
@@ -341,7 +341,7 @@ ULS_QUALIFIED_METHOD(uls_get_tmpl_value)(uls_tmpl_list_ptr_t tmpl_list, const ch
 	return tmpl->sval;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_set_tmpl_value)(uls_tmpl_list_ptr_t tmpl_list, const char* name, const char *val)
 {
 	uls_tmpl_ptr_t tmpl;
@@ -365,7 +365,7 @@ ULS_QUALIFIED_METHOD(uls_set_tmpl_value)(uls_tmpl_list_ptr_t tmpl_list, const ch
 	return 0;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_add_tmpl)(uls_tmpl_list_ptr_t tmpl_list, const char *name, const char *val)
 {
 	uls_tmpl_ptr_t tmpl;
@@ -402,7 +402,7 @@ ULS_QUALIFIED_METHOD(uls_add_tmpl)(uls_tmpl_list_ptr_t tmpl_list, const char *na
 	return k;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(ulsjava_add_tmpl)(uls_tmpl_list_ptr_t tmpl_list,
 	const void *name, int len_name,  const void *val, int len_val)
 {

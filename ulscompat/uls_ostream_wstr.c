@@ -37,7 +37,7 @@
 #include "uls/uls_ostream_wstr.h"
 #include "uls/uls_wlog.h"
 
-ULS_DLL_EXTERN uls_ostream_ptr_t
+uls_ostream_ptr_t
 __uls_create_ostream_wstr(int fd_out, uls_lex_ptr_t uls, int stream_type, const wchar_t* subname)
 {
 	char *ustr;
@@ -57,7 +57,7 @@ __uls_create_ostream_wstr(int fd_out, uls_lex_ptr_t uls, int stream_type, const 
 	return hdr;
 }
 
-ULS_DLL_EXTERN uls_ostream_ptr_t
+uls_ostream_ptr_t
 uls_create_ostream_wstr(int fd_out, uls_lex_ptr_t uls, const wchar_t* subname)
 {
 	char *ustr;
@@ -77,7 +77,7 @@ uls_create_ostream_wstr(int fd_out, uls_lex_ptr_t uls, const wchar_t* subname)
 	return hdr;
 }
 
-ULS_DLL_EXTERN uls_ostream_ptr_t
+uls_ostream_ptr_t
 uls_create_ostream_file_wstr(const wchar_t* filepath, uls_lex_ptr_t uls, const wchar_t* subname)
 {
 	uls_ostream_ptr_t ostr=nilptr;
@@ -115,7 +115,7 @@ uls_create_ostream_file_wstr(const wchar_t* filepath, uls_lex_ptr_t uls, const w
 	return ostr;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_print_tok_wstr(uls_ostream_ptr_t ostr, int tokid, const wchar_t* tokstr)
 {
 	char *ustr;
@@ -136,7 +136,7 @@ uls_print_tok_wstr(uls_ostream_ptr_t ostr, int tokid, const wchar_t* tokstr)
 	return rc;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_print_tok_linenum_wstr(uls_ostream_ptr_t ostr, int lno, const wchar_t* tag)
 {
 	char *ustr;

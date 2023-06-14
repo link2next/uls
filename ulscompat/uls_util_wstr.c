@@ -36,7 +36,7 @@
 #include "uls/uls_fileio.h"
 
 
-ULS_DLL_EXTERN void
+void
 uls_wputstr(const wchar_t *wstr)
 {
 	char *austr;
@@ -61,7 +61,7 @@ uls_wputstr(const wchar_t *wstr)
 	csz_deinit(uls_ptr(csz));
 }
 
-ULS_DLL_EXTERN int
+int
 uls_path_normalize_wstr(const wchar_t* wfpath, wchar_t* wfpath2)
 {
 	wchar_t *wbuf2;
@@ -102,7 +102,7 @@ uls_path_normalize_wstr(const wchar_t* wfpath, wchar_t* wfpath2)
 	return wlen2;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_mkdir_wstr(const wchar_t *wfilepath)
 {
 	char *ustr;
@@ -121,7 +121,7 @@ uls_mkdir_wstr(const wchar_t *wfilepath)
 	return rval;
 }
 
-ULS_DLL_EXTERN wchar_t*
+wchar_t*
 uls_wstrdup(const wchar_t* wstr, int wlen)
 {
 	wchar_t *wbuf;
@@ -138,7 +138,7 @@ uls_wstrdup(const wchar_t* wstr, int wlen)
 	return wbuf;
 }
 
-ULS_DLL_EXTERN wchar_t*
+wchar_t*
 uls_wstrchr(const wchar_t* wlptr, wchar_t wch0)
 {
 	wchar_t wch;
@@ -152,7 +152,7 @@ uls_wstrchr(const wchar_t* wlptr, wchar_t wch0)
 	return NULL;
 }
 
-ULS_DLL_EXTERN int
+int
 _uls_explode_wstr(uls_wrd_ptr_t uw, wchar_t delim_wch, uls_arglst_ptr_t arglst)
 {
 	wchar_t  *wlptr= (wchar_t *) uw->lptr, *wlptr1, wch;
@@ -206,7 +206,7 @@ _uls_explode_wstr(uls_wrd_ptr_t uw, wchar_t delim_wch, uls_arglst_ptr_t arglst)
 	return k;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_explode_wstr(wchar_t **ptr_wline, wchar_t delim_wch, wchar_t** args, int n_args)
 {
 	uls_wrd_t wrdx;
@@ -232,7 +232,7 @@ uls_explode_wstr(wchar_t **ptr_wline, wchar_t delim_wch, wchar_t** args, int n_a
 	return n_wrd;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_getopts_wstr(int n_args, wchar_t* wargs[], const wchar_t* optwfmt, uls_woptproc_t wproc)
 {
 	const wchar_t  *cwptr;
@@ -285,7 +285,7 @@ uls_getopts_wstr(int n_args, wchar_t* wargs[], const wchar_t* optwfmt, uls_woptp
 	return i;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_lf_wputs_csz(uls_voidptr_t x_dat, const char* wrdptr, int wrdlen)
 {
 	csz_str_ptr_t csz = (csz_str_t *) x_dat;
@@ -312,7 +312,7 @@ uls_lf_wputs_csz(uls_voidptr_t x_dat, const char* wrdptr, int wrdlen)
 	return rc;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_lf_wputs_str(uls_voidptr_t x_dat, const char* wrdptr, int wrdlen)
 {
 	uls_buf4wstr_ptr_t wlb = (uls_buf4wstr_ptr_t) x_dat;
@@ -345,7 +345,7 @@ uls_lf_wputs_str(uls_voidptr_t x_dat, const char* wrdptr, int wrdlen)
 	return rc;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_lf_wputs_file(uls_voidptr_t x_dat, const char* wrdptr, int wrdlen)
 {
 	FILE *fout = (FILE *) x_dat;

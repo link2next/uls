@@ -232,7 +232,7 @@ ULS_QUALIFIED_METHOD(uls_set_isrc_type)(uls_lex_ptr_t uls, int fd_type, int fd_s
 	return uls_push_isrc_type(uls, fd_type, fd_subtype);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_push_istream)(uls_lex_ptr_t uls, uls_istream_ptr_t istr,
 	uls_tmpl_list_ptr_t tmpl_list, int flags)
 {
@@ -269,7 +269,7 @@ ULS_QUALIFIED_METHOD(uls_push_istream)(uls_lex_ptr_t uls, uls_istream_ptr_t istr
 	return 0;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_set_istream)(uls_lex_ptr_t uls, uls_istream_ptr_t istr, uls_tmpl_list_ptr_t tmpl_list, int flags)
 {
 	if (istr == nilptr) {
@@ -283,7 +283,7 @@ ULS_QUALIFIED_METHOD(uls_set_istream)(uls_lex_ptr_t uls, uls_istream_ptr_t istr,
 }
 
 #ifndef ULS_DOTNET
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_push_istream_2)(uls_lex_ptr_t uls, uls_istream_ptr_t istr,
 	const char** tmpl_nams, const char** tmpl_vals, int n_tmpls, int flags)
 {
@@ -338,7 +338,7 @@ ULS_QUALIFIED_METHOD(uls_push_istream_2)(uls_lex_ptr_t uls, uls_istream_ptr_t is
 }
 #endif
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_push_file)(uls_lex_ptr_t uls, const char* filepath, int flags)
 {
 	uls_istream_ptr_t istr;
@@ -363,7 +363,7 @@ ULS_QUALIFIED_METHOD(uls_push_file)(uls_lex_ptr_t uls, const char* filepath, int
 	return 0;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_set_file)(uls_lex_ptr_t uls, const char* filepath, int flags)
 {
 	if (filepath == NULL) {
@@ -375,7 +375,7 @@ ULS_QUALIFIED_METHOD(uls_set_file)(uls_lex_ptr_t uls, const char* filepath, int 
 	return uls_push_file(uls, filepath, flags);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_push_fp)(uls_lex_ptr_t uls, FILE* fp, int flags)
 {
 	uls_istream_ptr_t istr;
@@ -400,7 +400,7 @@ ULS_QUALIFIED_METHOD(uls_push_fp)(uls_lex_ptr_t uls, FILE* fp, int flags)
 	return 0;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_set_fp)(uls_lex_ptr_t uls, FILE* fp, int flags)
 {
 	if (fp == nilptr) {
@@ -412,7 +412,7 @@ ULS_QUALIFIED_METHOD(uls_set_fp)(uls_lex_ptr_t uls, FILE* fp, int flags)
 	return uls_push_fp(uls, fp, flags);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_push_fd)(uls_lex_ptr_t uls, int fd, int flags)
 {
 	uls_istream_ptr_t istr;
@@ -448,14 +448,14 @@ ULS_QUALIFIED_METHOD(uls_push_fd)(uls_lex_ptr_t uls, int fd, int flags)
 	return 0;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_set_fd)(uls_lex_ptr_t uls, int fd, int flags)
 {
 	uls_pop(uls);
 	return uls_push_fd(uls, fd, flags);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_register_ungrabber)(uls_lex_ptr_t uls, int at_tail, uls_input_ungrabber_t proc, uls_voidptr_t data)
 {
 	uls_context_ptr_t ctx = uls->xcontext.context;
@@ -491,7 +491,7 @@ ULS_QUALIFIED_METHOD(uls_register_ungrabber)(uls_lex_ptr_t uls, int at_tail, uls
 	return 0;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_push_utf16_line)(uls_lex_ptr_t uls, uls_uint16* wline, int wlen)
 {
 	char  *line;
@@ -515,7 +515,7 @@ ULS_QUALIFIED_METHOD(uls_push_utf16_line)(uls_lex_ptr_t uls, uls_uint16* wline, 
 	uls_push_line(uls, line, len, ULS_MEMFREE_LINE);
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_set_utf16_line)(uls_lex_ptr_t uls, uls_uint16* wline, int wlen)
 {
 	char  *line;
@@ -539,7 +539,7 @@ ULS_QUALIFIED_METHOD(uls_set_utf16_line)(uls_lex_ptr_t uls, uls_uint16* wline, i
 	uls_set_line(uls, line, len, ULS_MEMFREE_LINE);
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_push_utf32_line)(uls_lex_ptr_t uls, uls_uint32* wline, int wlen)
 {
 	char  *line;
@@ -563,7 +563,7 @@ ULS_QUALIFIED_METHOD(uls_push_utf32_line)(uls_lex_ptr_t uls, uls_uint32* wline, 
 	uls_push_line(uls, line, len, ULS_MEMFREE_LINE);
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_set_utf32_line)(uls_lex_ptr_t uls, uls_uint32* wline, int wlen)
 {
 	char  *line;
@@ -587,7 +587,7 @@ ULS_QUALIFIED_METHOD(uls_set_utf32_line)(uls_lex_ptr_t uls, uls_uint32* wline, i
 	uls_set_line(uls, line, len, ULS_MEMFREE_LINE);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(ulsjava_push_line)(uls_lex_ptr_t uls, const void *line, int len_line, int flags)
 {
 	int rc;
@@ -595,7 +595,7 @@ ULS_QUALIFIED_METHOD(ulsjava_push_line)(uls_lex_ptr_t uls, const void *line, int
 	return rc;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(ulsjava_push_file)(uls_lex_ptr_t uls, const void *filepath, int len_filepath, int flags)
 {
 	const char *ustr = _uls_tool_(strdup)((const char*)filepath, len_filepath);
@@ -607,7 +607,7 @@ ULS_QUALIFIED_METHOD(ulsjava_push_file)(uls_lex_ptr_t uls, const void *filepath,
 	return rc;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(ulsjava_set_line)(uls_lex_ptr_t uls, const void *line, int len_line, int flags)
 {
 	int rc;
@@ -615,7 +615,7 @@ ULS_QUALIFIED_METHOD(ulsjava_set_line)(uls_lex_ptr_t uls, const void *line, int 
 	return rc;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(ulsjava_set_file)(uls_lex_ptr_t uls, const void *filepath, int len_filepath, int flags)
 {
 	const char *ustr = _uls_tool_(strdup)((const char*)filepath, len_filepath);
@@ -627,25 +627,25 @@ ULS_QUALIFIED_METHOD(ulsjava_set_file)(uls_lex_ptr_t uls, const void *filepath, 
 	return rc;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(_uls_MBCS)(void)
 {
 	return _uls_sysinfo_(encoding);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(_uls_const_MBCS_UTF8)(void)
 {
 	return ULS_MBCS_UTF8;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(_uls_const_MBCS_MS_MBCS)(void)
 {
 	return ULS_MBCS_MS_MBCS;
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(uls_skip_white_spaces)(uls_lex_ptr_t uls)
 {
 	skip_white_spaces(uls);

@@ -172,13 +172,13 @@ ULS_QUALIFIED_METHOD(_finalize_uls)(void)
 	__finalize_uls();
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(initialize_uls_static)(void)
 {
 	_initialize_uls();
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(initialize_uls)(void)
 {
 	initialize_uls_static();
@@ -187,7 +187,7 @@ ULS_QUALIFIED_METHOD(initialize_uls)(void)
 #endif
 }
 
-ULS_DLL_EXTERN void
+void
 ULS_QUALIFIED_METHOD(finalize_uls)(void)
 {
 	_finalize_uls();

@@ -669,7 +669,7 @@ ULS_QUALIFIED_METHOD(uls_print_tok_eoi)(uls_ostream_ptr_t ostr)
 	return uls_print_tok(ostr, uls_toknum_eoi(uls), NULL);
 }
 
-ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_ostream_ptr_t)
+ULS_QUALIFIED_RETTYP(uls_ostream_ptr_t)
 ULS_QUALIFIED_METHOD(__uls_create_ostream)
 	(int fd_out, uls_lex_ptr_t uls, int stream_type, const char* subname)
 {
@@ -726,7 +726,7 @@ ULS_QUALIFIED_METHOD(__uls_create_ostream)
 	return ostr;
 }
 
-ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_ostream_ptr_t)
+ULS_QUALIFIED_RETTYP(uls_ostream_ptr_t)
 ULS_QUALIFIED_METHOD(uls_create_ostream)(int fd_out, uls_lex_ptr_t uls, const char* subname)
 {
 	int stream_type;
@@ -740,7 +740,7 @@ ULS_QUALIFIED_METHOD(uls_create_ostream)(int fd_out, uls_lex_ptr_t uls, const ch
 	return __uls_create_ostream(fd_out, uls, stream_type, subname);
 }
 
-ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_ostream_ptr_t)
+ULS_QUALIFIED_RETTYP(uls_ostream_ptr_t)
 ULS_QUALIFIED_METHOD(uls_create_ostream_file)(const char* filepath, uls_lex_ptr_t uls, const char* subname)
 {
 	uls_ostream_ptr_t ostr;
@@ -761,7 +761,7 @@ ULS_QUALIFIED_METHOD(uls_create_ostream_file)(const char* filepath, uls_lex_ptr_
 	return ostr;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_destroy_ostream)(uls_ostream_ptr_t ostr)
 {
 	if (ostr == nilptr || ostr->ref_cnt <= 0) {
@@ -795,7 +795,7 @@ ULS_QUALIFIED_METHOD(uls_destroy_ostream)(uls_ostream_ptr_t ostr)
 	return 0;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(__uls_print_tok)(uls_ostream_ptr_t ostr, int tokid, const char* tokstr, int l_tokstr)
 {
 	int rc;
@@ -811,7 +811,7 @@ ULS_QUALIFIED_METHOD(__uls_print_tok)(uls_ostream_ptr_t ostr, int tokid, const c
 	return rc;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_print_tok)(uls_ostream_ptr_t ostr, int tokid, const char* tokstr)
 {
 	int l_tokstr;
@@ -826,7 +826,7 @@ ULS_QUALIFIED_METHOD(uls_print_tok)(uls_ostream_ptr_t ostr, int tokid, const cha
 	return __uls_print_tok(ostr, tokid, tokstr, l_tokstr);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(__uls_print_tok_linenum)(uls_ostream_ptr_t ostr, int lno, const char* tag, int tag_len)
 {
 	int rc;
@@ -842,7 +842,7 @@ ULS_QUALIFIED_METHOD(__uls_print_tok_linenum)(uls_ostream_ptr_t ostr, int lno, c
 	return rc;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_print_tok_linenum)(uls_ostream_ptr_t ostr, int lno, const char* tag)
 {
 	int tag_len;
@@ -856,7 +856,7 @@ ULS_QUALIFIED_METHOD(uls_print_tok_linenum)(uls_ostream_ptr_t ostr, int lno, con
 	return __uls_print_tok_linenum(ostr, lno, tag, tag_len);
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_start_stream)(uls_ostream_ptr_t ostr, int flags)
 {
 	_uls_ptrtype_tool(csz_str) outbuf;
@@ -922,13 +922,13 @@ ULS_QUALIFIED_METHOD(uls_start_stream)(uls_ostream_ptr_t ostr, int flags)
 	return stat;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(_uls_const_LINE_NUMBERING)(void)
 {
 	return ULS_LINE_NUMBERING;
 }
 
-ULS_DLL_EXTERN ULS_QUALIFIED_RETTYP(uls_ostream_ptr_t)
+ULS_QUALIFIED_RETTYP(uls_ostream_ptr_t)
 ULS_QUALIFIED_METHOD(ulsjava_create_ostream_file)(const void *filepath, int len_filepath, uls_lex_ptr_t uls,
 	const void *subname, int len_subname)
 {
@@ -943,7 +943,7 @@ ULS_QUALIFIED_METHOD(ulsjava_create_ostream_file)(const void *filepath, int len_
 	return ostr;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(ulsjava_print_tok)(uls_ostream_ptr_t ostr, int tokid, const void *tokstr, int len_tokstr)
 {
 	const char *ustr = _uls_tool_(strdup)((const char *)tokstr, len_tokstr);
@@ -955,7 +955,7 @@ ULS_QUALIFIED_METHOD(ulsjava_print_tok)(uls_ostream_ptr_t ostr, int tokid, const
 	return rc;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(ulsjava_print_tok_linenum)(uls_ostream_ptr_t ostr, int lno, const void *tag, int len_tag)
 {
 	const char *ustr = _uls_tool_(strdup)((const char *)tag, len_tag);

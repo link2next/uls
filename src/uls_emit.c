@@ -927,7 +927,7 @@ ULS_QUALIFIED_METHOD(print_tokdef_java)(uls_lex_ptr_t uls,
 	return 0;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_init_parms_emit)(uls_parms_emit_ptr_t emit_parm,
 	const char *out_dpath, const char *out_fname, const char *fpath_config,
 	const char* ulc_name, const char* class_path, const char *enum_name,
@@ -1057,7 +1057,7 @@ ULS_QUALIFIED_METHOD(uls_init_parms_emit)(uls_parms_emit_ptr_t emit_parm,
 	return 0;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_deinit_parms_emit)(uls_parms_emit_ptr_t emit_parm)
 {
 	uls_mfree(emit_parm->pathbuff);
@@ -1071,7 +1071,7 @@ ULS_QUALIFIED_METHOD(uls_deinit_parms_emit)(uls_parms_emit_ptr_t emit_parm)
 	return 0;
 }
 
-ULS_DLL_EXTERN int
+int
 ULS_QUALIFIED_METHOD(uls_generate_tokdef_file)(uls_lex_ptr_t uls, uls_parms_emit_ptr_t emit_parm)
 {
 	int stat = 0;

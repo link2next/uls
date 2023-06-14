@@ -54,6 +54,13 @@ ULS_DLL_EXTERN void uls_dump_tokdef_names(uls_lex_ptr_t uls);
 
 ULS_DLL_EXTERN void dump_fd_tower(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN void uls_dump_kwtable(uls_kwtable_ptr_t tbl);
+
+ULS_DLL_EXTERN void dump_tokdef_vx__yaml_commtype(int ind, uls_lex_ptr_t uls, uls_commtype_ptr_t cmt);
+ULS_DLL_EXTERN void dump_tokdef_vx__yaml_quotetype(int ind, uls_lex_ptr_t uls, uls_quotetype_ptr_t qmt);
+ULS_DLL_EXTERN void dump_tokdef_vx__yaml_rename(uls_lex_ptr_t uls);
+ULS_DLL_EXTERN void dump_tokdef_vx__yaml(uls_lex_ptr_t uls);
+
+ULS_DLL_EXTERN int uls_dump_tokdef_vx__yaml(const char *ulc_config, int flags);
 #endif
 
 #ifdef _ULS_CPLUSPLUS

@@ -104,7 +104,7 @@ void uls_init_wstr_2(uls_wlex_shell_ptr_t wuls, uls_lex_ptr_t uls)
 	wuls->wname_list_siz = wuls->wname_list_len = 0;
 }
 
-ULS_DLL_EXTERN const wchar_t*
+const wchar_t*
 uls_tok2keyw_2_wstr(uls_lex_ptr_t uls, int t, uls_outparam_ptr_t parms)
 {
 	uls_wlex_shell_ptr_t wuls = (uls_wlex_shell_ptr_t) uls->shell;
@@ -122,7 +122,7 @@ uls_tok2keyw_2_wstr(uls_lex_ptr_t uls, int t, uls_outparam_ptr_t parms)
 	return pair->wstr;
 }
 
-ULS_DLL_EXTERN const wchar_t*
+const wchar_t*
 uls_tok2name_2_wstr(uls_lex_ptr_t uls, int t, uls_outparam_ptr_t parms)
 {
 	uls_wlex_shell_ptr_t wuls = (uls_wlex_shell_ptr_t) uls->shell;
@@ -140,19 +140,19 @@ uls_tok2name_2_wstr(uls_lex_ptr_t uls, int t, uls_outparam_ptr_t parms)
 	return pair->wstr;
 }
 
-ULS_DLL_EXTERN const wchar_t*
+const wchar_t*
 uls_tok2keyw_wstr(uls_lex_ptr_t uls, int t)
 {
 	return uls_tok2keyw_2_wstr(uls, t, nilptr);
 }
 
-ULS_DLL_EXTERN const wchar_t*
+const wchar_t*
 uls_tok2name_wstr(uls_lex_ptr_t uls, int t)
 {
 	return uls_tok2name_2_wstr(uls, t, nilptr);
 }
 
-ULS_DLL_EXTERN int
+int
 uls_init_wstr(uls_lex_ptr_t uls, const wchar_t* confname)
 {
 	uls_wlex_shell_ptr_t wuls;
@@ -182,7 +182,7 @@ uls_init_wstr(uls_lex_ptr_t uls, const wchar_t* confname)
 	return stat;
 }
 
-ULS_DLL_EXTERN uls_lex_ptr_t
+uls_lex_ptr_t
 uls_create_wstr(const wchar_t* confname)
 {
 	uls_lex_ptr_t uls;
@@ -198,7 +198,7 @@ uls_create_wstr(const wchar_t* confname)
 	return uls;
 }
 
-ULS_DLL_EXTERN void
+void
 uls_destroy_wstr(uls_lex_ptr_t uls)
 {
 	uls_wlex_shell_ptr_t wuls = (uls_wlex_shell_ptr_t) uls->shell;
@@ -233,7 +233,7 @@ uls_destroy_wstr(uls_lex_ptr_t uls)
 	uls_dealloc_object(wuls);
 }
 
-ULS_DLL_EXTERN int
+int
 uls_push_fd_wstr(uls_lex_ptr_t uls, int fd, int flags)
 {
 	if (fd < 0) {
@@ -244,7 +244,7 @@ uls_push_fd_wstr(uls_lex_ptr_t uls, int fd, int flags)
 	return uls_push_fd(uls, fd, flags);
 }
 
-ULS_DLL_EXTERN int
+int
 uls_set_fd_wstr(uls_lex_ptr_t uls, int fd, int flags)
 {
 	if (fd < 0) {
@@ -255,7 +255,7 @@ uls_set_fd_wstr(uls_lex_ptr_t uls, int fd, int flags)
 	return uls_set_fd(uls, fd, flags);
 }
 
-ULS_DLL_EXTERN int
+int
 uls_push_fp_wstr(uls_lex_ptr_t uls, FILE *fp, int flags)
 {
 	if (fp == NULL) {
@@ -266,7 +266,7 @@ uls_push_fp_wstr(uls_lex_ptr_t uls, FILE *fp, int flags)
 	return uls_push_fp(uls, fp, flags);
 }
 
-ULS_DLL_EXTERN int
+int
 uls_set_fp_wstr(uls_lex_ptr_t uls, FILE *fp, int flags)
 {
 	if (fp == NULL) {
@@ -288,7 +288,7 @@ fp_ungrabber_wstr(uls_voidptr_t data)
 	uls_fp_close(fp);
 }
 
-ULS_DLL_EXTERN int
+int
 uls_push_file_wstr(uls_lex_ptr_t uls, const wchar_t* wfilepath, int flags)
 {
 	uls_outparam_ptr_t parm;
@@ -320,7 +320,7 @@ uls_push_file_wstr(uls_lex_ptr_t uls, const wchar_t* wfilepath, int flags)
 	return 0;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_set_file_wstr(uls_lex_ptr_t uls, const wchar_t* wfilepath, int flags)
 {
 	if (wfilepath == NULL) {
@@ -332,7 +332,7 @@ uls_set_file_wstr(uls_lex_ptr_t uls, const wchar_t* wfilepath, int flags)
 	return uls_push_file_wstr(uls, wfilepath, flags);
 }
 
-ULS_DLL_EXTERN int
+int
 uls_push_line_wstr(uls_lex_ptr_t uls, const wchar_t* wline, int wlen, int flags)
 {
 	uls_uint16   *wbuff;
@@ -361,7 +361,7 @@ uls_push_line_wstr(uls_lex_ptr_t uls, const wchar_t* wline, int wlen, int flags)
 	return 0;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_set_line_wstr(uls_lex_ptr_t uls, const wchar_t* wline, int wlen, int flags)
 {
 	uls_uint16   *wbuff;
@@ -390,7 +390,7 @@ uls_set_line_wstr(uls_lex_ptr_t uls, const wchar_t* wline, int wlen, int flags)
 	return 0;
 }
 
-ULS_DLL_EXTERN void
+void
 uls_set_tag_wstr(uls_lex_ptr_t uls, const wchar_t* wtag, int lno)
 {
 	uls_wlex_shell_ptr_t wuls = (uls_wlex_shell_ptr_t) uls->shell;
@@ -409,7 +409,7 @@ uls_set_tag_wstr(uls_lex_ptr_t uls, const wchar_t* wtag, int lno)
 	csz_deinit(uls_ptr(csz));
 }
 
-ULS_DLL_EXTERN const wchar_t*
+const wchar_t*
 _uls_get_tag2_wstr(uls_lex_ptr_t uls, uls_outparam_ptr_t parms)
 {
 	uls_wlex_shell_ptr_t wuls = (uls_wlex_shell_ptr_t) uls->shell;
@@ -442,7 +442,7 @@ _uls_get_tag2_wstr(uls_lex_ptr_t uls, uls_outparam_ptr_t parms)
 	return wtag;
 }
 
-ULS_DLL_EXTERN const wchar_t*
+const wchar_t*
 uls_get_tag2_wstr(uls_lex_ptr_t uls, int *ptr_len_wtag)
 {
 	const wchar_t *wtag;
@@ -456,13 +456,13 @@ uls_get_tag2_wstr(uls_lex_ptr_t uls, int *ptr_len_wtag)
 	return wtag;
 }
 
-ULS_DLL_EXTERN const wchar_t*
+const wchar_t*
 uls_get_tag_wstr(uls_lex_ptr_t uls)
 {
 	return uls_get_tag2_wstr(uls, NULL);
 }
 
-ULS_DLL_EXTERN int
+int
 uls_get_taglen_wstr(uls_lex_ptr_t uls)
 {
 	int len;
@@ -470,7 +470,7 @@ uls_get_taglen_wstr(uls_lex_ptr_t uls)
 	return len;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_get_wtok(uls_lex_ptr_t uls)
 {
 	uls_wlex_shell_ptr_t wuls = (uls_wlex_shell_ptr_t) uls->shell;
@@ -482,7 +482,7 @@ uls_get_wtok(uls_lex_ptr_t uls)
 	return t;
 }
 
-ULS_DLL_EXTERN void
+void
 uls_set_wtok(uls_lex_ptr_t uls, int tokid, const wchar_t* wlexeme, int l_wlexeme)
 {
 	char *ustr;
@@ -508,13 +508,13 @@ uls_set_wtok(uls_lex_ptr_t uls, int tokid, const wchar_t* wlexeme, int l_wlexeme
 	csz_deinit(uls_ptr(csz));
 }
 
-ULS_DLL_EXTERN int
+int
 uls_tokid_wstr(uls_lex_ptr_t uls)
 {
 	return _uls_tok_id(uls);
 }
 
-ULS_DLL_EXTERN const wchar_t*
+const wchar_t*
 uls_lexeme_wstr(uls_lex_ptr_t uls)
 {
 	uls_wlex_shell_ptr_t wuls = (uls_wlex_shell_ptr_t) uls->shell;
@@ -540,7 +540,7 @@ uls_lexeme_wstr(uls_lex_ptr_t uls)
 	return wlxm;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_lexeme_len_wstr(uls_lex_ptr_t uls)
 {
 	uls_wlex_shell_ptr_t wuls = (uls_wlex_shell_ptr_t) uls->shell;
@@ -551,13 +551,13 @@ uls_lexeme_len_wstr(uls_lex_ptr_t uls)
 	return wuls->wtokbuf_len;
 }
 
-ULS_DLL_EXTERN int
+int
 uls_lexeme_chars_wstr(uls_lex_ptr_t uls)
 {
 	return uls_lexeme_len_wstr(uls);
 }
 
-ULS_DLL_EXTERN wchar_t
+wchar_t
 uls_peek_wch(uls_lex_ptr_t uls, uls_nextch_detail_ptr_t parms)
 {
 	uls_uch_t uch;
@@ -565,7 +565,7 @@ uls_peek_wch(uls_lex_ptr_t uls, uls_nextch_detail_ptr_t parms)
 	return (wchar_t) uch;
 }
 
-ULS_DLL_EXTERN wchar_t
+wchar_t
 uls_get_wch(uls_lex_ptr_t uls, uls_nextch_detail_ptr_t parms)
 {
 	uls_uch_t uch;
@@ -573,7 +573,7 @@ uls_get_wch(uls_lex_ptr_t uls, uls_nextch_detail_ptr_t parms)
 	return (wchar_t) uch;
 }
 
-ULS_DLL_EXTERN void
+void
 uls_unget_lexeme_wstr(uls_lex_ptr_t uls, const wchar_t *lxm, int tok_id)
 {
 	char *ustr;
@@ -590,7 +590,7 @@ uls_unget_lexeme_wstr(uls_lex_ptr_t uls, const wchar_t *lxm, int tok_id)
 	csz_deinit(uls_ptr(csz));
 }
 
-ULS_DLL_EXTERN void
+void
 uls_unget_wstr(uls_lex_ptr_t uls, const wchar_t* wstr)
 {
 	char *ustr;
@@ -607,7 +607,7 @@ uls_unget_wstr(uls_lex_ptr_t uls, const wchar_t* wstr)
 	csz_deinit(uls_ptr(csz));
 }
 
-ULS_DLL_EXTERN void
+void
 uls_unget_wch(uls_lex_ptr_t uls, wchar_t wch)
 {
 	char *ustr;
@@ -628,7 +628,7 @@ uls_unget_wch(uls_lex_ptr_t uls, wchar_t wch)
 	csz_deinit(uls_ptr(csz));
 }
 
-ULS_DLL_EXTERN int
+int
 uls_push_istream_2_wstr(uls_lex_ptr_t uls, uls_istream_ptr_t istr,
 	const wchar_t** tmpl_wnams, const wchar_t** tmpl_wvals, int n_tmpls, int flags)
 {
@@ -699,7 +699,7 @@ uls_push_istream_2_wstr(uls_lex_ptr_t uls, uls_istream_ptr_t istr,
 	return stat;
 }
 
-ULS_DLL_EXTERN void
+void
 uls_dump_tok_wstr(uls_lex_ptr_t uls, const wchar_t *wpfx, const wchar_t *wsuff)
 {
 	int tok_id = uls_tok(uls), has_lxm;
@@ -734,7 +734,7 @@ uls_dump_tok_wstr(uls_lex_ptr_t uls, const wchar_t *wpfx, const wchar_t *wsuff)
 	csz_deinit(uls_ptr(csz));
 }
 
-ULS_DLL_EXTERN void
+void
 _uls_dump_tok_2_wstr(uls_lex_ptr_t uls, const wchar_t* wpfx,
 	const wchar_t *id_wstr, const wchar_t *tok_wstr, const wchar_t *wsuff)
 {
