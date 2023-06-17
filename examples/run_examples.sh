@@ -72,8 +72,8 @@ rm -f $tmp_sysprops_fpath
 
 LD_LIBRARY_PATH=/usr/lib/uls:/usr/local/lib:/usr/local/lib64
 LD_LIBRARY_PATH=$ULS_DLLPATH:$LD_LIBRARY_PATH
-if [ $# -ge 1 ]; then
-	LD_LIBRARY_PATH=$1:$LD_LIBRARY_PATH
+if [ $# -ge 2 ]; then
+	LD_LIBRARY_PATH=$2:$LD_LIBRARY_PATH
 fi
 export LD_LIBRARY_PATH
 
