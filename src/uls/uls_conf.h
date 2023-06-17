@@ -88,7 +88,6 @@ extern "C" {
 
 int initialize_ulc_lexattr();
 void finalize_ulc_lexattr();
-void change_ulc_lexattr(int forYamlCvt);
 #endif
 
 #ifdef ULS_DEF_PUBLIC_TYPE
@@ -201,9 +200,6 @@ ULS_DECL_STATIC int read_config__NUMBER_SUFFIXES(char *line, uls_cmd_ptr_t cmd);
 ULS_DECL_STATIC int read_config__DECIMAL_SEPARATOR(char *line, uls_cmd_ptr_t cmd);
 ULS_DECL_STATIC int read_config__PREPEND_INPUT(char *line, uls_cmd_ptr_t cmd);
 
-ULS_DECL_STATIC int read_config__ID_CHARS_cvt2yaml(char *line, uls_cmd_ptr_t cmd);
-ULS_DECL_STATIC int read_config__ID_FIRST_CHARS_cvt2yaml(char *line, uls_cmd_ptr_t cmd);
-
 ULS_DECL_STATIC int check_keyw_str(int lno, const char* str, uls_ptrtype_tool(outparam) parms);
 ULS_DECL_STATIC uls_tokdef_vx_ptr_t __find_tokdef_by_tokid(uls_lex_ptr_t uls, int t, int area);
 ULS_DECL_STATIC uls_tokdef_vx_ptr_t __find_rsvd_tokdef_by_name(uls_lex_ptr_t uls, const char* name);
@@ -262,7 +258,7 @@ fp_list_ptr_t ulc_find_fp_list(fp_list_ptr_t fp_stack_top, const char *ulc_name)
 fp_list_ptr_t ulc_fp_push(fp_list_ptr_t fp_lst, FILE *fp, const char* str);
 FILE* ulc_fp_peek(fp_list_ptr_t fp_lst, uls_ptrtype_tool(outparam) parms);
 
-FILE* ulc_fp_get(uls_ptrtype_tool(outparam) parms, int do_export);
+FILE* ulc_fp_pop(uls_ptrtype_tool(outparam) parms, int do_export);
 void release_ulc_fp_stack(fp_list_ptr_t fp_lst);
 
 void init_reserved_toks(uls_lex_ptr_t uls);
@@ -307,15 +303,11 @@ ULS_DLL_EXTERN int ulc_add_searchpath(const char *pathlist, int front);
 ULS_DLL_EXTERN int ulc_prepend_searchpath_pwd(void);
 
 ULS_DLL_EXTERN int ulc_read_header(uls_lex_ptr_t uls, FILE* fin, ulc_header_ptr_t hdr, uls_ptrtype_tool(outparam) parms);
-ULS_DLL_EXTERN int ulc_read_header_cvt2yaml(uls_lex_ptr_t uls, FILE* fin, ulc_header_ptr_t hdr, const char *tag);
 
 ULS_DLL_EXTERN uls_tokdef_vx_ptr_t ulc_proc_line(const char* tag_nam, int lno, char* lptr, uls_lex_ptr_t uls, ulc_header_ptr_t hdr,
 	uls_ptrtype_tool(outparam) parms);
 
 ULS_DLL_EXTERN uls_xcontext_ptr_t _uls_get_xcontext(uls_lex_ptr_t uls);
-
-void uls_set_cvt2yaml(FILE *fout);
-FILE *uls_get_cvt2yaml(void);
 #endif
 
 #ifdef _ULS_CPLUSPLUS

@@ -72,8 +72,6 @@ ULS_DEFINE_STRUCT(sysinfo)
 
 	int  n_strpool, n_alloc_strpool;
 	char *strpool;
-
-	FILE *fp_cvt2yaml;
 };
 #endif // ULS_DEF_PUBLIC_TYPE
 

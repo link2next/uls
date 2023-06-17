@@ -321,7 +321,7 @@ ULS_QUALIFIED_METHOD(keyw_stat_comp_by_freq)(const uls_voidptr_t a, const uls_vo
 	const uls_keyw_stat_ptr_t a1 = (const uls_keyw_stat_ptr_t ) a;
 	const uls_keyw_stat_ptr_t b1 = (const uls_keyw_stat_ptr_t ) b;
 
-	return a1->freq - b1->freq;
+	return b1->freq - a1->freq;
 }
 
 int

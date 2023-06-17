@@ -307,7 +307,6 @@ uls_bin_dir = $(uls_inst_dir)/bin
 uls_inc_dir = $(uls_inst_dir)/include
 uls_lib_dir = $(uls_inst_dir)/lib
 ulc2class_exe = $(uls_bin_dir)/ulc2class
-ACLOCAL_AMFLAGS = -I m4
 tokseq_SOURCES = main.c tokseq_lex.c
 tokseq_CPPFLAGS = -I$(uls_inc_dir)
 tokseq_LDADD = -L$(uls_lib_dir) -lulscompat -luls

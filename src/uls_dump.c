@@ -27,11 +27,13 @@
  *
  *  This file is part of ULS, Unified Lexical Scheme.
  */
+#ifndef ULS_EXCLUDE_HFILES
 #define __ULS_DUMP__
 #include "uls/uls_dump.h"
 #include "uls/uls_lex.h"
 #include "uls/uls_util.h"
 #include "uls/uls_log.h"
+#endif
 
 void
 ULS_QUALIFIED_METHOD(ulc_dump_tokdef_sorted)(uls_lex_ptr_t uls)
@@ -368,7 +370,7 @@ ULS_QUALIFIED_METHOD(uls_dump_kwtable)(uls_kwtable_ptr_t tbl)
 }
 
 void
-ULS_QUALIFIED_METHOD(dump_tokdef_vx__yaml_commtype)(int ind, uls_lex_ptr_t uls, uls_commtype_ptr_t cmt)
+ULS_QUALIFIED_METHOD(dump_tokdef__yaml_commtype)(int ind, uls_lex_ptr_t uls, uls_commtype_ptr_t cmt)
 {
 	uls_type_tool(outparam) parms1;
 	char outbuf_keyw[128];
@@ -403,7 +405,7 @@ ULS_QUALIFIED_METHOD(dump_tokdef_vx__yaml_commtype)(int ind, uls_lex_ptr_t uls, 
 }
 
 void
-ULS_QUALIFIED_METHOD(dump_tokdef_vx__yaml_quotetype)(int ind, uls_lex_ptr_t uls, uls_quotetype_ptr_t qmt)
+ULS_QUALIFIED_METHOD(dump_tokdef__yaml_quotetype)(int ind, uls_lex_ptr_t uls, uls_quotetype_ptr_t qmt)
 {
 	int tok_id;
 	uls_type_tool(outparam) parms1;
@@ -467,7 +469,7 @@ ULS_QUALIFIED_METHOD(dump_tokdef_vx__yaml_quotetype)(int ind, uls_lex_ptr_t uls,
 }
 
 void
-ULS_QUALIFIED_METHOD(dump_tokdef_vx__yaml_rename)(uls_lex_ptr_t uls)
+ULS_QUALIFIED_METHOD(dump_tokdef__yaml_rename)(uls_lex_ptr_t uls)
 {
 	uls_decl_parray_slots(slots_rsv, tokdef_vx);
 	uls_tokdef_vx_ptr_t e_vx;
@@ -549,8 +551,34 @@ ULS_QUALIFIED_METHOD(dump_tokdef_vx__yaml_rename)(uls_lex_ptr_t uls)
 	}
 }
 
+ULS_DECL_STATIC void
+ULS_QUALIFIED_METHOD(dump_tokdef__char_context)(uls_lex_ptr_t uls, int flag)
+{
+	char *ch_ctx = uls->ch_context;
+	int i, j;
+
+	for (i = 1; i < ULS_SYNTAX_TABLE_SIZE; ) {
+		if (ch_ctx[i] & flag) {
+			for (j = i + 1; j < ULS_SYNTAX_TABLE_SIZE; j++) {
+				if (!(ch_ctx[j] & flag)) {
+					--j;
+					break;
+				}
+			}
+			if (i < j) {
+				uls_sysprn_tabs(1, "- 0x%02x 0x%02x\n", i, j);
+			} else {
+				uls_sysprn_tabs(1, "- 0x%02x\n", i);
+			}
+			i = j + 1;
+		} else {
+			++i;
+		}
+	}
+}
+
 void
-ULS_QUALIFIED_METHOD(dump_tokdef_vx__yaml)(uls_lex_ptr_t uls)
+ULS_QUALIFIED_METHOD(dump_tokdef__yaml)(uls_lex_ptr_t uls)
 {
 	uls_decl_parray_slots(slots_vx, tokdef_vx);
 	uls_tokdef_vx_ptr_t e0_vx;
@@ -569,6 +597,14 @@ ULS_QUALIFIED_METHOD(dump_tokdef_vx__yaml)(uls_lex_ptr_t uls)
 	int i, tok_id;
 
 	uls_sysprn_tabs(0, "ulc-format-ver: 2.9\n");
+
+	// IDFIRST
+	uls_sysprn_tabs(0, "idfirst-chars:\n");
+	dump_tokdef__char_context(uls, ULS_CH_IDFIRST);
+
+	// ID
+	uls_sysprn_tabs(0, "id-chars:\n");
+	dump_tokdef__char_context(uls, ULS_CH_ID);
 
 	if (uls->flags & ULS_FL_CASE_INSENSITIVE) {
 		keyw = "false";
@@ -615,7 +651,7 @@ ULS_QUALIFIED_METHOD(dump_tokdef_vx__yaml)(uls_lex_ptr_t uls)
 
 		for (i=0; i<uls->n1_commtypes; i++) {
 			cmt = uls_get_array_slot_type01(uls_ptr(uls->commtypes), i);
-			dump_tokdef_vx__yaml_commtype(i + 1, uls, cmt);
+			dump_tokdef__yaml_commtype(i + 1, uls, cmt);
 		}
 		uls_sysprn_tabs(0, "\n");
 	}
@@ -626,12 +662,12 @@ ULS_QUALIFIED_METHOD(dump_tokdef_vx__yaml)(uls_lex_ptr_t uls)
 		for (i=0; i<uls->quotetypes.n; i++) {
 			qmt = slots_qmt[i];
 
-			dump_tokdef_vx__yaml_quotetype(i + 1, uls, qmt);
+			dump_tokdef__yaml_quotetype(i + 1, uls, qmt);
 		}
 		uls_sysprn_tabs(0, "\n");
 	}
 
-	dump_tokdef_vx__yaml_rename(uls);
+	dump_tokdef__yaml_rename(uls);
 	uls_sysprn_tabs(0, "\n");
 
 	// the token list
@@ -680,10 +716,9 @@ ULS_QUALIFIED_METHOD(dump_tokdef_vx__yaml)(uls_lex_ptr_t uls)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_dump_tokdef_vx__yaml)(const char *ulc_config, int flags)
+ULS_QUALIFIED_METHOD(uls_dump_tokdef__yaml)(const char *ulc_config, FILE *fout, int flags)
 {
 	int signed_yaml = 0, stat = 0;
-	FILE *fout = uls_get_cvt2yaml();
 	uls_lex_ptr_t uls;
 
 	if (flags & 0x01) {
@@ -706,7 +741,7 @@ ULS_QUALIFIED_METHOD(uls_dump_tokdef_vx__yaml)(const char *ulc_config, int flags
 		_uls_log(err_log)("%s: Failed to open the configuration file %s.", __func__, ulc_config);
 		stat = -1;
 	} else {
-		dump_tokdef_vx__yaml(uls);
+		dump_tokdef__yaml(uls);
 		uls_destroy(uls);
 	}
 

@@ -71,7 +71,7 @@ ULS_DECL_STATIC int comp_vx_by_toknam(const uls_voidptr_t a, const uls_voidptr_t
 ULS_DECL_STATIC int srch_vx_by_toknam(const uls_voidptr_t a, const uls_voidptr_t b);
 ULS_DECL_STATIC void __change_tok_id(uls_tokdef_vx_ptr_t e_vx, int tok_id);
 ULS_DECL_STATIC int __change_tok_nam(uls_tokdef_vx_ptr_t e0_vx, const char* name, const char* name2);
-ULS_DECL_STATIC int add_aliases_to_token(uls_tokdef_vx_ptr_t e0_vx, const char *wrd, uls_ptrtype_tool(wrd) wrdx);
+ULS_DECL_STATIC int add_aliases_to_token(uls_tokdef_vx_ptr_t e_vx, uls_ptrtype_tool(wrd) wrdx);
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC
@@ -79,7 +79,7 @@ int uld_pars_line(int lno, uls_ptrtype_tool(wrd) wrdx, uld_line_ptr_t tok_names)
 int uld_proc_line(const char *tag, int lno,
   char* lptr, uls_lex_ptr_t uls, int n2_vx_namelist);
 uls_tokdef_vx_ptr_t uld_find_tokdef_vx(uls_lex_ptr_t uls, int n_vx_namelist, const char* name);
-int uld_add_aliases(uls_tokdef_vx_ptr_t e0_vx, const char *line_aliases);
+int uld_add_aliases(uls_tokdef_vx_ptr_t e_vx, const char *line_aliases);
 
 int uld_load_fp(uls_lex_ptr_t uls, FILE *fin_uld, const char *tag);
 

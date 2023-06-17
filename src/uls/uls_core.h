@@ -165,13 +165,12 @@ ULS_DECL_STATIC _ULS_INLINE void __ready_to_use_lexseg(uls_context_ptr_t ctx);
 ULS_DECL_STATIC int find_prefix_radix(uls_ptrtype_tool(outparam) parms, uls_lex_ptr_t uls, const char *str);
 ULS_DECL_STATIC int get_number(uls_lex_ptr_t uls, uls_context_ptr_t ctx, uls_ptrtype_tool(parm_line) parm_ln);
 ULS_DECL_STATIC void make_eof_lexeme(uls_lex_ptr_t uls);
-ULS_DECL_STATIC void make_eoi_lexeme(uls_lex_ptr_t uls);
+ULS_DECL_STATIC uls_context_ptr_t make_eoi_lexeme(uls_lex_ptr_t uls);
 ULS_DECL_STATIC uls_tokdef_vx_ptr_t __uls_onechar_lexeme(uls_lex_ptr_t uls, uls_uch_t uch, const char *lptr, int len);
 ULS_DECL_STATIC _ULS_INLINE int __uls_is_real(const char *ptr);
 ULS_DECL_STATIC _ULS_INLINE double __uls_lexeme_unsigned_double(const char *ptr);
 ULS_DECL_STATIC uls_uint32 __uls_lexeme_uint32(const char *ptr);
 ULS_DECL_STATIC uls_uint64 __uls_lexeme_uint64(const char *ptr);
-
 ULS_DECL_STATIC int __uls_change_line(uls_lex_ptr_t uls, const char* line, int len, int flags);
 #endif // ULS_DECL_PRIVATE_PROC
 
@@ -180,8 +179,6 @@ const char* skip_white_spaces(uls_lex_ptr_t uls);
 
 void free_tokdef_array(uls_lex_ptr_t uls);
 int ulc_load(uls_lex_ptr_t uls, FILE *fin_ulc, FILE *fin_ulf);
-
-int ulc_load_cvt2yaml(uls_lex_ptr_t uls, FILE *fin_ulc);
 
 int uls_init_fp(uls_lex_ptr_t uls, const char *specname,
   FILE *fin_ulc, FILE *fin_ulf);

@@ -469,9 +469,9 @@ ULS_QUALIFIED_METHOD(read_hexa_char)(char* ptr)
 }
 
 int
-ULS_QUALIFIED_METHOD(is_pure_int_number)(const char* lptr)
+ULS_QUALIFIED_METHOD(is_pure_integer)(const char* lptr, uls_outparam_ptr_t parms)
 {
-	int minus=0, pure=1, n;
+	int minus=0, pure=1, num = 0, n_bytes;
 	const char* lptr0;
 	char ch;
 
@@ -480,20 +480,27 @@ ULS_QUALIFIED_METHOD(is_pure_int_number)(const char* lptr)
 		++lptr;
 	}
 
-	lptr0 = lptr;
-	for ( ; (ch=*lptr) !='\0'; lptr++) {
+	for (lptr0 = lptr; (ch=*lptr) !='\0'; lptr++) {
 		if (!uls_isdigit(ch)) {
 			pure = 0;
 			break;
 		}
+		num = num * 10 + (ch - '0');
 	}
 
-	if ((n = (int) (lptr - lptr0)) > 0) {
-		if (minus) ++n;
-		if (!pure) n = -n;
+	if ((n_bytes = (int) (lptr - lptr0)) > 0) {
+		if (minus) {
+			num = -num;
+			++n_bytes;
+		}
+		if (parms != nilptr) {
+			parms->len = n_bytes;
+			parms->n = num;
+		}
+		if (!pure) n_bytes = -n_bytes;
 	}
 
-	return n;
+	return n_bytes;
 }
 
 int
