@@ -44,7 +44,7 @@
 #define TMP_LANGS_FNAME      "uls_langs.txt"
 #define ULS_ULCNAME_DELIM    '/'
 
-#define ULS_VERSION_STR      "1.8.5"
+#define ULS_VERSION_STR      "1.8.11"
 #define ULC2CLASS_PROGVER    "v2.7.0"
 #define ULF_GEN_PROGVER      "v1.6.0"
 #define ULS_STREAM_PROGVER   "v2.6.0"
@@ -142,7 +142,11 @@
 #define TOKDEF_LINES_DELTA2        64
 
 #define ULS_LEXSEGS_MAX            63
-#define ULS_FDBUF_INITSIZE         512
+
+#define ULS_FDBUF_INITSIZE         1024
+#define ULS_FDBUF_INITSIZE_STREAM ((ULS_FDBUF_INITSIZE)<<1)
+
+#define ULS_FDZBUF_INITSIZE        (3*ULS_FDBUF_SIZE/2)
 #define ULS_FDBUF_SIZE             1024
 
 #define ULS_N_ONECHAR_TOKGRPS      4
@@ -161,9 +165,6 @@
 
 #define ULC_COLUMNS_MAXSIZ         16
 #define ULC_LONGNAME_MAXSIZ        63
-
-#define ULS_FDBUF_INITSIZE_STREAM ((ULS_FDBUF_INITSIZE)<<1)
-#define ULS_FDZBUF_INITSIZE        (3*ULS_FDBUF_SIZE/2)
 
 #define ULS_UNGETS_BUFSIZ          256
 #define ULS_LEXSTR_MAXSIZ          31
@@ -227,6 +228,7 @@
 
 // Encoding
 #define ULS_UTF8_CH_MAXLEN    4
+#define ULS_UTF16_CH_MAXLEN   2
 
 #define ULS_MBCS_UNKNOWN  -1
 #define ULS_MBCS_UTF8      0

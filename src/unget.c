@@ -486,7 +486,7 @@ ULS_QUALIFIED_METHOD(uls_unget_ch)(uls_lex_ptr_t uls, uls_uch_t uch)
 		ctx = __uls_unget_tok(uls);
 	}
 
-	if ((rc = _uls_tool_(encode_utf8)(uch, ch_str, ULS_UTF8_CH_MAXLEN)) <= 0) {
+	if ((rc = _uls_tool_(encode_utf8)(uch, ch_str)) <= 0) {
 		_uls_log(err_log)("%s: incorrect unicode!", __FUNCTION__);
 		return;
 	}

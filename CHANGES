@@ -1,4 +1,12 @@
 
+  v1.8.11
+  -----------
+    o bug-fixes on
+     a) data loss when returning nested input 
+     b) reading utf8 file containing multibytes chars. 
+     c) reading utf32 file 
+     d) reading utf files with BOM(8,16,32) 
+
   v1.8.10
   -----------
     o bug-fixes on

@@ -56,7 +56,7 @@ ULS_QUALIFIED_METHOD(__uls_change_stream_hdr)(uls_lex_ptr_t uls, uls_istream_ptr
 		start_lno = 1;
 	}
 
-	uls_init_line_in_input(inp, uls_get_namebuf_value(istr->firstline), istr->len_firstline, ipos);
+	uls_init_line_in_input(inp, istr->firstline, istr->len_firstline, ipos);
 	uls_context_set_tag(ctx, uls_get_namebuf_value(istr->filepath), start_lno);
 	return 0;
 }
@@ -124,7 +124,6 @@ ULS_QUALIFIED_METHOD(uls_select_isrc_filler)(uls_context_ptr_t ctx, uls_istream_
 	} else {
 		fill_isrc = nilptr;
 		bufsiz0 = ULS_FDBUF_INITSIZE_STREAM;
-		uls_input_set_fl(ctx->input, ULS_INP_FL_READONLY);
 
 		dat = (uls_voidptr_t) istr;
 		fill_isrc = uls_ref_callback_this(uls_fill_fd_stream);
@@ -132,7 +131,6 @@ ULS_QUALIFIED_METHOD(uls_select_isrc_filler)(uls_context_ptr_t ctx, uls_istream_
 	}
 
 	uls_input_reset(ctx->input, bufsiz0, 0);
-	uls_input_reset_cursor(ctx->input);
 	uls_input_change_filler(ctx->input, dat, fill_isrc, ungrab_proc);
 
 	return 0;

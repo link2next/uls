@@ -298,7 +298,9 @@ proc_file(char *fpath, uls_keyw_stat_list_t *ks_lst)
 {
 	if (fpath == NULL) return 0;
 
-	uls_push_file(sam_lex, fpath, 0);
+	if (uls_push_file(sam_lex, fpath, 0) < 0) {
+		return -1;
+	}
 
 	if (opt_verbose >= 1)
 		err_log("processing %s, ...", fpath);
@@ -494,7 +496,10 @@ ulf_create_file_internal(FILE *fp_list, FILE *fp_out, int i0, int n_args, char *
 			return -1;
 		}
 
-		proc_filelist(fp_list, keyw_stat_list);
+		if (proc_filelist(fp_list, keyw_stat_list) < 0) {
+			err_log("Failed to process files in %s", target_dir);
+			return -1;
+		}
 
 		if (ult_chdir(home_dir) < 0) {
 			err_log("fail to chdir(%s)", home_dir);

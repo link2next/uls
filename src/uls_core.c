@@ -184,13 +184,8 @@ ULS_QUALIFIED_METHOD(__uls_onechar_lexeme)(uls_lex_ptr_t uls, uls_uch_t uch, con
 	uls_tokdef_vx_ptr_t e_vx;
 
 	if ((e_vx = uls_find_1char_tokdef_vx(uls_ptr(uls->onechar_table), uch, nilptr)) == nilptr) {
-		if (uch < ULS_SYNTAX_TABLE_SIZE && (uls->ch_context[uch] & ULS_CH_1)) {
-			e_vx = ctx->anonymous_uchar_vx;
-			e_vx->tok_id = (int) uch;
-		} else {
-			e_vx = set_err_tok(uls, "Unknown unicode char!");
-			return e_vx;
-		}
+		e_vx = ctx->anonymous_uchar_vx;
+		e_vx->tok_id = (int) uch;
 	}
 
 	ctx->tok = e_vx->tok_id;
@@ -292,6 +287,7 @@ ULS_QUALIFIED_METHOD(__uls_change_line)(uls_lex_ptr_t uls, const char* line, int
 	else uls_unwant_eof(uls);
 
 	uls_input_change_filler_null(inp);
+	uls_input_reset(inp, 0, ULS_INP_FL_REFILL_NULL);
 
 	if (xctx->len_prepended_input > 0) {
 		parm = uls_alloc_object(uls_type_tool(outparam));
@@ -322,12 +318,7 @@ ULS_QUALIFIED_METHOD(__uls_change_line)(uls_lex_ptr_t uls, const char* line, int
 
 		inp->isource.usrc = (uls_voidptr_t) parm;
 		inp->isource.usrc_ungrab = uls_ref_callback_this(uls_ungrab_linecheck);
-
-	} else {
-		uls_input_set_fl(inp, ULS_INP_FL_READONLY);
 	}
-
-	uls_input_reset(inp, 0, ULS_INP_FL_REFILL_NULL);
 
 	inp->line_num = start_lno;
 	inp->rawbuf_ptr = line;
@@ -726,12 +717,12 @@ ULS_QUALIFIED_METHOD(uls_fillbuff)(uls_lex_ptr_t uls)
 	const char *line;
 	int rc;
 
-	if ((ctx->flags & ULS_CTX_FL_ERR) || inp->isource.flags & ULS_ISRC_FL_ERR) {
+	if ((ctx->flags & ULS_CTX_FL_ERR) || (inp->isource.flags & ULS_ISRC_FL_ERR)) {
 		_uls_log(err_log)("%s: called again after I/O failed!", __FUNCTION__);
 		return -1;
-	} else if (ctx->flags & ULS_CTX_FL_EOF) {
-		return 0;
 	}
+
+	if (ctx->flags & ULS_CTX_FL_EOF) return 0;
 
 	rc = ctx->fill_proc(uls_ptr(uls->xcontext));
 	if (rc < 0 || (rc == 0 && ctx->n_lexsegs == 0)) {
@@ -870,12 +861,6 @@ ULS_QUALIFIED_METHOD(uls_gettok_raw)(uls_lex_ptr_t uls)
 
  next_loop:
 	lptr = skip_white_spaces(uls);
-	if (_uls_tool_(decode_utf8)(lptr, -1, &uch) <= 0) {
-		e_vx = set_err_tok(uls, "Incorrect utf-8 format!");
-		uls->tokdef_vx = e_vx;
-		ctx->lptr = lptr;
-		return 0;
-	}
 
 	if ((ch=*lptr) < ULS_SYNTAX_TABLE_SIZE) {
 		ch_grp = ch_ctx[ch];
@@ -976,6 +961,12 @@ ULS_QUALIFIED_METHOD(uls_gettok_raw)(uls_lex_ptr_t uls)
 		lptr += rc;
 
 	} else if (rc0 < -1) {
+		if (_uls_tool_(decode_utf8)(lptr, -1, &uch) <= 0) {
+			e_vx = set_err_tok(uls, "Incorrect utf-8 format!");
+			uls->tokdef_vx = e_vx;
+			ctx->lptr = lptr;
+			return 0;
+		}
 		rc = -rc0;
 		e_vx = __uls_onechar_lexeme(uls, uch, lptr, rc);
 		lptr += rc;
@@ -1004,7 +995,7 @@ ULS_QUALIFIED_METHOD(uls_gettok_raw)(uls_lex_ptr_t uls)
 }
 
 int
-ULS_QUALIFIED_METHOD(__uls_change_isrc)(uls_lex_ptr_t uls, int bufsiz, uls_voidptr_t isrc,
+ULS_QUALIFIED_METHOD(__uls_change_isrc)(uls_lex_ptr_t uls, int bufsiz, uls_voidptr_t usrc,
 	uls_fill_isource_t fill_rawbuf, uls_ungrab_isource_t ungrab_proc)
 {
 	uls_xcontext_ptr_t xctx = uls_ptr(uls->xcontext);
@@ -1015,8 +1006,7 @@ ULS_QUALIFIED_METHOD(__uls_change_isrc)(uls_lex_ptr_t uls, int bufsiz, uls_voidp
 	if (bufsiz < 0) bufsiz = ULS_FDBUF_INITSIZE;
 
 	uls_input_reset(inp, bufsiz, -1);
-	uls_input_reset_cursor(inp);
-	uls_input_change_filler(inp, isrc, fill_rawbuf, ungrab_proc);
+	uls_input_change_filler(inp, usrc, fill_rawbuf, ungrab_proc);
 
 	start_lno = 1;
 	if (xctx->len_prepended_input > 0) {
@@ -1043,7 +1033,7 @@ ULS_QUALIFIED_METHOD(uls_push_context)(uls_lex_ptr_t uls, uls_context_ptr_t ctx_
 	if (ctx_new == nilptr) {
 		ctx_new = uls_alloc_object(uls_context_t);
 		uls_init_context(ctx_new, uls_ref_callback_this(uls_gettok_raw), uls->xcontext.toknum_NONE);
-		uls_input_reset(ctx->input, -1, 0);
+		uls_input_reset(ctx_new->input, -1, 0);
 
 		ctx_new->flags |= ULS_CTX_FL_GETTOK_RAW;
 		if (mask_want_eof)
