@@ -166,12 +166,11 @@ ULS_QUALIFIED_METHOD(uls_get_escape_str)(char quote_ch, uls_ptrtype_tool(wrd) wr
 			}
 			escape = 0;
 		} else {
-			if (ch == quote_ch) {
+			if (ch == quote_ch || ch == '\0') {
 				if (ch != '\0') ++lptr;
 				break;
 			}
 
-			if (ch == '\0') return -1;
 			if (ch=='\\') {
 				escape = 1;
 			} else {

@@ -75,8 +75,12 @@ ULS_QUALIFIED_METHOD(check_keyw_str)(int lno, const char* str, uls_ptrtype_tool(
 
 		if (ch == '\\') {
 			lit1.lptr = ++ptr;
-			uch = uls_get_escape_char(uls_ptr(lit1));
+			if (*ptr == '\0') {
+				_uls_log(err_log)("#%d: unterminated escape char", lno);
+				return -1;
+			}
 
+			uch = uls_get_escape_char(uls_ptr(lit1));
 			if (lit1.len_ch_escaped < 0) {
 				buf[len++] = '\\';
 				buf[len++] = *ptr++;
@@ -2448,7 +2452,7 @@ ULS_QUALIFIED_METHOD(classify_char_group)(uls_lex_ptr_t uls, ulc_header_ptr_t ul
 	for (i=0; i<uls->n1_commtypes; i++) {
 		cmt = uls_get_array_slot_type01(uls_ptr(uls->commtypes), i);
 		if (is_str_contained_in_quotetypes(uls, uls_get_namebuf_value(cmt->start_mark))) {
-			_uls_log(err_log)("comment-type '%s' is not proper as it contained in one of the quote-types[]",
+			_uls_log(err_log)("comment-type '%s' is not proper as it's contained in one of the quote-types[]",
 				uls_get_namebuf_value(cmt->start_mark));
 			return -1;
 		}
@@ -2458,7 +2462,7 @@ ULS_QUALIFIED_METHOD(classify_char_group)(uls_lex_ptr_t uls, ulc_header_ptr_t ul
 	for (i=0; i<uls->quotetypes.n; i++) {
 		qmt = slots_qmt[i];
 		if (is_str_contained_in_commtypes(uls, uls_get_namebuf_value(qmt->start_mark))) {
-			_uls_log(err_log)("quote-type '%s' is not proper as it contained in one of the comm-types[]",
+			_uls_log(err_log)("quote-type '%s' is not proper as it's contained in one of the comm-types[]",
 				uls_get_namebuf_value(qmt->start_mark));
 			return -1;
 		}

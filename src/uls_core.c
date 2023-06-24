@@ -536,6 +536,7 @@ ULS_QUALIFIED_METHOD(ulc_load)(uls_lex_ptr_t uls, FILE *fin_ulc, FILE *fin_ulf)
 
 		for (i=0; i < n_lst; i++) {
 			e = slots_lst[i]->keyw_info;
+			// Enter the items having low frequency first!
 			uls_add_kw(uls_ptr(uls->idkeyw_table), e);
 		}
 
@@ -856,7 +857,7 @@ ULS_QUALIFIED_METHOD(uls_gettok_raw)(uls_lex_ptr_t uls)
 	const char      *lptr;
 	char            ch, ch_grp;
 	uls_lexseg_ptr_t  lexseg, lexseg_next;
-	int             j, k, rc0, rc, n_uchars;
+	int             j, k, rc0, rc, n_wchars;
 	uls_uch_t       uch;
 	uls_tokdef_vx_ptr_t e_vx;
 	uls_tokdef_ptr_t e;
@@ -928,41 +929,34 @@ ULS_QUALIFIED_METHOD(uls_gettok_raw)(uls_lex_ptr_t uls)
 		ctx->s_val_len = ctx->s_val_uchars = k;
 		e_vx = slots_rsv[NUM_TOK_IDX];
 
-	} else if ((rc0=uls_is_char_idfirst(uls, lptr, &uch)) > 0) {
-		k = 0;
-
-		for (rc = rc0; rc == 1; ) {
-			str_putc(uls_ptr(ctx->tokbuf), k++, *lptr++);
-			rc = uls_is_char_id(uls, lptr, &uch);
+	} else if ((rc0 = uls_is_char_idfirst(uls, lptr, &uch)) > 0) {
+		rc = rc0;
+		for (n_wchars = k = 0; rc > 0; ) {
+			for (j=0; j<rc; j++) {
+				str_putc(uls_ptr(ctx->tokbuf), k++, *lptr++);
+			}
+			++n_wchars;
+			rc = uls_is_char_id(uls, lptr, nilptr);
 		}
 		str_putc(uls_ptr(ctx->tokbuf), k, '\0');
 
-		if (k > 0 && (e=is_keyword_idstr(uls_ptr(uls->idkeyw_table), ctx->tokbuf.buf, k)) != nilptr) {
+		if ((e = is_keyword_idstr(uls_ptr(uls->idkeyw_table), ctx->tokbuf.buf, k)) != nilptr) {
 			e_vx = e->view;
 			ctx->tok = e_vx->tok_id;
 			ctx->s_val = ctx->tokbuf.buf;
-			ctx->s_val_len = ctx->s_val_uchars = k;
+			ctx->s_val_len = k;
+			ctx->s_val_uchars = _uls_tool(ustr_num_chars)(ctx->s_val, k, nilptr);
+
+		} else if (n_wchars > uls->id_max_uchars || k > uls->id_max_bytes ) {
+			e_vx = set_err_tok(uls, "Too long identifier!");
 
 		} else {
-			n_uchars = k;
-			while (rc >= 1) {
-				for (j=0; j<rc; j++) {
-					str_putc(uls_ptr(ctx->tokbuf), k++, *lptr++);
-				}
-				++n_uchars;
-				rc = uls_is_char_id(uls, lptr, &uch);
-			}
-
-			if (n_uchars > uls->id_max_uchars || k > uls->id_max_bytes ) {
-				e_vx = set_err_tok(uls, "Too long identifier!");
-			} else {
-				str_putc(uls_ptr(ctx->tokbuf), k, '\0');
-				ctx->s_val = ctx->tokbuf.buf;
-				ctx->s_val_len = k;
-				ctx->s_val_uchars = n_uchars;
-				ctx->tok = uls->xcontext.toknum_ID;
-				e_vx = slots_rsv[ID_TOK_IDX];
-			}
+			str_putc(uls_ptr(ctx->tokbuf), k, '\0');
+			ctx->s_val = ctx->tokbuf.buf;
+			ctx->s_val_len = k;
+			ctx->s_val_uchars = n_wchars;
+			ctx->tok = uls->xcontext.toknum_ID;
+			e_vx = slots_rsv[ID_TOK_IDX];
 		}
 
 	} else if (((ch_grp & ULS_CH_2PLUS) || ch >= ULS_SYNTAX_TABLE_SIZE) &&
@@ -977,7 +971,8 @@ ULS_QUALIFIED_METHOD(uls_gettok_raw)(uls_lex_ptr_t uls)
 		ctx->tokbuf.buf[rc] = '\0';
 
 		ctx->s_val = ctx->tokbuf.buf;
-		ctx->s_val_len = ctx->s_val_uchars = rc;
+		ctx->s_val_len = rc;
+		ctx->s_val_uchars = _uls_tool(ustr_num_chars)(ctx->s_val, rc, nilptr);
 		lptr += rc;
 
 	} else if (rc0 < -1) {
@@ -1375,7 +1370,6 @@ ULS_QUALIFIED_METHOD(uls_destroy)(uls_lex_ptr_t uls)
 	if (--uls->ref_cnt > 0) return uls->ref_cnt;
 
 	uls_pop_all(uls);
-	uls_xcontext_reset(uls_ptr(uls->xcontext));
 	uls_dealloc_lex(uls);
 
 	return 0;
@@ -1522,8 +1516,10 @@ void
 ULS_QUALIFIED_METHOD(uls_set_tok)(uls_lex_ptr_t uls, int tokid, const char* lexeme, int l_lexeme)
 {
 	uls_context_ptr_t ctx = uls->xcontext.context;
-	if (lexeme == NULL) return;
 
+	ctx->tok = tokid;
+
+	if (lexeme == NULL) return;
 	if (l_lexeme < 0) {
 		l_lexeme = _uls_tool_(strlen)(lexeme);
 	}
@@ -1533,7 +1529,6 @@ ULS_QUALIFIED_METHOD(uls_set_tok)(uls_lex_ptr_t uls, int tokid, const char* lexe
 
 	ctx->s_val_len = l_lexeme;
 	ctx->s_val_uchars = _uls_tool(ustr_num_chars)(ctx->s_val, l_lexeme, nilptr);
-	ctx->tok = tokid;
 }
 
 void
