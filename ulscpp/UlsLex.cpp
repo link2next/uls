@@ -476,12 +476,6 @@ int UlsLex::get_uls_flags(UlsLex::InputOpts fl)
 	case DoDup:
 		ret_fl = ULS_DO_DUP;
 		break;
-	case MsMbcsEncoding:
-		ret_fl = ULS_FILE_MS_MBCS;
-		break;
-	case Utf8Encoding:
-		ret_fl = ULS_FILE_UTF8;
-		break;
 	default:
 		ret_fl = -1;
 		break;
@@ -676,14 +670,19 @@ bool UlsLex::finishUldMap()
 void UlsLex::changeUldNames(const char *name, const char*name2, int tokid_valid, int tokid, const char *aliases)
 {
 	uld_line_t tok_names;
+	char *buff;
 
  	tok_names.name = name;
 	tok_names.name2 = name2;
 	tok_names.tokid_changed = tokid_valid;
 	tok_names.tokid = tokid;
-	tok_names.aliases = aliases;
+
+	if (aliases == NULL) aliases = "";
+	buff = uls_strdup(aliases, -1);
+	tok_names.aliases = buff;
 
 	uld_change_names(names_map, &tok_names);
+	uls_mfree(buff);
 }
 
 // <brief>
@@ -696,14 +695,15 @@ void UlsLex::setTag_ustr(const char *fname)
 	const char *nstr;
 
 	uls_set_tag(&lex, fname, 1);
-	_ULSCPP_USTR2NSTR(uls_get_tag(&lex), nstr, 1);
+	nstr = uls_get_tag(&lex);
 	*FileNameBuf = string(nstr);
 }
 
 void UlsLex::setTag(string& fname)
 {
 	const char *ustr;
-	_ULSCPP_NSTR2USTR(fname.c_str(), ustr, 0);
+
+	ustr = fname.c_str();
 	setTag_ustr(ustr);
 }
 
@@ -732,7 +732,7 @@ void UlsLex::getTag(string& fname)
 void UlsLex::getTag(std::wstring& wfname)
 {
 	const wchar_t *wstr;
-	_ULSCPP_NSTR2WSTR(FileNameBuf->c_str(), wstr, 0);
+	_ULSCPP_USTR2WSTR(FileNameBuf->c_str(), wstr, 0);
 	wfname = wstr;
 }
 
@@ -809,7 +809,8 @@ bool UlsLex::isLogLevelSet(int lvl)
 void UlsLex::deleteLiteralAnalyzer(string& pfx)
 {
 	const char *ustr;
-	_ULSCPP_NSTR2USTR(pfx.c_str(), ustr, 0);
+
+	ustr = pfx.c_str();
 	uls_xcontext_delete_litstr_analyzer(_uls_get_xcontext(&lex), ustr);
 }
 
@@ -829,7 +830,8 @@ void UlsLex::deleteLiteralAnalyzer(wstring& wpfx)
 void UlsLex::changeLiteralAnalyzer(string pfx, uls_litstr_analyzer_t proc, void* data)
 {
 	const char *ustr;
-	_ULSCPP_NSTR2USTR(pfx.c_str(), ustr, 0);
+
+	ustr = pfx.c_str();
 	uls_xcontext_change_litstr_analyzer(_uls_get_xcontext(&lex), ustr, proc, data);
 }
 
@@ -972,7 +974,7 @@ bool UlsLex::pushFile(string& filepath, int flags)
 		flags = getInputOpts();
 	}
 
-	_ULSCPP_NSTR2USTR(filepath.c_str(), ustr, 0);
+	ustr = filepath.c_str();
 
 	if (uls_push_file(&lex, ustr, flags) < 0) {
 		return false;
@@ -1006,7 +1008,7 @@ void UlsLex::setFile(string& filepath, int flags)
 		flags = getInputOpts();
 	}
 
-	_ULSCPP_NSTR2USTR(filepath.c_str(), ustr, 0);
+	ustr = filepath.c_str();
 
 	if (uls_set_file(&lex, ustr, flags) < 0) {
 		throw std::invalid_argument("the param 'filepath' is invalid.");
@@ -1045,7 +1047,8 @@ void UlsLex::pushLine(const char* line, int len, int flags)
 		flags = getInputOpts();
 	}
 
-	len = _ULSCPP_NSTR2USTR(line, ustr, 0);
+	ustr = line;
+	len = uls_strlen(ustr);
 #ifdef ULS_WINDOWS
 	flags |= ULS_DO_DUP;
 #endif
@@ -1079,7 +1082,8 @@ void UlsLex::setLine(const char* line, int len, int flags)
 		flags = getInputOpts();
 	}
 
-	len = _ULSCPP_NSTR2USTR(line, ustr, 0);
+	ustr = line;
+	len = uls_strlen(ustr);
 #ifdef ULS_WINDOWS
 	flags |= ULS_DO_DUP;
 #endif
@@ -1136,7 +1140,7 @@ bool UlsLex::is_ch_space(uls_uch_t uch)
 // <return>bool</return>
 bool UlsLex::is_ch_idfirst(uls_uch_t uch)
 {
-	return uls_is_ch_idfirst(&lex, uch) ? true : false;
+	return uls_canbe_ch_idfirst(&lex, uch) ? true : false;
 }
 
 // <brief>
@@ -1147,7 +1151,7 @@ bool UlsLex::is_ch_idfirst(uls_uch_t uch)
 // <return>bool</return>
 bool UlsLex::is_ch_id(uls_uch_t uch)
 {
-	return uls_is_ch_id(&lex, uch) ? true : false;
+	return uls_canbe_ch_id(&lex, uch) ? true : false;
 }
 
 // <brief>
@@ -1158,7 +1162,7 @@ bool UlsLex::is_ch_id(uls_uch_t uch)
 // <return>bool</return>
 bool UlsLex::is_ch_quote(uls_uch_t uch)
 {
-	return uls_is_ch_quote(&lex, uch) ? true : false;
+	return uls_canbe_ch_quote(&lex, uch) ? true : false;
 }
 
 // <brief>
@@ -1181,7 +1185,7 @@ bool UlsLex::is_ch_1ch_token(uls_uch_t uch)
 // <return>bool</re turn>
 bool UlsLex::is_ch_2ch_token(uls_uch_t uch)
 {
-	return uls_is_ch_2ch_token(&lex, uch) ? true : false;
+	return uls_canbe_ch_2ch_token(&lex, uch) ? true : false;
 }
 
 // <brief>
@@ -1192,7 +1196,7 @@ bool UlsLex::is_ch_2ch_token(uls_uch_t uch)
 // <return>bool</return>
 bool UlsLex::is_ch_comm(uls_uch_t uch)
 {
-	return uls_is_ch_comm(&lex, uch) ? true : false;
+	return uls_canbe_ch_comm(&lex, uch) ? true : false;
 }
 
 // <brief>
@@ -1277,7 +1281,7 @@ void UlsLex::set_token(int t, string& lxm)
 {
 	const wchar_t *wstr;
 
-	_ULSCPP_NSTR2WSTR(lxm.c_str(), wstr, 0);
+	_ULSCPP_USTR2WSTR(lxm.c_str(), wstr, 0);
 
 	lxm_id = t;
 	*lxm_nstr = lxm;
@@ -1288,7 +1292,7 @@ void UlsLex::set_token(int t, std::wstring& wlxm)
 {
 	const char *nstr;
 
-	_ULSCPP_WSTR2NSTR(wlxm.c_str(), nstr, 0);
+	_ULSCPP_WSTR2USTR(wlxm.c_str(), nstr, 0);
 
 	lxm_id = t;
 	*lxm_nstr = nstr;
@@ -1312,10 +1316,10 @@ void UlsLex::update_token_lex(void)
 
 	lxm_id = uls_tok(&lex);
 
-	_ULSCPP_USTR2NSTR(uls_lexeme(&lex), nstr, 0);
+	nstr = uls_lexeme(&lex);
 	*lxm_nstr = nstr;
 
-	_ULSCPP_NSTR2WSTR(nstr, wstr, 1);
+	_ULSCPP_USTR2WSTR(nstr, wstr, 1);
 	*lxm_wstr = wstr;
 }
 
@@ -1514,7 +1518,7 @@ void UlsLex::ungetStr(string str)
 {
 	const char *ustr;
 
-	_ULSCPP_NSTR2USTR(str.c_str(), ustr, 0);
+	ustr = str.c_str();
 	uls_unget_str(&lex, ustr);
 
 	update_token_lex();
@@ -1545,7 +1549,7 @@ void UlsLex::ungetLexeme(string lxm, int tok_id)
 {
 	const char *ustr;
 
-	_ULSCPP_NSTR2USTR(lxm.c_str(), ustr, 0);
+	ustr = lxm.c_str();
 	uls_unget_lexeme(&lex, ustr, tok_id);
 
 	update_token_lex();
@@ -1569,8 +1573,8 @@ void UlsLex::dumpTok(string pfx, string suff)
 {
 	const char *ustr0, *ustr1;
 
-	_ULSCPP_NSTR2USTR(pfx.c_str(), ustr0, 0);
-	_ULSCPP_NSTR2USTR(suff.c_str(), ustr1, 1);
+	ustr0 = pfx.c_str();
+	ustr1 = suff.c_str();
 
 	uls_dump_tok(&lex, ustr0, ustr1);
 }
@@ -1603,7 +1607,7 @@ UlsLex::Keyword(int t, string *ptr_keyw)
 	if ((keyw = uls_tok2keyw(&lex, t)) == NULL)
 		keyw = "<unknown>";
 
-	_ULSCPP_USTR2NSTR(keyw, nstr, 0);
+	nstr = keyw;
 	*ptr_keyw = nstr;
 }
 
@@ -1796,7 +1800,7 @@ void UlsLex::openOutput(string& out_file)
 	uls_lf_puts_t puts_proc;
 
 	puts_proc = uls_lf_puts_file;
-	_ULSCPP_NSTR2USTR(out_file.c_str(), ustr, 0);
+	ustr = out_file.c_str();
 	openOutput_ustr(ustr, puts_proc);
 }
 
@@ -1848,7 +1852,7 @@ UlsLex::changeConvSpec(const char* percent_name, uls_lf_convspec_t proc)
 {
 	const char *ustr;
 
-	_ULSCPP_NSTR2USTR(percent_name, ustr, 0);
+	ustr = percent_name;
 	uls_lf_register_convspec(ulscpp_convspec_nmap, ustr, proc);
 }
 

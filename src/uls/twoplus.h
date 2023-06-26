@@ -73,7 +73,7 @@ int cmp_twoplus_by_length(const uls_voidptr_t a, const uls_voidptr_t b);
 int cmp_twoplus_vx_by_keyword(const uls_voidptr_t a, const uls_voidptr_t b);
 
 void distribute_twoplus_toks(uls_kwtable_twoplus_ptr_t tbl);
-uls_tokdef_ptr_t is_keyword_twoplus(uls_kwtable_twoplus_ptr_t tbl, const char *ch_ctx, const char* str);
+uls_tokdef_vx_ptr_t is_keyword_twoplus(uls_kwtable_twoplus_ptr_t tbl, const char *ch_ctx, const char* str);
 #endif
 
 #ifdef _ULS_CPLUSPLUS

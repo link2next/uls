@@ -945,11 +945,10 @@ ULS_QUALIFIED_METHOD(uls_gettok_raw)(uls_lex_ptr_t uls)
 		}
 
 	} else if (((ch_grp & ULS_CH_2PLUS) || ch >= ULS_SYNTAX_TABLE_SIZE) &&
-		(e=is_keyword_twoplus(uls_ptr(uls->twoplus_table), ch_ctx, lptr)) != nilptr) {
+		(e_vx=is_keyword_twoplus(uls_ptr(uls->twoplus_table), ch_ctx, lptr)) != nilptr) {
 		/* FOUND */
-		e_vx = e->view;
+		e = e_vx->base; // assert: e != nilptr
 		ctx->tok = e_vx->tok_id;
-
 		rc = e->l_keyword;
 
 		_uls_tool(str_append)(uls_ptr(ctx->tokbuf), 0, lptr, rc);
@@ -1623,6 +1622,7 @@ ULS_QUALIFIED_METHOD(uls_push_line)(uls_lex_ptr_t uls, const char* line, int len
 
 	if (uls_fillbuff_and_reset(uls) < 0) {
 		_uls_log(err_log)("%s: fail to fill the initial buff", __FUNCTION__);
+		uls_pop(uls);
 		return -1;
 	}
 
@@ -1683,7 +1683,7 @@ ULS_QUALIFIED_METHOD(uls_cardinal_toknam)(char* toknam, uls_lex_ptr_t uls, int t
 	} else if ((ptr=uls_tok2name(uls, tok_id)) != NULL) {
 		_uls_tool_(strcpy)(toknam, ptr);
 
-	} else if (tok_id>=0 && tok_id<ULS_SYNTAX_TABLE_SIZE && _uls_tool_(isprint)(tok_id)) {
+	} else if (_uls_tool_(isprint)(tok_id)) {
 		_uls_log_(snprintf)(toknam, ULS_CARDINAL_TOKNAM_SIZ, "%3d", tok_id);
 		if (!(uls->ch_context[tok_id] & ULS_CH_1)) {
 			has_lxm = 0;
@@ -2075,18 +2075,6 @@ ULS_QUALIFIED_METHOD(_uls_const_DO_DUP)(void)
 	return ULS_DO_DUP;
 }
 
-int
-ULS_QUALIFIED_METHOD(_uls_const_FILE_MS_MBCS)(void)
-{
-	return ULS_FILE_MS_MBCS;
-}
-
-int
-ULS_QUALIFIED_METHOD(_uls_const_FILE_UTF8)(void)
-{
-	return ULS_FILE_UTF8;
-}
-
 uls_uch_t
 ULS_QUALIFIED_METHOD(_uls_const_NEXTCH_NONE)(void)
 {
@@ -2144,19 +2132,19 @@ ULS_QUALIFIED_METHOD(_uls_is_ch_space)(uls_lex_ptr_t uls, uls_uch_t uch)
 int
 ULS_QUALIFIED_METHOD(_uls_is_ch_idfirst)(uls_lex_ptr_t uls, uls_uch_t uch)
 {
-	return uls_is_ch_idfirst(uls, uch);
+	return uls_canbe_ch_idfirst(uls, uch);
 }
 
 int
 ULS_QUALIFIED_METHOD(_uls_is_ch_id)(uls_lex_ptr_t uls, uls_uch_t uch)
 {
-	return uls_is_ch_id(uls, uch);
+	return uls_canbe_ch_id(uls, uch);
 }
 
 int
 ULS_QUALIFIED_METHOD(_uls_is_ch_quote)(uls_lex_ptr_t uls, uls_uch_t uch)
 {
-	return uls_is_ch_quote(uls, uch);
+	return uls_canbe_ch_quote(uls, uch);
 }
 
 int
@@ -2168,7 +2156,7 @@ ULS_QUALIFIED_METHOD(_uls_is_ch_1ch_token)(uls_lex_ptr_t uls, uls_uch_t uch)
 int
 ULS_QUALIFIED_METHOD(_uls_is_ch_2ch_token)(uls_lex_ptr_t uls, uls_uch_t uch)
 {
-	return uls_is_ch_2ch_token(uls, uch);
+	return uls_canbe_ch_2ch_token(uls, uch);
 }
 
 int

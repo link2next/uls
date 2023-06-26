@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.63])
+AC_PREREQ([2.69])
 AC_INIT([ULS], [1.8], [link2next@gmail.com])
 AC_CONFIG_SRCDIR([ulscpp/UlsLex.cpp])
 AC_CONFIG_HEADERS([config.h])
@@ -28,7 +28,8 @@ AC_CHECK_LIB([pthread], [pthread_mutex_init])
 
 # Checks for header files.
 AC_FUNC_ALLOCA
-AC_CHECK_HEADERS([fcntl.h libintl.h limits.h locale.h malloc.h stddef.h stdlib.h string.h unistd.h wchar.h])
+AC_CHECK_HEADERS([fcntl.h libintl.h limits.h locale.h malloc.h])
+AC_CHECK_HEADERS([stddef.h stdlib.h string.h unistd.h wchar.h ])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
@@ -46,7 +47,9 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_FUNC_FORK
 AC_FUNC_MALLOC
 AC_FUNC_REALLOC
-AC_CHECK_FUNCS([atexit dup2 getcwd memmove memset mkdir modf setlocale strchr strcasecmp strdup strerror strstr strrchr strtol strtoul])
+AC_CHECK_FUNCS([atexit dup2 getcwd memmove memset mkdir modf setlocale])
+AC_CHECK_FUNCS([strchr strcasecmp strdup strerror strstr strrchr strtol strtoul])
+AC_CHECK_FUNCS([readlink realpath])
 
 AC_PATH_PROG(HELP2MAN, help2man, false)
 
@@ -63,45 +66,45 @@ AC_ARG_WITH([etc-dir],
 AC_SUBST([etc_dir])
 
 AC_CONFIG_FILES([Makefile
-        ulsconfig/Makefile
-        ulc_exam/Makefile
-        src/Makefile
-        ulscompat/Makefile
-        ulscpp/Makefile
-        tools/Makefile
-        tools/ulstools/Makefile
-        tools/ulc2class/Makefile
-        tools/ulf_gen/Makefile
-        tools/uls_stream/Makefile
-        tools/ulc2yaml/Makefile
-        doc/Makefile
-        doc/man/Makefile
-        tests/Makefile
-        tests/cpp_hello/Makefile
-        tests/dump_toks/Makefile
-        tests/id_stat/Makefile
-        tests/getch/Makefile
-        tests/line/Makefile
-        tests/log/Makefile
-        tests/many_kwrds/Makefile
-        tests/nest/Makefile
-        tests/strings/Makefile
-        tests/tok_remap/Makefile
-        tests/two_lex/Makefile
-        tests/test_tree/Makefile
-        tests/gcc_toks/Makefile
-        tests/wdump_toks/Makefile
-        examples/Makefile
-        examples/test_1st/Makefile
-        examples/tokseq/Makefile
-        examples/yacc/Makefile
-        examples/DumpToks/Makefile
-        examples/Css3/Makefile
-        examples/Html5/Makefile
-        examples/Shell/Makefile
-        examples/Mkf/Makefile
-        examples/Natural/Makefile
-        post_inst/Makefile
+	ulsconfig/Makefile
+	ulc_exam/Makefile
+	src/Makefile
+	ulscompat/Makefile
+	ulscpp/Makefile
+	tools/Makefile
+	tools/ulstools/Makefile
+	tools/ulc2class/Makefile
+	tools/ulf_gen/Makefile
+	tools/uls_stream/Makefile
+	doc/Makefile
+	doc/man/Makefile
+	tests/Makefile
+	tests/cpp_hello/Makefile
+	tests/dump_toks/Makefile
+	tests/id_stat/Makefile
+	tests/getch/Makefile
+	tests/line/Makefile
+	tests/log/Makefile
+	tests/many_kwrds/Makefile
+	tests/nest/Makefile
+	tests/strings/Makefile
+	tests/tok_remap/Makefile
+	tests/two_lex/Makefile
+	tests/test_tree/Makefile
+	tests/gcc_toks/Makefile
+	tests/wdump_toks/Makefile
+	examples/Makefile
+	examples/test_1st/Makefile
+	examples/tokseq/Makefile
+	examples/yacc/Makefile
+	examples/DumpToks/Makefile
+	examples/Css3/Makefile
+	examples/Html5/Makefile
+	examples/Shell/Makefile
+	examples/Mkf/Makefile
+	examples/Natural/Makefile
+	examples/ulc2yaml/Makefile
+	post_inst/Makefile
 ])
 
 AC_OUTPUT

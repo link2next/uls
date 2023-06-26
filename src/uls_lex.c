@@ -98,17 +98,7 @@ ULS_QUALIFIED_METHOD(uls_select_isrc_filler)(uls_context_ptr_t ctx, uls_istream_
 	uls_voidptr_t dat;
 
 	if (istr->header.filetype == ULS_STREAM_RAW) {
-		if (subtype == UTF_INPUT_FORMAT_8) {
-			fill_isrc = uls_ref_callback_this(uls_fill_fd_source_utf8);
-		} else if (subtype == UTF_INPUT_FORMAT_16) {
-			fill_isrc = uls_ref_callback_this(uls_fill_fd_source_utf16);
-		} else if (subtype == UTF_INPUT_FORMAT_32) {
-			fill_isrc = uls_ref_callback_this(uls_fill_fd_source_utf32);
-		} else {
-			subtype = UTF_INPUT_FORMAT_8;
-			fill_isrc = uls_ref_callback_this(uls_fill_fd_source_utf8);
-		}
-
+		fill_isrc = uls_ref_callback_this(uls_fill_fd_source_utf8);
 		bufsiz0 = ULS_FDBUF_INITSIZE;
 
 		mode = subtype;
@@ -276,7 +266,6 @@ ULS_QUALIFIED_METHOD(uls_set_istream)(uls_lex_ptr_t uls, uls_istream_ptr_t istr,
 	}
 
 	uls_pop(uls);
-
 	return uls_push_istream(uls, istr, tmpl_list, flags);
 }
 
@@ -327,6 +316,7 @@ ULS_QUALIFIED_METHOD(uls_push_istream_2)(uls_lex_ptr_t uls, uls_istream_ptr_t is
 	}
 
 	if (uls_fillbuff_and_reset(uls) < 0) {
+		uls_pop(uls);
 		return -1;
 	}
 
@@ -623,24 +613,6 @@ ULS_QUALIFIED_METHOD(ulsjava_set_file)(uls_lex_ptr_t uls, const void *filepath, 
 	uls_mfree(ustr);
 
 	return rc;
-}
-
-int
-ULS_QUALIFIED_METHOD(_uls_MBCS)(void)
-{
-	return _uls_sysinfo_(encoding);
-}
-
-int
-ULS_QUALIFIED_METHOD(_uls_const_MBCS_UTF8)(void)
-{
-	return ULS_MBCS_UTF8;
-}
-
-int
-ULS_QUALIFIED_METHOD(_uls_const_MBCS_MS_MBCS)(void)
-{
-	return ULS_MBCS_MS_MBCS;
 }
 
 void

@@ -166,11 +166,11 @@ int uls_readn(int fd, uls_native_vptr_t ptr, int n);
 int uls_writen(int fd, uls_native_vptr_t ptr, int n);
 int uls_readline(int fd, char* ptr, int n);
 
-int uls_chdir(const char* path);
-int uls_getcwd(char* buf, int buf_siz);
-int uls_unlink(const char *filepath);
+ULS_DLL_EXTERN int uls_chdir(const char* path);
+ULS_DLL_EXTERN int uls_getcwd(char* buf, int buf_siz);
+ULS_DLL_EXTERN int uls_unlink(const char *filepath);
 int uls_copyfile_fd(int fd_in, int fd_out);
-int uls_copyfile(const char* filepath1, const char* filepath2);
+ULS_DLL_EXTERN int uls_copyfile(const char* filepath1, const char* filepath2);
 int uls_movefile(const char* fpath1, const char* fpath2);
 
 ULS_DLL_EXTERN int _uls_stdio_fd(int fp_num);

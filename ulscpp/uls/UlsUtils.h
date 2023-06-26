@@ -50,7 +50,6 @@ namespace uls {
 
 		public:
 			static const int CVT_MBSTR_USTR = 0;
-			static const int CVT_MBSTR_ASTR = 1;
 
 			// <brief>
 			// This is a constructor of UlsAuw.
@@ -65,7 +64,6 @@ namespace uls {
 			// <brief>
 			// converters among ANSI-encoding, UTF-8, and wide string
 			// </brief>
-			char *mbstr2mbstr(const char *mbstr, int mode, int slot_no);
 			char *wstr2mbstr(const wchar_t *wstr, int mode, int slot_no);
 			wchar_t *mbstr2wstr(const char *mbstr, int mode, int slot_no);
 

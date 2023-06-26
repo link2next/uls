@@ -89,8 +89,8 @@ uls::crux::UlsOStream::UlsOStream
 {
 	const char *ustr0, *ustr1;
 
-	_ULSCPP_NSTR2USTR(filepath.c_str(), ustr0, 0);
-	_ULSCPP_NSTR2USTR(subtag, ustr1, 1);
+	ustr0 = filepath.c_str();
+	ustr1 = subtag;
 
 	if (makeOStream_ustr(ustr0, lex, ustr1, numbering) == false) {
 		cerr << "can't create uls (output) stream object!" << endl;
@@ -154,7 +154,8 @@ uls::crux::UlsOStream::printTok(int tokid, string& tokstr)
 	const char *ustr;
 	int len, rc;
 
-	len = _ULSCPP_NSTR2USTR(tokstr.c_str(), ustr, 0);
+	ustr = tokstr.c_str();
+	len = uls_strlen(ustr);
 
 	rc = __uls_print_tok(out_hdr, tokid, ustr, len);
 	if (rc < 0)
@@ -185,7 +186,8 @@ uls::crux::UlsOStream::printTokLineNum(int lno, string& tagstr)
 	const char *ustr;
 	int len, rc;
 
-	len = _ULSCPP_NSTR2USTR(tagstr.c_str(), ustr, 0);
+	ustr = tagstr.c_str();
+	len = uls_strlen(ustr);
 	rc = __uls_print_tok_linenum(out_hdr, lno, ustr, len);
 	if (rc < 0)
 		cerr << "can't a print linenum-token!" << endl;
@@ -202,6 +204,7 @@ uls::crux::UlsOStream::printTokLineNum(int lno, std::wstring& wtagstr)
 	if (rc < 0)
 		cerr << "can't a print linenum-token!" << endl;
 }
+
 // <brief>
 // Start writing the lexical streaming with input-stream 'ifile'.
 // </brief>

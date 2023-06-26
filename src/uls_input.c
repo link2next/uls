@@ -399,6 +399,7 @@ ULS_QUALIFIED_METHOD(uls_input_read)(uls_source_ptr_t isrc, char *buf, int bufle
 		}
 
 		if (rc == 0) {
+			isrc->flags |= ULS_ISRC_FL_EOF;
 			break;
 		}
 
@@ -507,47 +508,10 @@ ULS_QUALIFIED_METHOD(uls_fill_fd_source_utf8)(uls_source_ptr_t isrc, char* buf, 
 	const uls_ptrtype_tool(utf_inbuf) inp = (const uls_ptrtype_tool(utf_inbuf)) isrc->usrc;
 	int rc;
 
-	rc = _uls_tool_(fill_utf8buf)(inp, buf, buflen, bufsiz);
-	if (rc < 0) {
-		isrc->flags |= ULS_ISRC_FL_ERR;
-	} else if (rc == 0) {
-		if (inp->is_eof > 0) {
-			isrc->flags |= ULS_ISRC_FL_EOF;
-		}
+	while ((rc = _uls_tool_(fill_utf8buf)(inp, buf, buflen, bufsiz)) <= 0) {
+		if (rc < 0 || inp->is_eof > 0) break;
+		_uls_tool_(msleep)(15);
 	}
-	return rc;
-}
 
-int
-ULS_QUALIFIED_METHOD(uls_fill_fd_source_utf16)(uls_source_ptr_t isrc, char* buf, int buflen, int bufsiz)
-{
-	const uls_ptrtype_tool(utf_inbuf) inp = (const uls_ptrtype_tool(utf_inbuf)) isrc->usrc;
-	int rc;
-
-	rc =  _uls_tool_(fill_utf8buf)(inp, buf, buflen, bufsiz);
-	if (rc < 0) {
-		isrc->flags |= ULS_ISRC_FL_ERR;
-	} else if (rc == 0) {
-		if (inp->is_eof > 0) {
-			isrc->flags |= ULS_ISRC_FL_EOF;
-		}
-	}
-	return rc;
-}
-
-int
-ULS_QUALIFIED_METHOD(uls_fill_fd_source_utf32)(uls_source_ptr_t isrc, char* buf, int buflen, int bufsiz)
-{
-	const uls_ptrtype_tool(utf_inbuf) inp = (const uls_ptrtype_tool(utf_inbuf)) isrc->usrc;
-	int rc;
-
-	rc =  _uls_tool_(fill_utf8buf)(inp, buf, buflen, bufsiz);
-	if (rc < 0) {
-		isrc->flags |= ULS_ISRC_FL_ERR;
-	} else if (rc == 0) {
-		if (inp->is_eof > 0) {
-			isrc->flags |= ULS_ISRC_FL_EOF;
-		}
-	}
 	return rc;
 }

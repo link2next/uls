@@ -311,7 +311,8 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 uls_ver_major = 1
 uls_ver_minor = 8
-uls_ver_debug = 11
+uls_ver_debug = 12
+uls_ver = $(uls_ver_major).$(uls_ver_minor).$(uls_ver_debug)
 so_current = 1
 so_revision = 0
 so_age = 0
@@ -320,7 +321,8 @@ TMP_SYSPROPS = /tmp/uls_sysprops.txt
 ulc2class_exe = $(top_builddir)/tools/ulc2class/ulc2class
 tests_libpath = $(top_builddir)/src:$(top_builddir)/ulscpp
 SUBDIRS = test_1st tokseq yacc \
-	DumpToks Css3 Html5 Shell Mkf Natural
+	DumpToks Css3 Html5 Shell Mkf Natural \
+	ulc2yaml
 
 all: all-recursive
 

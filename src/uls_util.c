@@ -177,11 +177,15 @@ ULS_QUALIFIED_METHOD(uls_get_exeloc_dir)(const char* argv0, char *fpath_buf)
 
 	_uls_tool(csz_deinit)(uls_ptr(ustr_csz));
 #else
+
 	if (argv0 == NULL) {
-		if ((len = (int) readlink("/proc/self/exe", fpath_buf, ULS_FILEPATH_MAX+1)) < 0) {
-			return -1;
-		}
-		fpath_buf[len] = '\0';
+#ifdef HAVE_READLINK
+                len = (int) readlink("/proc/self/exe", fpath_buf, ULS_FILEPATH_MAX+1);
+#else
+                len = -1;
+#endif
+                if (len < 0) return -1;
+                fpath_buf[len] = '\0';
 	} else {
 		if (argv0[0] == ULS_FILEPATH_DELIM) {
 			len = _uls_tool_(strcpy)(fpath_buf, argv0);
@@ -194,23 +198,23 @@ ULS_QUALIFIED_METHOD(uls_get_exeloc_dir)(const char* argv0, char *fpath_buf)
 		}
 	}
 
+#ifdef HAVE_REALPATH
 	if ((ptr=realpath(fpath_buf, NULL)) != NULL) {
 		len = _uls_tool_(strcpy)(fpath_buf, ptr);
 		free(ptr);
-
-		ptr = (char *) _uls_tool_(strchr_r)(fpath_buf, ULS_FILEPATH_DELIM);
-		uls_assert(ptr != NULL);
-		if (fpath_buf < ptr) {
-			*ptr = '\0';
-			len = (int) (ptr - fpath_buf);
-		} else {
-			*++ptr = '\0';
-			len = 1;
-		}
-	} else {
-		len = -1;
 	}
 #endif
+	ptr = (char *) _uls_tool_(strchr_r)(fpath_buf, ULS_FILEPATH_DELIM);
+	if (ptr == NULL) return -3;
+
+	if (fpath_buf < ptr) {
+		*ptr = '\0';
+		len = (int) (ptr - fpath_buf);
+	} else {
+		*++ptr = '\0';
+		len = 1;
+	}
+#endif // ULS_WINDOWS
 	return len;
 }
 
@@ -805,7 +809,7 @@ ULS_QUALIFIED_METHOD(initialize_uls_util)(void)
 	char pathbuff[ULS_FILEPATH_MAX+1];
 	const char *fpath, *cptr;
 
-	int rc, mbs, len;
+	int rc, len;
 	uls_type_tool(outparam) parms;
 	unsigned int a;
 
@@ -890,22 +894,16 @@ ULS_QUALIFIED_METHOD(initialize_uls_util)(void)
 	}
 
 	if (uls_streql(cptr, "utf8")) {
-		_uls_sysinfo_(encoding) = ULS_MBCS_UTF8;
-
+		_uls_sysinfo_(codepage) = 0; // UTF-8
+		_uls_sysinfo_(multibytes) = 0;
 	} else {
 		parms.lptr = cptr;
-		rc = get_ms_codepage(uls_ptr(parms));
-		mbs = parms.n;
-
-		if (rc >= 0) {
-			_uls_sysinfo_(encoding) = ULS_MBCS_MS_MBCS;
-			_uls_sysinfo_(codepage) = rc;
-			_uls_sysinfo_(multibytes) = mbs;
-
-		} else {
+		if ((rc = get_ms_codepage(uls_ptr(parms))) <= 0) {
 			_uls_log(err_log)("%s: unknown file-encoding %s", cptr);
 			return -1;
 		}
+		_uls_sysinfo_(codepage) = rc;
+		_uls_sysinfo_(multibytes) = parms.n;
 	}
 
 	return 0;

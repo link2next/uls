@@ -155,8 +155,6 @@ int uls_fill_null_source(uls_source_ptr_t isrc, char* buf, int buflen, int bufsi
 void uls_ungrab_null_source(uls_source_ptr_t isrc);
 
 int uls_fill_fd_source_utf8(uls_source_ptr_t isrc, char *buf, int buflen, int bufsiz);
-int uls_fill_fd_source_utf16(uls_source_ptr_t isrc, char *buf, int buflen, int bufsiz);
-int uls_fill_fd_source_utf32(uls_source_ptr_t isrc, char *buf, int buflen, int bufsiz);
 
 #endif // ULS_DECL_PROTECTED_PROC
 

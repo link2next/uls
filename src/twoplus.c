@@ -156,11 +156,11 @@ ULS_QUALIFIED_METHOD(uls_get_ind_twoplus_tree)(uls_kwtable_twoplus_ptr_t tbl, in
 	return uls_get_array_slot_type00(uls_ptr(tbl->tree_array), ind);
 }
 
-ULS_QUALIFIED_RETTYP(uls_tokdef_ptr_t)
+ULS_QUALIFIED_RETTYP(uls_tokdef_vx_ptr_t)
 ULS_QUALIFIED_METHOD(is_keyword_twoplus)(uls_kwtable_twoplus_ptr_t tbl, const char *ch_ctx, const char* str)
 {
 	uls_twoplus_tree_ptr_t tree;
-	uls_tokdef_vx_ptr_t e_vx;
+	uls_tokdef_vx_ptr_t e_vx = nilptr;
 	char ch;
 	int i;
 
@@ -182,11 +182,11 @@ ULS_QUALIFIED_METHOD(is_keyword_twoplus)(uls_kwtable_twoplus_ptr_t tbl, const ch
 	for ( ; tree != nilptr; tree=tree->prev) {
 		e_vx = __twoplus_bi_search(tbl, str, uls_ptr(tree->twoplus_sorted), tree->twoplus_sorted.n);
 		if (e_vx != nilptr) {
-			return e_vx->base;
+			break;
 		}
 	}
 
-	return nilptr;
+	return e_vx;
 }
 
 void

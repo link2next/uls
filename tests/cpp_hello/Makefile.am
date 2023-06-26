@@ -17,3 +17,6 @@ $(cpp_hello_OBJECTS) : Sample2Lex.cpp Sample2Lex.h
 
 Sample2Lex.cpp Sample2Lex.h : sample2.uld
 	ULS_SYSPROPS=$(TMP_SYSPROPS) $(ulc2class_exe) -lcpp -n AAA.BBB.Sample2Lex -f Sample2Lex $<
+
+clean-local:
+	-rm -f a?.uls

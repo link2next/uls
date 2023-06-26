@@ -794,28 +794,12 @@ ULS_DECLARE_STRUCT(lex);
 
 #ifndef ULS_DOTNET
 #ifdef _ULSCPP_IMPLDLL
-#if defined(ULS_WINDOWS)
 #define _ULSCPP_AUWCVT_LEN(slot_no) auwcvt->get_slot_len(slot_no)
-#define _ULSCPP_USTR2NSTR(ustr, astr, slot_no) \
-	((astr) = auwcvt->mbstr2mbstr(ustr, UlsAuw::CVT_MBSTR_ASTR, slot_no),_ULSCPP_AUWCVT_LEN(slot_no))
-#define _ULSCPP_NSTR2USTR(astr, ustr, slot_no) \
-	((ustr) = auwcvt->mbstr2mbstr(astr, UlsAuw::CVT_MBSTR_USTR, slot_no),_ULSCPP_AUWCVT_LEN(slot_no))
-#else
-#define _ULSCPP_AUWCVT_LEN(slot_no) auwcvt->get_slot_len(slot_no)
-#define _ULSCPP_USTR2NSTR(ustr, astr, slot_no) ((astr) = (ustr),uls_strlen(astr))
-#define _ULSCPP_NSTR2USTR(astr, ustr, slot_no) ((ustr) = (astr),uls_strlen(ustr))
-#endif
 
 #define _ULSCPP_USTR2WSTR(ustr, wstr, slot_no) \
 	((wstr) = auwcvt->mbstr2wstr(ustr, UlsAuw::CVT_MBSTR_USTR, slot_no),_ULSCPP_AUWCVT_LEN(slot_no))
 
 #define _ULSCPP_WSTR2USTR(wstr, ustr, slot_no) \
-	((ustr) = auwcvt->wstr2mbstr(wstr, UlsAuw::CVT_MBSTR_USTR, slot_no),_ULSCPP_AUWCVT_LEN(slot_no))
-
-#define _ULSCPP_NSTR2WSTR(ustr, wstr, slot_no) \
-	((wstr) = auwcvt->mbstr2wstr(ustr, UlsAuw::CVT_MBSTR_USTR, slot_no),_ULSCPP_AUWCVT_LEN(slot_no))
-
-#define _ULSCPP_WSTR2NSTR(wstr, ustr, slot_no) \
 	((ustr) = auwcvt->wstr2mbstr(wstr, UlsAuw::CVT_MBSTR_USTR, slot_no),_ULSCPP_AUWCVT_LEN(slot_no))
 #endif // _ULSCPP_IMPLDLL
 #endif // ULS_DOTNET

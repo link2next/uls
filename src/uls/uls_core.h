@@ -52,9 +52,6 @@ extern "C" {
 #define ULS_NO_DUP       0
 #define ULS_NO_EOFTOK    0
 
-#define ULS_FILE_MS_MBCS 0x10
-#define ULS_FILE_UTF8    0x20
-
 #ifdef ULS_CLASSIFY_SOURCE
 #define uls_tok(uls) _uls_tok_id(uls)
 #define uls_lexeme(uls) _uls_lexeme(uls)
@@ -283,9 +280,6 @@ ULS_DLL_EXTERN int uls_set_extra_tokdef(uls_lex_ptr_t uls, int tok_id, uls_voidp
 
 ULS_DLL_EXTERN int _uls_const_WANT_EOFTOK(void);
 ULS_DLL_EXTERN int _uls_const_DO_DUP(void);
-ULS_DLL_EXTERN int _uls_const_FILE_MS_MBCS(void);
-ULS_DLL_EXTERN int _uls_const_FILE_UTF8(void);
-
 ULS_DLL_EXTERN uls_uch_t _uls_const_NEXTCH_NONE(void);
 
 ULS_DLL_EXTERN int _uls_toknum_EOI(uls_lex_ptr_t uls);

@@ -321,9 +321,6 @@ namespace uls {
 			UlsAuw    *auwcvt;
 
 		protected:
-			static const int CVT_MBSTR_USTR = 0;
-			static const int CVT_MBSTR_ASTR = 1;
-
 			// <brief>
 			// Emits the formatted message by the string 'fmt' with 'args'
 			// </brief>
@@ -364,10 +361,9 @@ namespace uls {
 			// These flags affects the input stream process and is set in calling pushInput().
 			// 1. WantEOF: At the end of file, getTok() will give you the reserved token EOF.
 			// 2. DoDup: This will copy the input source for character string or file descriptor if possible.
-			// 3. MsMbcsEncoding: The input file is interpreted with MS-MBCS encoding. It's applicable in Windows.
 			// </brief>
 			enum InputOpts {
-				WantEOF=0, DoDup, MsMbcsEncoding, Utf8Encoding
+				WantEOF=0, DoDup
 			};
 
 			// <brief>

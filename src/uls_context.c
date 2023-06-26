@@ -706,7 +706,7 @@ ULS_QUALIFIED_METHOD(xcontext_raw_filler)(uls_xcontext_ptr_t xctx)
 		if ((ch=*lptr) < ULS_SYNTAX_TABLE_SIZE) {
 			ch_grp = ch_ctx[ch];
 		} else {
-			ch_grp = 0xFF & ~(ULS_CH_COMM | ULS_CH_QUOTE);
+			ch_grp = ULS_CH_COMM | ULS_CH_QUOTE;
 		}
 
 		if (ch_grp == 0) {

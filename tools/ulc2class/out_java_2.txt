@@ -66,8 +66,4 @@ public class Sample2 extends uls.polaris.UlsLex {
 	public Sample2(String ulc_file) {
 		super(ulc_file);
 	}
-
-	protected void finalize() {
-		super.finalize();
-	}
 }

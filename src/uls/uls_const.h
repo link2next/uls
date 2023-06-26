@@ -44,7 +44,7 @@
 #define TMP_LANGS_FNAME      "uls_langs.txt"
 #define ULS_ULCNAME_DELIM    '/'
 
-#define ULS_VERSION_STR      "1.8.11"
+#define ULS_VERSION_STR      "1.8.12"
 #define ULC2CLASS_PROGVER    "v2.7.0"
 #define ULF_GEN_PROGVER      "v1.6.0"
 #define ULS_STREAM_PROGVER   "v2.6.0"
@@ -229,10 +229,6 @@
 // Encoding
 #define ULS_UTF8_CH_MAXLEN    4
 #define ULS_UTF16_CH_MAXLEN   2
-
-#define ULS_MBCS_UNKNOWN  -1
-#define ULS_MBCS_UTF8      0
-#define ULS_MBCS_MS_MBCS   1
 
 #define UTF8_CODEPOINT_END          0x1FFFFF
 #define UTF16_CODEPOINT_END         0x10FFFF
