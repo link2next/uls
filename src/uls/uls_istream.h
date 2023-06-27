@@ -87,7 +87,6 @@ void uls_ungrab_fd_utf(uls_source_ptr_t isrc);
 
 uls_tmpl_pool_ptr_t uls_import_tmpls(uls_tmpl_list_ptr_t tmpl_list, uls_lex_ptr_t uls);
 int uls_bind_tmpls(uls_istream_ptr_t istr, uls_tmpl_list_ptr_t tmpl_list);
-int __uls_bind_istream_tmpls(uls_istream_ptr_t istr, uls_lex_ptr_t uls, uls_tmpl_list_ptr_t tmpl_list);
 
 int uls_fill_fd_stream(uls_source_ptr_t isrc, char* buf, int buflen, int bufsiz);
 void uls_ungrab_fd_stream(uls_source_ptr_t isrc);

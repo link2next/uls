@@ -510,7 +510,7 @@ ULS_QUALIFIED_METHOD(uls_fill_fd_source_utf8)(uls_source_ptr_t isrc, char* buf, 
 
 	while ((rc = _uls_tool_(fill_utf8buf)(inp, buf, buflen, bufsiz)) <= 0) {
 		if (rc < 0 || inp->is_eof > 0) break;
-		_uls_tool_(msleep)(15);
+		_uls_tool_(msleep)(20);
 	}
 
 	return rc;

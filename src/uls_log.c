@@ -271,14 +271,12 @@ ULS_QUALIFIED_METHOD(uls_init_log)(uls_log_ptr_t log, uls_lf_map_ptr_t lf_map, u
 void
 ULS_QUALIFIED_METHOD(uls_deinit_log)(uls_log_ptr_t log)
 {
-	uls_lex_ptr_t uls = log->uls;
-
 	uls_lf_destroy(log->lf);
 
 	log->flags &= ULS_FL_STATIC;
 
+	uls_ungrab(log->uls);
 	log->uls = nilptr;
-	uls_ungrab(uls);
 
 	log->log_port = nilptr;
 	log->log_puts = uls_lf_puts_null;

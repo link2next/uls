@@ -360,17 +360,6 @@ ULS_QUALIFIED_METHOD(uls_bind_tmpls)(uls_istream_ptr_t istr, uls_tmpl_list_ptr_t
 }
 
 int
-ULS_QUALIFIED_METHOD(__uls_bind_istream_tmpls)(uls_istream_ptr_t istr, uls_lex_ptr_t uls, uls_tmpl_list_ptr_t tmpl_list)
-{
-	if (uls_bind_istream(istr, uls) < 0) {
-		_uls_log(err_log)("%s: not compatible uls-file.", __FUNCTION__);
-		return -1;
-	}
-
-	return uls_bind_tmpls(istr, tmpl_list);
-}
-
-int
 ULS_QUALIFIED_METHOD(uls_fill_fd_stream)(uls_source_ptr_t isrc, char* buf, int buflen, int bufsiz)
 {
 	uls_istream_ptr_t istr = (uls_istream_ptr_t) isrc->usrc;
@@ -867,7 +856,6 @@ ULS_QUALIFIED_METHOD(uls_bind_istream)(uls_istream_ptr_t istr, uls_lex_ptr_t uls
 		if (!check_istr_compatibility(istr, uls)) {
 			return -1;
 		}
-
 		uls_grab(uls);
 	}
 
@@ -876,7 +864,6 @@ ULS_QUALIFIED_METHOD(uls_bind_istream)(uls_istream_ptr_t istr, uls_lex_ptr_t uls
 	}
 
 	istr->uls = uls;
-
 	return 0;
 }
 

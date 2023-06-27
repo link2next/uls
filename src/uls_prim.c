@@ -1424,9 +1424,11 @@ ULS_QUALIFIED_METHOD(_uls_explode_str)(uls_wrd_ptr_t uw, char delim_ch, int dups
 
 		for (lptr1=lptr; ; lptr++) {
 			if ((ch=*lptr) == '\0') {
+				len = (int) (lptr - lptr1);
 				if (lptr != lptr1) {
-					len = (int) (lptr - lptr1);
-					al[k] = arg = uls_create_argstr();
+					if ((arg=al[k]) == nilptr) {
+						al[k] = arg =  uls_create_argstr();
+					}
 					uls_set_argstr(arg, lptr1, len);
 					++k;
 				}
@@ -1436,7 +1438,10 @@ ULS_QUALIFIED_METHOD(_uls_explode_str)(uls_wrd_ptr_t uw, char delim_ch, int dups
 			if (ch == delim_ch || (delim_ch == ' ' && ch == '\t')) {
 				len = (int) (lptr - lptr1);
 				*lptr++ = '\0';
-				al[k] = arg = uls_create_argstr();
+
+				if ((arg=al[k]) == nilptr) {
+					al[k] = arg =  uls_create_argstr();
+				}
 				uls_set_argstr(arg, lptr1, len);
 				++k;
 				break;
@@ -1454,7 +1459,6 @@ ULS_QUALIFIED_METHOD(_uls_explode_str)(uls_wrd_ptr_t uw, char delim_ch, int dups
 
 	uw->lptr = lptr;
 	arglst->args.n = k;
-
 	return k;
 }
 

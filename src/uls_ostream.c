@@ -519,22 +519,16 @@ ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(__uls_bind_ostream)
 	(uls_ostream_ptr_t ostr, const char *specname, uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) parms)
 {
-	if (uls != nilptr) {
-		uls_set_namebuf_value(ostr->header.specname, uls_get_namebuf_value(uls->ulc_name));
-		if (uld_export_extra_names(uls, parms) < 0) {
-			return -1;
-		}
-		// nam_toks = parms.data;
-		// parms->n == n_nam_toks
-		uls_grab(uls);
-		ostr->uls = uls;
+	// assert: uls != NULL
+	uls_set_namebuf_value(ostr->header.specname, uls_get_namebuf_value(uls->ulc_name));
 
-	} else {
-		parms->data = nilptr;
-		parms->n = 0;
-		if (specname == NULL) specname = "<unknown>";
-		uls_set_namebuf_value(ostr->header.specname, specname);
+	if (uld_export_extra_names(uls, parms) < 0) {
+		return -1;
 	}
+	// nam_toks = parms.data;
+	// parms->n == n_nam_toks
+	uls_grab(uls);
+	ostr->uls = uls;
 
 	return 0;
 }

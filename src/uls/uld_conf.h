@@ -45,23 +45,23 @@ extern "C" {
 #ifdef ULS_DEF_PUBLIC_TYPE
 ULS_DEFINE_STRUCT(nam_tok)
 {
-  const char *name;
-  int tok_id;
+	const char *name;
+	int tok_id;
 };
 ULS_DEF_ARRAY_TYPE10(nam_tok);
 
 _ULS_DEFINE_STRUCT(uld_line)
 {
-  const char *name;
-  const char *name2;
-  int tokid_changed, tokid;
-  const char *aliases;
+	const char *name;
+	const char *name2;
+	int tokid_changed, tokid;
+	const char *aliases;
 };
 
 _ULS_DEFINE_STRUCT(uld_names_map)
 {
-  uls_lex_ptr_t uls;
-  int n_vx_namelist;
+	uls_lex_ptr_t uls;
+	int n_vx_namelist;
 };
 
 #endif
