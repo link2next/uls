@@ -79,7 +79,7 @@ uls::crux::UlsTmplList::clear(void)
 // </brief>
 // <return>true/false</return>
 bool
-uls::crux::UlsTmplList::exist(string& tnam)
+uls::crux::UlsTmplList::exist(const string& tnam) const
 {
 	std::map<string,string>::iterator it;
 	bool stat;
@@ -95,7 +95,7 @@ uls::crux::UlsTmplList::exist(string& tnam)
 }
 
 bool
-uls::crux::UlsTmplList::exist(std::wstring& wtnam)
+uls::crux::UlsTmplList::exist(const std::wstring& wtnam)  const
 {
 	std::map<wstring,wstring>::iterator it;
 	bool stat;
@@ -117,7 +117,7 @@ uls::crux::UlsTmplList::exist(std::wstring& wtnam)
 // </brief>
 // <return># of arguments</return>
 int
-uls::crux::UlsTmplList::length(void)
+uls::crux::UlsTmplList::length(void) const
 {
 	return (int) hashtbl->size();
 }
@@ -149,7 +149,7 @@ uls::crux::UlsTmplList::insert(const wchar_t *wtnam, const wchar_t *wtval)
 // <parm name="tval">the value of the 'tnam', output parameter</parm>
 // <return>tval</return>
 const char*
-uls::crux::UlsTmplList::getValue(const char*tnam)
+uls::crux::UlsTmplList::getValue(const char*tnam)  const
 {
 	std::map<string,string>::iterator it;
 	const char *tval = NULL;
@@ -164,7 +164,7 @@ uls::crux::UlsTmplList::getValue(const char*tnam)
 }
 
 bool
-uls::crux::UlsTmplList::getValue(string& tnam, string& tval)
+uls::crux::UlsTmplList::getValue(const string& tnam, string& tval) const
 {
 	const char *ptr;
 	bool stat;
@@ -181,7 +181,7 @@ uls::crux::UlsTmplList::getValue(string& tnam, string& tval)
 }
 
 const wchar_t*
-uls::crux::UlsTmplList::getValue(const wchar_t *wtnam)
+uls::crux::UlsTmplList::getValue(const wchar_t *wtnam) const
 {
 	std::map<wstring,wstring>::iterator it;
 	const wchar_t *wtval = NULL;
@@ -196,7 +196,7 @@ uls::crux::UlsTmplList::getValue(const wchar_t *wtnam)
 }
 
 bool
-uls::crux::UlsTmplList::getValue(std::wstring& wtnam, std::wstring& wtval)
+uls::crux::UlsTmplList::getValue(const std::wstring& wtnam, std::wstring& wtval) const
 {
 	const wchar_t *wptr;
 	bool stat;
@@ -233,7 +233,7 @@ uls::crux::UlsTmplList::setValue(const char *tnam, const char *tval)
 }
 
 bool
-uls::crux::UlsTmplList::setValue(string& tnam, string& tval)
+uls::crux::UlsTmplList::setValue(const string& tnam, const string& tval)
 {
 	return setValue(tnam.c_str(), tval.c_str());
 }
@@ -253,7 +253,7 @@ uls::crux::UlsTmplList::setValue(const wchar_t *wtnam, const wchar_t *wtval)
 }
 
 bool
-uls::crux::UlsTmplList::setValue(std::wstring& wtnam, std::wstring& wtval)
+uls::crux::UlsTmplList::setValue(const std::wstring& wtnam, const std::wstring& wtval)
 {
 	return setValue(wtnam.c_str(), wtval.c_str());
 }

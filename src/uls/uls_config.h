@@ -37,14 +37,10 @@
 
 //#define _ULS_DEBUG
 //#define _ULS_BUILD_STATIC_LIBS
-//#define ULS_NO_SUPPORT_FINALCALL
-
-#ifdef _ULS_BUILD_STATIC_LIBS
-#define ULS_NO_SUPPORT_FINALCALL
-#endif
 
 #if defined(_WIN32)
 #define ULS_WINDOWS
+#define __WINDOWS__
 #define ULS_CLASSIFY_SOURCE
 
 #ifdef _WIN64
@@ -58,9 +54,9 @@
 #define SIZEOF_DOUBLE sizeof(double)
 #define SIZEOF_LONG_DOUBLE sizeof(long double)
 
-#elif defined(linux) || defined(unix)
-#ifdef linux
-#define ULS_LINUX
+#elif defined(__linux__) || defined(unix)
+#ifdef __linux__
+#define __LINUX__
 #else
 #define ULS_UNIX
 #endif
@@ -74,8 +70,8 @@
 #define HAVE_PTHREAD
 #define ULS_FDF_SUPPORT
 
-#elif defined(__APPLE__)
-#define ULS_MACOS
+#elif defined(__APPLE__) && defined(__MACH__)
+#define __APPLE_OSX__
 
 #if SIZEOF_VOID_P == 8
 #define ARCH_64BIT
@@ -96,7 +92,6 @@
 #define ULSCPP_DLL_EXTERN
 #define _ULS_INLINE
 #define ULS_DECL_STATIC
-// ULS_DECL_EXTERN_STATIC: class methods
 #define ULS_DECL_EXTERN_STATIC static
 #ifndef ULS_CLASSIFY_SOURCE
 #define ULS_CLASSIFY_SOURCE
@@ -107,42 +102,38 @@
 #else // ULS_DOTNET
 
 #if defined(ULS_WINDOWS)
-
-#ifdef _ULS_BUILD_STATIC_LIBS
-#define ULS_DLL_EXTERN
-#define ULSCPP_DLL_EXTERN
-#else
-
 #ifdef _ULS_IMPLDLL
 #define ULS_DLL_EXTERN __declspec(dllexport)
 #else
 #define ULS_DLL_EXTERN __declspec(dllimport)
 #endif
-
 #ifdef _ULSCPP_IMPLDLL
 #define ULSCPP_DLL_EXTERN __declspec(dllexport)
 #else
 #define ULSCPP_DLL_EXTERN __declspec(dllimport)
 #endif
-#endif // _ULS_BUILD_STATIC_LIBS
-
 #define _ULS_INLINE __inline
 #define ULS_DECL_STATIC static
 #define ULS_DECL_EXTERN_STATIC
-
 #else // !ULS_WINDOWS
 #define ULS_DLL_EXTERN
 #define ULSCPP_DLL_EXTERN
 #define ULS_DECL_STATIC static
 #define _ULS_INLINE inline
 #define ULS_DECL_EXTERN_STATIC
-
 #endif // ULS_WINDOWS
 
 #if defined(_ULS_IMPLDLL) || defined(_ULSCPP_IMPLDLL)
 #define _ULS_INTERNAL_USE_ONLY
 #else
 #define _ULS_USEDLL
+#define _ULS_USE_ULSCOMPAT
+#endif
+
+#ifdef _ULS_USEDLL
+#ifdef _UNICODE
+#define ULS_USE_WSTR
+#endif
 #endif
 
 #define ULS_DECL_BASIC_TYPES

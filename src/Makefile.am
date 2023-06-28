@@ -19,7 +19,7 @@ uls/uls_const_linux.h: array_names00.txt
 uls_prim.c: uls/uls_const_linux.h
 
 libuls_la_CPPFLAGS = -D_ULS_IMPLDLL -DULS_SRC_DIR=\"$(PWD)\" \
-	-DULS_ETC_DIR=\"$(etc_dir)\" \
+	-DULS_ETC_DIR=\"$(ax_etc_dir)\" \
 	-include $(CONFIG_HEADER) -I$(top_srcdir)
 libuls_la_CFLAGS  = -funsigned-char \
 	-Wall -Wno-char-subscripts -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast

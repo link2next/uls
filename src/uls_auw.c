@@ -252,7 +252,6 @@ ULS_QUALIFIED_METHOD(astr_num_chars)(const char* str, int len, uls_outparam_ptr_
 wchar_t*
 ULS_QUALIFIED_METHOD(uls_astr2wstr)(const char *astr, int alen, csz_str_ptr_t csz_wstr)
 {
-	int  has_nil=0;
 	wchar_t *wstr;
 	uls_outparam_t parms1;
 
@@ -261,7 +260,6 @@ ULS_QUALIFIED_METHOD(uls_astr2wstr)(const char *astr, int alen, csz_str_ptr_t cs
 	}
 
 	if (alen < 0) {
-		has_nil = 1;
 		if (alen == -1) {
 			astr_num_chars(astr, -1, uls_ptr(parms1));
 			alen = parms1.len;
@@ -277,7 +275,6 @@ ULS_QUALIFIED_METHOD(uls_astr2wstr)(const char *astr, int alen, csz_str_ptr_t cs
 char*
 ULS_QUALIFIED_METHOD(uls_wstr2astr)(const wchar_t* wstr, int wlen, csz_str_ptr_t csz)
 {
-	int  has_nil=0;
 	char *astr;
 
 	if (wstr == NULL) {
@@ -285,7 +282,6 @@ ULS_QUALIFIED_METHOD(uls_wstr2astr)(const wchar_t* wstr, int wlen, csz_str_ptr_t
 	}
 
 	if (wlen < 0) {
-		has_nil = 1;
 		if (wlen == -1) {
 			wlen = uls_wcslen(wstr);
 		} else {
@@ -300,7 +296,6 @@ ULS_QUALIFIED_METHOD(uls_wstr2astr)(const wchar_t* wstr, int wlen, csz_str_ptr_t
 wchar_t*
 ULS_QUALIFIED_METHOD(uls_ustr2wstr)(const char *ustr, int ulen, csz_str_ptr_t csz_wstr)
 {
-	int has_nil=0;
 	wchar_t *wstr;
 	uls_outparam_t parms1;
 
@@ -309,7 +304,6 @@ ULS_QUALIFIED_METHOD(uls_ustr2wstr)(const char *ustr, int ulen, csz_str_ptr_t cs
 	}
 
 	if (ulen < 0) {
-		has_nil = 1;
 		if (ulen == -1) {
 			ustr_num_chars(ustr, -1, uls_ptr(parms1));
 			ulen = parms1.len;
@@ -325,7 +319,6 @@ ULS_QUALIFIED_METHOD(uls_ustr2wstr)(const char *ustr, int ulen, csz_str_ptr_t cs
 char*
 ULS_QUALIFIED_METHOD(uls_wstr2ustr)(const wchar_t* wstr, int wlen, csz_str_ptr_t csz)
 {
-	int  has_nil=0;
 	char *ustr;
 
 	if (wstr == NULL) {
@@ -333,7 +326,6 @@ ULS_QUALIFIED_METHOD(uls_wstr2ustr)(const wchar_t* wstr, int wlen, csz_str_ptr_t
 	}
 
 	if (wlen < 0) {
-		has_nil = 1;
 		if (wlen == -1) {
 			wlen = uls_wcslen(wstr);
 		} else {

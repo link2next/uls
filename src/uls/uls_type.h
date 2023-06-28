@@ -114,7 +114,8 @@ typedef void   *uls_voidptr_t;
 
 typedef uls_uint32  uls_flags_t;
 typedef uls_uint32  uls_uch_t;
-#define ULS_UCH_EOS 0
+typedef uls_uint32  uls_wch_t;
+
 typedef void *uls_native_vptr_t;
 #endif // ULS_DECL_BASIC_TYPES
 
@@ -578,12 +579,12 @@ ULS_DECLARE_STRUCT(lex);
 	} while (0)
 
 // type00
-#define uls_init_array_ns_type00(ary,ns,typnam,typmac,NN) do { int i; \
+#define uls_init_array_ns_type00(ary,ns,typnam,typmac,NN) do { int ii; \
 		(ary)->slots = uls_init_ptrarray_ns(NN, ns,typnam,typmac); (ary)->n = (ary)->n_alloc = (NN); \
-		for (i=0; i<(NN); i++) { (ary)->slots[i]=uls_alloc_object_clear(typmac(ns,typnam)); } \
+		for (ii=0; ii<(NN); ii++) { (ary)->slots[ii]=uls_alloc_object_clear(typmac(ns,typnam)); } \
 	} while (0)
-#define uls_deinit_array_ns_type00(ary,ns,typnam,typmac) do { int i; \
-		for (i=0; i<(ary)->n; i++) { uls_dealloc_object((ary)->slots[i]); } \
+#define uls_deinit_array_ns_type00(ary,ns,typnam,typmac) do { int ii; \
+		for (ii=0; ii<(ary)->n; ii++) { uls_dealloc_object((ary)->slots[ii]); } \
 		uls_deinit_ptrarray_ns((ary)->slots); \
 	} while (0)
 
@@ -592,21 +593,21 @@ ULS_DECLARE_STRUCT(lex);
 #define uls_get_array_slot_type00(ary,idx) _uls_get_stdary_slot((ary)->slots,idx)
 
 // type01
-#define uls_init_array_ns_type01(ary,ns,typnam,typmac,nn) do { int i; \
+#define uls_init_array_ns_type01(ary,ns,typnam,typmac,nn) do { int ii; \
 		(ary)->slots = uls_init_ptrarray_ns(nn, ns,typnam,typmac); (ary)->n = (ary)->n_alloc = (nn); \
-		for (i=0; i<(nn); i++) { _uls_alloc_zary_slot((ary)->slots,i,ns,typnam,typmac); } \
+		for (ii=0; ii<(nn); ii++) { _uls_alloc_zary_slot((ary)->slots,ii,ns,typnam,typmac); } \
 	} while (0)
-#define uls_deinit_array_ns_type01(ary,ns,typnam,typmac) do { int i; \
-		for (i=0; i<(ary)->n; i++) { _uls_dealloc_zary_slot((ary)->slots,i,ns,typnam,typmac); } \
+#define uls_deinit_array_ns_type01(ary,ns,typnam,typmac) do { int ii; \
+		for (ii=0; ii<(ary)->n; ii++) { _uls_dealloc_zary_slot((ary)->slots,ii,ns,typnam,typmac); } \
 		uls_deinit_ptrarray_ns((ary)->slots); \
 	} while (0)
 
-#define uls_init_array_ns_type01a(ary,ns,typnam,typmac,nn) do { int i; \
+#define uls_init_array_ns_type01a(ary,ns,typnam,typmac,nn) do { int ii; \
 		uls_init_array_ns_type01(ary,ns,typnam,typmac,nn); \
-		for (i=0; i<(nn); i++) { uls_init_##typnam(uls_get_array_slot_type01(ary,i)); } \
+		for (ii=0; ii<(nn); ii++) { uls_init_##typnam(uls_get_array_slot_type01(ary,ii)); } \
 	} while (0)
-#define uls_deinit_array_ns_type01a(ary,ns,typnam,typmac) do { int i; \
-		for (i=0; i<(ary)->n; i++) { uls_deinit_##typnam(uls_get_array_slot_type01(ary,i)); } \
+#define uls_deinit_array_ns_type01a(ary,ns,typnam,typmac) do { int ii; \
+		for (ii=0; ii<(ary)->n; ii++) { uls_deinit_##typnam(uls_get_array_slot_type01(ary,ii)); } \
 		uls_deinit_array_ns_type01(ary,ns,typnam,typmac); \
 	} while (0)
 
@@ -628,7 +629,7 @@ ULS_DECLARE_STRUCT(lex);
 		uls_deinit_parray(ary); \
 	} while (0)
 #define uls_resize_array_ns_type10(ary,ns,typnam,typmac,nn_alloc) do { \
-		int i; for (i=(nn_alloc); i<(ary)->n; i++) { _uls_dealloc_iary_slot((ary)->slots,i,ns,typnam,typmac); } \
+		int ii; for (ii=(nn_alloc); ii<(ary)->n; ii++) { _uls_dealloc_iary_slot((ary)->slots,ii,ns,typnam,typmac); } \
 		uls_resize_parray(ary,typnam,nn_alloc); \
 	} while (0)
 
@@ -710,12 +711,12 @@ ULS_DECLARE_STRUCT(lex);
 		uls_mfree((ary)->slots); (ary)->n = 0; \
 	} while (0)
 
-#define uls_init_array_ns_type01a(ary,ns,typnam,typmac,nn) do { int i; \
+#define uls_init_array_ns_type01a(ary,ns,typnam,typmac,nn) do { int ii; \
         	uls_init_array_ns_type01(ary,ns,typnam,typmac,nn); \
-		for (i=0; i<(nn); i++) { uls_init_##typnam(uls_get_array_slot_type01(ary,i)); } \
+		for (ii=0; ii<(nn); ii++) { uls_init_##typnam(uls_get_array_slot_type01(ary,ii)); } \
 	} while (0)
-#define uls_deinit_array_ns_type01a(ary,ns,typnam,typmac) do { int i; \
-		for (i=0; i<(ary)->n; i++) { uls_deinit_##typnam(uls_get_array_slot_type01(ary,i)); } \
+#define uls_deinit_array_ns_type01a(ary,ns,typnam,typmac) do { int ii; \
+		for (ii=0; ii<(ary)->n; ii++) { uls_deinit_##typnam(uls_get_array_slot_type01(ary,ii)); } \
 		uls_deinit_array_ns_type01(ary,ns,typnam,typmac); \
 	} while (0)
 
@@ -739,7 +740,7 @@ ULS_DECLARE_STRUCT(lex);
 		uls_mfree((ary)->slots); (ary)->n = (ary)->n_alloc = 0; \
 	} while (0)
 #define uls_resize_array_ns_type10(ary,ns,typnam,typmac,nn_alloc) do { \
-		int i; for (i=(nn_alloc); i<(ary)->n; i++) { _uls_dealloc_iary_slot((ary)->slots,i,ns,typnam,typmac); } \
+		int ii; for (ii=(nn_alloc); ii<(ary)->n; ii++) { _uls_dealloc_iary_slot((ary)->slots,ii,ns,typnam,typmac); } \
 		(ary)->slots=(typmac(ns,typnam)*)uls_mrealloc((ary)->slots,(nn_alloc)*sizeof(typmac(ns,typnam))); \
 		if ((nn_alloc) < (ary)->n) (ary)->n = (nn_alloc); (ary)->n_alloc = (nn_alloc); \
 	} while (0)

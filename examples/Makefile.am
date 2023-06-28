@@ -5,4 +5,4 @@ SUBDIRS = test_1st tokseq yacc \
 	ulc2yaml
 
 check: all
-	@bash ./run_examples.sh $(etc_dir)
+	@bash ./run_examples.sh $(ax_etc_dir)

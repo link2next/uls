@@ -1191,9 +1191,10 @@ ULS_QUALIFIED_METHOD(uls_lf_init_convspec_map)(uls_lf_map_ptr_t lf_map, int flag
 
 	if (!(flags & ULS_LF_NO_DEFAULT)) {
 		load_default_convspec_map(lf_map);
+		uls_lf_register_convspec(lf_map, "S", fmtproc_ws);
 		uls_lf_register_convspec(lf_map, "ls", fmtproc_ws);
 		uls_lf_register_convspec(lf_map, "ws", fmtproc_ws);
-		uls_lf_register_convspec(lf_map, "S", fmtproc_ws);
+		uls_lf_register_convspec(lf_map, "hs", fmtproc_s);
 	}
 
 	lf_map->ref_cnt = 1;

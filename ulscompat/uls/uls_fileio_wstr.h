@@ -34,7 +34,10 @@
 #ifndef __ULS_FILEIO_WSTR_H__
 #define __ULS_FILEIO_WSTR_H__
 
-#include "uls/uls_type.h"
+#include "uls/uls_auw.h"
+#ifdef _ULS_INTERNAL_USE_ONLY
+#include "uls/uls_fileio.h"
+#endif
 #include <stdio.h>
 
 #ifdef _ULS_CPLUSPLUS
@@ -46,9 +49,23 @@ ULS_DLL_EXTERN FILE* uls_fp_wopen(const wchar_t* wfpath, int mode);
 ULS_DLL_EXTERN int uls_fp_gets_wstr(FILE *fp, wchar_t *wbuf, int wbuf_siz, int flags);
 ULS_DLL_EXTERN int uls_close_tempfile_wstr(uls_tempfile_ptr_t tmpfile, const wchar_t* wfilepath);
 ULS_DLL_EXTERN int uls_fd_open_wstr(const wchar_t* wfpath, int mode);
+ULS_DLL_EXTERN int uls_getcwd_wstr(wchar_t* wbuf, int wbuf_siz);
+ULS_DLL_EXTERN int uls_chdir_wstr(const wchar_t* wpath);
 
 #ifdef _ULS_CPLUSPLUS
 }
 #endif
+
+#ifdef _ULS_USE_ULSCOMPAT
+#ifdef ULS_USE_WSTR
+#define uls_dirent_exist uls_dirent_exist_wstr
+#define uls_fp_open uls_fp_wopen
+#define uls_fp_gets uls_fp_gets_wstr
+#define uls_close_tempfile uls_close_tempfile_wstr
+#define uls_fd_open uls_fd_open_wstr
+#define uls_getcwd uls_getcwd_wstr
+#define uls_chdir uls_chdir_wstr
+#endif
+#endif // _ULS_USE_ULSCOMPAT
 
 #endif // __ULS_FILEIO_WSTR_H__

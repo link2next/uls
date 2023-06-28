@@ -57,13 +57,13 @@ AC_ARG_WITH([etc-dir],
   [AS_HELP_STRING([--with-etc-dir=<dirpath>],
     [use this option to specify the directory where uls.sysprops resides.])],
   [
-    etc_dir=$withval
+    ax_etc_dir=$withval
   ],
   [
-    etc_dir=/usr/local/etc/uls
+    ax_etc_dir=/usr/local/etc/uls
   ])
 
-AC_SUBST([etc_dir])
+AC_SUBST([ax_etc_dir])
 
 AC_CONFIG_FILES([Makefile
 	ulsconfig/Makefile
@@ -92,7 +92,6 @@ AC_CONFIG_FILES([Makefile
 	tests/two_lex/Makefile
 	tests/test_tree/Makefile
 	tests/gcc_toks/Makefile
-	tests/wdump_toks/Makefile
 	examples/Makefile
 	examples/test_1st/Makefile
 	examples/tokseq/Makefile

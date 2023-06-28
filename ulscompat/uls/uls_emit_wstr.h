@@ -34,8 +34,10 @@
 #ifndef __ULS_EMIT_WSTR_H__
 #define __ULS_EMIT_WSTR_H__
 
+#include "uls/uls_auw.h"
+#ifdef _ULS_INTERNAL_USE_ONLY
 #include "uls/uls_emit.h"
-#include "uls/uls_lex.h"
+#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
@@ -60,5 +62,12 @@ ULS_DLL_EXTERN int uls_deinit_parms_emit_wstr(uls_parms_emit_ptr_t emit_parm);
 #ifdef _ULS_CPLUSPLUS
 }
 #endif
+
+#ifdef _ULS_USE_ULSCOMPAT
+#ifdef ULS_USE_WSTR
+#define uls_init_parms_emit uls_init_parms_emit_wstr
+#define uls_deinit_parms_emit uls_deinit_parms_emit_wstr
+#endif
+#endif // _ULS_USE_ULSCOMPAT
 
 #endif // __ULS_EMIT_WSTR_H__

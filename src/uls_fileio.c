@@ -772,12 +772,6 @@ ULS_QUALIFIED_METHOD(uls_put_binstr)(const char* str, int len, int fd)
 	}
 }
 
-void
-ULS_QUALIFIED_METHOD(uls_putstr)(const char* str)
-{
-	uls_put_binstr(str, -1, _uls_stdio_fd(1));
-}
-
 int
 ULS_QUALIFIED_METHOD(uls_fgetc_ascii_str)(uls_voidptr_t dat, char *buf, int buf_siz)
 {

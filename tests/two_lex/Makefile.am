@@ -4,6 +4,8 @@ ACLOCAL_AMFLAGS = -I m4
 noinst_PROGRAMS = two_lex
 two_lex_SOURCES = two_lex.c
 two_lex_CFLAGS = -Wall
+#two_lex_CPPFLAGS = -DULS_USE_WSTR -I$(top_srcdir)/ulscompat -I$(top_srcdir)/src
+#two_lex_LDADD = $(top_builddir)/ulscompat/libulscompat.la $(top_builddir)/src/libuls.la
 two_lex_CPPFLAGS = -I$(top_srcdir)/src
 two_lex_LDADD = $(top_builddir)/src/libuls.la
 

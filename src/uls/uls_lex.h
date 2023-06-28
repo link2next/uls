@@ -90,19 +90,17 @@ ULS_DLL_EXTERN int ulsjava_set_file(uls_lex_ptr_t uls, const void *filepath, int
 ULS_DLL_EXTERN void uls_skip_white_spaces(uls_lex_ptr_t uls);
 #endif // ULS_DECL_PUBLIC_PROC
 
-#ifdef _ULS_CPLUSPLUS
-}
-#endif
-
 #ifdef _ULS_USEDLL
 #include "uls/litstr.h"
 #include "uls/unget.h"
+#endif
+
 #ifdef ULS_USE_WSTR
-#include "uls/uls_util_wstr.h"
-#include "uls/uls_wprint.h"
-#include "uls/uls_wlog.h"
 #include "uls/uls_wlex.h"
 #endif
+
+#ifdef _ULS_CPLUSPLUS
+}
 #endif
 
 #endif // __ULS_LEX_H__

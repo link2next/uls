@@ -34,9 +34,8 @@
 
 #include "uls/uls_lex.h"
 #include "uls/uls_log.h"
-#include "uls/uls_util.h"
 #include "uls/uls_fileio.h"
-#include "uls/uls_init.h"
+#include "uls/uls_util.h"
 
 #include <stdlib.h>
 #include <unistd.h>
@@ -45,54 +44,56 @@
 
 #include "sample_lex.h"
 
-const char *progname;
+#define N_CMD_ARGS  16
+
+LPCTSTR progname;
 int  opt_verbose;
 
-const char *config_name;
-char *input_file;
+LPCTSTR config_name;
+LPTSTR input_file;
 int   test_mode = -1;
 
 uls_lex_t *sample_lex;
 
 static void usage(void)
 {
-	err_log("%s v1.0", progname);
-	err_log("  Dumps tokens in the inputfiles");
-	err_log("  according to the token defintions in %s", config_name);
-	err_log("");
-	err_log(" Usage:");
-	err_log("  %s [-c <config-file>] <inputfile>", progname);
-	err_log("");
-	err_log("  For example,");
-	err_log("      %s input1.txt", progname);
-	err_log("  A default config-file used, %s if you don't specifiy the config-file.", config_name);
+	err_log(_T("%s v1.0"), progname);
+	err_log(_T("  Dumps tokens in the inputfiles"));
+	err_log(_T("  according to the token defintions in %s"), config_name);
+	err_log(_T(""));
+	err_log(_T(" Usage:"));
+	err_log(_T("  %s [-c <config-file>] <inputfile>"), progname);
+	err_log(_T(""));
+	err_log(_T("  For example,"));
+	err_log(_T("      %s input1.txt"), progname);
+	err_log(_T("  A default config-file used, %s if you don't specifiy the config-file."), config_name);
 }
 
 static int
-options(int opt, char* optarg)
+options(int opt, LPTSTR optarg)
 {
 	int stat = 0;
 
 	switch (opt) {
-	case 'c':
-		config_name = optarg;
+	case _T('c'):
+		config_name = uls_strdup(optarg, -1);
 		break;
 
-	case 'm':
-		test_mode = atoi(optarg);
+	case _T('m'):
+		test_mode = ult_str2int(optarg);
 		break;
 
-	case 'v':
+	case _T('v'):
 		++opt_verbose;
 		break;
 
-	case 'h':
+	case _T('h'):
 		usage();
 		stat = 1;
 		break;
 
 	default:
-		err_log("undefined option -%c", opt);
+		err_log(_T("undefined option -%c"), opt);
 		usage();
 		stat = -1;
 		break;
@@ -102,78 +103,78 @@ options(int opt, char* optarg)
 }
 
 int
-test_initial_uls(char* fpath)
+test_initial_uls(LPTSTR fpath)
 {
 	uls_lex_t *uls = sample_lex;
 	double f_val;
-	uls_int64 i_val;
-	const char *tagstr;
+	uls_int64 ii_val;
+	LPCTSTR tagstr;
 	int t, taglen;
-	uls_outparam_t parms;
 
 	if (uls_push_file(uls, fpath, ULS_WANT_EOFTOK) < 0) {
+		err_log(_T(" file open error"));
 		return -1;
 	}
 
-	uls_printf(" %3d : %3d  '%s'\n",
+	uls_printf(_T(" %3d : %3d  '%s'\n"),
 		uls_get_lineno(uls), uls_tok(uls), uls_lexeme(uls));
 
 	for ( ; ; ) {
 		if ((t=uls_get_tok(uls)) == TOK_EOI) break;
 
-		uls_printf(" %3d : %3d  '%s'\n",
+		uls_printf(_T(" %3d : %3d  '%s'\n"),
 			uls_get_lineno(uls), uls_tok(uls), uls_lexeme(uls));
 
 		if (t == TOK_NUMBER) {
 			if (uls_is_real(uls)) {
 				f_val = uls_lexeme_double(uls);
-				uls_printf("\tf_val = %f\n", f_val);
+				uls_printf(_T("\tf_val = %f\n"), f_val);
 			} else {
-				i_val = uls_lexeme_lld(uls);
-				uls_printf("\ti_val = %lld\n", i_val);
+				ii_val = uls_lexeme_lld(uls);
+				uls_printf(_T("\ti_val = %d\n"), ii_val);
 			}
 		} else if (t == TOK_EOF) {
-			tagstr = uls_eof_tag(uls, &parms);
-			taglen =  parms.len;
-			uls_printf("\tEOF : '%s'%d\n", tagstr, taglen);
+			tagstr = uls_get_eoftag(uls, &taglen);
+			uls_printf(_T("\tEOF : '%s'%d\n"), tagstr, taglen);
 		}
 	}
 
 	return 0;
 }
 
-void
-test_uls(char* fpath)
+int
+test_uls(LPCTSTR fpath)
 {
 	uls_lex_t *uls = sample_lex;
 	int fd, t;
 
-	if ((fd=open(fpath, O_RDONLY)) < 0) {
-		err_log(" file open error");
-		return;
+	if ((fd = uls_fd_open(fpath, ULS_FIO_READ)) < 0) {
+		err_log(_T("%s: file open error"), fpath);
+		return -1;
 	}
 
 	if (uls_set_fd(uls, fd, ULS_DO_DUP) < 0) {
-		err_log("can't set the istream!");
-		return;
+		err_log(_T("can't set the istream!"));
+		return -1;
 	}
 
 	uls_set_tag(uls, fpath, 1);
 
 	for ( ; ; ) {
 		if ((t=uls_get_tok(uls)) == TOK_ERR) {
-			err_log("TOK_ERR!");
+			err_log(_T("TOK_ERR!"));
 			uls_pop(uls);
 			break;
 		} else if (t == TOK_EOI) {
 			break;
 		}
 
-		uls_printf("%3d", uls_get_lineno(uls));
-		uls_dumpln_tok(uls);
+		uls_printf(_T("%3d"), uls_get_lineno(uls));
+		uls_dump_tok(uls, _T("\t"), _T("\n"));
 	}
 
 	close(fd);
+	return 0;
 }
 
 typedef struct {
@@ -198,24 +199,24 @@ sample_xdef_t xdefs[5] = {
 };
 
 void
-test_uls_xdef(char* fpath)
+test_uls_xdef(LPTSTR fpath)
 {
 	uls_lex_t *uls = sample_lex;
 	sample_xdef_t *xdef;
-	const char *ptr;
-	char buff[64];
+	LPCTSTR ptr;
+	TCHAR buff[64];
 	int i;
 
 	for (i=0; i<5; i++) {
 		if (uls_set_extra_tokdef(uls, xdefs[i].tok_id, xdefs + i) < 0) {
 			ptr = uls_tok2keyw(uls, xdefs[i].tok_id);
-			if (ptr == NULL) ptr = "???";
-			err_log("fail to set x-tokdef for tok %s.", ptr);
+			if (ptr == NULL) ptr = _T("???");
+			err_log(_T("fail to set x-tokdef for tok %s."), ptr);
 		}
 	}
 
 	if (uls_push_file(uls, fpath, 0) < 0) {
-		err_log(" file open error");
+		err_log(_T(" file open error"));
 		return;
 	}
 
@@ -224,15 +225,16 @@ test_uls_xdef(char* fpath)
 
 		xdef = (sample_xdef_t *) uls_get_current_extra_tokdef(uls);
 
-		uls_printf("%3d", uls_get_lineno(uls));
+		uls_printf(_T("%3d"), uls_get_lineno(uls));
 
 		if (xdef != NULL) {
-			uls_snprintf(buff, sizeof(buff), " prec=%d node_id=%d\n", xdef->prec, xdef->node_id);
+			uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T(" prec=%d node_id=%d\n"),
+				xdef->prec, xdef->node_id);
 		} else {
-			buff[0] = '\n'; buff[1] = '\0';
+			buff[0] = _T('\n'); buff[1] = _T('\0');
 		}
 
-		uls_dump_tok(uls, "\t", buff);
+		uls_dump_tok(uls, _T("\t"), buff);
 	}
 }
 
@@ -288,16 +290,15 @@ uls_ungrab_FILE_source(uls_source_t* isrc)
 }
 
 void
-test_uls_isrc(char* fpath)
+test_uls_isrc(LPCTSTR fpath)
 {
 	uls_lex_t *uls = sample_lex;
-	const char *tokstr;
-	unsigned char ch;
+	LPCTSTR tokstr;
 	FILE   *fp;
-	int j, t;
+	int t;
 
-	if ((fp=uls_fp_open(fpath, ULS_FIO_READ)) == NULL) {
-		err_log(" file open error");
+	if ((fp = uls_fp_open(fpath, ULS_FIO_READ)) == NULL) {
+		err_log(_T(" file open error"));
 		return;
 	}
 
@@ -309,35 +310,29 @@ test_uls_isrc(char* fpath)
 	for ( ; ; ) {
 		if ((t = uls_get_tok(uls)) == TOK_EOI) break;
 
-		uls_printf("#%d(%6d) :", uls_get_lineno(uls), t);
-
-           tokstr = uls_lexeme(uls);
-           for (j=0; (ch = tokstr[j]) != '\0'; j++) {
-		uls_printf(" %2x", ch);
-           }
-           uls_printf("\n");
+		uls_printf(_T("#%d(%6d) :"), uls_get_lineno(uls), t);
+		tokstr = uls_lexeme(uls);
+		ult_dump_bin(tokstr);
+		uls_printf(_T("\n"));
 	}
 }
 
 int
-main(int argc, char* argv[])
+_tmain(int n_targv, LPTSTR *targv)
 {
 	int i0;
 
-	initialize_uls();
-	progname = uls_filename(argv[0], NULL);
-	config_name = "sample.ulc";
+	progname = targv[0];
+	config_name = _T("sample.ulc");
 
-	if ((i0=uls_getopts(argc, argv, "c:vm:hz", options)) <= 0) {
+	if ((i0=uls_getopts(n_targv, targv, _T("c:vm:hz"), options)) <= 0) {
 		return i0;
 	}
 
-	if (i0 < argc) {
-		input_file = argv[i0];
-	}
+	input_file = targv[i0];
 
 	if ((sample_lex=uls_create(config_name)) == NULL) {
-		err_log("can't init uls-object");
+		err_log(_T("can't init uls-object"));
 		return -1;
 	}
 
@@ -361,4 +356,17 @@ main(int argc, char* argv[])
 	uls_destroy(sample_lex);
 
 	return 0;
+}
+
+int
+main(int argc, char *argv[])
+{
+	LPTSTR *targv;
+	int stat;
+
+	ULS_GET_WARGS_LIST(argc, argv, targv);
+	stat = _tmain(argc, targv);
+	ULS_PUT_WARGS_LIST(argc, targv);
+
+	return stat;
 }

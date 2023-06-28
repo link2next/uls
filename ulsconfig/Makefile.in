@@ -206,6 +206,7 @@ am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
 am__tar = @am__tar@
 am__untar = @am__untar@
+ax_etc_dir = @ax_etc_dir@
 bindir = @bindir@
 build = @build@
 build_alias = @build_alias@
@@ -217,7 +218,6 @@ datadir = @datadir@
 datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
-etc_dir = @etc_dir@
 exec_prefix = @exec_prefix@
 host = @host@
 host_alias = @host_alias@
@@ -250,7 +250,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 uls_ver_major = 1
 uls_ver_minor = 8
-uls_ver_debug = 13
+uls_ver_debug = 14
 uls_ver = $(uls_ver_major).$(uls_ver_minor).$(uls_ver_debug)
 so_current = 1
 so_revision = 0
@@ -467,12 +467,12 @@ all:
 	fi
 
 install: all
-	install -m755 -d "$(includedir)/uls" "$(datadir)/uls/ulcs" "$(etc_dir)" "$(bindir)"
-	install -m644 $(langs_infile) "$(etc_dir)"/$(langs_outfile)
-	install -m644 $(idranges_infile) "$(etc_dir)"/$(idranges_outfile)
+	install -m755 -d "$(includedir)/uls" "$(datadir)/uls/ulcs" "$(ax_etc_dir)" "$(bindir)"
+	install -m644 $(langs_infile) "$(ax_etc_dir)"/$(langs_outfile)
+	install -m644 $(idranges_infile) "$(ax_etc_dir)"/$(idranges_outfile)
 	install -m755 uls_common.sh $(bindir)/
-	./gen_sysprops.sh "$(prefix)" "$(etc_dir)" \
-		$(uls_ver_major).$(uls_ver_minor).$(uls_ver_debug) I "$(etc_dir)"/$(sysprops_outfile)
+	./gen_sysprops.sh "$(prefix)" "$(ax_etc_dir)" \
+		$(uls_ver_major).$(uls_ver_minor).$(uls_ver_debug) I "$(ax_etc_dir)"/$(sysprops_outfile)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

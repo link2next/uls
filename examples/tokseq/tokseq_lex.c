@@ -24,7 +24,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-#include <uls/uls_core.h>
+#include <uls/uls_lex.h>
 #include <uls/uld_conf.h>
 
 static int load_pairs(uls_lex_ptr_t uls)
@@ -37,24 +37,24 @@ static int load_pairs(uls_lex_ptr_t uls)
 	uld_line_t tok_names;
 
 	tok_names.name = "EOI";
-	tok_names.name2 = "NULL";
+	tok_names.name2 = NULL;
 	tok_names.tokid_changed = 1;
 	tok_names.tokid = 128;
 	tok_names.aliases = "";
 	uld_change_names(names_map, uls_ptr(tok_names));
 
 	tok_names.name = "ERR";
-	tok_names.name2 = "NULL";
+	tok_names.name2 = NULL;
 	tok_names.tokid_changed = 1;
 	tok_names.tokid = 129;
 	tok_names.aliases = "";
 	uld_change_names(names_map, uls_ptr(tok_names));
 
 	tok_names.name = "ID";
-	tok_names.name2 = "NULL";
+	tok_names.name2 = NULL;
 	tok_names.tokid_changed = 1;
 	tok_names.tokid = 130;
-	tok_names.aliases = "IDENT";
+	tok_names.aliases = "IDENT ID_ALIAS";
 	uld_change_names(names_map, uls_ptr(tok_names));
 
 	 }
@@ -68,7 +68,7 @@ static int load_pairs(uls_lex_ptr_t uls)
 
 int uls_init_tokseq(uls_lex_ptr_t uls)
 {
-	const char *confname = "simple";
+	 LPCTSTR confname = _T("simple");
 
 	if (uls_init(uls, confname) <  0) {
 		return -1;
@@ -83,7 +83,7 @@ int uls_init_tokseq(uls_lex_ptr_t uls)
 
 uls_lex_ptr_t uls_create_tokseq(void)
 {
-	const char *confname = "simple";
+	LPCTSTR confname = _T("simple");
 	uls_lex_ptr_t uls;
 
 	if ((uls = uls_create(confname)) == NULL) {

@@ -6,10 +6,10 @@ ACLOCAL_AMFLAGS = -I m4
 all: uninst_info.txt
 
 uninst_info.txt:
-	@./gen_uninst_info.sh "$(prefix)" "$(etc_dir)" $@
+	@./gen_uninst_info.sh "$(prefix)" "$(ax_etc_dir)" $@
 
 install: uninst_info.txt
-	install -m755 -d "$(bindir)" "$(datadir)" $(etc_dir)
+	install -m755 -d "$(bindir)" "$(datadir)" $(ax_etc_dir)
 	@./make_uls_examples_tar.sh ./uls_examples.tar $(top_srcdir)/examples ./list_uls_examples.txt "$(datadir)/uls/"
 	install -m755 uninstall_uls.sh $(bindir)/uninstall_uls
 	install -m755 uninst_info.txt $(bindir)/uls_uninst_info.sh

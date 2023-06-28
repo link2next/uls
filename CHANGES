@@ -1,31 +1,44 @@
 
+  v1.8.14
+  -----------
+    o Restored & Reinforced the incomplete wide string system of uls.
+       You can build the examples in wide string mode
+      a) On Windows select the charset to take effect the constant '_UNICODE'
+      b) On Linux define constant ULS_USE_WSTR to build programs in 'examples'.
+           Refer to 'Makefile.am'
+    o Fixed the bug that cause abnormal termination at the end of program
+          when you use both the libraries libuls and libulscompat.
+    o bug-fixes on
+      a) generating c files from uld files with new token name 'NULL'.
+      b) printing error messages in the wide string mode
+
   v1.8.13
   -----------
-    o The support of Java is included in the main source tree. 
+    o The support of Java is included in the main source tree.
     o The user guide(uls_ug-0.8.1.pdf) has been updated
 
   v1.8.12
   -----------
     o bug-fixes on
-     a) the generated cpp source files from uld-file 
+      a) the generated cpp source files from uld-file
     o Delete the debris of ANSI-encoding api, which is not supported any more.
-    o Fixed the example of uls_push_isrc in tests/dump_toks 
-    o Moved ulc2yaml from 'tests' to 'examples' directory. 
+    o Fixed the example of uls_push_isrc in tests/dump_toks
+    o Moved ulc2yaml from 'tests' to 'examples' directory.
 
   v1.8.11
   -----------
     o bug-fixes on
-     a) data loss when returning nested input 
-     b) reading utf8 file containing multibytes chars. 
-     c) reading utf32 file 
-     d) reading utf files with BOM(8,16,32) 
+      a) data loss when returning nested input
+      b) reading utf8 file containing multibytes chars.
+      c) reading utf32 file
+      d) reading utf files with BOM(8,16,32)
 
   v1.8.10
   -----------
     o bug-fixes on
-     a) the length of the wide string of lexeme
-     b) detecting unterminated string when keyword is defined in ulc-file
-     c) the procedure of getting escaped string
+      a) the length of the wide string of lexeme
+      b) detecting unterminated string when keyword is defined in ulc-file
+      c) the procedure of getting escaped string
     o Removed duplicated resetting the struct xcontext
     o Can safely set the param 'lexeme' of uls_set_tok() to NULL
     o Added the token ELLIPSIS in ulc_exam/ansi_ulc
@@ -34,23 +47,23 @@
   v1.8.9
   -----------
     o bug-fixes on
-     a) processing token EOI
-     b) Not yet support generating source file other than c/c++ from uld-file
-     c) line-numbering when reading ulc-files
+      a) processing token EOI
+      b) Not yet support generating source file other than c/c++ from uld-file
+      c) line-numbering when reading ulc-files
 
   v1.8.8
   -----------
     o bug-fixes on
-     a) generating cpp source file from ulc-file
-     b) using ulf-file, together with ulc-file
-     c) adding uld alias from uld-file
+      a) generating cpp source file from ulc-file
+      b) using ulf-file, together with ulc-file
+      c) adding uld alias from uld-file
 
   v1.8.7
   -----------
     o bug-fixes on
-     a) 1-char punctuation token which is explicitly defined in ulc-file
-     b) Unicode punctuation token of length more than 2.
-     c) uls_get_extra_tokdef()
+      a) 1-char punctuation token which is explicitly defined in ulc-file
+      b) Unicode punctuation token of length more than 2.
+      c) uls_get_extra_tokdef()
 
   v1.8.6
   -----------

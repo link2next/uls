@@ -635,7 +635,7 @@ ac_includes_default="\
 ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
-etc_dir
+ax_etc_dir
 HELP2MAN
 LIBOBJS
 ALLOCA
@@ -17954,18 +17954,18 @@ fi
 # Check whether --with-etc-dir was given.
 if test "${with_etc_dir+set}" = set; then :
   withval=$with_etc_dir;
-    etc_dir=$withval
+    ax_etc_dir=$withval
 
 else
 
-    etc_dir=/usr/local/etc/uls
+    ax_etc_dir=/usr/local/etc/uls
 
 fi
 
 
 
 
-ac_config_files="$ac_config_files Makefile ulsconfig/Makefile ulc_exam/Makefile src/Makefile ulscompat/Makefile ulscpp/Makefile tools/Makefile tools/ulstools/Makefile tools/ulc2class/Makefile tools/ulf_gen/Makefile tools/uls_stream/Makefile doc/Makefile doc/man/Makefile tests/Makefile tests/cpp_hello/Makefile tests/dump_toks/Makefile tests/id_stat/Makefile tests/getch/Makefile tests/line/Makefile tests/log/Makefile tests/many_kwrds/Makefile tests/nest/Makefile tests/strings/Makefile tests/tok_remap/Makefile tests/two_lex/Makefile tests/test_tree/Makefile tests/gcc_toks/Makefile tests/wdump_toks/Makefile examples/Makefile examples/test_1st/Makefile examples/tokseq/Makefile examples/yacc/Makefile examples/DumpToks/Makefile examples/Css3/Makefile examples/Html5/Makefile examples/Shell/Makefile examples/Mkf/Makefile examples/Natural/Makefile examples/ulc2yaml/Makefile post_inst/Makefile"
+ac_config_files="$ac_config_files Makefile ulsconfig/Makefile ulc_exam/Makefile src/Makefile ulscompat/Makefile ulscpp/Makefile tools/Makefile tools/ulstools/Makefile tools/ulc2class/Makefile tools/ulf_gen/Makefile tools/uls_stream/Makefile doc/Makefile doc/man/Makefile tests/Makefile tests/cpp_hello/Makefile tests/dump_toks/Makefile tests/id_stat/Makefile tests/getch/Makefile tests/line/Makefile tests/log/Makefile tests/many_kwrds/Makefile tests/nest/Makefile tests/strings/Makefile tests/tok_remap/Makefile tests/two_lex/Makefile tests/test_tree/Makefile tests/gcc_toks/Makefile examples/Makefile examples/test_1st/Makefile examples/tokseq/Makefile examples/yacc/Makefile examples/DumpToks/Makefile examples/Css3/Makefile examples/Html5/Makefile examples/Shell/Makefile examples/Mkf/Makefile examples/Natural/Makefile examples/ulc2yaml/Makefile post_inst/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -19108,7 +19108,6 @@ do
     "tests/two_lex/Makefile") CONFIG_FILES="$CONFIG_FILES tests/two_lex/Makefile" ;;
     "tests/test_tree/Makefile") CONFIG_FILES="$CONFIG_FILES tests/test_tree/Makefile" ;;
     "tests/gcc_toks/Makefile") CONFIG_FILES="$CONFIG_FILES tests/gcc_toks/Makefile" ;;
-    "tests/wdump_toks/Makefile") CONFIG_FILES="$CONFIG_FILES tests/wdump_toks/Makefile" ;;
     "examples/Makefile") CONFIG_FILES="$CONFIG_FILES examples/Makefile" ;;
     "examples/test_1st/Makefile") CONFIG_FILES="$CONFIG_FILES examples/test_1st/Makefile" ;;
     "examples/tokseq/Makefile") CONFIG_FILES="$CONFIG_FILES examples/tokseq/Makefile" ;;

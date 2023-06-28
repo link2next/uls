@@ -261,6 +261,7 @@ am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
 am__tar = @am__tar@
 am__untar = @am__untar@
+ax_etc_dir = @ax_etc_dir@
 bindir = @bindir@
 build = @build@
 build_alias = @build_alias@
@@ -272,7 +273,6 @@ datadir = @datadir@
 datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
-etc_dir = @etc_dir@
 exec_prefix = @exec_prefix@
 host = @host@
 host_alias = @host_alias@
@@ -310,8 +310,9 @@ uls_inc_dir = $(uls_inst_dir)/include
 uls_lib_dir = $(uls_inst_dir)/lib
 ulc2class_exe = $(uls_bin_dir)/ulc2class
 Html5Toks_SOURCES = Html5Toks.cpp Html5Lex.cpp
-Html5Toks_CPPFLAGS = -I$(uls_inc_dir)
-Html5Toks_LDADD = -L$(uls_lib_dir) -lulscpp -lulscompat -luls
+Html5Toks_CPPFLAGS = -I$(uls_inc_dir) -DULS_USE_WSTR
+#Html5Toks_CPPFLAGS = -I$(uls_inc_dir)
+Html5Toks_LDADD = -L$(uls_lib_dir) -lulscpp
 all: all-am
 
 .SUFFIXES:

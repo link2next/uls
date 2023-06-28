@@ -42,7 +42,6 @@
 #include "uls/uls_util.h"
 #include "uls/uls_log.h"
 #include "uls/uls_init.h"
-
 #endif
 
 #endif // __ULS_H__

@@ -36,28 +36,44 @@
 #include "ShellLexBasis.h"
 
 #include <string>
-
-#include <uls/csz_stream.h>
+#include <sstream>
 
 namespace uls
 {
 namespace collection
 {
-	class ShellLex : public uls::collection::ShellLexBasis {
-		csz_str_t tokbuf;
+	class StringBuilder {
+		std::otstringstream m_stream;
+		std::tstring m_sbuff;
 
-		std::string tok_str;
+		TCHAR *mBuff;
+		int siz_mBuff;
+		bool sync;
+
+	public:
+		StringBuilder();
+		virtual ~StringBuilder();
+
+		void clear();
+		int len();
+		void append(LPCTSTR str, int len = -1);
+		void append(TCHAR ch);
+
+		std::tstring& str();
+	};
+
+	class ShellLex : public uls::collection::ShellLexBasis {
+		StringBuilder tokbuf;
+		std::tstring tok_str;
 		int tok_id;
 		bool tok_ungot;
 
-		const char * tcschr(const char * tstr, char tch);
 		int expect_number(void);
 		void expect_redir(void);
 		void get_token(void);
 
 	public:
-
-		ShellLex(std::string& config_name);
+		ShellLex(std::tstring& config_name);
 		~ShellLex();
 
 		// <brief>
@@ -66,20 +82,16 @@ namespace collection
 		// Those we need to tokenize 'Makefile' files are just getTok(), token(), lexeme().
 		// </brief>
 		virtual int getTok(void);
-
 		virtual int getTokNum(void);
-		virtual std::string& getTokStr(void);
 
 		void ungetTok(void);
-		std::string getKeywordStr(int t);
 
 		// <brief>
 		// Sets the input file to be tokenized.
 		// </brief>
 		// <parm name="fpath">The path of file</parm>
 		// <return>none</return>
-		int source(std::string& fpath);
-
+		int source(std::tstring& fpath);
 	};
 }
 }

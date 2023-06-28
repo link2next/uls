@@ -69,6 +69,6 @@ class Sample2 : public uls::crux::UlsLex {
 
 	static const int            IDENT = 210;
 
-	Sample2(std::string &ulc_fpath)
+	Sample2(std::tstring& ulc_fpath)
 		 : uls::crux::UlsLex(ulc_fpath) {}
 };

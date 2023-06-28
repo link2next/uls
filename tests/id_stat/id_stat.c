@@ -36,7 +36,6 @@
 #include "uls/uls_log.h"
 #include "uls/uls_util.h"
 #include "uls/uls_fileio.h"
-#include "uls/uls_init.h"
 
 #include <stdlib.h>
 #include <unistd.h>
@@ -45,64 +44,64 @@
 
 #include "sample_lex.h"
 
-#define streql(a,b) (strcmp(a,b)==0)
+#define streql(a,b) ult_str_equal(a,b)
 
-const char *progname;
+LPCTSTR progname;
 int  test_mode = -1;
 int  opt_verbose;
-const char *config_name;
-char *input_file;
+LPCTSTR config_name;
+LPCTSTR input_file;
 
-char *target_dir;
-char home_dir[1024];
+LPCTSTR target_dir;
+TCHAR home_dir[1024];
 FILE *fp_list;
-const char *filelist;
+LPCTSTR filelist;
 
 uls_lex_t sample_lex;
 
 static void usage(void)
 {
-	err_log("%s v1.0", progname);
-	err_log("  Dumps the identifiers in inputfiles");
-	err_log("  according to the token defintions in %s", config_name);
-	err_log("");
-	err_log(" Usage:");
-	err_log("\t%s [-c <config-file>]  <inputfile>", progname);
-	err_log("");
-	err_log("  For example,");
-	err_log("      %s input1.txt", progname);
-	err_log("  A default config-file used, %s if you don't specifiy the config-file.", config_name);
+	err_log(_T("%s v1.0"), progname);
+	err_log(_T("  Dumps the identifiers in inputfiles"));
+	err_log(_T("  according to the token defintions in %s"), config_name);
+	err_log(_T(""));
+	err_log(_T(" Usage:"));
+	err_log(_T("\t%s [-c <config-file>]  <inputfile>"), progname);
+	err_log(_T(""));
+	err_log(_T("  For example,"));
+	err_log(_T("      %s input1.txt"), progname);
+	err_log(_T("  A default config-file used, %s if you don't specifiy the config-file."), config_name);
 }
 
 static int
-options(int opt, char* optarg)
+options(int opt, LPTSTR optarg)
 {
 	int stat = 0;
 
 	switch (opt) {
-	case 'c':
+	case _T('c'):
 		config_name = optarg;
 		break;
 
-	case 'l':
+	case _T('l'):
 		filelist = optarg;
 		break;
 
-	case 'm':
-		test_mode = atoi(optarg);
+	case _T('m'):
+		test_mode = ult_str2int(optarg);
 		break;
 
-	case 'v':
+	case _T('v'):
 		opt_verbose = 1;
 		break;
 
-	case 'h':
+	case _T('h'):
 		usage();
 		stat = 1;
 		break;
 
 	default:
-		err_log("undefined option -%c", opt);
+		err_log(_T("undefined option -%c"), opt);
 		usage();
 		stat = -1;
 		break;
@@ -113,7 +112,7 @@ options(int opt, char* optarg)
 
 typedef struct _id_stat id_stat_t;
 struct _id_stat {
-	char name[64];
+	TCHAR name[64];
 	int freq;
 };
 
@@ -122,7 +121,7 @@ int n_id_stat_array;
 int n_alloc_id_stat_array;
 
 id_stat_t*
-find_id_stat(const char *name)
+find_id_stat(LPCTSTR name)
 {
 	id_stat_t *e;
 	int i;
@@ -137,7 +136,7 @@ find_id_stat(const char *name)
 }
 
 id_stat_t*
-append_id_stat(const char *name)
+append_id_stat(LPCTSTR name)
 {
 	id_stat_t *e;
 
@@ -147,14 +146,14 @@ append_id_stat(const char *name)
 	}
 
 	e = id_stat_array + n_id_stat_array++;
-	strcpy(e->name, name);
+	ult_str_copy(e->name, name);
 	e->freq = 0;
 
 	return e;
 }
 
 int
-proc_file(char* fpath)
+proc_file(LPCTSTR fpath)
 {
 	id_stat_t *e;
 	int tok;
@@ -181,7 +180,7 @@ proc_file(char* fpath)
 }
 
 int
-test_id_stat(char* fpath)
+test_id_stat(LPCTSTR fpath)
 {
 	int tok;
 
@@ -193,8 +192,8 @@ test_id_stat(char* fpath)
 		tok = uls_get_tok(&sample_lex);
 		if (tok == TOK_EOI) break;
 
-		uls_printf("%3d: <%3d> ", uls_get_lineno(&sample_lex), tok);
-		uls_dump_tok(&sample_lex, NULL, "\n");
+		uls_printf(_T("%3d: <%3d> "), uls_get_lineno(&sample_lex), tok);
+		uls_dump_tok(&sample_lex, NULL, _T("\n"));
 	}
 
 	return 0;
@@ -203,13 +202,14 @@ test_id_stat(char* fpath)
 int
 proc_filelist(FILE *fin)
 {
-	char  linebuff[1024], *lptr, *fpath;
+	TCHAR  ch, linebuff[1024];
+	LPTSTR lptr, fpath;
 	int   i, len, lno = 0, stat=0;
 
 	while (1) {
 		if ((len=uls_fp_gets(fin, linebuff, sizeof(linebuff), 0)) <= ULS_EOF) {
 			if (len < ULS_EOF) {
-				err_log("%s: error to read a line", __FUNCTION__);
+				err_log(_T("%s: error to read a line"), __FUNCTION__);
 				stat =-1;
 			}
 			break;
@@ -217,17 +217,19 @@ proc_filelist(FILE *fin)
 
 		++lno;
 
-		lptr = skip_blanks(linebuff);
-		if (*lptr=='\0' || *lptr=='#') continue;
+		for (lptr = linebuff; (ch=*lptr) == _T(' ') || ch == _T('\t'); lptr++)
+			/* nothing */;
+
+		if (*lptr == _T('\0') || *lptr == _T('#')) continue;
 
 		fpath = lptr;
-		for (i=strlen(fpath)-1; i>=0; i--) {
-			if (!isspace(fpath[i])) break;
+		for (i = ult_str_length(fpath)-1; i>=0; i--) {
+			if (!uls_isspace(fpath[i])) break;
 		}
-		fpath[++i] = '\0';
+		fpath[++i] = _T('\0');
 
 		if (proc_file(fpath) < 0) {
-			err_log("fail to process '%s'", fpath);
+			err_log(_T("fail to process '%s'"), fpath);
 			stat = -1;
 			break;
 		}
@@ -242,11 +244,11 @@ comp_by_idname(const void *a, const void *b)
 	id_stat_t *a1 = (id_stat_t *) a;
 	id_stat_t *b1 = (id_stat_t *) b;
 
-	return strcmp(a1->name, b1->name);
+	return ult_str_compare(a1->name, b1->name);
 }
 
 int
-get_id_stats(int argc, char* argv[], int i0)
+get_id_stats(int argc, LPTSTR argv[], int i0)
 {
 	id_stat_t *e;
 	int i;
@@ -257,17 +259,17 @@ get_id_stats(int argc, char* argv[], int i0)
 		}
 
 		if ((fp_list=uls_fp_open(filelist, ULS_FIO_READ)) == NULL) {
-			err_log("%s: fail to read '%s'", __FUNCTION__, filelist);
+			err_log(_T("%s: fail to read '%s'"), __FUNCTION__, filelist);
 			return -1;
 		}
 
-		if (getcwd(home_dir, sizeof(home_dir)) == NULL) {
-			err_panic("can't get the pwd!");
+		if (uls_getcwd(home_dir, sizeof(home_dir)) < 0) {
+			err_panic(_T("can't get the pwd!"));
 		}
 
 		if (target_dir != NULL) {
 			if (uls_chdir(target_dir) < 0) {
-				err_log("can't change to %s", target_dir);
+				err_log(_T("can't change to %s"), target_dir);
 				uls_fp_close(fp_list);
 				return -1;
 			}
@@ -287,7 +289,7 @@ get_id_stats(int argc, char* argv[], int i0)
 
 	for (i=0; i<n_id_stat_array; i++) {
 		e = id_stat_array + i;
-		uls_printf("%24s %8d\n", e->name, e->freq);
+		uls_printf(_T("%24s %8d\n"), e->name, e->freq);
 	}
 
 	return 0;
@@ -300,39 +302,38 @@ test_initial_tok(uls_lex_ptr_t uls)
 
 	for (i=0; i<3; i++) {
 		tok = uls_get_tok(uls);
-		printf("[%d] tok_id=%d, lexeme='%s'\n", i, tok, uls_lexeme(uls));
+		uls_printf(_T("[%d] tok_id=%d, lexeme='%s'\n"), i, tok, uls_lexeme(uls));
 	}
 
 	return 0;
 }
 
 int
-main(int argc, char* argv[])
+_tmain(int n_targv, LPTSTR *targv)
 {
 	int i0, i, rc;
 
-	initialize_uls();
-	progname = uls_filename(argv[0], NULL);
+	progname = uls_split_filepath(targv[0], NULL);
 	target_dir = NULL;
-	config_name = "sample.ulc";
-	input_file = "input1.txt";
+	config_name = _T("sample.ulc");
+	input_file = _T("input1.txt");
 
-	if ((i0=uls_getopts(argc, argv, "c:l:m:vh", options)) <= 0) {
+	if ((i0=uls_getopts(n_targv, targv, _T("c:l:m:vh"), options)) <= 0) {
 		return i0;
 	}
 
 	if (uls_init(&sample_lex, config_name) < 0) {
-		err_log("can't init uls-object");
+		err_log(_T("can't init uls-object"));
 		return -1;
 	}
 
 	switch (test_mode) {
 	case 0:
-		rc = get_id_stats(argc, argv, i0);
+		rc = get_id_stats(n_targv, targv, i0);
 		break;
 	case 1:
-		for (i=i0; i<argc; i++) {
-			rc = test_id_stat(argv[i]);
+		for (i=i0; i<n_targv; i++) {
+			rc = test_id_stat(targv[i]);
 			if (rc < 0) break;
 		}
 		break;
@@ -348,4 +349,17 @@ main(int argc, char* argv[])
 	uls_mfree(id_stat_array);
 
 	return 0;
+}
+
+int
+main(int argc, char *argv[])
+{
+	LPTSTR *targv;
+	int stat;
+
+	ULS_GET_WARGS_LIST(argc, argv, targv);
+	stat = _tmain(argc, targv);
+	ULS_PUT_WARGS_LIST(argc, targv);
+
+	return stat;
 }

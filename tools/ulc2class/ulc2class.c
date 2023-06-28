@@ -76,7 +76,7 @@ static const struct option longopts[] = {
 	{ "prefix",        required_argument, NULL, 'p' },
 	{ "query",         no_argument,       NULL, 'q' },
 	{ "output",        required_argument, NULL, 'o' },
-	{ "wstr",          no_argument,       NULL, 'W' },
+
 	{ "silent",        no_argument,       NULL, 'y' },
 	{ "dump",          required_argument, NULL, 'z' },
 	{ "verbose",       no_argument,       NULL, 'v' },
@@ -87,7 +87,7 @@ static const struct option longopts[] = {
 };
 #endif
 
-#define ULC2CLASS_OPTSTR "d:f:e:l:n:g:p:qo:svWVHhyz:"
+#define ULC2CLASS_OPTSTR "d:f:e:l:n:g:p:qo:svVHhyz:"
 
 static void usage_synopsis()
 {
@@ -379,9 +379,6 @@ ulc2class_options(int opt, char* optarg)
 		prn_flags |= ULS_FL_VERBOSE;
 		break;
 
-	case 'W':
-		prn_flags |= ULS_FL_STRFMT_WSTR;
-		break;
 
 	case 'V':
 		uls_printf("%s %s, written by %s,\n\tis provided under %s.\n",
@@ -534,10 +531,6 @@ parse_options(int argc, char* argv[])
 		prn_flags &= ~ULS_FL_WANT_WRAPPER;
 	}
 
-	if (!(prn_flags & ULS_FL_C_GEN)) {
-		prn_flags &= ~ULS_FL_STRFMT_WSTR;
-	}
-
 	return i0;
 }
 
@@ -635,8 +628,6 @@ main(int argc, char* argv[])
 	const char *uld_file;
 	int i0, rc, stat=0;
 	uls_parms_emit_t emit_parm;
-
-	initialize_uls();
 
 	progname = THIS_PROGNAME;
 	if (argc <= 1) {

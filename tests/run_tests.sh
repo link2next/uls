@@ -38,6 +38,35 @@ MAX_N_MODES=8
 temp_dir="/tmp"
 test_prog=
 
+enc_mode=ustr
+
+if [ $# -lt 2 ]; then
+	echo "usage: $0 <test_prog> <LD_LIBPATH> [sysprops-path]"
+	exit 1
+fi
+
+test_prog=$1
+if [ ! -e ./$test_prog ]; then
+	echo "$0: $test_prog not exists!"
+	exit 1
+fi
+
+if [ -n "$LD_LIBRARY_PATH" ]; then
+	export LD_LIBRARY_PATH="$2:$LD_LIBRARY_PATH"
+else
+	export LD_LIBRARY_PATH="$2"
+fi
+
+if [ $# -ge 3 ]; then
+        export ULS_SYSPROPS=$3
+fi
+
+if [ $# -ge 4 ]; then
+	enc_mode=$4
+fi
+
+echo "Checking $test_dname enc_mode=$enc_mode..."
+
 test_1case()
 {
 	local ts=$1
@@ -82,29 +111,6 @@ test_1case()
 	return 0
 }
 
-if [ $# -lt 2 ]; then
-	echo "usage: $0 <test_prog> <LD_LIBPATH> [sysprops-path]"
-	exit 1
-fi
-
-test_prog=$1
-if [ ! -e ./$test_prog ]; then
-	echo "$0: $test_prog not exists!"
-	exit 1
-fi
-
-if [ -n "$LD_LIBRARY_PATH" ]; then
-        export LD_LIBRARY_PATH="$2:$LD_LIBRARY_PATH"
-else
-        export LD_LIBRARY_PATH="$2"
-fi
-
-if [ $# -ge 3 ]; then
-        export ULS_SYSPROPS=$3
-fi
-
-echo "Checking $test_dname ..."
-
 m=0
 while [ $m -lt $MAX_N_MODES ]; do
 	i=0
@@ -115,9 +121,18 @@ while [ $m -lt $MAX_N_MODES ]; do
 			in_file="-"
 		fi
 
-		out_file="out_${m}_${i}.txt";
+		if [ $enc_mode = 'wstr' ]; then
+			out_file="outw_${m}_${i}.txt";
+			if [ ! -f "$out_file" ]; then
+				out_file="out_${m}_${i}.txt";
+			fi
+		else
+			out_file="out_${m}_${i}.txt";
+		fi
+
 		if [ -f "$out_file" ]; then
 			n_files=$(($n_files+1))
+#			echo "output[$m][$i] = $out_file"
 		else
 			out_file="-"
 		fi

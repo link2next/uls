@@ -269,7 +269,6 @@ char uls_toupper(int c);
 char uls_tolower(int c);
 
 int is_pure_integer(const char* lptr, uls_outparam_ptr_t parms);
-
 int is_pure_word(const char* lptr, int must_id);
 int uls_atoi(const char *str);
 
@@ -320,7 +319,6 @@ ULS_DLL_EXTERN char* uls_strdup(const char* str, int len);
 ULS_DLL_EXTERN void* uls_memcopy(void *dst, const void* src, int n);
 ULS_DLL_EXTERN void* uls_memmove(void *dst, const void* src, int n);
 
-ULS_DLL_EXTERN int uls_wstrlen(const uls_uch_t* wstr);
 ULS_DLL_EXTERN int uls_strlen(const char* str);
 ULS_DLL_EXTERN int uls_strcpy(char* bufptr, const char* str);
 ULS_DLL_EXTERN int uls_strncpy(char* bufptr, const char* ptr, int n);

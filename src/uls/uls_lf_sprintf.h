@@ -300,4 +300,8 @@ ULS_DLL_EXTERN int uls_lf_puts_null(uls_voidptr_t x_dat, const char* wrdptr, int
 }
 #endif
 
+#ifdef ULS_USE_WSTR
+#include "uls/uls_lf_swprintf.h"
+#endif
+
 #endif // __ULS_LF_SPRINTF_H__

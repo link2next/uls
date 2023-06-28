@@ -31,25 +31,19 @@
     Stanley Hong <link2next@gmail.com>, June 2015.
   </author>
 */
+
 #include "uls.h"
 #define __ULSCOMPAT__
 #include "uls/ulscompat.h"
-#include "uls/uls_wlog.h"
+
 #include "uls/uls_util_wstr.h"
+#include "uls/uls_lf_swprintf.h"
+#include "uls/uls_wprint.h"
+#include "uls/uls_wlog.h"
+
 #include <stdlib.h>
 
 ULS_DECL_STATIC int ulscompat_inited;
-
-ULS_DECL_STATIC void
-__finalize_ulscompat(void)
-{
-	finalize_uls_wlog();
-	finalize_uls_wprint();
-	finalize_uls_wlf();
-	finalize_uls();
-
-	ulscompat_inited = 0;
-}
 
 void
 #ifdef __GNUC__
@@ -58,13 +52,9 @@ __attribute__((constructor))
 _initialize_ulscompat(void)
 {
 	if (ulscompat_inited) return;
-
-	initialize_uls_static();
-
 	initialize_uls_wlf();
 	initialize_uls_wprint();
 	initialize_uls_wlog();
-
 	ulscompat_inited = 1;
 }
 
@@ -75,22 +65,24 @@ __attribute__((destructor))
 _finalize_ulscompat(void)
 {
 	if (!ulscompat_inited) return;
-	__finalize_ulscompat();
+	finalize_uls_wlog();
+	finalize_uls_wprint();
+	finalize_uls_wlf();
+	ulscompat_inited = 0;
 }
 
 void
 initialize_ulscompat(void)
 {
+	initialize_uls();
 	_initialize_ulscompat();
-#ifdef ULS_DONT_FINALCALL
-	atexit(__finalize_ulscompat);
-#endif
 }
 
 void
 finalize_ulscompat(void)
 {
 	_finalize_ulscompat();
+	finalize_uls();
 }
 
 #if defined(ULS_WINDOWS)

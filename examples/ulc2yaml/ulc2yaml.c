@@ -210,8 +210,6 @@ main(int argc, char* argv[])
 	int i0, stat=0;
 	FILE *fout;
 
-	initialize_uls();
-
 	progname = THIS_PROGNAME;
 	if (argc <= 1) {
 		usage_brief();

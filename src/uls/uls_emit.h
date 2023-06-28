@@ -45,7 +45,7 @@ extern "C" {
 #define ULS_FL_WANT_RESERVED_TOKS 0x04
 #define ULS_FL_WANT_WRAPPER       0x08
 #define ULS_FL_ULD_FILE           0x10
-#define ULS_FL_STRFMT_WSTR        0x40
+
 #define ULS_FL_C_GEN              0x0100
 #define ULS_FL_CPP_GEN            0x0200
 #define ULS_FL_CPPCLI_GEN         0x0400

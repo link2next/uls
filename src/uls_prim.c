@@ -146,7 +146,7 @@ ULS_QUALIFIED_METHOD(uls_lf_number_Lu)(char *numstr, unsigned long long num, int
 		} while (num!=0);
 
 	} else {
-		base_mask = (1 << base_shift) - 1;
+		base_mask = (1ULL << base_shift) - 1;
 		do {
 			numstr[--i] = "0123456789ABCDEF"[ (int) (num & base_mask) ];
 			num >>= base_shift;
@@ -532,7 +532,25 @@ ULS_QUALIFIED_METHOD(is_pure_word)(const char* lptr, int must_id)
 int
 ULS_QUALIFIED_METHOD(uls_atoi)(const char *str)
 {
-	return atoi(str);
+	int i, minus, n = 0;
+	char ch;
+
+	if (str[0] == '-') {
+		minus = 1;
+		i = 1;
+	} else {
+		minus = 0;
+		i = 0;
+	}
+
+	for ( ; ; i++) {
+		if ((ch=str[i]) > '9' || ch < '0')
+			break;
+		n = ch - '0' + n * 10;
+	}
+
+	if (minus) n = -n;
+	return n;
 }
 
 void
@@ -1067,7 +1085,7 @@ ULS_QUALIFIED_METHOD(split_litstr)(char *str, char qch)
 
 	for (ptr1=ptr=str; ; ptr++) {
 		if (!uls_isprint(ch=*ptr)) { // ctrl-ch or '\0'
-			if (ch != '\0')	++ptr;
+			if (ch != '\0') ++ptr;
 			break;
 		}
 
@@ -1304,17 +1322,6 @@ ULS_QUALIFIED_METHOD(uls_memmove)(void *dst, const void* src, int n)
 	}
 
 	return ptr;
-}
-
-int
-ULS_QUALIFIED_METHOD(uls_wstrlen)(const uls_uch_t* wstr)
-{
-	const uls_uch_t* wptr;
-
-	for (wptr=wstr; *wptr != ULS_UCH_EOS; wptr++)
-		/* NOTHING */;
-
-	return (int) (wptr - wstr);
 }
 
 int
