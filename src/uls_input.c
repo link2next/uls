@@ -122,7 +122,7 @@ ULS_QUALIFIED_METHOD(input_skip_comment)(uls_commtype_ptr_t cmt, uls_input_ptr_t
 			inp->rawbuf_ptr = lptr;
 			inp->rawbuf_bytes = (int) (lptr_end - lptr);
 			if (inp->refill(inp, len_mark) < 0) {
-//				_uls_log(err_log)("%s: I/O error", __FUNCTION__);
+//				_uls_log(err_log)("%s: I/O error", __func__);
 				uls_input_reset_cursor(inp);
 				lptr = lptr_end = inp->rawbuf.buf;
 				stat = -1; // error
@@ -180,7 +180,7 @@ ULS_QUALIFIED_METHOD(input_quote_proc)(uls_input_ptr_t inp, uls_quotetype_ptr_t 
 			inp->rawbuf_bytes = (int) (lptr_end - lptr);
 
 			if (inp->refill(inp, n_bytes_req) < 0) {
-//				_uls_log(err_log)("%s: I/O error", __FUNCTION__);
+//				_uls_log(err_log)("%s: I/O error", __func__);
 				uls_input_reset_cursor(inp);
 				return ULS_LITPROC_ERROR;
 			}
@@ -230,7 +230,7 @@ ULS_QUALIFIED_METHOD(input_space_proc)(const char* ch_ctx, uls_input_ptr_t inp,
 			inp->rawbuf_bytes = (int) (parms.lptr_end - parms.lptr);
 
 			if (inp->refill(inp, len_surplus) < 0) {
-//				_uls_log(err_log)("%s: I/O error", __FUNCTION__);
+//				_uls_log(err_log)("%s: I/O error", __func__);
 				return -1;
 			}
 

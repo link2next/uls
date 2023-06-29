@@ -131,7 +131,7 @@ ULS_QUALIFIED_METHOD(uls_ieee754_bankup_bits)(char* srcptr, int start_bit, int e
 	//
 
 	if ((end_bit + 1) % 8 != 0) {
-		_uls_log(err_panic)("%s: invalid paramerter 'end_bit'", __FUNCTION__);
+		_uls_log(err_panic)("%s: invalid paramerter 'end_bit'", __func__);
 	}
 
 	if (n_shift <= 0 || start_bit > end_bit) return;

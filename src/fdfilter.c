@@ -246,7 +246,7 @@ fdf_iprovider_filelist(int fd_list, int writefd)
 	FILE *fp_lst;
 
 	if ((fp_lst=uls_fp_fdopen(fd_list, "r")) == NULL) {
-		_uls_log(err_log)("%s: fail to fdopen!", __FUNCTION__);
+		_uls_log(err_log)("%s: fail to fdopen!", __func__);
 		return -1;
 	}
 
@@ -362,7 +362,7 @@ uls_proc_join_round_1(uls_pid_t *child_pid, int n_child_pid)
 			if (errno == EINTR) {
 				continue;
 			} else if (errno == ECHILD) {
-				_uls_log(err_log)("%s: ECHILD!", __FUNCTION__);
+				_uls_log(err_log)("%s: ECHILD!", __func__);
 				for (k=0; k<n_child_pid; k++) {
 					if (child_pid[k] > 0) child_pid[k] = 0;
 				}

@@ -629,7 +629,7 @@ ULS_QUALIFIED_METHOD(parse_escmap_optgrp)(uls_escmap_ptr_t esc_map, uls_ptrtype_
 		return -1;
 	}
 
-	parms->uch = esc_sym;
+	parms->wch = esc_sym;
 	parms->line = lptr;
 	parms->flags = flags;
 
@@ -703,7 +703,7 @@ ULS_QUALIFIED_METHOD(uls_parse_escmap_feature)(uls_escmap_pool_ptr_t escmap_pool
 
 		lptr = parms1.line;
 		flags = parms1.flags;
-		esc_sym = (char) parms1.uch;
+		esc_sym = (char) parms1.wch;
 
 		esc_map = uls_dup_escmap(esc_map, escmap_pool, esc_sym, flags);
 
@@ -729,7 +729,7 @@ ULS_QUALIFIED_METHOD(extract_escstr_mapexpr)(uls_ptrtype_tool(outparam) parms)
 
 	lptr = _uls_tool(skip_blanks)(lptr);
 	if (*lptr == '\0') return -1;
-	parms->uch = *lptr;
+	parms->wch = *lptr;
 
 	if (lptr[1] != ':') {
 		_uls_log(err_log)("incorrect format!");
@@ -792,7 +792,7 @@ ULS_QUALIFIED_METHOD(uls_parse_escmap_mapping)(uls_escmap_ptr_t esc_map, uls_esc
 		}
 
 		lptr = (char *) parms1.lptr;
-		esc_ch = (char) parms1.uch;
+		esc_ch = (char) parms1.wch;
 		rval_flags = parms1.flags;
 
 		if (rval_flags & (ULS_FL_ESCSTR_MAPUNICODE|ULS_FL_ESCSTR_MAPHEXA)) {
@@ -864,7 +864,7 @@ ULS_QUALIFIED_METHOD(uls_dec_escaped_char)(uls_escmap_ptr_t map, uls_ptrtype_too
 		}
 
 		len = -n;
-		parms->uch = uch;
+		parms->wch = uch;
 		parms->flags = map_flags;
 	}
 
@@ -922,14 +922,14 @@ ULS_QUALIFIED_METHOD(initialize_uls_litesc)()
 	for (i=0; i<10; i++) {
 		esc_ch = '0' + i;
 		if (uls_add_escstr(escmap_pool, map, esc_ch, NULL, rval_flags) < 0) {
-			_uls_log(err_log)("%s: failed at escape-octal", __FUNCTION__);
+			_uls_log(err_log)("%s: failed at escape-octal", __func__);
 		}
 	}
 
 	// hexa-demcimal
 	rval_flags = ULS_FL_ESCSTR_MAPHEXA | ULS_FL_ESCSTR_HEXA | 0x02;
 	if (uls_add_escstr(escmap_pool, map, 'x', NULL, rval_flags) < 0) {
-		_uls_log(err_log)("%s: failed at escape-hexa-decimal", __FUNCTION__);
+		_uls_log(err_log)("%s: failed at escape-hexa-decimal", __func__);
 	}
 
 	/* modern */

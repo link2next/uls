@@ -262,13 +262,13 @@ ULS_QUALIFIED_METHOD(ulf_load)(uls_tokdef_ptr_t tok_info_lst, int n_tok_info_lst
 
 	if ((kwslst = make_keyw_stat_for_load(tok_info_lst, n_tok_info_lst, hdr)) == nilptr) {
 		if (n_tok_info_lst > 0) {
-			_uls_log(err_log)("%s: fail to make keyw_stats", __FUNCTION__);
+			_uls_log(err_log)("%s: fail to make keyw_stats", __func__);
 			return nilptr;
 		}
 	}
 
 	if ((lno=ulf_read_header(fin, hdr)) < 0) {
-		_uls_log(err_log)("%s: fail to read ulf-header", __FUNCTION__);
+		_uls_log(err_log)("%s: fail to read ulf-header", __func__);
 		ulc_free_kwstat_list(kwslst);
 		return nilptr;
 	}
@@ -278,7 +278,7 @@ ULS_QUALIFIED_METHOD(ulf_load)(uls_tokdef_ptr_t tok_info_lst, int n_tok_info_lst
 		hashfunc = nilptr; // use the default hash-func as it is.
 		hash_stat = uls_ptr(kw_tbl->dflhash_stat); // the params for the default hahs-func.
 	} else {
-		_uls_log(err_log)("%s: unknown hash-algorithm '%s'", __FUNCTION__, uls_get_namebuf_value(hdr->hash_algorithm));
+		_uls_log(err_log)("%s: unknown hash-algorithm '%s'", __func__, uls_get_namebuf_value(hdr->hash_algorithm));
 		ulc_free_kwstat_list(kwslst);
 		return nilptr;
 	}
@@ -288,7 +288,7 @@ ULS_QUALIFIED_METHOD(ulf_load)(uls_tokdef_ptr_t tok_info_lst, int n_tok_info_lst
 	while (1) {
 		if ((linelen=_uls_tool_(fp_gets)(fin, linebuff, sizeof(linebuff), 0)) <= ULS_EOF) {
 			if (linelen < ULS_EOF) {
-				_uls_log(err_log)("%s: fail to read ulf-header(io-error)", __FUNCTION__);
+				_uls_log(err_log)("%s: fail to read ulf-header(io-error)", __func__);
 				ulc_free_kwstat_list(kwslst);
 				return nilptr;
 			}
@@ -337,7 +337,7 @@ ULS_QUALIFIED_METHOD(ulf_create_file)(int n_hcodes, uls_uint32 *hcodes,
 	if (htab_siz <= 0) return -1;
 
 	if (_uls_log_(sysprn_open)(fout, nilptr) < 0) {
-		_uls_log(err_log)("%s: create an output file", __FUNCTION__);
+		_uls_log(err_log)("%s: create an output file", __func__);
 		return -1;
 	}
 

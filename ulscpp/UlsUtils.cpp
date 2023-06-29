@@ -381,7 +381,7 @@ uls::parseCommandOptions(int n_args, char *args[], const char *optfmt, uls::optp
 
 				if ((rc = proc(opt, optarg)) != 0) {
 					if (rc > 0) rc = 0;
-					else _uls_log(err_log)("Error in processing the option -%c, %s.", opt, optarg);
+					else _uls_log(err_log)("An error in processing the option -%c, %s.", opt, optarg);
 					return rc;
 				}
 				break;

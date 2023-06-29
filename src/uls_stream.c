@@ -104,10 +104,10 @@ ULS_QUALIFIED_METHOD(uls_dump_tmpls)(uls_tmpl_list_ptr_t tmpl_list)
 	uls_tmpl_ptr_t tmpl;
 	int i;
 
-	printf("%s:\n", __FUNCTION__);
+	printf("%s:\n", __func__);
 
 	if (tmpl_list == nilptr) {
-		printf("%s: tmpl_list == NULL!\n", __FUNCTION__);
+		printf("%s: tmpl_list == NULL!\n", __func__);
 		return;
 	}
 

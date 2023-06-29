@@ -79,7 +79,7 @@ ULS_QUALIFIED_METHOD(__change_tok_nam)(uls_tokdef_vx_ptr_t e0_vx, const char* na
 	}
 
 	if (e0_vx == nilptr || (name != NULL && uls_streql(name, name2))) { // the current token leader
-		_uls_log(err_log)("%s: can't find the token leader of '%s'", __FUNCTION__, name);
+		_uls_log(err_log)("%s: can't find the token leader of '%s'", __func__, name);
 		return -1;
 	}
 
@@ -263,7 +263,7 @@ ULS_QUALIFIED_METHOD(uld_load_fp)(uls_lex_ptr_t uls, FILE *fin_uld, const char *
 	while (1) {
 		if ((linelen=_uls_tool_(fp_gets)(fin_uld, linebuff, sizeof(linebuff), 0)) <= ULS_EOF) {
 			if (linelen < ULS_EOF) {
-				_uls_log(err_log)("%s: ulc file i/o error at %d", __FUNCTION__, lno);
+				_uls_log(err_log)("%s: ulc file i/o error at %d", __func__, lno);
 				stat = -1;
 			}
 			break;
@@ -368,7 +368,7 @@ ULS_QUALIFIED_METHOD(uld_post_names)(uld_names_map_ptr_t names_map)
 	for (i=1; ; i++) {
 		if (i >= n_slots_vx) {
 			if (classify_tok_group(uls) < 0) {
-				_uls_log(err_log)("%s: lex-conf file not consistent!", __FUNCTION__);
+				_uls_log(err_log)("%s: lex-conf file not consistent!", __func__);
 				stat = -1;
 			} else {
 				uls->xcontext.context->tok = uls->xcontext.toknum_EOI;

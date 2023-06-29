@@ -60,7 +60,7 @@ print_tmpl_stream_file(uls_ostream_t *ostr, uls_lex_t* uls)
 
 		} else if (lno != uls_get_lineno(uls)) {
 			lno = uls_get_lineno(uls);
-			uls_print_tok_linenum(ostr, lno, NULL);
+			__uls_print_tok_linenum(ostr, lno, NULL, 0);
 		}
 
 		if (uls_is_eof(uls) || uls_is_eoi(uls)) {
@@ -102,17 +102,17 @@ uls_start_stream_filepath(uls_ostream_t *ostr, const char* fpath, const char* fi
 	if (cmdline_filter != NULL) {
 #ifdef ULS_FDF_SUPPORT
 		if ((istr = uls_open_istream_filter_file(uls_ptr(fdfilter), fpath)) == uls_nil) {
-			err_log("%s: can't read %s", __FUNCTION__, fpath);
+			err_log("%s: can't read %s", __func__, fpath);
 			fdf_deinit(uls_ptr(fdfilter));
 			return -1;
 		}
 #else
-		err_log("%s: fdf not supported!", __FUNCTION__);
+		err_log("%s: fdf not supported!", __func__);
 		return -1;
 #endif
 	} else {
 		if ((istr = uls_open_istream_file(fpath)) == uls_nil) {
-			err_log("%s: can't read %s", __FUNCTION__, fpath);
+			err_log("%s: can't read %s", __func__, fpath);
 			return -1;
 		}
 	}

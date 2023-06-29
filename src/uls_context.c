@@ -43,7 +43,7 @@ ULS_QUALIFIED_METHOD(__xcontext_binfd_filler)(uls_xcontext_ptr_t xctx)
 	uls_regulate_rawbuf(inp);
 
 	if ((rc = inp->rawbuf.siz - inp->rawbuf_bytes) <= 0) {
-		_uls_log(err_log)("%s: InternalError: No space to fill in buffer!", __FUNCTION__);
+		_uls_log(err_log)("%s: InternalError: No space to fill in buffer!", __func__);
 		return 0;
 	}
 
@@ -179,7 +179,7 @@ ULS_QUALIFIED_METHOD(__xcontext_txtfd_filler)(uls_xcontext_ptr_t xctx, uls_ptrty
 again_1:
 	if ((rc=uls_input_read(uls_ptr(inp->isource), inp->rawbuf.buf, inp->rawbuf_bytes, inp->rawbuf.siz)) < 0) {
 		if (inp->rawbuf_bytes > 0)
-			_uls_log(err_log)("%s: redundant %d-bytes exist!", __FUNCTION__, inp->rawbuf_bytes);
+			_uls_log(err_log)("%s: redundant %d-bytes exist!", __func__, inp->rawbuf_bytes);
 		return -1;
 
 	}
@@ -207,7 +207,7 @@ again_1:
 			txtptr = parms2.lptr;
 
 			if (rc2 < 0) {
-				_uls_log(err_log)("%s: record truncated!", __FUNCTION__);
+				_uls_log(err_log)("%s: record truncated!", __func__);
 				return -1;
 			}
 
@@ -329,7 +329,7 @@ ULS_QUALIFIED_METHOD(__check_rec_boundary_reverse_order)(uls_xcontext_ptr_t xctx
 	_uls_tool_(reverse_bytes)((char *) &txtlen, sizeof(uls_int32));
 
 	if (txtlen < 0)
-		_uls_log(err_panic)("%s: corrupt stream!", __FUNCTION__);
+		_uls_log(err_panic)("%s: corrupt stream!", __func__);
 
 	txtptr = buf + ULS_BIN_RECHDR_SZ;
 	reclen = ULS_BIN_REC_SZ(txtlen);
@@ -362,7 +362,7 @@ ULS_QUALIFIED_METHOD(__check_rec_boundary_bin)(uls_xcontext_ptr_t xctx, uls_xctx
 	int i0 = 0, reclen, n_recs, n, m2;
 
 	if ((n=inp->rawbuf_bytes) < ULS_BIN_RECHDR_SZ) {
-		_uls_log(err_log)("%s: incorrect format error!", __FUNCTION__);
+		_uls_log(err_log)("%s: incorrect format error!", __func__);
 		return -1;
 	}
 
@@ -378,7 +378,7 @@ ULS_QUALIFIED_METHOD(__check_rec_boundary_bin)(uls_xcontext_ptr_t xctx, uls_xctx
 
 			_uls_tool(str_modify)(uls_ptr(inp->rawbuf), inp->rawbuf_bytes, NULL, m2);
 			if (uls_input_read(uls_ptr(inp->isource), inp->rawbuf.buf, inp->rawbuf_bytes, reclen) < m2) {
-				_uls_log(err_log)("%s: file error", __FUNCTION__);
+				_uls_log(err_log)("%s: file error", __func__);
 				return -1;
 			}
 
@@ -500,7 +500,7 @@ ULS_QUALIFIED_METHOD(uls_init_context)(uls_context_ptr_t ctx, uls_gettok_t getto
 {
 	uls_input_ptr_t   inp;
 	uls_lexseg_ptr_t lexseg;
-	int i;
+	int i, n;
 
 	ctx->flags = 0;
 	_uls_tool(csz_init)(uls_ptr(ctx->tag), 128);
@@ -538,8 +538,12 @@ ULS_QUALIFIED_METHOD(uls_init_context)(uls_context_ptr_t ctx, uls_gettok_t getto
 	ctx->s_val = ctx->tokbuf.buf;
 	ctx->s_val_len = ctx->s_val_uchars = 0;
 
-	_uls_tool(str_init)(uls_ptr(ctx->tokbuf), (ULS_LEXSTR_MAXSIZ+1)<<1);
+	n = (ULS_LEXSTR_MAXSIZ+1) << 1;
+	_uls_tool(str_init)(uls_ptr(ctx->tokbuf), n);
 	ctx->n_digits = ctx->expo = 0;
+
+	_uls_tool(str_init)(uls_ptr(ctx->tokbuf_aux), n);
+	ctx->l_tokbuf_aux = -1;
 
 	ctx->anonymous_uchar_vx = uls_create_tokdef_vx(0, "", nilptr); // 0: nonsense
 	ctx->anonymous_uchar_vx->flags |= ULS_VX_ANONYMOUS;
@@ -562,6 +566,7 @@ ULS_QUALIFIED_METHOD(uls_deinit_context)(uls_context_ptr_t ctx)
 
 	_uls_tool(csz_deinit)(uls_ptr(ctx->tag));
 	_uls_tool(str_free)(uls_ptr(ctx->tokbuf));
+	_uls_tool(str_free)(uls_ptr(ctx->tokbuf_aux));
 	ctx->gettok = nilptr;
 	ctx->prev = nilptr;
 
@@ -689,7 +694,7 @@ ULS_QUALIFIED_METHOD(xcontext_raw_filler)(uls_xcontext_ptr_t xctx)
 			inp->rawbuf_bytes = (int) (lptr_end - lptr);
 
 			if (inp->refill(inp, len_surplus) < 0) {
-//				_uls_log(err_log)("%s: I/O error", __FUNCTION__);
+//				_uls_log(err_log)("%s: I/O error", __func__);
 				uls_input_reset_cursor(inp);
 				return -1;
 			}
@@ -717,7 +722,7 @@ ULS_QUALIFIED_METHOD(xcontext_raw_filler)(uls_xcontext_ptr_t xctx)
 			inp->rawbuf_bytes = (int) (lptr_end - lptr);
 
 			if ((rc=input_space_proc(ch_ctx, inp, ss_dst1, len_surplus, uls_ptr(parms1))) < 0) {
-				_uls_log(err_log)("%s: I/O error", __FUNCTION__);
+				_uls_log(err_log)("%s: I/O error", __func__);
 				return -1;
 			}
 
@@ -951,5 +956,5 @@ ULS_QUALIFIED_METHOD(uls_context_set_line)(uls_context_ptr_t ctx, const char* li
 
 	ctx->line = ctx->lptr = line;
 	if ((ctx->line_end=line+len) < line)
-		_uls_log(err_panic)("%s: invalid param(len=%d)!", __FUNCTION__, len);
+		_uls_log(err_panic)("%s: invalid param(len=%d)!", __func__, len);
 }

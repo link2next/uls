@@ -117,6 +117,7 @@ void
 test_input_file(Sample2Lex *sam_lex, tstring& filename)
 {
 	tstring *lxm;
+	string numsuff;
 
 	sam_lex->printf(_T("Welcome to ULS World!\n"));
 	sam_lex->printf(_T("Testing ULS in C++ ...\n"));
@@ -126,7 +127,13 @@ test_input_file(Sample2Lex *sam_lex, tstring& filename)
 
 	while (sam_lex->getToken() != Sample2Lex::EOI) {
 		sam_lex->getTokStr(&lxm);
-		sam_lex->printf(_T("\t[%8t] %10s at %w\n"), lxm->c_str());
+
+		sam_lex->printf(_T("\t[%8t] %10s"), lxm->c_str());
+		numsuff = sam_lex->lexemeNumberSuffix();
+		if (!numsuff.empty()) {
+			sam_lex->printf(_T(" %hs"), numsuff.c_str());
+		}
+		sam_lex->printf(_T(" at %w\n"));
 	}
 }
 
@@ -187,7 +194,7 @@ bool test_simple_streaming(tstring& input_file, tstring& out_dir)
 	int t;
 
 	uls_file = out_dir;
-	uls_file += _T('/');
+	uls_file += ULS_FILEPATH_DELIM;
 	uls_file += _T("a2.uls");
 
 	UlsOStream *ofile = new UlsOStream(uls_file, lex, _T("<<tag>>"));

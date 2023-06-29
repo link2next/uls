@@ -55,7 +55,7 @@ uls_tmpl_list_t *tmpl_list;
 int
 print_uls_file(uls_lex_t *uls, LPCTSTR fpath, uls_ostream_t *ostr)
 {
-	int t, stat=0;
+	int t, l_lxm, stat=0;
 	LPCTSTR lxm;
 
 	if (uls_push_file(uls, fpath, 0) < 0) {
@@ -78,7 +78,10 @@ print_uls_file(uls_lex_t *uls, LPCTSTR fpath, uls_ostream_t *ostr)
 			t = uls_toknum_tmpl(uls);
 		}
 
-		if (uls_print_tok(ostr, t, lxm) < 0) {
+		for (l_lxm = 0; lxm[l_lxm] != _T('\0'); l_lxm++)
+			/* NOTHING */;
+
+		if (__uls_print_tok(ostr, t, lxm, l_lxm) < 0) {
 			stat = -1; break;
 		}
 	}

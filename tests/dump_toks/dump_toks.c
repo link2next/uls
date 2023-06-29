@@ -44,8 +44,6 @@
 
 #include "sample_lex.h"
 
-#define N_CMD_ARGS  16
-
 LPCTSTR progname;
 int  opt_verbose;
 
@@ -105,7 +103,7 @@ options(int opt, LPTSTR optarg)
 int
 test_initial_uls(LPTSTR fpath)
 {
-	uls_lex_t *uls = sample_lex;
+	uls_lex_ptr_t uls = sample_lex;
 	double f_val;
 	uls_int64 ii_val;
 	LPCTSTR tagstr;
@@ -117,13 +115,13 @@ test_initial_uls(LPTSTR fpath)
 	}
 
 	uls_printf(_T(" %3d : %3d  '%s'\n"),
-		uls_get_lineno(uls), uls_tok(uls), uls_lexeme(uls));
+		uls_get_lineno(uls), uls_tok(uls), uls_tokstr(uls));
 
 	for ( ; ; ) {
 		if ((t=uls_get_tok(uls)) == TOK_EOI) break;
 
 		uls_printf(_T(" %3d : %3d  '%s'\n"),
-			uls_get_lineno(uls), uls_tok(uls), uls_lexeme(uls));
+			uls_get_lineno(uls), uls_tok(uls), uls_tokstr(uls));
 
 		if (t == TOK_NUMBER) {
 			if (uls_is_real(uls)) {
@@ -131,7 +129,7 @@ test_initial_uls(LPTSTR fpath)
 				uls_printf(_T("\tf_val = %f\n"), f_val);
 			} else {
 				ii_val = uls_lexeme_lld(uls);
-				uls_printf(_T("\ti_val = %d\n"), ii_val);
+				uls_printf(_T("\ti_val = %lld\n"), ii_val);
 			}
 		} else if (t == TOK_EOF) {
 			tagstr = uls_get_eoftag(uls, &taglen);
@@ -154,7 +152,7 @@ test_uls(LPCTSTR fpath)
 	}
 
 	if (uls_set_fd(uls, fd, ULS_DO_DUP) < 0) {
-		err_log(_T("can't set the istream!"));
+		err_log(_T("Can't set the istream, '%s'"), fpath);
 		return -1;
 	}
 
@@ -211,7 +209,7 @@ test_uls_xdef(LPTSTR fpath)
 		if (uls_set_extra_tokdef(uls, xdefs[i].tok_id, xdefs + i) < 0) {
 			ptr = uls_tok2keyw(uls, xdefs[i].tok_id);
 			if (ptr == NULL) ptr = _T("???");
-			err_log(_T("fail to set x-tokdef for tok %s."), ptr);
+			err_log(_T("fail to set x-tokdef for token %s."), ptr);
 		}
 	}
 
@@ -311,7 +309,7 @@ test_uls_isrc(LPCTSTR fpath)
 		if ((t = uls_get_tok(uls)) == TOK_EOI) break;
 
 		uls_printf(_T("#%d(%6d) :"), uls_get_lineno(uls), t);
-		tokstr = uls_lexeme(uls);
+		tokstr = uls_tokstr(uls);
 		ult_dump_bin(tokstr);
 		uls_printf(_T("\n"));
 	}
@@ -329,7 +327,9 @@ _tmain(int n_targv, LPTSTR *targv)
 		return i0;
 	}
 
-	input_file = targv[i0];
+	if (i0 < n_targv) {
+		input_file = targv[i0];
+	}
 
 	if ((sample_lex=uls_create(config_name)) == NULL) {
 		err_log(_T("can't init uls-object"));

@@ -443,6 +443,22 @@ ULS_QUALIFIED_METHOD(is_num_radix)(uls_uch_t ch, int radix)
 }
 
 char
+ULS_QUALIFIED_METHOD(num2char_radix)(int val)
+{
+	char ch;
+
+	if (val < 10) {
+		ch ='0' + val;
+	} else if (val < 36) {
+		ch = val - 10 + 'A';
+	} else {
+		ch = '^';
+	}
+
+	return ch;
+}
+
+char
 ULS_QUALIFIED_METHOD(read_hexa_char)(char* ptr)
 {
 	unsigned n, ch_val = 0;
@@ -466,6 +482,70 @@ ULS_QUALIFIED_METHOD(read_hexa_char)(char* ptr)
 	}
 
 	return (char) ch_val;
+}
+
+const char*
+ULS_QUALIFIED_METHOD(uls_get_standard_number_prefix)(int radix)
+{
+	const char *prefix;
+
+	switch (radix) {
+	case 2:
+		prefix = "0b";
+		break;
+	case 3:
+		prefix = "0t";
+		break;
+	case 4:
+		prefix = "0q";
+		break;
+	case 8:
+		prefix = "0o";
+		break;
+	case 16:
+		prefix = "0x";
+		break;
+	default:
+		prefix = NULL;
+		break;
+	}
+
+	return prefix;
+}
+
+int
+ULS_QUALIFIED_METHOD(uls_find_standard_prefix_radix)(const char *line, int *ptr_radix)
+{
+	int ch, len_prefix = 0, radix;
+
+	if ((ch = line[0]) == '0') {
+		ch = line[1];
+		if (ch == 'x') { // hexa-decimal: 0x
+			len_prefix = 2;
+			radix = 16;
+		} else if (ch == 'o') { // octal, 0o
+			len_prefix = 2;
+			radix = 8;
+		} else if (ch == 'b') { // binary, 0b
+			len_prefix = 2;
+			radix = 2;
+		} else if (ch == 't') { // 0t
+			len_prefix = 2;
+			radix = 3;
+		} else if (ch == 'q') { // 0q
+			len_prefix = 2;
+			radix = 4;
+		} else {
+			len_prefix = 0;
+			radix = 10;
+		}
+	} else {
+		len_prefix = 0;
+		radix = 10;
+	}
+
+	*ptr_radix = radix;
+	return len_prefix;
 }
 
 int

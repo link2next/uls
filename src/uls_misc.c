@@ -438,7 +438,7 @@ ULS_QUALIFIED_METHOD(uls_get_simple_escape_str)(char quote_ch, uls_ptrtype_tool(
 				for (ch2=0,j=0; j<2; j++) {
 					if (!_uls_tool_(isxdigit)(ch=lptr[j+1])) {
 						if (j == 0) {
-							_uls_log(err_log)("%s: No hexa-string format!", __FUNCTION__);
+							_uls_log(err_log)("%s: No hexa-string format!", __func__);
 							parms->lptr = lptr;
 							return -1;
 						}

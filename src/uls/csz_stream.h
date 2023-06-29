@@ -53,7 +53,9 @@ extern "C" {
 #define str_copy _uls_tool(str_modify)
 #define str_putc(outbuf,k,ch) \
 	_uls_tool(__str_putc)(outbuf, CSZ_STREAM_DELTA_DFL, k, ch)
-#define str_putc_nosafe(outbuf, k, ch) (outbuf->buf[k]=(ch))
+#define str_putc_nosafe(outbuf, k, ch) ((outbuf)->buf[k]=(ch))
+#define str_dataptr_k(outbuf,k) ((outbuf)->buf+(k))
+#define str_dataptr(outbuf) ((outbuf)->buf)
 
 #define csz_copy _uls_tool(csz_modify)
 #define csz_putc_nosafe(csz,ch) do { \

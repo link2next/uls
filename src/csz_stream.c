@@ -174,7 +174,7 @@ ULS_QUALIFIED_METHOD(__str_modify)(uls_outbuf_ptr_t outbuf, int n_delta, int k, 
 	}
 
 	if (str != NULL && len > 0) {
-		uls_memcopy(bufptr+k, str, len);
+		uls_memmove(bufptr+k, str, len);
 	}
 }
 
@@ -407,7 +407,7 @@ ULS_QUALIFIED_METHOD(csz_append)(csz_str_ptr_t csz, const char* str, int len)
 	__str_modify(uls_ptr(csz->pool), csz->alloc_delta, k, NULL, len+1);
 
 	if (str != NULL) {
-		uls_memcopy(csz->pool.buf + k, str, len);
+		uls_memmove(csz->pool.buf + k, str, len);
 	}
 
 	csz->len = k + len;

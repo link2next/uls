@@ -49,7 +49,7 @@
                        [       ] (
                        [ DQUOTE] %s: can't read %s
                        [       ] ,
-                       [     ID] __FUNCTION__
+                       [     ID] __func__
                        [       ] ,
                        [     ID] fpath
                        [       ] )
@@ -107,7 +107,7 @@
                        [       ] (
                        [ DQUOTE] %s: fail to prepare input-stream
                        [       ] ,
-                       [     ID] __FUNCTION__
+                       [     ID] __func__
                        [       ] )
                        [       ] ;
              s1.c:23   [     ID] stat
@@ -177,7 +177,7 @@
              s1.c:40   [   CHAR] char
                        [     ID] linebuff
                        [       ] [
-                       [ NUMBER] 400
+                       [ NUMBER] 1024
                        [       ] ]
                        [       ] ,
                        [       ] *
@@ -353,7 +353,7 @@
                        [       ] (
                        [ DQUOTE] %s: can't bind!
                        [       ] ,
-                       [     ID] __FUNCTION__
+                       [     ID] __func__
                        [       ] )
                        [       ] ;
              s1.c:75   [ RETURN] return
@@ -394,7 +394,7 @@
                        [       ] (
                        [ DQUOTE] %s: can't conjecture file type!
                        [       ] ,
-                       [     ID] __FUNCTION__
+                       [     ID] __func__
                        [       ] )
                        [       ] ;
              s1.c:81   [     ID] fdf_deinit
@@ -427,7 +427,7 @@
                        [       ] (
                        [ DQUOTE] %s: can't conjecture file type!
                        [       ] ,
-                       [     ID] __FUNCTION__
+                       [     ID] __func__
                        [       ] )
                        [       ] ;
              s1.c:87   [ RETURN] return
@@ -526,7 +526,7 @@
                        [       ] (
                        [ DQUOTE] %s: fail to prepare input-stream
                        [       ] ,
-                       [     ID] __FUNCTION__
+                       [     ID] __func__
                        [       ] )
                        [       ] ;
              s1.c:100  [     ID] stat
@@ -555,7 +555,7 @@
                        [       ] (
                        [ DQUOTE] %s: fail to prepare input-stream
                        [       ] ,
-                       [     ID] __FUNCTION__
+                       [     ID] __func__
                        [       ] )
                        [       ] ;
              s1.c:105  [     ID] stat
@@ -584,7 +584,7 @@
                        [       ] (
                        [ DQUOTE] %s: fail to uls-streaming to %d
                        [       ] ,
-                       [     ID] __FUNCTION__
+                       [     ID] __func__
                        [       ] )
                        [       ] ;
              s1.c:110  [     ID] stat
@@ -740,7 +740,7 @@
                        [       ] (
                        [ DQUOTE] %s: can't bind!
                        [       ] ,
-                       [     ID] __FUNCTION__
+                       [     ID] __func__
                        [       ] )
                        [       ] ;
              s1.c:145  [     ID] ostr
@@ -837,7 +837,7 @@
                        [       ] (
                        [ DQUOTE] %s: improper fd of list
                        [       ] ,
-                       [     ID] __FUNCTION__
+                       [     ID] __func__
                        [       ] )
                        [       ] ;
              s1.c:159  [     ID] stat
@@ -937,7 +937,7 @@
                        [       ] (
                        [ DQUOTE] %s: can't move file %s into %s
                        [       ] ,
-             s1.c:184  [     ID] __FUNCTION__
+             s1.c:184  [     ID] __func__
                        [       ] ,
                        [     ID] tmpfile
                        [       ] .
@@ -1077,7 +1077,7 @@
        dir_a/s2.c:32   [   CHAR] char
                        [     ID] home_dir
                        [       ] [
-                       [ NUMBER] 400
+                       [ NUMBER] 1024
                        [       ] ]
                        [       ] ;
        dir_a/s2.c:33   [  CONST] const
@@ -1088,7 +1088,7 @@
        dir_a/s2.c:34   [   CHAR] char
                        [     ID] config_pathbuff
                        [       ] [
-                       [ NUMBER] 400
+                       [ NUMBER] 1024
                        [       ] ]
                        [       ] ;
        dir_a/s2.c:35   [   CHAR] char

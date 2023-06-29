@@ -23,12 +23,12 @@
  10	[       ] ;
  12	[     ID] keyw
  12	[       ] =
- 12	[ NUMBER] 0x4
+ 12	[ NUMBER] 4
  12	[SNOWMAN] ☃$
  12	[       ] ;
  12	[     ID] keyw
  12	[       ] =
- 12	[ NUMBER] 0x3
+ 12	[ NUMBER] 3
  12	[EUROSIGN] €
  12	[       ] ;
  13	[    END] }
