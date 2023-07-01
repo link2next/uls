@@ -208,6 +208,9 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
 GREP = @GREP@
+HAVE_JAVA = @HAVE_JAVA@
+HAVE_JAVAC = @HAVE_JAVAC@
+HAVE_JAVAH = @HAVE_JAVAH@
 HELP2MAN = @HELP2MAN@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
@@ -262,6 +265,8 @@ am__quote = @am__quote@
 am__tar = @am__tar@
 am__untar = @am__untar@
 ax_etc_dir = @ax_etc_dir@
+ax_jdk_cppflags = @ax_jdk_cppflags@
+ax_jdk_ldflags = @ax_jdk_ldflags@
 bindir = @bindir@
 build = @build@
 build_alias = @build_alias@
@@ -310,9 +315,9 @@ uls_inc_dir = $(uls_inst_dir)/include
 uls_lib_dir = $(uls_inst_dir)/lib
 ulc2class_exe = $(uls_bin_dir)/ulc2class
 ShellToks_SOURCES = ShellToks.cpp ShellLex.cpp
-#ShellToks_CPPFLAGS = -I$(uls_inc_dir) -DULS_USE_WSTR
-ShellToks_CPPFLAGS = -I$(uls_inc_dir)
-ShellToks_LDADD = -L$(uls_lib_dir) -lulscpp
+#ShellToks_CPPFLAGS = -std=c++11 -I$(uls_inc_dir) -DULS_USE_WSTR
+ShellToks_CPPFLAGS = -std=c++11 -I$(uls_inc_dir)
+ShellToks_LDADD = -L$(uls_lib_dir) -lulscpp -luls
 all: all-am
 
 .SUFFIXES:
