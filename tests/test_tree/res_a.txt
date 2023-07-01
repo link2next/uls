@@ -177,7 +177,7 @@
              s1.c:40   [   CHAR] char
                        [     ID] linebuff
                        [       ] [
-                       [ NUMBER] 1024
+                       [ NUMBER] 400
                        [       ] ]
                        [       ] ,
                        [       ] *
@@ -1077,7 +1077,7 @@
        dir_a/s2.c:32   [   CHAR] char
                        [     ID] home_dir
                        [       ] [
-                       [ NUMBER] 1024
+                       [ NUMBER] 400
                        [       ] ]
                        [       ] ;
        dir_a/s2.c:33   [  CONST] const
@@ -1088,7 +1088,7 @@
        dir_a/s2.c:34   [   CHAR] char
                        [     ID] config_pathbuff
                        [       ] [
-                       [ NUMBER] 1024
+                       [ NUMBER] 400
                        [       ] ]
                        [       ] ;
        dir_a/s2.c:35   [   CHAR] char

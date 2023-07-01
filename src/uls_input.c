@@ -385,26 +385,23 @@ ULS_QUALIFIED_METHOD(uls_destroy_input)(uls_input_ptr_t inp)
 int
 ULS_QUALIFIED_METHOD(uls_input_read)(uls_source_ptr_t isrc, char *buf, int buflen0, int bufsiz)
 {
+	// assume: buflen0 < bufsiz
 	int buflen = buflen0;
 	int rc;
 
-	if (isrc->flags & ULS_ISRC_FL_ERR) return -1;
-	if (isrc->flags & ULS_ISRC_FL_EOF) return 0;
-	if (buflen >= bufsiz) return 0;
+	while (1) {
+		if (isrc->flags & ULS_ISRC_FL_ERR) return -1;
+		if (isrc->flags & ULS_ISRC_FL_EOF) break;
 
-	do {
-		if ((rc=isrc->usrc_fillbuff(isrc, buf, buflen, bufsiz)) < 0) {
-			isrc->flags |= ULS_ISRC_FL_EOF | ULS_ISRC_FL_ERR;
+		rc = isrc->usrc_fillbuff(isrc, buf, buflen, bufsiz);
+		if (rc < 0) {
+			isrc->flags |= ULS_ISRC_FL_ERR | ULS_ISRC_FL_EOF;
 			return -1;
 		}
 
-		if (rc == 0) {
-			isrc->flags |= ULS_ISRC_FL_EOF;
-			break;
-		}
-
-		buflen += rc;
-	} while (buflen < bufsiz);
+		if ((buflen += rc) >= bufsiz) break;
+		if (rc == 0) _uls_tool_(msleep)(3);
+	}
 
 	return buflen - buflen0;
 }
@@ -436,7 +433,7 @@ ULS_QUALIFIED_METHOD(uls_input_refill_buffer)(uls_input_ptr_t inp, int n_bytes)
 			return -1;
 		}
 
-		if ((inp->rawbuf_bytes += rc) >= n_bytes || (inp->isource.flags & ULS_ISRC_FL_EOF)) {
+		if (rc == 0 || (inp->rawbuf_bytes += rc) >= n_bytes) {
 			break;
 		}
 		_uls_tool_(msleep)(15);
@@ -494,6 +491,7 @@ ULS_QUALIFIED_METHOD(uls_ungrab_linecheck)(uls_source_ptr_t isrc)
 int
 ULS_QUALIFIED_METHOD(uls_fill_null_source)(uls_source_ptr_t isrc, char* buf, int buflen, int bufsiz)
 {
+	isrc->flags |= ULS_ISRC_FL_EOF;
 	return 0;
 }
 
@@ -508,9 +506,13 @@ ULS_QUALIFIED_METHOD(uls_fill_fd_source_utf8)(uls_source_ptr_t isrc, char* buf, 
 	const uls_ptrtype_tool(utf_inbuf) inp = (const uls_ptrtype_tool(utf_inbuf)) isrc->usrc;
 	int rc;
 
-	while ((rc = _uls_tool_(fill_utf8buf)(inp, buf, buflen, bufsiz)) <= 0) {
-		if (rc < 0 || inp->is_eof > 0) break;
-		_uls_tool_(msleep)(20);
+	rc = _uls_tool_(fill_utf8buf)(inp, buf, buflen, bufsiz);
+	if (rc == 0) {
+		if (inp->is_eof > 0) {
+			isrc->flags |= ULS_ISRC_FL_EOF;
+		} else if (inp->is_eof < 0) {
+			rc = -1;
+		}
 	}
 
 	return rc;

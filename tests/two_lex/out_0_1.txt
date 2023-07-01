@@ -11,14 +11,14 @@
 	  4 	[       ] ;
 	  6 	[     ID] AAA
 	  6 	[       ] =
-	  6 	[ NUMBER] 1
+	  6 	[ NUMBER] 0x1
 	  6 	[       ] ;
 	  8 	[     ID] WWW
 		  1[     ID] WWW1
 		  2[     ID] WWW2
 		  3[     ID] WWW3
 	  8 	[       ] =
-	  8 	[ NUMBER] 0.
+	  8 	[ NUMBER] 0.0
 	  8 	[       ] ;
 	  9 	[     ID] YYY
 	  9 	[       ] =

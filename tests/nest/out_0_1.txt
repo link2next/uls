@@ -14,11 +14,11 @@
   5	[       ] ;
   7	[     ID] AAA
   7	[       ] =
-  7	[ NUMBER] 1
+  7	[ NUMBER] 0x1
   7	[       ] ;
   8	[     ID] BBB
   8	[       ] =
-  8	[ NUMBER] 0
+  8	[ NUMBER] 0x0
   8	[       ] ;
  10	[     IF] if
  10	[       ] (
@@ -31,7 +31,7 @@
  10	[       ] {
  11	[     ID] AAA
  11	[       ] =
- 11	[ NUMBER] 0
+ 11	[ NUMBER] 0x0
  11	[       ] ;
  12	[     ID] EEE
  12	[       ] =
@@ -43,11 +43,11 @@
  15	[     ID] VVV1
  15	[     ID] VVV2
  15	[       ] =
- 15	[ NUMBER] -0.00031415926
+ 15	[ NUMBER] -0.31415926E-3
  15	[       ] ;
  16	[     ID] BBB
  16	[       ] =
- 16	[ NUMBER] -7094
+ 16	[ NUMBER] -0x1BB6
  16	[       ] ;
  17	[     ID] AAA
  17	[       ] =
@@ -61,7 +61,7 @@
 		 EOF: '2 14 ./input1_1.txt'
 	 EOF: '1 14 ./input1_0.txt'
  19	[       ] =
- 19	[ NUMBER] 0.
+ 19	[ NUMBER] 0.0
  19	[       ] ;
  20	[     ID] YYY
  20	[       ] =

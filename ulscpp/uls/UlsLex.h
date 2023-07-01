@@ -578,7 +578,7 @@ namespace uls {
 			// </brief>
 			// <parm name="isQuote"> If the next token is a literal string 'isQuote' is true.</parm>
 			// <return>The next character</return>
-			virtual uls_uch_t peekCh(bool* isQuote);
+			virtual uls_uch_t peekCh(bool* isQuote) override;
 			uls_uch_t peekCh(void);
 
 			// <brief>
@@ -590,7 +590,7 @@ namespace uls {
 			// </brief>
 			// <parm name="isQuote"> If the next token is a literal string 'isQuote' is true.</parm>
 			// <return>The next character</return>
-			virtual uls_uch_t getCh(bool* isQuote);
+			virtual uls_uch_t getCh(bool* isQuote) override;
 			uls_uch_t getCh(void);
 
 			// <brief>
@@ -598,7 +598,7 @@ namespace uls {
 			//     at the next call of peekCh() or getCh().
 			// </brief>
 			// <return>none</return>
-			virtual void ungetCh(uls_uch_t uch);
+			virtual void ungetCh(uls_uch_t uch) override;
 
 			// <brief>
 			// This is one of the main methods of the uls lexical analyzer object.
@@ -611,7 +611,7 @@ namespace uls {
 			// Use getTokNum() to get the current token number and getTokStr() to get the associated lexeme.
 			// </brief>
 			// <return>the token number</return>
-			virtual int getTok(void);
+			virtual int getTok(void) override;
 			inline int getToken(void) {
 				return getTok();
 			}
@@ -644,7 +644,7 @@ namespace uls {
 			// It's the same value as the return value of getTok().
 			// </brief>
 			// <return>token number</return>
-			virtual int getTokNum(void);
+			virtual int getTokNum(void) override;
 			int getTokId(void) {
 				return getTokNum();
 			}
@@ -724,7 +724,7 @@ namespace uls {
 			// </brief>
 			// <parm name="lxm">The token string with which the token number 'tok_id' is paired.</parm>
 			// <return>none</return>
-			void ungetTok(void);
+			virtual void ungetTok(void) override;
 
 			void ungetStr(std::string str);
 			void ungetStr(std::wstring str);
@@ -807,7 +807,7 @@ namespace uls {
 			// <parm name="bufsiz">The capacity of 'buf'</parm>
 			// <parm name="fmt">format string</parm>
 			// <return># of bytes filled except for '\0'</return>
-			virtual int vsnprintf(char* buf, int bufsiz, const char *fmt, va_list args);
+			virtual int vsnprintf(char* buf, int bufsiz, const char *fmt, va_list args) override;
 			int vsnprintf(wchar_t* buf, int bufsiz, const wchar_t *fmt, va_list args);
 
 			int snprintf(char* buf, int bufsiz, const char *fmt, ...);

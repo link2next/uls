@@ -1,18 +1,11 @@
 
-  v1.8.15
+  v1.8.16
   -----------
-    o bug-fixes on numbers
-    o Refactoring token numbers
-      The format of the API function uls_lexeme(), which is the current token string, is changed
-         and the uls_tokstr() is now a little different from uls_lexeme().
-      a) Integers: The supported radices of number are 2, 3, 4, 8, 16, and 10.
-         The corresponding prefixes 0b, 0t, 0q, 0o, 0x are prepended in the token string, uls_lexeme().
-         uls_tokstr() will gives you it as hexa-decimal format prefixed by '0x'.
-      b) Floating-Point numbers:
-         uls_lexeme() will represent it as the one similar to scientific E-notation and
-         uls_tokstr() gives you it as the common form.
-      c) Use uls_number_suffix() to get the number suffix.
-      For more details, see the user-guide 'uls_ug-0.8.2.pdf' in the folder 'doc'.
+    o Tested on MacOS(Ventura)
+    o bug-fixes on
+      a) converting decimal-string to hexa as token string
+      b) infinite looping as getting input buffer since v1.8.12
+    o If you use the api uls_push_isrc(), refer to tests/dump_toks/dump_toks.c
 
   v1.8.14
   -----------

@@ -342,7 +342,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 uls_ver_major = 1
 uls_ver_minor = 8
-uls_ver_debug = 15
+uls_ver_debug = 16
 uls_ver = $(uls_ver_major).$(uls_ver_minor).$(uls_ver_debug)
 so_current = 1
 so_revision = 0
@@ -359,9 +359,10 @@ libulscpp_la_SOURCES = \
 noinst_HEADERS = 
 include_HEADERS = 
 libulscpp_la_CPPFLAGS = -D_ULSCPP_IMPLDLL -include $(CONFIG_HEADER) \
-	-I$(top_srcdir)/ulscompat -I$(top_srcdir)/src
+	-I$(top_srcdir)/ulscompat -I$(top_srcdir)/src \
+	-funsigned-char -std=c++11 -Wall -Wno-char-subscripts
 
-libulscpp_la_CFLAGS = -funsigned-char -Wall -Wno-char-subscripts
+#libulscpp_la_CFLAGS  = -funsigned-char -Wall -Wno-char-subscripts
 libulscpp_la_LIBADD = $(top_builddir)/ulscompat/libulscompat.la $(top_builddir)/src/libuls.la
 libulscpp_la_LDFLAGS = -version-info $(so_current):$(so_revision):$(so_age)
 ACLOCAL_AMFLAGS = -I m4

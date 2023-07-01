@@ -239,6 +239,7 @@ test_uls_xdef(LPTSTR fpath)
 int
 uls_fill_FILE_source(uls_source_t* isrc, char* buf, int buflen, int bufsiz)
 {
+	// assume: buflen < bufsiz
 	static unsigned char utf8buf[ULS_UTF8_CH_MAXLEN];
 	static int len_utf8buf;
 
@@ -257,8 +258,10 @@ uls_fill_FILE_source(uls_source_t* isrc, char* buf, int buflen, int bufsiz)
 	}
 
 	if ((n_bytes = fread(buf + buflen, sizeof(char), bufsiz - buflen, fp)) <= 0) {
-		if (n_bytes < 0 || ferror(fp) || !feof(fp)) {
+		if (n_bytes < 0 || ferror(fp)) {
 			n_bytes = -1;
+		} else if (feof(fp)) {
+			isrc->flags |= ULS_ISRC_FL_EOF;
 		}
 		return n_bytes;
 	}
@@ -274,7 +277,6 @@ uls_fill_FILE_source(uls_source_t* isrc, char* buf, int buflen, int bufsiz)
 			}
 			break;
 		}
-
 	}
 
 	return i - buflen0;

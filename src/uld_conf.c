@@ -122,7 +122,6 @@ ULS_QUALIFIED_METHOD(add_aliases_to_token)(uls_tokdef_vx_ptr_t e_vx, uls_ptrtype
 	return n;
 }
 
-
 int
 ULS_QUALIFIED_METHOD(uld_pars_line)(int lno, uls_ptrtype_tool(wrd) wrdx, uld_line_ptr_t tok_names)
 {
@@ -373,7 +372,6 @@ ULS_QUALIFIED_METHOD(uld_post_names)(uld_names_map_ptr_t names_map)
 			} else {
 				uls->xcontext.context->tok = uls->xcontext.toknum_EOI;
 			}
-
 			break;
 		}
 

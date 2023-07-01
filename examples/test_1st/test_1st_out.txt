@@ -4,15 +4,15 @@
 	[       ] {
 	[     ID] AAA
 	[       ] =
-	[ NUMBER] 1
+	[ NUMBER] 0x1
 	[       ] ;
 	[     ID] BBB
 	[       ] =
-	[ NUMBER] 0
+	[ NUMBER] 0x0
 	[       ] ;
 	[     ID] IDENTIFIER
 	[       ] =
-	[ NUMBER] 1
+	[ NUMBER] 0x1
 	[       ] ;
 	[     ID] if
 	[       ] (
@@ -27,32 +27,32 @@
 	[       ] {
 	[     ID] AAA
 	[       ] =
-	[ NUMBER] 0
+	[ NUMBER] 0x0
 	[       ] ;
 	[     ID] EEE
 	[       ] =
-	[ NUMBER] 755
+	[ NUMBER] 0x2F3
 	[       ] ;
 	[       ] }
 	[     ID] XXX
 	[       ] =
-	[ NUMBER] -0.00031415926
+	[ NUMBER] -0.31415926E-3
 	[       ] ;
 	[     ID] XXX
 	[       ] =
-	[ NUMBER] -0.00031415926
+	[ NUMBER] -0.31415926E-3
 	[       ] ;
 	[     ID] BBB
 	[       ] =
-	[ NUMBER] -7094
+	[ NUMBER] -0x1BB6
 	[       ] ;
 	[     ID] AAA
 	[       ] =
-	[ NUMBER] 644
+	[ NUMBER] 0x284
 	[       ] ;
 	[     ID] XXX
 	[       ] =
-	[ NUMBER] 0.
+	[ NUMBER] 0.0
 	[       ] ;
 	[     ID] YYY
 	[       ] =
@@ -77,7 +77,7 @@
 	[       ] }
 	[     ID] AAA
 	[       ] =
-	[ NUMBER] 0.
+	[ NUMBER] 0.0
 	[       ] ;
 	[     ID] BBB
 	[       ] =

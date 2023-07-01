@@ -805,6 +805,21 @@ ULS_QUALIFIED_METHOD(__uls_print_tok)(uls_ostream_ptr_t ostr, int tokid, const c
 }
 
 int
+ULS_QUALIFIED_METHOD(uls_print_tok)(uls_ostream_ptr_t ostr, int tokid, const char* tokstr)
+{
+	int l_tokstr;
+
+	if (tokstr == NULL) {
+		tokstr = "";
+		l_tokstr = 0;
+	} else {
+		l_tokstr = _uls_tool_(strlen)(tokstr);
+	}
+
+	return __uls_print_tok(ostr, tokid, tokstr, l_tokstr);
+}
+
+int
 ULS_QUALIFIED_METHOD(__uls_print_tok_linenum)(uls_ostream_ptr_t ostr, int lno, const char* tag, int tag_len)
 {
 	int rc;
@@ -820,66 +835,18 @@ ULS_QUALIFIED_METHOD(__uls_print_tok_linenum)(uls_ostream_ptr_t ostr, int lno, c
 	return rc;
 }
 
-ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__uls_print_tok_number)(uls_ostream_ptr_t ostr)
-{
-	uls_lex_ptr_t uls = (uls_lex_ptr_t) ostr->uls;
-	int rc, tokid, l_numstr, l_suffix, l_tokstr;
-	const char *numstr, *suffix, *tokstr;
-	char *tmpbuf, tmpbuf1[64], *tmpbuf2 = NULL;
-
-	tokid = uls->xcontext.toknum_NUMBER;
-
-	numstr = __uls_lexeme(uls);
-	l_numstr = __uls_lexeme_len(uls);
-
-	suffix = uls_number_suffix(uls);
-	l_suffix = _uls_tool_(strlen)(suffix);
-
-	if (l_suffix > 0) {
-		rc = l_numstr + l_suffix + 2;
-		if (rc > sizeof(tmpbuf1)) {
-			rc = uls_ceil_log2(rc, 3);
-			tmpbuf = tmpbuf2 = uls_malloc_buffer(rc);
-		} else {
-			tmpbuf = tmpbuf1;
-		}
-
-		_uls_tool_(memcopy)(tmpbuf, numstr, l_numstr);
-		l_tokstr = l_numstr;
-		tmpbuf[l_tokstr++] = ' ';
-
-		_uls_tool_(memcopy)(tmpbuf + l_tokstr, suffix, l_suffix);
-		l_tokstr += l_suffix;
-		tmpbuf[l_tokstr] = '\0';
-
-		tokstr = tmpbuf;
-	} else {
-		tokstr = numstr;
-		l_tokstr = l_numstr;
-	}
-
-	rc = __uls_print_tok(ostr, tokid, tokstr, l_tokstr);
-	uls_mfree(tmpbuf2);
-
-	return rc;
-}
-
 int
-ULS_QUALIFIED_METHOD(uls_print_tok)(uls_ostream_ptr_t ostr)
+ULS_QUALIFIED_METHOD(uls_print_tok_linenum)(uls_ostream_ptr_t ostr, int lno, const char* tag)
 {
-	uls_lex_ptr_t uls = (uls_lex_ptr_t) ostr->uls;
-	int rc, tokid = __uls_tok(uls);
-	const char* tokstr = __uls_lexeme(uls);
-	int l_tokstr =  __uls_lexeme_len(uls);
+	int tag_len;
 
-	if (tokid == uls->xcontext.toknum_NUMBER) {
-		rc = __uls_print_tok_number(ostr);
+	if (tag == NULL) {
+		tag_len = 0;
 	} else {
-		rc = __uls_print_tok(ostr, tokid, tokstr, l_tokstr);
+		tag_len = _uls_tool_(strlen)(tag);
 	}
 
-	return rc;
+	return __uls_print_tok_linenum(ostr, lno, tag, tag_len);
 }
 
 int
@@ -952,13 +919,6 @@ int
 ULS_QUALIFIED_METHOD(_uls_const_LINE_NUMBERING)(void)
 {
 	return ULS_LINE_NUMBERING;
-}
-
-int
-ULS_QUALIFIED_METHOD(_uls_print_tok)(uls_ostream_ptr_t ostr, int tokid, const char* tokstr)
-{
-	int l_tokstr = _uls_tool_(strlen)(tokstr);
-	return __uls_print_tok(ostr, tokid, tokstr, l_tokstr);
 }
 
 ULS_QUALIFIED_RETTYP(uls_ostream_ptr_t)

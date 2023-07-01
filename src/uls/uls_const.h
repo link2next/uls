@@ -58,10 +58,10 @@
 #define TMP_LANGS_FNAME      "uls_langs.txt"
 #define ULS_ULCNAME_DELIM    '/'
 
-#define ULS_VERSION_STR      _T("1.8.15")
+#define ULS_VERSION_STR      _T("1.8.16")
 #define ULC2CLASS_PROGVER    _T("v2.7.0")
 #define ULF_GEN_PROGVER      _T("v1.6.0")
-#define ULS_STREAM_PROGVER   _T("v2.7.0")
+#define ULS_STREAM_PROGVER   _T("v2.6.0")
 #define ULC2YAML_PROGVER     _T("v1.0.0")
 
 #define ULS_INITIAL_NAME     _T("ULS(Unified Lexical Scheme)")
