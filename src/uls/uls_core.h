@@ -80,7 +80,6 @@ extern "C" {
 #define uls_token_id uls_tok
 #define uls_tok_id uls_tok
 
-#define uls_tokstr uls_lexeme
 #define uls_lexeme_ulen uls_lexeme_chars
 #define uls_lexeme_text uls_lexeme
 
@@ -196,6 +195,9 @@ uls_context_ptr_t uls_push_context(uls_lex_ptr_t uls, uls_context_ptr_t ctx_new)
 #endif // ULS_DECL_PROTECTED_PROC
 
 #ifdef ULS_DECL_PUBLIC_PROC
+ULS_DLL_EXTERN const char* uls_tokstr(uls_lex_ptr_t uls);
+ULS_DLL_EXTERN int uls_tokstr_len(uls_lex_ptr_t uls);
+
 ULS_DLL_EXTERN const char* uls_tok2keyw(uls_lex_ptr_t uls, int t);
 ULS_DLL_EXTERN const char* uls_tok2name(uls_lex_ptr_t uls, int t);
 

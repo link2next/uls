@@ -1,7 +1,7 @@
  1stToken:
-	[ NUMBER] 0x1BB6
+	[ NUMBER] 7094
  getch: '0'
  2ndToken:
-	[     ID] x1BB6
+	[     ID] x7094
  3rdToken:
 	[     ID] ULS

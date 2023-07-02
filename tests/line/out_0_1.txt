@@ -1,4 +1,4 @@
-	[ NUMBER] 0.1E1
+	[ NUMBER] 1.
 	[   AUTO] auto
 	[   AUTO] Auto
 	[   AUTO] AUTO
@@ -6,19 +6,19 @@
 	[ LITSTR] hello
 	[       ] ^
 	[     ID] BBB
-	[ NUMBER] 0x0
+	[ NUMBER] 0
 	[ NUMBER] 0xFFFE
 	[     LF]
-	[ NUMBER] 0.2E1
+	[ NUMBER] 2.
 	[    TAB]
 	[    TAB]
 	[ LITSTR] hello world
-	[ NUMBER] -0x1BB6
+	[ NUMBER] -7094
 	[ NUMBER] 0x1A4
-	[ NUMBER] 0.0
+	[ NUMBER] 0.
 	[ NUMBER] 0.3
 	[     LF]
-	[ NUMBER] 0.3E1
+	[ NUMBER] 3.
 	[    TAB]
 	[    TAB]
 	[       ] (
@@ -34,7 +34,7 @@
 	[     ID] EEE
 	[       ] )
 	[     LF]
-	[ NUMBER] 0.4E1
+	[ NUMBER] 4.
 	[    TAB]
 	[    TAB]
 	[     ID] FFF

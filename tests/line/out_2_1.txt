@@ -1,2 +1,2 @@
-	[ NUMBER] 0x1
+	[ NUMBER] 1
 	[     LF]

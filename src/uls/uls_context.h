@@ -146,7 +146,8 @@ ULS_DEFINE_STRUCT(context)
 	int        s_val_len, s_val_uchars;
 
 	uls_type_tool(outbuf) tokbuf;
-	int        n_digits, expo;
+	uls_type_tool(outbuf) tokbuf_aux;
+	int        l_tokbuf_aux, n_digits, n_expo;
 
 	uls_tokdef_vx_ptr_t anonymous_uchar_vx;
 	uls_userdata_ptr_t user_data;

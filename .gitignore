@@ -22,6 +22,8 @@ Sample?Lex.*
 Makefile
 Makefile.in
 *.class
+*.jar
+ulsjni/tests/a?.uls
 *.list
 /autom4te.cache
 /doc/man/*.1
@@ -37,6 +39,7 @@ Makefile.in
 /examples/test_1st/test_1st
 /examples/tokseq/tokseq
 /examples/yacc/ulc2xml
+/examples/ulc2yaml/ulc2yaml
 /tests/cpp_hello/cpp_hello
 /tests/dump_toks/dump_toks
 /tests/gcc_toks/gcc_toks

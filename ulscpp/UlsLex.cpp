@@ -1332,7 +1332,7 @@ void UlsLex::update_token_lex(void)
 	wchar_t *wstr;
 
 	lxm_id = uls_tok(&lex);
-	nstr = uls_lexeme(&lex);
+	nstr = uls_tokstr(&lex);
 	lxm_nstr = nstr;
 
 	_ULSCPP_USTR2WSTR(nstr, wstr, 1);

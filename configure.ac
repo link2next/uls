@@ -114,6 +114,7 @@ AC_CONFIG_FILES([Makefile
 	ulscompat/Makefile
 	ulscpp/Makefile
 	ulsjni/Makefile
+	ulsjni/tests/Makefile
 	ulsjni/libulsjni/Makefile
 	ulsjni/src/Makefile
 	tools/Makefile

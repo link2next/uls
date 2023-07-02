@@ -24,11 +24,11 @@ Test-1: input_file = tmpl_ex.txt
 	[       ] (
 	[     ID] stack_size
 	[    LEQ] <=
-	[ NUMBER] 0x0
+	[ NUMBER] 0
 	[       ] )
 	[     ID] stack_size
 	[       ] =
-	[ NUMBER] 0x1
+	[ NUMBER] 1
 	[       ] ;
 	[     ID] stk_array
 	[       ] =
@@ -44,7 +44,7 @@ Test-1: input_file = tmpl_ex.txt
 	[       ] ;
 	[     ID] top
 	[       ] =
-	[ NUMBER] 0x0
+	[ NUMBER] 0
 	[       ] ;
 	[       ] }
 	[       ] ~
@@ -66,7 +66,7 @@ Test-1: input_file = tmpl_ex.txt
 	[ RETURN] return
 	[     ID] top
 	[     EQ] ==
-	[ NUMBER] 0x0
+	[ NUMBER] 0
 	[       ] ?
 	[     ID] true
 	[       ] :
@@ -186,11 +186,11 @@ tnam = 'T' tval='unsigned long long'
 	[       ] (
 	[     ID] stack_size
 	[    LEQ] <=
-	[ NUMBER] 0x0
+	[ NUMBER] 0
 	[       ] )
 	[     ID] stack_size
 	[       ] =
-	[ NUMBER] 0x1
+	[ NUMBER] 1
 	[       ] ;
 	[     ID] stk_array
 	[       ] =
@@ -208,7 +208,7 @@ tnam = 'T' tval='unsigned long long'
 	[       ] ;
 	[     ID] top
 	[       ] =
-	[ NUMBER] 0x0
+	[ NUMBER] 0
 	[       ] ;
 	[       ] }
 	[       ] ~
@@ -230,7 +230,7 @@ tnam = 'T' tval='unsigned long long'
 	[ RETURN] return
 	[     ID] top
 	[     EQ] ==
-	[ NUMBER] 0x0
+	[ NUMBER] 0
 	[       ] ?
 	[     ID] true
 	[       ] :

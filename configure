@@ -18153,7 +18153,7 @@ fi
 
 
 
-ac_config_files="$ac_config_files Makefile ulsconfig/Makefile ulc_exam/Makefile src/Makefile ulscompat/Makefile ulscpp/Makefile ulsjni/Makefile ulsjni/libulsjni/Makefile ulsjni/src/Makefile tools/Makefile tools/ulstools/Makefile tools/ulc2class/Makefile tools/ulf_gen/Makefile tools/uls_stream/Makefile doc/Makefile doc/man/Makefile tests/Makefile tests/cpp_hello/Makefile tests/dump_toks/Makefile tests/id_stat/Makefile tests/getch/Makefile tests/line/Makefile tests/log/Makefile tests/many_kwrds/Makefile tests/nest/Makefile tests/strings/Makefile tests/tok_remap/Makefile tests/two_lex/Makefile tests/test_tree/Makefile tests/gcc_toks/Makefile examples/Makefile examples/test_1st/Makefile examples/tokseq/Makefile examples/yacc/Makefile examples/DumpToks/Makefile examples/Css3/Makefile examples/Html5/Makefile examples/Shell/Makefile examples/Mkf/Makefile examples/Natural/Makefile examples/ulc2yaml/Makefile post_inst/Makefile"
+ac_config_files="$ac_config_files Makefile ulsconfig/Makefile ulc_exam/Makefile src/Makefile ulscompat/Makefile ulscpp/Makefile ulsjni/Makefile ulsjni/tests/Makefile ulsjni/libulsjni/Makefile ulsjni/src/Makefile tools/Makefile tools/ulstools/Makefile tools/ulc2class/Makefile tools/ulf_gen/Makefile tools/uls_stream/Makefile doc/Makefile doc/man/Makefile tests/Makefile tests/cpp_hello/Makefile tests/dump_toks/Makefile tests/id_stat/Makefile tests/getch/Makefile tests/line/Makefile tests/log/Makefile tests/many_kwrds/Makefile tests/nest/Makefile tests/strings/Makefile tests/tok_remap/Makefile tests/two_lex/Makefile tests/test_tree/Makefile tests/gcc_toks/Makefile examples/Makefile examples/test_1st/Makefile examples/tokseq/Makefile examples/yacc/Makefile examples/DumpToks/Makefile examples/Css3/Makefile examples/Html5/Makefile examples/Shell/Makefile examples/Mkf/Makefile examples/Natural/Makefile examples/ulc2yaml/Makefile post_inst/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -19280,6 +19280,7 @@ do
     "ulscompat/Makefile") CONFIG_FILES="$CONFIG_FILES ulscompat/Makefile" ;;
     "ulscpp/Makefile") CONFIG_FILES="$CONFIG_FILES ulscpp/Makefile" ;;
     "ulsjni/Makefile") CONFIG_FILES="$CONFIG_FILES ulsjni/Makefile" ;;
+    "ulsjni/tests/Makefile") CONFIG_FILES="$CONFIG_FILES ulsjni/tests/Makefile" ;;
     "ulsjni/libulsjni/Makefile") CONFIG_FILES="$CONFIG_FILES ulsjni/libulsjni/Makefile" ;;
     "ulsjni/src/Makefile") CONFIG_FILES="$CONFIG_FILES ulsjni/src/Makefile" ;;
     "tools/Makefile") CONFIG_FILES="$CONFIG_FILES tools/Makefile" ;;

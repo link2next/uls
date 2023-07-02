@@ -26,11 +26,11 @@
 	[       ] :
 	[     ID] rgb
 	[       ] (
-	[    NUM] 9F
+	[    NUM] 159
 	[       ] ,
 	[    NUM] 0
 	[       ] ,
-	[    NUM] 97
+	[    NUM] 151
 	[       ] )
 	[       ] ;
 	[       ] }
@@ -49,11 +49,11 @@
 	[     ID] dotted
 	[     ID] rgb
 	[       ] (
-	[    NUM] E6
+	[    NUM] 230
 	[       ] ,
-	[    NUM] 9F
+	[    NUM] 159
 	[       ] ,
-	[    NUM] 97
+	[    NUM] 151
 	[       ] )
 	[       ] ;
 	[       ] }
@@ -69,7 +69,7 @@
 	[    NUM] 5
 	[    DEG] deg
 	[       ] )
-	[    NUM] A
+	[    NUM] 10
 	[     PX] px
 	[       ] ;
 	[       ] }
@@ -94,7 +94,7 @@
 	[       ] ;
 	[     ID] letter-spacing
 	[       ] :
-	[    NUM] -.5E-1
+	[    NUM] -.05
 	[     EM] em
 	[       ] }
 	[     ID] a
@@ -111,7 +111,7 @@
 	[       ] (
 	[    NUM] 0
 	[       ] ,
-	[    NUM] FF
+	[    NUM] 255
 	[       ] ,
 	[    NUM] 0
 	[       ] )
@@ -131,7 +131,7 @@
 	[       ] ;
 	[     ID] font-size
 	[       ] :
-	[    NUM] 64
+	[    NUM] 100
 	[       ] %
 	[       ] }
 	[     ID] h1
@@ -189,7 +189,7 @@
 	[       ] {
 	[     ID] font
 	[       ] :
-	[    NUM] .125E1
+	[    NUM] 1.25
 	[     EM] em
 	[     ID] Constantia
 	[       ] ,

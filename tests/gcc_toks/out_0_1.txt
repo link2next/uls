@@ -4,7 +4,7 @@ pluto.h:717 [       ] )
 pluto.h:718 [       ] {
 pluto.h:719 [     ID] AAA
 pluto.h:719 [       ] =
-pluto.h:719 [ NUMBER] 0x1
+pluto.h:719 [ NUMBER] 1
 pluto.h:719 [       ] ;
 pluto.h:720 [     ID] BBB
 pluto.h:720 [       ] =
@@ -14,13 +14,13 @@ pluto.h:720 [     ID] Horizon
 pluto.h:720 [       ] ;
 pluto.h:722 [     ID] AAA
 pluto.h:722 [       ] =
-pluto.h:722 [ NUMBER] 0.0
+pluto.h:722 [ NUMBER] 0.
 pluto.h:722 [       ] ;
 pluto.h:723 [     ID] BBB
 pluto.h:723 [       ] =
-pluto.h:723 [ NUMBER] 0x0
-pluto.h:723 [ NUMBER] 0x0
-pluto.h:723 [ NUMBER] 0x0
+pluto.h:723 [ NUMBER] 0
+pluto.h:723 [ NUMBER] 0
+pluto.h:723 [ NUMBER] 0
 pluto.h:723 [     ID] x
 pluto.h:723 [       ] ;
 pluto.h:724 [     ID] BBB
@@ -30,7 +30,7 @@ pluto.h:724 [     ID] AAA
 pluto.h:724 [       ] ;
 pluto.h:726 [     ID] ID123
 pluto.h:726 [       ] =
-pluto.h:726 [ NUMBER] -0x1
+pluto.h:726 [ NUMBER] -1
 pluto.h:726 [       ] ;
 pluto.h:728 [     IF] if
 pluto.h:728 [       ] (
@@ -43,7 +43,7 @@ pluto.h:728 [       ] )
 pluto.h:728 [       ] {
 pluto.h:729 [     ID] AAA
 pluto.h:729 [       ] =
-pluto.h:729 [ NUMBER] 0x0
+pluto.h:729 [ NUMBER] 0
 pluto.h:729 [       ] ;
 pluto.h:730 [     ID] EEE
 pluto.h:730 [       ] =
@@ -56,7 +56,7 @@ pluto.h:733 [ NUMBER] -0.31415926E-7
 pluto.h:733 [       ] ;
 pluto.h:734 [     ID] BBB
 pluto.h:734 [       ] =
-pluto.h:734 [ NUMBER] -0x1BB6
+pluto.h:734 [ NUMBER] -7094
 pluto.h:734 [       ] ;
 pluto.h:735 [     ID] REX
 pluto.h:735 [       ] =
@@ -64,7 +64,7 @@ pluto.h:735 [ NUMBER] 0x1A4
 pluto.h:735 [       ] ;
 pluto.h:736 [     ID] ID
 pluto.h:736 [       ] =
-pluto.h:736 [ NUMBER] 0.31415E1
+pluto.h:736 [ NUMBER] 3.1415
 pluto.h:736 [       ] ;
 pluto.h:738 [  WHILE] while
 pluto.h:738 [       ] (

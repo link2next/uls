@@ -500,7 +500,7 @@ ULS_QUALIFIED_METHOD(uls_init_context)(uls_context_ptr_t ctx, uls_gettok_t getto
 {
 	uls_input_ptr_t   inp;
 	uls_lexseg_ptr_t lexseg;
-	int i;
+	int i, n;
 
 	ctx->flags = 0;
 	_uls_tool(csz_init)(uls_ptr(ctx->tag), 128);
@@ -538,8 +538,12 @@ ULS_QUALIFIED_METHOD(uls_init_context)(uls_context_ptr_t ctx, uls_gettok_t getto
 	ctx->s_val = ctx->tokbuf.buf;
 	ctx->s_val_len = ctx->s_val_uchars = 0;
 
-	_uls_tool(str_init)(uls_ptr(ctx->tokbuf), (ULS_LEXSTR_MAXSIZ+1)<<1);
-	ctx->n_digits = ctx->expo = 0;
+	n = (ULS_LEXSTR_MAXSIZ+1) << 1;
+	_uls_tool(str_init)(uls_ptr(ctx->tokbuf), n);
+	ctx->n_digits = ctx->n_expo = 0;
+
+	_uls_tool(str_init)(uls_ptr(ctx->tokbuf_aux), n);
+	ctx->l_tokbuf_aux = -1;
 
 	ctx->anonymous_uchar_vx = uls_create_tokdef_vx(0, "", nilptr); // 0: nonsense
 	ctx->anonymous_uchar_vx->flags |= ULS_VX_ANONYMOUS;
@@ -562,6 +566,7 @@ ULS_QUALIFIED_METHOD(uls_deinit_context)(uls_context_ptr_t ctx)
 
 	_uls_tool(csz_deinit)(uls_ptr(ctx->tag));
 	_uls_tool(str_free)(uls_ptr(ctx->tokbuf));
+	_uls_tool(str_free)(uls_ptr(ctx->tokbuf_aux));
 	ctx->gettok = nilptr;
 	ctx->prev = nilptr;
 

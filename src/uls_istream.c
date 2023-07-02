@@ -386,6 +386,7 @@ ULS_QUALIFIED_METHOD(uls_gettok_bin)(uls_lex_ptr_t uls)
 	uls_context_ptr_t ctx = uls->xcontext.context;
 	uls_decl_parray_slots_init(slots_rsv, tokdef_vx, uls_ptr(uls->tokdef_vx_rsvd));
 	const char     *lptr, *pckptr;
+	char *lptr2;
 	int    tok_id, rc, txtlen;
 	uls_uint32  *hdrbuf;
 	uls_type_tool(outparam) parms;
@@ -437,6 +438,16 @@ ULS_QUALIFIED_METHOD(uls_gettok_bin)(uls_lex_ptr_t uls)
 	}
 
 	ctx->flags |= ULS_CTX_FL_EXTERN_TOKBUF;
+
+	if (tok_id == uls->xcontext.toknum_NUMBER) { // numstr ' ' number-suffix
+		for (lptr2 = (char *) lptr; *lptr2 != '\0'; lptr2++) {
+			if (*lptr2 == ' ') {
+				*lptr2 = '\0';
+				txtlen = (int) (lptr2 - lptr);
+				break;
+			}
+		}
+	}
 
 	ctx->tok = tok_id;
 	ctx->s_val = lptr;
