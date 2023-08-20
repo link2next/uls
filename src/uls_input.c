@@ -385,7 +385,6 @@ ULS_QUALIFIED_METHOD(uls_destroy_input)(uls_input_ptr_t inp)
 int
 ULS_QUALIFIED_METHOD(uls_input_read)(uls_source_ptr_t isrc, char *buf, int buflen0, int bufsiz)
 {
-	// assume: buflen0 < bufsiz
 	int buflen = buflen0;
 	int rc;
 
@@ -393,9 +392,8 @@ ULS_QUALIFIED_METHOD(uls_input_read)(uls_source_ptr_t isrc, char *buf, int bufle
 		if (isrc->flags & ULS_ISRC_FL_ERR) return -1;
 		if (isrc->flags & ULS_ISRC_FL_EOF) break;
 
-		rc = isrc->usrc_fillbuff(isrc, buf, buflen, bufsiz);
-		if (rc < 0) {
-			isrc->flags |= ULS_ISRC_FL_ERR | ULS_ISRC_FL_EOF;
+		if ((rc = isrc->usrc_fillbuff(isrc, buf, buflen, bufsiz)) < 0) {
+			isrc->flags |= ULS_ISRC_FL_EOF | ULS_ISRC_FL_ERR;
 			return -1;
 		}
 

@@ -239,7 +239,6 @@ test_uls_xdef(LPTSTR fpath)
 int
 uls_fill_FILE_source(uls_source_t* isrc, char* buf, int buflen, int bufsiz)
 {
-	// assume: buflen < bufsiz
 	static unsigned char utf8buf[ULS_UTF8_CH_MAXLEN];
 	static int len_utf8buf;
 

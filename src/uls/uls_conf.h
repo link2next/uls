@@ -84,7 +84,6 @@ extern "C" {
 #define ULS_FL_LF_CHAR           0x01
 #define ULS_FL_TAB_CHAR          0x02
 #define ULS_FL_CASE_INSENSITIVE  0x04
-#define ULS_FL_CVT_YAML          0x10
 
 int initialize_ulc_lexattr();
 void finalize_ulc_lexattr();
@@ -303,7 +302,6 @@ ULS_DLL_EXTERN int ulc_add_searchpath(const char *pathlist, int front);
 ULS_DLL_EXTERN int ulc_prepend_searchpath_pwd(void);
 
 ULS_DLL_EXTERN int ulc_read_header(uls_lex_ptr_t uls, FILE* fin, ulc_header_ptr_t hdr, uls_ptrtype_tool(outparam) parms);
-
 ULS_DLL_EXTERN uls_tokdef_vx_ptr_t ulc_proc_line(const char* tag_nam, int lno, char* lptr, uls_lex_ptr_t uls, ulc_header_ptr_t hdr,
 	uls_ptrtype_tool(outparam) parms);
 

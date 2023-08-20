@@ -81,6 +81,7 @@ ULS_QUALIFIED_METHOD(check_keyw_str)(int lno, const char* str, uls_ptrtype_tool(
 			}
 
 			uch = uls_get_escape_char(uls_ptr(lit1));
+
 			if (lit1.len_ch_escaped < 0) {
 				buf[len++] = '\\';
 				buf[len++] = *ptr++;
@@ -2987,7 +2988,6 @@ ULS_QUALIFIED_METHOD(ulc_read_header)(uls_lex_ptr_t uls, FILE* fin, ulc_header_p
 				_uls_log(err_log)("%s: Can't find the header of ulc", fp_stack_top->tagstr);
 				return -1;
 			}
-			// BUGFIX-227: You should have considered the line having ulc_lname.
 			fp_stack_top->linenum = 1;
 			break;
 		}
