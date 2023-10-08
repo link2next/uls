@@ -109,7 +109,7 @@ ULS_QUALIFIED_METHOD(input_skip_comment)(uls_commtype_ptr_t cmt, uls_input_ptr_t
 {
 	const char  *lptr, *lptr_end, *mark;
 	int n_lfs = 0, len_mark;
-	int  stat = 1; // --> success
+	int rc, stat = 1; // --> success
 
 	lptr = inp->rawbuf_ptr;
 	lptr_end = lptr + inp->rawbuf_bytes;
@@ -468,7 +468,7 @@ ULS_QUALIFIED_METHOD(uls_resize_rawbuf)(uls_input_ptr_t inp, int delta)
 		if (delta > 0) {
 			m = uls_roundup(m, ULS_FDBUF_INITSIZE);
 		} else {
-			m = uls_roundup(m, sizeof(uls_uch_t));
+			m = uls_roundup(m, sizeof(uls_wch_t));
 		}
 
 		inp->rawbuf_ptr = inp->rawbuf.buf = (char *) _uls_tool_(mrealloc)(inp->rawbuf.buf, m);

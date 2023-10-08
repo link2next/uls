@@ -62,7 +62,7 @@ ULS_DECLARE_STRUCT(utf_inbuf);
 ULS_DEFINE_DELEGATE_BEGIN(fill_utf_rawbuf, int)(uls_utf_inbuf_ptr_t inp);
 ULS_DEFINE_DELEGATE_END(fill_utf_rawbuf);
 
-ULS_DEFINE_DELEGATE_BEGIN(dec_utf_rawbuf, int)(uls_utf_inbuf_ptr_t inp, uls_uch_t* out_buf, int out_bufsiz);
+ULS_DEFINE_DELEGATE_BEGIN(dec_utf_rawbuf, int)(uls_utf_inbuf_ptr_t inp, uls_wch_t* out_buf, int out_bufsiz);
 ULS_DEFINE_DELEGATE_END(dec_utf_rawbuf);
 #endif
 
@@ -75,7 +75,7 @@ ULS_DEFINE_STRUCT_BEGIN(utf_inbuf)
 	int    bytesbuf_siz; // bytes unit
 	char   *wrdptr;    // reference to bytesbuf[]
 	int    n_wrds;     // 1, 2, 4 bytes unit
-	uls_uch_t wch_buffered;
+	uls_wch_t wch_buffered;
 
 	int    fd;
 	int    is_eof;
@@ -89,13 +89,13 @@ ULS_DEFINE_STRUCT_BEGIN(utf_inbuf)
 
 #if defined(__ULS_UTF8_ENC__) || defined(ULS_DECL_PRIVATE_PROC)
 ULS_DECL_STATIC int fill_utf8_buf(uls_utf_inbuf_ptr_t inp);
-ULS_DECL_STATIC int dec_utf8_buf(uls_utf_inbuf_ptr_t inp, uls_uch_t* out_buf, int out_bufsiz);
+ULS_DECL_STATIC int dec_utf8_buf(uls_utf_inbuf_ptr_t inp, uls_wch_t* out_buf, int out_bufsiz);
 
 ULS_DECL_STATIC int fill_utf16_buf(uls_utf_inbuf_ptr_t inp);
-ULS_DECL_STATIC int dec_utf16_buf(uls_utf_inbuf_ptr_t inp, uls_uch_t* out_buf, int out_bufsiz);
+ULS_DECL_STATIC int dec_utf16_buf(uls_utf_inbuf_ptr_t inp, uls_wch_t* out_buf, int out_bufsiz);
 
 ULS_DECL_STATIC int fill_utf32_buf(uls_utf_inbuf_ptr_t inp);
-ULS_DECL_STATIC int dec_utf32_buf(uls_utf_inbuf_ptr_t inp, uls_uch_t* out_buf, int out_bufsiz);
+ULS_DECL_STATIC int dec_utf32_buf(uls_utf_inbuf_ptr_t inp, uls_wch_t* out_buf, int out_bufsiz);
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC
@@ -105,7 +105,7 @@ void uls_utf_reset_inbuf(uls_utf_inbuf_ptr_t inp, int mode);
 #endif
 
 #ifdef ULS_DECL_PUBLIC_PROC
-int uls_fill_utf8str(uls_uch_t *uchs, int n_uchs,
+int uls_fill_utf8str(uls_wch_t *uchs, int n_uchs,
 	char* utf8buf, int siz_utf8buf, int *p_len_utf8buf);
 int uls_fill_utf8buf(uls_utf_inbuf_ptr_t inp, char* utf8buf, int len_utf8buf, int siz_utf8buf);
 
@@ -116,7 +116,7 @@ int uls_utf_is_inbuf_empty(uls_utf_inbuf_ptr_t inp);
 void uls_utf_set_inbuf(uls_utf_inbuf_ptr_t inp, int fd);
 uls_utf_inbuf_ptr_t uls_utf_create_inbuf(char *buf, int bufsiz, int mode);
 void uls_utf_destroy_inbuf(uls_utf_inbuf_ptr_t inp);
-int uls_utf_drain_inbuf(uls_utf_inbuf_ptr_t inp, uls_uch_t *buf, int bufsiz);
+int uls_utf_drain_inbuf(uls_utf_inbuf_ptr_t inp, uls_wch_t *buf, int bufsiz);
 
 #endif
 

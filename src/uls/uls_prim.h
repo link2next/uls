@@ -161,7 +161,7 @@ ULS_DEFINE_STRUCT(outparam)
 
 	char *line;
 	const char *lptr, *lptr_end;
-	uls_uch_t wch;
+	uls_wch_t wch;
 
 	uls_native_vptr_t native_data;
 	uls_voidptr_t data;
@@ -201,8 +201,8 @@ ULS_DEFINE_STRUCT(arglst)
 
 ULS_DEFINE_STRUCT(uch_range)
 {
-	uls_uch_t x1;
-	uls_uch_t x2;
+	uls_wch_t x1;
+	uls_wch_t x2;
 };
 ULS_DEF_ARRAY_TYPE01(uch_range);
 #ifndef ULS_CLASSIFY_SOURCE
@@ -235,7 +235,7 @@ void err_panic_primitive(const char* fmt, ...);
 
 int is_octal_char(char ch);
 int is_hexa_char(char ch);
-int is_num_radix(uls_uch_t ch, int radix);
+int is_num_radix(uls_wch_t ch, int radix);
 char num2char_radix(int val);
 char read_hexa_char(char* ptr);
 
@@ -344,14 +344,15 @@ ULS_DLL_EXTERN void uls_reset_arglst(uls_arglst_ptr_t arglst);
 ULS_DLL_EXTERN void uls_resize_arglst(uls_arglst_ptr_t arglst, int n1_alloc);
 ULS_DLL_EXTERN int uls_append_arglst(uls_arglst_ptr_t arglst, uls_argstr_ptr_t arg);
 
-ULS_DLL_EXTERN int ustr_num_chars(const char *str, int len, uls_outparam_ptr_t parms);
+ULS_DLL_EXTERN int uls_encode_utf8(uls_wch_t wch, char* utf8buf);
+ULS_DLL_EXTERN int uls_decode_utf8(const char *utf8buf, int siz_utf8buf, uls_wch_t *p_val);
+ULS_DLL_EXTERN int uls_encode_utf16(uls_wch_t wch, uls_uint16 *utf16buf);
+ULS_DLL_EXTERN int uls_decode_utf16(const uls_uint16 *buf, int buf_len, uls_wch_t *p_uch);
+ULS_DLL_EXTERN int uls_encode_utf32(uls_wch_t wch, uls_uint32 *buf);
+ULS_DLL_EXTERN int uls_decode_utf32(const uls_uint32 buf, uls_wch_t *p_uch);
 
-ULS_DLL_EXTERN int uls_encode_utf8(uls_uch_t uch, char* utf8buf);
-ULS_DLL_EXTERN int uls_decode_utf8(const char *utf8buf, int siz_utf8buf, uls_uch_t *p_val);
-ULS_DLL_EXTERN int uls_encode_utf16(uls_uch_t uch, uls_uint16 *utf16buf);
-ULS_DLL_EXTERN int uls_decode_utf16(const uls_uint16 *buf, int buf_len, uls_uch_t *p_uch);
-ULS_DLL_EXTERN int uls_encode_utf32(uls_uch_t uch, uls_uint32 *buf);
-ULS_DLL_EXTERN int uls_decode_utf32(const uls_uint32 buf, uls_uch_t *p_uch);
+ULS_DLL_EXTERN int ustr_num_wchars(const char *str, int len, uls_outparam_ptr_t parms);
+#define ustr_num_chars ustr_num_wchars
 
 ULS_DLL_EXTERN ULS_DECL_EXTERN_STATIC void uls_init_mutex(uls_mutex_t mtx);
 ULS_DLL_EXTERN ULS_DECL_EXTERN_STATIC void uls_deinit_mutex(uls_mutex_t mtx);

@@ -55,7 +55,7 @@ ULS_QUALIFIED_METHOD(check_keyw_str)(int lno, const char* str, uls_ptrtype_tool(
 	int  n_lfs, n_tabs;
 	uls_commtype_ptr_t cmt;
 	uls_quotetype_ptr_t qmt;
-	uls_uch_t uch;
+	uls_wch_t wch;
 	uls_litstr_t lit1;
 	uls_decl_parray_slots(slots_qmt, quotetype);
 
@@ -80,22 +80,22 @@ ULS_QUALIFIED_METHOD(check_keyw_str)(int lno, const char* str, uls_ptrtype_tool(
 				return -1;
 			}
 
-			uch = uls_get_escape_char(uls_ptr(lit1));
+			wch = uls_get_escape_char(uls_ptr(lit1));
 
 			if (lit1.len_ch_escaped < 0) {
 				buf[len++] = '\\';
 				buf[len++] = *ptr++;
 			} else {
-				if (uch <= 0x7F && case_insensitive) {
-					uch = _uls_tool_(toupper)(uch);
+				if (wch <= 0x7F && case_insensitive) {
+					wch = _uls_tool_(toupper)(wch);
 				}
 
-				if ((rc = _uls_tool_(encode_utf8)(uch, NULL)) <= 0 || len + rc > ULS_LEXSTR_MAXSIZ) {
+				if ((rc = _uls_tool_(encode_utf8)(wch, NULL)) <= 0 || len + rc > ULS_LEXSTR_MAXSIZ) {
 					_uls_log(err_log)("#%d: encoding error!", lno);
 					return -1;
 				}
 
-				len += rc = _uls_tool_(encode_utf8)(uch, buf+len);
+				len += rc = _uls_tool_(encode_utf8)(wch, buf+len);
 				ptr = lit1.lptr;
 			}
 
@@ -110,14 +110,14 @@ ULS_QUALIFIED_METHOD(check_keyw_str)(int lno, const char* str, uls_ptrtype_tool(
 	parms->len = len;
 
 	ptr = buf;
-	if ((rc=uls_is_char_idfirst(uls, ptr, &uch)) > 0) {
+	if ((rc=uls_is_char_idfirst(uls, ptr, &wch)) > 0) {
 		do {
 			if (rc > 1) {
 				_uls_log(err_log)("Unicode char in keyword not permitted!");
 				return -1;
 			}
 			ptr += rc;
-		} while ((rc=uls_is_char_id(uls, ptr, &uch)) > 0);
+		} while ((rc=uls_is_char_id(uls, ptr, &wch)) > 0);
 
 		if (*ptr == '\0') {
 			n_ch_non_idstr = 0;
@@ -1527,9 +1527,9 @@ ULS_QUALIFIED_METHOD(read_config__NUMBER_PREFIXES)(char *line, uls_cmd_ptr_t cmd
 }
 
 void
-ULS_QUALIFIED_METHOD(ulx_set_decimal_separator)(uls_lex_ptr_t uls, uls_uch_t uch)
+ULS_QUALIFIED_METHOD(ulx_set_decimal_separator)(uls_lex_ptr_t uls, uls_wch_t wch)
 {
-	uls->numcnst_separator = uch;
+	uls->numcnst_separator = wch;
 }
 
 ULS_DECL_STATIC int
@@ -1542,18 +1542,18 @@ ULS_QUALIFIED_METHOD(read_config__DECIMAL_SEPARATOR)(char *line, uls_cmd_ptr_t c
 
 	uls_type_tool(wrd) wrdx;
 	char  *wrd;
-	uls_uch_t uch = ULS_DECIMAL_SEPARATOR_DFL;
+	uls_wch_t wch = ULS_DECIMAL_SEPARATOR_DFL;
 
 	wrdx.lptr = line;
 	if (*(wrd = __uls_tool_(splitstr)(uls_ptr(wrdx))) != '\0') {
-		uch = *wrd;
-		if (!_uls_tool_(isgraph)(uch) || _uls_tool_(isalnum)(uch) || uch == '-' || uch == '.') {
+		wch = *wrd;
+		if (!_uls_tool_(isgraph)(wch) || _uls_tool_(isalnum)(wch) || wch == '-' || wch == '.') {
 			_uls_log(err_log)("%s<%d>: Invalid decimal separator!", tag_nam, lno);
 			return -1;
 		}
 	}
 
-	ulx_set_decimal_separator(uls, uch);
+	ulx_set_decimal_separator(uls, wch);
 	return 0;
 }
 
@@ -1859,30 +1859,30 @@ ULS_QUALIFIED_METHOD(check_rsvd_toks)(uls_lex_ptr_t uls)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_is_char_idfirst)(uls_lex_ptr_t uls, const char* lptr, uls_uch_t *ptr_uch)
+ULS_QUALIFIED_METHOD(uls_is_char_idfirst)(uls_lex_ptr_t uls, const char* lptr, uls_wch_t *ptr_uch)
 {
 	int n_bytes, i;
-	uls_uch_t uch;
+	uls_wch_t wch;
 	uls_ptrtype_tool(uch_range) ran;
 
-	if ((n_bytes = _uls_tool_(decode_utf8)(lptr, -1, &uch)) <= 0) {
+	if ((n_bytes = _uls_tool_(decode_utf8)(lptr, -1, &wch)) <= 0) {
 		return n_bytes;
 	}
 	// UTF-8: n_bytes == 1, 2, 3, 4
-	if (ptr_uch != NULL) *ptr_uch = uch;
+	if (ptr_uch != NULL) *ptr_uch = wch;
 
 	if (n_bytes > 1) {
 		for (i=0; i<uls->idfirst_charset.n; i++) {
 			ran = uls_get_array_slot_type01(uls_ptr(uls->idfirst_charset), i);
-			if (uch >= ran->x1 && uch <= ran->x2)
+			if (wch >= ran->x1 && wch <= ran->x2)
 				return n_bytes;
 		}
 
-		if (is_utf_id(uch) > 0) {
+		if (is_utf_id(wch) > 0) {
 			return n_bytes;
 		}
 
-	} else if (uch < ULS_SYNTAX_TABLE_SIZE && (uls->ch_context[uch] & ULS_CH_IDFIRST)) {
+	} else if (wch < ULS_SYNTAX_TABLE_SIZE && (uls->ch_context[wch] & ULS_CH_IDFIRST)) {
 		return 1;
 	}
 
@@ -1890,31 +1890,31 @@ ULS_QUALIFIED_METHOD(uls_is_char_idfirst)(uls_lex_ptr_t uls, const char* lptr, u
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_is_char_id)(uls_lex_ptr_t uls, const char* lptr, uls_uch_t *ptr_uch)
+ULS_QUALIFIED_METHOD(uls_is_char_id)(uls_lex_ptr_t uls, const char* lptr, uls_wch_t *ptr_uch)
 {
 	int n_bytes, i;
-	uls_uch_t uch;
+	uls_wch_t wch;
 	uls_ptrtype_tool(uch_range) ran;
 
-	if ((n_bytes = _uls_tool_(decode_utf8)(lptr, -1, &uch)) <= 0) {
+	if ((n_bytes = _uls_tool_(decode_utf8)(lptr, -1, &wch)) <= 0) {
 		return n_bytes;
 	}
 
 	// UTF-8: n_bytes == 1, 2, 3, 4
-	if (ptr_uch != NULL) *ptr_uch = uch;
+	if (ptr_uch != NULL) *ptr_uch = wch;
 
 	if (n_bytes > 1) {
 		for (i=0; i<uls->id_charset.n; i++) {
 			ran = uls_get_array_slot_type01(uls_ptr(uls->id_charset), i);
-			if (uch >= ran->x1 && uch <= ran->x2)
+			if (wch >= ran->x1 && wch <= ran->x2)
 				return n_bytes;
 		}
 
-		if (is_utf_id(uch) > 0) {
+		if (is_utf_id(wch) > 0) {
 			return n_bytes;
 		}
 
-	} else if (uch < ULS_SYNTAX_TABLE_SIZE && (uls->ch_context[uch] & ULS_CH_ID)) {
+	} else if (wch < ULS_SYNTAX_TABLE_SIZE && (uls->ch_context[wch] & ULS_CH_ID)) {
 		return 1;
 	}
 

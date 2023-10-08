@@ -1,4 +1,14 @@
 
+  v1.9.1
+  -----------
+    o the minus sign of numbers
+      The minus sign of numbers are excluded in the lexeme of NUMBER token,
+            so that the token strings of it represent non-negative numbers.
+      a) A input string "a-3.14" is tokenized into token sequence { ID(a) '-' NUMBER(3.14) }
+      b) "a=-3.14" into { ID(a) '=' '-' NUMBER(3.14) }
+    o A bug-fix on uls_tokstr()
+       Can cause incorrect token strings of NUMBER when uls_set_tok()/uls_unget*() are used.
+
   v1.9.0
   -----------
     o Refactoring numbers

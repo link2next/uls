@@ -68,7 +68,7 @@ ULS_QUALIFIED_METHOD(__change_tok_id)(uls_tokdef_vx_ptr_t e_vx, int tok_id)
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__change_tok_nam)(uls_tokdef_vx_ptr_t e0_vx, const char* name, const char* name2)
+ULS_QUALIFIED_METHOD(__change_tok_nam)(uls_tokdef_vx_ptr_t e_vx, const char* name, const char* name2)
 {
 	int stat = 0;
 	uls_tokdef_name_ptr_t e_nam;
@@ -78,16 +78,16 @@ ULS_QUALIFIED_METHOD(__change_tok_nam)(uls_tokdef_vx_ptr_t e0_vx, const char* na
 		return -1;
 	}
 
-	if (e0_vx == nilptr || (name != NULL && uls_streql(name, name2))) { // the current token leader
+	if (e_vx == nilptr || (name != NULL && uls_streql(name, name2))) { // the current token leader
 		_uls_log(err_log)("%s: can't find the token leader of '%s'", __func__, name);
 		return -1;
 	}
 
-	if (name == NULL || uls_streql(uls_get_namebuf_value(e0_vx->name), name)) {
-		uls_set_namebuf_value(e0_vx->name, name2);
+	if (name == NULL || uls_streql(uls_get_namebuf_value(e_vx->name), name)) {
+		uls_set_namebuf_value(e_vx->name, name2);
 		stat = 1; // found & changed!
 
-	} else if ((e_nam = find_tokdef_name(e0_vx, name, nilptr)) != nilptr) {
+	} else if ((e_nam = find_tokdef_name(e_vx, name, nilptr)) != nilptr) {
 		uls_set_namebuf_value(e_nam->name, name2);
 		e_nam->flags |= ULS_VX_TOKNAM_CHANGED;
 		stat = 1; // found & changed!
@@ -183,6 +183,7 @@ ULS_QUALIFIED_METHOD(uld_proc_line)(const char *tag, int lno,
 	uls_type_tool(wrd) wrdx;
 
 	wrdx.lptr = lptr;
+
 	if (uld_pars_line(lno, uls_ptr(wrdx), uls_ptr(tok_names)) < 0) {
 		_uls_log(err_log)("%s<%d>: can't change the token name", tag, lno);
 		return -1;
@@ -252,8 +253,8 @@ ULS_QUALIFIED_METHOD(uld_add_aliases)(uls_tokdef_vx_ptr_t e_vx, const char *line
 int
 ULS_QUALIFIED_METHOD(uld_load_fp)(uls_lex_ptr_t uls, FILE *fin_uld, const char *tag)
 {
-	char     linebuff[ULS_LINEBUFF_SIZ__ULD+1], *lptr;
-	int      n2_vx_namelist, linelen, lno=0, stat=0;
+	char linebuff[ULS_LINEBUFF_SIZ__ULD+1], *lptr;
+	int  n2_vx_namelist, linelen, lno=0, stat=0;
 	uld_names_map_ptr_t names_map;
 
 	names_map = uld_prepare_names(uls);

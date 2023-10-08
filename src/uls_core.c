@@ -73,6 +73,7 @@ ULS_QUALIFIED_METHOD(find_prefix_radix)(uls_ptrtype_tool(outparam) parms, uls_le
 			break;
 		}
 	}
+
 	return parms->n1;
 }
 
@@ -80,7 +81,7 @@ ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(get_number)(uls_lex_ptr_t uls, uls_context_ptr_t ctx, uls_ptrtype_tool(parm_line) parm_ln)
 {
 	char *cnst_suffixes = uls->numcnst_suffixes;
-	uls_uch_t numsep = uls->numcnst_separator;
+	uls_wch_t numsep = uls->numcnst_separator;
 	uls_ptrtype_tool(outbuf) tokbuf = uls_ptr(ctx->tokbuf);
 	const char *cnst_suffix, *srp, *lptr, *lptr1, *lptr0;
 	uls_type_tool(outparam) parms1;
@@ -161,7 +162,7 @@ ULS_QUALIFIED_METHOD(make_eof_lexeme)(uls_lex_ptr_t uls)
 
 	ctx->s_val = ctx->tokbuf.buf;
 	ctx->s_val_len = k;
-	ctx->s_val_uchars = _uls_tool(ustr_num_chars)(ctx->s_val, k, nilptr);
+	ctx->s_val_uchars = _uls_tool(ustr_num_wchars)(ctx->s_val, k, nilptr);
 }
 
 ULS_DECL_STATIC ULS_QUALIFIED_RETTYP(uls_context_ptr_t)
@@ -182,14 +183,14 @@ ULS_QUALIFIED_METHOD(make_eoi_lexeme)(uls_lex_ptr_t uls)
 }
 
 ULS_DECL_STATIC ULS_QUALIFIED_RETTYP(uls_tokdef_vx_ptr_t)
-ULS_QUALIFIED_METHOD(__uls_onechar_lexeme)(uls_lex_ptr_t uls, uls_uch_t uch, const char *lptr, int len)
+ULS_QUALIFIED_METHOD(__uls_onechar_lexeme)(uls_lex_ptr_t uls, uls_wch_t wch, const char *lptr, int len)
 {
 	uls_context_ptr_t ctx = uls->xcontext.context;
 	uls_tokdef_vx_ptr_t e_vx;
 
-	if ((e_vx = uls_find_1char_tokdef_vx(uls_ptr(uls->onechar_table), uch, nilptr)) == nilptr) {
+	if ((e_vx = uls_find_1char_tokdef_vx(uls_ptr(uls->onechar_table), wch, nilptr)) == nilptr) {
 		e_vx = ctx->anonymous_uchar_vx;
-		e_vx->tok_id = (int) uch;
+		e_vx->tok_id = (int) wch;
 	}
 
 	ctx->tok = e_vx->tok_id;
@@ -536,7 +537,6 @@ ULS_QUALIFIED_METHOD(ulc_load)(uls_lex_ptr_t uls, FILE *fin_ulc, FILE *fin_ulf)
 		(keyw_stat_list=ulf_load(idtok_list, n_idtok_list, fin_ulf, uls_ptr(ulf_hdr), uls_ptr(uls->idkeyw_table))) != nilptr) {
 		lst = uls_ptr(keyw_stat_list->lst);
 		n_lst = keyw_stat_list->lst.n;
-
 		slots_lst = uls_parray_slots(lst);
 		_uls_quicksort_vptr(slots_lst, n_lst, keyw_stat_comp_by_freq);
 
@@ -565,6 +565,7 @@ ULS_QUALIFIED_METHOD(ulc_load)(uls_lex_ptr_t uls, FILE *fin_ulc, FILE *fin_ulf)
 	_uls_tool_(fp_close)(fin_ulf);
 
 	distribute_twoplus_toks(uls_ptr(uls->twoplus_table));
+
 	return stat;
 }
 
@@ -619,8 +620,7 @@ ULS_QUALIFIED_METHOD(__uls_init_fp)(uls_lex_ptr_t uls, const char *specname,
 
 	uls->shell = nilptr;
 
-	rc = ulc_load(uls, fin_ulc, fin_ulf);
-	if (rc < 0) {
+	if ((rc = ulc_load(uls, fin_ulc, fin_ulf)) < 0) {
 		// fin_ulc, fin_ulf consumed
 		uls_xcontext_deinit(uls_ptr(uls->xcontext));
 		uls_deinit_onechar_table(uls_ptr(uls->onechar_table));
@@ -839,7 +839,7 @@ ULS_QUALIFIED_METHOD(set_err_tok)(uls_lex_ptr_t uls, const char* errmsg)
 
 	lptr = __uls_get_tag(uls);
 	k = k1 = _uls_tool(str_puts)(uls_ptr(ctx->tokbuf), 0, lptr);
-	ctx->s_val_uchars = _uls_tool(ustr_num_chars)(lptr, k, nilptr);
+	ctx->s_val_uchars = _uls_tool(ustr_num_wchars)(lptr, k, nilptr);
 
 	_uls_log_(snprintf)(numbuf, sizeof(numbuf), "<%d> ", __uls_get_lineno(uls));
 	k = _uls_tool(str_puts)(uls_ptr(ctx->tokbuf), k, numbuf);
@@ -864,7 +864,7 @@ ULS_QUALIFIED_METHOD(uls_gettok_raw)(uls_lex_ptr_t uls)
 	char            ch, ch_grp;
 	uls_lexseg_ptr_t  lexseg, lexseg_next;
 	int             j, k, rc0, rc, n_wchars;
-	uls_uch_t       uch;
+	uls_wch_t       wch;
 	uls_tokdef_vx_ptr_t e_vx;
 	uls_tokdef_ptr_t e;
 	uls_type_tool(parm_line) parm_ln;
@@ -917,7 +917,7 @@ ULS_QUALIFIED_METHOD(uls_gettok_raw)(uls_lex_ptr_t uls)
 		ctx->flags |= ULS_CTX_FL_EXTERN_TOKBUF;
 
 		ctx->s_val_len = lexseg->len_text;
-		ctx->s_val_uchars = _uls_tool(ustr_num_chars)(ctx->s_val, ctx->s_val_len, nilptr);
+		ctx->s_val_uchars = _uls_tool(ustr_num_wchars)(ctx->s_val, ctx->s_val_len, nilptr);
 		ctx->tok = e_vx->tok_id;
 
 		ctx->delta_lineno = lexseg->n_lfs_raw;
@@ -929,7 +929,7 @@ ULS_QUALIFIED_METHOD(uls_gettok_raw)(uls_lex_ptr_t uls)
 		ctx->s_val_len = ctx->s_val_uchars = k;
 		e_vx = slots_rsv[NUM_TOK_IDX];
 
-	} else if ((rc0 = uls_is_char_idfirst(uls, lptr, &uch)) > 0) {
+	} else if ((rc0 = uls_is_char_idfirst(uls, lptr, &wch)) > 0) {
 		rc = rc0;
 		for (n_wchars = k = 0; rc > 0; ) {
 			for (j=0; j<rc; j++) {
@@ -945,7 +945,7 @@ ULS_QUALIFIED_METHOD(uls_gettok_raw)(uls_lex_ptr_t uls)
 			ctx->tok = e_vx->tok_id;
 			ctx->s_val = ctx->tokbuf.buf;
 			ctx->s_val_len = k;
-			ctx->s_val_uchars = _uls_tool(ustr_num_chars)(ctx->s_val, k, nilptr);
+			ctx->s_val_uchars = _uls_tool(ustr_num_wchars)(ctx->s_val, k, nilptr);
 
 		} else if (n_wchars > uls->id_max_uchars || k > uls->id_max_bytes ) {
 			e_vx = set_err_tok(uls, "Too long identifier!");
@@ -971,18 +971,18 @@ ULS_QUALIFIED_METHOD(uls_gettok_raw)(uls_lex_ptr_t uls)
 
 		ctx->s_val = ctx->tokbuf.buf;
 		ctx->s_val_len = rc;
-		ctx->s_val_uchars = _uls_tool(ustr_num_chars)(ctx->s_val, rc, nilptr);
+		ctx->s_val_uchars = _uls_tool(ustr_num_wchars)(ctx->s_val, rc, nilptr);
 		lptr += rc;
 
 	} else if (rc0 < -1) {
-		if (_uls_tool_(decode_utf8)(lptr, -1, &uch) <= 0) {
+		if (_uls_tool_(decode_utf8)(lptr, -1, &wch) <= 0) {
 			e_vx = set_err_tok(uls, "Incorrect utf-8 format!");
 			uls->tokdef_vx = e_vx;
 			ctx->lptr = lptr;
 			return 0;
 		}
 		rc = -rc0;
-		e_vx = __uls_onechar_lexeme(uls, uch, lptr, rc);
+		e_vx = __uls_onechar_lexeme(uls, wch, lptr, rc);
 		lptr += rc;
 
 	} else if (ch_grp & ULS_CH_1) {
@@ -997,7 +997,6 @@ ULS_QUALIFIED_METHOD(uls_gettok_raw)(uls_lex_ptr_t uls)
 
 		e_vx = __uls_onechar_lexeme(uls, ch, lptr, 1);
 		++lptr;
-
 	} else {
 		e_vx = set_err_tok(uls, "Unknown char!");
 	}
@@ -1530,7 +1529,7 @@ ULS_QUALIFIED_METHOD(uls_set_tok)(uls_lex_ptr_t uls, int tokid, const char* lexe
 	ctx->s_val = ctx->tokbuf.buf;
 
 	ctx->s_val_len = l_lexeme;
-	ctx->s_val_uchars = _uls_tool(ustr_num_chars)(ctx->s_val, l_lexeme, nilptr);
+	ctx->s_val_uchars = _uls_tool(ustr_num_wchars)(ctx->s_val, l_lexeme, nilptr);
 }
 
 void
@@ -2086,7 +2085,7 @@ ULS_QUALIFIED_METHOD(_uls_const_DO_DUP)(void)
 	return ULS_DO_DUP;
 }
 
-uls_uch_t
+uls_wch_t
 ULS_QUALIFIED_METHOD(_uls_const_NEXTCH_NONE)(void)
 {
 	return ULS_UCH_NONE;
@@ -2135,39 +2134,39 @@ ULS_QUALIFIED_METHOD(_uls_toknum_TMPL)(uls_lex_ptr_t uls)
 }
 
 int
-ULS_QUALIFIED_METHOD(_uls_is_ch_space)(uls_lex_ptr_t uls, uls_uch_t uch)
+ULS_QUALIFIED_METHOD(_uls_is_ch_space)(uls_lex_ptr_t uls, uls_wch_t wch)
 {
-	return uls_is_ch_space(uls, uch);
+	return uls_canbe_ch_space(uls, wch);
 }
 
 int
-ULS_QUALIFIED_METHOD(_uls_is_ch_idfirst)(uls_lex_ptr_t uls, uls_uch_t uch)
+ULS_QUALIFIED_METHOD(_uls_is_ch_idfirst)(uls_lex_ptr_t uls, uls_wch_t wch)
 {
-	return uls_canbe_ch_idfirst(uls, uch);
+	return uls_canbe_ch_idfirst(uls, wch);
 }
 
 int
-ULS_QUALIFIED_METHOD(_uls_is_ch_id)(uls_lex_ptr_t uls, uls_uch_t uch)
+ULS_QUALIFIED_METHOD(_uls_is_ch_id)(uls_lex_ptr_t uls, uls_wch_t wch)
 {
-	return uls_canbe_ch_id(uls, uch);
+	return uls_canbe_ch_id(uls, wch);
 }
 
 int
-ULS_QUALIFIED_METHOD(_uls_is_ch_quote)(uls_lex_ptr_t uls, uls_uch_t uch)
+ULS_QUALIFIED_METHOD(_uls_is_ch_quote)(uls_lex_ptr_t uls, uls_wch_t wch)
 {
-	return uls_canbe_ch_quote(uls, uch);
+	return uls_canbe_ch_quote(uls, wch);
 }
 
 int
-ULS_QUALIFIED_METHOD(_uls_is_ch_1ch_token)(uls_lex_ptr_t uls, uls_uch_t uch)
+ULS_QUALIFIED_METHOD(_uls_is_ch_1ch_token)(uls_lex_ptr_t uls, uls_wch_t wch)
 {
-	return uls_is_ch_1ch_token(uls, uch);
+	return uls_canbe_ch_1ch_token(uls, wch);
 }
 
 int
-ULS_QUALIFIED_METHOD(_uls_is_ch_2ch_token)(uls_lex_ptr_t uls, uls_uch_t uch)
+ULS_QUALIFIED_METHOD(_uls_is_ch_2ch_token)(uls_lex_ptr_t uls, uls_wch_t wch)
 {
-	return uls_canbe_ch_2ch_token(uls, uch);
+	return uls_canbe_ch_2ch_token(uls, wch);
 }
 
 int

@@ -48,7 +48,7 @@ ULS_QUALIFIED_METHOD(__uls_fmtproc_coord)(uls_voidptr_t x_dat, uls_lf_puts_t put
 		len = __uls_lf_snprintf(buf, sizeof(buf), nilptr, "%s:%04d", __uls_get_tag(uls), __uls_get_lineno(uls));
 	}
 
-	n_chars = ustr_num_chars(buf, len, nilptr);
+	n_chars = ustr_num_wchars(buf, len, nilptr);
 	return uls_lf_fill_mbstr(x_dat, puts_proc, uls_ptr(ctx->perfmt), buf, len, n_chars);
 }
 
@@ -65,7 +65,7 @@ ULS_QUALIFIED_METHOD(__uls_fmtproc_tokname)(uls_voidptr_t x_dat, uls_lf_puts_t p
 		wrdptr = "";
 	}
 
-	n_chars = ustr_num_chars(wrdptr, -1, uls_ptr(parms1));
+	n_chars = ustr_num_wchars(wrdptr, -1, uls_ptr(parms1));
 	len = parms1.len;
 
 	return uls_lf_fill_mbstr(x_dat, puts_proc, uls_ptr(ctx->perfmt),  wrdptr, len, n_chars);
@@ -84,7 +84,7 @@ ULS_QUALIFIED_METHOD(__uls_fmtproc_keyword)(uls_voidptr_t x_dat, uls_lf_puts_t p
 		wrdptr = __uls_lexeme(uls);
 	}
 
-	n_chars = ustr_num_chars(wrdptr, -1, uls_ptr(parms1));
+	n_chars = ustr_num_wchars(wrdptr, -1, uls_ptr(parms1));
 	len = parms1.len;
 
 	return uls_lf_fill_mbstr(x_dat, puts_proc, uls_ptr(ctx->perfmt),  wrdptr, len, n_chars);

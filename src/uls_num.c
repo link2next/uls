@@ -72,7 +72,7 @@ ULS_QUALIFIED_METHOD(add_decstr_by_xx)(const char* numstr, int n_digits, int nn,
 	}
 
 	if (nn <= 0) {
-		uls_memcopy(outbuf, numstr, n_digits);
+		uls_memmove(outbuf, numstr, n_digits);
 		outbuf[n_digits] = '\0';
 		return n_digits;
 	}
@@ -157,7 +157,7 @@ ULS_QUALIFIED_METHOD(mul_decstr_by_xx)(const char* numstr, int n_digits, int mul
 	}
 
 	if (multiplier == 1) {
-		uls_memcopy(outbuf, numstr, n_digits);
+		uls_memmove(outbuf, numstr, n_digits);
 		outbuf[n_digits] = '\0';
 		return n_digits;
 	}
@@ -207,6 +207,7 @@ ULS_QUALIFIED_METHOD(mul_decstr_by_xx)(const char* numstr, int n_digits, int mul
 	}
 	uls_reverse_bytes(outbuf, k);
 	outbuf[k] = '\0';
+
 	return k;
 }
 
@@ -310,6 +311,7 @@ ULS_QUALIFIED_METHOD(uls_quat2hex_str)(const char* numstr, int n_digits, char* o
 	int h_val;
 
 	if (n_digits < 0) n_digits = uls_strlen(numstr);
+
 	n = n_digits / 2;
 	m = n_digits % 2;
 
@@ -446,7 +448,7 @@ ULS_DECL_STATIC char*
 ULS_QUALIFIED_METHOD(decstr2hexbin)(uls_outparam_ptr_t parms)
 {
 	// In case decimal string is "143230",
-	// return-value(outptr): pointer of hexa bin: 022F7E
+	// return-value(outptr): pointer of hexa bin: 0x22F7E
 	//    outptr[0] = 0x02, outptr[1] = 0x2F, outptr[2] = 0x7E
 	// nibbles: # of hexa digits, nibbles==5
 	// Overwrites the input parms->line.
@@ -702,6 +704,10 @@ ULS_QUALIFIED_METHOD(uls_radix2hexadecimal_str)(int radix1, const char *numbuf1,
 	return k;
 }
 
+/**
+ * input: flags(ULS_NUM_FL_PREVCH_IS_SEP), wch, lptr
+ * output: flags, lptr
+ */
 ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(skip_prefixed_zeros)(uls_outparam_ptr_t parms)
 {
@@ -729,12 +735,14 @@ ULS_QUALIFIED_METHOD(skip_prefixed_zeros)(uls_outparam_ptr_t parms)
 		parms->flags &= ~ULS_NUM_FL_PREVCH_IS_SEP;
 	}
 
-//	parms->n1 = (int) (lptr - lptr0);
 	parms->lptr = lptr;
-
 	return m;
 }
 
+/**
+ * input: wch, lptr
+ * output: len, lptr
+ */
 ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(__skip_radix_numstr)(uls_outparam_ptr_t parms, int radix,
 	uls_outbuf_ptr_t numbuf, int k)
@@ -781,9 +789,8 @@ ULS_QUALIFIED_METHOD(__skip_radix_numstr)(uls_outparam_ptr_t parms, int radix,
  * output: flags(ULS_NUM_FL_PREVCH_IS_SEP), len, lptr
  */
 int
-ULS_QUALIFIED_METHOD(uls_skip_radix_numstr)(uls_outparam_ptr_t parms, int radix, uls_outbuf_ptr_t numbuf, int k)
+ULS_QUALIFIED_METHOD(skip_radix_numstr)(uls_outparam_ptr_t parms, int radix, uls_outbuf_ptr_t numbuf, int k)
 {
-	// call __skip_radix_numstr after skip_prefixed_zeros
 	int len, n_zeros;
 
 	n_zeros = skip_prefixed_zeros(parms);
@@ -992,7 +999,6 @@ ULS_QUALIFIED_METHOD(uls_num2stdfmt)(uls_outparam_ptr_t parms, uls_outbuf_ptr_t 
 				uls_memmove(str_dataptr_k(numbuf,j), str_dataptr_k(numbuf,k0), parms->len);
 				k = j + parms->len;
 				str_putc(numbuf, k, '\0');
-
 				return k;
 			}
 
@@ -1057,7 +1063,7 @@ ULS_QUALIFIED_METHOD(uls_extract_number)(uls_outparam_ptr_t parms, uls_outbuf_pt
 
 		parms->lptr += len_prefix;
 		parms->flags |= ULS_NUM_FL_PREVCH_IS_SEP;
-		k = uls_skip_radix_numstr(parms, radix, tokbuf, k);
+		k = skip_radix_numstr(parms, radix, tokbuf, k);
 
 		if (k > k1) {
 			if (*str_dataptr_k(tokbuf, k1) == '0') {
@@ -1069,7 +1075,6 @@ ULS_QUALIFIED_METHOD(uls_extract_number)(uls_outparam_ptr_t parms, uls_outbuf_pt
 		} else {
 			parms->lptr = lptr0;
 			n_zeros = skip_prefixed_zeros(parms);
-
 			if (n_zeros > 0) {
 				parms->flags |= ULS_NUM_FL_ZERO;
 				if (*parms->lptr == '.') {
@@ -1149,6 +1154,12 @@ ULS_QUALIFIED_METHOD(uls_extract_number)(uls_outparam_ptr_t parms, uls_outbuf_pt
 	return k;
 }
 
+/**
+ * uls_number: tokbuf, k0(offset-in-tokbuf)
+ *  input : numstr, len_numstr, n_expo
+ *  output : flags{ZERO|MINUS|FLOAT}, lptr(digits), len(#-of-digits), n(exponent),, n1(len_significand), n2(len_mentissa)
+ *  returns :
+ */
 void
 ULS_QUALIFIED_METHOD(uls_number)(const char *numstr, int len_numstr, int n_expo, uls_outparam_ptr_t parms)
 {
@@ -1265,7 +1276,7 @@ ULS_QUALIFIED_METHOD(__make_radixint_str_gexpr)(const char *radstr, int l_radstr
 	str_putc(numbuf, k++, 'x');
 
 	// Allocate memory for radix = 2, 4, 8 only
-	str_modify(numbuf, k, NULL, l_radstr + 1);
+	str_modify(numbuf, k, NULL, l_radstr + 1); // +1 for '\0'
 
 	switch (radix) {
 	case 2:

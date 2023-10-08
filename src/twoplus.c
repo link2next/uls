@@ -225,7 +225,6 @@ ULS_QUALIFIED_METHOD(distribute_twoplus_toks)(uls_kwtable_twoplus_ptr_t tbl)
 		for (i0=i++; i<n_tokdefs_vx; i++) {
 			e_vx = slots_vx[i];
 			e = e_vx->base;
-
 			if (len_keyw != e->l_keyword) break;
 		}
 

@@ -86,7 +86,7 @@ __add_widename_in_list(
 
 	pair = pair_list + pair_list_len;
 	pair->tok_id = t;
-	pair->n_chars = ustr_num_chars(sval, n_bytes, NULL);
+	pair->n_chars = ustr_num_wchars(sval, n_bytes, NULL);
 
 	csz_init(uls_ptr(csz_wstr), -1);
 

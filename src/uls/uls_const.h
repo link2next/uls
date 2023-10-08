@@ -58,7 +58,7 @@
 #define TMP_LANGS_FNAME      "uls_langs.txt"
 #define ULS_ULCNAME_DELIM    '/'
 
-#define ULS_VERSION_STR      _T("1.9.0")
+#define ULS_VERSION_STR      _T("1.9.1")
 #define ULC2CLASS_PROGVER    _T("v2.7.0")
 #define ULF_GEN_PROGVER      _T("v1.6.0")
 #define ULS_STREAM_PROGVER   _T("v2.7.0")
@@ -209,7 +209,7 @@
 
 #define ULS_HASH_ALGORITHM "ULF-HASH"
 
-// '-', '.', 0 1 2 3 4 5 6 7 8 9
+// .', 0 1 2 3 4 5 6 7 8 9
 #define ULS_CH_DIGIT   0x01
 
 /* one-char token candidate */
@@ -240,11 +240,11 @@
 #define ULS_UTF8_CH_MAXLEN    4
 #define ULS_UTF16_CH_MAXLEN   2
 
-#define UTF8_CODEPOINT_END          0x1FFFFF
-#define UTF16_CODEPOINT_END         0x10FFFF
-#define UTF16_CODEPOINT_RSVD_START  0xD800
-#define UTF16_CODEPOINT_RSVD_END    0xDFFF
-#define UTF32_CODEPOINT_END         UTF8_CODEPOINT_END
+#define ULS_UTF8_CODEPOINT_END          0x1FFFFF
+#define ULS_UTF16_CODEPOINT_END         0x10FFFF
+#define ULS_UTF16_CODEPOINT_RSVD_START  0xD800
+#define ULS_UTF16_CODEPOINT_RSVD_END    0xDFFF
+#define ULS_UTF32_CODEPOINT_END         ULS_UTF8_CODEPOINT_END
 
 #define DOUBLE_EXPO_SIZE_BITS  11
 #define DOUBLE_EXPO_BIAS      1023

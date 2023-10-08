@@ -46,7 +46,6 @@ int  opt_verbose;
 
 int   test_mode = -1;
 LPCTSTR config_name;
-
 LPCTSTR input_file;
 
 uls_lex_t *gcc_lex;
@@ -146,7 +145,7 @@ lex_input_file(LPCTSTR fpath)
 	uls_set_tag(gcc_lex, fpath, -1);
 
 	for ( ; ; ) {
-		if ((t=uls_get_tok(gcc_lex)) == TOK_EOI || t == TOK_ERR) {
+		if ((t = uls_get_tok(gcc_lex)) == TOK_EOI || t == TOK_ERR) {
 			if (t == TOK_ERR) {
 				err_log(_T("program abnormally terminated!"));
 			}

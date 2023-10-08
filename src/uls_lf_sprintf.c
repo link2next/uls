@@ -721,7 +721,7 @@ ULS_QUALIFIED_METHOD(fmtproc_s)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, ul
 	wrdptr = (char* ) va_arg(lf_ctx->args, char *);
 	if (wrdptr == NULL) wrdptr = "<null>";
 
-	n_chars = ustr_num_chars(wrdptr, -1, uls_ptr(parms1));
+	n_chars = ustr_num_wchars(wrdptr, -1, uls_ptr(parms1));
 	len = parms1.len;
 
 	rc = uls_lf_fill_mbstr(x_dat, puts_proc, uls_ptr(lf_ctx->perfmt), wrdptr, len, n_chars);
@@ -747,7 +747,7 @@ ULS_QUALIFIED_METHOD(fmtproc_ws)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, u
 		rc = -1;
 	} else {
 		ulen = csz_length(uls_ptr(csz));
-		rc = ustr_num_chars(ustr, ulen, nilptr);
+		rc = ustr_num_wchars(ustr, ulen, nilptr);
 		rc = uls_lf_fill_mbstr(x_dat, puts_proc, uls_ptr(lf_ctx->perfmt), ustr, ulen, rc);
 	}
 

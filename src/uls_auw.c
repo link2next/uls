@@ -167,11 +167,11 @@ ULS_QUALIFIED_METHOD(__uls_ustr2astr_ptr)(uls_outparam_ptr_t parms)
 	}
 
 	if (ulen == -1) {
-		n_chars = ustr_num_chars(ustr, -1, uls_ptr(parms1));
+		n_chars = ustr_num_wchars(ustr, -1, uls_ptr(parms1));
 		ulen = parms1.len;
 	} else {
 		ulen = -ulen;
-		n_chars = ustr_num_chars(ustr, ulen, nilptr);
+		n_chars = ustr_num_wchars(ustr, ulen, nilptr);
 	}
 
 	if (n_chars == ulen) {
@@ -305,7 +305,7 @@ ULS_QUALIFIED_METHOD(uls_ustr2wstr)(const char *ustr, int ulen, csz_str_ptr_t cs
 
 	if (ulen < 0) {
 		if (ulen == -1) {
-			ustr_num_chars(ustr, -1, uls_ptr(parms1));
+			ustr_num_wchars(ustr, -1, uls_ptr(parms1));
 			ulen = parms1.len;
 		} else {
 			ulen = -ulen;
@@ -494,7 +494,7 @@ ULS_QUALIFIED_METHOD(uls_ustr2wstr)(const char *ustr, int ulen, csz_str_ptr_t cs
 	if (ulen < 0) {
 		has_nil = 1;
 		if (ulen == -1) {
-			ustr_num_chars(ustr, -1, uls_ptr(parms1));
+			ustr_num_wchars(ustr, -1, uls_ptr(parms1));
 			ulen = parms1.len;
 		} else {
 			ulen = -ulen;

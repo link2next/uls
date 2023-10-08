@@ -214,7 +214,7 @@ ULS_QUALIFIED_METHOD(uls_dump_char_tokmap)(uls_lex_ptr_t uls)
 	uls_tokdef_vx_ptr_t e_vx;
 
 	int i, j;
-	uls_uch_t uch, uch0;
+	uls_wch_t wch, uch0;
 
 	_uls_log_(printf)("1-CHAR TOKEN MAP(map):\n");
 	for (i=0; i < ULS_N_ONECHAR_TOKGRPS; i++) {
@@ -223,17 +223,17 @@ ULS_QUALIFIED_METHOD(uls_dump_char_tokmap)(uls_lex_ptr_t uls)
 
 		slots_vx = uls_parray_slots(uls_ptr(tokgrp->tokdef_vx_1char));
 		for (j=0; j < tokgrp->tokdef_vx_1char.n; j++) {
-			uch = uch0 + j;
+			wch = uch0 + j;
 
 			if ((e_vx = slots_vx[j]) != nilptr) {
-				print_tokdef_vx_char(uch, e_vx);
+				print_tokdef_vx_char(wch, e_vx);
 			}
 		}
 	}
 
 	_uls_log_(printf)("1-CHAR TOKEN MAP(list):\n");
 	for (e_etc = uls->onechar_table.tokdefs_etc_list; e_etc != nilptr; e_etc = e_etc->next) {
-		print_tokdef_vx_char(e_etc->uch, e_etc->tokdef_vx);
+		print_tokdef_vx_char(e_etc->wch, e_etc->tokdef_vx);
 	}
 }
 

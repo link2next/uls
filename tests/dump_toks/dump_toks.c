@@ -48,7 +48,7 @@ LPCTSTR progname;
 int  opt_verbose;
 
 LPCTSTR config_name;
-LPTSTR input_file;
+LPCTSTR input_file;
 int   test_mode = -1;
 
 uls_lex_t *sample_lex;
@@ -101,7 +101,7 @@ options(int opt, LPTSTR optarg)
 }
 
 int
-test_initial_uls(LPTSTR fpath)
+test_initial_uls(LPCTSTR fpath)
 {
 	uls_lex_ptr_t uls = sample_lex;
 	double f_val;
@@ -197,7 +197,7 @@ sample_xdef_t xdefs[5] = {
 };
 
 void
-test_uls_xdef(LPTSTR fpath)
+test_uls_xdef(LPCTSTR fpath)
 {
 	uls_lex_t *uls = sample_lex;
 	sample_xdef_t *xdef;
@@ -355,7 +355,6 @@ _tmain(int n_targv, LPTSTR *targv)
 	}
 
 	uls_destroy(sample_lex);
-
 	return 0;
 }
 

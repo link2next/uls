@@ -149,7 +149,7 @@ ULS_QUALIFIED_METHOD(make_eoif_lexeme_bin)(uls_context_ptr_t ctx, int tok_id, co
 
 	ctx->s_val = ctx->tokbuf.buf;
 	ctx->s_val_len = txtlen;
-	ctx->s_val_uchars = _uls_tool(ustr_num_chars)(ctx->s_val, txtlen, nilptr);
+	ctx->s_val_uchars = _uls_tool(ustr_num_wchars)(ctx->s_val, txtlen, nilptr);
 }
 
 int
@@ -452,7 +452,7 @@ ULS_QUALIFIED_METHOD(uls_gettok_bin)(uls_lex_ptr_t uls)
 	ctx->tok = tok_id;
 	ctx->s_val = lptr;
 	ctx->s_val_len = txtlen;
-	ctx->s_val_uchars = _uls_tool(ustr_num_chars)(ctx->s_val, txtlen, nilptr);
+	ctx->s_val_uchars = _uls_tool(ustr_num_wchars)(ctx->s_val, txtlen, nilptr);
 
 	uls->tokdef_vx = uls_find_tokdef_vx_force(uls, tok_id);
 	return 0;
@@ -635,6 +635,7 @@ ULS_QUALIFIED_METHOD(uls_open_istream)(int fd)
 			istr->firstline[0] = '\0';
 			istr->len_firstline = 0;
 		}
+
 		return istr;
 	}
 

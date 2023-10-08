@@ -35,12 +35,12 @@
 #endif
 
 int
-ULS_QUALIFIED_METHOD(uls_escmap_canbe_escch)(uls_uch_t uch)
+ULS_QUALIFIED_METHOD(uls_escmap_canbe_escch)(uls_wch_t wch)
 {
 	int ind;
 
-	if (uch >= ULS_ESCMAP_CANBE_ESCCH_START && uch <= ULS_ESCMAP_CANBE_ESCCH_END) {
-		ind = uch - ULS_ESCMAP_CANBE_ESCCH_START;
+	if (wch >= ULS_ESCMAP_CANBE_ESCCH_START && wch <= ULS_ESCMAP_CANBE_ESCCH_END) {
+		ind = wch - ULS_ESCMAP_CANBE_ESCCH_START;
 	} else {
 		ind = -1;
 	}
@@ -839,7 +839,7 @@ ULS_QUALIFIED_METHOD(uls_dec_escaped_char)(uls_escmap_ptr_t map, uls_ptrtype_too
 	const char *lptr1;
 	uls_escstr_ptr_t escstr;
 	char buff[8];
-	uls_uch_t uch;
+	uls_wch_t wch;
 	int n, len, map_flags;
 
 	if ((escstr = uls_find_escstr(map, esc_ch)) == nilptr) {
@@ -858,13 +858,13 @@ ULS_QUALIFIED_METHOD(uls_dec_escaped_char)(uls_escmap_ptr_t map, uls_ptrtype_too
 		n = map_flags & ULS_FL_ESCSTR_MASK;
 
 		if (_uls_tool_(isdigit)(esc_ch)) {
-			uch = esc_ch - '0';
+			wch = esc_ch - '0';
 		} else {
-			uch = 0;
+			wch = 0;
 		}
 
 		len = -n;
-		parms->wch = uch;
+		parms->wch = wch;
 		parms->flags = map_flags;
 	}
 

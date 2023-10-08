@@ -106,7 +106,7 @@ ULS_DEF_PARRAY(tokdef);
 #endif // ULS_DEF_PUBLIC_TYPE
 
 #ifdef ULS_DECL_PROTECTED_PROC
-void print_tokdef_vx_char(uls_uch_t uch, uls_tokdef_vx_ptr_t e_vx);
+void print_tokdef_vx_char(uls_wch_t wch, uls_tokdef_vx_ptr_t e_vx);
 void uls_init_tokdef_vx(uls_tokdef_vx_ptr_t e_vx, int tok_id, const char* name, uls_tokdef_ptr_t e);
 void uls_deinit_tokdef_vx(uls_tokdef_vx_ptr_t e_vx);
 #endif

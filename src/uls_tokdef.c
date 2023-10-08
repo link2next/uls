@@ -33,19 +33,19 @@
 #endif
 
 void
-ULS_QUALIFIED_METHOD(print_tokdef_vx_char)(uls_uch_t uch, uls_tokdef_vx_ptr_t e_vx)
+ULS_QUALIFIED_METHOD(print_tokdef_vx_char)(uls_wch_t wch, uls_tokdef_vx_ptr_t e_vx)
 {
 	int tokid = e_vx->tok_id;
 
-	if (_uls_tool_(isgraph)(uch)) {
-		_uls_log_(printf)("\t'%c' (%3u)", uch, uch);
-		if (uch != tokid) {
+	if (_uls_tool_(isgraph)(wch)) {
+		_uls_log_(printf)("\t'%c' (%3u)", wch, wch);
+		if (wch != tokid) {
 			_uls_log_(printf)("  --> %d\n", tokid);
 		} else {
 			_uls_log_(printf)("\n");
 		}
 	} else {
-		_uls_log_(printf)("\t    (%3u)  --> %d\n", uch, tokid);
+		_uls_log_(printf)("\t    (%3u)  --> %d\n", wch, tokid);
 	}
 }
 

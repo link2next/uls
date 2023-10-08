@@ -99,7 +99,7 @@ options(int opt, LPTSTR optarg)
 }
 
 void
-test_uls(LPTSTR fpath)
+test_uls(LPCTSTR fpath)
 {
 	int fd;
 	int tok;

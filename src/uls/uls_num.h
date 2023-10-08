@@ -45,10 +45,10 @@ extern "C" {
 #endif
 
 #ifdef ULS_DECL_PROTECTED_TYPE
-#define ULS_NUM_FL_MINUS          0x10
-#define ULS_NUM_FL_ZERO           0x20
-#define ULS_NUM_FL_FLOAT          0x40
-#define ULS_NUM_FL_PREVCH_IS_SEP  0x80
+#define ULS_NUM_FL_ZERO           0x01
+#define ULS_NUM_FL_FLOAT          0x02
+#define ULS_NUM_FL_MINUS  0x04
+#define ULS_NUM_FL_PREVCH_IS_SEP  0x10
 
 #endif // ULS_DECL_PROTECTED_TYPE
 
@@ -85,7 +85,7 @@ int add_decstr_by_xx(const char* numstr, int n_digits, int nn, char* outbuf);
 int mul_decstr_by_xx(const char* numstr, int n_digits, int multiplier, char* outbuf);
 int div_decstr_by_16(char* wrd, uls_outparam_ptr_t parms);
 
-int uls_skip_radix_numstr(uls_outparam_ptr_t parms, int radix, uls_outbuf_ptr_t numbuf, int k);
+int skip_radix_numstr(uls_outparam_ptr_t parms, int radix, uls_outbuf_ptr_t numbuf, int k);
 int uls_num2stdfmt(uls_outparam_ptr_t parms, uls_outbuf_ptr_t numbuf, int k);
 #endif // ULS_DECL_PROTECTED_PROC
 

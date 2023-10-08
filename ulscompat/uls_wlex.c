@@ -239,7 +239,7 @@ int
 uls_push_fd_wstr(uls_lex_ptr_t uls, int fd, int flags)
 {
 	if (fd < 0) {
-		err_wlog(L"uls_push_fd: invalid parameter fd(%d)", fd);
+		err_wlog(L"%hs invalid parameter fd(%d)", __func__, fd);
 		return -1;
 	}
 
@@ -250,7 +250,7 @@ int
 uls_set_fd_wstr(uls_lex_ptr_t uls, int fd, int flags)
 {
 	if (fd < 0) {
-		err_wlog(L"uls_set_fd: invalid parameter fd(%d)", fd);
+		err_wlog(L"%hs invalid parameter fd(%d)", __func__, fd);
 		return -1;
 	}
 
@@ -261,7 +261,7 @@ int
 uls_push_fp_wstr(uls_lex_ptr_t uls, FILE *fp, int flags)
 {
 	if (fp == NULL) {
-		err_wlog(L"uls_push_fd: invalid parameter fp");
+		err_wlog(L"%hs: invalid parameter fp", __func__);
 		return -1;
 	}
 
@@ -272,7 +272,7 @@ int
 uls_set_fp_wstr(uls_lex_ptr_t uls, FILE *fp, int flags)
 {
 	if (fp == NULL) {
-		err_wlog(L"uls_set_fd: invalid parameter fp");
+		err_wlog(L"%hs: invalid parameter fp", __func__);
 		return -1;
 	}
 
@@ -297,17 +297,17 @@ uls_push_file_wstr(uls_lex_ptr_t uls, const wchar_t* wfilepath, int flags)
 	FILE *fp;
 
 	if (wfilepath == NULL) {
-		err_wlog(L"uls_push_file:invalid parameter, filepath!");
+		err_wlog(L"%hs: Invalid parameter, filepath=%s!", __func__, wfilepath);
 		return -1;
 	}
 
 	if ((fp = uls_fp_wopen(wfilepath, ULS_FIO_READ)) == NULL) {
-		err_wlog(L"Can't open '%s'!", wfilepath);
+		err_wlog(L"%hs: Can't open '%s'!", __func__, wfilepath);
 		return -1;
 	}
 
 	if (uls_push_fp_wstr(uls, fp, flags) < 0) {
-		err_wlog(L"uls_push_fp: internal error");
+		err_wlog(L"%hs: Error to uls_push_fp!", __func__);
 		uls_fp_close(fp);
 		return -1;
 	}
@@ -326,7 +326,7 @@ int
 uls_set_file_wstr(uls_lex_ptr_t uls, const wchar_t* wfilepath, int flags)
 {
 	if (wfilepath == NULL) {
-		err_wlog(L"uls_set_file:invalid parameter, filepath!");
+		err_wlog(L"%hs: Invalid parameter, filepath=%s", __func__, wfilepath);
 		return -1;
 	}
 
@@ -341,7 +341,7 @@ uls_push_line_wstr(uls_lex_ptr_t uls, const wchar_t* wline, int wlen, int flags)
 	int i;
 
 	if (wline == NULL) {
-		err_wlog(L"uls_push_line: fail to set wide string");
+		err_wlog(L"%hs: fail to set wide string", __func__);
 		return -1;
 	}
 
@@ -370,7 +370,7 @@ uls_set_line_wstr(uls_lex_ptr_t uls, const wchar_t* wline, int wlen, int flags)
 	int i;
 
 	if (wline == NULL) {
-		err_wlog(L"uls_set_line: fail to set wide string");
+		err_wlog(L"%hs fail to set wide string", __func__);
 		return -1;
 	}
 
@@ -562,17 +562,17 @@ uls_lexeme_chars_wstr(uls_lex_ptr_t uls)
 wchar_t
 uls_peek_wch(uls_lex_ptr_t uls, uls_nextch_detail_ptr_t parms)
 {
-	uls_uch_t uch;
-	uch = uls_peek_uch(uls, parms);
-	return (wchar_t) uch;
+	uls_wch_t wch;
+	wch = uls_peek_uch(uls, parms);
+	return (wchar_t) wch;
 }
 
 wchar_t
 uls_get_wch(uls_lex_ptr_t uls, uls_nextch_detail_ptr_t parms)
 {
-	uls_uch_t uch;
-	uch = uls_get_uch(uls, parms);
-	return (wchar_t) uch;
+	uls_wch_t wch;
+	wch = uls_get_uch(uls, parms);
+	return (wchar_t) wch;
 }
 
 void
@@ -642,7 +642,7 @@ uls_push_istream_2_wstr(uls_lex_ptr_t uls, uls_istream_ptr_t istr,
 		tmpl_wnams = tmpl_wvals = NULL;
 		n_tmpls = 0;
 	} else if (tmpl_wnams == NULL || tmpl_wvals == NULL) {
-		err_wlog(L"uls_push_istream: invalid parameter, tmpl_wnams!");
+		err_wlog(L"%hs: Invalid parameter, tmpl_wnams!", __func__);
 		return -1;
 	}
 

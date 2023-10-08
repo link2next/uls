@@ -45,7 +45,7 @@ extern "C" {
 #ifdef ULS_DEF_PUBLIC_TYPE
 ULS_DEFINE_STRUCT(nextch_detail)
 {
-	uls_uch_t uch;
+	uls_wch_t wch;
 	int len_uch;
 	uls_quotetype_ptr_t qmt;
 	int tok;
@@ -67,17 +67,17 @@ ULS_DECL_STATIC uls_context_ptr_t __uls_unget_quote(uls_lex_ptr_t uls,
 
 #ifdef ULS_DECL_PROTECTED_PROC
 uls_context_ptr_t __uls_unget_tok(uls_lex_ptr_t uls);
-uls_uch_t uls_peekch_detail(uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) parms);
+uls_wch_t uls_peekch_detail(uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) parms);
 #endif
 
 #ifdef ULS_DECL_PUBLIC_PROC
 ULS_DLL_EXTERN void uls_unget_tok(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN void uls_unget_lexeme(uls_lex_ptr_t uls, const char *lxm, int tok_id);
 ULS_DLL_EXTERN void uls_unget_str(uls_lex_ptr_t uls, const char* str);
-ULS_DLL_EXTERN void uls_unget_ch(uls_lex_ptr_t uls, uls_uch_t uch);
+ULS_DLL_EXTERN void uls_unget_ch(uls_lex_ptr_t uls, uls_wch_t wch);
 
-ULS_DLL_EXTERN uls_uch_t uls_peek_uch(uls_lex_ptr_t uls, uls_nextch_detail_ptr_t detail_ch);
-ULS_DLL_EXTERN uls_uch_t uls_get_uch(uls_lex_ptr_t uls, uls_nextch_detail_ptr_t detail_ch);
+ULS_DLL_EXTERN uls_wch_t uls_peek_uch(uls_lex_ptr_t uls, uls_nextch_detail_ptr_t detail_ch);
+ULS_DLL_EXTERN uls_wch_t uls_get_uch(uls_lex_ptr_t uls, uls_nextch_detail_ptr_t detail_ch);
 
 ULS_DLL_EXTERN void ulsjava_unget_str(uls_lex_ptr_t uls, const uls_native_vptr_t str, int len_str);
 ULS_DLL_EXTERN void ulsjava_unget_lexeme(uls_lex_ptr_t uls, const uls_native_vptr_t lxm, int len_lxm, int tok_id);
@@ -91,7 +91,6 @@ ULS_DLL_EXTERN uls_nextch_detail_ptr_t ulsjava_get_nextch_info(uls_lex_ptr_t uls
 ULS_DLL_EXTERN void ulsjava_put_nextch_info(uls_nextch_detail_ptr_t detail_ch);
 ULS_DLL_EXTERN int ulsjava_get_uch_from_nextch(uls_nextch_detail_ptr_t detail_ch);
 ULS_DLL_EXTERN int ulsjava_get_tok_from_nextch(uls_nextch_detail_ptr_t detail_ch);
-
 #endif
 #endif
 

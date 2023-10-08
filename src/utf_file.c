@@ -41,7 +41,7 @@ ULS_QUALIFIED_METHOD(id_range_comp)(const uls_voidptr_t e, const uls_voidptr_t b
 {
 	const uls_ptrtype_tool(uch_range) id_range = (const uls_ptrtype_tool(uch_range)) e;
 	const uls_ptrtype_tool(outparam) parms = (const uls_ptrtype_tool(outparam)) b;
-	uls_uch_t  val = (uls_uch_t) parms->x1;
+	uls_wch_t  val = (uls_wch_t) parms->x1;
 
 	// x2 < UNIT_MAX
 	if (id_range->x2 < val) {
@@ -55,12 +55,12 @@ ULS_QUALIFIED_METHOD(id_range_comp)(const uls_voidptr_t e, const uls_voidptr_t b
 }
 
 int
-ULS_QUALIFIED_METHOD(is_utf_id)(uls_uch_t uch)
+ULS_QUALIFIED_METHOD(is_utf_id)(uls_wch_t wch)
 {
 	uls_ptrtype_tool(uch_range) id_range;
 	uls_type_tool(outparam) parms1;
 
-	parms1.x1 = (unsigned int) uch;
+	parms1.x1 = (unsigned int) wch;
 #ifdef ULS_CLASSIFY_SOURCE
 	id_range = (uls_ptrtype_tool(uch_range)) _uls_bisearch_vptr((uls_voidptr_t) uls_ptr(parms1),
 		uls_array_slots_type01(uls_ptr(id_range_list1)), id_range_list1.n, id_range_comp);
@@ -83,7 +83,7 @@ ULS_QUALIFIED_METHOD(load_uch_ranges_list)(void)
 	int  len, i, k, n_wrdlst, n_lines, rc, stat=0;
 
 	uls_ptrtype_tool(uch_range) id_range;
-	uls_uch_t val1, val2;
+	uls_wch_t val1, val2;
 	char fpath[ULS_FILEPATH_MAX+1];
 	FILE *fin;
 

@@ -147,7 +147,7 @@ ULS_DECL_STATIC int parse_escmap_optgrp(uls_escmap_ptr_t esc_map, uls_ptrtype_to
 #endif // ULS_DECL_PRIVATE_PROC
 
 #ifdef ULS_DECL_PROTECTED_PROC
-int uls_escmap_canbe_escch(uls_uch_t uch);
+int uls_escmap_canbe_escch(uls_wch_t wch);
 void uls_init_escstr(uls_escstr_ptr_t escstr, char ch, char *str, int len);
 uls_escstr_ptr_t uls_alloc_escstr(char ch, char *str, int len);
 void uls_deinit_escstr(uls_escstr_ptr_t escstr);

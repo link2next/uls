@@ -160,7 +160,7 @@ ULS_DECL_STATIC int find_prefix_radix(uls_ptrtype_tool(outparam) parms, uls_lex_
 ULS_DECL_STATIC int get_number(uls_lex_ptr_t uls, uls_context_ptr_t ctx, uls_ptrtype_tool(parm_line) parm_ln);
 ULS_DECL_STATIC void make_eof_lexeme(uls_lex_ptr_t uls);
 ULS_DECL_STATIC uls_context_ptr_t make_eoi_lexeme(uls_lex_ptr_t uls);
-ULS_DECL_STATIC uls_tokdef_vx_ptr_t __uls_onechar_lexeme(uls_lex_ptr_t uls, uls_uch_t uch, const char *lptr, int len);
+ULS_DECL_STATIC uls_tokdef_vx_ptr_t __uls_onechar_lexeme(uls_lex_ptr_t uls, uls_wch_t wch, const char *lptr, int len);
 ULS_DECL_STATIC _ULS_INLINE int __uls_is_real(const char *ptr);
 ULS_DECL_STATIC _ULS_INLINE double __uls_lexeme_unsigned_double(const char *ptr);
 ULS_DECL_STATIC uls_uint32 __uls_lexeme_uint32(const char *ptr);
@@ -274,7 +274,7 @@ ULS_DLL_EXTERN int uls_set_extra_tokdef(uls_lex_ptr_t uls, int tok_id, uls_voidp
 
 ULS_DLL_EXTERN int _uls_const_WANT_EOFTOK(void);
 ULS_DLL_EXTERN int _uls_const_DO_DUP(void);
-ULS_DLL_EXTERN uls_uch_t _uls_const_NEXTCH_NONE(void);
+ULS_DLL_EXTERN uls_wch_t _uls_const_NEXTCH_NONE(void);
 
 ULS_DLL_EXTERN int _uls_toknum_EOI(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN int _uls_toknum_EOF(uls_lex_ptr_t uls);
@@ -284,12 +284,12 @@ ULS_DLL_EXTERN int _uls_toknum_ID(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN int _uls_toknum_NUMBER(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN int _uls_toknum_TMPL(uls_lex_ptr_t uls);
 
-ULS_DLL_EXTERN int _uls_is_ch_space(uls_lex_ptr_t uls, uls_uch_t uch);
-ULS_DLL_EXTERN int _uls_is_ch_idfirst(uls_lex_ptr_t uls, uls_uch_t uch);
-ULS_DLL_EXTERN int _uls_is_ch_id(uls_lex_ptr_t uls, uls_uch_t uch);
-ULS_DLL_EXTERN int _uls_is_ch_quote(uls_lex_ptr_t uls, uls_uch_t uch);
-ULS_DLL_EXTERN int _uls_is_ch_1ch_token(uls_lex_ptr_t uls, uls_uch_t uch);
-ULS_DLL_EXTERN int _uls_is_ch_2ch_token(uls_lex_ptr_t uls, uls_uch_t uch);
+ULS_DLL_EXTERN int _uls_is_ch_space(uls_lex_ptr_t uls, uls_wch_t wch);
+ULS_DLL_EXTERN int _uls_is_ch_idfirst(uls_lex_ptr_t uls, uls_wch_t wch);
+ULS_DLL_EXTERN int _uls_is_ch_id(uls_lex_ptr_t uls, uls_wch_t wch);
+ULS_DLL_EXTERN int _uls_is_ch_quote(uls_lex_ptr_t uls, uls_wch_t wch);
+ULS_DLL_EXTERN int _uls_is_ch_1ch_token(uls_lex_ptr_t uls, uls_wch_t wch);
+ULS_DLL_EXTERN int _uls_is_ch_2ch_token(uls_lex_ptr_t uls, uls_wch_t wch);
 
 ULS_DLL_EXTERN int _uls_get_lineno(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN void _uls_set_lineno(uls_lex_ptr_t uls, int lineno);

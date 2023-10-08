@@ -134,7 +134,9 @@ ULS_QUALIFIED_METHOD(__init_kwtable_buckets)(uls_kwtable_ptr_t tbl, int n_slots)
 	if (n_slots > 0) {
 		uls_init_parray(uls_ptr(tbl->bucket_head), tokdef, n_slots);
 		slots_bh = uls_parray_slots(uls_ptr(tbl->bucket_head));
-		for (i=0; i<n_slots; i++) slots_bh[i] = nilptr;
+		for (i=0; i<n_slots; i++) {
+			slots_bh[i] = nilptr;
+		}
 		tbl->bucket_head.n = n_slots;
 
 		tbl->dflhash_stat.n_slots = n_slots;

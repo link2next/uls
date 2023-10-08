@@ -462,7 +462,7 @@ uls_getopts_wstr(int n_args, wchar_t* wargs[], const wchar_t* optwfmt, uls_woptp
 			}
 
 			if ((cwptr=uls_wstrchr(optwfmt, opt)) == NULL) {
-				err_wlog(L"uls_getopts: undefined option -%c", opt);
+				err_wlog(L"%hs: undefined option -%c", __func__, opt);
 				return -1;
 			}
 
@@ -472,13 +472,13 @@ uls_getopts_wstr(int n_args, wchar_t* wargs[], const wchar_t* optwfmt, uls_woptp
 				} else if (k+1 < n_args && wargs[k+1][0] != L'-') {
 					optwarg = wargs[++k];
 				} else {
-					err_wlog(L"uls_getopts: option -%c requires an arg.", opt);
+					err_wlog(L"%hs: option -%c requires an arg.", __func__, opt);
 					return -1;
 				}
 
 				if ((rc = wproc(opt, optwarg)) != 0) {
 					if (rc > 0) rc = 0;
-					else err_wlog(L"uls_getopts: An Error in processing the option -%c.", opt);
+					else err_wlog(L"%hs: An Error in processing the option -%c.", __func__, opt);
 					return rc;
 				}
 				break;
@@ -487,7 +487,7 @@ uls_getopts_wstr(int n_args, wchar_t* wargs[], const wchar_t* optwfmt, uls_woptp
 				optwarg = nullbuff;
 				if ((rc = wproc(opt, optwarg)) != 0) {
 					if (rc > 0) rc = 0;
-					else err_wlog(L"uls_getopts: error in -%c.", opt);
+					else err_wlog(L"%hs: error in -%c.", __func__, opt);
 					return rc;
 				}
 				j++;

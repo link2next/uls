@@ -51,7 +51,7 @@ ULS_DECL_STATIC uls_decl_array_tool_type01(id_range_list1, uch_range);
 int id_range_comp(const uls_voidptr_t e, const uls_voidptr_t b);
 int load_uch_ranges_list(void);
 void unload_uch_ranges_list(void);
-int is_utf_id(uls_uch_t uch);
+int is_utf_id(uls_wch_t wch);
 #endif
 
 #ifdef _ULS_CPLUSPLUS

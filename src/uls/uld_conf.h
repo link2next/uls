@@ -70,7 +70,7 @@ _ULS_DEFINE_STRUCT(uld_names_map)
 ULS_DECL_STATIC int comp_vx_by_toknam(const uls_voidptr_t a, const uls_voidptr_t b);
 ULS_DECL_STATIC int srch_vx_by_toknam(const uls_voidptr_t a, const uls_voidptr_t b);
 ULS_DECL_STATIC void __change_tok_id(uls_tokdef_vx_ptr_t e_vx, int tok_id);
-ULS_DECL_STATIC int __change_tok_nam(uls_tokdef_vx_ptr_t e0_vx, const char* name, const char* name2);
+ULS_DECL_STATIC int __change_tok_nam(uls_tokdef_vx_ptr_t e_vx, const char* name, const char* name2);
 ULS_DECL_STATIC int add_aliases_to_token(uls_tokdef_vx_ptr_t e_vx, uls_ptrtype_tool(wrd) wrdx);
 #endif
 

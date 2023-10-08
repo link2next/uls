@@ -141,7 +141,7 @@ ULS_DEFINE_STRUCT_BEGIN(lex)
 	uls_decl_parray(quotetypes, quotetype); // ULS_N_MAX_QUOTETYPES
 
 	int id_max_bytes, id_max_uchars;
-	uls_uch_t numcnst_separator;
+	uls_wch_t numcnst_separator;
 
 	uls_decl_array_type00(numcnst_prefixes, number_prefix, ULS_N_MAX_NUMBER_PREFIXES);
 	int n_numcnst_prefixes;
@@ -235,8 +235,8 @@ ULS_DECL_STATIC void parse_id_ranges_internal(uls_lex_ptr_t uls, uls_ref_parray_
 #ifdef ULS_DECL_PROTECTED_PROC
 int is_reserved_tok(uls_lex_ptr_t uls, char* name);
 int check_rsvd_toks(uls_lex_ptr_t uls);
-int uls_is_char_idfirst(uls_lex_ptr_t uls, const char* lptr, uls_uch_t *ptr_uch);
-int uls_is_char_id(uls_lex_ptr_t uls, const char* lptr, uls_uch_t *ptr_uch);
+int uls_is_char_idfirst(uls_lex_ptr_t uls, const char* lptr, uls_wch_t *ptr_uch);
+int uls_is_char_id(uls_lex_ptr_t uls, const char* lptr, uls_wch_t *ptr_uch);
 
 uls_tokdef_vx_ptr_t uls_find_tokdef_vx(uls_lex_ptr_t uls, int t);
 uls_tokdef_vx_ptr_t uls_find_tokdef_vx_force(uls_lex_ptr_t uls, int t);
@@ -281,7 +281,7 @@ ULS_DLL_EXTERN void ulx_clear_config_ascii_id_chars(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN int  ulx_set_id_first_chars(uls_lex_ptr_t uls, int k, int i1, int i2);
 ULS_DLL_EXTERN int  ulx_set_id_chars(uls_lex_ptr_t uls, int k, int i1, int i2);
 ULS_DLL_EXTERN void ulx_set_prepended_input(uls_lex_ptr_t uls, const char *line, int len, int lfs_is_not_token);
-ULS_DLL_EXTERN void ulx_set_decimal_separator(uls_lex_ptr_t uls, uls_uch_t uch);
+ULS_DLL_EXTERN void ulx_set_decimal_separator(uls_lex_ptr_t uls, uls_wch_t wch);
 ULS_DLL_EXTERN void ulx_add_config_number_prefixes(uls_lex_ptr_t uls, char *wrd, int len, int radix, int slot_id);
 ULS_DLL_EXTERN int  ulx_add_config_number_suffixes(uls_lex_ptr_t uls, const char *suffix);
 ULS_DLL_EXTERN void ulx_set_not_char_tok(uls_lex_ptr_t uls, const char* non_ch_toks);

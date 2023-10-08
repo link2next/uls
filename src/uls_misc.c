@@ -143,7 +143,7 @@ ULS_QUALIFIED_METHOD(uls_skip_singleline_comment)(uls_ptrtype_tool(parm_line) pa
 ULS_DECL_STATIC unsigned int
 ULS_QUALIFIED_METHOD(uls_gauss_log2)(unsigned int n, uls_ptrtype_tool(outparam) parms)
 {
-	unsigned int i, n_bits=sizeof(unsigned int)<<3;
+	unsigned int i, n_bits = sizeof(unsigned int)<<3;
 	unsigned int m, m_prev;
 
 	m_prev = 1;

@@ -271,12 +271,12 @@ ULS_QUALIFIED_METHOD(uls_get_exeloc_dir)(const char* argv0, char *fpath_buf)
 
 	if (argv0 == NULL) {
 #ifdef HAVE_READLINK
-                len = (int) readlink("/proc/self/exe", fpath_buf, ULS_FILEPATH_MAX+1);
+		len = (int) readlink("/proc/self/exe", fpath_buf, ULS_FILEPATH_MAX+1);
 #else
-                len = -1;
+		len = -1;
 #endif
-                if (len < 0) return -1;
-                fpath_buf[len] = '\0';
+		if (len < 0) return -1;
+		fpath_buf[len] = '\0';
 	} else {
 		if (argv0[0] == ULS_FILEPATH_DELIM) {
 			len = _uls_tool_(strcpy)(fpath_buf, argv0);

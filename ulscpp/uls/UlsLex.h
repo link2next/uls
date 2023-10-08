@@ -255,8 +255,8 @@ namespace uls {
 			// getCh() will get the character and advance the cursor of input.
 			// </brief>
 			// <return>The next character</return>
-			virtual uls_uch_t peekCh(bool* isQuote) = 0;
-			virtual uls_uch_t getCh(bool* isQuote) = 0;
+			virtual uls_wch_t peekCh(bool* isQuote) = 0;
+			virtual uls_wch_t getCh(bool* isQuote) = 0;
 
 			// <brief>
 			// This will push back the character wch in order to get it again
@@ -264,7 +264,7 @@ namespace uls {
 			// getCh() will get the character and advance the cursor of input.
 			// </brief>
 			// <return>none</return>
-			virtual void ungetCh(uls_uch_t uch) = 0;
+			virtual void ungetCh(uls_wch_t wch) = 0;
 		};
 
 		// <brief>
@@ -554,17 +554,17 @@ namespace uls {
 			void dismissAllInputs(void);
 
 			// <brief>
-			// identify the char group of 'uch'.
+			// identify the char group of 'wch'.
 			// </brief>
-			// <parm name="uch">The char to be tested.</parm>
+			// <parm name="wch">The char to be tested.</parm>
 			// <return>true/false</return>
-			bool is_ch_space(uls_uch_t uch);
-			bool is_ch_idfirst(uls_uch_t uch);
-			bool is_ch_id(uls_uch_t uch);
-			bool is_ch_quote(uls_uch_t uch);
-			bool is_ch_1ch_token(uls_uch_t uch);
-			bool is_ch_2ch_token(uls_uch_t uch);
-			bool is_ch_comm(uls_uch_t uch);
+			bool is_ch_space(uls_wch_t wch);
+			bool is_ch_idfirst(uls_wch_t wch);
+			bool is_ch_id(uls_wch_t wch);
+			bool is_ch_quote(uls_wch_t wch);
+			bool is_ch_1ch_token(uls_wch_t wch);
+			bool is_ch_2ch_token(uls_wch_t wch);
+			bool is_ch_comm(uls_wch_t wch);
 
 			// <brief>
 			// Skips the white chars.
@@ -578,8 +578,8 @@ namespace uls {
 			// </brief>
 			// <parm name="isQuote"> If the next token is a literal string 'isQuote' is true.</parm>
 			// <return>The next character</return>
-			virtual uls_uch_t peekCh(bool* isQuote) override;
-			uls_uch_t peekCh(void);
+			virtual uls_wch_t peekCh(bool* isQuote) override;
+			uls_wch_t peekCh(void);
 
 			// <brief>
 			// This extracts the next character.
@@ -590,15 +590,15 @@ namespace uls {
 			// </brief>
 			// <parm name="isQuote"> If the next token is a literal string 'isQuote' is true.</parm>
 			// <return>The next character</return>
-			virtual uls_uch_t getCh(bool* isQuote) override;
-			uls_uch_t getCh(void);
+			virtual uls_wch_t getCh(bool* isQuote) override;
+			uls_wch_t getCh(void);
 
 			// <brief>
 			// This will push back the character wch in order to get it again
 			//     at the next call of peekCh() or getCh().
 			// </brief>
 			// <return>none</return>
-			virtual void ungetCh(uls_uch_t uch) override;
+			virtual void ungetCh(uls_wch_t wch) override;
 
 			// <brief>
 			// This is one of the main methods of the uls lexical analyzer object.

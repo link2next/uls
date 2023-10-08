@@ -270,9 +270,9 @@ JNIEXPORT jobject JNICALL Java_uls_polaris_UlsLex_getCh(JNIEnv *env, jobject obj
 JNIEXPORT jint JNICALL Java_uls_polaris_UlsLex_uchFromNextchInfo(JNIEnv *env, jobject obj, jobject jch_detail)
 {
 	uls_nextch_detail_ptr_t ch_detail = (uls_nextch_detail_ptr_t) (*env)->GetDirectBufferAddress(env, jch_detail);
-	int uch;
-	uch =  ulsjava_get_uch_from_nextch(ch_detail);
-	return uch;
+	int wch;
+	wch =  ulsjava_get_uch_from_nextch(ch_detail);
+	return wch;
 }
 
 JNIEXPORT jint JNICALL Java_uls_polaris_UlsLex_tokFromNextchInfo(JNIEnv *env, jobject obj, jobject jch_detail)
