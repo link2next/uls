@@ -1841,10 +1841,9 @@ ULS_QUALIFIED_METHOD(uls_encode_utf8)(uls_wch_t wch, char* utf8buf, int siz_utf8
 		return -(ULS_UTF8_CH_MAXLEN + 1);
 	}
 
-	if (siz_utf8buf >= 0 && siz_utf8buf < rc)
-		return -(ULS_UTF8_CH_MAXLEN + 2);
-
-	if (utf8buf != NULL) {
+	if (siz_utf8buf >= 0 && siz_utf8buf < rc) {
+		if (utf8buf != NULL) rc = -rc;
+	} else if (utf8buf != NULL) {
 		for (i=0; i<rc; i++) utf8buf[i] = tmpbuf[i];
 	}
 
@@ -1875,7 +1874,7 @@ ULS_QUALIFIED_METHOD(uls_decode_utf8)(const char *utf8buf, int len_utf8buf, uls_
 
 	if ((ch & 0xC0) != 0xC0) return 1;
 	for (n=0; ; n++) {
-		if (n>=3) return 1;
+		if (n >= 3) return -(ULS_UTF8_CH_MAXLEN + 1);
 		if ((ch_ary[n] & ch) == 0) {
 			++n;
 			break;
@@ -1892,7 +1891,7 @@ ULS_QUALIFIED_METHOD(uls_decode_utf8)(const char *utf8buf, int len_utf8buf, uls_
 	for (i=0; i<n; i++) {
 		ch = *++bufptr;
 		if ((ch & 0xC0) != 0x80) {
-			return 1;
+			return -(ULS_UTF8_CH_MAXLEN + 2);
 		}
 		val = (val << 6) | (ch & ch_mask);
 	}
@@ -1920,10 +1919,9 @@ ULS_QUALIFIED_METHOD(uls_encode_utf16)(uls_wch_t wch, uls_uint16 *utf16buf, int 
 		return -(ULS_UTF16_CH_MAXLEN + 1);
 	}
 
-	if (siz_utf16buf >= 0 && siz_utf16buf < rc)
-		return -(ULS_UTF16_CH_MAXLEN + 2);
-
-	if (utf16buf != NULL) {
+	if (siz_utf16buf >= 0 && siz_utf16buf < rc) {
+		if (utf16buf != NULL) rc = -rc;
+	} else if (utf16buf != NULL) {
 		for (i=0; i<rc; i++) utf16buf[i] = tmpbuf[i];
 	}
 

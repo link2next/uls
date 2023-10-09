@@ -759,12 +759,10 @@ ULS_QUALIFIED_METHOD(__skip_radix_numstr)(uls_outparam_ptr_t parms, int radix,
 		ch = *lptr;
 
 		if (is_num_radix(ch, radix) < 0) {
-			if (ch == numsep) {
-				if (is_prevch_numsep) break;
-				is_prevch_numsep = 1;
-			} else {
+			if (ch != numsep || is_prevch_numsep) {
 				break;
 			}
+			is_prevch_numsep = 1;
 		} else {
 			ch = uls_toupper(ch);
 			str_putc(numbuf, k++, ch);

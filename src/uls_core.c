@@ -934,7 +934,7 @@ ULS_QUALIFIED_METHOD(uls_gettok_raw)(uls_lex_ptr_t uls)
 			ctx->tok = e_vx->tok_id;
 			ctx->s_val = ctx->tokbuf.buf;
 			ctx->s_val_len = k;
-			ctx->s_val_uchars = _uls_tool(ustr_num_wchars)(ctx->s_val, k, nilptr);
+			ctx->s_val_uchars = n_wchars;
 
 		} else if (n_wchars > uls->id_max_uchars || k > uls->id_max_bytes ) {
 			e_vx = set_err_tok(uls, "Too long identifier!");
