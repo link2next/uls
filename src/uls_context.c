@@ -810,10 +810,11 @@ ULS_QUALIFIED_METHOD(xcontext_raw_filler)(uls_xcontext_ptr_t xctx)
 	inp->rawbuf_ptr = lptr;
 	inp->rawbuf_bytes = (int) (lptr_end - lptr);
 
+	_uls_tool(csz_text)(ss_dst1);
+
 	lexseg = uls_get_array_slot_type10(uls_ptr(ctx->lexsegs), n_segs);
 	uls_reset_lexseg(lexseg, offset1, csz_length(ss_dst1) - offset1, -1, -1, nilptr);
 
-	_uls_tool(csz_text)(ss_dst1);
 	ctx->n_lexsegs = n_segs;
 	lexseg = uls_get_array_slot_type10(uls_ptr(ctx->lexsegs), 0);
 

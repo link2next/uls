@@ -109,7 +109,7 @@ ULS_QUALIFIED_METHOD(input_skip_comment)(uls_commtype_ptr_t cmt, uls_input_ptr_t
 {
 	const char  *lptr, *lptr_end, *mark;
 	int n_lfs = 0, len_mark;
-	int stat = 1; // success
+	int rc, stat = 1; // success
 
 	lptr = inp->rawbuf_ptr;
 	lptr_end = lptr + inp->rawbuf_bytes;
@@ -121,16 +121,13 @@ ULS_QUALIFIED_METHOD(input_skip_comment)(uls_commtype_ptr_t cmt, uls_input_ptr_t
 		if (lptr_end < lptr + len_mark) {
 			inp->rawbuf_ptr = lptr;
 			inp->rawbuf_bytes = (int) (lptr_end - lptr);
-			if (inp->refill(inp, len_mark) < 0) {
+
+			if ((rc = inp->refill(inp, len_mark)) < len_mark) {
 //				_uls_log(err_log)("%s: I/O error", __func__);
 				uls_input_reset_cursor(inp);
 				lptr = lptr_end = inp->rawbuf.buf;
-				stat = -1; // error
-				break;
-			} else if (inp->rawbuf_bytes < len_mark) {
-				uls_input_reset_cursor(inp);
-				lptr = lptr_end = inp->rawbuf.buf;
-				stat = 0; // comment unterminated!
+				stat = (rc < 0) ? -1 : 0;
+				// stat == 0  if comment unterminated!
 				break;
 			}
 

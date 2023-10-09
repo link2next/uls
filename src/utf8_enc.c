@@ -57,7 +57,7 @@ ULS_QUALIFIED_METHOD(uls_enc_utf16str_to_utf8str)(uls_uint16 *wstr1, int l_wstr1
 			uls_mfree(buff_chrs);
 			return NULL;
 		}
-		utf_chrs += uls_encode_utf8(wch, utf_chrs);
+		utf_chrs += uls_encode_utf8(wch, utf_chrs, -1);
 	}
 
 	l_buff_chrs = (int) (utf_chrs - buff_chrs);
@@ -89,7 +89,7 @@ ULS_QUALIFIED_METHOD(uls_enc_utf32str_to_utf8str)(uls_uint32 *wstr1, int l_wstr1
 			uls_mfree(buff_chrs);
 			return NULL;
 		}
-		utf_chrs += rc = uls_encode_utf8(wch, utf_chrs);
+		utf_chrs += rc = uls_encode_utf8(wch, utf_chrs, -1);
 	}
 
 	l_buff_chrs = (int) (utf_chrs - buff_chrs);
@@ -114,11 +114,11 @@ ULS_QUALIFIED_METHOD(uls_fill_utf8str)(uls_wch_t *uchs, int n_uchs,
 	for (i = 0; i < n_uchs; i++) {
 		wch = uchs[i];
 
-		rc = uls_encode_utf8(wch, NULL);
+		rc = uls_encode_utf8(wch, NULL, -1);
 		if (len_utf8buf + rc > siz_utf8buf) {
 			break;
 		}
-		rc = uls_encode_utf8(wch, outptr);
+		rc = uls_encode_utf8(wch, outptr, -1);
 
 		outptr += rc;
 		len_utf8buf += rc;

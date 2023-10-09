@@ -1810,7 +1810,7 @@ ULS_QUALIFIED_METHOD(uls_filename)(const char *filepath, int* len_fname)
 #endif // ULS_DOTNET
 
 int
-ULS_QUALIFIED_METHOD(uls_encode_utf8)(uls_wch_t wch, char* utf8buf)
+ULS_QUALIFIED_METHOD(uls_encode_utf8)(uls_wch_t wch, char* utf8buf, int siz_utf8buf)
 {
 	char tmpbuf[ULS_UTF8_CH_MAXLEN];
 	int i, rc;
@@ -1838,8 +1838,11 @@ ULS_QUALIFIED_METHOD(uls_encode_utf8)(uls_wch_t wch, char* utf8buf)
 		rc = 4;
 
 	} else {
-		return -1;
+		return -(ULS_UTF8_CH_MAXLEN + 1);
 	}
+
+	if (siz_utf8buf >= 0 && siz_utf8buf < rc)
+		return -(ULS_UTF8_CH_MAXLEN + 2);
 
 	if (utf8buf != NULL) {
 		for (i=0; i<rc; i++) utf8buf[i] = tmpbuf[i];
@@ -1899,7 +1902,7 @@ ULS_QUALIFIED_METHOD(uls_decode_utf8)(const char *utf8buf, int len_utf8buf, uls_
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_encode_utf16)(uls_wch_t wch, uls_uint16 *utf16buf)
+ULS_QUALIFIED_METHOD(uls_encode_utf16)(uls_wch_t wch, uls_uint16 *utf16buf, int siz_utf16buf)
 {
 	uls_wch_t wch2;
 	uls_uint16 tmpbuf[ULS_UTF16_CH_MAXLEN];
@@ -1914,8 +1917,11 @@ ULS_QUALIFIED_METHOD(uls_encode_utf16)(uls_wch_t wch, uls_uint16 *utf16buf)
 		tmpbuf[1] = 0xDC00 + (wch2 & 0x3FF);
 		rc = 2;
 	} else {
-		return -1;
+		return -(ULS_UTF16_CH_MAXLEN + 1);
 	}
+
+	if (siz_utf16buf >= 0 && siz_utf16buf < rc)
+		return -(ULS_UTF16_CH_MAXLEN + 2);
 
 	if (utf16buf != NULL) {
 		for (i=0; i<rc; i++) utf16buf[i] = tmpbuf[i];
@@ -1945,7 +1951,7 @@ ULS_QUALIFIED_METHOD(uls_decode_utf16)(const uls_uint16 *utf16buf, int len_utf16
 	if (utf16buf[0] >= ULS_UTF16_CODEPOINT_RSVD_START && utf16buf[0] <= ULS_UTF16_CODEPOINT_RSVD_END) {
 		rc = 2;
 		if (len_utf16buf >= 2) {
-			if (utf16buf[1] < 0xDC00 || utf16buf[1] > 0xDFFF) return -1;
+			if (utf16buf[1] < 0xDC00 || utf16buf[1] > 0xDFFF) return -(ULS_UTF16_CH_MAXLEN + 1);
 			wch  = (utf16buf[0] - 0xD800) << 10;
 			wch |= (utf16buf[1] - 0xDC00);
 			wch += 0x10000;

@@ -90,12 +90,12 @@ ULS_QUALIFIED_METHOD(check_keyw_str)(int lno, const char* str, uls_ptrtype_tool(
 					wch = _uls_tool_(toupper)(wch);
 				}
 
-				if ((rc = _uls_tool_(encode_utf8)(wch, NULL)) <= 0 || len + rc > ULS_LEXSTR_MAXSIZ) {
+				if ((rc = _uls_tool_(encode_utf8)(wch, NULL, -1)) <= 0 || len + rc > ULS_LEXSTR_MAXSIZ) {
 					_uls_log(err_log)("#%d: encoding error!", lno);
 					return -1;
 				}
 
-				len += rc = _uls_tool_(encode_utf8)(wch, buf+len);
+				len += rc = _uls_tool_(encode_utf8)(wch, buf+len, -1);
 				ptr = lit1.lptr;
 			}
 
