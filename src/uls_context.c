@@ -504,7 +504,6 @@ ULS_QUALIFIED_METHOD(uls_init_context)(uls_context_ptr_t ctx, uls_gettok_t getto
 
 	ctx->flags = 0;
 	_uls_tool(csz_init)(uls_ptr(ctx->tag), 128);
-	_uls_tool(csz_add_eos)(uls_ptr(ctx->tag));
 	ctx->lineno = 1; ctx->delta_lineno = 0;
 
 	uls_init_bytespool(ctx->cnst_nilstr, ULS_CNST_NILSTR_SIZE, 0);

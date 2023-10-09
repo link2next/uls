@@ -625,7 +625,7 @@ ULS_QUALIFIED_METHOD(__uls_init_fp)(uls_lex_ptr_t uls, const char *specname,
 	uls->xcontext.quotetypes = uls_ptr(uls->quotetypes);
 
 	ctx = uls->xcontext.context;
-	ctx->tok = uls->xcontext.toknum_EOI;
+	ctx->tok = uls->xcontext.toknum_NONE;
 
 	ctx->tokbuf.buf[0] = ctx->tokbuf_aux.buf[0] = '\0';
 	ctx->s_val = ctx->tokbuf.buf;
