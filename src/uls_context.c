@@ -510,7 +510,6 @@ ULS_QUALIFIED_METHOD(uls_init_context)(uls_context_ptr_t ctx, uls_gettok_t getto
 	ctx->input = inp = uls_create_input();
 
 	_uls_tool(csz_init)(uls_ptr(ctx->zbuf1), ULS_FDZBUF_INITSIZE);
-	_uls_tool(csz_add_eos)(uls_ptr(ctx->zbuf1));
 	_uls_tool(csz_init)(uls_ptr(ctx->zbuf2), ULS_FDZBUF_INITSIZE);
 
 	ctx->lptr = ctx->line = ctx->cnst_nilstr;

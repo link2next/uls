@@ -1863,7 +1863,7 @@ ULS_QUALIFIED_METHOD(uls_decode_utf8)(const char *utf8buf, int len_utf8buf, uls_
 			if (utf8buf[i] == '\0') break;
 		}
 		if ((len_utf8buf = i) == 0) {
-			len_utf8buf = 1;
+			len_utf8buf = 1; // including '\0'
 		}
 	}
 
@@ -1940,11 +1940,8 @@ ULS_QUALIFIED_METHOD(uls_decode_utf16)(const uls_uint16 *utf16buf, int len_utf16
 			if (utf16buf[i] == 0) break;
 		}
 		if ((len_utf16buf = i) == 0) {
-			if (p_wch != NULL) *p_wch = 0;
-			return 1;
+			len_utf16buf = 1; // including '\0'
 		}
-	} else if (len_utf16buf == 0) {
-		return -(ULS_UTF16_CH_MAXLEN + 1);
 	}
 
 	if (utf16buf[0] >= ULS_UTF16_CODEPOINT_RSVD_START && utf16buf[0] <= ULS_UTF16_CODEPOINT_RSVD_END) {
