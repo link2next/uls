@@ -1996,10 +1996,8 @@ ULS_QUALIFIED_METHOD(uls_decode_utf32)(uls_uint32 buf, uls_wch_t *p_wch)
 int
 ULS_QUALIFIED_METHOD(ustr_num_wchars)(const char *ustr, int len, uls_outparam_ptr_t parms)
 {
-	const char *cptr, *cptr_end, *bufptr;
+	const char *cptr, *cptr_end;
 	int n, rc, wlen = 0, stat = 0;
-	char buff[ULS_UTF8_CH_MAXLEN];
-	int i, j;
 
 	if (len < 0) {
 		for (cptr = ustr; *cptr != '\0'; cptr += rc) {
@@ -2011,23 +2009,15 @@ ULS_QUALIFIED_METHOD(ustr_num_wchars)(const char *ustr, int len, uls_outparam_pt
 		}
 	} else {
 		cptr_end = ustr + len;
-		i = 0;
 		for (cptr = ustr; cptr < cptr_end; cptr += rc) {
 			n = (int) (cptr_end - cptr);
-			if (n >= ULS_UTF8_CH_MAXLEN) {
-				bufptr = cptr;
-				n = ULS_UTF8_CH_MAXLEN;
-			} else {
-				for (j=0; j<n; j++) buff[j] = cptr[j];
-				bufptr = buff;
-			}
-
-			if ((rc = uls_decode_utf8(bufptr, n, NULL)) <= 0) {
+			if ((rc = uls_decode_utf8(cptr, n, NULL)) <= 0) {
 				if (rc < -ULS_UTF8_CH_MAXLEN) stat = -1;
+				break;
+			} else if (rc > n) {
 				break;
 			}
 			++wlen;
-			i += rc;
 		}
 	}
 
