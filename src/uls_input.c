@@ -109,7 +109,7 @@ ULS_QUALIFIED_METHOD(input_skip_comment)(uls_commtype_ptr_t cmt, uls_input_ptr_t
 {
 	const char  *lptr, *lptr_end, *mark;
 	int n_lfs = 0, len_mark;
-	int rc, stat = 1; // --> success
+	int stat = 1; // success
 
 	lptr = inp->rawbuf_ptr;
 	lptr_end = lptr + inp->rawbuf_bytes;

@@ -13,7 +13,8 @@
 	[    TAB]
 	[    TAB]
 	[ LITSTR] hello world
-	[ NUMBER] -7094
+	[       ] -
+	[ NUMBER] 7094
 	[ NUMBER] 0x1A4
 	[ NUMBER] 0.
 	[ NUMBER] 0.3

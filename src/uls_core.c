@@ -83,7 +83,7 @@ ULS_QUALIFIED_METHOD(get_number)(uls_lex_ptr_t uls, uls_context_ptr_t ctx, uls_p
 	char *cnst_suffixes = uls->numcnst_suffixes;
 	uls_wch_t numsep = uls->numcnst_separator;
 	uls_ptrtype_tool(outbuf) tokbuf = uls_ptr(ctx->tokbuf);
-	const char *cnst_suffix, *srp, *lptr, *lptr1, *lptr0;
+	const char *cnst_suffix, *srp, *lptr, *lptr0;
 	uls_type_tool(outparam) parms1;
 	int k = 0, l_tokstr, l_cnst_suffix, n;
 	char ch;
@@ -92,13 +92,6 @@ ULS_QUALIFIED_METHOD(get_number)(uls_lex_ptr_t uls, uls_context_ptr_t ctx, uls_p
 	parms1.flags = 0;
 	parms1.wch = numsep;
 
- 	if (*lptr == '-') {
-		parms1.flags |= ULS_NUM_FL_MINUS;
-		str_putc(tokbuf, k++, '-');
-		++lptr;
-	}
-	lptr1 = lptr;
-
 	for (n = 0; *lptr == '0'; lptr++) ++n;
 	if (n > 0) --lptr;
 
@@ -106,7 +99,7 @@ ULS_QUALIFIED_METHOD(get_number)(uls_lex_ptr_t uls, uls_context_ptr_t ctx, uls_p
 		parms1.n1 = 0;
 		parms1.n2 = 10;
 	} else {
-		lptr = lptr1;
+		lptr = lptr0;
 		 find_prefix_radix(uls_ptr(parms1), uls, lptr);
 		srp = parms1.lptr_end = _uls_tool_(get_standard_number_prefix)(parms1.n2);
 		if (parms1.n2 != 10 && srp == NULL) { // NERVER-REACHED
@@ -122,9 +115,7 @@ ULS_QUALIFIED_METHOD(get_number)(uls_lex_ptr_t uls, uls_context_ptr_t ctx, uls_p
 		parms1.lptr = lptr0;
 		return -1; // not number
 	}
-	if (parms1.flags & ULS_NUM_FL_ZERO) {
-		parms1.flags &= ~ULS_NUM_FL_MINUS;
-	}
+
 	l_tokstr = k;
 	str_putc(tokbuf, k++, '\0');
 
@@ -597,8 +588,6 @@ ULS_QUALIFIED_METHOD(__uls_init_fp)(uls_lex_ptr_t uls, const char *specname,
 			ch_ctx[ch] = 0;
 		}
 	}
-
-	ch_ctx['-'] |= ULS_CH_DIGIT;
 	ch_ctx['.'] |= ULS_CH_DIGIT;
 
 	uls->id_max_bytes = uls->id_max_uchars = INT_MAX;

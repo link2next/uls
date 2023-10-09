@@ -47,7 +47,6 @@ extern "C" {
 #ifdef ULS_DECL_PROTECTED_TYPE
 #define ULS_NUM_FL_ZERO           0x01
 #define ULS_NUM_FL_FLOAT          0x02
-#define ULS_NUM_FL_MINUS  0x04
 #define ULS_NUM_FL_PREVCH_IS_SEP  0x10
 
 #endif // ULS_DECL_PROTECTED_TYPE

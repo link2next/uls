@@ -127,6 +127,7 @@ void
 test_sprintf(uls_lex_ptr_t uls, uls_log_t* log)
 {
 	TCHAR buff[128];
+	char buff2[32];
 	int len, i, ui;
 	long long ll;
 	unsigned long long ull;
@@ -139,6 +140,10 @@ test_sprintf(uls_lex_ptr_t uls, uls_log_t* log)
 	dump_tstr(buff, len);
 
 	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("'%s' '%8s' %% '%-8s'"), str, str, str);
+	dump_tstr(buff, len);
+
+	strcpy(buff2, "world");
+	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("%hs: '%hs' '%8hs' %% '%-8hs'"), __func__, buff2, buff2, buff2);
 	dump_tstr(buff, len);
 
 	buff[0] = 'X'; buff[1] = 'Y'; buff[2] = 'Z';
@@ -178,12 +183,10 @@ test_sprintf(uls_lex_ptr_t uls, uls_log_t* log)
 	x = 314159.2653589;
 	// use %f for printing 'double'
 	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("%.10f %.10e %.10g"), x, x, x);
-
 	dump_tstr(buff, len);
 
 	xx = -0.00031415926535897;
 	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("%.10lf %.10le %.10lg"), xx, xx, xx);
-
 	dump_tstr(buff, len);
 }
 
@@ -228,10 +231,14 @@ test_log(uls_lex_t *uls, uls_log_t *log)
 	long long ll;
 	int i;
 	int tok;
+	char buff2[32];
 
 	i = -3;
 	ui = 3;
 	err_log(_T("mesg = '%+5d' '%-3u'"), i, ui);
+
+	strcpy(buff2, "world");
+	err_log(_T("%hs: mesg = '%hs' '%-8hs'"), __func__, buff2, buff2);
 
 	tok = uls_get_tok(uls);
 	uls_printf(_T("stdout: <%w>: %t %k\n"), uls, uls, uls);
@@ -290,7 +297,7 @@ test_log_threads(void)
 int
 _tmain(int n_targv, LPTSTR *targv)
 {
-	LPTSTR input_file;
+	LPCTSTR input_file;
 	int i0;
 
 	progname = targv[0];

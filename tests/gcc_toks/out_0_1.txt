@@ -14,6 +14,7 @@ pluto.h:720 [     ID] Horizon
 pluto.h:720 [       ] ;
 pluto.h:722 [     ID] AAA
 pluto.h:722 [       ] =
+pluto.h:722 [       ] -
 pluto.h:722 [ NUMBER] 0.
 pluto.h:722 [       ] ;
 pluto.h:723 [     ID] BBB
@@ -30,7 +31,8 @@ pluto.h:724 [     ID] AAA
 pluto.h:724 [       ] ;
 pluto.h:726 [     ID] ID123
 pluto.h:726 [       ] =
-pluto.h:726 [ NUMBER] -1
+pluto.h:726 [       ] -
+pluto.h:726 [ NUMBER] 1
 pluto.h:726 [       ] ;
 pluto.h:728 [     IF] if
 pluto.h:728 [       ] (
@@ -52,11 +54,13 @@ pluto.h:730 [       ] ;
 pluto.h:731 [       ] }
 pluto.h:733 [     ID] YYY
 pluto.h:733 [       ] =
-pluto.h:733 [ NUMBER] -0.31415926E-7
+pluto.h:733 [       ] -
+pluto.h:733 [ NUMBER] 0.31415926E-7
 pluto.h:733 [       ] ;
 pluto.h:734 [     ID] BBB
 pluto.h:734 [       ] =
-pluto.h:734 [ NUMBER] -7094
+pluto.h:734 [       ] -
+pluto.h:734 [ NUMBER] 7094
 pluto.h:734 [       ] ;
 pluto.h:735 [     ID] REX
 pluto.h:735 [       ] =

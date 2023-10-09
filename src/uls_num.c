@@ -747,14 +747,12 @@ ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(__skip_radix_numstr)(uls_outparam_ptr_t parms, int radix,
 	uls_outbuf_ptr_t numbuf, int k)
 {
-	const char *lptr, *lptr0 = parms->lptr;
+	const char *lptr = parms->lptr;
 	uls_wch_t numsep = parms->wch;
-	char prev_ch, ch;
-	int k0 = k;
+	int is_prevch_numsep = 0, k0 = k;
+	char ch;
 
-	lptr = lptr0;
-	prev_ch = *lptr;
-	ch = uls_toupper(prev_ch);
+	ch = uls_toupper(*lptr);
 	str_putc(numbuf, k++, ch);
 
 	for (++lptr; ; lptr++) {
@@ -762,21 +760,19 @@ ULS_QUALIFIED_METHOD(__skip_radix_numstr)(uls_outparam_ptr_t parms, int radix,
 
 		if (is_num_radix(ch, radix) < 0) {
 			if (ch == numsep) {
-				if (prev_ch == numsep) break;
-				prev_ch = ch;
+				if (is_prevch_numsep) break;
+				is_prevch_numsep = 1;
 			} else {
 				break;
 			}
 		} else {
-			prev_ch = ch;
 			ch = uls_toupper(ch);
 			str_putc(numbuf, k++, ch);
+			is_prevch_numsep = 0;
 		}
 	}
 
-	if (prev_ch == numsep) {
-		--lptr;
-	}
+	if (is_prevch_numsep) --lptr;
 
 	parms->len = k - k0;
 	parms->lptr = lptr;
@@ -813,7 +809,6 @@ ULS_QUALIFIED_METHOD(skip_radix_numstr)(uls_outparam_ptr_t parms, int radix, uls
 		parms->flags |= ULS_NUM_FL_PREVCH_IS_SEP;
 	}
 
-	str_putc(numbuf, k, '\0');
 	return k;
 }
 
@@ -821,12 +816,12 @@ ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(check_expo)(uls_outparam_ptr_t parms)
 {
 	int expo, minus = 0;
-	const char *lptr0=parms->lptr, *lptr;
+	const char *lptr = parms->lptr, *lptr1;
 	char  ch;
 
-	lptr = lptr0;
+	parms->n = 0;
+
 	if (*lptr != 'E' && *lptr != 'e') {
-		parms->n = 0;
 		return 0;
 	}
 
@@ -837,16 +832,12 @@ ULS_QUALIFIED_METHOD(check_expo)(uls_outparam_ptr_t parms)
 		++lptr;
 	}
 
-	lptr0 = lptr;
-	for (expo=0; ; lptr++) {
-		if (!uls_isdigit(ch=*lptr)) {
-			break;
-		}
+	lptr1 = lptr;
+	for (expo = 0; uls_isdigit(ch=*lptr); lptr++) {
 		expo = 10 * expo + (ch - '0');
 	}
 
-	if (lptr0 == lptr) {
-		parms->n = 0;
+	if (lptr1 == lptr) {
 		return 0;
 	}
 
@@ -1069,7 +1060,6 @@ ULS_QUALIFIED_METHOD(uls_extract_number)(uls_outparam_ptr_t parms, uls_outbuf_pt
 			if (*str_dataptr_k(tokbuf, k1) == '0') {
 				parms->flags |= ULS_NUM_FL_ZERO;
 				str_putc(tokbuf, 0, '0');
-				str_putc(tokbuf, 1, '\0');
 				k = 1;
 			}
 		} else {
@@ -1087,16 +1077,15 @@ ULS_QUALIFIED_METHOD(uls_extract_number)(uls_outparam_ptr_t parms, uls_outbuf_pt
 				if (parms->flags & ULS_NUM_FL_FLOAT) {
 					str_putc(tokbuf, 0, '0');
 					str_putc(tokbuf, 1, '.');
-					str_putc(tokbuf, 2, '\0');
-					parms->len = 1; // # of digits
 					k = 2;
+					parms->len = 1; // # of digits
 				} else {
 					str_putc(tokbuf, 0, '0');
-					str_putc(tokbuf, 1, '\0');
 					k = 1;
 				}
 			}
 		}
+		str_putc(tokbuf, k, '\0');
 
 		return k;
 	}
@@ -1131,17 +1120,16 @@ ULS_QUALIFIED_METHOD(uls_extract_number)(uls_outparam_ptr_t parms, uls_outbuf_pt
 			if (ch == '.') {
 				str_putc(tokbuf, 0, '0');
 				str_putc(tokbuf, 1, '.');
-				str_putc(tokbuf, 2, '\0');
 				k = 2;
 				parms->flags |= ULS_NUM_FL_FLOAT;
 				parms->len = 1;
 				++parms->lptr;
 			} else {
 				str_putc(tokbuf, 0, '0');
-				str_putc(tokbuf, 1, '\0');
 				k = 1;
 				parms->len = 1;
 			}
+			str_putc(tokbuf, k, '\0');
 			check_expo(parms);
 		} else {
 	 		parms->flags = 0;
@@ -1168,11 +1156,6 @@ ULS_QUALIFIED_METHOD(uls_number)(const char *numstr, int len_numstr, int n_expo,
 
 	parms->flags = 0;
 
-	if (*lptr == '-') {
-		parms->flags |= ULS_NUM_FL_MINUS;
-		++lptr;
-	}
-
 	if ((len = uls_find_standard_prefix_radix(lptr, &radix)) > 0) {
 		parms->lptr = numstr + len;
 		parms->len = parms->n1 = len_numstr - len;
@@ -1190,7 +1173,6 @@ ULS_QUALIFIED_METHOD(uls_number)(const char *numstr, int len_numstr, int n_expo,
 
 		if (*lptr == '0') {
 			parms->flags |= ULS_NUM_FL_ZERO;
-			parms->flags &= ~ULS_NUM_FL_MINUS;
 			if (lptr[1] == '.') {
 				parms->flags |= ULS_NUM_FL_FLOAT;
 			}
