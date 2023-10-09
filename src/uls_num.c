@@ -815,14 +815,14 @@ ULS_QUALIFIED_METHOD(skip_radix_numstr)(uls_outparam_ptr_t parms, int radix, uls
 ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(check_expo)(uls_outparam_ptr_t parms)
 {
-	int expo, minus = 0;
+	int expo, minus = 0, stat = 0;
 	const char *lptr = parms->lptr, *lptr1;
 	char  ch;
 
 	parms->n = 0;
 
 	if (*lptr != 'E' && *lptr != 'e') {
-		return 0;
+		return 0; // false
 	}
 
 	if ((ch = *++lptr) == '-') {
@@ -837,15 +837,14 @@ ULS_QUALIFIED_METHOD(check_expo)(uls_outparam_ptr_t parms)
 		expo = 10 * expo + (ch - '0');
 	}
 
-	if (lptr1 == lptr) {
-		return 0;
+	if (lptr1 < lptr) {
+		stat = 1; // true
+		if (minus) expo = -expo;
+		parms->n = expo;
+		parms->lptr = lptr;
 	}
 
-	if (minus) expo = -expo;
-	parms->n = expo;
-	parms->lptr = lptr;
-
-	return expo;
+	return stat;
 }
 
 ULS_DECL_STATIC int
@@ -974,7 +973,8 @@ ULS_QUALIFIED_METHOD(uls_num2stdfmt)(uls_outparam_ptr_t parms, uls_outbuf_ptr_t 
 			// 10.000E-3
 			parms1.lptr = lptr;
 			// Don't use number separator in exponent part.
-			expo += check_expo(uls_ptr(parms1));
+			check_expo(uls_ptr(parms1));
+			expo += parms1.n;
 
 			if (lptr != parms1.lptr) {
 				lptr = parms1.lptr;
@@ -1026,7 +1026,9 @@ ULS_QUALIFIED_METHOD(uls_num2stdfmt)(uls_outparam_ptr_t parms, uls_outbuf_ptr_t 
 		}
 	}
 
-	expo += check_expo(uls_ptr(parms1));
+	check_expo(uls_ptr(parms1));
+	expo += parms1.n;
+
 	lptr = parms1.lptr;
 	parms->len = k - k0; // # of digits
 	parms->n = expo += n1;
@@ -1073,6 +1075,7 @@ ULS_QUALIFIED_METHOD(uls_extract_number)(uls_outparam_ptr_t parms, uls_outbuf_pt
 				}
 				skip_prefixed_zeros(parms);
 				check_expo(parms);
+				parms->n = 0;
 
 				if (parms->flags & ULS_NUM_FL_FLOAT) {
 					str_putc(tokbuf, 0, '0');
@@ -1131,6 +1134,7 @@ ULS_QUALIFIED_METHOD(uls_extract_number)(uls_outparam_ptr_t parms, uls_outbuf_pt
 			}
 			str_putc(tokbuf, k, '\0');
 			check_expo(parms);
+			parms->n = 0;
 		} else {
 	 		parms->flags = 0;
 	 		parms->len = 0;
