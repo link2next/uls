@@ -1519,6 +1519,7 @@ ULS_QUALIFIED_METHOD(uls_set_tok)(uls_lex_ptr_t uls, int tokid, const char* lexe
 
 	ctx->s_val_len = l_lexeme;
 	ctx->s_val_uchars = _uls_tool(ustr_num_wchars)(ctx->s_val, l_lexeme, nilptr);
+	ctx->l_tokbuf_aux = -1;
 }
 
 void
