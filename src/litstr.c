@@ -169,7 +169,9 @@ ULS_QUALIFIED_METHOD(uls_get_escape_str)(char quote_ch, uls_ptrtype_tool(wrd) wr
 		} else {
 			if (ch == quote_ch || ch == '\0') {
 				if (ch == '\0') {
-				
+					if (ch != quote_ch) {
+						return -1;
+					}
 				} else {
 					++lptr;
 				}
