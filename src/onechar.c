@@ -120,9 +120,9 @@ ULS_QUALIFIED_METHOD(uls_find_1char_tokdef_map)(uls_onechar_table_ptr_t tbl,
 	static int   left_child[4] = { -1, -1,  1, -1 };
 	static int  right_child[4] = {  2, -1,  3, -1 };
 
-	uls_tokdef_vx_ptr_t e_vx;
+	uls_tokdef_vx_ptr_t e_vx_ret = nilptr;
 	int  i_grp, n_tok_array;
-	uls_onechar_tokgrp_ptr_t tokgrp;
+	uls_onechar_tokgrp_ptr_t tokgrp, tokgrp_ret = nilptr;
 	uls_decl_parray_slots(slots_vx, tokdef_vx);
 	uls_wch_t uch0;
 
@@ -138,26 +138,23 @@ ULS_QUALIFIED_METHOD(uls_find_1char_tokdef_map)(uls_onechar_table_ptr_t tbl,
 		} else if (wch >= uch0 + n_tok_array) {
 			i_grp = right_child[i_grp];
 		} else {
-			e_vx = slots_vx[wch - uch0];
-			if (outparam != nilptr) {
-				outparam->tokgrp = tokgrp;
-				outparam->e_vx = e_vx;
-			}
-			return e_vx;
+			e_vx_ret = slots_vx[wch - uch0];
+			tokgrp_ret = tokgrp;
+			break;
 		}
 	}
 
 	if (outparam != nilptr) {
-		outparam->tokgrp = nilptr;
-		outparam->e_vx = nilptr;
+		outparam->tokgrp = tokgrp_ret;
+		outparam->e_vx = e_vx_ret;
 	}
 
-	return nilptr;
+	return e_vx_ret;
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_insert_onechar_tokdef_map)
-	(uls_onechar_tokgrp_ptr_t tokgrp, uls_wch_t wch, uls_tokdef_vx_ptr_t e_vx)
+ULS_QUALIFIED_METHOD(uls_insert_onechar_tokdef_map)(uls_onechar_tokgrp_ptr_t tokgrp,
+	uls_wch_t wch, uls_tokdef_vx_ptr_t e_vx)
 {
 	uls_decl_parray_slots_init(slots_vx, tokdef_vx, uls_ptr(tokgrp->tokdef_vx_1char));
 	int j;
@@ -206,13 +203,13 @@ ULS_QUALIFIED_METHOD(uls_find_1char_tokdef_etc)(uls_onechar_table_ptr_t tbl, uls
 }
 
 ULS_QUALIFIED_RETTYP(uls_tokdef_vx_ptr_t)
-ULS_QUALIFIED_METHOD(uls_find_1char_tokdef_vx)(uls_onechar_table_ptr_t tbl, uls_wch_t wch,
+ULS_QUALIFIED_METHOD(uls_find_1char_tokdef_vx)(uls_onechar_table_ptr_t tbl, int ch,
 	uls_tokdef_outparam_ptr_t outparam)
 {
 	uls_tokdef_vx_ptr_t e_vx;
 
-	if ((e_vx=uls_find_1char_tokdef_map(tbl, wch, outparam)) == nilptr) {
-		e_vx = uls_find_1char_tokdef_etc(tbl, wch);
+	if ((e_vx=uls_find_1char_tokdef_map(tbl, ch, outparam)) == nilptr) {
+		e_vx = uls_find_1char_tokdef_etc(tbl, ch);
 
 		if (outparam != nilptr) {
 			outparam->e_vx = e_vx;
@@ -224,8 +221,8 @@ ULS_QUALIFIED_METHOD(uls_find_1char_tokdef_vx)(uls_onechar_table_ptr_t tbl, uls_
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_insert_1char_tokdef_vx)
-	(uls_onechar_table_ptr_t tbl, uls_wch_t wch, uls_tokdef_vx_ptr_t e_vx)
+ULS_QUALIFIED_METHOD(uls_insert_1char_tokdef_vx)(uls_onechar_table_ptr_t tbl,
+	uls_wch_t wch, uls_tokdef_vx_ptr_t e_vx)
 {
 	uls_tokdef_outparam_t outparam;
 	int stat;

@@ -145,7 +145,7 @@ typedef void *uls_native_vptr_t;
 
 #else // ULS_CLASSIFY_SOURCE
 // name-buffer
-#define uls_def_namebuf(nam,siz) char  nam[siz+1]
+#define uls_def_namebuf(nam,siz) char  nam[(siz)+1]
 #define uls_init_namebuf(nam,siz) nam[0]='\0'
 #define uls_deinit_namebuf(nam)
 #define uls_get_namebuf_value(nam) (nam)

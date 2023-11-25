@@ -59,7 +59,7 @@ print_uls_file(uls_lex_t *uls, LPCTSTR fpath, uls_ostream_t *ostr)
 	LPCTSTR lxm;
 
 	if (uls_push_file(uls, fpath, 0) < 0) {
-		err_log(_T("%s: fail to prepare input-stream %s."), __func__, fpath);
+		err_log(_T("%hs: fail to prepare input-stream %s."), __func__, fpath);
 		return -1;
 	}
 
@@ -102,7 +102,7 @@ read_uls_file(uls_lex_t *uls, LPCTSTR fpath)
 	}
 
 	if (uls_push_istream(uls, istr, tmpl_list, 0) < 0) {
-		err_log(_T("%s: fail to prepare input-stream %s."), __func__, fpath);
+		err_log(_T("%hs: fail to prepare input-stream %s."), __func__, fpath);
 		uls_destroy_istream(istr);
 		return -1;
 	}
@@ -224,7 +224,7 @@ _tmain(int n_targv, LPTSTR *targv)
 	}
 
 	if ((sample_lex = uls_create(config_name)) == NULL) {
-		err_log(_T("%s: can't init uls-object of '%s'"), __func__, config_name);
+		err_log(_T("%hs: can't init uls-object of '%s'"), __func__, config_name);
 		ulc_list_searchpath(_T("simple"));
 		uls_destroy_tmpls(tmpl_list);
 		return -1;

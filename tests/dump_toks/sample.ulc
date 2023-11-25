@@ -78,7 +78,3 @@ UNSIGNED unsigned
 VOID     void
 VOLATILE volatile
 WHILE    while
-
-USERDEF1 500 
-USERDEF2
-USERDEF3 500

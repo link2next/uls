@@ -140,8 +140,8 @@ ULS_QUALIFIED_METHOD(check_keyw_str)(int lno, const char* str, uls_ptrtype_tool(
 			if (ch == '\n') ++n_lfs;
 			else if (ch == '\t') ++n_tabs;
 
-			if (ch < ULS_SYNTAX_TABLE_SIZE && (ch_ctx[ch] & ULS_CH_QUOTE)) ++n_ch_quotes;
-			if (ch < ULS_SYNTAX_TABLE_SIZE && (ch_ctx[ch] & ULS_CH_COMM)) ++n_ch_comms;
+			if (uls_canbe_ch_quote(ch_ctx, ch)) ++n_ch_quotes;
+			if (uls_canbe_ch_comm(ch_ctx, ch)) ++n_ch_comms;
 		} while (*(ptr += rc) != '\0');
 
 		n_ch_non_idstr = 1;
@@ -156,8 +156,11 @@ ULS_QUALIFIED_METHOD(check_keyw_str)(int lno, const char* str, uls_ptrtype_tool(
 		for (i=0; i<uls->n1_commtypes; i++) {
 			cmt = uls_get_array_slot_type01(uls_ptr(uls->commtypes), i);
 			if (_uls_tool_(strstr)(buf, uls_get_namebuf_value(cmt->start_mark)) != NULL) {
-				_uls_log(err_log)("#%d: keyword has the comment-string '%s'", lno, uls_get_namebuf_value(cmt->start_mark));
-				return -1;
+				_uls_log(err_log)("#%d: keyword conatins comment-mark:", lno);
+				_uls_log(err_log)("\tkeyword('%s'), comment-mark('%s')", buf, uls_get_namebuf_value(cmt->start_mark));
+				if (_uls_tool_(strncmp)(buf, uls_get_namebuf_value(cmt->start_mark), cmt->len_start_mark) == 0) {
+					return -1;
+				}
 			}
 		}
 	}
@@ -167,8 +170,11 @@ ULS_QUALIFIED_METHOD(check_keyw_str)(int lno, const char* str, uls_ptrtype_tool(
 		for (i=0; i<uls->quotetypes.n; i++) {
 			qmt = slots_qmt[i];
 			if (_uls_tool_(strstr)(buf, uls_get_namebuf_value(qmt->start_mark)) != NULL) {
-				_uls_log(err_log)("#%d: keyword has the quote-string '%s'", lno, uls_get_namebuf_value(qmt->start_mark));
-				return -1;
+				_uls_log(err_log)("#%d: keyword conatins quotation-mark:", lno);
+				_uls_log(err_log)("\tkeyword('%s'), quotation-mark('%s')", buf, uls_get_namebuf_value(qmt->start_mark));
+				if (_uls_tool_(strncmp)(buf, uls_get_namebuf_value(qmt->start_mark), qmt->len_start_mark) == 0) {
+					return -1;
+				}
 			}
 		}
 	}
@@ -179,10 +185,6 @@ ULS_QUALIFIED_METHOD(check_keyw_str)(int lno, const char* str, uls_ptrtype_tool(
 		rc = ULS_KEYW_TYPE_1CHAR;
 	} else {
 		rc = ULS_KEYW_TYPE_TWOPLUS;
-		if (len > ULS_TWOPLUS_MAXLEN) {
-			_uls_log(err_log)("#%d: %s too long for 2-chars token", lno, buf);
-			return -1;
-		}
 	}
 
 	return rc;
@@ -279,7 +281,7 @@ ULS_QUALIFIED_METHOD(__find_reg_tokdef_by_name)(uls_lex_ptr_t uls, const char* n
 }
 
 ULS_DECL_STATIC ULS_QUALIFIED_RETTYP(uls_tokdef_ptr_t)
-ULS_QUALIFIED_METHOD(__find_tokdef_by_keyw)(uls_lex_ptr_t uls, char* keyw)
+ULS_QUALIFIED_METHOD(__find_tokdef_by_keyw)(uls_lex_ptr_t uls, const char* keyw)
 {
 	uls_decl_parray_slots_init(slots_tok, tokdef, uls_ptr(uls->tokdef_array));
 	uls_tokdef_ptr_t e;
@@ -369,8 +371,8 @@ ULS_QUALIFIED_METHOD(make_tokdef_for_quotetype)(uls_lex_ptr_t uls, uls_quotetype
 	tok_id = qmt->tok_id;
 
 	if (__find_tokdef_by_tokid(uls, tok_id, TOKDEF_AREA_BOTH) != nilptr) {
-		_uls_log(err_log)("%s: the token-name already made for token", __func__);
-		_uls_log(err_log)("\ttoken-name:%s, token:%d", qmt_name, tok_id);
+		_uls_log(err_log)("%s: the token-name already made for token:", __func__);
+		_uls_log(err_log)("\ttoken-name('%s'), token(%d)", qmt_name, tok_id);
 		return -1;
 	}
 
@@ -378,7 +380,8 @@ ULS_QUALIFIED_METHOD(make_tokdef_for_quotetype)(uls_lex_ptr_t uls, uls_quotetype
 	e->keyw_type = ULS_KEYW_TYPE_LITERAL;
 
 	uls_set_namebuf_value(e->keyword, uls_get_namebuf_value(qmt->start_mark));
-	e->l_keyword = qmt->len_start_mark;
+	e->ulen_keyword = qmt->len_start_mark;
+	e->wlen_keyword = _uls_tool(ustr_num_wchars)(uls_get_namebuf_value(qmt->start_mark), qmt->len_start_mark, nilptr);
 
 	realloc_tokdef_array(uls, 1, 1);
 	slots_tok = uls_parray_slots(uls_ptr(uls->tokdef_array));
@@ -386,8 +389,8 @@ ULS_QUALIFIED_METHOD(make_tokdef_for_quotetype)(uls_lex_ptr_t uls, uls_quotetype
 
 	if (qmt_name[0] != '\0' && (__find_reg_tokdef_by_name(uls, qmt_name, uls_ptr(parms)) != nilptr ||
 		__find_rsvd_tokdef_by_name(uls, qmt_name) != nilptr)) {
-		_uls_log(err_log)("%s: can't make a tok name for token", __func__);
-		_uls_log(err_log)("\ttoken-name:%s, token:%d", qmt_name, tok_id);
+		_uls_log(err_log)("%s: can't make a tok name for token:", __func__);
+		_uls_log(err_log)("\ttoken-name('%s'), token(%d)", qmt_name, tok_id);
 		return -1;
 	}
 
@@ -418,22 +421,21 @@ ULS_QUALIFIED_METHOD(find_cnst_suffix)(char* cstr_pool, const char* str, int l_s
 }
 
 int
-ULS_QUALIFIED_METHOD(ulx_add_config_number_suffixes)(uls_lex_ptr_t uls, const char *suffix)
+ULS_QUALIFIED_METHOD(ulx_add_config_number_suffixes)(uls_lex_ptr_t uls, const char *suffix, int l_suffix)
 {
 	char* cnst_suffixes = uls->numcnst_suffixes;
 	uls_type_tool(outparam) parms;
 	const char *srcptr;
 	char ch, *dstptr, *ptr;
-	int len, k;
+	int k;
 
-	len = _uls_tool_(strlen)(suffix);
-	if (find_cnst_suffix(cnst_suffixes, suffix, len, uls_ptr(parms)) != NULL) {
+	if (find_cnst_suffix(cnst_suffixes, suffix, l_suffix, uls_ptr(parms)) != NULL) {
 		return -1;
 	}
 
 	ptr = parms.line;
 	k = (int) (ptr - cnst_suffixes);
-	if (ULS_CNST_SUFFIXES_MAXSIZ - k < len + 1) {
+	if (ULS_CNST_SUFFIXES_MAXSIZ - k < l_suffix + 1) {
 		return -1;
 	}
 
@@ -456,7 +458,7 @@ ULS_QUALIFIED_METHOD(add_cnst_suffix)(uls_lex_ptr_t uls, const char* suffix)
 
 	if (suffix == NULL || (len = _uls_tool_(strlen)(suffix)) == 0 || len > ULS_CNST_SUFFIX_MAXSIZ) {
 		stat = 0;
-	} else if (ulx_add_config_number_suffixes(uls, suffix) < 0) {
+	} else if (ulx_add_config_number_suffixes(uls, suffix, len) < 0) {
 		stat = 0;
 	}
 
@@ -673,8 +675,8 @@ ULS_QUALIFIED_METHOD(read_config__COMMENT_TYPE)(char *line, uls_cmd_ptr_t cmd)
 			} else if (uls_streql(wrd, "nested")) {
 				cmt_flags |= ULS_COMM_NESTED;
 			} else {
-				_uls_log(err_log)("%s<%d>: unknown attribute for a comment type", tag_nam, lno);
-				_uls_log(err_log)(" attribute '%s'", wrd);
+				_uls_log(err_log)("%s<%d>: unknown attribute for a comment type:", tag_nam, lno);
+				_uls_log(err_log)("\tattribute('%s')", wrd);
 				return -1;
 			}
 		}
@@ -684,9 +686,8 @@ ULS_QUALIFIED_METHOD(read_config__COMMENT_TYPE)(char *line, uls_cmd_ptr_t cmd)
 	parms1.line = cmt_mark1;
 	if ((len=_uls_tool_(strlen)(wrd)) == 0 || len > ULS_COMM_MARK_MAXSIZ ||
 		!canbe_commtype_mark(wrd, uls_ptr(parms1))) {
-		_uls_log(err_log)("%s<%d>: Too short or long comment (start) mark, or not permitted chars.",
-			tag_nam, lno);
-		_uls_log(err_log)("\t:'%s'", wrd);
+		_uls_log(err_log)("%s<%d>: Too short or long comment (start) mark, or not permitted chars:", tag_nam, lno);
+		_uls_log(err_log)("\tmark('%s')", wrd);
 		return -1;
 	}
 
@@ -699,9 +700,8 @@ ULS_QUALIFIED_METHOD(read_config__COMMENT_TYPE)(char *line, uls_cmd_ptr_t cmd)
 		parms2.line = cmt_mark2;
 		if ((len=_uls_tool_(strlen)(wrd = __uls_tool_(splitstr)(uls_ptr(wrdx))))==0 || len > ULS_COMM_MARK_MAXSIZ ||
 			!canbe_commtype_mark(wrd, uls_ptr(parms2))) {
-			_uls_log(err_log)("%s<%d>: Too short or long comment (end) mark, or not permitted chars.",
-				tag_nam, lno);
-			_uls_log(err_log)("\t:'%s'", wrd);
+			_uls_log(err_log)("%s<%d>: Too short or long comment (end) mark, or not permitted chars:", tag_nam, lno);
+			_uls_log(err_log)("\tmark('%s')", wrd);
 			return -1;
 		}
 	}
@@ -733,8 +733,8 @@ ULS_QUALIFIED_METHOD(read_config__COMMENT_TYPE)(char *line, uls_cmd_ptr_t cmd)
 	__set_config_comment_type(cmt, cmt_flags, cmt_mark1, parms1.len, parms1.n, cmt_mark2, parms2.len, parms2.n);
 
 	if (!is_commstart_valid(uls, k)) {
-		_uls_log(err_log)("%s<%d>: the comm-start-mark is collided with previous defined comment-type.", tag_nam, lno);
-		_uls_log(err_log)("\t:'%s'", uls_get_namebuf_value(cmt->start_mark));
+		_uls_log(err_log)("%s<%d>: the comm-start-mark is collided with previous defined comment-type:", tag_nam, lno);
+		_uls_log(err_log)("\tstart-mark('%s')", uls_get_namebuf_value(cmt->start_mark));
 		return -1;
 	}
 
@@ -887,8 +887,8 @@ ULS_QUALIFIED_METHOD(set_config__QUOTE_TYPE__token)(int tok_id, const char *tok_
 
 		qmt2 = slots_qmt[j];
 		if (qmt2->tok_id == tok_id) {
-			_uls_log(err_log)("%s:%d: The quotation tok-id already used by other token", tag_nam, lno);
-			_uls_log(err_log)("\t:tok-id:%d", tok_id);
+			_uls_log(err_log)("%s:%d: The quotation tok-id already used by other token:", tag_nam, lno);
+			_uls_log(err_log)("\ttok-id(%d)", tok_id);
 			return -1;
 		}
 	}
@@ -897,14 +897,14 @@ ULS_QUALIFIED_METHOD(set_config__QUOTE_TYPE__token)(int tok_id, const char *tok_
 	if (l_tok_nam > 0) {
 		/* token-name */
 		if (tok_nam[0] != '\0' && canbe_tokname(tok_nam) <= 0) {
-			_uls_log(err_log)("%s:%d Nil-string or too long token constant!", tag_nam, lno);
-			_uls_log(err_log)("\t:%s", tok_nam);
+			_uls_log(err_log)("%s:%d Nil-string or too long token constant:", tag_nam, lno);
+			_uls_log(err_log)("\ttoken-name('%s')", tok_nam);
 			return -1;
 		}
 
 		if (make_tokdef_for_quotetype(uls, qmt, tok_nam) < 0) {
-			_uls_log(err_log)("%s:%d fail to make tokdef for the quotation type!", tag_nam, lno);
-			_uls_log(err_log)("\t:%s", tok_nam);
+			_uls_log(err_log)("%s:%d fail to make tokdef for the quotation type:", tag_nam, lno);
+			_uls_log(err_log)("\ttoken-name('%s')", tok_nam);
 			return -1;
 		}
 	}
@@ -1005,9 +1005,8 @@ ULS_QUALIFIED_METHOD(__read_config__QUOTE_TYPE)(char *line,
 	parms1.line = qmt_mark1;
 	if ((len=_uls_tool_(strlen)(wrd=__uls_tool_(splitstr)(uls_ptr(wrdx)))) == 0 || len > ULS_QUOTE_MARK_MAXSIZ ||
 		!canbe_quotetype_mark(ch_ctx, wrd, uls_ptr(parms1))) {
-		_uls_log(err_log)("%s<%d>: Too short or long quote (start) mark, or not permitted chars.",
-			tag_nam, lno);
-		_uls_log(err_log)("\t:'%s'", wrd);
+		_uls_log(err_log)("%s<%d>: Too short or long quote (start) mark, or not permitted chars:", tag_nam, lno);
+		_uls_log(err_log)("\tmark('%s')", wrd);
 		return -1;
 	}
 
@@ -1016,9 +1015,8 @@ ULS_QUALIFIED_METHOD(__read_config__QUOTE_TYPE)(char *line,
 	if (qmt->flags & ULS_QSTR_ASYMMETRIC) {
 		if ((len=_uls_tool_(strlen)(wrd=__uls_tool_(splitstr)(uls_ptr(wrdx)))) == 0 || len > ULS_QUOTE_MARK_MAXSIZ ||
 			!canbe_quotetype_mark(ch_ctx, wrd, uls_ptr(parms2))) {
-			_uls_log(err_log)("%s<%d>: Too short or long quote (end) mark, or not permitted chars.",
-				tag_nam, lno);
-			_uls_log(err_log)("\t:'%s'", wrd);
+			_uls_log(err_log)("%s<%d>: Too short or long quote (end) mark, or not permitted chars.", tag_nam, lno);
+			_uls_log(err_log)("\tmark('%s')", wrd);
 			return -1;
 		}
 	} else {
@@ -1068,8 +1066,7 @@ ULS_QUALIFIED_METHOD(__read_config__QUOTE_TYPE)(char *line,
 	}
 
 	if ((qmt->escmap=uls_parse_escmap(wrdx.lptr, uls_ptr(uls->escstr_pool))) == nilptr) {
-		_uls_log(err_log)("%s<%d>: Invalid format of escape-mapping of literal string.",
-			tag_nam, lno);
+		_uls_log(err_log)("%s<%d>: Invalid format of escape-mapping of literal string.", tag_nam, lno);
 		return -1;
 	}
 
@@ -1326,8 +1323,8 @@ ULS_QUALIFIED_METHOD(read_config__RENAME)(char *line, uls_cmd_ptr_t cmd)
 	}
 
 	if (ulx_set_rename(uls, wrd, wrd2) < 0) {
-		_uls_log(err_log)("%s<%d>: Invalid 'RENAME'!", tag_nam, lno);
-		_uls_log(err_log)("\t:'%s'", wrd);
+		_uls_log(err_log)("%s<%d>: Invalid 'RENAME':", tag_nam, lno);
+		_uls_log(err_log)("\t'%s'", wrd);
 		stat = -1;
 	}
 
@@ -1589,7 +1586,6 @@ ULS_QUALIFIED_METHOD(ulx_set_prepended_input)(uls_lex_ptr_t uls, const char *lin
 		return;
 	}
 
-	if (len < 0) len = _uls_tool_(strlen)(line);
 	buff = (char *) uls_malloc_buffer(uls_ceil_log2(len + 1, 3) * sizeof(char));
 	for (n=i=0; i<len; i++) {
 		if ((ch=line[i]) == '\n') ++n;
@@ -1630,55 +1626,62 @@ ULS_QUALIFIED_METHOD(read_config__PREPEND_INPUT)(char *line, uls_cmd_ptr_t cmd)
 		wrdx.wrd = line2 = buff2;
 		wrdx.siz = len + 1;
 		wrdx.lptr = line + 1;
-		if ((len2=uls_get_escape_str('"', uls_ptr(wrdx))) < 0) {
+		if ((len2 = uls_get_escape_str('"', uls_ptr(wrdx))) < 0) {
 			_uls_log(err_log)("%s<%d>: an double-quoted string unterminated", tag_nam, lno);
-			stat = -1;
+			len2 = -1;
 		} else if (len2 == 0) {
 			_uls_log(err_log)("%s<%d>: an empty double-quoted string", tag_nam, lno);
-		}
-
-		wrd = __uls_tool_(splitstr)(uls_ptr(wrdx));
-		if (uls_streql(wrd, "true")) {
-			lfs_is_not_token = 1;
-		} else if (uls_streql(wrd, "false")) {
-			lfs_is_not_token = 0;
+			len2 = -2;
 		} else {
-			_uls_log(err_log)("%s<%d>: specify true or false.", tag_nam, lno);
+			wrd = __uls_tool_(splitstr)(uls_ptr(wrdx));
+			if (uls_streql(wrd, "true")) {
+				lfs_is_not_token = 1;
+			} else if (uls_streql(wrd, "false")) {
+				lfs_is_not_token = 0;
+			} else {
+				_uls_log(err_log)("%s<%d>: specify true or false.", tag_nam, lno);
+				len2 = -3;
+			}
 		}
 
 	} else if (*line == '\'') {
 		line2 = line + 1;
 		len2 = _uls_tool_(strlen)(line2);
-		for (--len2; len2 >= 0; len2--) {
+		for (--len2; ; len2--) {
+			if (len2 <= 0) {
+				_uls_log(err_log)("%s<%d>: an empty single-quoted string", tag_nam, lno);
+				break;
+			}
 			if (!_uls_tool_(isspace)(line2[len2])) {
 				if (line2[len2] != '\'') {
 					_uls_log(err_log)("%s<%d>: an single-quoted string unterminated", tag_nam, lno);
-					return -3;
+					len2 = -4;
 				} else {
 					line2[len2] = '\0';
 				}
 				break;
 			}
 		}
-		if (len2 <= 0) {
-			_uls_log(err_log)("%s<%d>: an empty single-quoted string", tag_nam, lno);
-		}
+
 	} else {
 		_uls_log(err_log)("%s<%d>: PREPEND_INPUT must be started by quotation, '\\' or '\"'.", tag_nam, lno);
+		len2 = -5;
+	}
+
+	if (len2 > 0) {
+		ulx_set_prepended_input(uls, line2, len2, lfs_is_not_token);
+	} else {
 		stat = -2;
 	}
 
-	if (stat >= 0) {
-		ulx_set_prepended_input(uls, line2, len2, lfs_is_not_token);
-	}
 	uls_mfree(buff2);
 	return stat;
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(read_config_var)(const char* tag_nam, int lno, uls_lex_ptr_t uls,
-	char* lptr, ulc_header_ptr_t hdr)
+ULS_QUALIFIED_METHOD(read_config_var)(ulc_header_ptr_t hdr, const char* tag_nam, int lno, char* lptr)
 {
+	uls_lex_ptr_t uls = hdr->uls;
 	char  *wrd;
 	int len, rc, stat = 1;
 
@@ -1701,8 +1704,8 @@ ULS_QUALIFIED_METHOD(read_config_var)(const char* tag_nam, int lno, uls_lex_ptr_
 
 	rc = uls_cmd_run(uls_array_slots_type00(uls_ptr(ulc_cmd_list)), ULC_N_LEXATTRS, wrd, lptr, uls_ptr(parms1));
 	if (rc < 0) {
-		_uls_log(err_log)("%s<%d>: unknown attribute in ULS-spec", tag_nam, lno);
-		_uls_log(err_log)("\tattribute:'%s'", wrd);
+		_uls_log(err_log)("%s<%d>: unknown attribute in ULS-spec:", tag_nam, lno);
+		_uls_log(err_log)("\tattribute('%s')", wrd);
 		stat = -1;
 	}
 
@@ -1775,41 +1778,8 @@ ULS_QUALIFIED_METHOD(_list_searchpath)(const char *filename,
 	}
 }
 
-ULS_DECL_STATIC void
-ULS_QUALIFIED_METHOD(set_chrmap)(uls_lex_ptr_t uls, int tok_id, int keyw_type, char ch_kwd)
-{
-	char *ch_ctx = uls->ch_context;
-
-	switch (keyw_type) {
-	case ULS_KEYW_TYPE_TWOPLUS:
-		if (ch_kwd < ULS_SYNTAX_TABLE_SIZE) {
-			ch_ctx[ch_kwd] |= ULS_CH_2PLUS;
-			if (uls->flags & ULS_FL_CASE_INSENSITIVE) {
-				ch_ctx[_uls_tool_(toupper)(ch_kwd)] |= ULS_CH_2PLUS;
-			}
-		}
-		/* pass through */
-
-	case ULS_KEYW_TYPE_IDSTR:
-	case ULS_KEYW_TYPE_USER:
-		if (_uls_tool_(isprint)(tok_id) && (ch_ctx[tok_id] & ULS_CH_1)) {
-//			_uls_log(err_log)("User token overrides char-token('%c'),", tok_id, tok_id);
-		}
-		break;
-
-	case ULS_KEYW_TYPE_1CHAR:
-		if (ch_kwd < ULS_SYNTAX_TABLE_SIZE) ch_ctx[ch_kwd] |= ULS_CH_1;
-		if (ch_kwd == '\n') uls->flags |= ULS_FL_LF_CHAR;
-		else if (ch_kwd == '\t') uls->flags |= ULS_FL_TAB_CHAR;
-		break;
-
-	default:
-		break;
-	}
-}
-
 int
-ULS_QUALIFIED_METHOD(is_reserved_tok)(uls_lex_ptr_t uls, char* name)
+ULS_QUALIFIED_METHOD(is_reserved_tok)(uls_lex_ptr_t uls, const char* name)
 {
 	uls_decl_parray_slots_init(slots_rsv, tokdef_vx, uls_ptr(uls->tokdef_vx_rsvd));
 	uls_tokdef_vx_ptr_t e_vx;
@@ -1855,6 +1825,14 @@ ULS_QUALIFIED_METHOD(check_rsvd_toks)(uls_lex_ptr_t uls)
 		}
 	}
 
+	if (stat < 0) {
+		_uls_log(err_log)("Reserved tokens:");
+		for (i=0; i<N_RESERVED_TOKS; i++) {
+			e_vx = slots_rsv[i];
+			_uls_log(err_log)("\t%s %d", uls_get_namebuf_value(e_vx->name), e_vx->tok_id);
+		}
+	}
+
 	return stat;
 }
 
@@ -1882,7 +1860,7 @@ ULS_QUALIFIED_METHOD(uls_is_char_idfirst)(uls_lex_ptr_t uls, const char* lptr, u
 			return n_bytes;
 		}
 
-	} else if (wch < ULS_SYNTAX_TABLE_SIZE && (uls->ch_context[wch] & ULS_CH_IDFIRST)) {
+	} else if (uls_canbe_ch_idfirst(uls->ch_context, wch)) {
 		return 1;
 	}
 
@@ -1914,7 +1892,7 @@ ULS_QUALIFIED_METHOD(uls_is_char_id)(uls_lex_ptr_t uls, const char* lptr, uls_wc
 			return n_bytes;
 		}
 
-	} else if (wch < ULS_SYNTAX_TABLE_SIZE && (uls->ch_context[wch] & ULS_CH_ID)) {
+	} else if (uls_canbe_ch_id(uls->ch_context, wch)) {
 		return 1;
 	}
 
@@ -1955,7 +1933,7 @@ ULS_QUALIFIED_METHOD(uls_find_tokdef_vx_force)(uls_lex_ptr_t uls, int t)
 		(_uls_type_array(uls_voidptr_t)) slots_vx, uls->tokdef_vx_array.n,
 		uls_ref_callback_this(srch_vx_by_id))) == nilptr) {
 		if (t >= 0 && (e_vx = uls_find_1char_tokdef_vx(uls_ptr(uls->onechar_table), t, nilptr)) == nilptr) {
-			if (t < ULS_SYNTAX_TABLE_SIZE && (uls->ch_context[t] & ULS_CH_1)) {
+			if (uls_canbe_ch_1ch_token(uls->ch_context, t)) {
 				e_vx = ctx->anonymous_uchar_vx;
 				e_vx->tok_id = t;
 			}
@@ -1971,8 +1949,7 @@ ULS_QUALIFIED_METHOD(set_extra_tokdef_vx)(uls_lex_ptr_t uls, int tok_id, uls_voi
 	uls_tokdef_vx_ptr_t e_vx;
 
 	if ((e_vx = uls_find_tokdef_vx(uls, tok_id)) == nilptr) {
-		if (tok_id >= 0 && tok_id < ULS_SYNTAX_TABLE_SIZE &&
-			(uls->ch_context[tok_id] & ULS_CH_1)) {
+		if (tok_id >= 0 && uls_canbe_ch_1ch_token(uls->ch_context, tok_id)) {
 			e_vx = uls_insert_1char_tokdef_uch(uls_ptr(uls->onechar_table), tok_id);
 		} else {
 			return nilptr;
@@ -2357,8 +2334,9 @@ ULS_QUALIFIED_METHOD(init_reserved_toks)(uls_lex_ptr_t uls)
 		e_vx->flags = ULS_VX_RSVD;
 		slots_vx[i] = e_vx;
 	}
-	uls->tokdef_vx_rsvd.n = N_RESERVED_TOKS;
 
+	// tokdef_vx_rsvd[0..N_RESERVED_TOKS-1] is shared by tokdef_vx_array[]
+	uls->tokdef_vx_rsvd.n = N_RESERVED_TOKS;
 	uls->tokdef_vx_array.n = N_RESERVED_TOKS;
 
 	/* LINENUM */
@@ -2415,13 +2393,35 @@ ULS_QUALIFIED_METHOD(init_reserved_toks)(uls_lex_ptr_t uls)
 }
 
 int
-ULS_QUALIFIED_METHOD(classify_char_group)(uls_lex_ptr_t uls, ulc_header_ptr_t uls_conf)
+ULS_QUALIFIED_METHOD(classify_tok_group)(uls_lex_ptr_t uls)
 {
 	char *ch_ctx = uls->ch_context;
+
+	uls_decl_parray_slots(slots_vx, tokdef_vx);
+	uls_decl_parray_slots(slots_qmt, quotetype);
+
+	uls_tokdef_vx_ptr_t e_vx;
 	uls_commtype_ptr_t cmt;
 	uls_quotetype_ptr_t qmt;
-	uls_decl_parray_slots(slots_qmt, quotetype);
-	int  ch, i; // ch should not be char of type.
+	int  ch, i, n;
+
+	if (check_rsvd_toks(uls) < 0) {
+		_uls_log(err_log)("%s: failed to check rsvd_toks", __func__);
+		return -1;
+	}
+
+	if ((n=uls->tokdef_array.n) < uls->tokdef_array.n_alloc) {
+		// shrink the size of uls->tokdef_array to the compact size.
+		uls_resize_parray(uls_ptr(uls->tokdef_array), tokdef, n);
+	}
+
+	if ((n=uls->tokdef_vx_array.n) < uls->tokdef_vx_array.n_alloc) {
+		// shrink the size of uls->tokdef_vx_array to the compact size.
+		uls_resize_parray(uls_ptr(uls->tokdef_vx_array), tokdef_vx, n);
+	}
+
+	slots_vx = uls_parray_slots(uls_ptr(uls->tokdef_vx_array));
+	_uls_quicksort_vptr(slots_vx, uls->tokdef_vx_array.n, comp_vx_by_tokid);
 
 	for (i=0; i<uls->n1_commtypes; i++) {
 		cmt = uls_get_array_slot_type01(uls_ptr(uls->commtypes), i);
@@ -2432,6 +2432,12 @@ ULS_QUALIFIED_METHOD(classify_char_group)(uls_lex_ptr_t uls, ulc_header_ptr_t ul
 		}
 	}
 
+	for (i=0; i<uls->n1_commtypes; i++) {
+		cmt = uls_get_array_slot_type01(uls_ptr(uls->commtypes), i);
+		ch = uls_get_namebuf_value(cmt->start_mark)[0];
+		if (ch < ULS_SYNTAX_TABLE_SIZE) ch_ctx[ch] |= ULS_CH_COMM;
+	}
+
 	slots_qmt = uls_parray_slots(uls_ptr(uls->quotetypes));
 	for (i=0; i<uls->quotetypes.n; i++) {
 		qmt = slots_qmt[i];
@@ -2440,19 +2446,79 @@ ULS_QUALIFIED_METHOD(classify_char_group)(uls_lex_ptr_t uls, ulc_header_ptr_t ul
 				uls_get_namebuf_value(qmt->start_mark));
 			return -1;
 		}
-	}
 
-	for (i=0; i<uls->n1_commtypes; i++) {
-		cmt = uls_get_array_slot_type01(uls_ptr(uls->commtypes), i);
-		ch = uls_get_namebuf_value(cmt->start_mark)[0];
-		if (ch < ULS_SYNTAX_TABLE_SIZE) ch_ctx[ch] |= ULS_CH_COMM;
-	}
+		if (qmt->flags & ULS_QSTR_NOTHING) {
+			qmt->tok_id = uls->xcontext.toknum_NONE;
+		}
 
-	for (i=0; i<uls->quotetypes.n; i++) {
-		qmt = slots_qmt[i];
+		e_vx = uls_find_tokdef_vx(uls, qmt->tok_id);
+		qmt->tokdef_vx = e_vx;
+
 		ch = uls_get_namebuf_value(qmt->start_mark)[0];
 		if (ch < ULS_SYNTAX_TABLE_SIZE) ch_ctx[ch] |= ULS_CH_QUOTE;
 	}
+
+	if (uls->twoplus_table.twoplus_mempool.n > 0) {
+		distribute_twoplus_toks(uls_ptr(uls->twoplus_table));
+	}
+
+	return 0;
+}
+
+void
+ULS_QUALIFIED_METHOD(assign_tok_group)(uls_lex_ptr_t uls)
+{
+	uls_decl_parray_slots_init(slots_rsv, tokdef_vx, uls_ptr(uls->tokdef_vx_rsvd));
+	uls_xcontext_ptr_t xctx = uls_ptr(uls->xcontext);
+	uls_context_ptr_t ctx = xctx->context;
+	char *ch_ctx = uls->ch_context;
+	uls_tokdef_vx_ptr_t e_vx;
+
+	// LINENUM
+	e_vx = slots_rsv[LINENUM_TOK_IDX];
+	xctx->toknum_LINENUM = e_vx->tok_id;
+
+	// NONE
+	e_vx = slots_rsv[NONE_TOK_IDX];
+	xctx->toknum_NONE = e_vx->tok_id;
+
+	// ERR
+	e_vx = slots_rsv[ERR_TOK_IDX];
+	xctx->toknum_ERR = e_vx->tok_id;
+	if (xctx->toknum_ERR >= 0 && xctx->toknum_ERR < ULS_SYNTAX_TABLE_SIZE)
+		ch_ctx[xctx->toknum_ERR] &= ~ULS_CH_1;
+
+	// EOI
+	e_vx = slots_rsv[EOI_TOK_IDX];
+	xctx->toknum_EOI = e_vx->tok_id;
+	if (xctx->toknum_EOI >= 0 && xctx->toknum_EOI < ULS_SYNTAX_TABLE_SIZE)
+		ch_ctx[xctx->toknum_EOI] &= ~ULS_CH_1;
+
+	// EOF
+	e_vx = slots_rsv[EOF_TOK_IDX];
+	xctx->toknum_EOF = e_vx->tok_id;
+	if (xctx->toknum_EOF >= 0 && xctx->toknum_EOF < ULS_SYNTAX_TABLE_SIZE)
+		ch_ctx[xctx->toknum_EOF] &= ~ULS_CH_1;
+
+	// ID
+	e_vx = slots_rsv[ID_TOK_IDX];
+	xctx->toknum_ID = e_vx->tok_id;
+	if (xctx->toknum_ID >= 0 && xctx->toknum_ID < ULS_SYNTAX_TABLE_SIZE)
+		ch_ctx[xctx->toknum_ID] &= ~ULS_CH_1;
+
+	// NUMBER
+	e_vx = slots_rsv[NUM_TOK_IDX];
+	xctx->toknum_NUMBER = e_vx->tok_id;
+	if (xctx->toknum_NUMBER >= 0 && xctx->toknum_NUMBER < ULS_SYNTAX_TABLE_SIZE)
+		ch_ctx[xctx->toknum_NUMBER] &= ~ULS_CH_1;
+
+	// TMPL
+	e_vx = slots_rsv[TMPL_TOK_IDX];
+	xctx->toknum_TMPL = e_vx->tok_id;
+
+	// LINK
+	e_vx = slots_rsv[LINK_TOK_IDX];
+	xctx->toknum_LINK = e_vx->tok_id;
 
 	/* '\0' : An exceptional char, which is used only space char. */
 	if (ch_ctx['\0'] != 0) {
@@ -2466,80 +2532,32 @@ ULS_QUALIFIED_METHOD(classify_char_group)(uls_lex_ptr_t uls, ulc_header_ptr_t ul
 		ch_ctx[' '] = 0;
 	}
 
-	return 0;
+	xctx->ch_context = ch_ctx;
+
+	xctx->commtypes = uls_ptr(uls->commtypes);
+	xctx->n2_commtypes = uls->n1_commtypes;
+
+	xctx->quotetypes = uls_ptr(uls->quotetypes);
+	xctx->len_surplus = calc_len_surplus_recommended(uls);
+
+	ctx->tok = xctx->toknum_EOI;
+	ctx->tokbuf.buf[0] = '\0';
+	ctx->s_val = ctx->tokbuf.buf;
+	ctx->s_val_len = ctx->s_val_uchars = 0;
 }
 
 int
-ULS_QUALIFIED_METHOD(classify_tok_group)(uls_lex_ptr_t uls)
-{
-	uls_decl_parray_slots_init(slots_rsv, tokdef_vx, uls_ptr(uls->tokdef_vx_rsvd));
-	uls_decl_parray_slots(slots_vx, tokdef_vx);
-	uls_decl_parray_slots(slots_qmt, quotetype);
-	uls_tokdef_vx_ptr_t e_vx;
-	uls_quotetype_ptr_t qmt;
-	int  i;
-
-	slots_vx = uls_parray_slots(uls_ptr(uls->tokdef_vx_array));
-	_uls_quicksort_vptr(slots_vx, uls->tokdef_vx_array.n, comp_vx_by_tokid);
-
-	// sync uls->toknum_* with the values of ulc-file.
-	e_vx = slots_rsv[LINENUM_TOK_IDX];
-	uls->xcontext.toknum_LINENUM = e_vx->tok_id;
-
-	e_vx = slots_rsv[NONE_TOK_IDX];
-	uls->xcontext.toknum_NONE = e_vx->tok_id;
-
-	e_vx = slots_rsv[ERR_TOK_IDX];
-	uls->xcontext.toknum_ERR = e_vx->tok_id;
-
-	e_vx = slots_rsv[EOI_TOK_IDX];
-	uls->xcontext.toknum_EOI = e_vx->tok_id;
-
-	e_vx = slots_rsv[EOF_TOK_IDX];
-	uls->xcontext.toknum_EOF = e_vx->tok_id;
-
-	e_vx = slots_rsv[ID_TOK_IDX];
-	uls->xcontext.toknum_ID = e_vx->tok_id;
-
-	e_vx = slots_rsv[NUM_TOK_IDX];
-	uls->xcontext.toknum_NUMBER = e_vx->tok_id;
-
-	e_vx = slots_rsv[TMPL_TOK_IDX];
-	uls->xcontext.toknum_TMPL = e_vx->tok_id;
-
-	e_vx = slots_rsv[LINK_TOK_IDX];
-	uls->xcontext.toknum_LINK= e_vx->tok_id;
-
-	slots_qmt = uls_parray_slots(uls_ptr(uls->quotetypes));
-	for (i=0; i<uls->quotetypes.n; i++) {
-		qmt = slots_qmt[i];
-
-		if (qmt->flags & ULS_QSTR_NOTHING) {
-			qmt->tok_id = uls->xcontext.toknum_NONE;
-		}
-
-		e_vx = uls_find_tokdef_vx(uls, qmt->tok_id);
-		qmt->tokdef_vx = e_vx;
-	}
-
-	return 0;
-}
-
-ULS_QUALIFIED_RETTYP(uls_tokdef_ptr_t)
-ULS_QUALIFIED_METHOD(rearrange_tokname_of_quotetypes)(uls_lex_ptr_t uls, int n_keys_twoplus, uls_ptrtype_tool(outparam) parms)
+ULS_QUALIFIED_METHOD(rearrange_tokname_of_twoplus)(uls_lex_ptr_t uls, int n_keys_twoplus)
 {
 	uls_kwtable_twoplus_ptr_t twotbl = uls_ptr(uls->twoplus_table);
 	uls_decl_parray_slots(slots_tm, tokdef_vx);
 	uls_decl_parray_slots(slots_tok, tokdef);
-	uls_tokdef_ptr_t idtok_list;
+
 	uls_tokdef_vx_ptr_t  e_vx;
 	uls_tokdef_ptr_t e;
-	int i, n1, n2;
+	int i, n1 = 0;
 
 	uls_init_parray(uls_ptr(twotbl->twoplus_mempool), tokdef_vx, n_keys_twoplus);
-
-	n1 = n2 = 0;
-	idtok_list = nilptr;
 
 	slots_tok = uls_parray_slots(uls_ptr(uls->tokdef_array));
 	slots_tm = uls_parray_slots(uls_ptr(twotbl->twoplus_mempool));
@@ -2551,20 +2569,13 @@ ULS_QUALIFIED_METHOD(rearrange_tokname_of_quotetypes)(uls_lex_ptr_t uls, int n_k
 		if (e->keyw_type == ULS_KEYW_TYPE_TWOPLUS) { /* tokdef_twoplus */
 			slots_tm[n1++] = e_vx;
 
-		} else if (e->keyw_type == ULS_KEYW_TYPE_IDSTR) { /* idkeyw_table */
-			e->link = idtok_list;
-			idtok_list = e;
-			++n2;
-
 		} else if (e->keyw_type == ULS_KEYW_TYPE_1CHAR) {
 			_uls_log(err_panic)("%d: not permitted keyw_type", e->keyw_type);
 		}
 	}
 
 	twotbl->twoplus_mempool.n = n1;
-	parms->n = n2;
-
-	return idtok_list;
+	return n1;
 }
 
 int
@@ -2964,8 +2975,9 @@ ULS_QUALIFIED_METHOD(check_ulc_file_magic)(FILE* fin, uls_ptrtype_tool(version) 
 }
 
 int
-ULS_QUALIFIED_METHOD(ulc_read_header)(uls_lex_ptr_t uls, FILE* fin, ulc_header_ptr_t hdr, uls_ptrtype_tool(outparam) parms)
+ULS_QUALIFIED_METHOD(ulc_read_header)(FILE* fin, ulc_header_ptr_t hdr, uls_ptrtype_tool(outparam) parms)
 {
+	uls_lex_ptr_t uls = hdr->uls;
 	fp_list_ptr_t  fp_stack_ptr, fp_stack_top;
 	char  specname[ULC_LONGNAME_MAXSIZ+1];
 	char  linebuff[ULS_LINEBUFF_SIZ+1], *tag, *lptr;
@@ -3048,7 +3060,7 @@ ULS_QUALIFIED_METHOD(ulc_read_header)(uls_lex_ptr_t uls, FILE* fin, ulc_header_p
 		if (*(lptr = _uls_tool(skip_blanks)(linebuff)) == '\0' || *lptr == '#')
 			continue;
 
-		if ((rc=read_config_var(tag, lno, uls, lptr, hdr)) <= 0) {
+		if ((rc = read_config_var(hdr, tag, lno, lptr)) <= 0) {
 			if (rc < 0) return -1;
 			break;
 		}
@@ -3057,230 +3069,358 @@ ULS_QUALIFIED_METHOD(ulc_read_header)(uls_lex_ptr_t uls, FILE* fin, ulc_header_p
 	return lno;
 }
 
-ULS_QUALIFIED_RETTYP(uls_tokdef_vx_ptr_t)
-ULS_QUALIFIED_METHOD(ulc_proc_line)
-	(const char* tag_nam, int lno,
-		char* lptr, uls_lex_ptr_t uls, ulc_header_ptr_t hdr, uls_ptrtype_tool(outparam) parms)
+ULS_DECL_STATIC int
+ULS_QUALIFIED_METHOD(gen_next_tok_id)(ulc_header_ptr_t hdr,
+	uls_tokdef_vx_ptr_t e_vx_grp, const char *tok_idstr, int ch_kwd)
 {
-	char *wrd1, *wrd2, *wrd3;
-	char wrdbuf2[ULS_LEXSTR_MAXSIZ+1];
-	int  len2, tok_id, rsv_idx, keyw_type;
-	uls_tokdef_ptr_t e, e_keyw;
-	uls_tokdef_vx_ptr_t e_vx=nilptr, e_vx_grp, e2_vx, e_vx_1ch;
+	int tok_id;
 
-	uls_decl_parray_slots(slots_tok, tokdef);
-	uls_decl_parray_slots(slots_rsv, tokdef_vx);
-	uls_decl_parray_slots(slots_vx, tokdef_vx);
-
-	uls_tokdef_name_ptr_t e_nam;
-	uls_type_tool(wrd) wrdx;
-	uls_type_tool(outparam) parms1;
-
-	parms->data = nilptr;
-	wrdx.lptr = lptr;
-
-/* token-name */
-	wrd1 = __uls_tool_(splitstr)(uls_ptr(wrdx));
-	if (canbe_tokname(wrd1) <= 0) {
-		_uls_log(err_log)("%s<%d>: Nil-string or too long token constant.", tag_nam, lno);
-		_uls_log(err_log)("\ttoken-name:'%s'", wrd1);
-		return nilptr;
-	}
-
-	if ((rsv_idx=is_reserved_tok(uls, wrd1)) >= 0) {
-		wrd2 = __uls_tool_(splitstr)(uls_ptr(wrdx));
-		if ((len2 = _uls_tool_(strlen)(wrd2)) > ULS_LEXSTR_MAXSIZ) {
-			// The keywords for ID, NUMBER, .. are nonsense.
-			len2 = ULS_LEXSTR_MAXSIZ;
-			wrd2[len2] = '\0';
-		}
-
-		if (*wrd2 == '\0' || _uls_tool(is_pure_integer)(wrd2, nilptr) > 0) {
-			wrd3 = wrd2;
-			wrd2 = "";
-			len2 = 0;
-		} else {
-			wrd3 = __uls_tool_(splitstr)(uls_ptr(wrdx));
-		}
-
-		/* tok-id */
-		if (*wrd3 != '\0') {
-			tok_id = _uls_tool_(atoi)(wrd3);
-			hdr->tok_id_seed = tok_id + 1;
-		} else {
-			tok_id = hdr->tok_id_seed++;
-		}
-
-		if ((e2_vx=__find_tokdef_by_tokid(uls, tok_id, TOKDEF_AREA_REGULAR)) != nilptr) {
-			_uls_log(err_log)("In %s<%d>,", tag_nam, lno);
-			_uls_log(err_log)("\tthe token-id %s is already used by %s.", wrd1, uls_get_namebuf_value(e2_vx->name));
-			return nilptr;
-		}
-
-		slots_rsv = uls_parray_slots(uls_ptr(uls->tokdef_vx_rsvd));
-		e_vx = slots_rsv[rsv_idx];
-		e_vx->tok_id = tok_id;
-
-		return e_vx;
-	}
-
-	e_vx_grp = __find_reg_tokdef_by_name(uls, wrd1, uls_ptr(parms1));
-	e_nam = (uls_tokdef_name_ptr_t) parms1.data;
-
-/* keyword */
-	wrd2 = __uls_tool_(splitstr)(uls_ptr(wrdx));
-
-	parms1.data = uls;
-	parms1.line = wrdbuf2;
-	keyw_type = check_keyw_str(lno, wrd2, uls_ptr(parms1));
-	len2 = parms1.len;
-
-	if (keyw_type < 0) {
-		_uls_log(err_log)("%s<%d>: Invalid keyword", tag_nam, lno);
-		_uls_log(err_log)("\t:keyword:'%s'", wrd2);
-		return nilptr;
-	}
-
-	e_keyw = nilptr;
-	e_vx_1ch = nilptr;
-
-	if (keyw_type == ULS_KEYW_TYPE_USER) {
-		wrd3 = wrd2;
-		wrd2 = wrdbuf2;
-
-	} else if (keyw_type == ULS_KEYW_TYPE_1CHAR) {
-		wrd2 = wrdbuf2;
-		if ((e_vx_1ch = uls_find_1char_tokdef_vx(uls_ptr(uls->onechar_table), wrd2[0], nilptr)) != nilptr) {
-			if (e_vx_grp == nilptr) e_vx_grp = e_vx_1ch;
-		}
-		wrd3 = __uls_tool_(splitstr)(uls_ptr(wrdx));
-
-	} else {
-		if ((e_keyw=__find_tokdef_by_keyw(uls, wrdbuf2)) != nilptr) {
-			if (e_vx_grp == nilptr) {
-				e_vx_grp = e_keyw->view;
-			} else {
-				// There exists a previously defined tok-def(e_vx_grp) with same keyword.
-				if (e_keyw->view != e_vx_grp) {
-					_uls_log(err_log)("%s<%d>: the name is alrealy defined in another line.", tag_nam, lno);
-					_uls_log(err_log)("\tname: '%s' of '%s'", wrd1, wrd2);
-					return nilptr;
-				}
-			}
-		}
-
-		wrd2 = wrdbuf2;
-		wrd3 = __uls_tool_(splitstr)(uls_ptr(wrdx));
-	}
-
-/* token-id */
-	if (*wrd3 != '\0') {
-		tok_id = _uls_tool_(atoi)(wrd3);
+	if (*tok_idstr != '\0') {
+		tok_id = _uls_tool_(atoi)(tok_idstr);
 		hdr->tok_id_seed = tok_id + 1;
 	} else {
 		if (e_vx_grp != nilptr) {
 			tok_id = e_vx_grp->tok_id;
 		} else {
-			if (keyw_type == ULS_KEYW_TYPE_1CHAR) {
-				tok_id = wrd2[0];
+			if (ch_kwd > 0) {
+				tok_id = ch_kwd;
 			} else {
 				tok_id = hdr->tok_id_seed++;
 			}
 		}
 	}
 
-	set_chrmap(uls, tok_id, keyw_type, wrd2[0]);
+	return tok_id;
+}
 
+ULS_DECL_STATIC ULS_QUALIFIED_RETTYP(uls_tokdef_ptr_t)
+ULS_QUALIFIED_METHOD(__new_regular_tokdef)(int keyw_type, const char *keyw, int ulen, int wlen)
+{
+	uls_tokdef_ptr_t e = uls_create_tokdef();
+
+	e->keyw_type = keyw_type;
+	uls_set_namebuf_value(e->keyword, keyw);
+	e->ulen_keyword = ulen;
+	e->wlen_keyword = wlen;
+
+	return e;
+}
+
+ULS_DECL_STATIC ULS_QUALIFIED_RETTYP(uls_tokdef_vx_ptr_t)
+ULS_QUALIFIED_METHOD(__ulc_proc_line__1char)(ulc_header_ptr_t hdr,
+	const char *tok_nam, char ch_kwd, const char *tok_idstr)
+{
+	uls_lex_ptr_t uls = hdr->uls;
+	const char *tag_nam = hdr->tag_nam;
+	int tok_id, lno = hdr->lno;
+
+	uls_tokdef_ptr_t e;
+	uls_tokdef_vx_ptr_t e_vx, e_vx_grp, e_vx_1ch;
+	uls_tokdef_name_ptr_t e_nam;
+
+	uls_decl_parray_slots(slots_vx, tokdef_vx);
+	uls_type_tool(outparam) parms1;
+
+	e_vx_grp = __find_reg_tokdef_by_name(uls, tok_nam, uls_ptr(parms1));
+	e_nam = (uls_tokdef_name_ptr_t) parms1.data;
+
+	if ((e_vx_1ch = uls_find_1char_tokdef_vx(uls_ptr(uls->onechar_table), ch_kwd, nilptr)) != nilptr) {
+		if (e_vx_grp == nilptr) e_vx_grp = e_vx_1ch;
+	}
+	tok_id = gen_next_tok_id(hdr, e_vx_grp, tok_idstr, ch_kwd);
+
+	if (__find_tokdef_by_tokid(uls, tok_id, TOKDEF_AREA_RSVD) != nilptr) {
+		_uls_log(err_log)("%s<%d>: Aliasing of 1char-token isn't permitted:", tag_nam, lno);
+		_uls_log(err_log)("\treserved-tok('%s'), 1char-token(%d)", tok_nam, tok_id);
+		return nilptr;
+	}
+
+	if (ch_kwd < ULS_SYNTAX_TABLE_SIZE) uls->ch_context[ch_kwd] |= ULS_CH_1;
+	if (ch_kwd == '\n') uls->flags |= ULS_FL_LF_CHAR;
+	else if (ch_kwd == '\t') uls->flags |= ULS_FL_TAB_CHAR;
+
+	// register e_name
 	if (e_vx_grp != nilptr) {
-		// Either name or keyword is the same as the one of 'e_vx_grp'.
-		if (e_vx_grp->tok_id != tok_id) {
-			_uls_log(err_log)("%s<%d>: The keyword conflicts with the previous designation for token.", tag_nam, lno);
-			_uls_log(err_log)("\tkeyword:'%s'", wrd2);
-			_uls_log(err_log)("\ttoken %s(%d)", uls_get_namebuf_value(e_vx_grp->name), e_vx_grp->tok_id);
-			return nilptr;
-		}
-
-		if (e_keyw != nilptr || e_vx_1ch != nilptr) {
+		if (e_vx_1ch != nilptr) {
 			if (e_nam == nilptr) {
-				e_nam = alloc_tokdef_name(wrd1, e_vx_grp);
+				e_nam = alloc_tokdef_name(tok_nam, e_vx_grp);
 				append_tokdef_name_to_group(e_vx_grp, e_nam);
 			}
 			return e_vx_grp;
 		}
 
-		// The keyword of the current is not equals to the one of e_vx_grp.
-		// This means that the names of the two lines should be same
-		// because the current is associated with the 'e_vx_grp'.
-		// uls_streql(wrd1, e_vx_grp->name) == true
-
-	} else if ((e2_vx=__find_tokdef_by_tokid(uls, tok_id, TOKDEF_AREA_RSVD)) != nilptr) {
-		_uls_log(err_log)("%s<%d>: Aliasing of reserved-tok isn't permitted!", tag_nam, lno);
-		_uls_log(err_log)("\treserved-tok:%s", wrd1);
-		return nilptr;
-
-	} else if ((e2_vx=__find_tokdef_by_tokid(uls, tok_id, TOKDEF_AREA_REGULAR)) != nilptr) {
-		e_vx_grp = e2_vx;
-
-		if (uls_get_namebuf_value(e2_vx->name)[0] == '\0') {
-			e2_vx->l_name = uls_set_namebuf_value(e2_vx->name, wrd1);
-			if (wrd2[0] == '\0') { // user-defined token name
+	} else if ((e_vx_grp = __find_tokdef_by_tokid(uls, tok_id, TOKDEF_AREA_REGULAR)) != nilptr) {
+		if (uls_get_namebuf_value(e_vx_grp->name)[0] == '\0') {
+			e_vx_grp->l_name = uls_set_namebuf_value(e_vx_grp->name, tok_nam);
+			if (ch_kwd == '\0') { // user-defined token name
 				return e_vx_grp;
 			}
-
 		} else {
-			e_nam = alloc_tokdef_name(wrd1, e_vx_grp);
-			if (wrd2[0] == '\0') {
-				append_tokdef_name_to_group(e_vx_grp, e_nam);
-				return e_vx_grp;
-			} else if (keyw_type == ULS_KEYW_TYPE_1CHAR) {
-				uls_insert_1char_tokdef_vx(uls_ptr(uls->onechar_table), wrd2[0], e_vx_grp);
+			e_nam = alloc_tokdef_name(tok_nam, e_vx_grp);
+			if (ch_kwd == '\0') {
 				append_tokdef_name_to_group(e_vx_grp, e_nam);
 				return e_vx_grp;
 			}
+
+			uls_insert_1char_tokdef_vx(uls_ptr(uls->onechar_table), ch_kwd, e_vx_grp);
+			append_tokdef_name_to_group(e_vx_grp, e_nam);
+			return e_vx_grp;
 		}
 	}
 
 	// allocate the slot for new uls_tokdef_ptr_t
 	realloc_tokdef_array(uls, 1, 1);
+	e = nilptr;
 
-	if (keyw_type == ULS_KEYW_TYPE_1CHAR) {
-		e = nilptr;
+	slots_vx = uls_parray_slots(uls_ptr(uls->tokdef_vx_array));
+
+	if (e_vx_grp == nilptr) { // group-leader
+		uls_assert(e_nam == nilptr);
+		e_vx = e_vx_grp = uls_create_tokdef_vx(tok_id, tok_nam, e);
+
+		if (uls_insert_1char_tokdef_vx(uls_ptr(uls->onechar_table), ch_kwd, e_vx) == 0) {
+			uls_destroy_tokdef_vx(e_vx);
+			e_vx = nilptr;
+		} else {
+			slots_vx[uls->tokdef_vx_array.n++] = e_vx;
+		}
 	} else {
-		e = uls_create_tokdef();
+		e_vx = nilptr;
+	}
 
-		// check keyword
-		e->keyw_type = keyw_type;
-		uls_set_namebuf_value(e->keyword, wrd2);
-		e->l_keyword = len2;
+	hdr->e_ret = e;
+	return e_vx;
+}
 
-		if (keyw_type == ULS_KEYW_TYPE_TWOPLUS) {
-			++hdr->n_keys_twoplus;
-		} else if (keyw_type == ULS_KEYW_TYPE_IDSTR) {
-			++hdr->n_keys_idstr;
+ULS_DECL_STATIC ULS_QUALIFIED_RETTYP(uls_tokdef_vx_ptr_t)
+ULS_QUALIFIED_METHOD(__ulc_proc_line__reserved)(ulc_header_ptr_t hdr,
+	const char *tok_nam, const char *keyw, const char *tok_idstr)
+{
+	uls_lex_ptr_t uls = hdr->uls;
+	const char *tag_nam = hdr->tag_nam;
+	int tok_id, rsv_idx, lno = hdr->lno;
+	uls_tokdef_vx_ptr_t e_vx, e2_vx;
+	uls_decl_parray_slots(slots_rsv, tokdef_vx);
+
+	tok_id = gen_next_tok_id(hdr, nilptr, tok_idstr, 0);
+
+	if ((e2_vx = __find_tokdef_by_tokid(uls, tok_id, TOKDEF_AREA_REGULAR)) != nilptr) {
+		_uls_log(err_log)("In %s<%d>,", tag_nam, lno);
+		_uls_log(err_log)("\tthe token-id %s is already used by %s.", tok_nam, uls_get_namebuf_value(e2_vx->name));
+		e_vx = nilptr;
+	} else {
+		rsv_idx = is_reserved_tok(uls, tok_nam);
+		slots_rsv = uls_parray_slots(uls_ptr(uls->tokdef_vx_rsvd));
+		e_vx = slots_rsv[rsv_idx];
+		e_vx->tok_id = tok_id;
+	}
+
+	return e_vx;
+}
+
+ULS_DECL_STATIC int
+ULS_QUALIFIED_METHOD(check_tokid_duplicity)(const char* tag_nam, int lno,
+	int tok_id, uls_tokdef_vx_ptr_t e_vx_grp, uls_lex_ptr_t uls)
+{
+	int stat = 1;
+
+	if (__find_tokdef_by_tokid(uls, tok_id, TOKDEF_AREA_RSVD) != nilptr) {
+		_uls_log(err_log)("%s<%d>: Aliasing of token isn't permitted:", tag_nam, lno);
+		_uls_log(err_log)("\ttok_id(%d)", tok_id);
+		stat = 0;
+	} else if (e_vx_grp != nilptr) {
+		if (e_vx_grp->tok_id != tok_id) {
+			_uls_log(err_log)("%s<%d>: The keyword conflicts with the previous designation for token:", tag_nam, lno);
+			_uls_log(err_log)("\ttoken %s(%d)", uls_get_namebuf_value(e_vx_grp->name), e_vx_grp->tok_id);
+			stat = 0;
 		}
 	}
+
+	return stat;
+}
+
+ULS_DECL_STATIC ULS_QUALIFIED_RETTYP(uls_tokdef_vx_ptr_t)
+ULS_QUALIFIED_METHOD(__ulc_proc_line__userdef)(ulc_header_ptr_t hdr,
+	const char *tok_nam, const char *tok_idstr)
+{
+	uls_lex_ptr_t uls = hdr->uls;
+	const char *tag_nam = hdr->tag_nam;
+	int tok_id, lno = hdr->lno;
+	uls_tokdef_ptr_t e;
+	uls_tokdef_vx_ptr_t e_vx, e_vx_grp;
+	uls_tokdef_name_ptr_t e_nam;
+	uls_type_tool(outparam) parms1;
+
+	e_vx_grp = __find_reg_tokdef_by_name(uls, tok_nam, uls_ptr(parms1));
+	e_nam = (uls_tokdef_name_ptr_t) parms1.data;
+
+	tok_id = gen_next_tok_id(hdr, e_vx_grp, tok_idstr, 0);
+	if (!check_tokid_duplicity(tag_nam, lno, tok_id, e_vx_grp, uls)) {
+		return nilptr;
+	}
+
+	// determine group_leader
+	hdr->e_nam_ret = e_nam;
+	hdr->e_vx_ret = e_vx_grp;
+	if (!__determine_reg_group_leader(hdr, tok_nam, "", tok_id, nilptr)) {
+		return hdr->e_vx_ret;
+	}
+	e_vx_grp = hdr->e_vx_ret;
+	e_nam = hdr->e_nam_ret;
+
+	// allocate the slot for new uls_tokdef_ptr_t
+	realloc_tokdef_array(uls, 1, 1);
+	e = __new_regular_tokdef(ULS_KEYW_TYPE_USER, "", 0, 0);
+	e_vx = __register_tokdef_vx(e, e_vx_grp, e_nam, tok_nam, tok_id, uls);
+
+	hdr->e_ret = e;
+	return e_vx;
+}
+
+ULS_DECL_STATIC int
+ULS_QUALIFIED_METHOD(__determine_reg_group_leader)(ulc_header_ptr_t hdr,
+	const char *tok_nam, const char *keyw, int tok_id, uls_tokdef_ptr_t e_keyw)
+{
+	uls_lex_ptr_t uls = hdr->uls;
+	uls_tokdef_name_ptr_t e_nam = hdr->e_nam_ret;
+	uls_tokdef_vx_ptr_t e_vx_grp = hdr->e_vx_ret;
+
+	// register e_name
+	if (e_vx_grp != nilptr) {
+		// Either name or keyword is the same as the one of 'e_vx_grp'.
+		if (e_keyw != nilptr) {
+			if (e_nam == nilptr) {
+				e_nam = alloc_tokdef_name(tok_nam, e_vx_grp);
+				append_tokdef_name_to_group(e_vx_grp, e_nam);
+			}
+			hdr->e_nam_ret = e_nam;
+			hdr->e_vx_ret = e_vx_grp;
+			return 0;
+		}
+
+	} else if ((e_vx_grp = __find_tokdef_by_tokid(uls, tok_id, TOKDEF_AREA_REGULAR)) != nilptr) {
+		if (uls_get_namebuf_value(e_vx_grp->name)[0] == '\0') {
+			e_vx_grp->l_name = uls_set_namebuf_value(e_vx_grp->name, tok_nam);
+			if (keyw[0] == '\0') { // user-defined token name
+				hdr->e_nam_ret = e_nam;
+				hdr->e_vx_ret = e_vx_grp;
+				return 0;
+			}
+		} else {
+			e_nam = alloc_tokdef_name(tok_nam, e_vx_grp);
+			if (keyw[0] == '\0') {
+				append_tokdef_name_to_group(e_vx_grp, e_nam);
+				hdr->e_nam_ret = e_nam;
+				hdr->e_vx_ret = e_vx_grp;
+				return 0;
+			}
+		}
+	}
+
+	hdr->e_nam_ret = e_nam;
+	hdr->e_vx_ret = e_vx_grp;
+	return 1;
+}
+
+ULS_DECL_STATIC ULS_QUALIFIED_RETTYP(uls_tokdef_vx_ptr_t)
+ULS_QUALIFIED_METHOD(__ulc_proc_line__regular)(ulc_header_ptr_t hdr,
+	const char *tok_nam, const char *keyw, const char *tok_idstr)
+{
+	uls_lex_ptr_t uls = hdr->uls;
+	const char *tag_nam = hdr->tag_nam;
+	int tok_id, lno = hdr->lno;
+	int ulen, wlen, keyw_type = hdr->keyw_type;
+	char *ch_ctx = uls->ch_context, ch_kwd = keyw[0];
+
+	uls_tokdef_ptr_t e, e_keyw;
+	uls_tokdef_vx_ptr_t e_vx, e_vx_grp;
+	uls_tokdef_name_ptr_t e_nam;
+
+	uls_type_tool(outparam) parms1;
+
+	ulen = _uls_tool_(strlen)(keyw);
+	wlen = _uls_tool(ustr_num_wchars)(keyw, ulen, nilptr);
+
+	e_vx_grp = __find_reg_tokdef_by_name(uls, tok_nam, uls_ptr(parms1));
+	e_nam = (uls_tokdef_name_ptr_t) parms1.data;
+
+	if ((e_keyw = __find_tokdef_by_keyw(uls, keyw)) != nilptr) {
+		if (e_vx_grp == nilptr) {
+			e_vx_grp = e_keyw->view;
+			uls_assert(e_vx_grp != nilptr);
+		} else {
+			// There exists a previously defined tok-def(e_vx_grp) with same keyword.
+			if (e_keyw->view != e_vx_grp) {
+				_uls_log(err_log)("%s<%d>: the name is alrealy defined in another line:", tag_nam, lno);
+				_uls_log(err_log)("\tname('%s'), keyword('%s')", tok_nam, keyw);
+				return nilptr;
+			}
+		}
+	}
+
+	tok_id = gen_next_tok_id(hdr, e_vx_grp, tok_idstr, 0);
+	if (!check_tokid_duplicity(tag_nam, lno, tok_id, e_vx_grp, uls)) {
+		return nilptr;
+	}
+
+	// set ch_context map
+	if (keyw_type == ULS_KEYW_TYPE_TWOPLUS) {
+		if (ch_kwd < ULS_SYNTAX_TABLE_SIZE) {
+			ch_ctx[ch_kwd] |= ULS_CH_2PLUS;
+			if (uls->flags & ULS_FL_CASE_INSENSITIVE) {
+				ch_ctx[_uls_tool_(toupper)(ch_kwd)] |= ULS_CH_2PLUS;
+			}
+		}
+		if (wlen > ULS_TWOPLUS_WMAXLEN) {
+			_uls_log(err_log)("%s<%d>: Too long punctuation token:", tag_nam, lno);
+			_uls_log(err_log)("\tlength(%d), keyword('%s')", wlen, keyw);
+			return nilptr;
+		}
+	}
+
+	hdr->e_nam_ret = e_nam;
+	hdr->e_vx_ret = e_vx_grp;
+	if (!__determine_reg_group_leader(hdr, tok_nam, keyw, tok_id, e_keyw)) {
+		return hdr->e_vx_ret;
+	}
+	e_vx_grp = hdr->e_vx_ret;
+	e_nam = hdr->e_nam_ret;
+
+	// allocate the slot for new uls_tokdef_ptr_t, uls_tokdef_vx_ptr_t
+	realloc_tokdef_array(uls, 1, 1);
+	e = __new_regular_tokdef(keyw_type, keyw, ulen, wlen);
+	e_vx = __register_tokdef_vx(e, e_vx_grp, e_nam, tok_nam, tok_id, uls);
+
+	if (keyw_type == ULS_KEYW_TYPE_TWOPLUS) {
+		++hdr->n_keys_twoplus;
+	} else if (keyw_type == ULS_KEYW_TYPE_IDSTR) {
+		++hdr->n_keys_idstr;
+	}
+
+	hdr->e_ret = e;
+	return e_vx;
+}
+
+ULS_DECL_STATIC ULS_QUALIFIED_RETTYP(uls_tokdef_vx_ptr_t)
+ULS_QUALIFIED_METHOD(__register_tokdef_vx)(uls_tokdef_ptr_t e,
+	uls_tokdef_vx_ptr_t e_vx_grp, uls_tokdef_name_ptr_t e_nam,
+	const char *tok_nam, int tok_id, uls_lex_ptr_t uls)
+{
+	uls_decl_parray_slots(slots_tok, tokdef);
+	uls_decl_parray_slots(slots_vx, tokdef_vx);
+	uls_tokdef_vx_ptr_t e_vx;
 
 	slots_tok = uls_parray_slots(uls_ptr(uls->tokdef_array));
 	slots_vx = uls_parray_slots(uls_ptr(uls->tokdef_vx_array));
 
 	if (e_vx_grp == nilptr) { // group-leader
 		uls_assert(e_nam == nilptr);
+		e_vx = e_vx_grp = uls_create_tokdef_vx(tok_id, tok_nam, e);
 
-		e_vx = e_vx_grp = uls_create_tokdef_vx(tok_id, wrd1, e);
-
-		if (keyw_type == ULS_KEYW_TYPE_1CHAR) {
-			if (uls_insert_1char_tokdef_vx(uls_ptr(uls->onechar_table), wrd2[0], e_vx) == 0) {
-				uls_destroy_tokdef_vx(e_vx);
-				e_vx = nilptr;
-			} else {
-				slots_vx[uls->tokdef_vx_array.n++] = e_vx;
-			}
-		} else {
-			e->view = e_vx;
-			e->name = uls_get_namebuf_value(e_vx->name);
-			slots_tok[uls->tokdef_array.n++] = e;
-			slots_vx[uls->tokdef_vx_array.n++] = e_vx;
-		}
+		e->view = e_vx;
+		e->name = uls_get_namebuf_value(e_vx->name);
+		slots_tok[uls->tokdef_array.n++] = e;
+		slots_vx[uls->tokdef_vx_array.n++] = e_vx;
 
 	} else if (e != nilptr) {
 		e->view = e_vx = e_vx_grp;
@@ -3294,9 +3434,95 @@ ULS_QUALIFIED_METHOD(ulc_proc_line)
 
 		slots_tok[uls->tokdef_array.n++] = e;
 		append_tokdef_to_group(e_vx_grp, e);
+
+	} else {
+		e_vx = nilptr;
 	}
 
-	parms->data = e;
+	return e_vx;
+}
+
+ULS_QUALIFIED_RETTYP(uls_tokdef_vx_ptr_t)
+ULS_QUALIFIED_METHOD(ulc_proc_line)(ulc_header_ptr_t hdr,
+	char* line, uls_ptrtype_tool(outparam) parms)
+{
+	uls_lex_ptr_t uls = hdr->uls;
+	const char* tag_nam = uls_get_namebuf_value(uls->ulc_name);
+	int lno = parms->n;
+
+	char *wrd1, *wrd2, *wrd3;
+	char wrdbuf2[ULS_LEXSTR_MAXSIZ+1];
+	int  keyw_type;
+
+	uls_tokdef_vx_ptr_t e_vx;
+	uls_type_tool(outparam) parms1;
+	uls_type_tool(wrd) wrdx;
+
+	parms->data = nilptr;
+	wrdx.lptr = line;
+
+	hdr->tag_nam = tag_nam;
+	hdr->lno = lno;
+
+/* token-name */
+	wrd1 = __uls_tool_(splitstr)(uls_ptr(wrdx));
+	if (canbe_tokname(wrd1) <= 0) {
+		_uls_log(err_log)("%s<%d>: Nil-string or too long token constant:", tag_nam, lno);
+		_uls_log(err_log)("\ttoken-name('%s')", wrd1);
+		return nilptr;
+	}
+
+/* keyword */
+	wrd2 = __uls_tool_(splitstr)(uls_ptr(wrdx));
+	wrdbuf2[0] = '\0';
+
+	if (is_reserved_tok(uls, wrd1) >= 0) {
+		keyw_type = ULS_KEYW_TYPE_RESERVED;
+	} else {
+		parms1.data = uls;
+		parms1.line = wrdbuf2;
+		keyw_type = check_keyw_str(lno, wrd2, uls_ptr(parms1));
+
+		if (keyw_type < 0) {
+			_uls_log(err_log)("%s<%d>: Invalid keyword:", tag_nam, lno);
+			_uls_log(err_log)("\tkeyword('%s')", wrd2);
+			return nilptr;
+		}
+	}
+
+	if (keyw_type == ULS_KEYW_TYPE_USER) {
+		wrd3 = wrd2;
+		wrd2 = wrdbuf2;
+	} else if (keyw_type == ULS_KEYW_TYPE_1CHAR) {
+		wrd2 = wrdbuf2;
+		wrd3 = __uls_tool_(splitstr)(uls_ptr(wrdx));
+	} else if (keyw_type == ULS_KEYW_TYPE_RESERVED) {
+		if (_uls_tool(is_pure_integer)(wrd2, nilptr) > 0) {
+			wrd3 = wrd2;
+			wrd2 = wrdbuf2;
+		} else {
+			wrd2 = wrdbuf2;
+			wrd3 = __uls_tool_(splitstr)(uls_ptr(wrdx));
+		}
+	} else {
+		wrd2 = wrdbuf2;
+		wrd3 = __uls_tool_(splitstr)(uls_ptr(wrdx));
+	}
+
+	hdr->keyw_type = keyw_type;
+	hdr->e_ret = nilptr;
+
+	if (keyw_type == ULS_KEYW_TYPE_1CHAR) {
+		e_vx = __ulc_proc_line__1char(hdr, wrd1, wrd2[0], wrd3);
+	} else if (keyw_type == ULS_KEYW_TYPE_RESERVED) {
+		e_vx = __ulc_proc_line__reserved(hdr, wrd1, wrd2, wrd3);
+	} else if (keyw_type == ULS_KEYW_TYPE_USER) {
+		e_vx = __ulc_proc_line__userdef(hdr, wrd1, wrd3);
+	} else {
+		e_vx = __ulc_proc_line__regular(hdr, wrd1, wrd2, wrd3);
+	}
+
+	parms->data = hdr->e_ret;
 	return e_vx;
 }
 

@@ -1,4 +1,12 @@
 
+  v1.9.2
+  -----------
+    o The help messages of tools, ulc2class, ulf_gen, and uls_stream
+         will be printed to not stdout but stderr. 
+    o bug-fixes on
+      a) the infrequent and incorrect parsing of punctuation tokens with more than 1-char,
+          like '$$', '||', '==='.
+
   v1.9.1
   -----------
     o the minus sign of numbers

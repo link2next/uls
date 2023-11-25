@@ -174,9 +174,9 @@ ULS_QUALIFIED_METHOD(uld_pars_line)(int lno, uls_ptrtype_tool(wrd) wrdx, uld_lin
 }
 
 int
-ULS_QUALIFIED_METHOD(uld_proc_line)(const char *tag, int lno,
-	char* lptr, uls_lex_ptr_t uls, int n2_vx_namelist)
+ULS_QUALIFIED_METHOD(uld_proc_line)(int lno, char* lptr, uls_lex_ptr_t uls, int n2_vx_namelist)
 {
+	const char *tag = "uld";
 	int stat=0;
 	uls_tokdef_vx_ptr_t e0_vx;
 	uld_line_t tok_names;
@@ -251,7 +251,7 @@ ULS_QUALIFIED_METHOD(uld_add_aliases)(uls_tokdef_vx_ptr_t e_vx, const char *line
 }
 
 int
-ULS_QUALIFIED_METHOD(uld_load_fp)(uls_lex_ptr_t uls, FILE *fin_uld, const char *tag)
+ULS_QUALIFIED_METHOD(uld_load_fp)(uls_lex_ptr_t uls, FILE *fin_uld)
 {
 	char linebuff[ULS_LINEBUFF_SIZ__ULD+1], *lptr;
 	int  n2_vx_namelist, linelen, lno=0, stat=0;
@@ -274,14 +274,14 @@ ULS_QUALIFIED_METHOD(uld_load_fp)(uls_lex_ptr_t uls, FILE *fin_uld, const char *
 			*lptr == '#' || (lptr[0]=='/' && lptr[1]=='/'))
 			continue;
 
-		if (uld_proc_line(tag, lno, lptr, uls, n2_vx_namelist) < 0) {
+		if (uld_proc_line(lno, lptr, uls, n2_vx_namelist) < 0) {
 			stat = -1;
 			break;
 		}
 	}
 
 	if (uld_post_names(names_map) < 0) {
-		_uls_log(err_log)("can't process uld-file %s", tag);
+		_uls_log(err_log)("can't process uld-file");
 		stat = -1;
 	}
 
@@ -350,7 +350,7 @@ ULS_QUALIFIED_METHOD(uld_change_names)(uld_names_map_ptr_t names_map, uld_line_p
 }
 
 int
-ULS_QUALIFIED_METHOD(uld_post_names)(uld_names_map_ptr_t names_map)
+ULS_QUALIFIED_METHOD(__uld_post_names)(uld_names_map_ptr_t names_map)
 {
 	uls_lex_ptr_t uls = names_map->uls;
 	uls_decl_parray_slots_init(slots_vx, tokdef_vx, uls_ptr(uls->tokdef_vx_array));
@@ -365,17 +365,7 @@ ULS_QUALIFIED_METHOD(uld_post_names)(uld_names_map_ptr_t names_map)
 	prev_tok_id = e_vx->tok_id;
 	prev_tok_nam = uls_get_namebuf_value(e_vx->name);
 
-	for (i=1; ; i++) {
-		if (i >= n_slots_vx) {
-			if (classify_tok_group(uls) < 0) {
-				_uls_log(err_log)("%s: lex-conf file not consistent!", __func__);
-				stat = -1;
-			} else {
-				uls->xcontext.context->tok = uls->xcontext.toknum_EOI;
-			}
-			break;
-		}
-
+	for (i=1; i < n_slots_vx; i++) {
 		e_vx = slots_vx[i];
 
 		if (e_vx->tok_id == prev_tok_id) {
@@ -389,6 +379,25 @@ ULS_QUALIFIED_METHOD(uld_post_names)(uld_names_map_ptr_t names_map)
 	}
 
 	uls_dealloc_object(names_map);
+	return stat;
+}
+
+int
+ULS_QUALIFIED_METHOD(uld_post_names)(uld_names_map_ptr_t names_map)
+{
+	int stat = 0;
+	uls_lex_ptr_t uls = names_map->uls;
+
+	if (__uld_post_names(names_map) < 0) {
+		stat = -1;
+	} else {
+		if (classify_tok_group(uls) < 0) {
+			_uls_log(err_log)("%s: lex-conf file not consistent!", __func__);
+			stat = -1;
+		} else {
+			assign_tok_group(uls);
+		}
+	}
 
 	return stat;
 }

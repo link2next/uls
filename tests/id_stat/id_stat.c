@@ -209,7 +209,7 @@ proc_filelist(FILE *fin)
 	while (1) {
 		if ((len=uls_fp_gets(fin, linebuff, sizeof(linebuff), 0)) <= ULS_EOF) {
 			if (len < ULS_EOF) {
-				err_log(_T("%s: error to read a line"), __func__);
+				err_log(_T("%hs: error to read a line"), __func__);
 				stat =-1;
 			}
 			break;
@@ -259,7 +259,7 @@ get_id_stats(int argc, LPTSTR argv[], int i0)
 		}
 
 		if ((fp_list=uls_fp_open(filelist, ULS_FIO_READ)) == NULL) {
-			err_log(_T("%s: fail to read '%s'"), __func__, filelist);
+			err_log(_T("%hs: fail to read '%s'"), __func__, filelist);
 			return -1;
 		}
 

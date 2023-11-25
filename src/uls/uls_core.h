@@ -166,14 +166,16 @@ ULS_DECL_STATIC _ULS_INLINE double __uls_lexeme_unsigned_double(const char *ptr)
 ULS_DECL_STATIC uls_uint32 __uls_lexeme_uint32(const char *ptr);
 ULS_DECL_STATIC uls_uint64 __uls_lexeme_uint64(const char *ptr);
 ULS_DECL_STATIC int __uls_change_line(uls_lex_ptr_t uls, const char* line, int len, int flags);
-ULS_DECL_STATIC int __uls_init_fp(uls_lex_ptr_t uls, const char *specname, FILE *fin_ulc, FILE *fin_ulf);
+ULS_DECL_STATIC void uls_init_fp(uls_lex_ptr_t uls);
+ULS_DECL_STATIC uls_tokdef_ptr_t get_idtok_list(uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) parms);
+ULS_DECL_STATIC int __load_ulc_from_config_files(uls_lex_ptr_t uls, const char* confname);
 #endif // ULS_DECL_PRIVATE_PROC
 
 #ifdef ULS_DECL_PROTECTED_PROC
 const char* skip_white_spaces(uls_lex_ptr_t uls);
 
 void free_tokdef_array(uls_lex_ptr_t uls);
-int ulc_load(uls_lex_ptr_t uls, FILE *fin_ulc, FILE *fin_ulf);
+int ulc_load(uls_lex_ptr_t uls, FILE *fin_ulc, FILE *fin_uld, FILE *fin_ulf);
 
 void uls_dealloc_lex(uls_lex_ptr_t uls);
 int uls_spec_compatible(uls_lex_ptr_t uls, const char* specname, uls_ptrtype_tool(version) filever);

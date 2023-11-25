@@ -167,7 +167,6 @@ ShellLex::expect_redir(void)
 	TCHAR  tch;
 
 	while ((wch=ShellLexBasis::getCh(&is_quote)) != ULS_UCH_NONE && !is_quote) {
-
 		if (isspace(wch)) {
 			ShellLexBasis::ungetCh(wch);
 			break;

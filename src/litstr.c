@@ -221,7 +221,7 @@ ULS_QUALIFIED_METHOD(canbe_commtype_mark)(char* wrd, uls_ptrtype_tool(outparam) 
 }
 
 int
-ULS_QUALIFIED_METHOD(canbe_quotetype_mark)(char *chr_tbl, char* wrd, uls_ptrtype_tool(outparam) parms)
+ULS_QUALIFIED_METHOD(canbe_quotetype_mark)(const char *ch_ctx, char* wrd, uls_ptrtype_tool(outparam) parms)
 {
 	char *buff = parms->line;
 	uls_type_tool(wrd) wrdx;
@@ -243,8 +243,7 @@ ULS_QUALIFIED_METHOD(canbe_quotetype_mark)(char *chr_tbl, char* wrd, uls_ptrtype
 	}
 
 	ch = buff[0];
-	if ((i == 1 && ch == '.') ||
-		(ch < ULS_SYNTAX_TABLE_SIZE && (chr_tbl[ch] & ULS_CH_IDFIRST))) {
+	if ((i == 1 && ch == '.') || uls_canbe_ch_idfirst(ch_ctx, ch)) {
 		return 0;
 	}
 

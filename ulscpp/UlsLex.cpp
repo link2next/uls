@@ -616,7 +616,7 @@ UlsLex::UlsLex(wstring& ulc_wfile)
 	csz_init(&csz, -1);
 
 	if ((ustr = uls_wstr2ustr(ulc_wfile.c_str(), -1, &csz)) == NULL) {
-		err_panic("encoding error!");
+		err_log("encoding error!");
 	}
 	else {
 		initUlsLex_ustr(ustr);
@@ -1146,7 +1146,7 @@ void UlsLex::dismissAllInputs(void)
 // <return>bool</return>
 bool UlsLex::is_ch_space(uls_wch_t wch)
 {
-	return uls_canbe_ch_space(&lex, wch) ? true : false;
+	return uls_canbe_ch_space(lex.ch_context, wch) ? true : false;
 }
 
 // <brief>
@@ -1157,7 +1157,7 @@ bool UlsLex::is_ch_space(uls_wch_t wch)
 // <return>bool</return>
 bool UlsLex::is_ch_idfirst(uls_wch_t wch)
 {
-	return uls_canbe_ch_idfirst(&lex, wch) ? true : false;
+	return uls_canbe_ch_idfirst(lex.ch_context, wch) ? true : false;
 }
 
 // <brief>
@@ -1168,7 +1168,7 @@ bool UlsLex::is_ch_idfirst(uls_wch_t wch)
 // <return>bool</return>
 bool UlsLex::is_ch_id(uls_wch_t wch)
 {
-	return uls_canbe_ch_id(&lex, wch) ? true : false;
+	return uls_canbe_ch_id(lex.ch_context, wch) ? true : false;
 }
 
 // <brief>
@@ -1179,7 +1179,7 @@ bool UlsLex::is_ch_id(uls_wch_t wch)
 // <return>bool</return>
 bool UlsLex::is_ch_quote(uls_wch_t wch)
 {
-	return uls_canbe_ch_quote(&lex, wch) ? true : false;
+	return uls_canbe_ch_quote(lex.ch_context, wch) ? true : false;
 }
 
 // <brief>
@@ -1190,7 +1190,7 @@ bool UlsLex::is_ch_quote(uls_wch_t wch)
 // <return>bool</return>
 bool UlsLex::is_ch_1ch_token(uls_wch_t wch)
 {
-	return uls_canbe_ch_1ch_token(&lex, wch) ? true : false;
+	return uls_canbe_ch_1ch_token(lex.ch_context, wch) ? true : false;
 }
 
 // <brief>
@@ -1202,7 +1202,7 @@ bool UlsLex::is_ch_1ch_token(uls_wch_t wch)
 // <return>bool</re turn>
 bool UlsLex::is_ch_2ch_token(uls_wch_t wch)
 {
-	return uls_canbe_ch_2ch_token(&lex, wch) ? true : false;
+	return uls_canbe_ch_2ch_token(lex.ch_context, wch) ? true : false;
 }
 
 // <brief>
@@ -1213,7 +1213,7 @@ bool UlsLex::is_ch_2ch_token(uls_wch_t wch)
 // <return>bool</return>
 bool UlsLex::is_ch_comm(uls_wch_t wch)
 {
-	return uls_canbe_ch_comm(&lex, wch) ? true : false;
+	return uls_canbe_ch_comm(lex.ch_context, wch) ? true : false;
 }
 
 // <brief>

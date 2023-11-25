@@ -67,7 +67,6 @@ ULS_QUALIFIED_METHOD(__create_istream)(int fd)
 		ULS_VERSION_STREAM_DEBUG);
 
 	istr->ref_cnt = 1;
-
 	return istr;
 }
 

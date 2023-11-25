@@ -58,10 +58,10 @@
 #define TMP_LANGS_FNAME      "uls_langs.txt"
 #define ULS_ULCNAME_DELIM    '/'
 
-#define ULS_VERSION_STR      _T("1.9.1")
-#define ULC2CLASS_PROGVER    _T("v2.7.0")
-#define ULF_GEN_PROGVER      _T("v1.6.0")
-#define ULS_STREAM_PROGVER   _T("v2.7.0")
+#define ULS_VERSION_STR      _T("1.9.2")
+#define ULC2CLASS_PROGVER    _T("v2.7.1")
+#define ULF_GEN_PROGVER      _T("v1.6.1")
+#define ULS_STREAM_PROGVER   _T("v2.7.1")
 #define ULC2YAML_PROGVER     _T("v1.0.0")
 
 #define ULS_INITIAL_NAME     _T("ULS(Unified Lexical Scheme)")
@@ -183,8 +183,8 @@
 #define ULS_CARDINAL_TOKNAM_SIZ    15
 #define ULS_CARDINAL_LXMPFX_MAXSIZ 15
 
-#define ULS_KWTABLE_TWOPLUS_SIZE   14
-#define ULS_TWOPLUS_MAXLEN         (ULS_KWTABLE_TWOPLUS_SIZE+1)
+#define ULS_KWTABLE_TWOPLUS_SIZE   15
+#define ULS_TWOPLUS_WMAXLEN        ULS_KWTABLE_TWOPLUS_SIZE
 
 #define ULS_CNST_NILSTR_SIZE       4
 #define ULS_SYNTAX_TABLE_SIZE      128

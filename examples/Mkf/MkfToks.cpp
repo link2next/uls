@@ -84,6 +84,7 @@ namespace
 			stat = 1;
 			break;
 		default:
+			_tcerr << _T("undefined option -") << (TCHAR) opt << _tendl;
 			stat = -1;
 			break;
 		}

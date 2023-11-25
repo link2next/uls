@@ -106,7 +106,7 @@ test_uls_creating(int n_targv, LPTSTR *targv, int i0)
 	int i;
 
 	if ((simple_lex = uls_create(config_name)) == NULL) {
-		err_log(_T("%s: can't init uls-object of '%s'"), __func__, config_name);
+		err_log(_T("%hs: can't init uls-object of '%s'"), __func__, config_name);
 		ulc_list_searchpath(_T("simple"));
 		return -1;
 	}

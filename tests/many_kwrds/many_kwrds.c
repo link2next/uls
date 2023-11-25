@@ -98,7 +98,7 @@ options(int opt, LPTSTR optarg)
 	return stat;
 }
 
-static FILE   *cur_fin;
+static FILE     *cur_fin;
 static TCHAR   filebuff[FILEBUFF_SIZ+1];
 
 int
@@ -107,14 +107,14 @@ proc_file(LPCTSTR fpath)
 	int len, stat = 0, lno = 0;
 
 	if ((cur_fin=uls_fp_open(fpath, ULS_FIO_READ)) == NULL) {
-		err_log(_T("%s: fail to open '%s'"), __func__, fpath);
+		err_log(_T("%hs: fail to open '%s'"), __func__, fpath);
 		return -1;
 	}
 
 	while (1) {
-		if ((len=uls_fp_gets(cur_fin, filebuff, sizeof(filebuff) / sizeof(TCHAR), 0)) <= ULS_EOF) {
+		if ((len=uls_fp_gets(cur_fin, filebuff, sizeof(filebuff)/sizeof(TCHAR), 0)) <= ULS_EOF) {
 			if (len < ULS_EOF) {
-				err_log(_T("%s: error to read a line"), __func__);
+				err_log(_T("%hs: error to read a line"), __func__);
 				stat =-1;
 			}
 			break;

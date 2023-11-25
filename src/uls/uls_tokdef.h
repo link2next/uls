@@ -73,32 +73,31 @@ ULS_DEF_PARRAY(tokdef_name);
 ULS_DEFINE_STRUCT_BEGIN(tokdef_vx)
 {
 	uls_flags_t flags;
-	int  tok_id;
+	int  tok_id; // primary
 
 	uls_def_namebuf(name, ULS_LEXSTR_MAXSIZ);
 	int  l_name;
 
 	uls_voidptr_t extra_tokdef;
-	uls_tokdef_ptr_t base;
-	uls_tokdef_name_ptr_t tokdef_names;
+	uls_tokdef_ptr_t base; // list of tokdef
+	uls_tokdef_name_ptr_t tokdef_names; // list of aliases
 };
 ULS_DEF_PARRAY(tokdef_vx);
 
 ULS_DEFINE_STRUCT_BEGIN(tokdef)
 {
-	uls_def_namebuf(keyword, ULS_LEXSTR_MAXSIZ);
-	int  l_keyword;
+	uls_def_namebuf(keyword, ULS_TWOPLUS_WMAXLEN*ULS_UTF8_CH_MAXLEN); // primary
+	int  ulen_keyword, wlen_keyword;
 	int  keyw_type;
 
 	uls_tokdef_vx_ptr_t view;
 
 	const char *name;
 
-	// Hash link for same hash-value(keyword,l_keyword)
+	// Hash link for same hash-value(keyword,ulen_keyword)
 	uls_tokdef_ptr_t link;
 
-	// The pointer to the next 'uls_tokdef_t'
-	//    for grounping the elements with same view->tok_id
+	// The link for grounping the elements with same view->tok_id via tokdef_vx.base.
 	uls_tokdef_ptr_t next;
 };
 ULS_DEF_PARRAY(tokdef);

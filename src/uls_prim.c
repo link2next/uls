@@ -1865,6 +1865,8 @@ ULS_QUALIFIED_METHOD(uls_decode_utf8)(const char *utf8buf, int len_utf8buf, uls_
 		if ((len_utf8buf = i) == 0) {
 			len_utf8buf = 1; // including '\0'
 		}
+	} else if (len_utf8buf == 0) {
+		return -(ULS_UTF8_CH_MAXLEN + 1);
 	}
 
 	ch = *bufptr;
@@ -1874,7 +1876,7 @@ ULS_QUALIFIED_METHOD(uls_decode_utf8)(const char *utf8buf, int len_utf8buf, uls_
 	}
 
 	for (n=0; ; n++) {
-		if (n >= 3) return -(ULS_UTF8_CH_MAXLEN + 1);
+		if (n >= 3) return -(ULS_UTF8_CH_MAXLEN + 2);
 		if ((ch_ary[n] & ch) == 0) {
 			++n;
 			break;
@@ -1892,7 +1894,7 @@ ULS_QUALIFIED_METHOD(uls_decode_utf8)(const char *utf8buf, int len_utf8buf, uls_
 	for (i=0; i<n; i++) {
 		ch = *++bufptr;
 		if ((ch & 0xC0) != 0x80) {
-			return -(ULS_UTF8_CH_MAXLEN + 2);
+			return -(ULS_UTF8_CH_MAXLEN + 3);
 		}
 		val = (val << 6) | (ch & ch_mask);
 	}
@@ -1942,12 +1944,15 @@ ULS_QUALIFIED_METHOD(uls_decode_utf16)(const uls_uint16 *utf16buf, int len_utf16
 		if ((len_utf16buf = i) == 0) {
 			len_utf16buf = 1; // including '\0'
 		}
+	} else if (len_utf16buf == 0) {
+		return -(ULS_UTF16_CH_MAXLEN + 1);
 	}
 
 	if (utf16buf[0] >= ULS_UTF16_CODEPOINT_RSVD_START && utf16buf[0] <= ULS_UTF16_CODEPOINT_RSVD_END) {
 		rc = 2;
 		if (len_utf16buf >= 2) {
-			if (utf16buf[1] < 0xDC00 || utf16buf[1] > 0xDFFF) return -(ULS_UTF16_CH_MAXLEN + 1);
+			if (utf16buf[1] < 0xDC00 || utf16buf[1] > 0xDFFF)
+				return -(ULS_UTF16_CH_MAXLEN + 2);
 			wch  = (utf16buf[0] - 0xD800) << 10;
 			wch |= (utf16buf[1] - 0xDC00);
 			wch += 0x10000;
@@ -1993,11 +1998,11 @@ ULS_QUALIFIED_METHOD(uls_decode_utf32)(uls_uint32 buf, uls_wch_t *p_wch)
 int
 ULS_QUALIFIED_METHOD(ustr_num_wchars)(const char *ustr, int len, uls_outparam_ptr_t parms)
 {
-	const char *cptr, *cptr_end;
+	const char *cptr = ustr, *cptr_end;
 	int n, rc, wlen = 0, stat = 0;
 
 	if (len < 0) {
-		for (cptr = ustr; *cptr != '\0'; cptr += rc) {
+		for ( ; *cptr != '\0'; cptr += rc) {
 			if ((rc = uls_decode_utf8(cptr, -1, NULL)) <= 0) {
 				if (rc < -ULS_UTF8_CH_MAXLEN) stat = -1;
 				break;
@@ -2006,7 +2011,7 @@ ULS_QUALIFIED_METHOD(ustr_num_wchars)(const char *ustr, int len, uls_outparam_pt
 		}
 	} else {
 		cptr_end = ustr + len;
-		for (cptr = ustr; cptr < cptr_end; cptr += rc) {
+		for ( ; cptr < cptr_end; cptr += rc) {
 			n = (int) (cptr_end - cptr);
 			if ((rc = uls_decode_utf8(cptr, n, NULL)) <= 0) {
 				if (rc < -ULS_UTF8_CH_MAXLEN) stat = -1;

@@ -153,7 +153,7 @@ ULS_QUALIFIED_METHOD(uls_dump_2char)(uls_lex_ptr_t uls)
 
 	_uls_log_(printf)("2+CHAR types:");
 	for (tree=uls->twoplus_table.start; tree != nilptr; tree=tree->prev) {
-		_uls_log_(printf)("\t[LEN=%d]\n", tree->len_keyw);
+		_uls_log_(printf)("\t[WLEN=%d]\n", tree->wlen_keyw);
 
 		slots_tp = uls_parray_slots(uls_ptr(tree->twoplus_sorted));
 		for (i=0; i<tree->twoplus_sorted.n; i++) {

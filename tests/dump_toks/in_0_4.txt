@@ -2,7 +2,6 @@
 main()
 {
 	A = "\x09hello\uAE00\$world\$";
-	글= world;
 	str = [[ This is NOT 
 		c-string ]];
 	str2 = "How \

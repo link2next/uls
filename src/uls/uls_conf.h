@@ -96,6 +96,14 @@ _ULS_DEFINE_STRUCT(ulc_header)
 	int  n_keys_twoplus, n_keys_idstr;
 	int  tok_id_min, tok_id_max;
 	int  tok_id_seed;
+
+	const char *tag_nam;
+	int lno, keyw_type;
+
+	uls_lex_ptr_t uls;
+	uls_tokdef_ptr_t e_ret;
+	uls_tokdef_vx_ptr_t e_vx_ret;
+	uls_tokdef_name_ptr_t e_nam_ret;
 };
 
 _ULS_DEFINE_STRUCT(fp_list)
@@ -203,7 +211,7 @@ ULS_DECL_STATIC int check_keyw_str(int lno, const char* str, uls_ptrtype_tool(ou
 ULS_DECL_STATIC uls_tokdef_vx_ptr_t __find_tokdef_by_tokid(uls_lex_ptr_t uls, int t, int area);
 ULS_DECL_STATIC uls_tokdef_vx_ptr_t __find_rsvd_tokdef_by_name(uls_lex_ptr_t uls, const char* name);
 ULS_DECL_STATIC uls_tokdef_vx_ptr_t __find_reg_tokdef_by_name(uls_lex_ptr_t uls, const char* name, uls_ptrtype_tool(outparam) parms);
-ULS_DECL_STATIC uls_tokdef_ptr_t __find_tokdef_by_keyw(uls_lex_ptr_t uls, char* keyw);
+ULS_DECL_STATIC uls_tokdef_ptr_t __find_tokdef_by_keyw(uls_lex_ptr_t uls, const char* keyw);
 
 ULS_DECL_STATIC int is_str_contained_in_commtypes(uls_lex_ptr_t uls, const char *str);
 ULS_DECL_STATIC int is_str_contained_in_quotetypes(uls_lex_ptr_t uls, const char *str);
@@ -219,21 +227,38 @@ ULS_DECL_STATIC int is_commstart_valid(uls_lex_ptr_t uls, int k);
 ULS_DECL_STATIC int is_quotestart_valid(uls_lex_ptr_t uls, int k);
 ULS_DECL_STATIC void __set_config_comment_type(uls_commtype_ptr_t cmt, int flags,
 	const char *mark1, int len_mark1, int lfs_mark1, const char *mark2, int len_mark2, int lfs_mark2);
-ULS_DECL_STATIC int read_config_var(const char* tag_nam, int lno, uls_lex_ptr_t uls,
-	char* lptr, ulc_header_ptr_t hdr);
-
+ULS_DECL_STATIC int read_config_var(ulc_header_ptr_t hdr, const char* tag_nam, int lno, char* lptr);
 ULS_DECL_STATIC int get_ulf_filepath(const char* dirpath, int len_dirpath,
 	const char *specname, char* pathbuff);
 
 ULS_DECL_STATIC void _list_searchpath(const char *filename, uls_ptrtype_tool(arglst) title, uls_ptrtype_tool(arglst) searchpath, int n);
-ULS_DECL_STATIC void set_chrmap(uls_lex_ptr_t uls, int tok_id, int keyw_type, char ch_kwd);
 ULS_DECL_STATIC int get_ulc_fileformat_ver(char *linebuff, int linelen, uls_ptrtype_tool(version) ver1);
 ULS_DECL_STATIC int check_ulc_file_magic(FILE* fin, uls_ptrtype_tool(version) sysver, char *ulc_lname);
 ULS_DECL_STATIC void parse_id_ranges_internal(uls_lex_ptr_t uls, uls_ref_parray_tool(wrds_ranges,uch_range), int is_first);
+
+ULS_DECL_STATIC int gen_next_tok_id(ulc_header_ptr_t hdr,
+	uls_tokdef_vx_ptr_t e_vx_grp, const char *tok_idstr, int ch_kwd);
+ULS_DECL_STATIC uls_tokdef_ptr_t __new_regular_tokdef(int keyw_type, const char *keyw, int ulen, int wlen);
+ULS_DECL_STATIC int check_tokid_duplicity(const char* tag_nam, int lno,
+	int tok_id, uls_tokdef_vx_ptr_t e_vx_grp, uls_lex_ptr_t uls);
+ULS_DECL_STATIC int __determine_reg_group_leader(ulc_header_ptr_t hdr,
+	const char *tok_nam, const char *keyw, int tok_id, uls_tokdef_ptr_t e_keyw);
+ULS_DECL_STATIC uls_tokdef_vx_ptr_t __register_tokdef_vx(uls_tokdef_ptr_t e,
+	uls_tokdef_vx_ptr_t e_vx_grp, uls_tokdef_name_ptr_t e_nam,
+	const char *tok_nam, int tok_id, uls_lex_ptr_t uls);
+
+ULS_DECL_STATIC uls_tokdef_vx_ptr_t __ulc_proc_line__1char(ulc_header_ptr_t hdr,
+	const char *tok_nam, char ch_kwd, const char *tok_idstr);
+ULS_DECL_STATIC uls_tokdef_vx_ptr_t __ulc_proc_line__reserved(ulc_header_ptr_t hdr,
+	const char *tok_nam, const char *keyw, const char *tok_idstr);
+ULS_DECL_STATIC uls_tokdef_vx_ptr_t __ulc_proc_line__userdef(ulc_header_ptr_t hdr,
+	const char *tok_nam, const char *tok_idstr);
+ULS_DECL_STATIC uls_tokdef_vx_ptr_t __ulc_proc_line__regular(ulc_header_ptr_t hdr,
+	const char *tok_nam, const char *keyw, const char *tok_idstr);
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC
-int is_reserved_tok(uls_lex_ptr_t uls, char* name);
+int is_reserved_tok(uls_lex_ptr_t uls, const char* name);
 int check_rsvd_toks(uls_lex_ptr_t uls);
 int uls_is_char_idfirst(uls_lex_ptr_t uls, const char* lptr, uls_wch_t *ptr_uch);
 int uls_is_char_id(uls_lex_ptr_t uls, const char* lptr, uls_wch_t *ptr_uch);
@@ -261,10 +286,10 @@ FILE* ulc_fp_pop(uls_ptrtype_tool(outparam) parms, int do_export);
 void release_ulc_fp_stack(fp_list_ptr_t fp_lst);
 
 void init_reserved_toks(uls_lex_ptr_t uls);
-int classify_char_group(uls_lex_ptr_t uls, ulc_header_ptr_t uls_conf);
 int classify_tok_group(uls_lex_ptr_t uls);
+void assign_tok_group(uls_lex_ptr_t uls);
 
-uls_tokdef_ptr_t rearrange_tokname_of_quotetypes(uls_lex_ptr_t uls, int n_keys_twoplus, uls_ptrtype_tool(outparam) parms);
+int rearrange_tokname_of_twoplus(uls_lex_ptr_t uls, int n_keys_twoplus);
 
 int calc_len_surplus_recommended(uls_lex_ptr_t uls);
 
@@ -283,7 +308,7 @@ ULS_DLL_EXTERN int  ulx_set_id_chars(uls_lex_ptr_t uls, int k, int i1, int i2);
 ULS_DLL_EXTERN void ulx_set_prepended_input(uls_lex_ptr_t uls, const char *line, int len, int lfs_is_not_token);
 ULS_DLL_EXTERN void ulx_set_decimal_separator(uls_lex_ptr_t uls, uls_wch_t wch);
 ULS_DLL_EXTERN void ulx_add_config_number_prefixes(uls_lex_ptr_t uls, char *wrd, int len, int radix, int slot_id);
-ULS_DLL_EXTERN int  ulx_add_config_number_suffixes(uls_lex_ptr_t uls, const char *suffix);
+ULS_DLL_EXTERN int  ulx_add_config_number_suffixes(uls_lex_ptr_t uls, const char *suffix, int l_suffix);
 ULS_DLL_EXTERN void ulx_set_not_char_tok(uls_lex_ptr_t uls, const char* non_ch_toks);
 ULS_DLL_EXTERN void ulx_set_comment_type(uls_lex_ptr_t uls, const char *mark1, const char *mark2);
 ULS_DLL_EXTERN int  ulx_set_rename(uls_lex_ptr_t uls, const char *name1, const char *name2);
@@ -301,9 +326,8 @@ ULS_DLL_EXTERN int ulc_add_searchpath(const char *pathlist, int front);
 
 ULS_DLL_EXTERN int ulc_prepend_searchpath_pwd(void);
 
-ULS_DLL_EXTERN int ulc_read_header(uls_lex_ptr_t uls, FILE* fin, ulc_header_ptr_t hdr, uls_ptrtype_tool(outparam) parms);
-ULS_DLL_EXTERN uls_tokdef_vx_ptr_t ulc_proc_line(const char* tag_nam, int lno, char* lptr, uls_lex_ptr_t uls, ulc_header_ptr_t hdr,
-	uls_ptrtype_tool(outparam) parms);
+ULS_DLL_EXTERN int ulc_read_header(FILE* fin, ulc_header_ptr_t hdr, uls_ptrtype_tool(outparam) parms);
+ULS_DLL_EXTERN uls_tokdef_vx_ptr_t ulc_proc_line(ulc_header_ptr_t hdr, char* line, uls_ptrtype_tool(outparam) parms);
 
 ULS_DLL_EXTERN uls_xcontext_ptr_t _uls_get_xcontext(uls_lex_ptr_t uls);
 #endif

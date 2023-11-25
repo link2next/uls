@@ -101,26 +101,26 @@ ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(filter_to_print_tokdef)(uls_lex_ptr_t uls, uls_tokdef_ptr_t e, int flags)
 {
 	uls_tokdef_vx_ptr_t e_vx = e->view;
-	int stat = 1;
+	int filtered = 0;
 
 	if (e_vx->tok_id == uls->xcontext.toknum_LINENUM || uls_get_namebuf_value(e_vx->name)[0] == '\0') {
-		stat = 0; // filtered
+		filtered = 1; // filtered
 
 	} else if (is_reserved_tok(uls, uls_get_namebuf_value(e_vx->name)) >= 0) {
-		if ((flags & ULS_FL_WANT_RESERVED_TOKS) == 0) stat = 0;
+		if ((flags & ULS_FL_WANT_RESERVED_TOKS) == 0) filtered = 1;
 
 	} else if (e->keyw_type == ULS_KEYW_TYPE_LITERAL) {
-		if ((flags & ULS_FL_WANT_QUOTE_TOKS) == 0) stat = 0;
+		if ((flags & ULS_FL_WANT_QUOTE_TOKS) == 0) filtered = 1;
 
 	} else {
-		if ((flags & ULS_FL_WANT_REGULAR_TOKS) == 0) stat = 0;
+		if ((flags & ULS_FL_WANT_REGULAR_TOKS) == 0) filtered = 1;
 	}
 
-	if (!stat) {
+	if (filtered) {
 //		_uls_log(err_log)("'%s' filtered for printing header file.", e->view->name);
 	}
 
-	return stat;
+	return filtered;
 }
 
 ULS_DECL_STATIC void
@@ -1142,7 +1142,7 @@ ULS_QUALIFIED_METHOD(uls_generate_tokdef_file)(uls_lex_ptr_t uls, uls_parms_emit
 			continue;
 		}
 
-		if ((e = e_vx->base) == nilptr || filter_to_print_tokdef(uls, e, emit_parm->flags)) {
+		if ((e = e_vx->base) == nilptr || !filter_to_print_tokdef(uls, e, emit_parm->flags)) {
 				slots_prn[n_tokdef_ary_prn++] = e_vx;
 		}
 	}
@@ -1187,7 +1187,6 @@ ULS_QUALIFIED_METHOD(uls_generate_tokdef_file)(uls_lex_ptr_t uls, uls_parms_emit
 
 		_uls_tool_(fp_close)(fout);
 	}
-
 
 	if (stat < 0 || (emit_parm->flags & ULS_FL_WANT_WRAPPER) == 0) {
 		uls_deinit_parray(uls_ptr(tokdef_ary_prn));

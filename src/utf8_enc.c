@@ -80,7 +80,7 @@ ULS_QUALIFIED_METHOD(uls_enc_utf32str_to_utf8str)(uls_uint32 *wstr1, int l_wstr1
 
 	if (wstr1 == NULL || l_wstr1 <= 0) return NULL;
 
-	siz_buff_chrs = 4 * l_wstr1 + 1;
+	siz_buff_chrs = ULS_UTF8_CH_MAXLEN * l_wstr1 + 1;
 	buff_chrs = utf_chrs = uls_malloc_buffer(siz_buff_chrs);
 
 	for (i=0; i < l_wstr1; i++) {
@@ -141,7 +141,7 @@ ULS_QUALIFIED_METHOD(uls_fill_utf8buf)(uls_utf_inbuf_ptr_t inp, char* utf8buf, i
 
 	while (1) {
 		i = uls_roundup(len_utf8buf, wrdsiz);
-		if (i + wrdsiz > siz_utf8buf) {
+		if (i + ULS_UTF8_CH_MAXLEN > siz_utf8buf) {
 			for ( ; len_utf8buf < siz_utf8buf; len_utf8buf += n_bytes) {
 				n_words = uls_utf_drain_inbuf(inp, &wch, 1);
 				if (n_words < 0) {

@@ -6,29 +6,25 @@
   4	[       ] =
   4	[ LITSTR] 	hello글\$world\$
   4	[       ] ;
-  5	[     ID] 글
+  5	[     ID] str
   5	[       ] =
-  5	[     ID] world
-  5	[       ] ;
-  6	[     ID] str
-  6	[       ] =
-  6	[ LITSTR]  This is NOT 
+  5	[ LITSTR]  This is NOT 
 		c-string 
-  7	[       ] ;
-  8	[     ID] str2
-  8	[       ] =
-  8	[ LITSTR] How \
+  6	[       ] ;
+  7	[     ID] str2
+  7	[       ] =
+  7	[ LITSTR] How \
   	   about \
 	   this
- 10	[       ] ;
- 12	[     ID] keyw
- 12	[       ] =
- 12	[ NUMBER] 4
- 12	[SNOWMAN] ☃$
- 12	[       ] ;
- 12	[     ID] keyw
- 12	[       ] =
- 12	[ NUMBER] 3
- 12	[EUROSIGN] €
- 12	[       ] ;
- 13	[    END] }
+  9	[       ] ;
+ 11	[     ID] keyw
+ 11	[       ] =
+ 11	[ NUMBER] 4
+ 11	[SNOWMAN] ☃$
+ 11	[       ] ;
+ 11	[     ID] keyw
+ 11	[       ] =
+ 11	[ NUMBER] 3
+ 11	[EUROSIGN] €
+ 11	[       ] ;
+ 12	[    END] }

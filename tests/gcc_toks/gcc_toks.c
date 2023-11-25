@@ -176,7 +176,7 @@ test_gnu_c(LPTSTR *args, int n_args)
 	int i, stat=0;
 
 	if (n_args < 1) {
-		err_log(_T("%s: invalid parameter!"), __func__);
+		err_log(_T("%hs: invalid parameter!"), __func__);
 		return -1;
 	}
 

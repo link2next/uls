@@ -45,6 +45,9 @@ extern "C" {
 #endif
 
 #ifdef ULS_DECL_PROTECTED_TYPE
+// the flags of uls_xcontext_t
+#define ULS_XCTX_FL_IGNORE_LF      0x01
+
 // the flags of uls_context_t
 #define ULS_CTX_FL_WANT_EOFTOK     0x01
 #define ULS_CTX_FL_EOF             0x02
@@ -54,18 +57,7 @@ extern "C" {
 #define ULS_CTX_FL_EXTERN_TOKBUF   0x20
 #define ULS_CTX_FL_ERR             0x40
 #define ULS_CTX_FL_GETTOK_RAW      0x80
-#define ULS_CTX_FL_FILL_RAW       0x100
-
-// the flags of uls_xcontext_t
-#define ULS_XCTX_FL_IGNORE_LF   0x01
-
-#define uls_canbe_ch_space(uls, wch)        (wch < ULS_SYNTAX_TABLE_SIZE && (uls)->ch_context[wch] == 0)
-#define uls_canbe_ch_idfirst(uls, wch)   (wch >= ULS_SYNTAX_TABLE_SIZE || (uls)->ch_context[wch] & ULS_CH_IDFIRST)
-#define uls_canbe_ch_id(uls, wch)        (wch >= ULS_SYNTAX_TABLE_SIZE || (uls)->ch_context[wch] & ULS_CH_ID)
-#define uls_canbe_ch_quote(uls, wch)     (wch >= ULS_SYNTAX_TABLE_SIZE || (uls)->ch_context[wch] & ULS_CH_QUOTE)
-#define uls_canbe_ch_1ch_token(uls, wch)    (wch < ULS_SYNTAX_TABLE_SIZE && (uls)->ch_context[wch] & ULS_CH_1)
-#define uls_canbe_ch_2ch_token(uls, wch) (wch >= ULS_SYNTAX_TABLE_SIZE || (uls)->ch_context[wch] & ULS_CH_2PLUS)
-#define uls_canbe_ch_comm(uls, wch)      (wch >= ULS_SYNTAX_TABLE_SIZE || (uls)->ch_context[wch] & ULS_CH_COMM)
+#define ULS_CTX_FL_FILL_RAW        0x100
 
 #define uls_context_get_tag(ctx) (_uls_tool(csz_text)(uls_ptr((ctx)->tag)))
 #define uls_context_get_taglen(ctx) (csz_length(uls_ptr((ctx)->tag)))

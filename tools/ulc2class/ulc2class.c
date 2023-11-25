@@ -91,56 +91,56 @@ static const struct option longopts[] = {
 
 static void usage_synopsis()
 {
-	uls_printf("Usage: %s [OPTIONS] <ulc-file.ulc|uld-file.uld>\n", progname);
-	uls_printf("    %s generates the source files for lexical analysis from ulc file.\n", progname);
-	uls_printf("       %s <ulc-filepath|lang-name>\n", progname);
-	uls_printf("       %s -l {c|cpp|cppcli|cs|java} <ulc-file>\n", progname);
-	uls_printf("       %s -lc -e <enum-name> <ulc-file>\n", progname);
-	uls_printf("       %s -f <out-filename> -n <class-name> <ulc-file>\n", progname);
-	uls_printf("       %s -d <out-dirpath> -f <out-filename> <ulc-file>\n", progname);
-	uls_printf("       %s -q [lang-name]\n", progname);
-	uls_printf("       %s -q -s <lang-name>\n", progname);
-	uls_printf("       %s --dump=<category> <ulc-filepath>,\n", progname);
-	uls_printf("          where category = [keyw|names|rsvd|hash|ch_ctx|quote|1char|2char|utf]\n");
+	err_log("Usage: %s [OPTIONS] <ulc-file.ulc|uld-file.uld>", progname);
+	err_log("    %s generates the source files for lexical analysis from ulc file.", progname);
+	err_log("       %s <ulc-filepath|lang-name>", progname);
+	err_log("       %s -l {c|cpp|cppcli|cs|java} <ulc-file>", progname);
+	err_log("       %s -lc -e <enum-name> <ulc-file>", progname);
+	err_log("       %s -f <out-filename> -n <class-name> <ulc-file>", progname);
+	err_log("       %s -d <out-dirpath> -f <out-filename> <ulc-file>", progname);
+	err_log("       %s -q [lang-name]", progname);
+	err_log("       %s -q -s <lang-name>", progname);
+	err_log("       %s --dump=<category> <ulc-filepath>,", progname);
+	err_log("          where category = [keyw|names|rsvd|hash|ch_ctx|quote|1char|2char|utf]");
 }
 
 static void usage_desc()
 {
 #ifdef ULS_WINDOWS
-	uls_printf("  -o <filepath>     specify the output file path.\n");
-	uls_printf("  -f <filename>     specify the output file name without suffix.\n");
-	uls_printf("  -d <dirpath>      specify the directory for output files.\n");
-	uls_printf("  -l <lang-name>    specify the language name when generating source files.\n");
-	uls_printf("  -n <name>         specifies the name of class(or enum-name).\n");
-	uls_printf("  -q                query the list of ulc names.\n");
-	uls_printf("  -s                generates a sample uld-file.\n");
-//	uls_printf("  -g <token-group>  token-group = {'regular','reserved', 'quote'}.\n");
-	uls_printf("  -v                verbose mode.\n");
-	uls_printf("  -V                prints the version information.\n");
-	uls_printf("  -h                displays the brief help.\n");
+	err_log("  -o <filepath>     specify the output file path.");
+	err_log("  -f <filename>     specify the output file name without suffix.");
+	err_log("  -d <dirpath>      specify the directory for output files.");
+	err_log("  -l <lang-name>    specify the language name when generating source files.");
+	err_log("  -n <name>         specifies the name of class(or enum-name).");
+	err_log("  -q                query the list of ulc names.");
+	err_log("  -s                generates a sample uld-file.");
+//	err_log("  -g <token-group>  token-group = {'regular','reserved', 'quote'}.");
+	err_log("  -v                verbose mode.");
+	err_log("  -V                prints the version information.");
+	err_log("  -h                displays the brief help.");
 #else
-	uls_printf("  -o, --output <filepath>    specify the output file path.\n");
-	uls_printf("  -f, --filename <filename>  specify the output file name without suffix.\n");
-	uls_printf("  -d, --dirpath <dirpath>    specify the directory for output files.\n");
-	uls_printf("  -l, --lang=<lang-name>     specify the target language name.\n");
-	uls_printf("  -n, --class-name=<name>    specify the name of the class(or enum-name).\n");
+	err_log("  -o, --output <filepath>    specify the output file path.");
+	err_log("  -f, --filename <filename>  specify the output file name without suffix.");
+	err_log("  -d, --dirpath <dirpath>    specify the directory for output files.");
+	err_log("  -l, --lang=<lang-name>     specify the target language name.");
+	err_log("  -n, --class-name=<name>    specify the name of the class(or enum-name).");
 
-	uls_printf("  -q, --query [lang-name]    query the list of ulc names.\n");
-	uls_printf("  -s, --uld-sample           generates a sample uld-file.\n");
-//	uls_printf("  -g, --group=<token-group>  token-group = {'regular','reserved', 'quote'}.\n");
-	uls_printf("  -v, --verbose              verbose mode.\n");
-	uls_printf("  -V, --version              prints the version information.\n");
-	uls_printf("  -h, --help                 displays the brief help.\n");
+	err_log("  -q, --query [lang-name]    query the list of ulc names.");
+	err_log("  -s, --uld-sample           generates a sample uld-file.");
+//	err_log("  -g, --group=<token-group>  token-group = {'regular','reserved', 'quote'}.");
+	err_log("  -v, --verbose              verbose mode.");
+	err_log("  -V, --version              prints the version information.");
+	err_log("  -h, --help                 displays the brief help.");
 #endif
 }
 
 static void usage_brief()
 {
 	usage_synopsis();
-	uls_printf("\n");
+	err_log("");
 
 	usage_desc();
-	uls_printf("\n");
+	err_log("");
 }
 
 static void usage()
@@ -152,89 +152,89 @@ static void usage_long(void)
 {
 	usage_brief();
 
-	uls_printf("The tokens generated by %s consists of reserved and regular ones.\n");
-	uls_printf("The regular tokens are defined by user.\n");
-	uls_printf("The reserved tokens are the basic tokens that the system initially defines.\n");
-	uls_printf("\n");
+	err_log("The tokens generated by %s consists of reserved and regular ones.", progname);
+	err_log("The regular tokens are defined by user.");
+	err_log("The reserved tokens are the basic tokens that the system initially defines.");
+	err_log("");
 
-	uls_printf("The below are the reserved tokens:\n");
-	uls_printf(" * EOI(End of Input): The last token of all input streams.\n");
-	uls_printf("       It returns EOI if the internal input stack is empty!\n");
-	uls_printf(" * EOF: The internal input structure contains a stack of input streams.\n");
-	uls_printf("       It returns EOF whenever top of the stacks is consumed.\n");
-	uls_printf(" * ERR: It returns this err token in case of error.\n");
-	uls_printf(" * ID: Identifer token, which should be defined by user in ulc-file.\n");
-	uls_printf(" * NUMBER: It represents the current token is number whichever it is integer or floating number.\n");
-	uls_printf(" * LINENUM: This informs users of the location of the input cursor.\n");
-	uls_printf(" * TMPL: This allows the template variables in uls-file, which must be replaced with strings.\n");
-	uls_printf(" * NONE: It returns NONE when the input stack is intial state.\n");
-	uls_printf("\n");
+	err_log("The below are the reserved tokens:");
+	err_log(" * EOI(End of Input): The last token of all input streams.");
+	err_log("       It returns EOI if the internal input stack is empty!");
+	err_log(" * EOF: The internal input structure contains a stack of input streams.");
+	err_log("       It returns EOF whenever top of the stacks is consumed.");
+	err_log(" * ERR: It returns this err token in case of error.");
+	err_log(" * ID: Identifer token, which should be defined by user in ulc-file.");
+	err_log(" * NUMBER: It represents the current token is number whichever it is integer or floating number.");
+	err_log(" * LINENUM: This informs users of the location of the input cursor.");
+	err_log(" * TMPL: This allows the template variables in uls-file, which must be replaced with strings.");
+	err_log(" * NONE: It returns NONE when the input stack is intial state.");
+	err_log("");
 
-	uls_printf("You can specify the qualified long class name with -n-option.\n");
-	uls_printf("For instance, the class name may be 'AAA.BBB.SampleLex', or just class name 'SampleLex'.\n");
-	uls_printf("\n");
+	err_log("You can specify the qualified long class name with -n-option.");
+	err_log("For instance, the class name may be 'AAA.BBB.SampleLex', or just class name 'SampleLex'.");
+	err_log("");
 
-	uls_printf("To generate c++ headers,\n");
-	uls_printf("    %s sample.ulc\n", progname);
-	uls_printf("    %s -lcpp -n AAA.BBB.SampleLex sample.ulc\n", progname);
-	uls_printf("The default output of %s is a c++ header file.\n", progname);
-	uls_printf("\n");
+	err_log("To generate c++ headers,");
+	err_log("    %s sample.ulc", progname);
+	err_log("    %s -lcpp -n AAA.BBB.SampleLex sample.ulc", progname);
+	err_log("The default output of %s is a c++ header file.", progname);
+	err_log("");
 
-	uls_printf("To generate header files of other languages, use -l-option.\n");
-	uls_printf("    %s -lc sample.ulc\n", progname);
-	uls_printf("    %s -ljava -n sample sample.ulc\n", progname);
-	uls_printf("\n");
+	err_log("To generate header files of other languages, use -l-option.");
+	err_log("    %s -lc sample.ulc", progname);
+	err_log("    %s -ljava -n sample sample.ulc", progname);
+	err_log("");
 
-	uls_printf("To generate C# wrapper class files,\n");
-	uls_printf("    %s -lcs -n AAA.BBB.SampleLex sample.ulc\n", progname);
-	uls_printf("    %s -d /topdir/AAA/BBB -f SampleLex -lcs -n AAA.BBB.SampleLex sample.ulc\n", progname);
-	uls_printf("    The above line specifies the output directory with -d-option.\n");
-	uls_printf("    The f-option is used for the common filename of output files.\n");
-	uls_printf("\n");
+	err_log("To generate C# wrapper class files,");
+	err_log("    %s -lcs -n AAA.BBB.SampleLex sample.ulc", progname);
+	err_log("    %s -d /topdir/AAA/BBB -f SampleLex -lcs -n AAA.BBB.SampleLex sample.ulc", progname);
+	err_log("    The above line specifies the output directory with -d-option.");
+	err_log("    The f-option is used for the common filename of output files.");
+	err_log("");
 
-	uls_printf("To generate java class files,\n");
-	uls_printf("    %s -ljava -n AAA.BBB.SampleLex sample.ulc\n", progname);
-	uls_printf("    %s -d /topdir/AAA/BBB -f SampleLex -l java -n AAA.BBB.SampleLex sample.ulc\n", progname);
-	uls_printf("\n");
+	err_log("To generate java class files,");
+	err_log("    %s -ljava -n AAA.BBB.SampleLex sample.ulc", progname);
+	err_log("    %s -d /topdir/AAA/BBB -f SampleLex -l java -n AAA.BBB.SampleLex sample.ulc", progname);
+	err_log("");
 
-	uls_printf("To query the available names for ulc in the uls repository,\n");
-	uls_printf("    %s -q\n", progname);
-	uls_printf("  .....\n");
-	uls_printf("  cpp c++ C++\n");
-	uls_printf("  c_sharp C# c# cs csharp c-sharp\n");
-	uls_printf("  go Go golang\n");
-	uls_printf("  visual_basic visual-basic VisualBasic 'visual basic' 'Visual basic'\n");
-	uls_printf("  .....\n");
-	uls_printf(" Each line represents the supported names of a language.\n");
-	uls_printf(" You may select the any name in same group for your preference.\n");
-	uls_printf(" The name must be used as the argument of uls-object creator,\n");
-	uls_printf("     such as uls_create(), subclasses of UlsLex(), for configuration name.\n");
-	uls_printf("\n");
+	err_log("To query the available names for ulc in the uls repository,");
+	err_log("    %s -q", progname);
+	err_log("  .....");
+	err_log("  cpp c++ C++");
+	err_log("  c_sharp C# c# cs csharp c-sharp");
+	err_log("  go Go golang");
+	err_log("  visual_basic visual-basic VisualBasic 'visual basic' 'Visual basic'");
+	err_log("  .....");
+	err_log(" Each line represents the supported names of a language.");
+	err_log(" You may select the any name in same group for your preference.");
+	err_log(" The name must be used as the argument of uls-object creator,");
+	err_log("     such as uls_create(), subclasses of UlsLex(), for configuration name.");
+	err_log("");
 
-	uls_printf("If you want to know whether or not a language is supported by ULS,\n");
-	uls_printf("    %s -q golang\n", progname);
-	uls_printf("    %s -q c++\n", progname);
-	uls_printf("\n");
+	err_log("If you want to know whether or not a language is supported by ULS,");
+	err_log("    %s -q golang", progname);
+	err_log("    %s -q c++", progname);
+	err_log("");
 
-	uls_printf("To dump the mapping of token name to token number, use -s-option with -q-option.\n");
-	uls_printf("    %s -q -s golang\n", progname);
-	uls_printf("      #@golang\n");
-	uls_printf("        ......\n");
-	uls_printf("        NUMBER -3\n");
-	uls_printf("            ID -2\n");
-	uls_printf("           EOF -1\n");
-	uls_printf("           EOI 0\n");
-	uls_printf("   RUNE_LITSTR 128\n");
-	uls_printf(" INTERP_LITSTR 129\n");
-	uls_printf("    RAW_LITSTR 130\n");
-	uls_printf("         .....\n");
-	uls_printf("You can modify the token name and number after saving the above output as uld-file\n");
-	uls_printf("  and specify the path of uld-file in the argument of uls-object creator for configuration name.\n");
-	uls_printf("\n");
+	err_log("To dump the mapping of token name to token number, use -s-option with -q-option.");
+	err_log("    %s -q -s golang", progname);
+	err_log("      #@golang");
+	err_log("        ......");
+	err_log("        NUMBER -3");
+	err_log("            ID -2");
+	err_log("           EOF -1");
+	err_log("           EOI 0");
+	err_log("   RUNE_LITSTR 128");
+	err_log(" INTERP_LITSTR 129");
+	err_log("    RAW_LITSTR 130");
+	err_log("         .....");
+	err_log("You can modify the token name and number after saving the above output as uld-file");
+	err_log("  and specify the path of uld-file in the argument of uls-object creator for configuration name.");
+	err_log("");
 
-	uls_printf("Refer to the examples in 'ulc_exam' in the package to see how to write ulc-file.\n");
-	uls_printf("Refer to the examples' or 'tests' to see how to use ulc-file.\n");
-	uls_printf("\n");
+	err_log("Refer to the examples in 'ulc_exam' in the package to see how to write ulc-file.");
+	err_log("Refer to the examples' or 'tests' to see how to use ulc-file.");
+	err_log("");
 }
 
 static int

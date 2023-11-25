@@ -181,7 +181,6 @@ again_1:
 		if (inp->rawbuf_bytes > 0)
 			_uls_log(err_log)("%s: redundant %d-bytes exist!", __func__, inp->rawbuf_bytes);
 		return -1;
-
 	}
 
 	if (rc == 0) {

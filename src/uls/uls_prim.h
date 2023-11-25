@@ -117,6 +117,14 @@ extern "C" {
 #endif
 #endif // ULS_WINDOWS
 
+#define uls_canbe_ch_space(ch_ctx, wch)      (wch < ULS_SYNTAX_TABLE_SIZE && (ch_ctx)[wch] == 0)
+#define uls_canbe_ch_idfirst(ch_ctx, wch)    (wch >= ULS_SYNTAX_TABLE_SIZE || ((ch_ctx)[wch] & ULS_CH_IDFIRST))
+#define uls_canbe_ch_id(ch_ctx, wch)         (wch >= ULS_SYNTAX_TABLE_SIZE || ((ch_ctx)[wch] & ULS_CH_ID))
+#define uls_canbe_ch_comm(ch_ctx, wch)       (wch >= ULS_SYNTAX_TABLE_SIZE || ((ch_ctx)[wch] & ULS_CH_COMM))
+#define uls_canbe_ch_quote(ch_ctx, wch)      (wch >= ULS_SYNTAX_TABLE_SIZE || ((ch_ctx)[wch] & ULS_CH_QUOTE))
+#define uls_canbe_ch_1ch_token(ch_ctx, wch)  (wch < ULS_SYNTAX_TABLE_SIZE && ((ch_ctx)[wch] & ULS_CH_1))
+#define uls_canbe_ch_2ch_token(ch_ctx, wch)  (wch >= ULS_SYNTAX_TABLE_SIZE || ((ch_ctx)[wch] & ULS_CH_2PLUS))
+
 #ifdef _ULS_IMPLDLL
 #define _IS_CH_DIGIT(c) (c>='0' && c<='9')
 #define _IS_CH_LOWER(c) (c>='a' && c<='z')

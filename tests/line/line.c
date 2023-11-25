@@ -60,7 +60,7 @@ proc_file(LPCTSTR filepath)
 	int len, stat = 0, lno = 0;
 
 	if ((cur_fin=uls_fp_open(filepath, ULS_FIO_READ)) == NULL) {
-		err_log(_T("%s: fail to open '%s'"), __func__, filepath);
+		err_log(_T("%hs: fail to open '%s'"), __func__, filepath);
 		return -1;
 	}
 
@@ -68,7 +68,7 @@ proc_file(LPCTSTR filepath)
 	while (1) {
 		if ((len=uls_fp_gets(cur_fin, filebuff, sizeof(filebuff), 0)) <= ULS_EOF) {
 			if (len < ULS_EOF) {
-				err_log(_T("%s: error to read a line"), __func__);
+				err_log(_T("%hs: error to read a line"), __func__);
 				stat =-1;
 			}
 			break;

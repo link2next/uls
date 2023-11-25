@@ -58,7 +58,6 @@ ULS_DEFINE_STRUCT(onechar_table)
 {
 	uls_decl_array_type00(tokgrps, onechar_tokgrp, ULS_N_ONECHAR_TOKGRPS);
 	uls_onechar_tokdef_etc_ptr_t tokdefs_etc_list;
-
 	uls_decl_parray(tokdef_vx_pool_1ch, tokdef_vx);
 };
 
@@ -84,7 +83,7 @@ void uls_insert_onechar_tokdef_map(uls_onechar_tokgrp_ptr_t tokgrp, uls_wch_t wc
 uls_tokdef_vx_ptr_t uls_find_1char_tokdef_etc(uls_onechar_table_ptr_t tbl, uls_wch_t wch);
 void uls_insert_onechar_tokdef_etc(uls_onechar_table_ptr_t tbl, uls_wch_t wch, uls_tokdef_vx_ptr_t e_vx);
 
-uls_tokdef_vx_ptr_t uls_find_1char_tokdef_vx(uls_onechar_table_ptr_t tbl, uls_wch_t wch,
+uls_tokdef_vx_ptr_t uls_find_1char_tokdef_vx(uls_onechar_table_ptr_t tbl, int ch,
 	uls_tokdef_outparam_ptr_t outparam);
 int uls_insert_1char_tokdef_vx(uls_onechar_table_ptr_t tbl, uls_wch_t wch, uls_tokdef_vx_ptr_t e_vx);
 uls_tokdef_vx_ptr_t uls_insert_1char_tokdef_uch(uls_onechar_table_ptr_t tbl, uls_wch_t wch);

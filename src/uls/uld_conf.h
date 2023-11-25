@@ -76,12 +76,11 @@ ULS_DECL_STATIC int add_aliases_to_token(uls_tokdef_vx_ptr_t e_vx, uls_ptrtype_t
 
 #ifdef ULS_DECL_PROTECTED_PROC
 int uld_pars_line(int lno, uls_ptrtype_tool(wrd) wrdx, uld_line_ptr_t tok_names);
-int uld_proc_line(const char *tag, int lno,
-  char* lptr, uls_lex_ptr_t uls, int n2_vx_namelist);
+int uld_proc_line(int lno, char* lptr, uls_lex_ptr_t uls, int n2_vx_namelist);
 uls_tokdef_vx_ptr_t uld_find_tokdef_vx(uls_lex_ptr_t uls, int n_vx_namelist, const char* name);
 int uld_add_aliases(uls_tokdef_vx_ptr_t e_vx, const char *line_aliases);
-
-int uld_load_fp(uls_lex_ptr_t uls, FILE *fin_uld, const char *tag);
+int __uld_post_names(uld_names_map_ptr_t names_map);
+int uld_load_fp(uls_lex_ptr_t uls, FILE *fin_uld);
 
 void uls_init_nam_tok(uls_nam_tok_ptr_t nam_tok);
 void uls_deinit_nam_tok(uls_nam_tok_ptr_t nam_tok);
