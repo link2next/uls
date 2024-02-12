@@ -373,10 +373,7 @@ ULS_QUALIFIED_METHOD(dfl_lit_analyzer_escape0)(uls_litstr_ptr_t lit)
 	if (len > ULS_UTF8_CH_MAXLEN) len = ULS_UTF8_CH_MAXLEN;
 	for (j=0; j<len; j++) buff[j] = lptr[j];
 
-	if ((rc = _uls_tool_(decode_utf8)(buff, j, &wch)) <= 0) {
-//		_uls_log(err_log)("%s: encoding error!", __func__);
-		return ULS_LITPROC_ERROR;
-	}
+	rc = _uls_tool_(decode_utf8)(buff, j, &wch);
 
 	if (wch == escmap->esc_sym) {
 		lit_ctx->litstr_proc = uls_ref_callback_this(dfl_lit_analyzer_escape1);
@@ -443,10 +440,7 @@ ULS_QUALIFIED_METHOD(dfl_lit_analyzer_escape1)(uls_litstr_ptr_t lit)
 	if (len > ULS_UTF8_CH_MAXLEN) len = ULS_UTF8_CH_MAXLEN;
 	for (j=0; j<len; j++) buff[j] = lptr[j];
 
-	if ((len1 = _uls_tool_(decode_utf8)(buff, j, &wch)) <= 0) {
-//		_uls_log(err_log)("%s: unterminated literal-string", __func__);
-		return ULS_LITPROC_ERROR;
-	}
+	len1 = _uls_tool_(decode_utf8)(buff, j, &wch);
 
 	lptr += len1;
 	if (wch == '\n') {

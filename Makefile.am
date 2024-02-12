@@ -11,3 +11,5 @@ ACLOCAL_AMFLAGS = -I m4
 libtool: $(LIBTOOL_DEPS)
 	bash ./config.status --recheck
 
+clean-local:
+	@make -C examples clean

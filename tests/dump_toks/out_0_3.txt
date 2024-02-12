@@ -5,3 +5,6 @@
 	world
   8	[ LITSTR] hello\n\
 \tworld
+ 11	[ LITSTR] jointed
+ 11	[ LITSTR] literal
+ 11	[ LITSTR] strings

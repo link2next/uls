@@ -307,11 +307,16 @@ test_uls_isrc(LPCTSTR fpath)
 	uls_set_tag(uls, fpath, 1);
 
 	for ( ; ; ) {
-		if ((t = uls_get_tok(uls)) == TOK_EOI) break;
+		if ((t = uls_get_tok(uls)) == TOK_ERR) {
+			tokstr = uls_tokstr(uls);
+			err_log(_T("ErrorToken: %s"), tokstr);
+			break;
+		}
+		if (t == TOK_EOI) break;
 
 		uls_printf(_T("#%d(%6d) :"), uls_get_lineno(uls), t);
 		tokstr = uls_tokstr(uls);
-		ult_dump_bin(tokstr);
+		ult_dump_utf8str(tokstr);
 		uls_printf(_T("\n"));
 	}
 }

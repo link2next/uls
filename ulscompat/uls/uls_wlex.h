@@ -48,7 +48,10 @@ ULS_DEFINE_STRUCT(wlex_shell)
 	uls_flags_t flags;
 
 	csz_str_t wtokbuf;
-	int    wtokbuf_bytes, wtokbuf_len;
+	int    wtokbuf_len;
+
+	csz_str_t wtokbuf2;
+	int    wtokbuf2_len;
 
 	csz_str_t wtag, wtageof;
 	int wtag_len, wtageof_len;
@@ -96,6 +99,8 @@ ULS_DLL_EXTERN void uls_set_wtok(uls_lex_ptr_t uls, int tokid, const wchar_t* wl
 ULS_DLL_EXTERN int uls_tokid_wstr(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN const wchar_t* uls_lexeme_wstr(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN int uls_lexeme_len_wstr(uls_lex_ptr_t uls);
+ULS_DLL_EXTERN const wchar_t* uls_tokstr_wstr(uls_lex_ptr_t uls);
+ULS_DLL_EXTERN int uls_tokstr_len_wstr(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN int uls_lexeme_chars_wstr(uls_lex_ptr_t uls);
 
 ULS_DLL_EXTERN wchar_t uls_peek_wch(uls_lex_ptr_t uls, uls_nextch_detail_ptr_t parms);
@@ -156,8 +161,14 @@ ULS_DLL_EXTERN const wchar_t* uls_get_tag2_wstr(uls_lex_ptr_t uls, int *ptr_len_
 #undef uls_lexeme
 #define uls_lexeme uls_lexeme_wstr
 
+#undef uls_tokstr
+#define uls_tokstr uls_tokstr_wstr
+
 #undef uls_lexeme_len
 #define uls_lexeme_len uls_lexeme_len_wstr
+
+#undef uls_tokstr_len
+#define uls_tokstr_len uls_tokstr_len_wstr
 
 #undef uls_lexeme_chars
 #define uls_lexeme_chars uls_lexeme_chars_wstr

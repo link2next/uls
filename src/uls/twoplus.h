@@ -42,7 +42,7 @@ extern "C" {
 ULS_DEFINE_STRUCT(twoplus_tree)
 {
 	int wlen_keyw;
-	uls_decl_parray(twoplus_sorted, tokdef_vx);
+	uls_decl_parray(twoplus_sorted, tokdef);
 	uls_twoplus_tree_ptr_t prev;
 };
 ULS_DEF_ARRAY_TYPE00(twoplus_tree, TWOPLUS_TREE_TYPE00_ULS_KWTABLE_TWOPLUS_SIZE, ULS_KWTABLE_TWOPLUS_SIZE);
@@ -51,13 +51,13 @@ ULS_DEFINE_STRUCT(kwtable_twoplus)
 {
 	uls_decl_array_type00(tree_array, twoplus_tree, ULS_KWTABLE_TWOPLUS_SIZE);
 	uls_twoplus_tree_ptr_t  start;
-	uls_decl_parray(twoplus_mempool, tokdef_vx);
+	uls_decl_parray(twoplus_mempool, tokdef);
 };
 #endif // ULS_DEF_PUBLIC_TYPE
 
 #if defined(__ULS_TWOPLUS__) || defined(ULS_DECL_PRIVATE_PROC)
-ULS_DECL_STATIC uls_tokdef_vx_ptr_t __twoplus_bi_search(uls_kwtable_twoplus_ptr_t tbl,
-	const char* line_keyw, uls_ref_parray(ary,tokdef_vx), int n_ary);
+ULS_DECL_STATIC uls_tokdef_ptr_t __twoplus_bi_search(uls_kwtable_twoplus_ptr_t tbl,
+	const char* line_keyw, uls_ref_parray(ary,tokdef), int n_ary);
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC

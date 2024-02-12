@@ -58,6 +58,7 @@ extern "C" {
 #define ULS_CTX_FL_ERR             0x40
 #define ULS_CTX_FL_GETTOK_RAW      0x80
 #define ULS_CTX_FL_FILL_RAW        0x100
+#define ULS_CTX_FL_TOKSTR_AUX      0x200
 
 #define uls_context_get_tag(ctx) (_uls_tool(csz_text)(uls_ptr((ctx)->tag)))
 #define uls_context_get_taglen(ctx) (csz_length(uls_ptr((ctx)->tag)))
@@ -135,7 +136,7 @@ ULS_DEFINE_STRUCT(context)
 
 	int        tok;
 	const char *s_val;
-	int        s_val_len, s_val_uchars;
+	int        s_val_len, s_val_wchars;
 
 	uls_type_tool(outbuf) tokbuf;
 	uls_type_tool(outbuf) tokbuf_aux;

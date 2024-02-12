@@ -1551,7 +1551,7 @@ void UlsLex::ungetStr(wstring str)
 }
 
 // <brief>
-// Call ungetLexeme if you want push lexeme to the current input stream.
+// Call ungetToken if you want push lexeme to the current input stream.
 // </brief>
 // <parm name="tok_id">
 //   The corresponding token string of 'tok_id'.

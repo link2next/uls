@@ -124,7 +124,7 @@ ULS_QUALIFIED_METHOD(ult_split_litstr)(char *str, char qch)
 }
 
 void
-ULS_QUALIFIED_METHOD(ult_dump_bin)(const char *str)
+ULS_QUALIFIED_METHOD(ult_dump_utf8str)(const char *str)
 {
 	unsigned char ch, ch1;
 	unsigned char buff[4];

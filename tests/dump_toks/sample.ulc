@@ -18,6 +18,8 @@ QUOTE_TYPE: token=DQUOTE " x:\x2x u:\u4x
 QUOTE_TYPE: token=BBQUOTE options=multiline,asymmetric  [[ ]] 
 QUOTE_TYPE: token=SQUOTE ' verbatim1
 
+NOT_CHAR_TOK: multibytes=false %~_! 
+
 %%
 #
 # Token Definition List
@@ -78,3 +80,7 @@ UNSIGNED unsigned
 VOID     void
 VOLATILE volatile
 WHILE    while
+
+USERDEF1 500
+USERDEF2
+USERDEF3 500

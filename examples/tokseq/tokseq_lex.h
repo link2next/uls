@@ -39,8 +39,8 @@
 #define          TOK_ERR  129
 
 #define           TOK_ID  130
-#define        TOK_IDENT  130
 #define     TOK_ID_ALIAS  130
+#define        TOK_IDENT  130
 
 extern int uls_init_tokseq(uls_lex_ptr_t uls);
 extern uls_lex_ptr_t uls_create_tokseq(void);

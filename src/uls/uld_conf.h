@@ -70,7 +70,6 @@ _ULS_DEFINE_STRUCT(uld_names_map)
 ULS_DECL_STATIC int comp_vx_by_toknam(const uls_voidptr_t a, const uls_voidptr_t b);
 ULS_DECL_STATIC int srch_vx_by_toknam(const uls_voidptr_t a, const uls_voidptr_t b);
 ULS_DECL_STATIC void __change_tok_id(uls_tokdef_vx_ptr_t e_vx, int tok_id);
-ULS_DECL_STATIC int __change_tok_nam(uls_tokdef_vx_ptr_t e_vx, const char* name, const char* name2);
 ULS_DECL_STATIC int add_aliases_to_token(uls_tokdef_vx_ptr_t e_vx, uls_ptrtype_tool(wrd) wrdx);
 #endif
 
@@ -95,7 +94,6 @@ ULS_DLL_EXTERN int uld_change_tok_id(uls_tokdef_vx_ptr_t e_vx, int tok_id);
 ULS_DLL_EXTERN int uld_change_tok_names(uls_tokdef_vx_ptr_t e_vx, const char* name2, const char *line_aliases);
 
 ULS_DLL_EXTERN void uld_export_names(uls_lex_ptr_t uls);
-
 ULS_DLL_EXTERN int uld_export_extra_names(uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) parms);
 ULS_DLL_EXTERN void uld_unexport_extra_names(uls_ref_array_type10(lst_names,nam_tok));
 #endif

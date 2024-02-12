@@ -912,7 +912,7 @@ public class UlsLex implements AutoCloseable {
 			if (Dic4ExtraTokdef.containsKey(t)) {
 				o = Dic4ExtraTokdef.get(t);
 			} else {
-				System.err.println("Key:" + t + "Not Found!");
+				System.err.println("Key(" + t + ") Not Found!");
 			}
 		} catch (Exception e) {
 			System.err.println("Can't get token (exta) information for tok:" + t + "!");

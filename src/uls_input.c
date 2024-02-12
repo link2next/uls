@@ -40,50 +40,48 @@ ULS_DECL_STATIC _ULS_INLINE int
 ULS_QUALIFIED_METHOD(__input_space_proc)(const char* ch_ctx, _uls_ptrtype_tool(csz_str) ss_dst, uls_ptrtype_tool(outparam) parms)
 {
 	const char  *lptr = parms->lptr, *lptr_end = parms->lptr_end;
-	int   stat=0, n_spaces, n_spaces_total, n_lfs_total;
+	int   stat=0, n_spaces, n_spaces_accum, n_lfs_total;
 	char  ch;
 
-	n_spaces_total = parms->n1;
-	n_lfs_total = parms->n2; // '\n'
+	n_spaces_accum = parms->n1;
+	n_lfs_total = parms->n2;
 
-	for (n_spaces=0; ; ) {
+	for (n_spaces = 0; ; ) {
 		if ((ch = *lptr) >= ULS_SYNTAX_TABLE_SIZE || ch_ctx[ch] != 0) {
 			stat = 1;
 			break;
 		}
 
-		if (ch == '\n') { // treat as special cases
+		if (ch == '\n') {
 			if (n_spaces > 0) {
 				_uls_tool(csz_putc)(ss_dst, ' ');
-				++n_spaces_total;
+				++n_spaces_accum;
 				n_spaces = 0;
 			}
 			_uls_tool(csz_putc)(ss_dst, '\n');
 			++n_lfs_total;
 
 		} else {
-			if (n_spaces >= (ULS_INT_MAX>>1)) {
-				// n_spaces reaches ULS_INT_MAX / 2
+			if (++n_spaces >= (ULS_INT_MAX>>1)) { // ULS_INT_MAX / 2
 				_uls_tool(csz_putc)(ss_dst, ' ');
-				++n_spaces_total;
-				n_spaces = 0; // reset n_spaces to zero
+				++n_spaces_accum;
+				n_spaces = 0;
 			}
-			++n_spaces;
 		}
 
-		if (++lptr == lptr_end) {
+		if (++lptr >= lptr_end) {
 			break;
 		}
 	}
 
 	if (n_spaces > 0) {
 		_uls_tool(csz_putc)(ss_dst, ' ');
-		++n_spaces_total;
+		++n_spaces_accum;
 //		n_spaces = 0;
 	}
 
 	parms->lptr = lptr;
-	parms->n1 = n_spaces_total;
+	parms->n1 = n_spaces_accum;
 	parms->n2 = n_lfs_total;
 
 	return stat;
@@ -242,7 +240,6 @@ ULS_QUALIFIED_METHOD(input_space_proc)(const char* ch_ctx, uls_input_ptr_t inp,
 	} while ((stat = __input_space_proc(ch_ctx, ss_dst, uls_ptr(parms))) == 0);
 
 	parms0->n = n_lfs = parms.n2;
-
 	inp->rawbuf_ptr = parms.lptr;
 	inp->rawbuf_bytes = (int) (parms.lptr_end - parms.lptr);
 

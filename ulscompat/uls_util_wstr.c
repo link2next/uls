@@ -64,24 +64,21 @@ uls_wputstr(const wchar_t *wstr)
 }
 
 void
-ult_dump_bin_wstr(const wchar_t *wstr)
+ult_dump_utf8str_wstr(const wchar_t *wstr)
 {
-	wchar_t wch, wbuff[8];
-	unsigned char ch1;
-	int i, j, k;
+	int wlen = uls_wcslen(wstr);
+	char *ustr;
+	csz_str_t csz;
 
-	for (i = 0; (wch = wstr[i]) != L'\0'; i++) {
-		k = 0;
-		for (j = 3; j > 0; j--) {
-			ch1 = (unsigned char) ( (wch >> (j * 4)) & 0x0F );
-			if (k > 0 || ch1 != 0) wbuff[k++] = uls_nibble2ascii(ch1);
-		}
-		ch1 = (unsigned char) (wch & 0x0F);
-		wbuff[k++] = uls_nibble2ascii(ch1);
-		wbuff[k] = L'\0';
+	csz_init(uls_ptr(csz), (wlen+1)*ULS_UTF8_CH_MAXLEN);
 
-		uls_wprintf(L" %s", wbuff);
+	if ((ustr = uls_wstr2ustr(wstr, wlen, uls_ptr(csz))) == NULL) {
+		err_wlog(L"encoding error!");
+	} else {
+		ult_dump_utf8str(ustr);
 	}
+
+	csz_deinit(uls_ptr(csz));
 }
 
 int

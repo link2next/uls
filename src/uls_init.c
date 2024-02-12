@@ -52,7 +52,6 @@ ULS_DECL_STATIC void
 ULS_QUALIFIED_METHOD(__finalize_uls)(void)
 {
 	finalize_uls_litesc();
-	finalize_ulc_lexattr();
 
 	if (uls_langs != nilptr) {
 		uls_destroy_lang_list(uls_langs);
@@ -93,7 +92,6 @@ ULS_QUALIFIED_METHOD(__initialize_uls)(void)
 		}
 	}
 
-	initialize_ulc_lexattr();
 	initialize_uls_litesc();
 
 	_uls_sysinfo_(initialized) = 1;

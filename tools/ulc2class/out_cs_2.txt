@@ -42,13 +42,13 @@ public class Sample2 : uls.polaris.UlsLex {
 	public const int            BEGIN = 92;
 	public const int              BEG = 92;
 	public const int              AND = 93;
-	public const int           ANDAND = 93;
-	public const int           AANNDD = 93;
-	public const int             AND2 = 93;
 	public const int        AND_ALIAS = 93;
+	public const int             AND2 = 93;
+	public const int           AANNDD = 93;
+	public const int           ANDAND = 93;
 	public const int            MINUS = 94;
-	public const int               OR = 94;
 	public const int              OR2 = 94;
+	public const int               OR = 94;
 	public const int               EQ = 95;
 	public const int             EQEQ = 96;
 	public const int              NEQ = 97;

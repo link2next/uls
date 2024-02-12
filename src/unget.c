@@ -319,16 +319,13 @@ again_1:
 
 		} else {
 			lexseg = uls_get_array_slot_type10(uls_ptr(xctx->context->lexsegs), k);
-
 			if ((qmt = uls_find_quotetype_by_tokid(
 				uls_ptr(uls->quotetypes), uls->quotetypes.n, lexseg->tokdef_vx->tok_id)) == nilptr) {
 				_uls_log(err_panic)("No matching quote-string for tok-id(%d) found",
 					lexseg->tokdef_vx->tok_id);
 			}
-
 			parms->len = 0;
 			parms->data = qmt;
-
 			return ULS_UCH_NONE;
 		}
 	}
@@ -340,11 +337,7 @@ again_1:
 		wch = ch;
 		rc = 1;
 	} else {
-		if ((rc = _uls_tool_(decode_utf8)(lptr, -1, &wch)) <= 0) {
-			parms->len = -3; // ERR
-			parms->data = nilptr;
-			return ULS_UCH_NONE;
-		}
+		rc = _uls_tool_(decode_utf8)(lptr, -1, &wch);
 	}
 
 	parms->len = rc;
@@ -439,8 +432,9 @@ ULS_QUALIFIED_METHOD(uls_unget_lexeme)(uls_lex_ptr_t uls, const char *lxm, int t
 	uls_context_ptr_t ctx = uls->xcontext.context;
 	uls_type_tool(outparam) parms;
 	uls_decl_parray_slots_init(slots_rsv, tokdef_vx, uls_ptr(uls->tokdef_vx_rsvd));
-	int l_lxm, n_lfs;
-	char *lptr;
+	int k, l_lxm, l2_lxm, n_lfs;
+	char *lptr, *lxm_buff = NULL;
+	const char *lxm_aux = "";
 
 	if (lxm == NULL) {
 		_uls_log(err_log)("%s: lxm == NULL", __func__);
@@ -457,6 +451,22 @@ ULS_QUALIFIED_METHOD(uls_unget_lexeme)(uls_lex_ptr_t uls, const char *lxm, int t
 	l_lxm = __numof_lfs(uls_ptr(parms));
 	n_lfs = parms.n;
 
+	if (tok_id == uls->xcontext.toknum_NUMBER) {
+		l2_lxm = _uls_tool_(strlen)(lxm_aux);
+		lxm_buff = (char *) _uls_tool_(malloc)(l_lxm + 1 + l2_lxm + 1);
+
+		_uls_tool_(memcopy)(lxm_buff, lxm, l_lxm);
+		k = l_lxm;
+
+		lxm_buff[k++] = '\0';
+		_uls_tool_(memcopy)(lxm_buff + k, lxm_aux, l2_lxm);
+		k += l2_lxm;
+		lxm_buff[k] = '\0';
+
+		lxm = lxm_buff;
+		l_lxm = k;
+	}
+
 	if (tok_id == uls->xcontext.toknum_NONE) {
 		if (l_lxm > 0) {
 			ctx = __uls_unget_str(uls, NULL, l_lxm + 1);
@@ -470,6 +480,7 @@ ULS_QUALIFIED_METHOD(uls_unget_lexeme)(uls_lex_ptr_t uls, const char *lxm, int t
 
 	ctx->l_tokbuf_aux = -1;
 	uls->tokdef_vx = slots_rsv[NONE_TOK_IDX];
+	uls_mfree(lxm_buff);
 }
 
 void
@@ -523,7 +534,6 @@ void
 ULS_QUALIFIED_METHOD(ulsjava_unget_str)(uls_lex_ptr_t uls, const uls_native_vptr_t str, int len_str)
 {
 	const char *ustr = _uls_tool_(strdup)((const char *)str, len_str);
-
 	uls_unget_str(uls, ustr);
 	uls_mfree(ustr);
 }
@@ -532,7 +542,6 @@ void
 ULS_QUALIFIED_METHOD(ulsjava_unget_lexeme)(uls_lex_ptr_t uls, const uls_native_vptr_t lxm, int len_lxm, int tok_id)
 {
 	const char *ustr = _uls_tool_(strdup)((const char *)lxm, len_lxm);
-
 	uls_unget_lexeme(uls, ustr, tok_id);
 	uls_mfree(ustr);
 }

@@ -58,7 +58,7 @@
 #define TMP_LANGS_FNAME      "uls_langs.txt"
 #define ULS_ULCNAME_DELIM    '/'
 
-#define ULS_VERSION_STR      _T("1.9.2")
+#define ULS_VERSION_STR      _T("1.9.3")
 #define ULC2CLASS_PROGVER    _T("v2.7.1")
 #define ULF_GEN_PROGVER      _T("v1.6.1")
 #define ULS_STREAM_PROGVER   _T("v2.7.1")
@@ -169,7 +169,6 @@
 #define ULS_BIN_RECHDR_SZ (ULS_BIN_RECHDR_NUM_INT32*sizeof(uls_int32))
 #define ULS_BIN_REC_SZ(txtlen) (ULS_BIN_RECHDR_SZ+uls_roundup((txtlen)+1,4))
 
-#define ULC_N_LEXATTRS             13
 #define ULS_STREAM_SUBNAME_SIZE    31
 #define ULS_STREAM_CTIME_SIZE      20
 
@@ -178,7 +177,8 @@
 
 #define ULS_UNGETS_BUFSIZ          256
 #define ULS_LEXSTR_MAXSIZ          31
-#define ULS_NAME_MAXSIZ            31
+#define ULS_TOKNAM_MAXSIZ          31
+#define ULS_TAGNAM_MAXSIZ          63
 
 #define ULS_CARDINAL_TOKNAM_SIZ    15
 #define ULS_CARDINAL_LXMPFX_MAXSIZ 15
@@ -210,7 +210,7 @@
 #define ULS_HASH_ALGORITHM "ULF-HASH"
 
 // .', 0 1 2 3 4 5 6 7 8 9
-#define ULS_CH_DIGIT   0x01
+#define ULS_CH_GUARD   0x01
 
 /* one-char token candidate */
 #define ULS_CH_1       0x02

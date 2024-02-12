@@ -720,7 +720,7 @@ namespace uls {
 			// <brief>
 			// Call ungetTok() if you want to get the current token again after getTok().
 			// Call ungetStr() if you want to push a string to the front of the current input source.
-			// Call ungetLexeme() if you want to push a lexeme to the front of the current input source.
+			// Call ungetToken() if you want to push a lexeme to the front of the current input source.
 			// </brief>
 			// <parm name="lxm">The token string with which the token number 'tok_id' is paired.</parm>
 			// <return>none</return>

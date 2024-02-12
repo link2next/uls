@@ -40,13 +40,13 @@ public class Sample2 extends uls.polaris.UlsLex {
 	public final int            BEGIN = 92;
 	public final int              BEG = 92;
 	public final int              AND = 93;
-	public final int           ANDAND = 93;
-	public final int           AANNDD = 93;
-	public final int             AND2 = 93;
 	public final int        AND_ALIAS = 93;
+	public final int             AND2 = 93;
+	public final int           AANNDD = 93;
+	public final int           ANDAND = 93;
 	public final int            MINUS = 94;
-	public final int               OR = 94;
 	public final int              OR2 = 94;
+	public final int               OR = 94;
 	public final int               EQ = 95;
 	public final int             EQEQ = 96;
 	public final int              NEQ = 97;

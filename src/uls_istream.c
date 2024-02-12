@@ -148,7 +148,7 @@ ULS_QUALIFIED_METHOD(make_eoif_lexeme_bin)(uls_context_ptr_t ctx, int tok_id, co
 
 	ctx->s_val = ctx->tokbuf.buf;
 	ctx->s_val_len = txtlen;
-	ctx->s_val_uchars = _uls_tool(ustr_num_wchars)(ctx->s_val, txtlen, nilptr);
+	ctx->s_val_wchars = _uls_tool(ustr_num_wchars)(ctx->s_val, txtlen, nilptr);
 }
 
 int
@@ -384,6 +384,8 @@ ULS_QUALIFIED_METHOD(uls_gettok_bin)(uls_lex_ptr_t uls)
 {
 	uls_context_ptr_t ctx = uls->xcontext.context;
 	uls_decl_parray_slots_init(slots_rsv, tokdef_vx, uls_ptr(uls->tokdef_vx_rsvd));
+	uls_tokdef_vx_ptr_t e_vx;
+
 	const char     *lptr, *pckptr;
 	char *lptr2;
 	int    tok_id, rc, txtlen;
@@ -451,9 +453,13 @@ ULS_QUALIFIED_METHOD(uls_gettok_bin)(uls_lex_ptr_t uls)
 	ctx->tok = tok_id;
 	ctx->s_val = lptr;
 	ctx->s_val_len = txtlen;
-	ctx->s_val_uchars = _uls_tool(ustr_num_wchars)(ctx->s_val, txtlen, nilptr);
+	ctx->s_val_wchars = _uls_tool(ustr_num_wchars)(ctx->s_val, txtlen, nilptr);
 
-	uls->tokdef_vx = uls_find_tokdef_vx_force(uls, tok_id);
+	if ((e_vx = uls_find_tokdef_vx(uls, tok_id)) == nilptr) {
+		e_vx = set_err_tok(uls, "Unknown token-id!");
+	}
+
+	uls->tokdef_vx = e_vx;
 	return 0;
 }
 

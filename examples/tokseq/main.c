@@ -43,8 +43,6 @@
 #define N_TMPLVAL_ARRAY 8
 
 LPCTSTR progname;
-
-LPCTSTR config_name;
 LPCTSTR input_file;
 
 int  opt_verbose;
@@ -198,7 +196,6 @@ _tmain(int n_targv, LPTSTR *targv)
 	tmpl_list = uls_create_tmpls(N_TMPLVAL_ARRAY, 0);
 
 	// opt_verbose = 1;
-	config_name = _T("tokseq.uld");
 	out_dir = _T(".");
 
 	if ((i0=uls_getopts(n_targv, targv, _T("vhV"), options)) <= 0) {
@@ -223,15 +220,15 @@ _tmain(int n_targv, LPTSTR *targv)
 		}
 	}
 
-	if ((sample_lex = uls_create(config_name)) == NULL) {
-		err_log(_T("%hs: can't init uls-object of '%s'"), __func__, config_name);
+	if ((sample_lex = uls_create_tokseq()) == NULL) {
+		err_log(_T("%hs: can't init uls-object!"), __func__);
 		ulc_list_searchpath(_T("simple"));
 		uls_destroy_tmpls(tmpl_list);
 		return -1;
 	}
 
 	run_test_scenario(out_dir);
-	uls_destroy(sample_lex);
+	uls_destroy_tokseq(sample_lex);
 	uls_destroy_tmpls(tmpl_list);
 
 	return 0;

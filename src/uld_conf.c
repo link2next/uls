@@ -34,6 +34,7 @@
 #ifndef ULS_EXCLUDE_HFILES
 #define __ULD_CONF__
 #include "uls/uld_conf.h"
+#include "uls/uls_core.h"
 #include "uls/uls_misc.h"
 #include "uls/uls_fileio.h"
 #include "uls/uls_log.h"
@@ -53,9 +54,9 @@ ULS_QUALIFIED_METHOD(srch_vx_by_toknam)(const uls_voidptr_t a, const uls_voidptr
 {
 	const uls_ptrtype_tool(outparam) parms = (const uls_ptrtype_tool(outparam)) b;
 	const char *name = parms->lptr;
-	const uls_tokdef_vx_ptr_t e = (const uls_tokdef_vx_ptr_t ) a;
+	const uls_tokdef_vx_ptr_t e_vx = (const uls_tokdef_vx_ptr_t ) a;
 
-	return _uls_tool_(strcmp)(uls_get_namebuf_value(e->name), name);
+	return _uls_tool_(strcmp)(uls_get_namebuf_value(e_vx->name), name);
 }
 
 ULS_DECL_STATIC void
@@ -68,55 +69,18 @@ ULS_QUALIFIED_METHOD(__change_tok_id)(uls_tokdef_vx_ptr_t e_vx, int tok_id)
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__change_tok_nam)(uls_tokdef_vx_ptr_t e_vx, const char* name, const char* name2)
-{
-	int stat = 0;
-	uls_tokdef_name_ptr_t e_nam;
-
-	if (canbe_tokname(name2) <= 0) {
-		_uls_log(err_log)("%s: not token name!", name2);
-		return -1;
-	}
-
-	if (e_vx == nilptr || (name != NULL && uls_streql(name, name2))) { // the current token leader
-		_uls_log(err_log)("%s: can't find the token leader of '%s'", __func__, name);
-		return -1;
-	}
-
-	if (name == NULL || uls_streql(uls_get_namebuf_value(e_vx->name), name)) {
-		uls_set_namebuf_value(e_vx->name, name2);
-		stat = 1; // found & changed!
-
-	} else if ((e_nam = find_tokdef_name(e_vx, name, nilptr)) != nilptr) {
-		uls_set_namebuf_value(e_nam->name, name2);
-		e_nam->flags |= ULS_VX_TOKNAM_CHANGED;
-		stat = 1; // found & changed!
-	}
-
-	return stat;
-}
-
-ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(add_aliases_to_token)(uls_tokdef_vx_ptr_t e_vx, uls_ptrtype_tool(wrd) wrdx)
 {
-	uls_tokdef_name_ptr_t e_nam, e_nam_prev;
-	uls_type_tool(outparam) parms1;
 	char *wrd;
 	int n;
 
 	for (n=0; *(wrd = __uls_tool_(splitstr)(wrdx)) != '\0'; n++) {
 		if (canbe_tokname(wrd) <= 0) {
+			_uls_log(err_log)("%s: not good as token name!", wrd);
 			n = -1; break;
 		}
 
-		e_nam = find_tokdef_name(e_vx, wrd, uls_ptr(parms1));
-		e_nam_prev = (uls_tokdef_name_ptr_t) parms1.data;
-
-		if (e_nam == nilptr) {
-			e_nam = alloc_tokdef_name(wrd, e_vx);
-			e_nam->flags |= ULS_VX_TOKNAM_CHANGED;
-			insert_tokdef_name_to_group(e_vx, e_nam_prev, e_nam);
-		}
+		uls_add_tokdef_vx_name(e_vx, wrd);
 	}
 
 	return n;
@@ -195,7 +159,7 @@ ULS_QUALIFIED_METHOD(uld_proc_line)(int lno, char* lptr, uls_lex_ptr_t uls, int 
 		return -1;
 	}
 
-	if (tok_names.name2 != NULL && __change_tok_nam(e0_vx, NULL, tok_names.name2) < 0) {
+	if (tok_names.name2 != NULL && uls_change_tokdef_vx_name(e0_vx, NULL, tok_names.name2) < 0) {
 		_uls_log(err_log)("%s<%d>: can't change the token name", tag, lno);
 		_uls_log(err_log)("\t:'%s' to '%s'", tok_names.name, tok_names.name2);
 		return -1;
@@ -240,7 +204,6 @@ ULS_QUALIFIED_METHOD(uld_add_aliases)(uls_tokdef_vx_ptr_t e_vx, const char *line
 	}
 
 	line = _uls_tool_(strdup)(line_aliases, -1);
-
 	wrdx.lptr = line;
 	if (add_aliases_to_token(e_vx, uls_ptr(wrdx)) < 0) {
 		stat = -1;
@@ -412,7 +375,7 @@ ULS_QUALIFIED_METHOD(uld_change_tok_id)(uls_tokdef_vx_ptr_t e_vx, int tok_id)
 int
 ULS_QUALIFIED_METHOD(uld_change_tok_names)(uls_tokdef_vx_ptr_t e_vx, const char* name2, const char *line_aliases)
 {
-	if (name2 != NULL && __change_tok_nam(e_vx, NULL, name2) < 0) {
+	if (name2 != NULL && uls_change_tokdef_vx_name(e_vx, NULL, name2) < 0) {
 		return -1;
 	}
 

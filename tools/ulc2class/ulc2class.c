@@ -379,7 +379,6 @@ ulc2class_options(int opt, char* optarg)
 		prn_flags |= ULS_FL_VERBOSE;
 		break;
 
-
 	case 'V':
 		uls_printf("%s %s, written by %s,\n\tis provided under %s.\n",
 			progname, ULC2CLASS_PROGVER, ULS_AUTHOR, ULS_LICENSE_NAME);
@@ -526,7 +525,7 @@ parse_options(int argc, char* argv[])
 		prn_flags |= ULS_FL_CPP_GEN;
 	}
 
-	if (prn_flags & (ULS_FL_C_GEN | ULS_FL_CPP_GEN |ULS_FL_CPPCLI_GEN)) {
+	if (prn_flags & (ULS_FL_C_GEN | ULS_FL_CPP_GEN | ULS_FL_CPPCLI_GEN)) {
 	} else {
 		prn_flags &= ~ULS_FL_WANT_WRAPPER;
 	}
@@ -602,7 +601,7 @@ void
 dump_tok_info(uls_lex_t *uls)
 {
 	if (ult_streql(opt_dump, "keyw")) {
-		uls_dump_tokdef_vx(uls);
+		uls_dump_list_tokdef_vx(uls);
 	} else if (ult_streql(opt_dump, "names")) {
 		uls_dump_tokdef_names(uls);
 	} else if (ult_streql(opt_dump, "rsvd")) {
@@ -685,7 +684,7 @@ main(int argc, char* argv[])
 	}
 
 	if ((sam_lex=uls_create(ulc_config)) == uls_nil) {
-		err_log("%s: Failed to open the configuration file %s.", progname, ulc_config);
+		err_log("%s: Failed to process the configuration file %s", progname, ulc_config);
 		if (typ_fpath != ULS_NAME_FILEPATH_ULD) {
 			ulc_list_searchpath(ulc_config);
 		}

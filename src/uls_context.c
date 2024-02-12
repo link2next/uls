@@ -533,7 +533,7 @@ ULS_QUALIFIED_METHOD(uls_init_context)(uls_context_ptr_t ctx, uls_gettok_t getto
 
 	ctx->tok = tok0;
 	ctx->s_val = ctx->tokbuf.buf;
-	ctx->s_val_len = ctx->s_val_uchars = 0;
+	ctx->s_val_len = ctx->s_val_wchars = 0;
 
 	n = (ULS_LEXSTR_MAXSIZ+1) << 1;
 	_uls_tool(str_init)(uls_ptr(ctx->tokbuf), n);
@@ -718,7 +718,7 @@ ULS_QUALIFIED_METHOD(xcontext_raw_filler)(uls_xcontext_ptr_t xctx)
 			inp->rawbuf_ptr = lptr;
 			inp->rawbuf_bytes = (int) (lptr_end - lptr);
 
-			if ((rc=input_space_proc(ch_ctx, inp, ss_dst1, len_surplus, uls_ptr(parms1))) < 0) {
+			if ((rc = input_space_proc(ch_ctx, inp, ss_dst1, len_surplus, uls_ptr(parms1))) < 0) {
 				_uls_log(err_log)("%s: I/O error", __func__);
 				return -1;
 			}
