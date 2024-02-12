@@ -145,7 +145,6 @@ int
 ShellLex::expect_number(void)
 {
 	LPCTSTR ptr;
-	TCHAR  tch;
 	tstring *lxm;
 	int tok, len;
 
@@ -155,12 +154,6 @@ ShellLex::expect_number(void)
 	UlsLex::getTokStr(&lxm);
 	ptr = lxm->c_str();
 	len = (int) lxm->length();
-
-	tch = _T('0');
-	tokbuf.append(tch);
-
-	tch = _T('x');
-	tokbuf.append(tch);
 
 	tokbuf.append(ptr, len);
 	return tok;
@@ -174,7 +167,6 @@ ShellLex::expect_redir(void)
 	TCHAR  tch;
 
 	while ((wch=ShellLexBasis::getCh(&is_quote)) != ULS_UCH_NONE && !is_quote) {
-
 		if (isspace(wch)) {
 			ShellLexBasis::ungetCh(wch);
 			break;

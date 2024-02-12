@@ -1,0 +1,649 @@
+** Test Start
+Test-1: input_file = tmpl_ex.txt
+	[     ID] class
+	[     ID] TmplStack
+	[       ] {
+	[     ID] T
+	[       ] *
+	[     ID] stk_array
+	[       ] ;
+	[    INT] int
+	[     ID] stk_siz
+	[       ] ,
+	[     ID] top
+	[       ] ;
+	[     ID] public
+	[       ] :
+	[     ID] TmplStack
+	[       ] (
+	[    INT] int
+	[     ID] stack_size
+	[       ] )
+	[       ] {
+	[     IF] if
+	[       ] (
+	[     ID] stack_size
+	[    LEQ] <=
+	[ NUMBER] 0
+	[       ] )
+	[     ID] stack_size
+	[       ] =
+	[ NUMBER] 1
+	[       ] ;
+	[     ID] stk_array
+	[       ] =
+	[     ID] new
+	[     ID] T
+	[       ] [
+	[     ID] stack_size
+	[       ] ]
+	[       ] ;
+	[     ID] stk_siz
+	[       ] =
+	[     ID] stack_size
+	[       ] ;
+	[     ID] top
+	[       ] =
+	[ NUMBER] 0
+	[       ] ;
+	[       ] }
+	[       ] ~
+	[     ID] TmplStack
+	[       ] (
+	[       ] )
+	[       ] {
+	[     ID] delete
+	[       ] [
+	[       ] ]
+	[     ID] stk_array
+	[       ] ;
+	[       ] }
+	[     ID] bool
+	[     ID] isEmpty
+	[       ] (
+	[       ] )
+	[       ] {
+	[ RETURN] return
+	[     ID] top
+	[     EQ] ==
+	[ NUMBER] 0
+	[       ] ?
+	[     ID] true
+	[       ] :
+	[     ID] false
+	[       ] ;
+	[       ] }
+	[     ID] bool
+	[     ID] isFull
+	[       ] (
+	[       ] )
+	[       ] {
+	[ RETURN] return
+	[     ID] top
+	[     EQ] ==
+	[     ID] stk_siz
+	[       ] ?
+	[     ID] true
+	[       ] :
+	[     ID] false
+	[       ] ;
+	[       ] }
+	[   VOID] void
+	[     ID] push
+	[       ] (
+	[  CONST] const
+	[     ID] T
+	[       ] &
+	[     ID] elmt
+	[       ] )
+	[       ] {
+	[     IF] if
+	[       ] (
+	[     ID] isFull
+	[       ] (
+	[       ] )
+	[       ] )
+	[       ] {
+	[     ID] cout
+	[       ] <
+	[       ] <
+	[ LITSTR] stack full: fail to push!
+
+	[       ] ;
+	[ RETURN] return
+	[       ] ;
+	[       ] }
+	[     ID] stk_array
+	[       ] [
+	[     ID] top
+	[       ] +
+	[       ] +
+	[       ] ]
+	[       ] =
+	[     ID] elmt
+	[       ] ;
+	[       ] }
+	[     ID] T
+	[     ID] pop
+	[       ] (
+	[       ] )
+	[       ] {
+	[     IF] if
+	[       ] (
+	[     ID] isEmpty
+	[       ] (
+	[       ] )
+	[       ] )
+	[       ] {
+	[     ID] cout
+	[       ] <
+	[       ] <
+	[ LITSTR] stack empty: fail to pop!
+
+	[       ] ;
+	[       ] }
+	[   ELSE] else
+	[       ] {
+	[       ] -
+	[       ] -
+	[     ID] top
+	[       ] ;
+	[       ] }
+	[ RETURN] return
+	[     ID] stk_array
+	[       ] [
+	[     ID] top
+	[       ] ]
+	[       ] ;
+	[       ] }
+	[       ] }
+	[       ] ;
+Test-2: input_file = tmpl_ex.uls
+tnam = 'T' tval='unsigned long long'
+	[     ID] class
+	[     ID] TmplStack
+	[       ] {
+	[UNSIGNED] unsigned
+	[   LONG] long
+	[   LONG] long
+	[       ] *
+	[     ID] stk_array
+	[       ] ;
+	[    INT] int
+	[     ID] stk_siz
+	[       ] ,
+	[     ID] top
+	[       ] ;
+	[     ID] public
+	[       ] :
+	[     ID] TmplStack
+	[       ] (
+	[    INT] int
+	[     ID] stack_size
+	[       ] )
+	[       ] {
+	[     IF] if
+	[       ] (
+	[     ID] stack_size
+	[    LEQ] <=
+	[ NUMBER] 0
+	[       ] )
+	[     ID] stack_size
+	[       ] =
+	[ NUMBER] 1
+	[       ] ;
+	[     ID] stk_array
+	[       ] =
+	[     ID] new
+	[UNSIGNED] unsigned
+	[   LONG] long
+	[   LONG] long
+	[       ] [
+	[     ID] stack_size
+	[       ] ]
+	[       ] ;
+	[     ID] stk_siz
+	[       ] =
+	[     ID] stack_size
+	[       ] ;
+	[     ID] top
+	[       ] =
+	[ NUMBER] 0
+	[       ] ;
+	[       ] }
+	[       ] ~
+	[     ID] TmplStack
+	[       ] (
+	[       ] )
+	[       ] {
+	[     ID] delete
+	[       ] [
+	[       ] ]
+	[     ID] stk_array
+	[       ] ;
+	[       ] }
+	[     ID] bool
+	[     ID] isEmpty
+	[       ] (
+	[       ] )
+	[       ] {
+	[ RETURN] return
+	[     ID] top
+	[     EQ] ==
+	[ NUMBER] 0
+	[       ] ?
+	[     ID] true
+	[       ] :
+	[     ID] false
+	[       ] ;
+	[       ] }
+	[     ID] bool
+	[     ID] isFull
+	[       ] (
+	[       ] )
+	[       ] {
+	[ RETURN] return
+	[     ID] top
+	[     EQ] ==
+	[     ID] stk_siz
+	[       ] ?
+	[     ID] true
+	[       ] :
+	[     ID] false
+	[       ] ;
+	[       ] }
+	[   VOID] void
+	[     ID] push
+	[       ] (
+	[  CONST] const
+	[UNSIGNED] unsigned
+	[   LONG] long
+	[   LONG] long
+	[       ] &
+	[     ID] elmt
+	[       ] )
+	[       ] {
+	[     IF] if
+	[       ] (
+	[     ID] isFull
+	[       ] (
+	[       ] )
+	[       ] )
+	[       ] {
+	[     ID] cout
+	[       ] <
+	[       ] <
+	[ LITSTR] stack full: fail to push!
+
+	[       ] ;
+	[ RETURN] return
+	[       ] ;
+	[       ] }
+	[     ID] stk_array
+	[       ] [
+	[     ID] top
+	[       ] +
+	[       ] +
+	[       ] ]
+	[       ] =
+	[     ID] elmt
+	[       ] ;
+	[       ] }
+	[UNSIGNED] unsigned
+	[   LONG] long
+	[   LONG] long
+	[     ID] pop
+	[       ] (
+	[       ] )
+	[       ] {
+	[     IF] if
+	[       ] (
+	[     ID] isEmpty
+	[       ] (
+	[       ] )
+	[       ] )
+	[       ] {
+	[     ID] cout
+	[       ] <
+	[       ] <
+	[ LITSTR] stack empty: fail to pop!
+
+	[       ] ;
+	[       ] }
+	[   ELSE] else
+	[       ] {
+	[       ] -
+	[       ] -
+	[     ID] top
+	[       ] ;
+	[       ] }
+	[ RETURN] return
+	[     ID] stk_array
+	[       ] [
+	[     ID] top
+	[       ] ]
+	[       ] ;
+	[       ] }
+	[       ] }
+	[       ] ;
+Test-3: input_file = tmpl_ex.txt
+	[1] class
+	[1] TmplStack
+	[123] {
+	[1] T
+	[42] *
+	[1] stk_array
+	[59] ;
+	[178] int
+	[1] stk_siz
+	[44] ,
+	[1] top
+	[59] ;
+	[1] public
+	[58] :
+	[1] TmplStack
+	[40] (
+	[178] int
+	[1] stack_size
+	[41] )
+	[123] {
+	[166] if
+	[40] (
+	[1] stack_size
+	[131] <=
+	[2] 0
+	[41] )
+	[1] stack_size
+	[61] =
+	[2] 1
+	[59] ;
+	[1] stk_array
+	[61] =
+	[1] new
+	[1] T
+	[91] [
+	[1] stack_size
+	[93] ]
+	[59] ;
+	[1] stk_siz
+	[61] =
+	[1] stack_size
+	[59] ;
+	[1] top
+	[61] =
+	[2] 0
+	[59] ;
+	[125] }
+	[126] ~
+	[1] TmplStack
+	[40] (
+	[41] )
+	[123] {
+	[1] delete
+	[91] [
+	[93] ]
+	[1] stk_array
+	[59] ;
+	[125] }
+	[1] bool
+	[1] isEmpty
+	[40] (
+	[41] )
+	[123] {
+	[185] return
+	[1] top
+	[130] ==
+	[2] 0
+	[63] ?
+	[1] true
+	[58] :
+	[1] false
+	[59] ;
+	[125] }
+	[1] bool
+	[1] isFull
+	[40] (
+	[41] )
+	[123] {
+	[185] return
+	[1] top
+	[130] ==
+	[1] stk_siz
+	[63] ?
+	[1] true
+	[58] :
+	[1] false
+	[59] ;
+	[125] }
+	[192] void
+	[1] push
+	[40] (
+	[177] const
+	[1] T
+	[38] &
+	[1] elmt
+	[41] )
+	[123] {
+	[166] if
+	[40] (
+	[1] isFull
+	[40] (
+	[41] )
+	[41] )
+	[123] {
+	[1] cout
+	[60] <
+	[60] <
+	[34] stack full: fail to push!
+
+	[59] ;
+	[185] return
+	[59] ;
+	[125] }
+	[1] stk_array
+	[91] [
+	[1] top
+	[43] +
+	[43] +
+	[93] ]
+	[61] =
+	[1] elmt
+	[59] ;
+	[125] }
+	[1] T
+	[1] pop
+	[40] (
+	[41] )
+	[123] {
+	[166] if
+	[40] (
+	[1] isEmpty
+	[40] (
+	[41] )
+	[41] )
+	[123] {
+	[1] cout
+	[60] <
+	[60] <
+	[34] stack empty: fail to pop!
+
+	[59] ;
+	[125] }
+	[160] else
+	[123] {
+	[45] -
+	[45] -
+	[1] top
+	[59] ;
+	[125] }
+	[185] return
+	[1] stk_array
+	[91] [
+	[1] top
+	[93] ]
+	[59] ;
+	[125] }
+	[125] }
+	[59] ;
+Test-4: input_file = tmpl_ex.txt
+tnam = 'TVAR2' tval='long double'
+tnam = 'TVAR1' tval='unsigned long long'
+	[1] class
+	[1] TmplStack
+	[123] {
+	[1] T
+	[42] *
+	[1] stk_array
+	[59] ;
+	[178] int
+	[1] stk_siz
+	[44] ,
+	[1] top
+	[59] ;
+	[1] public
+	[58] :
+	[1] TmplStack
+	[40] (
+	[178] int
+	[1] stack_size
+	[41] )
+	[123] {
+	[166] if
+	[40] (
+	[1] stack_size
+	[131] <=
+	[2] 0
+	[41] )
+	[1] stack_size
+	[61] =
+	[2] 1
+	[59] ;
+	[1] stk_array
+	[61] =
+	[1] new
+	[1] T
+	[91] [
+	[1] stack_size
+	[93] ]
+	[59] ;
+	[1] stk_siz
+	[61] =
+	[1] stack_size
+	[59] ;
+	[1] top
+	[61] =
+	[2] 0
+	[59] ;
+	[125] }
+	[126] ~
+	[1] TmplStack
+	[40] (
+	[41] )
+	[123] {
+	[1] delete
+	[91] [
+	[93] ]
+	[1] stk_array
+	[59] ;
+	[125] }
+	[1] bool
+	[1] isEmpty
+	[40] (
+	[41] )
+	[123] {
+	[185] return
+	[1] top
+	[130] ==
+	[2] 0
+	[63] ?
+	[1] true
+	[58] :
+	[1] false
+	[59] ;
+	[125] }
+	[1] bool
+	[1] isFull
+	[40] (
+	[41] )
+	[123] {
+	[185] return
+	[1] top
+	[130] ==
+	[1] stk_siz
+	[63] ?
+	[1] true
+	[58] :
+	[1] false
+	[59] ;
+	[125] }
+	[192] void
+	[1] push
+	[40] (
+	[177] const
+	[1] T
+	[38] &
+	[1] elmt
+	[41] )
+	[123] {
+	[166] if
+	[40] (
+	[1] isFull
+	[40] (
+	[41] )
+	[41] )
+	[123] {
+	[1] cout
+	[60] <
+	[60] <
+	[34] stack full: fail to push!
+
+	[59] ;
+	[185] return
+	[59] ;
+	[125] }
+	[1] stk_array
+	[91] [
+	[1] top
+	[43] +
+	[43] +
+	[93] ]
+	[61] =
+	[1] elmt
+	[59] ;
+	[125] }
+	[1] T
+	[1] pop
+	[40] (
+	[41] )
+	[123] {
+	[166] if
+	[40] (
+	[1] isEmpty
+	[40] (
+	[41] )
+	[41] )
+	[123] {
+	[1] cout
+	[60] <
+	[60] <
+	[34] stack empty: fail to pop!
+
+	[59] ;
+	[125] }
+	[160] else
+	[123] {
+	[45] -
+	[45] -
+	[1] top
+	[59] ;
+	[125] }
+	[185] return
+	[1] stk_array
+	[91] [
+	[1] top
+	[93] ]
+	[59] ;
+	[125] }
+	[125] }
+	[59] ;
+** Test End

@@ -1,5 +1,6 @@
 0 -- ''
 31 -- ''hello' '   hello' % 'hello   ''
+45 -- 'test_sprintf: 'world' '   world' % 'world   ''
 12 -- 'X he-Y-llo Z'
 22 -- 'hello 0x000007D8 world'
 5 -- '   +7'

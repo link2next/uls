@@ -94,6 +94,8 @@ ULS_DECL_STATIC void fill_uls_redundant_lines(char *buff, int buflen, int len1, 
 ULS_DECL_STATIC int writeline_istr_hdr(char *buf, int bufsiz, int k, const char *line, int linelen);
 ULS_DECL_STATIC int format_uls_hdrbuf(char *ulshdr);
 ULS_DECL_STATIC int do_end_of_uls_hdr(char *buff, int buflen);
+
+ULS_DECL_STATIC int __uls_print_tok_number(uls_ostream_ptr_t ostr);
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC
@@ -113,9 +115,9 @@ ULS_DLL_EXTERN int uls_destroy_ostream(uls_ostream_ptr_t ostr);
 #define uls_close_ostream uls_destroy_ostream
 
 ULS_DLL_EXTERN int __uls_print_tok(uls_ostream_ptr_t ostr, int tokid, const char* tokstr, int l_tokstr);
-ULS_DLL_EXTERN int uls_print_tok(uls_ostream_ptr_t ostr, int tokid, const char* tokstr);
+ULS_DLL_EXTERN int _uls_print_tok(uls_ostream_ptr_t ostr, int tokid, const char* tokstr);
 ULS_DLL_EXTERN int __uls_print_tok_linenum(uls_ostream_ptr_t ostr, int lno, const char* tag, int tag_len);
-ULS_DLL_EXTERN int uls_print_tok_linenum(uls_ostream_ptr_t ostr, int lno, const char* tag);
+ULS_DLL_EXTERN int uls_print_tok(uls_ostream_ptr_t ostr);
 
 ULS_DLL_EXTERN int uls_start_stream(uls_ostream_ptr_t ostr, int flags);
 

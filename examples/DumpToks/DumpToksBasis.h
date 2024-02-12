@@ -92,7 +92,7 @@ namespace uls {
 			static const int         VOLATILE = 193;
 			static const int            WHILE = 194;
 
-			DumpToksBasis(std::tstring &ulc_fpath)
+			DumpToksBasis(std::tstring& ulc_fpath)
 				 : uls::crux::UlsLex(ulc_fpath) {}
 		};
 	}

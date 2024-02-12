@@ -93,7 +93,7 @@ test_get_ch(void)
 {
 	int tok_id, is_quote;
 	uls_nextch_detail_t detail;
-	uls_uch_t wch;
+	uls_wch_t wch;
 
 	uls_set_file(sample_lex, input_file, 0);
 	// uls_set_line(sample_lex, "hello world", -1, 0);

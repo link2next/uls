@@ -184,6 +184,9 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
 GREP = @GREP@
+HAVE_JAVA = @HAVE_JAVA@
+HAVE_JAVAC = @HAVE_JAVAC@
+HAVE_JAVAH = @HAVE_JAVAH@
 HELP2MAN = @HELP2MAN@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
@@ -238,6 +241,8 @@ am__quote = @am__quote@
 am__tar = @am__tar@
 am__untar = @am__untar@
 ax_etc_dir = @ax_etc_dir@
+ax_jdk_cppflags = @ax_jdk_cppflags@
+ax_jdk_ldflags = @ax_jdk_ldflags@
 bindir = @bindir@
 build = @build@
 build_alias = @build_alias@
@@ -525,13 +530,13 @@ uninstall-man: uninstall-man1
 
 
 ulc2class.1: $(top_builddir)/tools/ulc2class/ulc2class
-	-$(HELP2MAN) -o $@ -s 1 --name="ulc2class" --help-option="-H" $(top_builddir)/tools/ulc2class/ulc2class
+	-$(HELP2MAN) --no-discard-stderr -o $@ -s 1 --name="ulc2class" --help-option="-H" $(top_builddir)/tools/ulc2class/ulc2class
 
 ulf_gen.1: $(top_builddir)/tools/ulf_gen/ulf_gen
-	-$(HELP2MAN) -o $@ -s 1 --name="ulf_gen" --help-option="-H" $(top_builddir)/tools/ulf_gen/ulf_gen
+	-$(HELP2MAN) --no-discard-stderr -o $@ -s 1 --name="ulf_gen" --help-option="-H" $(top_builddir)/tools/ulf_gen/ulf_gen
 
 uls_stream.1: $(top_builddir)/tools/uls_stream/uls_stream
-	-$(HELP2MAN) -o $@ -s 1 --name="uls_stream" --help-option="-H" $(top_builddir)/tools/uls_stream/uls_stream
+	-$(HELP2MAN) --no-discard-stderr -o $@ -s 1 --name="uls_stream" --help-option="-H" $(top_builddir)/tools/uls_stream/uls_stream
 
 check:
 	touch $(dist_man_MANS)

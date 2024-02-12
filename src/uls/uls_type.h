@@ -113,8 +113,8 @@ typedef void   *uls_voidptr_t;
 #endif // ULS_DOTNET
 
 typedef uls_uint32  uls_flags_t;
-typedef uls_uint32  uls_uch_t;
 typedef uls_uint32  uls_wch_t;
+typedef uls_uint32  uls_uch_t;
 
 typedef void *uls_native_vptr_t;
 #endif // ULS_DECL_BASIC_TYPES
@@ -127,7 +127,6 @@ typedef void *uls_native_vptr_t;
 #define uls_get_namebuf_value(nam) (nam.str)
 #define uls_get_namebuf_length(nam) (nam.len)
 #define uls_set_namebuf_value(nam,str) _uls_tool_(set_nambuf)(uls_ptr(nam),str,-1)
-#define uls_set_namebuf_value_2(nam,str,len) _uls_tool_(set_nambuf)(uls_ptr(nam),str,len)
 
 // name-buffer(this)
 #define uls_def_namebuf_this(nam,siz) uls_nambuf_t nam
@@ -146,13 +145,12 @@ typedef void *uls_native_vptr_t;
 
 #else // ULS_CLASSIFY_SOURCE
 // name-buffer
-#define uls_def_namebuf(nam,siz) char  nam[siz+1]
+#define uls_def_namebuf(nam,siz) char  nam[(siz)+1]
 #define uls_init_namebuf(nam,siz) nam[0]='\0'
 #define uls_deinit_namebuf(nam)
 #define uls_get_namebuf_value(nam) (nam)
 #define uls_get_namebuf_length(nam) uls_strlen(nam)
 #define uls_set_namebuf_value(nam,str) uls_set_nambuf_raw(nam,sizeof(nam),str,-1)
-#define uls_set_namebuf_value_2(nam,str,len) uls_set_nambuf_raw(nam,sizeof(nam),str,len)
 
 // name-buffer(this)
 #define uls_def_namebuf_this uls_def_namebuf
@@ -161,7 +159,6 @@ typedef void *uls_native_vptr_t;
 #define uls_get_namebuf_value_this uls_get_namebuf_value
 #define uls_get_namebuf_length_this uls_get_namebuf_length
 #define uls_set_namebuf_value_this uls_set_namebuf_value
-#define uls_set_namebuf_value_2_this uls_set_namebuf_value_2
 
 // bytes pool
 #define uls_def_bytespool(nam,siz) char nam[siz]

@@ -55,7 +55,8 @@
                        [       ] )
                        [       ] ;
              s1.c:13   [ RETURN] return
-                       [ NUMBER] -1
+                       [       ] -
+                       [ NUMBER] 1
                        [       ] ;
              s1.c:14   [       ] }
              s1.c:16   [     IF] if
@@ -83,7 +84,8 @@
                        [       ] ;
              s1.c:18   [     ID] stat
                        [       ] =
-                       [ NUMBER] -2
+                       [       ] -
+                       [ NUMBER] 2
                        [       ] ;
                        [   GOTO] goto
                        [     ID] end_1
@@ -112,7 +114,8 @@
                        [       ] ;
              s1.c:23   [     ID] stat
                        [       ] =
-                       [ NUMBER] -3
+                       [       ] -
+                       [ NUMBER] 3
                        [       ] ;
                        [   GOTO] goto
                        [     ID] end_1
@@ -141,7 +144,8 @@
                        [       ] ;
              s1.c:28   [     ID] stat
                        [       ] =
-                       [ NUMBER] -4
+                       [       ] -
+                       [ NUMBER] 4
                        [       ] ;
                        [   GOTO] goto
                        [     ID] end_1
@@ -177,7 +181,7 @@
              s1.c:40   [   CHAR] char
                        [     ID] linebuff
                        [       ] [
-                       [ NUMBER] 400
+                       [ NUMBER] 1024
                        [       ] ]
                        [       ] ,
                        [       ] *
@@ -357,7 +361,8 @@
                        [       ] )
                        [       ] ;
              s1.c:75   [ RETURN] return
-                       [ NUMBER] -1
+                       [       ] -
+                       [ NUMBER] 1
                        [       ] ;
              s1.c:76   [       ] }
              s1.c:77   [       ] #
@@ -404,7 +409,8 @@
                        [       ] )
                        [       ] ;
              s1.c:82   [ RETURN] return
-                       [ NUMBER] -2
+                       [       ] -
+                       [ NUMBER] 2
                        [       ] ;
              s1.c:83   [       ] }
              s1.c:84   [       ] #
@@ -431,7 +437,8 @@
                        [       ] )
                        [       ] ;
              s1.c:87   [ RETURN] return
-                       [ NUMBER] -2
+                       [       ] -
+                       [ NUMBER] 2
                        [       ] ;
              s1.c:88   [       ] }
              s1.c:89   [       ] #
@@ -499,7 +506,8 @@
                        [       ] ;
              s1.c:94   [     ID] stat
                        [       ] =
-                       [ NUMBER] -3
+                       [       ] -
+                       [ NUMBER] 3
                        [       ] ;
                        [   GOTO] goto
                        [     ID] end_1
@@ -531,7 +539,8 @@
                        [       ] ;
              s1.c:100  [     ID] stat
                        [       ] =
-                       [ NUMBER] -4
+                       [       ] -
+                       [ NUMBER] 4
                        [       ] ;
                        [   GOTO] goto
                        [     ID] end_1
@@ -560,7 +569,8 @@
                        [       ] ;
              s1.c:105  [     ID] stat
                        [       ] =
-                       [ NUMBER] -5
+                       [       ] -
+                       [ NUMBER] 5
                        [       ] ;
                        [   GOTO] goto
                        [     ID] end_1
@@ -589,7 +599,8 @@
                        [       ] ;
              s1.c:110  [     ID] stat
                        [       ] =
-                       [ NUMBER] -6
+                       [       ] -
+                       [ NUMBER] 6
                        [       ] ;
                        [   GOTO] goto
                        [     ID] end_1
@@ -685,7 +696,8 @@
                        [       ] )
                        [       ] ;
              s1.c:135  [ RETURN] return
-                       [ NUMBER] -1
+                       [       ] -
+                       [ NUMBER] 1
                        [       ] ;
              s1.c:136  [       ] }
              s1.c:138  [     IF] if
@@ -718,7 +730,8 @@
                        [       ] ;
              s1.c:140  [     ID] stat
                        [       ] =
-                       [ NUMBER] -1
+                       [       ] -
+                       [ NUMBER] 1
                        [       ] ;
                        [   GOTO] goto
                        [     ID] err_1
@@ -753,7 +766,8 @@
                        [       ] ;
              s1.c:146  [     ID] stat
                        [       ] =
-                       [ NUMBER] -2
+                       [       ] -
+                       [ NUMBER] 2
                        [       ] ;
                        [   GOTO] goto
                        [     ID] err_1
@@ -791,7 +805,8 @@
                        [       ] ;
              s1.c:151  [     ID] stat
                        [       ] =
-                       [ NUMBER] -3
+                       [       ] -
+                       [ NUMBER] 3
                        [       ] ;
              s1.c:153  [       ] }
                        [   ELSE] else
@@ -842,7 +857,8 @@
                        [       ] ;
              s1.c:159  [     ID] stat
                        [       ] =
-                       [ NUMBER] -4
+                       [       ] -
+                       [ NUMBER] 4
                        [       ] ;
              s1.c:160  [       ] }
                        [   ELSE] else
@@ -865,7 +881,8 @@
                        [       ] ;
              s1.c:163  [     ID] fd_list
                        [       ] =
-                       [ NUMBER] -5
+                       [       ] -
+                       [ NUMBER] 5
                        [       ] ;
              s1.c:164  [       ] }
              s1.c:165  [       ] }
@@ -878,7 +895,8 @@
                        [       ] {
              s1.c:168  [     ID] stat
                        [       ] =
-                       [ NUMBER] -6
+                       [       ] -
+                       [ NUMBER] 6
                        [       ] ;
              s1.c:169  [       ] }
              s1.c:170  [       ] }
@@ -948,7 +966,8 @@
                        [       ] ;
              s1.c:185  [     ID] stat
                        [       ] =
-                       [ NUMBER] -7
+                       [       ] -
+                       [ NUMBER] 7
                        [       ] ;
                        [   GOTO] goto
                        [     ID] err_1
@@ -1077,7 +1096,7 @@
        dir_a/s2.c:32   [   CHAR] char
                        [     ID] home_dir
                        [       ] [
-                       [ NUMBER] 400
+                       [ NUMBER] 1024
                        [       ] ]
                        [       ] ;
        dir_a/s2.c:33   [  CONST] const
@@ -1088,7 +1107,7 @@
        dir_a/s2.c:34   [   CHAR] char
                        [     ID] config_pathbuff
                        [       ] [
-                       [ NUMBER] 400
+                       [ NUMBER] 1024
                        [       ] ]
                        [       ] ;
        dir_a/s2.c:35   [   CHAR] char
@@ -1967,7 +1986,8 @@
                        [       ] (
                        [     ID] optarg
                        [       ] ,
-                       [ NUMBER] -1
+                       [       ] -
+                       [ NUMBER] 1
                        [       ] )
                        [       ] ;
        dir_a/s2.c:216  [     ID] path_normalize
@@ -2035,7 +2055,8 @@
                        [       ] (
                        [     ID] argv0
                        [       ] ,
-                       [ NUMBER] -1
+                       [       ] -
+                       [ NUMBER] 1
                        [       ] )
                        [       ] ;
        dir_a/s2.c:230  [     ID] path_normalize
@@ -2174,7 +2195,8 @@
                        [       ] ;
        dir_a/s2.c:255  [     ID] stat
                        [       ] =
-                       [ NUMBER] -1
+                       [       ] -
+                       [ NUMBER] 1
                        [       ] ;
        dir_a/s2.c:256  [       ] }
        dir_a/s2.c:257  [  BREAK] break
@@ -2202,7 +2224,8 @@
                        [       ] ;
        dir_a/s2.c:262  [     ID] stat
                        [       ] =
-                       [ NUMBER] -1
+                       [       ] -
+                       [ NUMBER] 1
                        [       ] ;
        dir_a/s2.c:263  [       ] }
        dir_a/s2.c:264  [  BREAK] break
@@ -2321,7 +2344,8 @@
                        [       ] ;
        dir_a/s2.c:310  [     ID] stat
                        [       ] =
-                       [ NUMBER] -1
+                       [       ] -
+                       [ NUMBER] 1
                        [       ] ;
        dir_a/s2.c:311  [  BREAK] break
                        [       ] ;
@@ -2415,7 +2439,8 @@
                        [       ] )
                        [       ] )
                        [    NEQ] !=
-                       [ NUMBER] -1
+                       [       ] -
+                       [ NUMBER] 1
                        [       ] )
                        [       ] {
        dir_a/s2.c:336  [     IF] if
@@ -2466,7 +2491,8 @@
                        [       ] )
                        [       ] {
        dir_a/s2.c:343  [ RETURN] return
-                       [ NUMBER] -1
+                       [       ] -
+                       [ NUMBER] 1
                        [       ] ;
        dir_a/s2.c:344  [       ] }
        dir_a/s2.c:345  [       ] #
@@ -2528,7 +2554,8 @@
                        [       ] )
                        [       ] ;
        dir_a/s2.c:358  [ RETURN] return
-                       [ NUMBER] -1
+                       [       ] -
+                       [ NUMBER] 1
                        [       ] ;
        dir_a/s2.c:359  [       ] }
        dir_a/s2.c:360  [     ID] target_dir
@@ -2542,7 +2569,8 @@
                        [       ] +
                        [       ] ]
                        [       ] ,
-                       [ NUMBER] -1
+                       [       ] -
+                       [ NUMBER] 1
                        [       ] )
                        [       ] ;
        dir_a/s2.c:361  [     ID] path_normalize
@@ -2626,7 +2654,8 @@
                        [       ] )
                        [       ] ;
        dir_a/s2.c:370  [ RETURN] return
-                       [ NUMBER] -1
+                       [       ] -
+                       [ NUMBER] 1
                        [       ] ;
        dir_a/s2.c:371  [       ] }
        dir_a/s2.c:373  [       ] }
@@ -2810,7 +2839,8 @@
                        [       ] )
                        [       ] ;
        dir_a/s2.c:411  [ RETURN] return
-                       [ NUMBER] -1
+                       [       ] -
+                       [ NUMBER] 1
                        [       ] ;
        dir_a/s2.c:412  [       ] }
        dir_a/s2.c:413  [     ID] config_path
@@ -2863,7 +2893,8 @@
                        [       ] )
                        [       ] ;
        dir_a/s2.c:425  [ RETURN] return
-                       [ NUMBER] -1
+                       [       ] -
+                       [ NUMBER] 1
                        [       ] ;
        dir_a/s2.c:426  [       ] }
        dir_a/s2.c:428  [     IF] if
@@ -2931,7 +2962,8 @@
                        [       ] )
                        [       ] ;
        dir_a/s2.c:441  [ RETURN] return
-                       [ NUMBER] -1
+                       [       ] -
+                       [ NUMBER] 1
                        [       ] ;
        dir_a/s2.c:442  [       ] }
        dir_a/s2.c:444  [     ID] config_path
@@ -2979,7 +3011,8 @@
                        [       ] )
                        [       ] ;
        dir_a/s2.c:454  [ RETURN] return
-                       [ NUMBER] -1
+                       [       ] -
+                       [ NUMBER] 1
                        [       ] ;
        dir_a/s2.c:455  [       ] }
        dir_a/s2.c:457  [     IF] if
@@ -3015,7 +3048,8 @@
                        [     ID] i
                        [       ] ]
                        [       ] ,
-                       [ NUMBER] -1
+                       [       ] -
+                       [ NUMBER] 1
                        [       ] )
                        [       ] ;
        dir_a/s2.c:462  [     ID] path_normalize
@@ -3105,7 +3139,8 @@
                        [     ID] i
                        [       ] ]
                        [       ] ,
-                       [ NUMBER] -1
+                       [       ] -
+                       [ NUMBER] 1
                        [       ] )
                        [       ] ;
        dir_a/s2.c:480  [     ID] path_normalize

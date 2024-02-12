@@ -1,4 +1,46 @@
 
+  v1.9.3
+  -----------
+    o Resolved the problems of building & testing it on MacOS(Sonoma)
+        Use the option '--disable-java' of 'configure' if you don't want Java api
+    o Checked the lexical attributes NOT_CHAR_TOK 
+       Use this to specify the ASCII printable chars that is not permitted in the language like:
+          NOT_CHAR_TOK: %~!
+       , which tells that char-set { '%', '~', '!' } is not char tokens. 
+    o The example 'tokseq' correctly uses the generated api in tokseq_lex.c
+    o bug-fixes on parsing ulc file
+
+  v1.9.2
+  -----------
+    o The help messages of tools, ulc2class, ulf_gen, and uls_stream
+         will be printed to not stdout but stderr. 
+    o bug-fixes on
+      a) the infrequent and incorrect parsing of punctuation tokens with more than 1-char,
+          like '$$', '||', '==='.
+
+  v1.9.1
+  -----------
+    o the minus sign of numbers
+      The minus sign of numbers are excluded in the lexeme of NUMBER token,
+            so that the token strings of it represent non-negative numbers.
+      a) A input string "a-3.14" is tokenized into token sequence { ID(a) '-' NUMBER(3.14) }
+      b) "a=-3.14" into { ID(a) '=' '-' NUMBER(3.14) }
+    o A bug-fix on uls_tokstr()
+       Can cause incorrect token strings of NUMBER when uls_set_tok()/uls_unget*() are used.
+
+  v1.9.0
+  -----------
+    o Refactoring numbers
+      The format of the API function uls_lexeme(), which is the current token string, is changed
+         and the uls_tokstr() is now a little different from uls_lexeme().
+      a) Integers: The supported radices of number are 2, 3, 4, 8, 16, and 10.
+         The corresponding prefixes 0b, 0t, 0q, 0o, 0x are prepended in the token string, uls_lexeme().
+         uls_tokstr() will gives you it as hexa-decimal format prefixed by '0x'.
+      b) Floating-Point numbers:
+         uls_lexeme() will represent it as the one similar to scientific E-notation and
+         uls_tokstr() gives you it as the common form.
+      c) Use uls_number_suffix() to get the number suffix.
+
   v1.8.16
   -----------
     o Tested on MacOS(Ventura)

@@ -1,7 +1,6 @@
 include $(top_srcdir)/uls.config
 ACLOCAL_AMFLAGS = -I m4
 
-
 noinst_PROGRAMS = dump_toks
 dump_toks_SOURCES = dump_toks.c
 dump_toks_CFLAGS = -Wall

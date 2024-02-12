@@ -181,7 +181,6 @@ again_1:
 		if (inp->rawbuf_bytes > 0)
 			_uls_log(err_log)("%s: redundant %d-bytes exist!", __func__, inp->rawbuf_bytes);
 		return -1;
-
 	}
 
 	if (rc == 0) {
@@ -500,18 +499,16 @@ ULS_QUALIFIED_METHOD(uls_init_context)(uls_context_ptr_t ctx, uls_gettok_t getto
 {
 	uls_input_ptr_t   inp;
 	uls_lexseg_ptr_t lexseg;
-	int i;
+	int i, n;
 
 	ctx->flags = 0;
 	_uls_tool(csz_init)(uls_ptr(ctx->tag), 128);
-	_uls_tool(csz_add_eos)(uls_ptr(ctx->tag));
 	ctx->lineno = 1; ctx->delta_lineno = 0;
 
 	uls_init_bytespool(ctx->cnst_nilstr, ULS_CNST_NILSTR_SIZE, 0);
 	ctx->input = inp = uls_create_input();
 
 	_uls_tool(csz_init)(uls_ptr(ctx->zbuf1), ULS_FDZBUF_INITSIZE);
-	_uls_tool(csz_add_eos)(uls_ptr(ctx->zbuf1));
 	_uls_tool(csz_init)(uls_ptr(ctx->zbuf2), ULS_FDZBUF_INITSIZE);
 
 	ctx->lptr = ctx->line = ctx->cnst_nilstr;
@@ -536,10 +533,14 @@ ULS_QUALIFIED_METHOD(uls_init_context)(uls_context_ptr_t ctx, uls_gettok_t getto
 
 	ctx->tok = tok0;
 	ctx->s_val = ctx->tokbuf.buf;
-	ctx->s_val_len = ctx->s_val_uchars = 0;
+	ctx->s_val_len = ctx->s_val_wchars = 0;
 
-	_uls_tool(str_init)(uls_ptr(ctx->tokbuf), (ULS_LEXSTR_MAXSIZ+1)<<1);
-	ctx->n_digits = ctx->expo = 0;
+	n = (ULS_LEXSTR_MAXSIZ+1) << 1;
+	_uls_tool(str_init)(uls_ptr(ctx->tokbuf), n);
+	ctx->n_digits = ctx->n_expo = 0;
+
+	_uls_tool(str_init)(uls_ptr(ctx->tokbuf_aux), n);
+	ctx->l_tokbuf_aux = -1;
 
 	ctx->anonymous_uchar_vx = uls_create_tokdef_vx(0, "", nilptr); // 0: nonsense
 	ctx->anonymous_uchar_vx->flags |= ULS_VX_ANONYMOUS;
@@ -562,6 +563,7 @@ ULS_QUALIFIED_METHOD(uls_deinit_context)(uls_context_ptr_t ctx)
 
 	_uls_tool(csz_deinit)(uls_ptr(ctx->tag));
 	_uls_tool(str_free)(uls_ptr(ctx->tokbuf));
+	_uls_tool(str_free)(uls_ptr(ctx->tokbuf_aux));
 	ctx->gettok = nilptr;
 	ctx->prev = nilptr;
 
@@ -716,7 +718,7 @@ ULS_QUALIFIED_METHOD(xcontext_raw_filler)(uls_xcontext_ptr_t xctx)
 			inp->rawbuf_ptr = lptr;
 			inp->rawbuf_bytes = (int) (lptr_end - lptr);
 
-			if ((rc=input_space_proc(ch_ctx, inp, ss_dst1, len_surplus, uls_ptr(parms1))) < 0) {
+			if ((rc = input_space_proc(ch_ctx, inp, ss_dst1, len_surplus, uls_ptr(parms1))) < 0) {
 				_uls_log(err_log)("%s: I/O error", __func__);
 				return -1;
 			}
@@ -805,10 +807,11 @@ ULS_QUALIFIED_METHOD(xcontext_raw_filler)(uls_xcontext_ptr_t xctx)
 	inp->rawbuf_ptr = lptr;
 	inp->rawbuf_bytes = (int) (lptr_end - lptr);
 
+	_uls_tool(csz_text)(ss_dst1);
+
 	lexseg = uls_get_array_slot_type10(uls_ptr(ctx->lexsegs), n_segs);
 	uls_reset_lexseg(lexseg, offset1, csz_length(ss_dst1) - offset1, -1, -1, nilptr);
 
-	_uls_tool(csz_text)(ss_dst1);
 	ctx->n_lexsegs = n_segs;
 	lexseg = uls_get_array_slot_type10(uls_ptr(ctx->lexsegs), 0);
 

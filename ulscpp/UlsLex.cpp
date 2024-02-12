@@ -616,7 +616,7 @@ UlsLex::UlsLex(wstring& ulc_wfile)
 	csz_init(&csz, -1);
 
 	if ((ustr = uls_wstr2ustr(ulc_wfile.c_str(), -1, &csz)) == NULL) {
-		err_panic("encoding error!");
+		err_log("encoding error!");
 	}
 	else {
 		initUlsLex_ustr(ustr);
@@ -1144,9 +1144,9 @@ void UlsLex::dismissAllInputs(void)
 // </brief>
 // <parm name="ch">The char to be tested.</parm>
 // <return>bool</return>
-bool UlsLex::is_ch_space(uls_uch_t uch)
+bool UlsLex::is_ch_space(uls_wch_t wch)
 {
-	return uls_is_ch_space(&lex, uch) ? true : false;
+	return uls_canbe_ch_space(lex.ch_context, wch) ? true : false;
 }
 
 // <brief>
@@ -1155,9 +1155,9 @@ bool UlsLex::is_ch_space(uls_uch_t uch)
 // </brief>
 // <parm name="ch">The char to be tested.</parm>
 // <return>bool</return>
-bool UlsLex::is_ch_idfirst(uls_uch_t uch)
+bool UlsLex::is_ch_idfirst(uls_wch_t wch)
 {
-	return uls_canbe_ch_idfirst(&lex, uch) ? true : false;
+	return uls_canbe_ch_idfirst(lex.ch_context, wch) ? true : false;
 }
 
 // <brief>
@@ -1166,9 +1166,9 @@ bool UlsLex::is_ch_idfirst(uls_uch_t uch)
 // </brief>
 // <parm name="ch">The char to be tested.</parm>
 // <return>bool</return>
-bool UlsLex::is_ch_id(uls_uch_t uch)
+bool UlsLex::is_ch_id(uls_wch_t wch)
 {
-	return uls_canbe_ch_id(&lex, uch) ? true : false;
+	return uls_canbe_ch_id(lex.ch_context, wch) ? true : false;
 }
 
 // <brief>
@@ -1177,9 +1177,9 @@ bool UlsLex::is_ch_id(uls_uch_t uch)
 // </brief>
 // <parm name="ch">The char to be tested.</parm>
 // <return>bool</return>
-bool UlsLex::is_ch_quote(uls_uch_t uch)
+bool UlsLex::is_ch_quote(uls_wch_t wch)
 {
-	return uls_canbe_ch_quote(&lex, uch) ? true : false;
+	return uls_canbe_ch_quote(lex.ch_context, wch) ? true : false;
 }
 
 // <brief>
@@ -1188,9 +1188,9 @@ bool UlsLex::is_ch_quote(uls_uch_t uch)
 // </brief>
 // <parm name="ch">The char to be tested.</parm>
 // <return>bool</return>
-bool UlsLex::is_ch_1ch_token(uls_uch_t uch)
+bool UlsLex::is_ch_1ch_token(uls_wch_t wch)
 {
-	return uls_is_ch_1ch_token(&lex, uch) ? true : false;
+	return uls_canbe_ch_1ch_token(lex.ch_context, wch) ? true : false;
 }
 
 // <brief>
@@ -1200,9 +1200,9 @@ bool UlsLex::is_ch_1ch_token(uls_uch_t uch)
 // </brief>
 // <parm name="ch">The char to be tested.</parm>
 // <return>bool</re turn>
-bool UlsLex::is_ch_2ch_token(uls_uch_t uch)
+bool UlsLex::is_ch_2ch_token(uls_wch_t wch)
 {
-	return uls_canbe_ch_2ch_token(&lex, uch) ? true : false;
+	return uls_canbe_ch_2ch_token(lex.ch_context, wch) ? true : false;
 }
 
 // <brief>
@@ -1211,9 +1211,9 @@ bool UlsLex::is_ch_2ch_token(uls_uch_t uch)
 // </brief>
 // <parm name="ch">The char to be tested.</parm>
 // <return>bool</return>
-bool UlsLex::is_ch_comm(uls_uch_t uch)
+bool UlsLex::is_ch_comm(uls_wch_t wch)
 {
-	return uls_canbe_ch_comm(&lex, uch) ? true : false;
+	return uls_canbe_ch_comm(lex.ch_context, wch) ? true : false;
 }
 
 // <brief>
@@ -1230,13 +1230,13 @@ void UlsLex::skipBlanks(void)
 // </brief>
 // <parm name="isQuote">checks if the next char is a first char of some quote-string.</parm>
 // <return>The next character</return>
-uls_uch_t UlsLex::peekCh(bool* isQuote)
+uls_wch_t UlsLex::peekCh(bool* isQuote)
 {
-	uls_uch_t uch;
+	uls_wch_t wch;
 	uls_nextch_detail_t detail;
 	bool is_quote = false;
 
-	if ((uch = uls_peek_uch(&lex, &detail)) == ULS_UCH_NONE && detail.qmt != NULL) {
+	if ((wch = uls_peek_uch(&lex, &detail)) == ULS_UCH_NONE && detail.qmt != NULL) {
 		is_quote = true;
 	}
 
@@ -1244,14 +1244,14 @@ uls_uch_t UlsLex::peekCh(bool* isQuote)
 		*isQuote = is_quote;
 	}
 
-	return uch;
+	return wch;
 }
 
 // <brief>
 // Peeks the next character in the internal buffer.
 // </brief>
 // <return>The next character</return>
-uls_uch_t UlsLex::peekCh(void)
+uls_wch_t UlsLex::peekCh(void)
 {
 	return peekCh(NULL);
 }
@@ -1263,13 +1263,13 @@ uls_uch_t UlsLex::peekCh(void)
 //  checks if the extracted char is a first char of some quote-string.
 // </parm>
 // <return>The next character</return>
-uls_uch_t UlsLex::getCh(bool* isQuote)
+uls_wch_t UlsLex::getCh(bool* isQuote)
 {
-	uls_uch_t uch;
+	uls_wch_t wch;
 	uls_nextch_detail_t detail;
 	bool is_quote = false;
 
-	if ((uch = uls_get_uch(&lex, &detail)) == ULS_UCH_NONE && detail.qmt != NULL) {
+	if ((wch = uls_get_uch(&lex, &detail)) == ULS_UCH_NONE && detail.qmt != NULL) {
 		is_quote = true;
 	}
 
@@ -1277,14 +1277,14 @@ uls_uch_t UlsLex::getCh(bool* isQuote)
 		*isQuote = is_quote;
 	}
 
-	return uch;
+	return wch;
 }
 
 // <brief>
 // Extracts the next character.
 // </brief>
 // <return>The next character</return>
-uls_uch_t UlsLex::getCh(void)
+uls_wch_t UlsLex::getCh(void)
 {
 	return getCh(NULL);
 }
@@ -1332,7 +1332,7 @@ void UlsLex::update_token_lex(void)
 	wchar_t *wstr;
 
 	lxm_id = uls_tok(&lex);
-	nstr = uls_lexeme(&lex);
+	nstr = uls_tokstr(&lex);
 	lxm_nstr = nstr;
 
 	_ULSCPP_USTR2WSTR(nstr, wstr, 1);
@@ -1343,9 +1343,9 @@ void UlsLex::update_token_lex(void)
 // push the 'ch' to the buffer so that next char with a call getCh() may be 'ch'.
 // </brief>
 // <return>none</return>
-void UlsLex::ungetCh(uls_uch_t uch)
+void UlsLex::ungetCh(uls_wch_t wch)
 {
-	uls_unget_ch(&lex, uch);
+	uls_unget_ch(&lex, wch);
 	update_token_lex();
 }
 
@@ -1551,7 +1551,7 @@ void UlsLex::ungetStr(wstring str)
 }
 
 // <brief>
-// Call ungetLexeme if you want push lexeme to the current input stream.
+// Call ungetToken if you want push lexeme to the current input stream.
 // </brief>
 // <parm name="tok_id">
 //   The corresponding token string of 'tok_id'.

@@ -48,7 +48,7 @@ LPCTSTR progname;
 int  opt_verbose;
 
 LPCTSTR config_name;
-LPTSTR input_file;
+LPCTSTR input_file;
 int   test_mode = -1;
 
 uls_lex_t *sample_lex;
@@ -101,7 +101,7 @@ options(int opt, LPTSTR optarg)
 }
 
 int
-test_initial_uls(LPTSTR fpath)
+test_initial_uls(LPCTSTR fpath)
 {
 	uls_lex_ptr_t uls = sample_lex;
 	double f_val;
@@ -197,7 +197,7 @@ sample_xdef_t xdefs[5] = {
 };
 
 void
-test_uls_xdef(LPTSTR fpath)
+test_uls_xdef(LPCTSTR fpath)
 {
 	uls_lex_t *uls = sample_lex;
 	sample_xdef_t *xdef;
@@ -239,7 +239,6 @@ test_uls_xdef(LPTSTR fpath)
 int
 uls_fill_FILE_source(uls_source_t* isrc, char* buf, int buflen, int bufsiz)
 {
-	// assume: buflen < bufsiz
 	static unsigned char utf8buf[ULS_UTF8_CH_MAXLEN];
 	static int len_utf8buf;
 
@@ -308,11 +307,16 @@ test_uls_isrc(LPCTSTR fpath)
 	uls_set_tag(uls, fpath, 1);
 
 	for ( ; ; ) {
-		if ((t = uls_get_tok(uls)) == TOK_EOI) break;
+		if ((t = uls_get_tok(uls)) == TOK_ERR) {
+			tokstr = uls_tokstr(uls);
+			err_log(_T("ErrorToken: %s"), tokstr);
+			break;
+		}
+		if (t == TOK_EOI) break;
 
 		uls_printf(_T("#%d(%6d) :"), uls_get_lineno(uls), t);
 		tokstr = uls_tokstr(uls);
-		ult_dump_bin(tokstr);
+		ult_dump_utf8str(tokstr);
 		uls_printf(_T("\n"));
 	}
 }
@@ -356,7 +360,6 @@ _tmain(int n_targv, LPTSTR *targv)
 	}
 
 	uls_destroy(sample_lex);
-
 	return 0;
 }
 

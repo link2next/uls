@@ -132,7 +132,7 @@ test_uls_0(LPTSTR fpath)
 }
 
 void
-test_uls_1(LPTSTR fpath)
+test_uls_1(LPCTSTR fpath)
 {
 	int tok;
 	FILE *fp;

@@ -169,7 +169,7 @@ ULS_DLL_EXTERN char* ult_skip_blanks(const char* lptr);
 ULS_DLL_EXTERN char* ult_splitstr(char** p_str, int *p_len);
 ULS_DLL_EXTERN char* ult_split_litstr(char *str, char qch);
 
-ULS_DLL_EXTERN void ult_dump_bin(const char *str);
+ULS_DLL_EXTERN void ult_dump_utf8str(const char *str);
 void uls_print_bytes(const char* srcptr, int n_bytes);
 int uls_get_exeloc_dir(const char* argv0, char *fpath_buf);
 const char* uls_get_dirpath(const char* fname, uls_ptrtype_tool(outparam) parms);

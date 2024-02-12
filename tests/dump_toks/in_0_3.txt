@@ -7,3 +7,5 @@ hello
 
   'hello\n\
 \tworld'
+
+   "jointed"'literal'"strings"

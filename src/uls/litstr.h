@@ -98,9 +98,9 @@ ULS_DEFINE_STRUCT_BEGIN(litstr)
 	int len;
 
 	int map_flags;
-	uls_uch_t ch_escaped;
+	uls_wch_t ch_escaped;
 	int  len_ch_escaped;
-	uls_uch_t uch;
+	uls_wch_t wch;
 
 	uls_litstr_context_t context;
 };
@@ -108,12 +108,12 @@ ULS_DEFINE_STRUCT_BEGIN(litstr)
 #endif // ULS_DEF_PUBLIC_TYPE
 
 #ifdef ULS_DECL_PROTECTED_PROC
-uls_uch_t __dec_escaped_char_cont(char quote_ch, uls_litstr_ptr_t lit);
-uls_uch_t uls_get_escape_char_initial(uls_litstr_ptr_t lit);
-uls_uch_t uls_get_escape_char_cont(uls_litstr_ptr_t lit);
+uls_wch_t __dec_escaped_char_cont(char quote_ch, uls_litstr_ptr_t lit);
+uls_wch_t uls_get_escape_char_initial(uls_litstr_ptr_t lit);
+uls_wch_t uls_get_escape_char_cont(uls_litstr_ptr_t lit);
 
 int __uls_analyze_esc_ch(uls_litstr_ptr_t lit, uls_escmap_ptr_t escmap, _uls_ptrtype_tool(csz_str) outbuf);
-uls_uch_t uls_get_escape_char(uls_litstr_ptr_t lit);
+uls_wch_t uls_get_escape_char(uls_litstr_ptr_t lit);
 int uls_get_escape_str(char quote_ch, uls_ptrtype_tool(wrd) wrdx);
 void uls_init_quotetype(uls_quotetype_ptr_t qmt);
 void uls_deinit_quotetype(uls_quotetype_ptr_t qmt);
@@ -128,7 +128,7 @@ int dfl_lit_analyzer_escape2(uls_litstr_ptr_t lit);
 
 #ifdef ULS_DECL_PUBLIC_PROC
 int canbe_commtype_mark(char* wrd, uls_ptrtype_tool(outparam) parms);
-int canbe_quotetype_mark(char *chr_tbl, char* wrd, uls_ptrtype_tool(outparam) parms);
+int canbe_quotetype_mark(const char *ch_ctx, char* wrd, uls_ptrtype_tool(outparam) parms);
 
 uls_quotetype_ptr_t uls_create_quotetype(void);
 void uls_destroy_quotetype(uls_quotetype_ptr_t qmt);

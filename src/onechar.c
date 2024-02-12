@@ -35,18 +35,18 @@
 #endif
 
 ULS_DECL_STATIC void
-ULS_QUALIFIED_METHOD(__init_onechar_tokgrp)(uls_onechar_table_ptr_t tbl, int grp_id, uls_uch_t uch0, int n)
+ULS_QUALIFIED_METHOD(__init_onechar_tokgrp)(uls_onechar_table_ptr_t tbl, int grp_id, int ch0, int n)
 {
 	uls_onechar_tokgrp_ptr_t tokgrp;
 	uls_decl_parray_slots(slots_vx, tokdef_vx);
 	int i;
 
 	tokgrp = uls_get_array_slot_type00(uls_ptr(tbl->tokgrps), grp_id);
-	tokgrp->uch0 = uch0;
+	tokgrp->ch0 = ch0;
 
 	uls_init_parray(uls_ptr(tokgrp->tokdef_vx_1char), tokdef_vx, n);
 	slots_vx = uls_parray_slots(uls_ptr(tokgrp->tokdef_vx_1char));
-	for (i=0; i<n; i++) {
+	for (i = 0; i < n; i++) {
 		slots_vx[i] = nilptr;
 	}
 	tokgrp->tokdef_vx_1char.n = n;
@@ -57,8 +57,6 @@ ULS_QUALIFIED_METHOD(uls_init_onechar_table)(uls_onechar_table_ptr_t tbl)
 {
 	uls_init_array_type00(uls_ptr(tbl->tokgrps), onechar_tokgrp, ULS_N_ONECHAR_TOKGRPS);
 
-	uls_init_parray(uls_ptr(tbl->tokdef_vx_pool_1ch), tokdef_vx, 0);
-
 	// GROUP-0: '!' ~ '/'
 	__init_onechar_tokgrp(tbl, 0, '!', 15);
 
@@ -66,7 +64,7 @@ ULS_QUALIFIED_METHOD(uls_init_onechar_table)(uls_onechar_table_ptr_t tbl)
 	__init_onechar_tokgrp(tbl, 1, ':', 7);
 
 	// GROUP-2: '[' ~ '`'
-	__init_onechar_tokgrp(tbl, 2, '[', 6); 
+	__init_onechar_tokgrp(tbl, 2, '[', 6);
 
 	// GROUP-3: '{' ~ '~'
 	__init_onechar_tokgrp(tbl, 3, '{', 4);
@@ -78,36 +76,36 @@ void
 ULS_QUALIFIED_METHOD(uls_deinit_onechar_table)(uls_onechar_table_ptr_t tbl)
 {
 	uls_onechar_tokdef_etc_ptr_t  e_etc, e_etc_next;
-	uls_decl_parray_slots(slots_vx, tokdef_vx);
 	uls_onechar_tokgrp_ptr_t tokgrp;
+	uls_decl_parray_slots(slots_vx, tokdef_vx);
 	uls_tokdef_vx_ptr_t e_vx;
-	int i;
+	int i, j;
 
 	for (e_etc = tbl->tokdefs_etc_list; e_etc != nilptr; e_etc = e_etc_next) {
 		e_etc_next = e_etc->next;
+		e_vx = e_etc->tokdef_vx;
+		uls_destroy_tokdef_vx(e_vx);
 		uls_dealloc_object(e_etc);
 	}
-
 	tbl->tokdefs_etc_list = nilptr;
 
-	slots_vx = uls_parray_slots(uls_ptr(tbl->tokdef_vx_pool_1ch));
-	for (i=0; i < tbl->tokdef_vx_pool_1ch.n; i++) {
-		e_vx = slots_vx[i];
-		uls_destroy_tokdef_vx(e_vx);
-	}
-
-	uls_deinit_parray(uls_ptr(tbl->tokdef_vx_pool_1ch));
-
-	for (i=0; i<ULS_N_ONECHAR_TOKGRPS; i++) {
+	for (i = 0; i < ULS_N_ONECHAR_TOKGRPS; i++) {
 		tokgrp = uls_get_array_slot_type00(uls_ptr(tbl->tokgrps), i);
+
+		slots_vx = uls_parray_slots(uls_ptr(tokgrp->tokdef_vx_1char));
+		for (j=0; j < tokgrp->tokdef_vx_1char.n; j++) {
+			if ((e_vx = slots_vx[j]) != nilptr) {
+				uls_destroy_tokdef_vx(e_vx);
+			}
+		}
 		uls_deinit_parray(uls_ptr(tokgrp->tokdef_vx_1char));
 	}
 	uls_deinit_array_type00(uls_ptr(tbl->tokgrps), onechar_tokgrp);
 }
 
 ULS_QUALIFIED_RETTYP(uls_tokdef_vx_ptr_t)
-ULS_QUALIFIED_METHOD(uls_find_1char_tokdef_map)(uls_onechar_table_ptr_t tbl,
-	uls_uch_t uch, uls_tokdef_outparam_ptr_t outparam)
+ULS_QUALIFIED_METHOD(find_1char_tokdef_map)(uls_onechar_table_ptr_t tbl,
+	int ch, uls_tokdef_outparam_ptr_t outparam)
 {
 	//
 	// group[0] = { '!' ... '/' }
@@ -120,83 +118,64 @@ ULS_QUALIFIED_METHOD(uls_find_1char_tokdef_map)(uls_onechar_table_ptr_t tbl,
 	static int   left_child[4] = { -1, -1,  1, -1 };
 	static int  right_child[4] = {  2, -1,  3, -1 };
 
-	uls_tokdef_vx_ptr_t e_vx;
+	uls_tokdef_vx_ptr_t e_vx_ret = nilptr;
 	int  i_grp, n_tok_array;
-	uls_onechar_tokgrp_ptr_t tokgrp;
+	uls_onechar_tokgrp_ptr_t tokgrp, tokgrp_ret = nilptr;
 	uls_decl_parray_slots(slots_vx, tokdef_vx);
-	uls_uch_t uch0;
+	int ch0;
 
 	for (i_grp = 0; i_grp >= 0; ) {
 		tokgrp = uls_get_array_slot_type00(uls_ptr(tbl->tokgrps), i_grp);
 
 		slots_vx = uls_parray_slots(uls_ptr(tokgrp->tokdef_vx_1char));
 		n_tok_array = tokgrp->tokdef_vx_1char.n;
-		uch0 = tokgrp->uch0;
+		ch0 = tokgrp->ch0;
 
-		if (uch < uch0) {
+		if (ch < ch0) {
 			i_grp = left_child[i_grp];
-		} else if (uch >= uch0 + n_tok_array) {
+		} else if (ch >= ch0 + n_tok_array) {
 			i_grp = right_child[i_grp];
 		} else {
-			e_vx = slots_vx[uch - uch0];
-			if (outparam != nilptr) {
-				outparam->tokgrp = tokgrp;
-				outparam->e_vx = e_vx;
-			}
-			return e_vx;
+			e_vx_ret = slots_vx[ch - ch0];
+			tokgrp_ret = tokgrp;
+			break;
 		}
 	}
 
 	if (outparam != nilptr) {
-		outparam->tokgrp = nilptr;
-		outparam->e_vx = nilptr;
+		outparam->tokgrp = tokgrp_ret;
+		outparam->e_vx = e_vx_ret;
 	}
 
-	return nilptr;
+	return e_vx_ret;
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_insert_onechar_tokdef_map)
-	(uls_onechar_tokgrp_ptr_t tokgrp, uls_uch_t uch, uls_tokdef_vx_ptr_t e_vx)
+ULS_QUALIFIED_METHOD(insert_1char_tokdef_map)(uls_onechar_tokgrp_ptr_t tokgrp,
+	int ch, uls_tokdef_vx_ptr_t e_vx)
 {
 	uls_decl_parray_slots_init(slots_vx, tokdef_vx, uls_ptr(tokgrp->tokdef_vx_1char));
 	int j;
 
-	uls_assert(tokgrp->uch0 <= uch);
-
-	j = uch - tokgrp->uch0;
-	uls_assert(j < tokgrp->tokdef_vx_1char.n);
+	if ((j = ch - tokgrp->ch0) >= tokgrp->tokdef_vx_1char.n || ch < tokgrp->ch0) {
+		_uls_log(err_log)("%s: InternalError, %c out of tokgrp", __func__, ch);
+		return;
+	}
 
 	if (slots_vx[j] != nilptr) {
-		_uls_log(err_log)("%s: the slot for '0x%X already occupied!", __func__, uch);
+		_uls_log(err_log)("%s: the slot for '0x%X already occupied!", __func__, ch);
 	}
 
 	slots_vx[j] = e_vx;
 }
 
-void
-ULS_QUALIFIED_METHOD(uls_insert_onechar_tokdef_etc)
-(uls_onechar_table_ptr_t tbl, uls_uch_t uch, uls_tokdef_vx_ptr_t e_vx)
-{
-	uls_onechar_tokdef_etc_ptr_t  e_etc;
-
-	uls_assert(e_vx != nilptr);
-
-	e_etc = uls_alloc_object(uls_onechar_tokdef_etc_t);
-
-	e_etc->uch = uch;
-	e_etc->tokdef_vx = e_vx;
-	e_etc->next = tbl->tokdefs_etc_list;
-	tbl->tokdefs_etc_list = e_etc;
-}
-
 ULS_QUALIFIED_RETTYP(uls_tokdef_vx_ptr_t)
-ULS_QUALIFIED_METHOD(uls_find_1char_tokdef_etc)(uls_onechar_table_ptr_t tbl, uls_uch_t uch)
+ULS_QUALIFIED_METHOD(find_1char_tokdef_etc)(uls_onechar_table_ptr_t tbl, uls_wch_t wch)
 {
 	uls_onechar_tokdef_etc_ptr_t e_etc;
 
 	for (e_etc = tbl->tokdefs_etc_list; e_etc != nilptr; e_etc = e_etc->next) {
-		if (e_etc->uch == uch) {
+		if (e_etc->wch == wch) {
 			uls_assert(e_etc->tokdef_vx != nilptr);
 			return e_etc->tokdef_vx;
 		}
@@ -206,63 +185,53 @@ ULS_QUALIFIED_METHOD(uls_find_1char_tokdef_etc)(uls_onechar_table_ptr_t tbl, uls
 }
 
 ULS_QUALIFIED_RETTYP(uls_tokdef_vx_ptr_t)
-ULS_QUALIFIED_METHOD(uls_find_1char_tokdef_vx)(uls_onechar_table_ptr_t tbl, uls_uch_t uch,
-	uls_tokdef_outparam_ptr_t outparam)
+ULS_QUALIFIED_METHOD(find_1char_tokdef_etc_by_tokid)(uls_onechar_table_ptr_t tbl, int tok_id)
 {
-	uls_tokdef_vx_ptr_t e_vx;
+	uls_onechar_tokdef_etc_ptr_t e_etc;
+	uls_tokdef_vx_ptr_t e_vx, e_vx_ret = nilptr;
 
-	if ((e_vx=uls_find_1char_tokdef_map(tbl, uch, outparam)) == nilptr) {
-		e_vx = uls_find_1char_tokdef_etc(tbl, uch);
-
-		if (outparam != nilptr) {
-			outparam->e_vx = e_vx;
-			outparam->tokgrp = nilptr;
+	for (e_etc = tbl->tokdefs_etc_list; e_etc != nilptr; e_etc = e_etc->next) {
+		e_vx = e_etc->tokdef_vx;
+		if (e_vx->tok_id == tok_id) {
+			e_vx_ret = e_vx;
+			break;
 		}
 	}
 
-	return e_vx;
+	return e_vx_ret;
 }
 
-int
-ULS_QUALIFIED_METHOD(uls_insert_1char_tokdef_vx)
-	(uls_onechar_table_ptr_t tbl, uls_uch_t uch, uls_tokdef_vx_ptr_t e_vx)
+void
+ULS_QUALIFIED_METHOD(insert_1char_tokdef_etc)(uls_onechar_table_ptr_t tbl,
+	uls_wch_t wch, uls_tokdef_vx_ptr_t e_vx)
 {
-	uls_tokdef_outparam_t outparam;
-	int stat;
+	uls_onechar_tokdef_etc_ptr_t  e_etc;
 
-	// why uch is needed? Can we use the e_vx->tok_id instead!?
-	if (uls_find_1char_tokdef_vx(tbl, uch, uls_ptr(outparam)) != nilptr) {
-		return 0;
-	}
+	e_etc = uls_alloc_object(uls_onechar_tokdef_etc_t);
+	e_etc->wch = wch;
+	e_etc->tokdef_vx = e_vx;
 
-	if (outparam.tokgrp != nilptr) {
-		uls_insert_onechar_tokdef_map(outparam.tokgrp, uch, e_vx);
-		stat = 1;
-	} else {
-		uls_insert_onechar_tokdef_etc(tbl, uch, e_vx);
-		stat = 2;
-	}
-
-	return stat;
+	e_etc->next = tbl->tokdefs_etc_list;
+	tbl->tokdefs_etc_list = e_etc;
 }
 
 ULS_QUALIFIED_RETTYP(uls_tokdef_vx_ptr_t)
-ULS_QUALIFIED_METHOD(uls_insert_1char_tokdef_uch)(uls_onechar_table_ptr_t tbl, uls_uch_t uch)
+ULS_QUALIFIED_METHOD(uls_find_1char_tokdef_vx)(uls_onechar_table_ptr_t tbl, int ch,
+	uls_tokdef_outparam_ptr_t outparam)
 {
 	uls_tokdef_vx_ptr_t e_vx;
-	uls_decl_parray_slots(slots_vx, tokdef_vx);
-	int siz;
+	uls_tokdef_outparam_t parms1;
 
-	if (tbl->tokdef_vx_pool_1ch.n_alloc < (siz = tbl->tokdef_vx_pool_1ch.n + 1)) {
-		siz = uls_roundup(siz, TOKDEF_LINES_DELTA2);
-		uls_resize_parray(uls_ptr(tbl->tokdef_vx_pool_1ch), tokdef_vx, siz);
+	if (ch < 0) return nilptr;
+	if ((e_vx = find_1char_tokdef_map(tbl, ch, uls_ptr(parms1))) == nilptr &&
+		parms1.tokgrp == nilptr) {
+		e_vx = find_1char_tokdef_etc(tbl, ch);
 	}
 
-	e_vx = uls_create_tokdef_vx((int) uch, "", nilptr);
-	uls_insert_1char_tokdef_vx(tbl, uch, e_vx);
-
-	slots_vx = uls_parray_slots(uls_ptr(tbl->tokdef_vx_pool_1ch));
-	slots_vx[tbl->tokdef_vx_pool_1ch.n++] = e_vx;
+	if (outparam != nilptr) {
+		outparam->e_vx = e_vx;
+		outparam->tokgrp = parms1.tokgrp;
+	}
 
 	return e_vx;
 }

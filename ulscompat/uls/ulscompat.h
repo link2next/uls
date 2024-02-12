@@ -35,6 +35,7 @@
 #define __ULSCOMPAT_H__
 
 #include "uls/uls_type.h"
+#include <wchar.h>
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {

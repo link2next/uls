@@ -71,27 +71,6 @@ ULS_QUALIFIED_METHOD(splitint)(const char* line, uls_ptrtype_tool(outparam) parm
 	return n;
 }
 
-int
-ULS_QUALIFIED_METHOD(canbe_tokname)(const char *str)
-{
-	int i, val;
-	char ch;
-
-	for (i=0; (ch=str[i])!='\0'; i++) {
-		if (i > 0) {
-			val = _uls_tool_(isalnum)(ch) || (ch == '_');
-		} else {
-			val = _uls_tool_(isalpha)(ch) || (ch == '_');
-		}
-		if (val == 0) return 0;
-	}
-
-	if (i > ULS_LEXSTR_MAXSIZ)
-		return 0;
-
-	return i;
-}
-
 const char*
 ULS_QUALIFIED_METHOD(uls_skip_multiline_comment)(uls_ptrtype_tool(parm_line) parm_ln)
 {
@@ -143,7 +122,7 @@ ULS_QUALIFIED_METHOD(uls_skip_singleline_comment)(uls_ptrtype_tool(parm_line) pa
 ULS_DECL_STATIC unsigned int
 ULS_QUALIFIED_METHOD(uls_gauss_log2)(unsigned int n, uls_ptrtype_tool(outparam) parms)
 {
-	unsigned int i, n_bits=sizeof(unsigned int)<<3;
+	unsigned int i, n_bits = sizeof(unsigned int)<<3;
 	unsigned int m, m_prev;
 
 	m_prev = 1;
@@ -580,37 +559,4 @@ ULS_QUALIFIED_METHOD(uls_get_spec_fp)(const char* dirpath_list, const char* fpat
 	}
 
 	return fp_in;
-}
-
-int
-ULS_QUALIFIED_METHOD(uls_cmd_run)(uls_array_ref_slots_type00(cmdlst,cmd), int n_cmdlst, const char* keyw,
-	char *line, uls_voidptr_t data)
-{
-	int stat = -2;
-	int   low, high, mid, cond;
-	uls_cmd_ptr_t cmd;
-
-	low = 0;
-	high = n_cmdlst - 1;
-
-	while (low <= high) {
-		mid = (low + high) / 2;
-		cmd = uls_get_array_slot(cmdlst,mid);
-
-		if ((cond = _uls_tool_(strcmp)(cmd->name, keyw)) < 0) {
-			low = mid + 1;
-		} else if (cond > 0) {
-			high = mid - 1;
-		} else {
-			cmd->user_data = data;
-			if (cmd->proc(line, cmd) < 0) {
-				stat = -1;
-			} else {
-				stat = 0;
-			}
-			break;
-		}
-	}
-
-	return stat;
 }

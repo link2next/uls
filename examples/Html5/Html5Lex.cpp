@@ -111,6 +111,7 @@ StringBuilder::append(TCHAR ch)
 	m_stream << buff;
 	sync = false;
 }
+
 // <brief>
 // Sets the input file to be tokenized.
 // </brief>
@@ -160,7 +161,6 @@ Html5Lex::~Html5Lex()
 // If it's empty, sets *is_trivial to 1.
 // </brief>
 // <parm name="fp">The FILE pointer of input file</parm>
-// <parm name="txt">the text found is stored in this</parm>
 // <parm name="is_trivial">check whether the found text is empty or not</parm>
 // <return>'<' if it's found, otherwise EOF</return>
 int
@@ -176,21 +176,21 @@ Html5Lex::run_to_tagbegin(FILE* fp, int *is_trivial)
 			txtbuf.append(tch);
 			escape = 0;
 
-		} else if (ch == '<') {
+		} else if (ch == _T('<')) {
 			break;
 
-		} else if (ch == '\\') {
+		} else if (ch == _T('\\')) {
 			escape = 1;
 
-			tch = '\\';
+			tch = _T('\\');
 			txtbuf.append(tch);
 			bTrivial = 0;
 		}
 
-		if (ch != '\n') {
+		if (ch != _T('\n')) {
 			tch = (TCHAR) ch;
 			txtbuf.append(tch);
-			if (ch != ' ' && ch != '\t') bTrivial = 0;
+			if (ch != _T(' ') && ch != _T('\t')) bTrivial = 0;
 		}
 	}
 
@@ -204,10 +204,8 @@ Html5Lex::run_to_tagbegin(FILE* fp, int *is_trivial)
 
 // <brief>
 // This processs the quotation strings in HTML-element.
-// The found strings is stored in 'txt'.
 // </brief>
 // <parm name="fp">The FILE pointer of input file</parm>
-// <parm name="txt">the text found is stored in this</parm>
 // <parm name="quote_ch">The single or double quotation mark</parm>
 // <return>0 if success, ohterwise -1</return>
 int
@@ -233,8 +231,8 @@ Html5Lex::pass_html_quote(FILE* fp, int quote_ch)
 				txtbuf.append(tch);
 				break;
 
-			} else if (ch=='\\') {
-				tch = '\\';
+			} else if (ch == _T('\\')) {
+				tch = _T('\\');
 				txtbuf.append(tch);
 				escape = 1;
 
@@ -254,7 +252,6 @@ Html5Lex::pass_html_quote(FILE* fp, int quote_ch)
 // If it's empty, sets *is_trivial to 1.
 // </brief>
 // <parm name="fp">The FILE pointer of input file</parm>
-// <parm name="txt">The found html-element is stored in this</parm>
 // <return>0, 1 if success, ohterwise -1</return>
 int
 Html5Lex::run_to_tagend(FILE* fp)
@@ -270,7 +267,7 @@ Html5Lex::run_to_tagend(FILE* fp)
 			break;
 		}
 
-		if (ch == '\'' || ch == '"') {
+		if (ch == _T('\'') || ch == _T('"')) {
 			tch = (TCHAR) ch;
 			txtbuf.append(tch);
 
@@ -283,14 +280,14 @@ Html5Lex::run_to_tagend(FILE* fp)
 			tch = (TCHAR) ch;
 			txtbuf.append(tch);
 
-			if (ch == '>') {
+			if (ch == _T('>')) {
 				stat = 0;
 				break;
 			}
 		}
 	}
 
-	tch = '\0';
+	tch = _T('\0');
 	txtbuf.append(tch);
 
 	return stat;
@@ -385,7 +382,7 @@ again_1:
 		tstring str1 = txtbuf.str();
 		pushLine(str1.c_str(), str1.length());
 
-		if ((tok = Html5LexBasis::getTok()) != '<') {
+		if ((tok = Html5LexBasis::getTok()) != _T('<')) {
 			goto again_1;
 		}
 
@@ -436,7 +433,7 @@ again_1:
 	UlsLex::getTokStr(&lxm);
 	tok_str = *lxm;
 
-	if (tok == '-') {
+	if (tok == _T('-')) {
 		if ((wch=Html5LexBasis::peekCh(NULL)) == _T('.') || isdigit(wch)) {
 			tok = NUM;
 			concat_lexeme(_T("-"), 1);
@@ -459,7 +456,6 @@ Html5Lex::getTok(void)
 {
 	get_token();
 	Html5LexBasis::setTok(tok_id, tok_str);
-
 	return tok_id;
 }
 

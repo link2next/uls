@@ -55,12 +55,12 @@ static FILE   *cur_fin;
 static TCHAR   filebuff[FILEBUFF_SIZ+1];
 
 int
-proc_file(LPTSTR filepath)
+proc_file(LPCTSTR filepath)
 {
 	int len, stat = 0, lno = 0;
 
 	if ((cur_fin=uls_fp_open(filepath, ULS_FIO_READ)) == NULL) {
-		err_log(_T("%s: fail to open '%s'"), __func__, filepath);
+		err_log(_T("%hs: fail to open '%s'"), __func__, filepath);
 		return -1;
 	}
 
@@ -68,7 +68,7 @@ proc_file(LPTSTR filepath)
 	while (1) {
 		if ((len=uls_fp_gets(cur_fin, filebuff, sizeof(filebuff), 0)) <= ULS_EOF) {
 			if (len < ULS_EOF) {
-				err_log(_T("%s: error to read a line"), __func__);
+				err_log(_T("%hs: error to read a line"), __func__);
 				stat =-1;
 			}
 			break;
@@ -143,7 +143,7 @@ void
 test_stage_4(void)
 {
 	TCHAR linebuff[81];
-	uls_uch_t uch;
+	uls_wch_t wch;
 
 	ult_str_copy(linebuff, _T("7094ULS-world"));
 
@@ -154,8 +154,8 @@ test_stage_4(void)
 
 	uls_unget_tok(sample_lex);
 
-	uch = uls_getch(sample_lex, NULL);
-	uls_printf(_T(" getch: '%c'\n"), (char) uch);
+	wch = uls_getch(sample_lex, NULL);
+	uls_printf(_T(" getch: '%c'\n"), (char) wch);
 
 	uls_get_tok(sample_lex);
 	uls_dump_tok(sample_lex, _T(" 2ndToken:\n\t"), _T("\n"));
@@ -332,7 +332,6 @@ _tmain(int n_targv, LPTSTR *targv)
 	}
 
 	uls_destroy(sample_lex);
-
 	return 0;
 }
 

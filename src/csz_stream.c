@@ -332,7 +332,7 @@ ULS_QUALIFIED_METHOD(csz_init)(csz_str_ptr_t csz, int n_delta)
 		n_delta = CSZ_STREAM_DELTA_DFL;
 	}
 
-	csz->alloc_delta = uls_roundup(n_delta,  sizeof(uls_uch_t));
+	csz->alloc_delta = uls_roundup(n_delta,  sizeof(uls_wch_t));
 	csz->len = 0;
 }
 

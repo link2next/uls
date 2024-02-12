@@ -104,6 +104,8 @@ ULS_DECL_STATIC int __print_uld_lineproc_3java(uld_line_ptr_t tok_names, int n_t
 
 ULS_DECL_STATIC int __print_uld_c_source_1_fp(int n_tabs, FILE *fin_uld);
 ULS_DECL_STATIC int __print_uld_c_source_2_fp(int n_tabs, FILE *fin_uld);
+ULS_DECL_STATIC int collect_printable_list_of_tokdef_vx(uls_lex_ptr_t uls,
+	uls_parms_emit_ptr_t emit_parm, uls_ref_parray(tokdef_ary_prn,tokdef_vx));
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC

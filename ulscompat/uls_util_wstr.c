@@ -64,24 +64,21 @@ uls_wputstr(const wchar_t *wstr)
 }
 
 void
-ult_dump_bin_wstr(const wchar_t *wstr)
+ult_dump_utf8str_wstr(const wchar_t *wstr)
 {
-	wchar_t wch, wbuff[8];
-	unsigned char ch1;
-	int i, j, k;
+	int wlen = uls_wcslen(wstr);
+	char *ustr;
+	csz_str_t csz;
 
-	for (i = 0; (wch = wstr[i]) != L'\0'; i++) {
-		k = 0;
-		for (j = 3; j > 0; j--) {
-			ch1 = (unsigned char) ( (wch >> (j * 4)) & 0x0F );
-			if (k > 0 || ch1 != 0) wbuff[k++] = uls_nibble2ascii(ch1);
-		}
-		ch1 = (unsigned char) (wch & 0x0F);
-		wbuff[k++] = uls_nibble2ascii(ch1);
-		wbuff[k] = L'\0';
+	csz_init(uls_ptr(csz), (wlen+1)*ULS_UTF8_CH_MAXLEN);
 
-		uls_wprintf(L" %s", wbuff);
+	if ((ustr = uls_wstr2ustr(wstr, wlen, uls_ptr(csz))) == NULL) {
+		err_wlog(L"encoding error!");
+	} else {
+		ult_dump_utf8str(ustr);
 	}
+
+	csz_deinit(uls_ptr(csz));
 }
 
 int
@@ -462,7 +459,7 @@ uls_getopts_wstr(int n_args, wchar_t* wargs[], const wchar_t* optwfmt, uls_woptp
 			}
 
 			if ((cwptr=uls_wstrchr(optwfmt, opt)) == NULL) {
-				err_wlog(L"uls_getopts: undefined option -%c", opt);
+				err_wlog(L"%hs: undefined option -%c", __func__, opt);
 				return -1;
 			}
 
@@ -472,13 +469,13 @@ uls_getopts_wstr(int n_args, wchar_t* wargs[], const wchar_t* optwfmt, uls_woptp
 				} else if (k+1 < n_args && wargs[k+1][0] != L'-') {
 					optwarg = wargs[++k];
 				} else {
-					err_wlog(L"uls_getopts: option -%c requires an arg.", opt);
+					err_wlog(L"%hs: option -%c requires an arg.", __func__, opt);
 					return -1;
 				}
 
 				if ((rc = wproc(opt, optwarg)) != 0) {
 					if (rc > 0) rc = 0;
-					else err_wlog(L"uls_getopts: An Error in processing the option -%c.", opt);
+					else err_wlog(L"%hs: An Error in processing the option -%c.", __func__, opt);
 					return rc;
 				}
 				break;
@@ -487,7 +484,7 @@ uls_getopts_wstr(int n_args, wchar_t* wargs[], const wchar_t* optwfmt, uls_woptp
 				optwarg = nullbuff;
 				if ((rc = wproc(opt, optwarg)) != 0) {
 					if (rc > 0) rc = 0;
-					else err_wlog(L"uls_getopts: error in -%c.", opt);
+					else err_wlog(L"%hs: error in -%c.", __func__, opt);
 					return rc;
 				}
 				j++;

@@ -23,6 +23,10 @@ AC_PROG_MAKE_SET
 AC_PROG_LIBTOOL
 AC_PROG_YACC
 
+AC_CHECK_PROG([HAVE_JAVA],[java],[yes],[no])
+AC_CHECK_PROG([HAVE_JAVAC],[javac],[yes],[no])
+AC_CHECK_PROG([HAVE_JAVAH],[javah],[yes],[no])
+
 # Checks for libraries.
 AC_CHECK_LIB([pthread], [pthread_mutex_init])
 
@@ -53,6 +57,44 @@ AC_CHECK_FUNCS([readlink realpath])
 
 AC_PATH_PROG(HELP2MAN, help2man, false)
 
+AC_ARG_ENABLE([java],
+	[AS_HELP_STRING([--disable-java],
+		[Don't compile the uls library for java.])
+	],
+	[ ax_enable_ulsjni=$enableval ],
+	[ ax_enable_ulsjni=yes ]
+	)
+AM_CONDITIONAL([WANT_ULSJNI], [test x$ax_enable_ulsjni = xyes])
+
+AC_ARG_WITH([java],
+	[AS_HELP_STRING([--with-java=<java-home>],
+		[Specify the JAVA_HOME directory.])],
+	[ax_java_home=$withval],
+	[ax_java_home=$JAVA_HOME]
+	)
+
+if test "x$ax_java_home" = "x"; then
+	ax_java_home="/usr/lib/jvm/java-8-openjdk-amd64"
+fi
+
+AC_ARG_WITH([jdk-incdir],
+	[AS_HELP_STRING([--with-jdk-incdir=<dirpath>],
+		[Specify the include directory of jdk.])
+	],
+	[ ax_jdk_cppflags="-I$withval" ],
+	[ ax_jdk_cppflags="-I$ax_java_home/include -I$ax_java_home/include/linux -I$ax_java_home/include/darwin" ]
+	)
+AC_SUBST([ax_jdk_cppflags])
+
+AC_ARG_WITH([jdk-libdir],
+	[AS_HELP_STRING([--with-jdk-libdir=<dirpath>],
+		[Specify the library directory of jdk.])
+	],
+	[ ax_jdk_ldflags="-L$withval" ],
+	[ ax_jdk_ldflags="-L$ax_java_home/lib" ]
+	)
+AC_SUBST([ax_jdk_ldflags])
+
 AC_ARG_WITH([etc-dir],
   [AS_HELP_STRING([--with-etc-dir=<dirpath>],
     [use this option to specify the directory where uls.sysprops resides.])],
@@ -71,6 +113,10 @@ AC_CONFIG_FILES([Makefile
 	src/Makefile
 	ulscompat/Makefile
 	ulscpp/Makefile
+	ulsjni/Makefile
+	ulsjni/tests/Makefile
+	ulsjni/libulsjni/Makefile
+	ulsjni/src/Makefile
 	tools/Makefile
 	tools/ulstools/Makefile
 	tools/ulc2class/Makefile

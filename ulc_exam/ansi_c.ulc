@@ -16,7 +16,7 @@ COMMENT_TYPE: /* */
 QUOTE_TYPE: token=DQUOTE "
 QUOTE_TYPE: token=SQUOTE ' verbatim1
 
-NOT_CHAR_TOK: ` @ _
+NOT_CHAR_TOK: `@_
 
 %%
 

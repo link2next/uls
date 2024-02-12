@@ -58,10 +58,10 @@
 #define TMP_LANGS_FNAME      "uls_langs.txt"
 #define ULS_ULCNAME_DELIM    '/'
 
-#define ULS_VERSION_STR      _T("1.8.16")
-#define ULC2CLASS_PROGVER    _T("v2.7.0")
-#define ULF_GEN_PROGVER      _T("v1.6.0")
-#define ULS_STREAM_PROGVER   _T("v2.6.0")
+#define ULS_VERSION_STR      _T("1.9.3")
+#define ULC2CLASS_PROGVER    _T("v2.7.1")
+#define ULF_GEN_PROGVER      _T("v1.6.1")
+#define ULS_STREAM_PROGVER   _T("v2.7.1")
 #define ULC2YAML_PROGVER     _T("v1.0.0")
 
 #define ULS_INITIAL_NAME     _T("ULS(Unified Lexical Scheme)")
@@ -169,7 +169,6 @@
 #define ULS_BIN_RECHDR_SZ (ULS_BIN_RECHDR_NUM_INT32*sizeof(uls_int32))
 #define ULS_BIN_REC_SZ(txtlen) (ULS_BIN_RECHDR_SZ+uls_roundup((txtlen)+1,4))
 
-#define ULC_N_LEXATTRS             13
 #define ULS_STREAM_SUBNAME_SIZE    31
 #define ULS_STREAM_CTIME_SIZE      20
 
@@ -178,13 +177,14 @@
 
 #define ULS_UNGETS_BUFSIZ          256
 #define ULS_LEXSTR_MAXSIZ          31
-#define ULS_NAME_MAXSIZ            31
+#define ULS_TOKNAM_MAXSIZ          31
+#define ULS_TAGNAM_MAXSIZ          63
 
 #define ULS_CARDINAL_TOKNAM_SIZ    15
 #define ULS_CARDINAL_LXMPFX_MAXSIZ 15
 
-#define ULS_KWTABLE_TWOPLUS_SIZE   14
-#define ULS_TWOPLUS_MAXLEN         (ULS_KWTABLE_TWOPLUS_SIZE+1)
+#define ULS_KWTABLE_TWOPLUS_SIZE   15
+#define ULS_TWOPLUS_WMAXLEN        ULS_KWTABLE_TWOPLUS_SIZE
 
 #define ULS_CNST_NILSTR_SIZE       4
 #define ULS_SYNTAX_TABLE_SIZE      128
@@ -209,8 +209,8 @@
 
 #define ULS_HASH_ALGORITHM "ULF-HASH"
 
-// '-', '.', 0 1 2 3 4 5 6 7 8 9
-#define ULS_CH_DIGIT   0x01
+// .', 0 1 2 3 4 5 6 7 8 9
+#define ULS_CH_GUARD   0x01
 
 /* one-char token candidate */
 #define ULS_CH_1       0x02
@@ -240,11 +240,11 @@
 #define ULS_UTF8_CH_MAXLEN    4
 #define ULS_UTF16_CH_MAXLEN   2
 
-#define UTF8_CODEPOINT_END          0x1FFFFF
-#define UTF16_CODEPOINT_END         0x10FFFF
-#define UTF16_CODEPOINT_RSVD_START  0xD800
-#define UTF16_CODEPOINT_RSVD_END    0xDFFF
-#define UTF32_CODEPOINT_END         UTF8_CODEPOINT_END
+#define ULS_UTF8_CODEPOINT_END          0x1FFFFF
+#define ULS_UTF16_CODEPOINT_END         0x10FFFF
+#define ULS_UTF16_CODEPOINT_RSVD_START  0xD800
+#define ULS_UTF16_CODEPOINT_RSVD_END    0xDFFF
+#define ULS_UTF32_CODEPOINT_END         ULS_UTF8_CODEPOINT_END
 
 #define DOUBLE_EXPO_SIZE_BITS  11
 #define DOUBLE_EXPO_BIAS      1023

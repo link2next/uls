@@ -46,7 +46,7 @@ extern "C" {
 typedef int (*uls_woptproc_t)(int opt, wchar_t* optwarg);
 
 ULS_DLL_EXTERN void uls_wputstr(const wchar_t *wstr);
-ULS_DLL_EXTERN void ult_dump_bin_wstr(const wchar_t *wstr);
+ULS_DLL_EXTERN void ult_dump_utf8str_wstr(const wchar_t *wstr);
 
 ULS_DLL_EXTERN int uls_wstr2int(const wchar_t *wstr);
 ULS_DLL_EXTERN int uls_wstrlen(const wchar_t* wstr);
@@ -101,7 +101,7 @@ ULS_DLL_EXTERN void ulscompat_put_warg_list(wchar_t **wargv, int n_wargv);
 #ifdef _ULS_USE_ULSCOMPAT
 #ifdef ULS_USE_WSTR
 #define uls_putstr uls_wputstr
-#define ult_dump_bin ult_dump_bin_wstr
+#define ult_dump_utf8str ult_dump_utf8str_wstr
 
 #define ult_str2int uls_wstr2int
 #define ult_str_length uls_wstrlen

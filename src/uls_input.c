@@ -40,50 +40,48 @@ ULS_DECL_STATIC _ULS_INLINE int
 ULS_QUALIFIED_METHOD(__input_space_proc)(const char* ch_ctx, _uls_ptrtype_tool(csz_str) ss_dst, uls_ptrtype_tool(outparam) parms)
 {
 	const char  *lptr = parms->lptr, *lptr_end = parms->lptr_end;
-	int   stat=0, n_spaces, n_spaces_total, n_lfs_total;
+	int   stat=0, n_spaces, n_spaces_accum, n_lfs_total;
 	char  ch;
 
-	n_spaces_total = parms->n1;
-	n_lfs_total = parms->n2; // '\n'
+	n_spaces_accum = parms->n1;
+	n_lfs_total = parms->n2;
 
-	for (n_spaces=0; ; ) {
+	for (n_spaces = 0; ; ) {
 		if ((ch = *lptr) >= ULS_SYNTAX_TABLE_SIZE || ch_ctx[ch] != 0) {
 			stat = 1;
 			break;
 		}
 
-		if (ch == '\n') { // treat as special cases
+		if (ch == '\n') {
 			if (n_spaces > 0) {
 				_uls_tool(csz_putc)(ss_dst, ' ');
-				++n_spaces_total;
+				++n_spaces_accum;
 				n_spaces = 0;
 			}
 			_uls_tool(csz_putc)(ss_dst, '\n');
 			++n_lfs_total;
 
 		} else {
-			if (n_spaces >= (ULS_INT_MAX>>1)) {
-				// n_spaces reaches ULS_INT_MAX / 2
+			if (++n_spaces >= (ULS_INT_MAX>>1)) { // ULS_INT_MAX / 2
 				_uls_tool(csz_putc)(ss_dst, ' ');
-				++n_spaces_total;
-				n_spaces = 0; // reset n_spaces to zero
+				++n_spaces_accum;
+				n_spaces = 0;
 			}
-			++n_spaces;
 		}
 
-		if (++lptr == lptr_end) {
+		if (++lptr >= lptr_end) {
 			break;
 		}
 	}
 
 	if (n_spaces > 0) {
 		_uls_tool(csz_putc)(ss_dst, ' ');
-		++n_spaces_total;
+		++n_spaces_accum;
 //		n_spaces = 0;
 	}
 
 	parms->lptr = lptr;
-	parms->n1 = n_spaces_total;
+	parms->n1 = n_spaces_accum;
 	parms->n2 = n_lfs_total;
 
 	return stat;
@@ -109,7 +107,7 @@ ULS_QUALIFIED_METHOD(input_skip_comment)(uls_commtype_ptr_t cmt, uls_input_ptr_t
 {
 	const char  *lptr, *lptr_end, *mark;
 	int n_lfs = 0, len_mark;
-	int  stat = 1; // --> success
+	int rc, stat = 1; // success
 
 	lptr = inp->rawbuf_ptr;
 	lptr_end = lptr + inp->rawbuf_bytes;
@@ -121,16 +119,13 @@ ULS_QUALIFIED_METHOD(input_skip_comment)(uls_commtype_ptr_t cmt, uls_input_ptr_t
 		if (lptr_end < lptr + len_mark) {
 			inp->rawbuf_ptr = lptr;
 			inp->rawbuf_bytes = (int) (lptr_end - lptr);
-			if (inp->refill(inp, len_mark) < 0) {
+
+			if ((rc = inp->refill(inp, len_mark)) < len_mark) {
 //				_uls_log(err_log)("%s: I/O error", __func__);
 				uls_input_reset_cursor(inp);
 				lptr = lptr_end = inp->rawbuf.buf;
-				stat = -1; // error
-				break;
-			} else if (inp->rawbuf_bytes < len_mark) {
-				uls_input_reset_cursor(inp);
-				lptr = lptr_end = inp->rawbuf.buf;
-				stat = 0; // comment unterminated!
+				stat = (rc < 0) ? -1 : 0;
+				// stat == 0  if comment unterminated!
 				break;
 			}
 
@@ -245,7 +240,6 @@ ULS_QUALIFIED_METHOD(input_space_proc)(const char* ch_ctx, uls_input_ptr_t inp,
 	} while ((stat = __input_space_proc(ch_ctx, ss_dst, uls_ptr(parms))) == 0);
 
 	parms0->n = n_lfs = parms.n2;
-
 	inp->rawbuf_ptr = parms.lptr;
 	inp->rawbuf_bytes = (int) (parms.lptr_end - parms.lptr);
 
@@ -385,7 +379,6 @@ ULS_QUALIFIED_METHOD(uls_destroy_input)(uls_input_ptr_t inp)
 int
 ULS_QUALIFIED_METHOD(uls_input_read)(uls_source_ptr_t isrc, char *buf, int buflen0, int bufsiz)
 {
-	// assume: buflen0 < bufsiz
 	int buflen = buflen0;
 	int rc;
 
@@ -393,9 +386,8 @@ ULS_QUALIFIED_METHOD(uls_input_read)(uls_source_ptr_t isrc, char *buf, int bufle
 		if (isrc->flags & ULS_ISRC_FL_ERR) return -1;
 		if (isrc->flags & ULS_ISRC_FL_EOF) break;
 
-		rc = isrc->usrc_fillbuff(isrc, buf, buflen, bufsiz);
-		if (rc < 0) {
-			isrc->flags |= ULS_ISRC_FL_ERR | ULS_ISRC_FL_EOF;
+		if ((rc = isrc->usrc_fillbuff(isrc, buf, buflen, bufsiz)) < 0) {
+			isrc->flags |= ULS_ISRC_FL_EOF | ULS_ISRC_FL_ERR;
 			return -1;
 		}
 
@@ -470,7 +462,7 @@ ULS_QUALIFIED_METHOD(uls_resize_rawbuf)(uls_input_ptr_t inp, int delta)
 		if (delta > 0) {
 			m = uls_roundup(m, ULS_FDBUF_INITSIZE);
 		} else {
-			m = uls_roundup(m, sizeof(uls_uch_t));
+			m = uls_roundup(m, sizeof(uls_wch_t));
 		}
 
 		inp->rawbuf_ptr = inp->rawbuf.buf = (char *) _uls_tool_(mrealloc)(inp->rawbuf.buf, m);
