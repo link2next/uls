@@ -57,7 +57,8 @@ ULS_QUALIFIED_METHOD(__uls_change_stream_hdr)(uls_lex_ptr_t uls, uls_istream_ptr
 	}
 
 	uls_init_line_in_input(inp, istr->firstline, istr->len_firstline, ipos);
-	uls_context_set_tag(ctx, uls_get_namebuf_value(istr->filepath), start_lno);
+	uls_ctx_set_tag(ctx, uls_get_namebuf_value(istr->filepath), -1);
+	__uls_ctx_set_lineno(ctx, start_lno);
 	return 0;
 }
 
@@ -208,8 +209,7 @@ ULS_QUALIFIED_METHOD(uls_push_isrc_type)(uls_lex_ptr_t uls, int fd_type, int fd_
 	ctx->record_boundary_checker = fill_subproc2;
 
 	start_lno = 1;
-	uls_context_set_tag(ctx, NULL, start_lno);
-
+	__uls_ctx_set_lineno(ctx, start_lno);
 	return 0;
 }
 

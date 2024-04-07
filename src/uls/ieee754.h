@@ -44,16 +44,20 @@ extern "C" {
 #endif
 
 #if defined(__ULS_IEEE754__) || defined(ULS_DECL_PRIVATE_PROC)
-ULS_DECL_STATIC int get_ieee754_biased_expo(char* buff, int n_bits_expo);
+ULS_DECL_STATIC int get_ieee754_biased_expo(const char* buff, int n_bits_expo);
 ULS_DECL_STATIC void put_ieee754_biased_expo(int m_expo, char* buff, int n_bits_expo);
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC
 void uls_ieee754_bankup_bits(char* srcptr, int start_bit, int end_bit, int n_shift);
+
+int uls_ieee754_double_isspecial(double x, char* nambuf);
 int uls_ieee754_longdouble_isspecial(long double x, char* nambuf);
-	// ret-val == 1 : x is a special-value with nambuf filled.
+	// ret-val > 0 : x is a special-value with nambuf filled.
 	// ret-val == 0 x is a finite value
-long double uls_ieee754_modlf(long double x, long double* p_frac);
+
+double uls_ieee754_modf(double x, double* p_int);
+long double uls_ieee754_modlf(long double x, long double* p_int);
 #endif
 
 #ifdef _ULS_CPLUSPLUS

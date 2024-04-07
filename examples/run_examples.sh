@@ -96,14 +96,14 @@ test_1case()
 	fi
 
 	if [ $? != 0 -o ! -f "$tmpfile1" ]; then
-		echo "fail to exec $test_prog";
+		echo "fail to exec $test_prog"
 		return 1
 	fi
 
-	diff -q $tmpfile1 $outfile_res;
+	diff -q $outfile_res $tmpfile1 
 	# assert: $outfile_res exists
 	if [ $? != 0 ]; then
-		echo "fail(stdout): diff for '$test_prog'";
+		echo "fail(stdout): diff for '$test_prog'"
 	else
 		rm $tmpfile1
 	fi

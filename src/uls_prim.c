@@ -551,8 +551,8 @@ ULS_QUALIFIED_METHOD(uls_find_standard_prefix_radix)(const char *line, int *ptr_
 int
 ULS_QUALIFIED_METHOD(is_pure_integer)(const char* lptr, uls_outparam_ptr_t parms)
 {
-	int minus=0, pure=1, num = 0, n_bytes;
-	const char* lptr0;
+	int minus = 0, pure = 1, num = 0, n_bytes;
+	const char* lptr1;
 	char ch;
 
 	if (*lptr == '-') {
@@ -560,7 +560,7 @@ ULS_QUALIFIED_METHOD(is_pure_integer)(const char* lptr, uls_outparam_ptr_t parms
 		++lptr;
 	}
 
-	for (lptr0 = lptr; (ch=*lptr) !='\0'; lptr++) {
+	for (lptr1 = lptr; (ch=*lptr) !='\0'; lptr++) {
 		if (!uls_isdigit(ch)) {
 			pure = 0;
 			break;
@@ -568,16 +568,18 @@ ULS_QUALIFIED_METHOD(is_pure_integer)(const char* lptr, uls_outparam_ptr_t parms
 		num = num * 10 + (ch - '0');
 	}
 
-	if ((n_bytes = (int) (lptr - lptr0)) > 0) {
+	if ((n_bytes = (int) (lptr - lptr1)) > 0) {
 		if (minus) {
 			num = -num;
 			++n_bytes;
 		}
-		if (parms != nilptr) {
-			parms->len = n_bytes;
-			parms->n = num;
-		}
 		if (!pure) n_bytes = -n_bytes;
+	}
+
+	if (parms != nilptr) {
+		parms->flags = minus ? 1 : 0;
+		parms->len = n_bytes;
+		parms->n = num;
 	}
 
 	return n_bytes;
@@ -833,7 +835,7 @@ ULS_QUALIFIED_METHOD(uls_find_first_1bit)(char* srcptr,
 				return 1;
 			}
 
-			return 0; // NOT FOUND
+			return 0;
 		}
 
 		if ((j=__find_first_1bit(*dstptr, j1, 7))>=0) {
@@ -849,7 +851,7 @@ ULS_QUALIFIED_METHOD(uls_find_first_1bit)(char* srcptr,
 		if (srcptr[i] != 0) {
 			j = __find_first_1bit(srcptr[i], 0, 7);
 			if (found_bit != NULL) *found_bit = i*8 + j;
-			return 1; // FOUND
+			return 1;
 		}
 	}
 
@@ -857,7 +859,7 @@ ULS_QUALIFIED_METHOD(uls_find_first_1bit)(char* srcptr,
 		dstptr = srcptr + i2;
 		if ((j=__find_first_1bit(*dstptr, 0, j2))>=0) {
 			if (found_bit != NULL) *found_bit = i2*8 + j;
-			return 1; // FOUND
+			return 1;
 		}
 	}
 
@@ -898,7 +900,7 @@ ULS_QUALIFIED_METHOD(uls_check_longdouble_fmt)(int endian)
 {
 	long double temp_lf;
 	char *ptr = (char *) &temp_lf;
-	int f_siz=SIZEOF_LONG_DOUBLE;
+	int f_siz = SIZEOF_LONG_DOUBLE;
 	int j, ret_typ=-1, n_bits=0;
 
 	uls_bzero(ptr, f_siz);
@@ -1227,7 +1229,7 @@ ULS_QUALIFIED_METHOD(uls_init_nambuf)(uls_nambuf_ptr_t arg, int siz)
 {
 	// siz >= 0
 	arg->buf_siz = siz + 1;
-	arg->str = uls_malloc_buffer(arg->buf_siz);
+	arg->str = (char *) uls_malloc(arg->buf_siz);
 	arg->str[0] = '\0';
 	arg->len = 0;
 }
@@ -1261,11 +1263,13 @@ ULS_QUALIFIED_METHOD(uls_set_nambuf_raw)(char *argbuf, int argbuf_siz, const cha
 {
 	int len;
 
+	if (!argbuf_siz) return 0;
+
 	if (name_len < 0) {
 		name_len = uls_strlen(name);
 	}
 
-	if (name_len >= argbuf_siz) {
+	if (argbuf_siz > 0 && name_len >= argbuf_siz) {
 		name_len = argbuf_siz - 1;
 	}
 
@@ -1367,7 +1371,7 @@ ULS_QUALIFIED_METHOD(uls_strdup)(const char* str, int len)
 	if (len < 0)
 		len = uls_strlen(str);
 
-	ptr = uls_malloc_buffer(len + 1);
+	ptr = (char *) uls_malloc(len + 1);
 	uls_memcopy(ptr, str, len);
 	ptr[len] = '\0';
 
@@ -1588,7 +1592,7 @@ ULS_QUALIFIED_METHOD(uls_init_argstr)(uls_argstr_ptr_t arg, int siz)
 {
 	if (siz >= 0) {
 		arg->buf_siz = siz + 1;
-		arg->buf = uls_malloc_buffer(arg->buf_siz);
+		arg->buf = (char *) uls_malloc(arg->buf_siz);
 		arg->buf[0] = '\0';
 		arg->str = arg->buf;
 		arg->len = 0;

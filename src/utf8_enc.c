@@ -49,7 +49,7 @@ ULS_QUALIFIED_METHOD(uls_enc_utf16str_to_utf8str)(uls_uint16 *wstr1, int l_wstr1
 	if (wstr1 == NULL || l_wstr1 <= 0) return NULL;
 
 	siz_buff_chrs = 4 * l_wstr1 + 1;
-	buff_chrs = utf_chrs = uls_malloc_buffer(siz_buff_chrs);
+	buff_chrs = utf_chrs = (char *) uls_malloc(siz_buff_chrs);
 
 	for (i=0; i < l_wstr1; i += rc) {
 		if ((rc = uls_decode_utf16(wstr1 + i, l_wstr1 - i, &wch)) <= 0) {
@@ -81,7 +81,7 @@ ULS_QUALIFIED_METHOD(uls_enc_utf32str_to_utf8str)(uls_uint32 *wstr1, int l_wstr1
 	if (wstr1 == NULL || l_wstr1 <= 0) return NULL;
 
 	siz_buff_chrs = ULS_UTF8_CH_MAXLEN * l_wstr1 + 1;
-	buff_chrs = utf_chrs = uls_malloc_buffer(siz_buff_chrs);
+	buff_chrs = utf_chrs = (char *) uls_malloc(siz_buff_chrs);
 
 	for (i=0; i < l_wstr1; i++) {
 		if (uls_decode_utf32(wstr1[i], &wch) <= 0) {
@@ -199,7 +199,7 @@ ULS_QUALIFIED_METHOD(uls_utf_init_inbuf)(uls_utf_inbuf_ptr_t inp,
 
 	if (buf == NULL) {
 		bufsiz = uls_roundup(bufsiz, UTF_INPUT_BUFSIZ);
-		inp->bytesbuf = uls_malloc_buffer(bufsiz);
+		inp->bytesbuf = (char *) uls_malloc(bufsiz);
 		inp->flags |= ULS_FL_UTF_INBUF_BUF_ALLOCED;
 	} else {
 		inp->bytesbuf = buf;

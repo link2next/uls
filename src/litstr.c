@@ -38,21 +38,15 @@ ULS_QUALIFIED_METHOD(uls_get_escape_char_initial)(uls_litstr_ptr_t lit)
 {
 	uls_wch_t prefix_ch = lit->ch_escaped;
 	uls_type_tool(outparam) parms1;
-	uls_wch_t wch;
+	uls_wch_t wch = 0;
 	int n;
 
 	if (prefix_ch == 'x') { // hexa-decimal
-		wch = 0;
 		n = 2;
-
 	} else if (prefix_ch == 'u') { // unicode
-		wch = 0;
 		n = 4;
-
 	} else if (prefix_ch == 'U') { // unicode
-		wch = 0;
 		n = 8;
-
 	} else if (prefix_ch >= '0' && prefix_ch < '8') { // octal
 		wch = prefix_ch - '0';
 		if (prefix_ch == '0') {
@@ -60,17 +54,11 @@ ULS_QUALIFIED_METHOD(uls_get_escape_char_initial)(uls_litstr_ptr_t lit)
 		} else {
 			n = 2;
 		}
-
-	} else { // prefix_ch itself
+	} else {
 		parms1.x1 = prefix_ch;
-
-		if (uls_get_simple_escape_char(uls_ptr(parms1)) > 0) {
-			wch = parms1.x2;
-			n = 0;
-		} else {
-			wch = 0;
-			n = -1; // not processed
-		}
+		uls_get_simple_escape_char(uls_ptr(parms1));
+		wch = parms1.x2;
+		n = 0;
 	}
 
 	lit->len_ch_escaped = n;
@@ -140,14 +128,14 @@ ULS_QUALIFIED_METHOD(uls_get_escape_str)(char quote_ch, uls_ptrtype_tool(wrd) wr
 	char *outbuff = wrdx->wrd;
 	int siz_outbuff = wrdx->siz;
 	uls_litstr_t lit1;
-	int rc, escape = 0, k=0;
+	int rc, escape = 0, k = 0, stat = 0;
 	uls_wch_t  wch;
 	char ch;
 
 	for ( ; ; ) {
 		if (k + ULS_UTF8_CH_MAXLEN > siz_outbuff) {
-			// buffer overflow
-			return -1;
+			stat = -3;
+			break;
 		}
 
 		ch = *lptr;
@@ -155,30 +143,30 @@ ULS_QUALIFIED_METHOD(uls_get_escape_str)(char quote_ch, uls_ptrtype_tool(wrd) wr
 			lit1.lptr = lptr;
 			wch = uls_get_escape_char(uls_ptr(lit1));
 
-			if (lit1.len_ch_escaped < 0) {
-				outbuff[k++] = '\\';
-				outbuff[k++] = *lptr++;
-			} else {
-				if ((rc = _uls_tool_(encode_utf8)(wch, outbuff + k, siz_outbuff - k)) <= 0) {
-					return -1;
-				}
-				k += rc;
-				lptr = (char *) lit1.lptr;
+			if ((rc = _uls_tool_(encode_utf8)(wch, outbuff + k, ULS_UTF8_CH_MAXLEN)) <= 0) {
+				stat = -2;
+				break;
 			}
+			k += rc;
+			lptr = (char *) lit1.lptr;
+
 			escape = 0;
 		} else {
 			if (ch == quote_ch || ch == '\0') {
 				if (ch == '\0') {
 					if (ch != quote_ch) {
-						return -1;
+						// an unterminated string is found but return the string...
+						stat = -1;
+						break;
 					}
 				} else {
 					++lptr;
 				}
+				stat = k;
 				break;
 			}
 
-			if (ch=='\\') {
+			if (ch == '\\') {
 				escape = 1;
 			} else {
 				outbuff[k++] = ch;
@@ -190,7 +178,8 @@ ULS_QUALIFIED_METHOD(uls_get_escape_str)(char quote_ch, uls_ptrtype_tool(wrd) wr
 	outbuff[k] = '\0';
 	wrdx->len = k;
 	wrdx->lptr = lptr;
-	return k;
+
+	return stat;
 }
 
 int
@@ -204,7 +193,7 @@ ULS_QUALIFIED_METHOD(canbe_commtype_mark)(char* wrd, uls_ptrtype_tool(outparam) 
 	wrdx.wrd = buff;
 	wrdx.siz = ULS_COMM_MARK_MAXSIZ + 1;
 	wrdx.lptr = wrd;
-	if ((parms->len=uls_get_escape_str('\0', uls_ptr(wrdx))) <= 0) {
+	if ((parms->len=uls_get_escape_str('\0', uls_ptr(wrdx))) < 0) {
 		return 0;
 	}
 
@@ -231,7 +220,7 @@ ULS_QUALIFIED_METHOD(canbe_quotetype_mark)(const char *ch_ctx, char* wrd, uls_pt
 	wrdx.wrd = buff;
 	wrdx.siz = ULS_QUOTE_MARK_MAXSIZ + 1;
 	wrdx.lptr = wrd;
-	if ((parms->len=uls_get_escape_str('\0', uls_ptr(wrdx))) <= 0)
+	if ((parms->len=uls_get_escape_str('\0', uls_ptr(wrdx))) < 0)
 		return 0;
 
 	for (i=0; (ch=buff[i]) != '\0'; i++) {
@@ -467,7 +456,7 @@ ULS_QUALIFIED_METHOD(dfl_lit_analyzer_escape1)(uls_litstr_ptr_t lit)
 		lit_ctx->litstr_proc = uls_ref_callback_this(dfl_lit_analyzer_escape2);
 
 	} else {
-		if ((len = _uls_tool_(encode_utf8)(lit->wch, buff, -1)) <= 0) {
+		if ((len = _uls_tool_(encode_utf8)(lit->wch, buff, ULS_UTF8_CH_MAXLEN)) <= 0) {
 //			_uls_log(err_log)("%s: encoding error!", __func__);
 			return ULS_LITPROC_ERROR;
 		}
@@ -534,7 +523,7 @@ ULS_QUALIFIED_METHOD(dfl_lit_analyzer_escape2)(uls_litstr_ptr_t lit)
 	wch = __dec_escaped_char_cont('\0', lit);
 
 	if (map_flags & ULS_FL_ESCSTR_MAPUNICODE) {
-		if ((rc = _uls_tool_(encode_utf8)(wch, buff, -1)) <= 0) {
+		if ((rc = _uls_tool_(encode_utf8)(wch, buff, ULS_UTF8_CH_MAXLEN)) <= 0) {
 			return ULS_LITPROC_ERROR;
 		}
 		for (j=0; j<rc; j++) {

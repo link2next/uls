@@ -421,14 +421,13 @@ const wchar_t*
 _uls_get_tag2_wstr(uls_lex_ptr_t uls, uls_outparam_ptr_t parms)
 {
 	uls_wlex_shell_ptr_t wuls = (uls_wlex_shell_ptr_t) uls->shell;
-	uls_xcontext_ptr_t xctx = uls_ptr(uls->xcontext);
 	wchar_t *wtag;
 	const char *tagstr;
 	int k;
 
 	if (wuls->wtag_len < 0) {
-		tagstr = uls_context_get_tag(xctx->context);
-		k = uls_context_get_taglen(xctx->context);
+		tagstr = uls_get_tag(uls);
+		k = uls_get_taglen(uls);
 		if (tagstr == NULL) {
 			tagstr = "";
 			k = 0;

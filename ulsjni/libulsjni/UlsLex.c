@@ -315,19 +315,19 @@ JNIEXPORT void JNICALL Java_uls_polaris_UlsLex_setTag(JNIEnv *env, jobject obj, 
 JNIEXPORT jint JNICALL Java_uls_polaris_UlsLex_getLineno(JNIEnv *env, jobject obj, jobject juls)
 {
 	uls_lex_ptr_t uls = (uls_lex_ptr_t) (*env)->GetDirectBufferAddress(env, juls);
-	return _uls_get_lineno(uls);
+	return uls_get_lineno(uls);
 }
 
 JNIEXPORT void JNICALL Java_uls_polaris_UlsLex_setLineno(JNIEnv *env, jobject obj, jobject juls, jint jlineno)
 {
 	uls_lex_ptr_t uls = (uls_lex_ptr_t) (*env)->GetDirectBufferAddress(env, juls);
-	_uls_set_lineno(uls, jlineno);
+	uls_set_lineno(uls, jlineno);
 }
 
 JNIEXPORT void JNICALL Java_uls_polaris_UlsLex_incLineno(JNIEnv *env, jobject obj, jobject juls, jint jamount)
 {
 	uls_lex_ptr_t uls = (uls_lex_ptr_t) (*env)->GetDirectBufferAddress(env, juls);
-	_uls_inc_lineno(uls, jamount);
+	uls_inc_lineno(uls, jamount);
 }
 
 JNIEXPORT jboolean JNICALL Java_uls_polaris_UlsLex_pushLine(JNIEnv *env, jobject obj, jobject juls, jstring jline, jint jflags)

@@ -48,7 +48,7 @@ int   test_mode = -1;
 LPCTSTR config_name;
 LPCTSTR input_file;
 
-uls_lex_t *gcc_lex;
+uls_lex_ptr_t gcc_lex;
 
 static LPTSTR lbuff;
 static int lbuff_siz;

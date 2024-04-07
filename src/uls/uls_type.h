@@ -140,7 +140,8 @@ typedef void *uls_native_vptr_t;
 // bytes pool
 #define uls_def_bytespool(nam,siz) char*nam
 #define uls_ref_bytespool(nam) char*nam
-#define uls_init_bytespool(nam,siz,no_clear) (nam) = ((no_clear) ? uls_malloc_buffer(siz) : uls_malloc_buffer_clear(siz))
+#define uls_init_bytespool(nam,siz,no_clear) (nam) = \
+	((no_clear) ? (char *) _uls_tool_(malloc)(siz) : (char *) _uls_tool_(malloc_clear)(siz))
 #define uls_deinit_bytespool(nam) uls_mfree(nam)
 
 #else // ULS_CLASSIFY_SOURCE
@@ -251,6 +252,12 @@ typedef void *uls_native_vptr_t;
 #define _uls_array10_ns_(ns,typnam) ns::_uls_array10_this_(ns,typnam)
 #define _uls_ptrarray10_ns_(ns,typnam) ns::_uls_ptrarray10_this_(ns,typnam)
 
+// int-array
+#define uls_def_intarray(nam) array<int>^ nam
+#define uls_ref_intarray(nam,nam2) array<int> ^nam = nam2
+#define uls_init_intarray(nam,siz) nam = gcnew array<int>(siz)
+#define uls_deinit_intarray(nam) nam = nilptr
+
 #else // ULS_DOTNET
 
 #define uls_ptr(a) &(a)
@@ -323,6 +330,12 @@ typedef void *uls_native_vptr_t;
 #define _uls_ptrarray10_this_(ns,typnam) uls_##typnam##_s10array_ptr_t
 #define _uls_array10_ns_(ns,typnam) _uls_array10_this_(ns,typnam)
 #define _uls_ptrarray10_ns_(ns,typnam) _uls_ptrarray10_this_(ns,typnam)
+
+// int-array
+#define uls_def_intarray(nam) int *nam
+#define uls_ref_intarray(nam,nam2) int *nam = nam2
+#define uls_init_intarray(nam,siz) nam = (int *) uls_malloc(siz * sizeof(int))
+#define uls_deinit_intarray(nam) uls_mfree(nam)
 
 #endif // ULS_DOTNET
 

@@ -175,7 +175,6 @@ ULS_DLL_EXTERN int uls_deinit_tmpls(uls_tmpl_list_ptr_t tmpl_list);
 ULS_DLL_EXTERN void uls_reset_tmpls(uls_tmpl_list_ptr_t tmpl_list, int n_alloc);
 ULS_DLL_EXTERN uls_tmpl_list_ptr_t uls_create_tmpls(int n_alloc, int flags);
 ULS_DLL_EXTERN int uls_destroy_tmpls(uls_tmpl_list_ptr_t tmpl_list);
-ULS_DLL_EXTERN void uls_dump_tmpls(uls_tmpl_list_ptr_t tmpl_list);
 
 ULS_DLL_EXTERN const char* uls_get_tmpl_value(uls_tmpl_list_ptr_t tmpl_list, const char* name);
 ULS_DLL_EXTERN int uls_set_tmpl_value(uls_tmpl_list_ptr_t tmpl_list, const char* name, const char *val);

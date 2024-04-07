@@ -153,13 +153,13 @@ del_tree "$inc_uls_dir"
 del_file "$inc_dir"/{uls*.h,Uls*.h}
 
 del_file "$lib_dir"/libuls*
-del_file "$man_dir"/{ulc2class.1,ulf_gen.1,uls_stream.1}
+del_file "$man_dir"/{ulc2class.1.gz,ulf_gen.1.gz,uls_stream.1.gz}
 
 del_tree "$data_dir"/ulcs
 del_file "$data_dir"/uls_examples.tar
 del_tree "$data_dir"
 
-del_file "$bin_dir"/{ulc2class,ulf_gen,uls_stream,ulc2yaml}
+del_file "$bin_dir"/{ulc2class,ulf_gen,uls_stream}
 del_file "$bin_dir"/uls_*.sh
 del_file "$bin_dir"/setup_uls_examples
 del_file "$bin_dir"/$progname

@@ -43,6 +43,22 @@
 extern "C" {
 #endif
 
+#ifdef ULS_DECL_PUBLIC_TYPE
+#define ULS_LF_LEFT_JUSTIFIED     0x0001  /* left justified */
+#define ULS_LF_ZEROPAD            0x0002  /* pad with zero */
+#define ULS_LF_PLUS_PREFIX        0x0004  /* show plus */
+#define ULS_LF_MINUS_PREFIX       0x0008  /* show minus */
+
+#define ULS_LF_SPECIAL_CHAR       0x0010  /* 0x */
+#define ULS_LF_DYNAMIC_WIDTH      0x0020
+#define ULS_LF_DYNAMIC_PRECISION  0x0040
+
+#define ULS_LF_BIN_PREFIX         0x0100
+#define ULS_LF_HEX_PREFIX         0x0200
+#define ULS_LF_PERCENT_E          0x0400
+#define ULS_LF_PERCENT_G          0x0800
+#endif
+
 #ifdef ULS_DECL_PROTECTED_TYPE
 #ifdef _ULS_IMPLDLL
 #define round_uup(x) ((int)((x)+0.5))
@@ -53,12 +69,13 @@ extern "C" {
 #if defined(__ULS_LF_PERCENT_F__) || defined(ULS_DECL_PRIVATE_PROC)
 ULS_DECL_STATIC void reverse_char_array(char* ary, int n);
 ULS_DECL_STATIC int unsigned2str(unsigned int n, csz_str_ptr_t ss);
+ULS_DECL_STATIC void __pad_zeros(int n_prec, unsigned int flags, csz_str_ptr_t ss);
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC
-int  uls_lf_digits_to_percent_f(char* numstr, int minus, int n_expo, int n_prec, csz_str_ptr_t ss);
+int  uls_lf_digits_to_percent_f(char* numstr, int minus, int n_expo, int n_prec, unsigned int flags, csz_str_ptr_t ss);
 void uls_lf_digits_to_percent_e(char* numstr, int minus, int n_expo, int n_prec, csz_str_ptr_t ss);
-void uls_lf_digits_to_percent_g(char* numstr, int minus, int n_expo, int n_prec, csz_str_ptr_t ss);
+void uls_lf_digits_to_percent_g(char* numstr, int minus, int n_expo, int n_prec, unsigned int flags, csz_str_ptr_t ss);
 #endif
 
 #ifdef ULS_DECL_PUBLIC_PROC

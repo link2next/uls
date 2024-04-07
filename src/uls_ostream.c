@@ -202,8 +202,7 @@ ULS_QUALIFIED_METHOD(__create_ostream)(int fd)
 
 	if (fd < 0) return nilptr;
 
-	ostr = uls_alloc_object(uls_ostream_t);
-	uls_initial_zerofy_object(ostr);
+	ostr = uls_alloc_object_clear(uls_ostream_t);
 	__init_ostream(ostr);
 
 	ostr->fd = fd;
@@ -287,7 +286,7 @@ ULS_QUALIFIED_METHOD(fill_uls_redundant_lines)(char *buff, int buflen, int len1,
 {
 	int i, k, n_bytes, n_lines, n;
 	int n_bytes_per_line = 63;
-	const char *mesg1 = "RECOMMENDED NOT TO EDIT!";
+	const char *mesg1 = "DO NOT EDIT!";
 
 	k = buflen;
 	buff[k++] = '\n';
@@ -319,25 +318,15 @@ ULS_QUALIFIED_METHOD(fill_uls_redundant_lines)(char *buff, int buflen, int len1,
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(write_uld_to_ostream)(uls_ref_array_type10(lst_names,nam_tok),
+ULS_QUALIFIED_METHOD(write_uld_to_ostream)(uls_xcontext_ptr_t xctx,
 	uls_ptrtype_tool(outparam) parms, int fd_out)
 {
-	int n_lst_names = lst_names->n;
 	char *remap_buf = parms->line;
-	int k, len, len1, remap_bufsiz = parms->n1 << ULS_BIN_BLKSIZ_LOG2;
+	int k, len, len1;
+	int fpos, stat=0;
 
-	char linebuff[ULS_LINEBUFF_SIZ__ULD + 1];
-	int i, fpos, stat=0;
-	uls_nam_tok_ptr_t e;
-
-	for (i=k=0; i<n_lst_names; i++) {
-		e = uls_get_array_slot_type10(lst_names, i);
-
-		len = _uls_log_(snprintf)(linebuff, sizeof(linebuff), "\t%-16s %d", e->name, e->tok_id);
-		if ((k = writeline_istr_hdr(remap_buf, remap_bufsiz, k, linebuff, len)) < 0) {
-			stat = -1;
-			break;
-		}
+	if ((k = xctx->uldfile_buflen) > 0) {
+		_uls_tool_(memcopy)(remap_buf, xctx->uldfile_buf, k);
 	}
 
 	parms->len = k;
@@ -418,8 +407,7 @@ ULS_QUALIFIED_METHOD(save_istr_hdrbuf)(char *ulshdr, int buflen, int fd)
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(write_ostream_header)(uls_ostream_ptr_t ostr,
-	uls_ref_array_type10(lst_names,nam_tok))
+ULS_QUALIFIED_METHOD(write_ostream_header)(uls_ostream_ptr_t ostr, uls_xcontext_ptr_t xctx)
 {
 	char verstr[ULS_VERSION_STR_MAXLEN+1];
 	char *mode_str, time_buf[ULS_STREAM_CTIME_SIZE+1];
@@ -478,23 +466,23 @@ ULS_QUALIFIED_METHOD(write_ostream_header)(uls_ostream_ptr_t ostr,
 		return -1;
 	}
 
-	if (lst_names->n > 0) {
-		remap_size = lst_names->n * (ULS_LINEBUFF_SIZ__ULD + 1) + 3; // +3 for '%' '%' '\n'
+	if (xctx->uldfile_nlines > 0) {
+		remap_size = xctx->uldfile_bufsiz + 3; // +3 for '%' '%' '\n'
 		remap_size = uls_ceil_log2(remap_size, ULS_BIN_BLKSIZ_LOG2);
-		remap_buff = (char *) uls_malloc_buffer(remap_size);
+		remap_buff = (char *) _uls_tool_(malloc)(remap_size);
 
 		parms1.line = remap_buff;
 		parms1.n1 = remap_size >> ULS_BIN_BLKSIZ_LOG2;
 
-		rc = write_uld_to_ostream(lst_names, uls_ptr(parms1), ostr->fd);
+		rc = write_uld_to_ostream(xctx, uls_ptr(parms1), ostr->fd);
 		uls_mfree(remap_buff);
 		if (rc < 0) {
 			return -1;
 		}
 
 		n_blocks = parms1.n2;
-
-		len = _uls_log_(snprintf)(linebuff, sizeof(linebuff), "TOKEN_REMAP: %d %d", lst_names->n, n_blocks);
+		len = _uls_log_(snprintf)(linebuff, sizeof(linebuff), "TOKEN_REMAP: %d %d",
+			xctx->uldfile_nlines, n_blocks);
 		if ((k = writeline_istr_hdr(ulshdr, ULS_BIN_HDR_SZ, k, linebuff, len)) < 0) {
 			return -1;
 		}
@@ -515,21 +503,13 @@ ULS_QUALIFIED_METHOD(write_ostream_header)(uls_ostream_ptr_t ostr,
 	return 0;
 }
 
-ULS_DECL_STATIC int
+ULS_DECL_STATIC void
 ULS_QUALIFIED_METHOD(__uls_bind_ostream)
-	(uls_ostream_ptr_t ostr, const char *specname, uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) parms)
+	(uls_ostream_ptr_t ostr, const char *specname, uls_lex_ptr_t uls)
 {
 	uls_set_namebuf_value(ostr->header.specname, uls_get_namebuf_value(uls->ulc_name));
-
-	if (uld_export_extra_names(uls, parms) < 0) {
-		return -1;
-	}
-	// nam_toks = parms.data;
-	// parms->n == n_nam_toks
 	uls_grab(uls);
 	ostr->uls = uls;
-
-	return 0;
 }
 
 ULS_DECL_STATIC void
@@ -667,8 +647,6 @@ ULS_QUALIFIED_METHOD(__uls_create_ostream)
 	(int fd_out, uls_lex_ptr_t uls, int stream_type, const char* subname)
 {
 	uls_ostream_ptr_t ostr;
-	uls_ref_array_type10(lst_names, nam_tok);
-	uls_type_tool(outparam) parms;
 	int  rc;
 
 	if (uls == nilptr || fd_out < 0) {
@@ -699,17 +677,8 @@ ULS_QUALIFIED_METHOD(__uls_create_ostream)
 		uls_set_namebuf_value(ostr->header.subname, subname);
 	}
 
-	if (__uls_bind_ostream(ostr, nilptr, uls, uls_ptr(parms)) < 0) {
-		_uls_log(err_log)("%s: binding error!", __func__);
-		__destroy_ostream(ostr);
-		return nilptr;
-	}
-
-	lst_names = uls_cast_array_type10(nam_tok) parms.data;
-	rc = write_ostream_header(ostr, lst_names);
-	uld_unexport_extra_names(lst_names);
-
-	if (rc < 0) {
+	__uls_bind_ostream(ostr, nilptr, uls);
+	if ((rc = write_ostream_header(ostr, uls_ptr(uls->xcontext))) < 0) {
 		_uls_log(err_log)("%s: can't bind!", __func__);
  		__uls_unbind_ostream(ostr);
  		__destroy_ostream(ostr);
@@ -840,7 +809,7 @@ ULS_QUALIFIED_METHOD(__uls_print_tok_number)(uls_ostream_ptr_t ostr)
 		rc = l_numstr + l_suffix + 2;
 		if (rc > sizeof(tmpbuf1)) {
 			rc = uls_ceil_log2(rc, 3);
-			tmpbuf = tmpbuf2 = uls_malloc_buffer(rc);
+			tmpbuf = tmpbuf2 = (char *) _uls_tool_(malloc)(rc);
 		} else {
 			tmpbuf = tmpbuf1;
 		}

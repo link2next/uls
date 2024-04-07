@@ -315,8 +315,9 @@ uls_inc_dir = $(uls_inst_dir)/include
 uls_lib_dir = $(uls_inst_dir)/lib
 ulc2class_exe = $(uls_bin_dir)/ulc2class
 Html5Toks_SOURCES = Html5Toks.cpp Html5Lex.cpp
-#Html5Toks_CPPFLAGS = -std=c++11 -I$(uls_inc_dir) -DULS_USE_WSTR
-Html5Toks_CPPFLAGS = -std=c++11 -I$(uls_inc_dir)
+Html5Toks_CFLAGS = -Wall -std=c++11
+#Html5Toks_CPPFLAGS = -I$(uls_inc_dir) -DULS_USE_WSTR
+Html5Toks_CPPFLAGS = -I$(uls_inc_dir)
 Html5Toks_LDADD = -L$(uls_lib_dir) -lulscpp -luls
 all: all-am
 
@@ -692,7 +693,7 @@ uninstall-am: uninstall-binPROGRAMS
 $(Html5Toks_SOURCES): Html5LexBasis.h
 
 Html5LexBasis.h: html5.ulc
-	$(ulc2class_exe) --lang=cpp -o$@ -n uls.collection.Html5LexBasis $<
+	LD_LIBRARY_PATH="$(uls_lib_dir)" $(ulc2class_exe) --lang=cpp -o$@ -n uls.collection.Html5LexBasis $<
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

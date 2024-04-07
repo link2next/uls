@@ -137,7 +137,7 @@
            $ configure --prefix=<install_dir>
 
         If you build without java support, specify the option as follows:
-           $ configure --without-java
+           $ configure --disable-java
 
       2. To build the package,
          $ make

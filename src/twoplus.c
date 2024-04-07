@@ -100,20 +100,20 @@ ULS_QUALIFIED_METHOD(cmp_twoplus_vx_by_keyword)(const uls_voidptr_t a, const uls
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_init_twoplus_tree)(uls_twoplus_tree_ptr_t tree)
+ULS_QUALIFIED_METHOD(uls_init_2char_tree)(uls_twoplus_tree_ptr_t tree)
 {
 	uls_initial_zerofy_object(tree);
 	uls_init_parray(uls_ptr(tree->twoplus_sorted), tokdef, 0);
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_deinit_twoplus_tree)(uls_twoplus_tree_ptr_t tree)
+ULS_QUALIFIED_METHOD(uls_deinit_2char_tree)(uls_twoplus_tree_ptr_t tree)
 {
 	uls_deinit_parray(uls_ptr(tree->twoplus_sorted));
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_init_kwtable_twoplus)(uls_kwtable_twoplus_ptr_t tbl)
+ULS_QUALIFIED_METHOD(uls_init_2char_table)(uls_kwtable_twoplus_ptr_t tbl)
 {
 	uls_twoplus_tree_ptr_t tree;
 	int i;
@@ -123,20 +123,20 @@ ULS_QUALIFIED_METHOD(uls_init_kwtable_twoplus)(uls_kwtable_twoplus_ptr_t tbl)
 
 	for (i=0; i < ULS_KWTABLE_TWOPLUS_SIZE; i++) {
 		tree = uls_get_array_slot_type00(uls_ptr(tbl->tree_array), i);
-		uls_init_twoplus_tree(tree);
+		uls_init_2char_tree(tree);
 	}
 	uls_init_parray(uls_ptr(tbl->twoplus_mempool), tokdef, 0);
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_deinit_kwtable_twoplus)(uls_kwtable_twoplus_ptr_t tbl)
+ULS_QUALIFIED_METHOD(uls_deinit_2char_table)(uls_kwtable_twoplus_ptr_t tbl)
 {
 	uls_twoplus_tree_ptr_t tree;
 	int i;
 
 	for (i=0; i < ULS_KWTABLE_TWOPLUS_SIZE; i++) {
 		tree = uls_get_array_slot_type00(uls_ptr(tbl->tree_array), i);
-		uls_deinit_twoplus_tree(tree);
+		uls_deinit_2char_tree(tree);
 	}
 
 	uls_deinit_array_type00(uls_ptr(tbl->tree_array), twoplus_tree);
@@ -204,30 +204,39 @@ ULS_QUALIFIED_METHOD(is_keyword_twoplus)(uls_kwtable_twoplus_ptr_t tbl, const ch
 }
 
 void
-ULS_QUALIFIED_METHOD(distribute_twoplus_toks)(uls_kwtable_twoplus_ptr_t tbl)
+ULS_QUALIFIED_METHOD(distribute_twoplus_toks)(uls_kwtable_twoplus_ptr_t tbl, char *ch_ctx)
 {
-	uls_decl_parray_slots_init(slots_vx_twoplus, tokdef, uls_ptr(tbl->twoplus_mempool));
+	uls_decl_parray_slots_init(slots_keyw, tokdef, uls_ptr(tbl->twoplus_mempool));
 	uls_decl_parray_slots(slots_tp, tokdef);
-	int n_tokdefs_twoplus = tbl->twoplus_mempool.n;
+	int n_slots_keyw = tbl->twoplus_mempool.n;
 
 	uls_twoplus_tree_ptr_t tree, tree_prev;
 	uls_twoplus_tree_ptr_t tree_list, tree_listtail;
 
 	uls_tokdef_ptr_t e;
 	int i, i0, j, n, wlen0_keyw;
+	char ch_kwd;
 
-	_uls_quicksort_vptr(slots_vx_twoplus, n_tokdefs_twoplus, cmp_twoplus_by_length);
+	if (n_slots_keyw <= 0) return;
+	_uls_quicksort_vptr(slots_keyw, n_slots_keyw, cmp_twoplus_by_length);
+
+	for (i=0; i<n_slots_keyw; i++) {
+		e = slots_keyw[i];
+		if ((ch_kwd = uls_get_namebuf_value(e->keyword)[0]) < ULS_SYNTAX_TABLE_SIZE) {
+			ch_ctx[ch_kwd] |= ULS_CH_2PLUS;
+		}
+	}
 
 	tree_list = tree_listtail = nilptr;
-	for (i=0; i<n_tokdefs_twoplus; ) {
-		e = slots_vx_twoplus[i];
+	for (i=0; i<n_slots_keyw; ) {
+		e = slots_keyw[i];
 
 		wlen0_keyw = e->wlen_keyword;
 		tree = uls_get_ind_twoplus_tree(tbl, wlen0_keyw, nilptr);
 
 		tree->wlen_keyw = wlen0_keyw;
-		for (i0 = i++; i < n_tokdefs_twoplus; i++) {
-			e = slots_vx_twoplus[i];
+		for (i0 = i++; i < n_slots_keyw; i++) {
+			e = slots_keyw[i];
 			if (e->wlen_keyword != wlen0_keyw) break;
 		}
 
@@ -235,7 +244,7 @@ ULS_QUALIFIED_METHOD(distribute_twoplus_toks)(uls_kwtable_twoplus_ptr_t tbl)
 		uls_resize_parray(uls_ptr(tree->twoplus_sorted), tokdef, n);
 		slots_tp = uls_parray_slots(uls_ptr(tree->twoplus_sorted));
 		for (j = 0; j < n; j++) {
-			slots_tp[j] = slots_vx_twoplus[i0 + j];
+			slots_tp[j] = slots_keyw[i0 + j];
 		}
 		_uls_quicksort_vptr(slots_tp, n, cmp_twoplus_vx_by_keyword);
 		tree->twoplus_sorted.n = n;

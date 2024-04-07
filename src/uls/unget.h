@@ -83,8 +83,8 @@ ULS_DLL_EXTERN void ulsjava_unget_str(uls_lex_ptr_t uls, const uls_native_vptr_t
 ULS_DLL_EXTERN void ulsjava_unget_lexeme(uls_lex_ptr_t uls, const uls_native_vptr_t lxm, int len_lxm, int tok_id);
 
 #ifndef ULS_DOTNET
-ULS_DLL_EXTERN int ulsjava_peek_ch(uls_lex_t* uls, int* tok_peek);
-ULS_DLL_EXTERN int ulsjava_get_ch(uls_lex_t* uls, int* tok_peek);
+ULS_DLL_EXTERN int ulsjava_peek_ch(uls_lex_ptr_t uls, int* tok_peek);
+ULS_DLL_EXTERN int ulsjava_get_ch(uls_lex_ptr_t uls, int* tok_peek);
 
 ULS_DLL_EXTERN uls_nextch_detail_ptr_t ulsjava_peek_nextch_info(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN uls_nextch_detail_ptr_t ulsjava_get_nextch_info(uls_lex_ptr_t uls);

@@ -350,7 +350,7 @@ namespace uls {
 			// <brief>
 			// changeUldNames
 			// </brief>
-			int prepareUldMap();
+			int prepareUldMap(int bufsiz_uldfile);
 			bool finishUldMap();
 			void changeUldNames(const char *name, const char *name2, int tokid_valid, int tokid, const char *aliases);
 			void changeUldNames(const wchar_t *name, const wchar_t *name2, int tokid_valid, int tokid, const wchar_t *aliases);

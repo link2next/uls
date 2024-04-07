@@ -297,7 +297,7 @@ uls_pars_cmdline(const char* cmdline, char** p_line, int* p_args)
 
 	k = uls_strlen(cmdline);
 
-	*p_line = lptr = uls_malloc_buffer(k+1);
+	*p_line = lptr = uls_malloc(k+1);
 	uls_strcpy(lptr, cmdline);
 
 	n_alloc_args = 32;

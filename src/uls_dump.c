@@ -37,7 +37,7 @@
 #endif
 
 void
-ULS_QUALIFIED_METHOD(ulc_dump_tokdef_sorted)(uls_lex_ptr_t uls)
+ULS_QUALIFIED_METHOD(uls_dump_tokdef_sorted)(uls_lex_ptr_t uls)
 {
 	uls_decl_parray_slots_init(slots_vx, tokdef_vx, uls_ptr(uls->tokdef_vx_array));
 	uls_tokdef_vx_ptr_t  e_vx, e2_vx;
@@ -140,18 +140,16 @@ ULS_QUALIFIED_METHOD(uls_dump_2char)(uls_lex_ptr_t uls)
 	uls_tokdef_ptr_t e;
 	int i, ch;
 
-	_uls_log_(printf)("2+CHAR TOKEN:\n");
-	_uls_log_(printf)("\tfirst_chars:");
+	_uls_log_(printf)(" * map(2char):\n\t");
 	for (i=0, ch=0; ch < ULS_SYNTAX_TABLE_SIZE; ch++) {
-		if ((ch_ctx[ch] & ULS_CH_2PLUS)==0)
-			continue;
-		_uls_log_(printf)(" %3d(%c)", ch, ch);
-
-		if (((++i) % 8)==0) _uls_log_(printf)("\n");
+		if (ch_ctx[ch] & ULS_CH_2PLUS) {
+			_uls_log_(printf)("%3d(%c)", ch, ch);
+			if (((++i) % 8)==0) _uls_log_(printf)("\n\t");
+		}
 	}
 	_uls_log_(printf)("\n");
 
-	_uls_log_(printf)("2+CHAR types:");
+	_uls_log_(printf)(" * 2char-types:\n");
 	for (tree=uls->twoplus_table.start; tree != nilptr; tree=tree->prev) {
 		_uls_log_(printf)("\t[WLEN=%d]\n", tree->wlen_keyw);
 
@@ -166,11 +164,10 @@ ULS_QUALIFIED_METHOD(uls_dump_2char)(uls_lex_ptr_t uls)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_dump_utf8)(uls_lex_ptr_t uls)
+ULS_QUALIFIED_METHOD(uls_dump_utf8firstbyte)(uls_lex_ptr_t uls)
 {
 	int i, j;
 	int ch, ch0;
-	uls_ptrtype_tool(uch_range) ran;
 
 	for (i=0; i < 16; i++) {
 		ch0 = 128 + 8*i;
@@ -187,6 +184,13 @@ ULS_QUALIFIED_METHOD(uls_dump_utf8)(uls_lex_ptr_t uls)
 		}
 		_uls_log_(printf)("\n");
 	}
+}
+
+void
+ULS_QUALIFIED_METHOD(uls_dump_idfirst)(uls_lex_ptr_t uls)
+{
+	uls_ptrtype_tool(uch_range) ran;
+	int i;
 
 	_uls_log_(printf)(" ********** (Unicode) ID-FIRST charset ranges **************\n");
 	for (i=0; i<uls->idfirst_charset.n; i++) {
@@ -202,7 +206,7 @@ ULS_QUALIFIED_METHOD(uls_dump_utf8)(uls_lex_ptr_t uls)
 }
 
 void
-ULS_QUALIFIED_METHOD(print_tokdef_vx_char)(uls_wch_t wch, uls_tokdef_vx_ptr_t e_vx)
+ULS_QUALIFIED_METHOD(uls_dump_tokdef_vx_char)(uls_wch_t wch, uls_tokdef_vx_ptr_t e_vx)
 {
 	int tokid = e_vx->tok_id;
 
@@ -233,7 +237,7 @@ ULS_QUALIFIED_METHOD(uls_dump_1char)(uls_lex_ptr_t uls)
 	uls_tokdef_vx_ptr_t e_vx;
 	int i, j, ch, ch0;
 
-	_uls_log_(printf)("1-CHAR TOKEN MAP(map):\n");
+	_uls_log_(printf)("CHAR TOKEN MAP(map):\n");
 	for (i=0; i < ULS_N_ONECHAR_TOKGRPS; i++) {
 		tokgrp = uls_get_array_slot_type00(uls_ptr(uls->onechar_table.tokgrps), i);
 		ch0 = tokgrp->ch0;
@@ -243,15 +247,15 @@ ULS_QUALIFIED_METHOD(uls_dump_1char)(uls_lex_ptr_t uls)
 			ch = ch0 + j;
 
 			if ((e_vx = slots_vx[j]) != nilptr) {
-				print_tokdef_vx_char(ch, e_vx);
+				uls_dump_tokdef_vx_char(ch, e_vx);
 			}
 		}
 		_uls_log_(printf)("\n");
 	}
 
-	_uls_log_(printf)("1-CHAR TOKEN MAP(etc):\n");
+	_uls_log_(printf)("CHAR TOKEN MAP(etc):\n");
 	for (e_etc = uls->onechar_table.tokdefs_etc_list; e_etc != nilptr; e_etc = e_etc->next) {
-		print_tokdef_vx_char(e_etc->wch, e_etc->tokdef_vx);
+		uls_dump_tokdef_vx_char(e_etc->wch, e_etc->tokdef_vx);
 	}
 }
 
@@ -346,8 +350,9 @@ ULS_QUALIFIED_METHOD(dump_fd_tower)(uls_lex_ptr_t uls)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_dump_kwtable)(uls_kwtable_ptr_t tbl)
+ULS_QUALIFIED_METHOD(uls_dump_kwtable)(uls_lex_ptr_t uls)
 {
+	uls_kwtable_ptr_t tbl = uls_ptr(uls->idkeyw_table);
 	uls_decl_parray_slots(slots_bh, tokdef);
 	uls_tokdef_ptr_t  e;
 	uls_tokdef_vx_ptr_t  e_vx;
@@ -617,11 +622,11 @@ ULS_QUALIFIED_METHOD(dump_tokdef__yaml)(uls_lex_ptr_t uls)
 		uls_sysprn_tabs(0, "number-separator: %c\n", (char) tok_id);
 	}
 
-	if ((i=uls->id_max_bytes) != INT_MAX) {
+	if ((i=uls->id_max_bytes) != ULS_INT_MAX) {
 		uls_sysprn_tabs(0, "id-max-bytes: %d\n", i);
 	}
 
-	if ((i=uls->id_max_uchars) != INT_MAX) {
+	if ((i=uls->id_max_uchars) != ULS_INT_MAX) {
 		uls_sysprn_tabs(0, "id_max_uchars: %d\n", i);
 	}
 

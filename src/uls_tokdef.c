@@ -171,7 +171,7 @@ ULS_QUALIFIED_METHOD(find_tokdef_alias)(uls_tokdef_vx_ptr_t e_vx, const char* na
 {
 	uls_tokdef_name_ptr_t e_nam;
 
-	for (e_nam=e_vx->tokdef_names; e_nam != nilptr; e_nam = e_nam->next) {
+	for (e_nam = e_vx->tokdef_names; e_nam != nilptr; e_nam = e_nam->next) {
 		if (uls_streql(uls_get_namebuf_value(e_nam->name), name)) {
 			break;
 		}
@@ -200,22 +200,6 @@ ULS_QUALIFIED_METHOD(insert_tokdef_name_to_group)(uls_tokdef_vx_ptr_t e_vx, uls_
 	// insert e_nam into the head.
 	e_nam->next = e_vx->tokdef_names;
 	e_vx->tokdef_names = e_nam;
-}
-
-int
-ULS_QUALIFIED_METHOD(append_tokdef_name_to_group)(uls_tokdef_vx_ptr_t e_vx, uls_tokdef_name_ptr_t e0_nam)
-{
-	uls_tokdef_name_ptr_t e_nam;
-	const char *name0 = uls_get_namebuf_value(e0_nam->name);
-
-	for (e_nam = e_vx->tokdef_names; e_nam != nilptr; e_nam = e_nam->next) {
-		if (uls_streql(uls_get_namebuf_value(e_nam->name), name0)) {
-			return 0;
-		}
-	}
-
-	insert_tokdef_name_to_group(e_vx, e0_nam);
-	return 1;
 }
 
 int
@@ -253,12 +237,10 @@ ULS_QUALIFIED_METHOD(uls_add_tokdef_vx_name)(uls_tokdef_vx_ptr_t e_vx, const cha
 
 	if (uls_get_namebuf_value(e_vx->name)[0] == '\0') {
 		uls_set_namebuf_value(e_vx->name, name);
-		return 1;
-	}
-
-	if ((e_nam = find_tokdef_alias(e_vx, name)) == nilptr) {
+		stat = 1;
+	} else if ((e_nam = find_tokdef_alias(e_vx, name)) == nilptr) {
 		e_nam = alloc_tokdef_name(name);
-		append_tokdef_name_to_group(e_vx, e_nam);
+		insert_tokdef_name_to_group(e_vx, e_nam);
 		stat = 1;
 	}
 
@@ -268,17 +250,18 @@ ULS_QUALIFIED_METHOD(uls_add_tokdef_vx_name)(uls_tokdef_vx_ptr_t e_vx, const cha
 void
 ULS_QUALIFIED_METHOD(append_tokdef_to_group)(uls_tokdef_vx_ptr_t e_vx, uls_tokdef_ptr_t e_target)
 {
-	uls_tokdef_ptr_t e, e_prev=nilptr;
+	uls_tokdef_ptr_t e, e_prev = nilptr;
 
-	for (e=e_vx->base; e != nilptr; e = e->next) {
+	e_target->view = e_vx;
+	e_target->next = nilptr;
+
+	for (e = e_vx->base; e != nilptr; e = e->next) {
 		e_prev = e;
 	}
 
 	if (e_prev != nilptr) {
-		e_target->next = e_prev->next;
 		e_prev->next = e_target;
 	} else {
-		e_target->next = e_vx->base;
 		e_vx->base = e_target;
 	}
 }

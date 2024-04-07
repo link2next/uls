@@ -112,6 +112,9 @@ AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+ulf_gen_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(ulf_gen_CFLAGS) \
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -309,10 +312,10 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 uls_ver_major = 1
 uls_ver_minor = 9
-uls_ver_debug = 3
+uls_ver_debug = 4
 uls_ver = $(uls_ver_major).$(uls_ver_minor).$(uls_ver_debug)
 so_current = 1
-so_revision = 0
+so_revision = 1
 so_age = 0
 ULS_SYSPROPS = /usr/local/etc/uls/uls.sysprops
 TMP_SYSPROPS = /tmp/uls_sysprops.txt
@@ -320,6 +323,7 @@ ulc2class_exe = $(top_builddir)/tools/ulc2class/ulc2class
 tests_libpath = $(top_builddir)/src:$(top_builddir)/ulscpp
 ulf_gen_SOURCES = ulf_gen.c
 ulf_gen_CPPFLAGS = -I$(top_srcdir)/tools/ulstools -I$(top_srcdir)/src
+ulf_gen_CFLAGS = -Wall
 ulf_gen_LDADD = $(top_builddir)/tools/ulstools/libulstools.a $(top_builddir)/src/libuls.la
 ACLOCAL_AMFLAGS = -I m4
 all: all-am
@@ -408,7 +412,7 @@ clean-binPROGRAMS:
 
 ulf_gen$(EXEEXT): $(ulf_gen_OBJECTS) $(ulf_gen_DEPENDENCIES) $(EXTRA_ulf_gen_DEPENDENCIES) 
 	@rm -f ulf_gen$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(ulf_gen_OBJECTS) $(ulf_gen_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(ulf_gen_LINK) $(ulf_gen_OBJECTS) $(ulf_gen_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -446,18 +450,18 @@ am--depfiles: $(am__depfiles_remade)
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
 
 ulf_gen-ulf_gen.o: ulf_gen.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ulf_gen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ulf_gen-ulf_gen.o -MD -MP -MF $(DEPDIR)/ulf_gen-ulf_gen.Tpo -c -o ulf_gen-ulf_gen.o `test -f 'ulf_gen.c' || echo '$(srcdir)/'`ulf_gen.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ulf_gen_CPPFLAGS) $(CPPFLAGS) $(ulf_gen_CFLAGS) $(CFLAGS) -MT ulf_gen-ulf_gen.o -MD -MP -MF $(DEPDIR)/ulf_gen-ulf_gen.Tpo -c -o ulf_gen-ulf_gen.o `test -f 'ulf_gen.c' || echo '$(srcdir)/'`ulf_gen.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ulf_gen-ulf_gen.Tpo $(DEPDIR)/ulf_gen-ulf_gen.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ulf_gen.c' object='ulf_gen-ulf_gen.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ulf_gen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ulf_gen-ulf_gen.o `test -f 'ulf_gen.c' || echo '$(srcdir)/'`ulf_gen.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ulf_gen_CPPFLAGS) $(CPPFLAGS) $(ulf_gen_CFLAGS) $(CFLAGS) -c -o ulf_gen-ulf_gen.o `test -f 'ulf_gen.c' || echo '$(srcdir)/'`ulf_gen.c
 
 ulf_gen-ulf_gen.obj: ulf_gen.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ulf_gen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ulf_gen-ulf_gen.obj -MD -MP -MF $(DEPDIR)/ulf_gen-ulf_gen.Tpo -c -o ulf_gen-ulf_gen.obj `if test -f 'ulf_gen.c'; then $(CYGPATH_W) 'ulf_gen.c'; else $(CYGPATH_W) '$(srcdir)/ulf_gen.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ulf_gen_CPPFLAGS) $(CPPFLAGS) $(ulf_gen_CFLAGS) $(CFLAGS) -MT ulf_gen-ulf_gen.obj -MD -MP -MF $(DEPDIR)/ulf_gen-ulf_gen.Tpo -c -o ulf_gen-ulf_gen.obj `if test -f 'ulf_gen.c'; then $(CYGPATH_W) 'ulf_gen.c'; else $(CYGPATH_W) '$(srcdir)/ulf_gen.c'; fi`
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ulf_gen-ulf_gen.Tpo $(DEPDIR)/ulf_gen-ulf_gen.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ulf_gen.c' object='ulf_gen-ulf_gen.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ulf_gen_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ulf_gen-ulf_gen.obj `if test -f 'ulf_gen.c'; then $(CYGPATH_W) 'ulf_gen.c'; else $(CYGPATH_W) '$(srcdir)/ulf_gen.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ulf_gen_CPPFLAGS) $(CPPFLAGS) $(ulf_gen_CFLAGS) $(CFLAGS) -c -o ulf_gen-ulf_gen.obj `if test -f 'ulf_gen.c'; then $(CYGPATH_W) 'ulf_gen.c'; else $(CYGPATH_W) '$(srcdir)/ulf_gen.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo

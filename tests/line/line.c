@@ -49,7 +49,7 @@ int  test_mode = -1;
 int  opt_verbose;
 LPCTSTR config_name;
 LPTSTR input_file;
-uls_lex_t *sample_lex;
+uls_lex_ptr_t sample_lex;
 
 static FILE   *cur_fin;
 static TCHAR   filebuff[FILEBUFF_SIZ+1];
@@ -64,7 +64,6 @@ proc_file(LPCTSTR filepath)
 		return -1;
 	}
 
-	uls_set_lineno(sample_lex, ++lno);
 	while (1) {
 		if ((len=uls_fp_gets(cur_fin, filebuff, sizeof(filebuff), 0)) <= ULS_EOF) {
 			if (len < ULS_EOF) {
@@ -76,12 +75,11 @@ proc_file(LPCTSTR filepath)
 		filebuff[len++] = '\n'; filebuff[len] = '\0';
 
 		uls_push_line(sample_lex, filebuff, ult_str_length(filebuff), ULS_DO_DUP);
+		uls_set_lineno(sample_lex, ++lno);
 
 		while (uls_get_tok(sample_lex) != tokEOI) {
 			uls_dumpln_tok(sample_lex);
 		}
-
-		uls_inc_lineno(sample_lex, ++lno);
 	}
 
 	uls_fp_close(cur_fin);
@@ -187,7 +185,7 @@ test_stage_5(void)
 }
 
 void
-test_uls_line(uls_lex_t *uls)
+test_uls_line(uls_lex_ptr_t uls)
 {
 	LPTSTR linebuff;
 

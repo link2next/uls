@@ -47,7 +47,7 @@ ULS_QUALIFIED_METHOD(__init_istream)(uls_istream_ptr_t istr)
 	istr->fd = -1;
 	istr->start_off = -1;
 
-	istr->firstline = (char *) uls_malloc_buffer(ULS_MAGICCODE_SIZE + 1);
+	istr->firstline = (char *) _uls_tool_(malloc)(ULS_MAGICCODE_SIZE + 1);
 	_uls_tool_(init_tempfile)(uls_ptr(istr->uld_file));
 }
 
@@ -56,8 +56,7 @@ ULS_QUALIFIED_METHOD(__create_istream)(int fd)
 {
 	uls_istream_ptr_t istr;
 
-	istr = uls_alloc_object(uls_istream_t);
-	uls_initial_zerofy_object(istr);
+	istr = uls_alloc_object_clear(uls_istream_t);
 	__init_istream(istr);
 
 	istr->fd = fd;
@@ -424,7 +423,7 @@ ULS_QUALIFIED_METHOD(uls_gettok_bin)(uls_lex_ptr_t uls)
 		if (*lptr == '\0') lptr = NULL;
 		else ++lptr; // skip the ' '
 
-		uls_context_set_tag(ctx, lptr, rc);
+		uls_ctx_set_tag(ctx, lptr, rc);
 		goto next_loop;
 	}
 
@@ -546,7 +545,7 @@ ULS_QUALIFIED_METHOD(parse_uls_hdr)(char* line, int fd_in, uls_istream_ptr_t ist
 		istr->start_off = fpos;
 
 		remap_size = remap_n_blocks << ULS_BIN_BLKSIZ_LOG2;
-		remap_buff = (char *) uls_malloc_buffer(remap_size + 1);
+		remap_buff = (char *) _uls_tool_(malloc)(remap_size + 1);
 		if (uls_fd_read(fd_in, remap_buff, remap_size) < remap_size) {
 			return -1;
 		}
@@ -566,7 +565,6 @@ ULS_QUALIFIED_METHOD(parse_uls_hdr)(char* line, int fd_in, uls_istream_ptr_t ist
 				break;
 			}
 			bufptr2[len2] = '\0';
-
 			_uls_log_(fprintf)(fp_out, "%s\n", bufptr2);
 			 bufptr2 += len2 + 1;
 		}

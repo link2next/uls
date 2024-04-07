@@ -232,7 +232,7 @@ ULS_QUALIFIED_METHOD(str_init)(uls_outbuf_ptr_t outbuf, int siz)
 
 	if (outbuf->buf == NULL) {
 		if (siz < 0) siz = 128;
-		outbuf->buf = uls_malloc_buffer(siz);
+		outbuf->buf = (char *) uls_malloc(siz);
 		outbuf->siz = siz;
 	}
 

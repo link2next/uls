@@ -119,7 +119,7 @@ ULS_QUALIFIED_METHOD(finalize_uls_syserr)(void)
 int
 ULS_QUALIFIED_METHOD(uls_fmtproc_coord)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t ctx)
 {
-	uls_lex_t  *uls;
+	uls_lex_ptr_t uls;
 
 	uls = (uls_lex_ptr_t) va_arg(ctx->args, uls_lex_ptr_t);
 	return __uls_fmtproc_coord(x_dat, puts_proc, uls, ctx);
@@ -128,7 +128,7 @@ ULS_QUALIFIED_METHOD(uls_fmtproc_coord)(uls_voidptr_t x_dat, uls_lf_puts_t puts_
 int
 ULS_QUALIFIED_METHOD(uls_fmtproc_tokname)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t ctx)
 {
-	uls_lex_t  *uls;
+	uls_lex_ptr_t uls;
 
 	uls = (uls_lex_ptr_t) va_arg(ctx->args, uls_lex_ptr_t);
 	return __uls_fmtproc_tokname(x_dat, puts_proc, uls, ctx);
@@ -137,7 +137,7 @@ ULS_QUALIFIED_METHOD(uls_fmtproc_tokname)(uls_voidptr_t x_dat, uls_lf_puts_t put
 int
 ULS_QUALIFIED_METHOD(uls_fmtproc_keyword)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t ctx)
 {
-	uls_lex_t  *uls;
+	uls_lex_ptr_t uls;
 
 	uls = (uls_lex_ptr_t) va_arg(ctx->args, uls_lex_ptr_t);
 	return __uls_fmtproc_keyword(x_dat, puts_proc, uls, ctx);
@@ -146,21 +146,21 @@ ULS_QUALIFIED_METHOD(uls_fmtproc_keyword)(uls_voidptr_t x_dat, uls_lf_puts_t put
 int
 ULS_QUALIFIED_METHOD(uls_log_fmtproc_coord)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t ctx)
 {
-	uls_lex_t  *uls = (uls_lex_ptr_t) ctx->g_dat;
+	uls_lex_ptr_t uls = (uls_lex_ptr_t) ctx->g_dat;
 	return __uls_fmtproc_coord(x_dat, puts_proc, uls, ctx);
 }
 
 int
 ULS_QUALIFIED_METHOD(uls_log_fmtproc_tokname)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t ctx)
 {
-	uls_lex_t  *uls = (uls_lex_ptr_t) ctx->g_dat;
+	uls_lex_ptr_t uls = (uls_lex_ptr_t) ctx->g_dat;
 	return __uls_fmtproc_tokname(x_dat, puts_proc, uls, ctx);
 }
 
 int
 ULS_QUALIFIED_METHOD(uls_log_fmtproc_keyword)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t ctx)
 {
-	uls_lex_t  *uls = (uls_lex_ptr_t) ctx->g_dat;
+	uls_lex_ptr_t uls = (uls_lex_ptr_t) ctx->g_dat;
 	return __uls_fmtproc_keyword(x_dat, puts_proc, uls, ctx);
 }
 

@@ -1126,6 +1126,25 @@ ULS_QUALIFIED_METHOD(uls_fp_putc)(FILE *fp, char ch)
 	putc(ch, fp);
 }
 
+int
+ULS_QUALIFIED_METHOD(uls_fp_filesize)(FILE *fin)
+{
+	long fpos_cur = ftell(fin);
+	int filesize;
+
+	if (fseek(fin, 0, SEEK_END) != 0) {
+		filesize = -1;
+	} else {
+		filesize = (int) ftell(fin);
+	}
+
+	if (fseek(fin, fpos_cur, SEEK_SET) != 0) {
+		filesize = -1;
+	}
+
+	return filesize;
+}
+
 void
 ULS_QUALIFIED_METHOD(uls_init_tempfile)(uls_tempfile_ptr_t tmpfile)
 {

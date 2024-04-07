@@ -777,7 +777,7 @@ ULS_QUALIFIED_METHOD(uls_parse_escmap_mapping)(uls_escmap_ptr_t esc_map, uls_esc
 	uls_type_tool(outparam) parms1;
 
 	len = _uls_tool_(strlen)(line);
-	escstr_buf = (char *)_uls_tool_(malloc)(len + 1);
+	escstr_buf = (char *) _uls_tool_(malloc)(len + 1);
 
 	for (lptr = line; ; ) {
 		parms1.lptr = lptr;

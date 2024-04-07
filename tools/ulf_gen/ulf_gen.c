@@ -39,35 +39,59 @@
 
 #include "ult_utils.h"
 #include <ctype.h>
+#include <time.h>
 
 #define THIS_PROGNAME "ulf_gen"
-#define DFL_N_SAMPLES 0xFFFF
+#define DFL_N_SAMPLES 10
+
+_ULS_DEFINE_STRUCT(round_stat)
+{
+	int n_buckets;
+	double avg, sigma2;
+	double gamma;
+};
 
 _ULS_DEFINE_STRUCT(stat_of_round)
 {
-	uls_dflhash_state_t dflhash_stat0;
-	int   n; // # of buckets
-	double avg, sigma2;
-	double gamma;
+	uls_hash_stat_t hcodes;
+	round_stat_t state;
 };
 
 char *progname;
 char home_dir[ULS_FILEPATH_MAX+1];
 const char *config_file;
-char *target_dir;
 char *filelist;
-FILE *fp_list;
+
 char *out_file;
 char out_file_buff[ULS_FILEPATH_MAX+1];
 int  opt_verbose;
+int  opt_optimize_level;
 
 uls_lex_ptr_t sam_lex;
 uls_hashfunc_t ulf_hashfunc;
-
-int target_hashtable_size;
 int n_samples;
+int *g_hash_buckets;
 
-#define ULFGEN_OPTSTR "L:l:o:n:s:vVHh"
+static int i_weight_list, j_weight_list, k_weight_list;
+
+#define NUM_WPRIMES  25
+static int weight_plist[NUM_WPRIMES] = {
+	 2,  3,  5,  7,
+	11, 13, 17, 19,
+	23, 29,
+	31, 37,
+	41, 43, 47,
+	53, 59,
+	61, 67,
+	71, 73, 79,
+	83, 89,
+	97
+};
+
+void init_weights_indices();
+int next_weights_indices(int space_size);
+
+#define ULFGEN_OPTSTR "L:l:o:O:n:s:vVHh"
 
 #ifdef HAVE_GETOPT
 #include <getopt.h>
@@ -78,6 +102,7 @@ static const struct option longopts[] = {
 	{ "output",  required_argument,    NULL, 'o' },
 	{ "num-iter",  required_argument,  NULL, 'n' },
 	{ "size-hash",  required_argument, NULL, 's' },
+	{ "optimize",  required_argument,  NULL, 'O' },
 	{ "verbose",  no_argument,         NULL, 'v' },
 	{ "version", no_argument,          NULL, 'V' },
 	{ "Help",    no_argument,          NULL, 'H' },
@@ -101,6 +126,7 @@ static void usage_desc(void)
 	err_log("  -L <ulc-spec>      Specify the lexical-spec(*.ulc) of the language");
 	err_log("  -l <list-file>     Specify the list of data source files");
 	err_log("  -o <a-file>        Specify the the output filepath(*.ulf)");
+	err_log("  -O <level=1,2,3>   Specify the optimizing level for hashcode");
 	err_log("  -v, --verbose      verbose mode");
 	err_log("  -V, --version      Print the version information");
 	err_log("  -h, --help         Display the short help");
@@ -108,6 +134,7 @@ static void usage_desc(void)
 	err_log("  -L, --lang=<ulc-spec>   Specify the lexical-spec(*.ulc) of the language");
 	err_log("  -l, --list=<list-file>  Specify the list of data source files");
 	err_log("  -o, --output=<a-file>   Specify the the output filepath(*.ulf)");
+	err_log("  -O, --optimize <1,2,3>  Specify the optimizing level for hashcode");
 	err_log("  -v, --verbose           verbose mode");
 	err_log("  -V, --version           Print the version information");
 	err_log("  -h, --help              Display the short help");
@@ -158,7 +185,6 @@ static void usage_long(void)
 static int ulfgen_options(int opt, char* optarg)
 {
 	int   stat = 0;
-	int   siz;
 
 	switch (opt) {
 	case 'L':
@@ -172,7 +198,6 @@ static int ulfgen_options(int opt, char* optarg)
 
 	case 'n':
 		n_samples = atoi(optarg);
-		if (n_samples <= 0) n_samples = 1;
 		break;
 
 	case 'o':
@@ -181,12 +206,10 @@ static int ulfgen_options(int opt, char* optarg)
 		break;
 
 	case 's':
-		if ((siz=atoi(optarg)) > 0) {
-			target_hashtable_size =  siz;
-		} else {
-			err_log("non-positive hash-size(%d) specified!", siz);
-			stat = -1;
-		}
+		break;
+
+	case 'O':
+		opt_optimize_level = atoi(optarg);
 		break;
 
 	case 'v':
@@ -229,11 +252,8 @@ parse_options(int argc, char* argv[])
 	if (ult_getcwd(home_dir, sizeof(home_dir)) < 0)
 		err_panic("%s: fail to getcwd()", __func__);
 
-	target_hashtable_size = ULF_HASH_TABLE_SIZE;
-
 	filelist = NULL;
 	out_file = NULL;
-	target_dir = NULL;
 	n_samples = DFL_N_SAMPLES;
 
 #ifdef HAVE_GETOPT
@@ -255,22 +275,34 @@ parse_options(int argc, char* argv[])
 		return -1;
 	}
 
-	if (filelist != NULL) {
-		if (i0 >= argc) {
-			err_log("Specify the target-directory to apply the paths in %s\n", filelist);
-			return -1;
-		}
-
-		if ((fp_list=uls_fp_open(filelist, ULS_FIO_READ)) == NULL) {
-			err_log("%s: fail to read '%s'", __func__, filelist);
-			return -1;
-		}
-
-		target_dir = ult_strdup(argv[i0++]);
-		uls_path_normalize(target_dir, target_dir);
-	}
-
 	return i0;
+}
+
+static void
+init_stat_round(stat_of_round_ptr_t p_round)
+{
+	memset(p_round, 0x00, sizeof(stat_of_round_t));
+	uls_init_hash_stat(uls_ptr(p_round->hcodes));
+}
+
+static void
+deinit_stat_round(stat_of_round_ptr_t p_round)
+{
+	uls_deinit_hash_stat(uls_ptr(p_round->hcodes));
+}
+
+static void
+copy_stat_round(stat_of_round_ptr_t p_stat_src, stat_of_round_ptr_t p_stat_dst)
+{
+	uls_copy_hash_stat(uls_ptr(p_stat_src->hcodes),
+		uls_ptr(p_stat_dst->hcodes));
+	p_stat_dst->state = p_stat_src->state;
+}
+
+void
+reset_hash_buckets()
+{
+	memset(g_hash_buckets, 0x00, ULF_HASH_TABLE_SIZE * sizeof(int));
 }
 
 int
@@ -279,7 +311,7 @@ incl_if_keyw(uls_keyw_stat_list_t *ks_lst, const char* keyw)
 	uls_keyw_stat_ptr_t kwstat;
 	int stat = 0;
 
-	kwstat = ulc_search_kwstat_list(ks_lst, keyw);
+	kwstat = ulf_search_kwstat_list(ks_lst, keyw);
 
 	if (kwstat != uls_nil) {
 		if (kwstat->freq < INT_MAX) {
@@ -293,6 +325,30 @@ incl_if_keyw(uls_keyw_stat_list_t *ks_lst, const char* keyw)
 	return stat;
 }
 
+void
+dump_hash_freq(stat_of_round_ptr_t p_round)
+{
+	uls_hash_stat_t *hs = &p_round->hcodes;
+	int i;
+
+	uls_printf("weight = { %d, %d, %d }\n",
+		hs->weight[0],
+		hs->weight[1],
+		hs->weight[2]
+	);
+
+	uls_printf("avg(%.2f), sigma2(%.2f), gamma(%.2f)\n",
+		p_round->state.avg, p_round->state.sigma2, p_round->state.gamma);
+
+	if (opt_verbose >= 2) {
+		uls_printf("hash-table distribution:\n");
+		for (i=0; i < ULF_HASH_TABLE_SIZE; i++) {
+			uls_printf("\t%2d] %d\n", i, g_hash_buckets[i]);
+		}
+		uls_printf("\n");
+	}
+}
+
 int
 proc_file(char *fpath, uls_keyw_stat_list_t *ks_lst)
 {
@@ -302,9 +358,7 @@ proc_file(char *fpath, uls_keyw_stat_list_t *ks_lst)
 		return -1;
 	}
 
-	if (opt_verbose >= 1)
-		err_log("processing %s, ...", fpath);
-
+	err_log("processing %s, ...", fpath);
 	for ( ; ; ) {
 		uls_get_tok(sam_lex);
 		if (uls_is_eoi(sam_lex)) break;
@@ -316,13 +370,13 @@ proc_file(char *fpath, uls_keyw_stat_list_t *ks_lst)
 }
 
 int
-proc_filelist(FILE *fin, uls_keyw_stat_list_t *ks_lst)
+proc_filelist(FILE *fp_list, uls_keyw_stat_list_t *ks_lst)
 {
 	char  linebuff[ULS_FILEPATH_MAX+1], *lptr, *fpath;
 	int   i, len, lno = 0, stat=0;
 
 	while (1) {
-		if ((len=uls_fp_gets(fin, linebuff, sizeof(linebuff), 0)) <= ULS_EOF) {
+		if ((len=uls_fp_gets(fp_list, linebuff, sizeof(linebuff), 0)) <= ULS_EOF) {
 			if (len < ULS_EOF) {
 				err_log("%s: io-error", __func__);
 				stat = -1;
@@ -351,188 +405,271 @@ proc_filelist(FILE *fin, uls_keyw_stat_list_t *ks_lst)
 	return stat;
 }
 
-static void
-uls_hashfunc_set_params(stat_of_round_ptr_t p_stat,
-	int n_slots, int n_shifts, uls_uint32 hcodes0)
+void
+uls_hashfunc_set_params(stat_of_round_ptr_t p_round, int w0, int w1, int w2)
 {
-	p_stat->dflhash_stat0.n_slots = n_slots;
-	p_stat->dflhash_stat0.n_shifts = n_shifts;
-	p_stat->dflhash_stat0.init_hcode = hcodes0;
+	uls_hash_stat_t *hs = &p_round->hcodes;
 
-	p_stat->n = 0;
-	p_stat->gamma = 0.;
+	hs->weight[0] = w0;
+	hs->weight[1] = w1;
+	hs->weight[2] = w2;
 }
 
 void
-go_round(uls_keyw_stat_list_t *ks_lst,
-	uls_uint32 hcodes0, int* hash_range, int n_hash_range, stat_of_round_ptr_t p_stat)
+hashfunc_set_params_random(stat_of_round_ptr_t p_round)
+{
+	uls_hash_stat_t *hs = &p_round->hcodes;
+	int w0, w1, w2;
+
+	w0 = rand() % 100;
+	if (rand() % 2) w0 = -w0;
+
+	w1 = rand() % 100;
+	if (rand() % 2) w1 = -w1;
+
+	w2 = rand() % 100;
+	if (rand() % 2) w1 = -w1;
+
+	hs->weight[0] = w0;
+	hs->weight[1] = w1;
+	hs->weight[2] = w2;
+}
+
+void
+go_round(uls_keyw_stat_list_t *ks_lst, stat_of_round_ptr_t p_round)
 {
 	uls_ref_parray(lst, keyw_stat);
 	uls_decl_parray_slots(slots_lst, keyw_stat);
 	uls_keyw_stat_ptr_t e;
-	int i, hash_id, n;
-	double sum, sum1, sum2;
+	double sum1, sum2, avg;
+	int i, hash, n;
 
-	memset(hash_range, 0x00, n_hash_range * sizeof(int));
-
-	uls_hashfunc_set_params(p_stat, n_hash_range, -1, hcodes0);
-
-	sum = 0.;
 	lst = uls_ptr(ks_lst->lst);
 	slots_lst = uls_parray_slots(lst);
+
+	reset_hash_buckets();
 	for (i=0; i < ks_lst->lst.n; i++) {
 		e = slots_lst[i];
-
-		hash_id = ulf_hashfunc(&p_stat->dflhash_stat0, e->keyw);
-		if (hash_range[hash_id] < INT_MAX)
-			++hash_range[hash_id];
-
-		if (opt_verbose >= 3)
-			uls_printf(" '%s' --> %d\n", e->keyw, hash_id);
-
-		sum += hash_range[hash_id] * e->freq;
+		hash = ulf_hashfunc(&p_round->hcodes, e->keyw);
+		if (g_hash_buckets[hash] < INT_MAX)
+			++g_hash_buckets[hash];
 	}
 
-	sum1 = sum2 = 0.;
 	n = 0;
-	for (hash_id=0; hash_id < n_hash_range; hash_id++) {
-		if ((i=hash_range[hash_id]) > 0) {
+	sum1 = sum2 = 0.;
+	for (hash=0; hash < ULF_HASH_TABLE_SIZE; hash++) {
+		if ((i=g_hash_buckets[hash]) > 0) {
 			sum1 += i;
 			sum2 += i*i;
 			++n;
 		}
 	}
 
-	p_stat->avg = sum1 / n;
-	p_stat->sigma2 = sum2 / n - p_stat->avg * p_stat->avg;
-	p_stat->n = n;
-	p_stat->gamma = sum / n;
-}
+	p_round->state.n_buckets = n;
+	p_round->state.avg = avg = sum1 / n;
+	p_round->state.sigma2 = sum2 / n - avg * avg;
+	p_round->state.gamma =  ( 1 / (1 + p_round->state.sigma2) + 1) * n;
 
-void
-get_random_hcodes(int n_hcodes0, uls_uint32* hcodes0)
-{
-	uls_uint32 hcode;
-	int i, j;
+	if (opt_verbose >= 3) {
+		uls_hash_stat_t *hs = &p_round->hcodes;
+		int w0, w1, w2;
 
-	for (i=0; i<n_hcodes0; i++) {
-		hcode = 0;
-		for (j=0; j<4; j++) {
-			hcode ^= rand();
-			hcode <<= 8;
-		}
-		hcodes0[i] = hcode;
+		w0 = hs->weight[0];
+		w1 = hs->weight[1];
+		w2 = hs->weight[2];
+		uls_printf("w0=%d, w1=%d, w2=%d:\n", w0, w1, w2);
+
+		uls_printf("\t#buckets=%d, sum1=%f, sum2=%f\n", n, sum1, sum2);
+		uls_printf("\tavg=%f, sigma2=%f --> gamma=%f\n\n",
+			avg, p_round->state.sigma2, p_round->state.gamma);
 	}
 }
 
 void
-calc_good_hcode0(uls_keyw_stat_list_t *ks_lst, stat_of_round_ptr_t p_stat)
+calc_good_hcode_O0(uls_keyw_stat_list_t *ks_lst, stat_of_round_ptr_t p_round)
 {
-	int *bucket_size_array;
-	stat_of_round_t  round_stat;
+	stat_of_round_t  round;
 	int     i;
 
-	bucket_size_array = (int *) uls_malloc(target_hashtable_size * sizeof(int));
+	init_stat_round(uls_ptr(round));
 
-	for (i=0; i<n_samples; i++) {
-		get_random_hcodes(1, &p_stat->dflhash_stat0.init_hcode);
-
-		go_round(ks_lst, p_stat->dflhash_stat0.init_hcode,
-			bucket_size_array, target_hashtable_size, uls_ptr(round_stat));
-
-		if (opt_verbose >= 2 && i % 1000 == 0) {
-			uls_printf("\tn=%d: avg = %.3f, sigma2 = %.3f, gamma=%.3f\n",
-				round_stat.n, round_stat.avg, round_stat.sigma2, round_stat.gamma);
-		}
-
-		if (i > 0) {
-			if (round_stat.gamma < p_stat->gamma) {
-				*p_stat = round_stat;
-			}
-		} else {
-			*p_stat = round_stat;
+	for (i = 0; i<n_samples; i++) {
+		hashfunc_set_params_random(uls_ptr(round));
+		go_round(ks_lst, uls_ptr(round));
+		if (round.state.gamma > p_round->state.gamma) {
+			copy_stat_round(uls_ptr(round), p_round);
 		}
 	}
 
-	if (opt_verbose >= 1) {
-		uls_printf("\tavg = %.3f, sigma2 = %.3f, n=%d, gamma=%.3f\n",
-			p_stat->avg, p_stat->sigma2, p_stat->n, p_stat->gamma);
-	}
-
-	uls_mfree(bucket_size_array);
-
-	if (opt_verbose >= 2) {
-		uls_printf(" hcode[] = ");
-		uls_printf(" 0x%08X", p_stat->dflhash_stat0.init_hcode);
-		uls_printf("\n");
-	}
+	deinit_stat_round(uls_ptr(round));
 }
 
-static int keyw_stat_comp_by_freq_reverse(const uls_voidptr_t a, const uls_voidptr_t b)
+void
+calc_good_hcode_O1(uls_keyw_stat_list_t *ks_lst, stat_of_round_ptr_t p_round)
 {
-	uls_keyw_stat_ptr_t a1 = (uls_keyw_stat_ptr_t) a;
-	uls_keyw_stat_ptr_t b1 = (uls_keyw_stat_ptr_t) b;
+	stat_of_round_t  round;
+	int w0, w1, w2;
 
-	return b1->freq - a1->freq;
+	init_weights_indices();
+	init_stat_round(uls_ptr(round));
+
+	do {
+		w0 = i_weight_list - 9;
+		w1 = j_weight_list - 9;
+		w2 = k_weight_list - 9;
+
+		uls_hashfunc_set_params(uls_ptr(round), w0,  w1, w2);
+		go_round(ks_lst, uls_ptr(round));
+		if (round.state.gamma > p_round->state.gamma) {
+			copy_stat_round(uls_ptr(round), p_round);
+		}
+	} while (next_weights_indices(19));
+
+	deinit_stat_round(uls_ptr(round));
 }
 
-int
-ulf_create_file_internal(FILE *fp_list, FILE *fp_out, int i0, int n_args, char **args)
+void
+calc_good_hcode_O2(uls_keyw_stat_list_t *ks_lst, stat_of_round_ptr_t p_round)
 {
-	uls_keyw_stat_list_t *keyw_stat_list;
+	stat_of_round_t  round;
+	int w0, w1, w2;
+
+	init_weights_indices();
+	init_stat_round(uls_ptr(round));
+
+	while (next_weights_indices(NUM_WPRIMES)) {
+		w0 = weight_plist[i_weight_list];
+		w1 = weight_plist[j_weight_list];
+		w2 = weight_plist[k_weight_list];
+
+		uls_hashfunc_set_params(uls_ptr(round), w0,  w1, w2);
+		go_round(ks_lst, uls_ptr(round));
+		if (round.state.gamma > p_round->state.gamma) {
+			copy_stat_round(uls_ptr(round), p_round);
+		}
+	}
+
+	deinit_stat_round(uls_ptr(round));
+}
+
+static int
+__create_file_internal(uls_keyw_stat_list_t *ks_lst, const char *tgt_dir,
+	FILE *fp_list, FILE *fp_out, int n_args, char *args[])
+{
 	stat_of_round_t best_round_stat;
-	int i;
+	uls_hash_stat_t *hs;
+	int i, rval;
 
-	keyw_stat_list = ulc_export_kwtable(uls_ptr(sam_lex->idkeyw_table));
-	if (keyw_stat_list == uls_nil) {
-		err_log("No keyword information!");
-		return -1;
+	if (ks_lst->lst.n <= 0) {
+		err_log("%s: No keywords!", __func__);
+		init_stat_round(uls_ptr(best_round_stat));
+		hs = &best_round_stat.hcodes;
+		uls_hashfunc_set_params(uls_ptr(best_round_stat), 1, 1, 1);
+		rval = ulf_create_file(hs, ks_lst, fp_out);
+		deinit_stat_round(uls_ptr(best_round_stat));
+		return rval;
 	}
 
+	// 1. stastics of keyword frequencies
 	if (fp_list != NULL) {
-		if (ult_chdir(target_dir) < 0) {
-			err_log("can't change to %s", target_dir);
-			ulc_free_kwstat_list(keyw_stat_list);
+		if (ult_chdir(tgt_dir) < 0) {
+			err_log("can't change to %s", tgt_dir);
 			return -1;
 		}
 
-		if (proc_filelist(fp_list, keyw_stat_list) < 0) {
-			err_log("Failed to process files in %s", target_dir);
+		if (proc_filelist(fp_list, ks_lst) < 0) {
+			err_log("Failed to process files in %s", tgt_dir);
 			return -1;
 		}
 
 		if (ult_chdir(home_dir) < 0) {
 			err_log("fail to chdir(%s)", home_dir);
-			ulc_free_kwstat_list(keyw_stat_list);
 			return -1;
 		}
 
 	} else {
-		for (i=i0; i<n_args; i++) {
-			proc_file(args[i], keyw_stat_list);
+		for (i = 0; i < n_args; i++) {
+			proc_file(args[i], ks_lst);
 		}
 	}
 
-	_uls_quicksort_vptr(uls_parray_slots(uls_ptr(keyw_stat_list->lst)), keyw_stat_list->lst.n, keyw_stat_comp_by_freq_reverse);
+	init_stat_round(uls_ptr(best_round_stat));
+	hs = &best_round_stat.hcodes;
 
-	calc_good_hcode0(keyw_stat_list, uls_ptr(best_round_stat));
+	// 2. distribution of keywords in hash-table
+	uls_hashfunc_set_params(uls_ptr(best_round_stat), 1, 1, 1);
+	go_round(ks_lst, uls_ptr(best_round_stat));
 
-	ulf_create_file(1, &best_round_stat.dflhash_stat0.init_hcode,
-		target_hashtable_size, keyw_stat_list, fp_out);
+	calc_good_hcode_O0(ks_lst, uls_ptr(best_round_stat));
 
-	ulc_free_kwstat_list(keyw_stat_list);
+	if (opt_optimize_level >= 1) {
+		calc_good_hcode_O1(ks_lst, uls_ptr(best_round_stat));
+		uls_printf("O1: weight = { %d, %d, %d }\n",
+			hs->weight[0],
+			hs->weight[1],
+			hs->weight[2]
+		);
+	}
 
-	return 0;
+	if (opt_optimize_level >= 2) {
+		calc_good_hcode_O2(ks_lst, uls_ptr(best_round_stat));
+		uls_printf("O2: weight = { %d, %d, %d }\n",
+			hs->weight[0],
+			hs->weight[1],
+			hs->weight[2]
+		);
+	}
+
+	dump_hash_freq(uls_ptr(best_round_stat));
+	rval = ulf_create_file(hs, ks_lst, fp_out);
+	deinit_stat_round(uls_ptr(best_round_stat));
+	return rval;
+}
+
+int
+main_proc(const char *tgt_dir, FILE *fp_list, int n_args, char *args[])
+{
+	int stat = 0;
+	uls_keyw_stat_list_t *ks_lst;
+	FILE *fp_out;
+
+	g_hash_buckets = (int *) uls_malloc(ULF_HASH_TABLE_SIZE * sizeof(int));
+
+	if ((fp_out=uls_fp_open(out_file, ULS_FIO_CREAT)) == NULL) {
+		err_log("%s: fail to create '%s'", __func__, out_file);
+		return -1;
+	}
+
+	err_log("Gathering the statistics of keywords usage, ...");
+
+	ks_lst = ulc_export_kwtable(uls_ptr(sam_lex->idkeyw_table));
+	if (ks_lst == uls_nil) {
+		err_log("No keyword information!");
+		stat = -1;
+	} else {
+		// ks_lst is sorted by keyw, alphabetic order
+		err_log("Writing the frequencies of keywords to %s, ...", out_file);
+		stat = __create_file_internal(ks_lst, tgt_dir,
+			fp_list, fp_out, n_args, args);
+		ulc_free_kwstat_list(ks_lst);
+	}
+
+	uls_fp_close(fp_out);
+	uls_mfree(g_hash_buckets);
+
+	return stat;
 }
 
 int
 main(int argc, char* argv[])
 {
-	FILE *fp_out;
+	FILE *fp_list = NULL;
+	char *target_dir = NULL;
 	const char *conf_fname;
 	int i0, i, conf_fname_len, stat = 0;
 	int cse_insen;
 
+	srand(time(NULL));
 	progname = THIS_PROGNAME;
 	if (argc <= 1) {
 		usage_brief();
@@ -549,6 +686,21 @@ main(int argc, char* argv[])
 		return i0;
 	}
 
+	if (filelist != NULL) {
+		if (i0 >= argc) {
+			err_log("Specify the target-directory to apply the paths in %s\n", filelist);
+			return -1;
+		}
+
+		target_dir = ult_strdup(argv[i0++]);
+		uls_path_normalize(target_dir, target_dir);
+
+		if ((fp_list = uls_fp_open(filelist, ULS_FIO_READ)) == NULL) {
+			err_log("%s: fail to read '%s'", __func__, filelist);
+			return -1;
+		}
+	}
+
 	conf_fname = uls_filename(config_file, &conf_fname_len);
 
 	if (out_file == NULL) {
@@ -558,30 +710,23 @@ main(int argc, char* argv[])
 		out_file = out_file_buff;
 	}
 
-	if (opt_verbose)
+	if (opt_verbose >= 2)
 		ulc_list_searchpath(config_file);
 
-	if ((sam_lex=uls_create(config_file)) == uls_nil) {
+	if ((sam_lex = uls_create(config_file)) == uls_nil) {
 		err_log("can't create a uls-object for %s.", config_file);
 		return -1;
 	}
 
 	cse_insen = sam_lex->flags & ULS_FL_CASE_INSENSITIVE;
-	ulf_hashfunc = uls_get_hashfunc(ULS_HASH_ALGORITHM, cse_insen);
 
-	if ((fp_out=uls_fp_open(out_file, ULS_FIO_CREAT)) == NULL) {
-		err_log("%s: fail to create '%s'", __func__, out_file);
-		stat = -1;
-	} else {
-		err_log("Gathering the statistics of keywords usage, ...");
-		if (ulf_create_file_internal(fp_list, fp_out, i0, argc, argv) < 0) {
-			err_log("%s: internal error!'", __func__);
-			stat = -1;
-		} else {
-			err_log("Writing the frequencies of keywords to %s, ...", out_file);
-		}
-		uls_fp_close(fp_out);
+	ulf_hashfunc = uls_get_hashfunc(ULS_HASH_ALGORITHM, cse_insen);
+	if (ulf_hashfunc == uls_nil) {
+		err_log("%s: unkown hash algorithm", __func__, ULS_HASH_ALGORITHM);
+		return -1;
 	}
+
+	stat = main_proc(target_dir, fp_list, argc - i0, argv + i0);
 
 	if (fp_list != NULL) {
 		uls_fp_close(fp_list);
@@ -595,4 +740,28 @@ main(int argc, char* argv[])
 	uls_mfree(target_dir);
 
 	return stat;
+}
+
+void
+init_weights_indices()
+{
+	i_weight_list = j_weight_list = k_weight_list = 0;
+}
+
+int
+next_weights_indices(int space_size)
+{
+
+	if (++k_weight_list >= space_size) {
+		if (++j_weight_list >= space_size) {
+			if (++i_weight_list >= space_size) {
+				init_weights_indices();
+				return 0;
+			}
+			j_weight_list = 0;
+		}
+		k_weight_list = 0;
+	}
+
+	return 1; // true
 }

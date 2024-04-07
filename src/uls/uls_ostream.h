@@ -79,11 +79,10 @@ ULS_DECL_STATIC void __deinit_ostream(uls_ostream_ptr_t ostr);
 ULS_DECL_STATIC uls_ostream_ptr_t __create_ostream(int fd);
 ULS_DECL_STATIC void __destroy_ostream(uls_ostream_ptr_t ostr);
 ULS_DECL_STATIC void __bind_ostream_callbacks(uls_ostream_ptr_t ostr, int stream_type);
-ULS_DECL_STATIC int write_uld_to_ostream(uls_ref_array_type10(lst_names,nam_tok),
+ULS_DECL_STATIC int write_uld_to_ostream(uls_xcontext_ptr_t xctx,
 	uls_ptrtype_tool(outparam) parms, int fd_out);
-ULS_DECL_STATIC int write_ostream_header(uls_ostream_ptr_t ostr, uls_ref_array_type10(lst_names,nam_tok));
-ULS_DECL_STATIC int __uls_bind_ostream(uls_ostream_ptr_t ostr, const char *specname,
-	uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) parms);
+ULS_DECL_STATIC int write_ostream_header(uls_ostream_ptr_t ostr, uls_xcontext_ptr_t xctx);
+ULS_DECL_STATIC void __uls_bind_ostream(uls_ostream_ptr_t ostr, const char *specname, uls_lex_ptr_t uls);
 ULS_DECL_STATIC void __uls_unbind_ostream(uls_ostream_ptr_t ostr);
 ULS_DECL_STATIC int __flush_uls_stream_buffer(_uls_ptrtype_tool(csz_str) outbuf, int fd, int force);
 ULS_DECL_STATIC int __uls_finalize_ostream(uls_ostream_ptr_t ostr);

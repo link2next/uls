@@ -121,7 +121,7 @@ void uls_deinit_commtype(uls_commtype_ptr_t qmt);
 
 int input_skip_comment(uls_commtype_ptr_t cmt, uls_input_ptr_t inp, uls_ptrtype_tool(outparam) parms);
 int input_quote_proc(uls_input_ptr_t inp, uls_quotetype_ptr_t qmt, _uls_ptrtype_tool(csz_str) ss_dst, uls_ptrtype_tool(outparam) parms);
-int input_space_proc(const char* ch_ctx, uls_input_ptr_t inp, _uls_ptrtype_tool(csz_str) ss_dst, int len_surplus, uls_ptrtype_tool(outparam) parms0);
+int input_space_proc(const char* ch_ctx, uls_input_ptr_t inp, _uls_ptrtype_tool(csz_str) ss_dst, uls_ptrtype_tool(outparam) parms0);
 
 void uls_init_isource(uls_source_ptr_t isrc);
 void uls_deinit_isource(uls_source_ptr_t isrc);

@@ -52,24 +52,9 @@ extern "C" {
 #endif
 
 #ifdef ULS_DECL_PUBLIC_TYPE
-
 #define ULS_LF_PERCENT_NAMESIZ 3
 #define ULS_LF_N_FILLCHS 16
 #define ULS_LF_N_FILLSTR 64
-
-#define ULS_LF_LEFT_JUSTIFIED     0x0001  /* left justified */
-#define ULS_LF_ZEROPAD            0x0002  /* pad with zero */
-#define ULS_LF_PLUS_PREFIX        0x0004  /* show plus */
-#define ULS_LF_MINUS_PREFIX       0x0008  /* show minus */
-
-#define ULS_LF_SPECIAL_CHAR       0x0010  /* 0x */
-#define ULS_LF_DYNAMIC_WIDTH      0x0020
-#define ULS_LF_DYNAMIC_PRECISION  0x0040
-
-#define ULS_LF_BIN_PREFIX         0x0100
-#define ULS_LF_HEX_PREFIX         0x0200
-#define ULS_LF_PERCENT_E          0x0400
-#define ULS_LF_PERCENT_G          0x0800
 
 #define ULS_LF_DFL_FLOAT_PRECISION 6
 

@@ -144,7 +144,7 @@ ULS_QUALIFIED_METHOD(make_eof_lexeme)(uls_lex_ptr_t uls)
 	int lno, k;
 	char *tagstr;
 
-	lno = __uls_get_lineno(uls);
+	lno = uls_ctx_get_lineno(ctx);
 	tagstr = _uls_tool(csz_text)(uls_ptr(ctx->tag));
 	k = __uls_make_eoftok_lexeme(uls_ptr(ctx->tokbuf), lno, tagstr);
 
@@ -265,7 +265,7 @@ ULS_QUALIFIED_METHOD(__uls_change_line)(uls_lex_ptr_t uls, const char* line, int
 	uls_xcontext_ptr_t xctx = uls_ptr(uls->xcontext);
 	uls_context_ptr_t ctx = uls->xcontext.context;
 	uls_input_ptr_t   inp = ctx->input;
-	int start_lno=1;
+	int start_lno = 1;
 	uls_ptrtype_tool(outparam) parm;
 	char *ptr;
 
@@ -278,7 +278,7 @@ ULS_QUALIFIED_METHOD(__uls_change_line)(uls_lex_ptr_t uls, const char* line, int
 	if (xctx->len_prepended_input > 0) {
 		parm = uls_alloc_object(uls_type_tool(outparam));
 
-		ptr = uls_malloc_buffer(xctx->len_prepended_input + len + 1);
+		ptr = (char *) _uls_tool_(malloc)(xctx->len_prepended_input + len + 1);
 		_uls_tool_(memcopy)(ptr, xctx->prepended_input, xctx->len_prepended_input);
 		_uls_tool_(memcopy)(ptr + xctx->len_prepended_input, line, len);
 		if (flags & ULS_MEMFREE_LINE) uls_mfree(line);
@@ -313,7 +313,7 @@ ULS_QUALIFIED_METHOD(__uls_change_line)(uls_lex_ptr_t uls, const char* line, int
 
 	ctx->line = ctx->line_end = inp->rawbuf_ptr;
 	ctx->lptr = ctx->line;
-	ctx->lineno = start_lno;
+	__uls_ctx_set_lineno(ctx, start_lno);
 
 	return 0;
 }
@@ -330,7 +330,7 @@ ULS_QUALIFIED_METHOD(skip_white_spaces)(uls_lex_ptr_t uls)
 			break;
 		}
 		if (ch == '\n') {
-			uls_context_inc_lineno(ctx, 1);
+			__uls_ctx_inc_lineno(ctx, 1);
 		}
 	}
 
@@ -377,8 +377,8 @@ ULS_QUALIFIED_METHOD(free_tokdef_array)(uls_lex_ptr_t uls)
 	slots_vx = uls_parray_slots(uls_ptr(uls->tokdef_vx_array));
 	for (i=0; i < uls->tokdef_vx_array.n; i++) {
 		e_vx = slots_vx[i];
-		e_vx->base = nilptr;
 		if (!(e_vx->flags & (ULS_VX_CHRMAP|ULS_VX_REFERRED))) {
+			e_vx->base = nilptr;
 			uls_destroy_tokdef_vx(e_vx);
 		}
 //		slots_vx[i] = nilptr;
@@ -401,6 +401,7 @@ ULS_QUALIFIED_METHOD(get_idtok_list)(uls_lex_ptr_t uls, uls_ptrtype_tool(outpara
 
 	for (i=0; i < uls->tokdef_array.n; i++) {
 		e = slots_keyw[i];
+
 		if (e->keyw_type == ULS_KEYW_TYPE_IDSTR) {
 			e->link = idtok_list;
 			idtok_list = e;
@@ -413,10 +414,11 @@ ULS_QUALIFIED_METHOD(get_idtok_list)(uls_lex_ptr_t uls, uls_ptrtype_tool(outpara
 }
 
 int
-ULS_QUALIFIED_METHOD(ulc_load)(ulc_header_ptr_t uls_config, FILE *fin_ulc, FILE *fin_uld, FILE *fin_ulf)
+ULS_QUALIFIED_METHOD(ulc_load)(ulc_header_ptr_t uls_config, FILE *fin_ulc,
+	FILE *fin_uld, int siz_uld_filebuff, FILE *fin_ulf)
 {
 	uls_lex_ptr_t uls = uls_config->uls;
-	fp_list_ptr_t  ulc_fp_stack;
+	ulc_fpitem_ptr_t  ulc_fp_stack;
 	char     linebuff[ULS_LINEBUFF_SIZ__ULC+1], *lptr;
 	int      i, linelen, rc, stat = 0;
 	int      n_idtok_list, tok_id;
@@ -431,27 +433,29 @@ ULS_QUALIFIED_METHOD(ulc_load)(ulc_header_ptr_t uls_config, FILE *fin_ulc, FILE 
 
 	ulf_header_t ulf_hdr;
 	uls_type_tool(outparam) parms;
+	uls_kwtable_ptr_t kw_tbl;
 
 	ulc_fp_stack = ulc_fp_push(nilptr, fin_ulc, uls_get_namebuf_value(uls->ulc_name));
 
 	uls_config->fp_stack = ulc_fp_stack;
 	rc = ulc_read_header(fin_ulc, uls_config);
-	ulc_fp_stack = (fp_list_ptr_t) uls_config->fp_stack;
+	ulc_fp_stack = (ulc_fpitem_ptr_t) uls_config->fp_stack;
 	if (rc < 0) {
 		_uls_log(err_log)("fail to read the header of uls-spec.");
 		release_ulc_fp_stack(ulc_fp_stack);
+		_uls_tool_(fp_close)(fin_uld);
 		_uls_tool_(fp_close)(fin_ulf);
 		return -1;
 	}
 
-	parms.data = ulc_fp_stack;
-	parms.line = uls_get_namebuf_value(uls_config->tagbuf);
+	reset_tokid_seed(uls, uls_config);
 
-	fin_ulc = ulc_fp_pop(uls_ptr(parms), 1);
-	ulc_fp_stack = (fp_list_ptr_t) parms.data;
+	parms.line = uls_get_namebuf_value(uls_config->tagbuf);
+	parms.x1 = 1;
+	ulc_fp_stack = ulc_fp_pop(ulc_fp_stack, uls_ptr(parms));
+	fin_ulc = (FILE *) parms.native_data;
 
 	uls_config->lno = parms.n;
-
 	while (1) {
 		if ((linelen = _uls_tool_(fp_gets)(fin_ulc, linebuff, sizeof(linebuff), 0)) <= ULS_EOF) {
 			if (linelen < ULS_EOF) {
@@ -463,11 +467,10 @@ ULS_QUALIFIED_METHOD(ulc_load)(ulc_header_ptr_t uls_config, FILE *fin_ulc, FILE 
 			_uls_tool_(fp_close)(fin_ulc);
 			if (ulc_fp_stack == nilptr) break;
 
-			parms.data = ulc_fp_stack;
 			parms.line = uls_get_namebuf_value(uls_config->tagbuf);
-
-			fin_ulc = ulc_fp_pop(uls_ptr(parms), 1);
-			ulc_fp_stack = (fp_list_ptr_t) parms.data;
+			parms.x1 = 1;
+			ulc_fp_stack = ulc_fp_pop(ulc_fp_stack, uls_ptr(parms));
+			fin_ulc = (FILE *) parms.native_data;
 
 			uls_config->lno = parms.n;
 			continue;
@@ -496,26 +499,33 @@ ULS_QUALIFIED_METHOD(ulc_load)(ulc_header_ptr_t uls_config, FILE *fin_ulc, FILE 
 	release_ulc_fp_stack(ulc_fp_stack);
 	if (stat < 0) {
 		free_tokdef_array(uls);
+		_uls_tool_(fp_close)(fin_uld);
 		_uls_tool_(fp_close)(fin_ulf);
 		return -1;
 	}
 
 	if (fin_uld != NULL) {
-		if (uld_load_fp(uls, fin_uld) < 0) {
+		rc = uld_load_fp(uls, fin_uld, siz_uld_filebuff);
+		_uls_tool_(fp_close)(fin_uld);
+		if (rc < 0) {
 			_uls_log(err_log)("Failed to read uld-file!");
 			return -1;
 		}
-
-		_uls_tool_(fp_close)(fin_uld);
 	}
 
-	uls_reset_kwtable_2(uls_ptr(uls->idkeyw_table), 0, uls->flags & ULS_FL_CASE_INSENSITIVE);
+	kw_tbl = uls_ptr(uls->idkeyw_table);
+	uls_reset_kwtable(kw_tbl, uls->flags & ULS_FL_CASE_INSENSITIVE);
 
 	idtok_list = get_idtok_list(uls, uls_ptr(parms));
+	// a list of type 'tokdef_t*'
 	n_idtok_list = parms.n;
 
 	if (fin_ulf != NULL &&
-		(keyw_stat_list=ulf_load(idtok_list, n_idtok_list, fin_ulf, uls_ptr(ulf_hdr), uls_ptr(uls->idkeyw_table))) != nilptr) {
+		(keyw_stat_list = ulf_load(idtok_list, n_idtok_list, fin_ulf, uls_ptr(ulf_hdr))) != nilptr) {
+		for (i = 0; i < 3; i++) {
+			kw_tbl->hash_stat.weight[i] = ulf_hdr.weights[i];
+		}
+
 		lst = uls_ptr(keyw_stat_list->lst);
 		n_lst = keyw_stat_list->lst.n;
 
@@ -525,7 +535,7 @@ ULS_QUALIFIED_METHOD(ulc_load)(ulc_header_ptr_t uls_config, FILE *fin_ulc, FILE 
 		for (i=0; i < n_lst; i++) {
 			e = slots_lst[i]->keyw_info;
 			// Enter the items having low frequency first!
-			uls_add_kw(uls_ptr(uls->idkeyw_table), e);
+			uls_add_kw(kw_tbl, e);
 		}
 
 		ulc_free_kwstat_list(keyw_stat_list);
@@ -533,13 +543,11 @@ ULS_QUALIFIED_METHOD(ulc_load)(ulc_header_ptr_t uls_config, FILE *fin_ulc, FILE 
 
 	} else {
 		ulf_init_header(uls_ptr(ulf_hdr));
-		uls_reset_kwtable(uls_ptr(uls->idkeyw_table), ULF_HASH_TABLE_SIZE,
-			nilptr, uls_ptr(uls->idkeyw_table.dflhash_stat));
 
 		// consume tok_info_lst upto n_lst
-		for (e=idtok_list; e!=nilptr; e=e_link) {
+		for (e = idtok_list; e != nilptr; e = e_link) {
 			e_link = e->link;
-			uls_add_kw(uls_ptr(uls->idkeyw_table), e);
+			uls_add_kw(kw_tbl, e);
 		}
 	}
 
@@ -558,7 +566,7 @@ ULS_QUALIFIED_METHOD(uls_init_fp)(uls_lex_ptr_t uls)
 	uls->flags = ULS_FL_STATIC;
 
 	uls_init_namebuf(uls->ulc_name, ULC_LONGNAME_MAXSIZ);
-	uls_set_namebuf_value(uls->ulc_name, "<none>");
+	uls_set_namebuf_value(uls->ulc_name, "none");
 
 	uls->numcnst_separator = ULS_DECIMAL_SEPARATOR_DFL;
 
@@ -584,17 +592,17 @@ ULS_QUALIFIED_METHOD(uls_init_fp)(uls_lex_ptr_t uls)
 		ULS_VERSION_STREAM_DEBUG);
 
 	uls_init_bytespool(uls->ch_context, ULS_SYNTAX_TABLE_SIZE, 0);
-	uls->id_max_bytes = uls->id_max_uchars = INT_MAX;
+	uls->id_max_bytes = uls->id_max_uchars = ULS_INT_MAX;
 
 	n = N_RESERVED_TOKS + TOKDEF_LINES_DELTA;
 	uls_init_parray(uls_ptr(uls->tokdef_array), tokdef, n);
 	uls_init_parray(uls_ptr(uls->tokdef_vx_array), tokdef_vx, n);
-	uls_init_parray(uls_ptr(uls->tokdef_vx_rsvd), tokdef_vx, 0);
+	uls_init_parray(uls_ptr(uls->tokdef_vx_rsvd), tokdef_vx, N_RESERVED_TOKS);
 	uls->tokdef_vx = nilptr;
 
 	uls_init_kwtable(uls_ptr(uls->idkeyw_table));
-	uls_init_onechar_table(uls_ptr(uls->onechar_table));
-	uls_init_kwtable_twoplus(uls_ptr(uls->twoplus_table));
+	uls_init_1char_table(uls_ptr(uls->onechar_table));
+	uls_init_2char_table(uls_ptr(uls->twoplus_table));
 
 	uls_init_escmap_pool(uls_ptr(uls->escstr_pool));
 
@@ -615,12 +623,12 @@ ULS_QUALIFIED_METHOD(uls_dealloc_lex)(uls_lex_ptr_t uls)
 	uls_xcontext_deinit(uls_ptr(uls->xcontext));
 
 	uls_deinit_escmap_pool(uls_ptr(uls->escstr_pool));
-	uls_deinit_kwtable_twoplus(uls_ptr(uls->twoplus_table));
+	uls_deinit_2char_table(uls_ptr(uls->twoplus_table));
 	uls_deinit_kwtable(uls_ptr(uls->idkeyw_table));
 	free_tokdef_array(uls);
 
 	// 1char tokens
-	uls_deinit_onechar_table(uls_ptr(uls->onechar_table));
+	uls_deinit_1char_table(uls_ptr(uls->onechar_table));
 
 	// idfirst_charsets
 	uls_deinit_array_tool_type01(uls_ptr(uls->idfirst_charset), uch_range);
@@ -795,11 +803,11 @@ ULS_QUALIFIED_METHOD(set_err_tok)(uls_lex_ptr_t uls, const char* errmsg)
 
 	ctx->tok = uls->xcontext.toknum_ERR;
 
-	lptr = __uls_get_tag(uls);
+	lptr = uls_ctx_get_tag(ctx);
 	k = k1 = _uls_tool(str_puts)(uls_ptr(ctx->tokbuf), 0, lptr);
 	ctx->s_val_wchars = _uls_tool(ustr_num_wchars)(lptr, k, nilptr);
 
-	_uls_log_(snprintf)(numbuf, sizeof(numbuf), "<%d> ", __uls_get_lineno(uls));
+	_uls_log_(snprintf)(numbuf, sizeof(numbuf), "<%d> ", uls_ctx_get_lineno(ctx));
 	k = _uls_tool(str_puts)(uls_ptr(ctx->tokbuf), k, numbuf);
 	k = _uls_tool(str_puts)(uls_ptr(ctx->tokbuf), k, errmsg);
 
@@ -856,7 +864,7 @@ ULS_QUALIFIED_METHOD(uls_gettok_raw)(uls_lex_ptr_t uls)
 	uls_type_tool(parm_line) parm_ln;
 
 	if (ctx->delta_lineno != 0) {
-		ctx->lineno += ctx->delta_lineno;
+		__uls_ctx_inc_lineno(ctx, ctx->delta_lineno);
 		ctx->delta_lineno = 0;
 	}
 
@@ -866,7 +874,7 @@ ULS_QUALIFIED_METHOD(uls_gettok_raw)(uls_lex_ptr_t uls)
 	if ((ch=*lptr) < ULS_SYNTAX_TABLE_SIZE) {
 		ch_grp = ch_ctx[ch];
 	} else {
-		ch_grp = ULS_CH_1 | ULS_CH_2PLUS;
+		ch_grp = ULS_CH_2PLUS;
 	}
 
 	wch = ch;
@@ -979,15 +987,17 @@ ULS_QUALIFIED_METHOD(uls_gettok_raw)(uls_lex_ptr_t uls)
 		}
 
 		if ((e_vx = uls_find_1char_tokdef_vx(uls_ptr(uls->onechar_table), wch, nilptr)) != nilptr) {
-			if (ch == '\n') {
-				if (ctx->lineno <= 0 && (uls->xcontext.flags & ULS_XCTX_FL_IGNORE_LF)) {
-					++ctx->lineno;
+			if (wch == '\n') {
+				if (ctx->lineno <= 0) {
+					__uls_ctx_inc_lineno(ctx, 1);
 					ctx->lptr = ++lptr;
 					goto next_loop;
 				}
+
 				ctx->delta_lineno =  1;
 			}
 			__uls_onechar_lexeme_vx(uls, e_vx, wch, lptr, rc);
+
 		} else if (_uls_tool_(isgraph)(wch) || (uls->flags & ULS_FL_MULTIBYTES_CHRTOK)) {
 			e_vx = __uls_onechar_lexeme(uls, wch, lptr, rc);
 		} else {
@@ -1023,7 +1033,7 @@ ULS_QUALIFIED_METHOD(__uls_change_isrc)(uls_lex_ptr_t uls, int bufsiz, uls_voidp
 		start_lno -= xctx->lfs_prepended_input;
 	}
 
-	uls_context_set_tag(ctx, NULL, start_lno);
+	__uls_ctx_set_lineno(ctx, start_lno);
 
 	if (uls_fillbuff_and_reset(uls) < 0) {
 		_uls_log(err_log)("%s: fail to fill the initial buff", __func__);
@@ -1293,23 +1303,17 @@ ULS_QUALIFIED_METHOD(uls_get_1char_charset)(char *buff)
 }
 
 ULS_DECL_STATIC void
-ULS_QUALIFIED_METHOD(__set_char_toks)(uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) parms)
+ULS_QUALIFIED_METHOD(__filter_1char_toks)(uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) parms)
 {
 	char *char_tokens = parms->line; // ULS_SYNTAX_TABLE_SIZE
 	const char *not_chrtoks = parms->lptr;
 	char not_ch_toks[ULS_CHRTOKS_MAXSIZ + 1];
-	char  ch, *wrdptr, *ch_ctx;
-	int i, j, k, n;
+	char  ch, *wrdptr;
+	int i, k, n;
 
-	uls_decl_parray_slots(slots_vx, tokdef_vx);
 	uls_decl_parray_slots(slots_qmt, quotetype);
-	uls_tokdef_vx_ptr_t e_vx;
 	uls_commtype_ptr_t cmt;
 	uls_quotetype_ptr_t qmt;
-
-	uls_onechar_tokgrp_ptr_t tokgrp;
-	uls_onechar_tokdef_etc_ptr_t  e_etc;
-	uls_onechar_table_ptr_t tbl;
 
 	k = _uls_tool_(strcpy)(not_ch_toks, not_chrtoks);
 
@@ -1351,50 +1355,18 @@ ULS_QUALIFIED_METHOD(__set_char_toks)(uls_lex_ptr_t uls, uls_ptrtype_tool(outpar
 			++i;
 		}
 	}
-
-	ch_ctx = uls->ch_context;
-	for (wrdptr = char_tokens; (ch=*wrdptr) != '\0'; wrdptr++) {
-		ch_ctx[ch] |= ULS_CH_1;
-	}
-
-	tbl = uls_ptr(uls->onechar_table);
-	for (i = 0; i < ULS_N_ONECHAR_TOKGRPS; i++) {
-		tokgrp = uls_get_array_slot_type00(uls_ptr(tbl->tokgrps), i);
-
-		slots_vx = uls_parray_slots(uls_ptr(tokgrp->tokdef_vx_1char));
-		for (j = 0; j < tokgrp->tokdef_vx_1char.n; j++) {
-			if ((e_vx = slots_vx[j]) != nilptr) {
-				ch = tokgrp->ch0 + j;
-				if (!(ch_ctx[ch] & ULS_CH_1)) {
-					_uls_log(err_log)("... forcing char('%c') as token", ch);
-					ch_ctx[ch] |= ULS_CH_1;
-				}
-			}
-		}
-	}
-
-	for (e_etc = tbl->tokdefs_etc_list; e_etc != nilptr; e_etc = e_etc->next) {
-		ch = e_etc->wch;
-		if (ch < ULS_SYNTAX_TABLE_SIZE) { // ch may be '\n', '\t'
-			ch_ctx[ch] |= ULS_CH_1;
-		}
-	}
 }
 
-void
-ULS_QUALIFIED_METHOD(ulc_rearrange_1char_toks)(uls_lex_ptr_t uls, const char *not_chrtoks)
+ULS_DECL_STATIC void
+ULS_QUALIFIED_METHOD(__rearrange_1char_toks)(uls_lex_ptr_t uls, const char *char_tokens)
 {
 	uls_onechar_table_ptr_t tbl = uls_ptr(uls->onechar_table);
 	uls_decl_parray_slots(slots_vx, tokdef_vx);
-	uls_type_tool(outparam) parms1;
+
 	uls_tokdef_outparam_t parms2;
 	uls_tokdef_vx_ptr_t e_vx;
-	char *ptr, char_tokens[ULS_SYNTAX_TABLE_SIZE];
+	const char *cptr;
 	int i, j, ch;
-
-	parms1.line = char_tokens;
-	parms1.lptr = not_chrtoks;
-	__set_char_toks(uls, uls_ptr(parms1));
 
 	slots_vx = uls_parray_slots(uls_ptr(uls->tokdef_vx_array));
 	for (i = N_RESERVED_TOKS; i < uls->tokdef_vx_array.n; ) {
@@ -1410,10 +1382,10 @@ ULS_QUALIFIED_METHOD(ulc_rearrange_1char_toks)(uls_lex_ptr_t uls, const char *no
 		}
 	}
 
-	for (ptr = char_tokens; (ch = *ptr) != '\0'; ptr++) {
+	for (cptr = char_tokens; (ch = *cptr) != '\0'; cptr++) {
 		// ch not in { '\n', '\t' }
 		if (find_1char_tokdef_map(tbl, ch, uls_ptr(parms2)) == nilptr && parms2.tokgrp != nilptr) {
-			e_vx = uls_create_tokdef_vx(ch, "", nilptr);
+			e_vx = uls_create_tokdef_vx(ch, NULL, nilptr);
 			e_vx->flags |= ULS_VX_CHRMAP;
 			insert_1char_tokdef_map(parms2.tokgrp, ch, e_vx);
 		}
@@ -1421,14 +1393,16 @@ ULS_QUALIFIED_METHOD(ulc_rearrange_1char_toks)(uls_lex_ptr_t uls, const char *no
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__load_ulc_from_config_files)(uls_lex_ptr_t uls, const char* confname)
+ULS_QUALIFIED_METHOD(__load_ulc_from_config_files)(ulc_header_ptr_t hdr, const char* confname)
 {
+	uls_lex_ptr_t uls = hdr->uls;
 	char   specname[ULC_LONGNAME_MAXSIZ+1];
 	char   linebuff[ULS_LINEBUFF_SIZ__ULD+1];
+	char char_tokens[ULS_SYNTAX_TABLE_SIZE];
 
 	FILE   *fin_ulc, *fin_ulf, *fin_uld = NULL;
 	int    rc, len_basedir, len_specname, typ_fpath;
-	ulc_header_t  uls_config;
+	int    siz_uld_filebuff = 0;
 	uls_type_tool(outparam) parms1;
 
 	parms1.line = specname;
@@ -1439,10 +1413,16 @@ ULS_QUALIFIED_METHOD(__load_ulc_from_config_files)(uls_lex_ptr_t uls, const char
 	if (typ_fpath < 0) return -1;
 
 	if (typ_fpath == ULS_NAME_FILEPATH_ULD) {
-		if ((fin_uld = ulc_search_for_fp(ULS_NAME_FILEPATH_ULD, confname, nilptr)) == NULL) {
-			_uls_log(err_log)("can't open file '%s'", confname);
+		if ((fin_uld=_uls_tool_(fp_open)(confname, ULS_FIO_READ)) == NULL) {
+			_uls_log(err_log)("can't open file %s", confname);
 			return -1;
 		}
+
+		if ((rc = _uls_tool_(fp_filesize)(fin_uld)) < 0) {
+			_uls_log(err_log)("invalid file: %s", confname);
+			return -1;
+		}
+		siz_uld_filebuff = uld_calc_filebuff_size(rc);
 
 		rc = _uls_tool_(fp_gets)(fin_uld, linebuff, sizeof(linebuff), 0);
 		if ( rc < 3 || !(linebuff[0] == '#' && linebuff[1] == '@')) {
@@ -1469,33 +1449,27 @@ ULS_QUALIFIED_METHOD(__load_ulc_from_config_files)(uls_lex_ptr_t uls, const char
 
 	uls_set_namebuf_value(uls->ulc_name, specname);
 
-	if ((fin_ulc = uls_get_ulc_path(typ_fpath, confname, len_basedir, specname, len_specname, uls_ptr(parms1))) == NULL) {
-		_uls_log(err_log)("uls_get_ulc_path: failed!");
+	if ((fin_ulc = uls_get_ulc_path(typ_fpath, confname, len_basedir,
+		specname, len_specname, uls_ptr(parms1))) == NULL) {
 		_uls_tool_(fp_close)(fin_uld);
 		return -1;
 	}
 	fin_ulf = (FILE *) parms1.native_data;
 
-	ulc_init_header(uls_ptr(uls_config), uls);
-	if ((rc = ulc_load(uls_ptr(uls_config), fin_ulc, fin_uld, fin_ulf)) < 0) {
-		_uls_log(err_log)("ulc_load: failed!");
-		ulc_deinit_header(uls_ptr(uls_config));
+	if ((rc = ulc_load(hdr, fin_ulc, fin_uld, siz_uld_filebuff, fin_ulf)) < 0) {
 		return -1;
 	}
-
-	rearrange_tokname_of_twoplus(uls, uls_config.n_keys_twoplus);
-	if (uls->twoplus_table.twoplus_mempool.n > 0) {
-		distribute_twoplus_toks(uls_ptr(uls->twoplus_table));
-	}
-
-	ulc_rearrange_1char_toks(uls, uls_config.not_chrtoks);
-	ulc_deinit_header(uls_ptr(uls_config));
-
 	// fin_ulc, fin_ulf, fin_uld consumed
-	if (classify_tok_group(uls) < 0) {
-		_uls_log(err_log)("%s: lex-conf file not consistent!", __func__);
+
+	if (check_if_keyw(uls) < 0) {
 		return -1;
 	}
+
+	// 1char
+	parms1.line = char_tokens;
+	parms1.lptr = hdr->not_chrtoks;
+	__filter_1char_toks(uls, uls_ptr(parms1));
+	__rearrange_1char_toks(uls, char_tokens);
 
 	return 0;
 }
@@ -1503,7 +1477,8 @@ ULS_QUALIFIED_METHOD(__load_ulc_from_config_files)(uls_lex_ptr_t uls, const char
 int
 ULS_QUALIFIED_METHOD(uls_init)(uls_lex_ptr_t uls, const char* confname)
 {
-	int rc;
+	ulc_header_t  uls_config;
+	int stat = 0;
 
 	if (uls == nilptr || confname == NULL) {
 		_uls_log(err_log)("%s: invalid parameter!", __func__);
@@ -1511,16 +1486,20 @@ ULS_QUALIFIED_METHOD(uls_init)(uls_lex_ptr_t uls, const char* confname)
 	}
 
 	uls_init_fp(uls);
+	ulc_init_header(uls_ptr(uls_config), uls);
 
-	if ((rc = __load_ulc_from_config_files(uls, confname)) < 0) {
+	if (__load_ulc_from_config_files(uls_ptr(uls_config), confname) < 0) {
 		uls_dealloc_lex(uls);
-		return -1;
+		stat = -1;
+	} else if (uls_classify_tok_group(uls) < 0) {
+		_uls_log(err_log)("%s: lex-conf file not consistent!", __func__);
+		stat = -1;
+	} else {
+		uls_grab(uls);
 	}
 
-	assign_tok_group(uls);
-	uls_grab(uls);
-
-	return 0;
+	ulc_deinit_header(uls_ptr(uls_config));
+	return stat;
 }
 
 ULS_QUALIFIED_RETTYP(uls_lex_ptr_t)
@@ -1606,12 +1585,29 @@ ULS_QUALIFIED_METHOD(uls_get_extra_tokdef)(uls_lex_ptr_t uls, int tok_id)
 ULS_QUALIFIED_RETTYP(uls_tokdef_vx_ptr_t)
 ULS_QUALIFIED_METHOD(uls_set_extra_tokdef_vx)(uls_lex_ptr_t uls, int tok_id, uls_voidptr_t extra_tokdef)
 {
+	uls_xcontext_ptr_t xctx = uls_ptr(uls->xcontext);
 	uls_tokdef_vx_ptr_t e_vx;
+	char buff[ULS_UTF8_CH_MAXLEN];
+	uls_wch_t wch;
+	int rc;
 
-	if ((e_vx = uls_find_tokdef_vx(uls, tok_id)) != nilptr) {
+	if ((e_vx = uls_find_tokdef_vx(uls, tok_id)) == nilptr) {
+		if ((uls->flags & ULS_FL_MULTIBYTES_CHRTOK) && tok_id > 0 && xctx->num_unregst_wch_tokens < 100) {
+			wch = tok_id;
+
+			if ((rc = _uls_tool_(encode_utf8)(wch, buff, -1)) > 0) {
+				e_vx = uls_create_tokdef_vx(wch, NULL, nilptr);
+				insert_1char_tokdef_etc(uls_ptr(uls->onechar_table), wch, e_vx);
+				__uls_onechar_lexeme_vx(uls, e_vx, wch, buff, rc);
+				++xctx->num_unregst_wch_tokens;
+			}
+		}
+	}
+
+	if (e_vx != nilptr) {
 		e_vx->extra_tokdef = extra_tokdef;
-	} else if (uls->flags & ULS_FL_MULTIBYTES_CHRTOK) {
-		_uls_log(err_log)("%s: unregistered token(%d)", __func__, tok_id);
+	} else {
+		_uls_log(err_log)("%s: unregistered (wchar) token(%d)", __func__, tok_id);
 	}
 
 	return e_vx;
@@ -2319,6 +2315,24 @@ ULS_QUALIFIED_METHOD(_uls_toknum_TMPL)(uls_lex_ptr_t uls)
 }
 
 int
+ULS_QUALIFIED_METHOD(_uls_get_lineno)(uls_lex_ptr_t uls)
+{
+	return uls_ctx_get_lineno(uls->xcontext.context);
+}
+
+void
+ULS_QUALIFIED_METHOD(_uls_set_lineno)(uls_lex_ptr_t uls, int lineno)
+{
+	uls_ctx_set_tag(uls->xcontext.context, NULL, lineno);
+}
+
+void
+ULS_QUALIFIED_METHOD(_uls_inc_lineno)(uls_lex_ptr_t uls, int delta)
+{
+	uls_ctx_inc_lineno(uls->xcontext.context, delta);
+}
+
+int
 ULS_QUALIFIED_METHOD(_uls_is_ch_space)(uls_lex_ptr_t uls, uls_wch_t wch)
 {
 	return uls_canbe_ch_space(uls->ch_context, wch);
@@ -2361,24 +2375,6 @@ ULS_QUALIFIED_METHOD(_uls_is_ch_2ch_token)(uls_lex_ptr_t uls, uls_wch_t wch)
 }
 
 int
-ULS_QUALIFIED_METHOD(_uls_get_lineno)(uls_lex_ptr_t uls)
-{
-	return __uls_get_lineno(uls);
-}
-
-void
-ULS_QUALIFIED_METHOD(_uls_set_lineno)(uls_lex_ptr_t uls, int lineno)
-{
-	uls_context_set_tag(uls->xcontext.context, NULL, lineno);
-}
-
-void
-ULS_QUALIFIED_METHOD(_uls_inc_lineno)(uls_lex_ptr_t uls, int amount)
-{
-	uls_context_inc_lineno(uls->xcontext.context, amount);
-}
-
-int
 ULS_QUALIFIED_METHOD(_uls_tok_id)(uls_lex_ptr_t uls)
 {
 	return __uls_tok(uls);
@@ -2417,11 +2413,12 @@ ULS_QUALIFIED_METHOD(_uls_get_taglen)(uls_lex_ptr_t uls)
 const char*
 ULS_QUALIFIED_METHOD(_uls_get_tag2)(uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) parms)
 {
-	const char *tagstr = __uls_get_tag(uls);
+	uls_context_ptr_t ctx = uls->xcontext.context;
+	const char *tagstr = uls_ctx_get_tag(ctx);
 
 	if (parms != nilptr) {
 		parms->lptr = tagstr;
-		parms->len = __uls_get_taglen(uls);
+		parms->len = uls_ctx_get_taglen(ctx);
 	}
 
 	return tagstr;
@@ -2430,7 +2427,7 @@ ULS_QUALIFIED_METHOD(_uls_get_tag2)(uls_lex_ptr_t uls, uls_ptrtype_tool(outparam
 void
 ULS_QUALIFIED_METHOD(uls_set_tag)(uls_lex_ptr_t uls, const char* tag, int lno)
 {
-	uls_context_set_tag(uls->xcontext.context, tag, lno);
+	uls_ctx_set_tag(uls->xcontext.context, tag, lno);
 }
 
 const char*
@@ -2511,7 +2508,7 @@ ULS_QUALIFIED_METHOD(uls_get_eoftag)(uls_lex_ptr_t uls, int *ptr_len_tag)
 }
 
 int
-ulsjava_get_tokid_list(uls_lex_t* uls, int **ptr_outbuf)
+ulsjava_get_tokid_list(uls_lex_ptr_t uls, int **ptr_outbuf)
 {
 	uls_type_tool(outparam) parms;
 	int n;
@@ -2523,7 +2520,7 @@ ulsjava_get_tokid_list(uls_lex_t* uls, int **ptr_outbuf)
 }
 
 void
-ulsjava_put_tokid_list(uls_lex_t* uls, int **ptr_outbuf)
+ulsjava_put_tokid_list(uls_lex_ptr_t uls, int **ptr_outbuf)
 {
 	uls_type_tool(outparam) parms;
 

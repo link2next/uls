@@ -33,7 +33,7 @@ AC_CHECK_LIB([pthread], [pthread_mutex_init])
 # Checks for header files.
 AC_FUNC_ALLOCA
 AC_CHECK_HEADERS([fcntl.h libintl.h limits.h locale.h malloc.h])
-AC_CHECK_HEADERS([stddef.h stdlib.h string.h unistd.h wchar.h ])
+AC_CHECK_HEADERS([stddef.h stdlib.h string.h unistd.h wchar.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
@@ -123,7 +123,6 @@ AC_CONFIG_FILES([Makefile
 	tools/ulf_gen/Makefile
 	tools/uls_stream/Makefile
 	doc/Makefile
-	doc/man/Makefile
 	tests/Makefile
 	tests/cpp_hello/Makefile
 	tests/dump_toks/Makefile
@@ -136,7 +135,6 @@ AC_CONFIG_FILES([Makefile
 	tests/strings/Makefile
 	tests/tok_remap/Makefile
 	tests/two_lex/Makefile
-	tests/test_tree/Makefile
 	tests/gcc_toks/Makefile
 	examples/Makefile
 	examples/test_1st/Makefile

@@ -30,7 +30,7 @@
 
 #include "uls.h"
 
-int print_tmpl_stream_file(uls_ostream_t *ostr, uls_lex_t* uls);
+int print_tmpl_stream_file(uls_ostream_t *ostr, uls_lex_ptr_t uls);
 int write_uls_files(int n_fpaths, const char** fpaths);
 
 #endif

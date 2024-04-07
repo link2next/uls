@@ -67,16 +67,16 @@ uls_lex_ptr_t sam_lex;
 
 static const struct option longopts[] = {
 	{ "dirpath",       required_argument, NULL, 'd' },
-	{ "filename",      required_argument, NULL, 'f' },
-	{ "uld-sample",    no_argument,       NULL, 's' },
 	{ "enum",          required_argument, NULL, 'e' },
+	{ "filename",      required_argument, NULL, 'f' },
+	{ "group",         required_argument, NULL, 'g' }, // OBSOLETE:
 	{ "lang",          required_argument, NULL, 'l' },
 	{ "class-name",    required_argument, NULL, 'n' },
-	{ "group",         required_argument, NULL, 'g' }, // OBSOLETE:
+	{ "output",        required_argument, NULL, 'o' },
 	{ "prefix",        required_argument, NULL, 'p' },
 	{ "query",         no_argument,       NULL, 'q' },
-	{ "output",        required_argument, NULL, 'o' },
-
+	{ "uld-sample",    no_argument,       NULL, 's' },
+	{ "uld",           no_argument,       NULL, 'S' },
 	{ "silent",        no_argument,       NULL, 'y' },
 	{ "dump",          required_argument, NULL, 'z' },
 	{ "verbose",       no_argument,       NULL, 'v' },
@@ -87,19 +87,19 @@ static const struct option longopts[] = {
 };
 #endif
 
-#define ULC2CLASS_OPTSTR "d:f:e:l:n:g:p:qo:svVHhyz:"
+#define ULC2CLASS_OPTSTR "d:e:f:g:l:n:o:p:qsSvVHhyz:"
 
 static void usage_synopsis()
 {
-	err_log("Usage: %s [OPTIONS] <ulc-file.ulc|uld-file.uld>", progname);
+	err_log("Usage: %s [OPTIONS] <file.ulc|file.uld>", progname);
 	err_log("    %s generates the source files for lexical analysis from ulc file.", progname);
 	err_log("       %s <ulc-filepath|lang-name>", progname);
 	err_log("       %s -l {c|cpp|cppcli|cs|java} <ulc-file>", progname);
 	err_log("       %s -lc -e <enum-name> <ulc-file>", progname);
 	err_log("       %s -f <out-filename> -n <class-name> <ulc-file>", progname);
 	err_log("       %s -d <out-dirpath> -f <out-filename> <ulc-file>", progname);
+	err_log("       %s -S <lang-name>", progname);
 	err_log("       %s -q [lang-name]", progname);
-	err_log("       %s -q -s <lang-name>", progname);
 	err_log("       %s --dump=<category> <ulc-filepath>,", progname);
 	err_log("          where category = [keyw|names|rsvd|hash|ch_ctx|quote|1char|2char|utf]");
 }
@@ -107,27 +107,28 @@ static void usage_synopsis()
 static void usage_desc()
 {
 #ifdef ULS_WINDOWS
-	err_log("  -o <filepath>     specify the output file path.");
-	err_log("  -f <filename>     specify the output file name without suffix.");
 	err_log("  -d <dirpath>      specify the directory for output files.");
+	err_log("  -e <enum-name>    specify the enum-name if you want token-name list with enum style.");
+	err_log("  -f <filename>     specify the output file name without suffix.");
 	err_log("  -l <lang-name>    specify the language name when generating source files.");
 	err_log("  -n <name>         specifies the name of class(or enum-name).");
+	err_log("  -o <filepath>     specify the output file path.");
+	err_log("  -p <prefix>       prepend <prefix> at the front of token-name.");
 	err_log("  -q                query the list of ulc names.");
-	err_log("  -s                generates a sample uld-file.");
-//	err_log("  -g <token-group>  token-group = {'regular','reserved', 'quote'}.");
+	err_log("  -S                generates a sample uld-file.");
 	err_log("  -v                verbose mode.");
 	err_log("  -V                prints the version information.");
 	err_log("  -h                displays the brief help.");
 #else
-	err_log("  -o, --output <filepath>    specify the output file path.");
-	err_log("  -f, --filename <filename>  specify the output file name without suffix.");
 	err_log("  -d, --dirpath <dirpath>    specify the directory for output files.");
+	err_log("  -e, --enum <enum-name>     specify the enum-name if you want token-name list with enum style.");
+	err_log("  -f, --filename <filename>  specify the output file name without suffix.");
 	err_log("  -l, --lang=<lang-name>     specify the target language name.");
 	err_log("  -n, --class-name=<name>    specify the name of the class(or enum-name).");
-
+	err_log("  -o, --output <filepath>    specify the output file path.");
+	err_log("  -p, --prefix <prefix>      prepend <prefix> at the front of token-name.");
 	err_log("  -q, --query [lang-name]    query the list of ulc names.");
-	err_log("  -s, --uld-sample           generates a sample uld-file.");
-//	err_log("  -g, --group=<token-group>  token-group = {'regular','reserved', 'quote'}.");
+	err_log("  -S, --uld-sample           generates a sample uld-file.");
 	err_log("  -v, --verbose              verbose mode.");
 	err_log("  -V, --version              prints the version information.");
 	err_log("  -h, --help                 displays the brief help.");
@@ -217,17 +218,13 @@ static void usage_long(void)
 	err_log("");
 
 	err_log("To dump the mapping of token name to token number, use -s-option with -q-option.");
-	err_log("    %s -q -s golang", progname);
-	err_log("      #@golang");
-	err_log("        ......");
-	err_log("        NUMBER -3");
-	err_log("            ID -2");
-	err_log("           EOF -1");
-	err_log("           EOI 0");
-	err_log("   RUNE_LITSTR 128");
-	err_log(" INTERP_LITSTR 129");
-	err_log("    RAW_LITSTR 130");
-	err_log("         .....");
+	err_log("    %s -S golang", progname);
+	err_log("#@go");
+	err_log("");
+	err_log("#ERR              ERR               -8");
+	err_log("#NONE             NONE              -7");
+	err_log(".....");
+	err_log("");
 	err_log("You can modify the token name and number after saving the above output as uld-file");
 	err_log("  and specify the path of uld-file in the argument of uls-object creator for configuration name.");
 	err_log("");
@@ -357,6 +354,7 @@ ulc2class_options(int opt, char* optarg)
 		opt_query = 1;
 		break;
 
+	case 'S':
 	case 's':
 		opt_uld_gen = 1;
 		break;
@@ -550,16 +548,6 @@ ulc_query_var(const char *varnam)
 }
 
 int
-ulc_query_process(void)
-{
-	if (opt_uld_gen) {
-		uld_export_names(sam_lex);
-	}
-
-	return 0;
-}
-
-int
 ulc_generate_files(uls_parms_emit_t *emit_parm)
 {
 	const char *cptr_suff;
@@ -598,7 +586,7 @@ ulc_generate_files(uls_parms_emit_t *emit_parm)
 }
 
 void
-dump_tok_info(uls_lex_t *uls)
+dump_tok_info(uls_lex_ptr_t uls)
 {
 	if (ult_streql(opt_dump, "keyw")) {
 		uls_dump_list_tokdef_vx(uls);
@@ -607,7 +595,7 @@ dump_tok_info(uls_lex_t *uls)
 	} else if (ult_streql(opt_dump, "rsvd")) {
 		uls_dump_tokdef_rsvd(uls);
 	} else if (ult_streql(opt_dump, "hash")) {
-		uls_dump_kwtable(&uls->idkeyw_table);
+		uls_dump_kwtable(uls);
 	} else if (ult_streql(opt_dump, "ch_ctx")) {
 		uls_dump_char_context(uls);
 	} else if (ult_streql(opt_dump, "quote")) {
@@ -617,7 +605,7 @@ dump_tok_info(uls_lex_t *uls)
 	} else if (ult_streql(opt_dump, "2char")) {
 		uls_dump_2char(uls);
 	} else if (ult_streql(opt_dump, "utf")) {
-		uls_dump_utf8(uls);
+		uls_dump_utf8firstbyte(uls);
 	}
 }
 
@@ -639,12 +627,7 @@ main(int argc, char* argv[])
 		return i0;
 	}
 
-	if (opt_uld_gen && !opt_query) {
-		err_log("%s: Use -s with -q-option.", progname);
-		return -1;
-	}
-
-	if (opt_query && !opt_uld_gen) {
+	if (opt_query) {
 		if (opt_class_name != NULL) {
 			return ulc_query_var(opt_class_name);
 		}
@@ -691,23 +674,23 @@ main(int argc, char* argv[])
 		return -1;
 	}
 
-	rc = uls_init_parms_emit(&emit_parm, out_dirpath, out_filename, uld_file,
-		specname, opt_class_name, opt_enum_name, opt_prefix,
-		prn_flags | ULS_FL_WANT_RESERVED_TOKS);
-	if (rc < 0) {
-		err_log("%s: fail to create source files for %s", progname, ulc_config);
-		stat = -1;
-	}
-
 	if (opt_dump != NULL) {
 		dump_tok_info(sam_lex);
-	} else if (opt_query) {
-		stat = ulc_query_process();
+	} else if (opt_uld_gen) {
+		uld_dump_sample(sam_lex);
 	} else {
-		stat = ulc_generate_files(&emit_parm);
+		rc = uls_init_parms_emit(&emit_parm, out_dirpath, out_filename, uld_file,
+			specname, opt_class_name, opt_enum_name, opt_prefix,
+			prn_flags | ULS_FL_WANT_RESERVED_TOKS);
+		if (rc < 0) {
+			err_log("%s: fail to create source files for %s", progname, ulc_config);
+			stat = -1;
+		} else {
+			stat = ulc_generate_files(&emit_parm);
+			uls_deinit_parms_emit(&emit_parm);
+		}
 	}
 
-	uls_deinit_parms_emit(&emit_parm);
 	uls_destroy(sam_lex);
 
 	uls_mfree(ulc_config);

@@ -50,7 +50,7 @@ int  opt_verbose;
 LPCTSTR config_name;
 LPCTSTR input_file;
 
-uls_lex_t *sample_lex;
+uls_lex_ptr_t sample_lex;
 
 static void usage(void)
 {
@@ -121,7 +121,7 @@ proc_file(LPCTSTR fpath)
 		}
 
 		uls_set_line(sample_lex, filebuff, ult_str_length(filebuff), 0);
-		uls_inc_lineno(sample_lex, ++lno);
+		uls_set_lineno(sample_lex, ++lno);
 
 		if (uls_get_tok(sample_lex) != TOK_EOI) {
 			uls_dumpln_tok(sample_lex);

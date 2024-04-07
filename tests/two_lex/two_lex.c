@@ -49,7 +49,7 @@ LPCTSTR progname;
 int  test_mode = -1;
 int  opt_verbose;
 
-uls_lex_t *sam1_lex, *sam2_lex;
+uls_lex_ptr_t sam1_lex, sam2_lex;
 
 static void usage(void)
 {

@@ -35,7 +35,7 @@
 #endif
 
 ULS_DECL_STATIC void
-ULS_QUALIFIED_METHOD(__init_onechar_tokgrp)(uls_onechar_table_ptr_t tbl, int grp_id, int ch0, int n)
+ULS_QUALIFIED_METHOD(__init_1char_tokgrp)(uls_onechar_table_ptr_t tbl, int grp_id, int ch0, int n)
 {
 	uls_onechar_tokgrp_ptr_t tokgrp;
 	uls_decl_parray_slots(slots_vx, tokdef_vx);
@@ -53,27 +53,27 @@ ULS_QUALIFIED_METHOD(__init_onechar_tokgrp)(uls_onechar_table_ptr_t tbl, int grp
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_init_onechar_table)(uls_onechar_table_ptr_t tbl)
+ULS_QUALIFIED_METHOD(uls_init_1char_table)(uls_onechar_table_ptr_t tbl)
 {
 	uls_init_array_type00(uls_ptr(tbl->tokgrps), onechar_tokgrp, ULS_N_ONECHAR_TOKGRPS);
 
 	// GROUP-0: '!' ~ '/'
-	__init_onechar_tokgrp(tbl, 0, '!', 15);
+	__init_1char_tokgrp(tbl, 0, '!', 15);
 
 	// GROUP-1: ':' ~ '@'
-	__init_onechar_tokgrp(tbl, 1, ':', 7);
+	__init_1char_tokgrp(tbl, 1, ':', 7);
 
 	// GROUP-2: '[' ~ '`'
-	__init_onechar_tokgrp(tbl, 2, '[', 6);
+	__init_1char_tokgrp(tbl, 2, '[', 6);
 
 	// GROUP-3: '{' ~ '~'
-	__init_onechar_tokgrp(tbl, 3, '{', 4);
+	__init_1char_tokgrp(tbl, 3, '{', 4);
 
 	tbl->tokdefs_etc_list = nilptr;
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_deinit_onechar_table)(uls_onechar_table_ptr_t tbl)
+ULS_QUALIFIED_METHOD(uls_deinit_1char_table)(uls_onechar_table_ptr_t tbl)
 {
 	uls_onechar_tokdef_etc_ptr_t  e_etc, e_etc_next;
 	uls_onechar_tokgrp_ptr_t tokgrp;

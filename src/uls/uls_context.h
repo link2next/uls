@@ -45,9 +45,6 @@ extern "C" {
 #endif
 
 #ifdef ULS_DECL_PROTECTED_TYPE
-// the flags of uls_xcontext_t
-#define ULS_XCTX_FL_IGNORE_LF      0x01
-
 // the flags of uls_context_t
 #define ULS_CTX_FL_WANT_EOFTOK     0x01
 #define ULS_CTX_FL_EOF             0x02
@@ -60,12 +57,13 @@ extern "C" {
 #define ULS_CTX_FL_FILL_RAW        0x100
 #define ULS_CTX_FL_TOKSTR_AUX      0x200
 
-#define uls_context_get_tag(ctx) (_uls_tool(csz_text)(uls_ptr((ctx)->tag)))
-#define uls_context_get_taglen(ctx) (csz_length(uls_ptr((ctx)->tag)))
+#define uls_ctx_get_tag(ctx) (_uls_tool(csz_text)(uls_ptr((ctx)->tag)))
+#define uls_ctx_get_taglen(ctx) (csz_length(uls_ptr((ctx)->tag)))
 
-#define uls_context_set_lineno(ctx,lno) uls_context_set_tag(ctx, NULL, lno)
-#define uls_context_get_lineno(ctx) ((ctx)->lineno)
-
+#define uls_ctx_get_lineno(ctx) ((ctx)->lineno)
+#define uls_ctx_set_lineno(ctx,lno) uls_ctx_set_tag(ctx, NULL, lno)
+#define __uls_ctx_set_lineno(ctx,lno) do { (ctx)->lineno = lno; } while(0)
+#define __uls_ctx_inc_lineno(ctx,delta) do { (ctx)->lineno += delta; } while(0)
 #endif // ULS_DECL_PROTECTED_TYPE
 
 #ifdef ULS_DECL_PUBLIC_TYPE
@@ -88,7 +86,8 @@ ULS_DEFINE_DELEGATE_END(xctx_boundary_checker);
 
 ULS_DEFINE_DELEGATE_BEGIN(xctx_boundary_checker2, int)(uls_xcontext_ptr_t xctx, char* buf, int n);
 ULS_DEFINE_DELEGATE_END(xctx_boundary_checker2);
-#endif
+
+#endif // ULS_DECL_PUBLIC_TYPE
 
 #ifdef ULS_DEF_PUBLIC_TYPE
 ULS_DEFINE_STRUCT(lexseg)
@@ -163,9 +162,13 @@ ULS_DEFINE_STRUCT_BEGIN(xcontext)
 	char *prepended_input;
 	int len_prepended_input, lfs_prepended_input;
 
+	char *uldfile_buf;
+	int uldfile_buflen, uldfile_bufsiz;
+	int uldfile_nlines;
+
 	uls_ref_parray(quotetypes, quotetype);  // ULS_N_MAX_QUOTETYPES
 
-	int len_surplus;
+	int num_unregst_wch_tokens;
 	uls_context_ptr_t context;
 };
 #endif // ULS_DEF_PUBLIC_TYPE
@@ -215,13 +218,14 @@ int xcontext_txtfd_filler(uls_xcontext_ptr_t xctx);
 #endif
 
 #ifdef ULS_DECL_PUBLIC_PROC
-ULS_DLL_EXTERN void uls_context_set_tag(uls_context_ptr_t ctx, const char* tagstr, int lno);
-ULS_DLL_EXTERN void uls_context_inc_lineno(uls_context_ptr_t ctx, int delta);
 ULS_DLL_EXTERN void uls_context_set_line(uls_context_ptr_t ctx, const char* line, int len);
 
 ULS_DLL_EXTERN int uls_xcontext_delete_litstr_analyzer(uls_xcontext_ptr_t xctx, const char* prefix);
 ULS_DLL_EXTERN int uls_xcontext_change_litstr_analyzer(uls_xcontext_ptr_t xctx,
 	const char* prefix, uls_litstr_analyzer_t lit_analyzer, uls_voidptr_t data);
+
+ULS_DLL_EXTERN void uls_ctx_set_tag(uls_context_ptr_t ctx, const char* tagstr, int lno);
+ULS_DLL_EXTERN void uls_ctx_inc_lineno(uls_context_ptr_t ctx, int delta);
 #endif
 
 #ifdef _ULS_CPLUSPLUS

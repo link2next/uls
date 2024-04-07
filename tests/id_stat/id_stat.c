@@ -138,18 +138,18 @@ find_id_stat(LPCTSTR name)
 id_stat_t*
 append_id_stat(LPCTSTR name)
 {
-	id_stat_t *e;
+	id_stat_t *id_stat;
 
 	if (n_id_stat_array >= n_alloc_id_stat_array) {
 		n_alloc_id_stat_array += 128;
 		id_stat_array = uls_mrealloc(id_stat_array, n_alloc_id_stat_array * sizeof(id_stat_t));
 	}
 
-	e = id_stat_array + n_id_stat_array++;
-	ult_str_copy(e->name, name);
-	e->freq = 0;
+	id_stat = id_stat_array + n_id_stat_array++;
+	ult_str_copy(id_stat->name, name);
+	id_stat->freq = 0;
 
-	return e;
+	return id_stat;
 }
 
 int

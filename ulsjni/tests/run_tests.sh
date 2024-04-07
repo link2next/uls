@@ -57,7 +57,7 @@ test_outfile1="/tmp/$$_ulsjni_out_1_1.txt"
 java -Djava.library.path=$LIB_PATH $OPT_CP uls.tests.UlsDump input1.txt $TESTS_DIR > $test_outfile1
 diff -q $TESTS_DIR/out_1_1.txt $test_outfile1
 if [ $? != 0 ]; then
-	echo "fail(stdout): diff for '$test_outfile1'";
+	echo "fail(stdout): diff for '$test_outfile1'"
 	exit 1
 fi
 
@@ -66,7 +66,7 @@ test_outfile2="/tmp/$$_ulsjni_out_2_1.txt"
 java -Djava.library.path=$LIB_PATH $OPT_CP uls.tests.UlsTestStream $TESTS_DIR > $test_outfile2
 diff -q $TESTS_DIR/out_2_1.txt $test_outfile2
 if [ $? != 0 ]; then
-	echo "fail(stdout): diff for '$test_outfile2'";
+	echo "fail(stdout): diff for '$test_outfile2'"
 	exit 1
 fi
 

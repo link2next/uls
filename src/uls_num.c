@@ -1280,7 +1280,7 @@ ULS_QUALIFIED_METHOD(__make_radixint_str_gexpr)(const char *radstr, int l_radstr
 		break;
 	default: // radix = { 3, 10 }
 		n = uls_ceil_log2(len + 1, 3);
-		numstr2 = uls_malloc_buffer(n);
+		numstr2 = (char *) uls_malloc(n);
 		uls_memcopy(numstr2, radstr, len);
 		numstr2[len] = '\0';
 		k = uls_radix2hexadecimal_str(radix, numstr2, len, numbuf, k);

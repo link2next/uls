@@ -204,6 +204,7 @@ ULS_DLL_EXTERN void uls_fp_close(FILE *fp);
 ULS_DLL_EXTERN int uls_fp_gets(FILE *fp, char* buf, int buf_siz, int flags);
 ULS_DLL_EXTERN int uls_fp_getc(FILE *fp);
 ULS_DLL_EXTERN void uls_fp_putc(FILE *fp, char ch);
+ULS_DLL_EXTERN int uls_fp_filesize(FILE *fin);
 
 ULS_DLL_EXTERN void uls_init_tempfile(uls_tempfile_ptr_t tmpfile);
 ULS_DLL_EXTERN void uls_deinit_tempfile(uls_tempfile_ptr_t tmpfile);

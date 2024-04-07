@@ -1,7 +1,7 @@
-ULF_GEN(1)                                          User Commands                                          ULF_GEN(1)
+ULF_GEN(1)                                     User Commands                                     ULF_GEN(1)
 
 NAME
-       ulf_gen - ulf_gen
+       ulf_gen v1.6.1, written by Stanley Hong - ulf_gen
 
 SYNOPSIS
        ulf_gen -L <ulc-file> [options] <file|dir>
@@ -9,8 +9,8 @@ SYNOPSIS
 DESCRIPTION
               ulf_gen generates the frequencies of the keywords of a language.
 
-              ulf_gen  -L  <ulc-file>  <file1>  <file2>  ...  ulf_gen -L <ulc-file> -o /usr/local/share/a.ulf <file1>
-              <file2> ...  ulf_gen -L <ulc-file> -l <list-file> <target-dir>
+              ulf_gen  -L  <ulc-file>  <file1> <file2> ...  ulf_gen -L <ulc-file> -o /usr/local/share/a.ulf
+              <file1> <file2> ...  ulf_gen -L <ulc-file> -l <list-file> <target-dir>
 
        -L, --lang=<ulc-spec>
               Specify the lexical-spec(*.ulc) of the language
@@ -30,11 +30,14 @@ DESCRIPTION
        -h, --help
               Display the short help
 
-       ulf_gen collects the usage statistics of given language by sampling from source code files.  It dumps the fre‐
-       quencies  of  keywords.   After  saving them in the file suffixed by '*.ulf', you can use it together with its
-       ulc-file.  For example, Let the output file  of  'sample.ulc'  be  'sample.ulf'.   The  file  'sample.ulf'  is
-       together  read if only it exists in the same directory of sample.ulc.  The ulf-file is optional but can accel‐
-       erates the generated lexical tokenizer.
+       ulf_gen collects the usage statistics of given language
+
+              by sampling from source code files.
+
+       It dumps the frequencies of keywords.  After saving them in the file suffixed by  '*.ulf',  you  can
+       use  it  together  with  its  ulc-file.   For  example, Let the output file of 'sample.ulc' be 'sam‐
+       ple.ulf'.  The file 'sample.ulf' is together read if only it exists in the same  directory  of  sam‐
+       ple.ulc.  The ulf-file is optional but can accelerates the generated lexical tokenizer.
 
        To get the ulf-file of 'sample.ulc' from listed source code files,
 
@@ -53,11 +56,11 @@ DESCRIPTION
               is provided under The MIT License (MIT).
 
 SEE ALSO
-       The full documentation for ulf_gen is maintained as a Texinfo manual.  If the info and  ulf_gen  programs  are
-       properly installed at your site, the command
+       The  full documentation for ulf_gen is maintained as a Texinfo manual.  If the info and ulf_gen pro‐
+       grams are properly installed at your site, the command
 
               info ulf_gen
 
        should give you access to the complete manual.
 
-ulf_gen v1.6.0, written by Stanley Hong (link2next@gmail.com) May 2019,  ULF_GEN(1)
+ulf_gen (link2next@gmail.com),                   March 2024                                      ULF_GEN(1)

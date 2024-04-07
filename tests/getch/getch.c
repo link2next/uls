@@ -46,7 +46,7 @@ int  test_mode = -1;
 int  opt_verbose;
 LPCTSTR config_name;
 LPTSTR input_file;
-uls_lex_t *sample_lex;
+uls_lex_ptr_t sample_lex;
 
 static void usage(void)
 {

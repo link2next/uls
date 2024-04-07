@@ -51,7 +51,7 @@ LPCTSTR config_name;
 LPCTSTR input_file;
 int   test_mode = -1;
 
-uls_lex_t *sample_lex;
+uls_lex_ptr_t sample_lex;
 
 static void usage(void)
 {
@@ -143,7 +143,7 @@ test_initial_uls(LPCTSTR fpath)
 int
 test_uls(LPCTSTR fpath)
 {
-	uls_lex_t *uls = sample_lex;
+	uls_lex_ptr_t uls = sample_lex;
 	int fd, t;
 
 	if ((fd = uls_fd_open(fpath, ULS_FIO_READ)) < 0) {
@@ -199,7 +199,7 @@ sample_xdef_t xdefs[5] = {
 void
 test_uls_xdef(LPCTSTR fpath)
 {
-	uls_lex_t *uls = sample_lex;
+	uls_lex_ptr_t uls = sample_lex;
 	sample_xdef_t *xdef;
 	LPCTSTR ptr;
 	TCHAR buff[64];
@@ -291,7 +291,7 @@ uls_ungrab_FILE_source(uls_source_t* isrc)
 void
 test_uls_isrc(LPCTSTR fpath)
 {
-	uls_lex_t *uls = sample_lex;
+	uls_lex_ptr_t uls = sample_lex;
 	LPCTSTR tokstr;
 	FILE   *fp;
 	int t;

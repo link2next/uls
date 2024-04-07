@@ -69,12 +69,12 @@ ULS_DEFINE_STRUCT(tokdef_outparam)
 #endif // ULS_DEF_PUBLIC_TYPE
 
 #if defined(__ULS_ONECHAR__) || defined(ULS_DECL_PRIVATE_PROC)
-ULS_DECL_STATIC void __init_onechar_tokgrp(uls_onechar_table_ptr_t tbl, int grp_id, int ch0, int n);
+ULS_DECL_STATIC void __init_1char_tokgrp(uls_onechar_table_ptr_t tbl, int grp_id, int ch0, int n);
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC
-void uls_init_onechar_table(uls_onechar_table_ptr_t tbl);
-void uls_deinit_onechar_table(uls_onechar_table_ptr_t tbl);
+void uls_init_1char_table(uls_onechar_table_ptr_t tbl);
+void uls_deinit_1char_table(uls_onechar_table_ptr_t tbl);
 
 uls_tokdef_vx_ptr_t find_1char_tokdef_map(uls_onechar_table_ptr_t tbl, int ch, uls_tokdef_outparam_ptr_t outparam);
 void insert_1char_tokdef_map(uls_onechar_tokgrp_ptr_t tokgrp, int ch, uls_tokdef_vx_ptr_t e_vx);

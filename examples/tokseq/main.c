@@ -221,14 +221,16 @@ _tmain(int n_targv, LPTSTR *targv)
 	}
 
 	if ((sample_lex = uls_create_tokseq()) == NULL) {
+//	if ((sample_lex = uls_create(_T("./tokseq.uld"))) == NULL) {
 		err_log(_T("%hs: can't init uls-object!"), __func__);
-		ulc_list_searchpath(_T("simple"));
 		uls_destroy_tmpls(tmpl_list);
 		return -1;
 	}
 
 	run_test_scenario(out_dir);
+
 	uls_destroy_tokseq(sample_lex);
+//	uls_destroy(sample_lex);
 	uls_destroy_tmpls(tmpl_list);
 
 	return 0;

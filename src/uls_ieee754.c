@@ -39,68 +39,6 @@
 #include "uls/uls_log.h"
 #endif
 
-ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(get_ieee754_biased_expo)(char* buff, int n_bits_expo)
-{
-	char  mask, ch, ch_carry;
-	int expo, i, j2, n_bits, m;
-
-	ch_carry = buff[0] & 0x7F;
-
-	for (expo=0, i=0; i<n_bits_expo/8; ) {
-		++i;
-		ch = ch_carry << 1;
-		if (buff[i] & 0x80) {
-			ch |= 0x01;
-		}
-
-		expo = (expo << 8) | ch;
-		ch_carry = buff[i] & 0x7F;
-	}
-
-	if ((n_bits = n_bits_expo % 8) > 0) {
-		j2 = n_bits;
-		m = 7 - j2;
-
-		mask = ((1 << n_bits) - 1) << m;
-		ch = (buff[i] & mask) >> m;
-		expo = (expo << n_bits) | ch;
-
-	} else {
-		expo = (expo << 7) | ch_carry;
-	}
-
-	return expo;
-}
-
-ULS_DECL_STATIC void
-ULS_QUALIFIED_METHOD(put_ieee754_biased_expo)(int m_expo, char* buff, int n_bits_expo)
-{
-	char  mask, ch;
-	int i, n_bits, m;
-
-	i = n_bits_expo / 8;
-
-	if ((n_bits = (1+n_bits_expo) % 8) > 0) {
-		m = 8 - n_bits;
-		mask = (1 << n_bits) - 1;
-
-		ch = (m_expo & mask) << m;
-		mask <<= m;
-
-		buff[i] = (buff[i] & ~mask) | ch;
-		--i;
-		m_expo >>= n_bits;
-	}
-
-	for ( ; i>0; i--, m_expo>>=8) {
-		buff[i] = m_expo & 0xFF;
-	}
-
-	mask = 0x7F;
-	buff[0] = (buff[0] & ~mask) | (m_expo & mask);
-}
-
 void
 ULS_QUALIFIED_METHOD(uls_ieee754_bankup_bits)(char* srcptr, int start_bit, int end_bit, int n_shift)
 {
@@ -232,56 +170,151 @@ ULS_QUALIFIED_METHOD(uls_ieee754_bankup_bits)(char* srcptr, int start_bit, int e
 	uls_clear_bits(srcptr0, end_bit - n_shift + 1, end_bit);
 }
 
+ULS_DECL_STATIC int
+ULS_QUALIFIED_METHOD(get_ieee754_biased_expo)(const char* buff, int n_bits_expo)
+{
+	char  mask, ch, ch_carry;
+	int expo = 0, i, n_bits, m;
+
+	ch_carry = buff[0] & 0x7F;
+	n_bits_expo -= 7;
+
+	for (i = 1; i <= n_bits_expo / 8; i++) {
+		ch = ch_carry << 1;
+		if (buff[i] & 0x80) {
+			ch |= 0x01;
+		}
+
+		expo = (expo << 8) | ch;
+		ch_carry = buff[i] & 0x7F;
+	}
+
+	expo = (expo << 7) | ch_carry;
+
+	if ((n_bits = n_bits_expo % 8) > 0) {
+		m = 8 - n_bits;
+		mask = ((1 << n_bits) - 1) << m;
+		ch = (buff[i] & mask) >> m;
+		expo = (expo << n_bits) | ch;
+	}
+
+	return expo;
+}
+
+ULS_DECL_STATIC void
+ULS_QUALIFIED_METHOD(put_ieee754_biased_expo)(int m_expo, char* buff, int n_bits_expo)
+{
+	char  mask, ch;
+	int i, n_bits, m;
+
+	i = n_bits_expo / 8;
+
+	if ((n_bits = (1+n_bits_expo) % 8) > 0) {
+		m = 8 - n_bits;
+
+		mask = (1 << n_bits) - 1;
+		ch = (m_expo & mask) << m;
+
+		mask <<= m;
+		buff[i] = (buff[i] & ~mask) | ch;
+		--i;
+		m_expo >>= n_bits;
+	}
+
+	for ( ; i > 0; i--, m_expo >>= 8) {
+		buff[i] = m_expo & 0xFF;
+	}
+
+	mask = 0x7F;
+	buff[0] = (buff[0] & ~mask) | (m_expo & mask);
+}
+
+int
+ULS_QUALIFIED_METHOD(uls_ieee754_double_isspecial)(double x, char* nambuf)
+{
+	if (x != x) {
+		uls_strcpy(nambuf, "NaN");
+	} else if (x != 0.0 && x * 2 == x) {
+		if (x < 0.0) {
+			uls_strcpy(nambuf, "-INF");
+		} else {
+			uls_strcpy(nambuf, "INF");
+		}
+	} else {
+		nambuf[0] = '\0';
+	}
+
+	return uls_strlen(nambuf);
+}
+
+double
+ULS_QUALIFIED_METHOD(uls_ieee754_modf)(double x, double* p_int)
+{
+	char  buff[SIZEOF_DOUBLE];
+	char  buff2[SIZEOF_DOUBLE];
+	double frac;
+	int m_expo, i0, i;
+
+	uls_memcopy(buff, &x, DOUBLE_SIZE_BYTES);
+	uls_arch2be_array(buff, DOUBLE_SIZE_BYTES);
+
+	m_expo = get_ieee754_biased_expo(buff, DOUBLE_EXPO_SIZE_BITS) - DOUBLE_EXPO_BIAS;
+	if (m_expo < 0) {
+		if (p_int != NULL) *p_int = 0.;
+		return x;
+	}
+
+	i0 = DOUBLE_MENTISA_STARTBIT + m_expo;
+
+	uls_memcopy(buff2, buff, DOUBLE_SIZE_BYTES);
+	if (uls_find_first_1bit(buff2, i0, DOUBLE_SIZE_BITS-1, (uls_uint32 *) &i) == 0) {
+		frac = 0.;
+	} else {
+		// skip 1 at index i, which is used implicit 1 in the ieee754 format.
+		if (++i >= DOUBLE_SIZE_BITS) {
+               uls_clear_bits(buff2, DOUBLE_MENTISA_STARTBIT, DOUBLE_SIZE_BITS-1);
+           }  else {
+			uls_ieee754_bankup_bits(buff2, i, DOUBLE_SIZE_BITS-1, i-DOUBLE_MENTISA_STARTBIT);
+		}
+		put_ieee754_biased_expo(i0 - i + DOUBLE_EXPO_BIAS, buff2, DOUBLE_EXPO_SIZE_BITS);
+		uls_be2arch_array(buff2, DOUBLE_SIZE_BYTES);
+		uls_memcopy(&frac, buff2, DOUBLE_SIZE_BYTES);
+	}
+
+	if (p_int != NULL) {
+		// extract the integral part of x.
+		uls_clear_bits(buff, i0, DOUBLE_SIZE_BITS - 1);
+		uls_be2arch_array(buff, DOUBLE_SIZE_BYTES);
+		uls_memcopy(p_int, buff, DOUBLE_SIZE_BYTES);
+	}
+
+	return frac;
+}
+
 int
 ULS_QUALIFIED_METHOD(uls_ieee754_longdouble_isspecial)(long double x, char* nambuf)
 {
-	// ret-val == 1 : x is a special-value with nambuf filled.
-	// ret-val == 0 x is a finite value
-	char  buff[SIZEOF_LONG_DOUBLE];
-	int expo_biasd, stat = 0;
-	int i, i0, minus;
-
-	uls_memcopy(buff, &x, _uls_sysinfo_(LDOUBLE_SIZE_BYTES));
-	uls_arch2be_array(buff, _uls_sysinfo_(LDOUBLE_SIZE_BYTES));
-
-	minus = (buff[0] & 0x80) ? 1 : 0;
-
-	expo_biasd = get_ieee754_biased_expo(buff, _uls_sysinfo_(LDOUBLE_EXPOSIZE_BITS));
-	i0 = _uls_sysinfo_(LDOUBLE_MENTISA_STARTBIT);
-
-	if (expo_biasd == (1<<_uls_sysinfo_(LDOUBLE_EXPOSIZE_BITS))-1) {
-		if (uls_find_first_1bit(buff,
-				i0, _uls_sysinfo_(LDOUBLE_SIZE_BITS)-1, (uls_uint32 *) &i) == 0) {
-			if (minus) uls_strcpy(nambuf, "-INF");
-			else uls_strcpy(nambuf, "+INF");
-
-		} else if (i == i0) {
-			uls_strcpy(nambuf, "QNaN");
-		} else { // i > i0
-			uls_strcpy(nambuf, "SNaN");
-		}
-		stat = 1;
-
-	} else if (expo_biasd == 0) {
-		if (uls_find_first_1bit(buff,
-			i0, _uls_sysinfo_(LDOUBLE_SIZE_BITS)-1, (uls_uint32 *) &i) == 0) {
-			if (minus) uls_strcpy(nambuf, "-0");
-			else uls_strcpy(nambuf, "+0");
+	if (x != x) {
+		uls_strcpy(nambuf, "NaN");
+	} else if (x != 0.0 && x * 2 == x) {
+		if (x < 0.0) {
+			uls_strcpy(nambuf, "-INF");
 		} else {
-			uls_strcpy(nambuf, "PDR");
+			uls_strcpy(nambuf, "INF");
 		}
 	} else {
-		uls_strcpy(nambuf, "PNR");
+		nambuf[0] = '\0';
 	}
 
-	return stat;
+	return uls_strlen(nambuf);
 }
 
 long double
-ULS_QUALIFIED_METHOD(uls_ieee754_modlf)(long double x, long double* p_frac)
+ULS_QUALIFIED_METHOD(uls_ieee754_modlf)(long double x, long double* p_int)
 {
 	char  buff[SIZEOF_LONG_DOUBLE];
 	char  buff2[SIZEOF_LONG_DOUBLE];
+	long double frac;
 	int m_expo, i0, i;
 
 	uls_memcopy(buff, &x, _uls_sysinfo_(LDOUBLE_SIZE_BYTES));
@@ -289,29 +322,32 @@ ULS_QUALIFIED_METHOD(uls_ieee754_modlf)(long double x, long double* p_frac)
 
 	m_expo = get_ieee754_biased_expo(buff, _uls_sysinfo_(LDOUBLE_EXPOSIZE_BITS)) - _uls_sysinfo_(LDOUBLE_EXPO_BIAS);
 	if (m_expo < 0) {
-		if (p_frac!=NULL) *p_frac = x;
-		return 0.;
+		if (p_int != NULL) *p_int = 0.;
+		return x;
 	}
 
 	i0 = _uls_sysinfo_(LDOUBLE_MENTISA_STARTBIT) + m_expo;
 
-	if (p_frac != NULL) {
-		uls_memcopy(buff2, buff, _uls_sysinfo_(LDOUBLE_SIZE_BYTES));
+	uls_memcopy(buff2, buff, _uls_sysinfo_(LDOUBLE_SIZE_BYTES));
 
-		if (uls_find_first_1bit(buff2, i0+1, _uls_sysinfo_(LDOUBLE_SIZE_BITS)-1, (uls_uint32 *) &i)==0) {
-			*p_frac = 0.;
+	if (uls_find_first_1bit(buff2, i0, _uls_sysinfo_(LDOUBLE_SIZE_BITS)-1, (uls_uint32 *) &i)==0) {
+		frac = 0.;
+	} else {
+		if (++i >= _uls_sysinfo_(LDOUBLE_SIZE_BITS)) {
+			uls_clear_bits(buff2, _uls_sysinfo_(LDOUBLE_MENTISA_STARTBIT), _uls_sysinfo_(LDOUBLE_SIZE_BITS)-1);
 		} else {
 			uls_ieee754_bankup_bits(buff2, i, _uls_sysinfo_(LDOUBLE_SIZE_BITS)-1, i-_uls_sysinfo_(LDOUBLE_MENTISA_STARTBIT));
-			put_ieee754_biased_expo(i0-i+_uls_sysinfo_(LDOUBLE_EXPO_BIAS), buff2, _uls_sysinfo_(LDOUBLE_EXPOSIZE_BITS));
-			uls_arch2be_array(buff2, _uls_sysinfo_(LDOUBLE_SIZE_BYTES));
-			uls_memcopy(p_frac, buff2, _uls_sysinfo_(LDOUBLE_SIZE_BYTES));
 		}
+		put_ieee754_biased_expo(i0 - i + _uls_sysinfo_(LDOUBLE_EXPO_BIAS), buff2, _uls_sysinfo_(LDOUBLE_EXPOSIZE_BITS));
+		uls_be2arch_array(buff2, _uls_sysinfo_(LDOUBLE_SIZE_BYTES));
+		uls_memcopy(&frac, buff2, _uls_sysinfo_(LDOUBLE_SIZE_BYTES));
 	}
 
-	uls_clear_bits(buff, i0+1, _uls_sysinfo_(LDOUBLE_SIZE_BITS)-1);
+	if (p_int != NULL) {
+		uls_clear_bits(buff, i0, _uls_sysinfo_(LDOUBLE_SIZE_BITS) - 1);
+		uls_be2arch_array(buff, _uls_sysinfo_(LDOUBLE_SIZE_BYTES));
+		uls_memcopy(p_int, buff, _uls_sysinfo_(LDOUBLE_SIZE_BYTES));
+	}
 
-	uls_arch2be_array(buff, _uls_sysinfo_(LDOUBLE_SIZE_BYTES));
-	uls_memcopy(&x, buff, _uls_sysinfo_(LDOUBLE_SIZE_BYTES));
-
-	return x;
+	return frac;
 }

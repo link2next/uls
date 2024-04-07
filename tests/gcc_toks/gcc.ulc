@@ -7,7 +7,7 @@ NUMBER_PREFIXES: 0x:16 0X:16 0:8 0b:2
 
 #COMMENT_TYPE: options=oneline,column0 // 
 QUOTE_TYPE: options=asymmetric,right_exclusive token=256,WCOORD \n#  \n verbatim1
-PREPEND_INPUT: "\n" true
+PREPEND_INPUT: "\n"
 
 %%
 

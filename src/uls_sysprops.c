@@ -73,7 +73,7 @@ ULS_QUALIFIED_METHOD(__init_system_info)(uls_sysinfo_ptr_t sysinfo, int poolsiz)
 
 	if (poolsiz > 0) {
 		sysinfo->n_alloc_strpool = poolsiz;
-		sysinfo->strpool = uls_malloc_buffer(poolsiz);
+		sysinfo->strpool = (char *) _uls_tool_(malloc)(poolsiz);
 	}
 
 	sysinfo->n_strpool = 0;
@@ -247,7 +247,23 @@ ULS_QUALIFIED_METHOD(uls_arch2be_array)(char* ary, int n)
 }
 
 void
+ULS_QUALIFIED_METHOD(uls_be2arch_array)(char* ary, int n)
+{
+	if (_uls_sysinfo_(ULS_BYTE_ORDER) == ULS_LITTLE_ENDIAN) {
+		uls_reverse_bytes(ary, n);
+	}
+}
+
+void
 ULS_QUALIFIED_METHOD(uls_arch2le_array)(char* ary, int n)
+{
+	if (_uls_sysinfo_(ULS_BYTE_ORDER) == ULS_BIG_ENDIAN) {
+		uls_reverse_bytes(ary, n);
+	}
+}
+
+void
+ULS_QUALIFIED_METHOD(uls_le2arch_array)(char* ary, int n)
 {
 	if (_uls_sysinfo_(ULS_BYTE_ORDER) == ULS_BIG_ENDIAN) {
 		uls_reverse_bytes(ary, n);

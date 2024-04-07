@@ -29,7 +29,7 @@
 #include "main.h"
 
 int
-print_tmpl_stream_file(uls_ostream_t *ostr, uls_lex_t* uls)
+print_tmpl_stream_file(uls_ostream_t *ostr, uls_lex_ptr_t uls)
 {
 	csz_str_t tag_buf;
 	const char *lxm;

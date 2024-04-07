@@ -71,8 +71,6 @@ extern "C" {
 #define DECLARE_ULS_MUTEX(name) uls_mutex_struct_t name
 #define EXTERN_ULS_MUTEX(name) extern uls_mutex_struct_t name
 
-#define uls_malloc_buffer(n) (char *) _uls_tool_(malloc)(n)
-#define uls_malloc_buffer_clear(n) (char *) _uls_tool_(malloc_clear)(n)
 #define uls_mfree(a) do { _uls_tool(__uls_mfree)((void *)(a)); (a)=NULL; } while (0)
 #endif // ULS_DECL_GLOBAL_TYPES
 
@@ -98,12 +96,7 @@ extern "C" {
 #define byte_offset(i_bit)  ((i_bit) & (BYTE_SIZE_BITS-1))
 #define BYTE_LEFT_MOST_1    (1<<(BYTE_SIZE_BITS-1))
 
-#define ULS_INT_MAX \
-  ( \
-  	((unsigned int) -1) & ~( \
-  		(unsigned int) 0x1 << (sizeof(int)*8-1) \
-  	) \
-  )
+#define ULS_INT_MAX (~((int)1 << (sizeof(int)*8-1)))
 #define ULS_INT_MIN (-ULS_INT_MAX-1)
 
 #ifdef ULS_WINDOWS
@@ -122,7 +115,6 @@ extern "C" {
 #define uls_canbe_ch_id(ch_ctx, wch)         (wch >= ULS_SYNTAX_TABLE_SIZE || ((ch_ctx)[wch] & ULS_CH_ID))
 #define uls_canbe_ch_comm(ch_ctx, wch)       (wch >= ULS_SYNTAX_TABLE_SIZE || ((ch_ctx)[wch] & ULS_CH_COMM))
 #define uls_canbe_ch_quote(ch_ctx, wch)      (wch >= ULS_SYNTAX_TABLE_SIZE || ((ch_ctx)[wch] & ULS_CH_QUOTE))
-#define uls_canbe_ch_1ch_token(ch_ctx, wch)  (wch >= ULS_SYNTAX_TABLE_SIZE || ((ch_ctx)[wch] & ULS_CH_1))
 #define uls_canbe_ch_2ch_token(ch_ctx, wch)  (wch >= ULS_SYNTAX_TABLE_SIZE || ((ch_ctx)[wch] & ULS_CH_2PLUS))
 
 #ifdef _ULS_IMPLDLL

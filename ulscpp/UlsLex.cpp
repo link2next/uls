@@ -650,9 +650,9 @@ UlsLex::~UlsLex()
 	uls_lf_destroy(str_nlf);
 }
 
-int UlsLex::prepareUldMap()
+int UlsLex::prepareUldMap(int bufsiz_uldfile)
 {
-	names_map = uld_prepare_names(&lex);
+	names_map = uld_prepare_names(&lex, bufsiz_uldfile);
 	return 0;
 }
 
@@ -781,7 +781,7 @@ void UlsLex::setLineNum(int lineno)
 // <return>none</return>
 void UlsLex::addLineNum(int amount)
 {
-	_uls_inc_lineno(&lex, amount);
+	uls_inc_lineno(&lex, amount);
 	LineNum = uls_get_lineno(&lex);
 }
 
@@ -1190,7 +1190,7 @@ bool UlsLex::is_ch_quote(uls_wch_t wch)
 // <return>bool</return>
 bool UlsLex::is_ch_1ch_token(uls_wch_t wch)
 {
-	return uls_canbe_ch_1ch_token(lex.ch_context, wch) ? true : false;
+	return uls_is_ch_1ch_token(&lex, wch) ? true : false;
 }
 
 // <brief>

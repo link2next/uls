@@ -1,6 +1,6 @@
-mesg = '   -3' '3  '
-test_log: mesg = 'world' 'world   '
+test_log_str: mesg = 'world' 'world   '
 err<in_1_1.txt:0001>: NUMBER 1
+mesg = '   -3' '3  '
 [ULS] [in_1_1.txt:2] buff = '2011        , tok=-3:'2'
 [ULS] [in_1_1.txt:3] buff = '-35', tok=-3(3    ) '  NUMBER' at 'in_1_1.txt:0003' $
 [ULS] [in_1_1.txt:3] buff = '2011        , tok=-3:'3'

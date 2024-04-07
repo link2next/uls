@@ -91,17 +91,17 @@ test_1case()
 	fi
 
 	if [ $outfile_res != "-"  ]; then
-		diff -q $tmpfile1 $outfile_res;
+		diff -q $outfile_res $tmpfile1 
 		if [ $? != 0 ]; then
-			echo "fail(stdout): diff for '$test_prog'";
+			echo "fail(stdout): diff for '$test_prog'"
 			return 1
 		fi
 	fi
 
 	if [ $errfile_res != "-" ]; then
-		diff -q $tmpfile2 $errfile_res;
+		diff -q $errfile_res $tmpfile2 
 		if [ $? != 0 ]; then
-			echo "fail(stderr): diff for '$test_prog'";
+			echo "fail(stderr): diff for '$test_prog'"
 			return 1
 		fi
 	fi

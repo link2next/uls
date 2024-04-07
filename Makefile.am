@@ -1,6 +1,7 @@
 
 SUBDIRS = ulsconfig ulc_exam \
 	src ulscompat ulscpp tools tests
+
 if WANT_ULSJNI 
 SUBDIRS += ulsjni
 endif

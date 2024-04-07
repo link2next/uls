@@ -65,7 +65,7 @@ ULS_DEFINE_DELEGATE_END(strcmp_proc);
 ULS_DEFINE_STRUCT(tokdef_name)
 {
 	uls_flags_t flags;
-	uls_def_namebuf(name, ULS_LEXSTR_MAXSIZ);
+	uls_def_namebuf(name, ULS_TOKNAM_MAXSIZ);
 	uls_tokdef_name_ptr_t next;
 };
 ULS_DEF_PARRAY(tokdef_name);
@@ -127,8 +127,6 @@ uls_tokdef_name_ptr_t find_tokdef_alias(uls_tokdef_vx_ptr_t e_vx, const char* na
 int uls_add_tokdef_vx_name(uls_tokdef_vx_ptr_t e_vx, const char* name);
 int uls_change_tokdef_vx_name(uls_tokdef_vx_ptr_t e_vx, const char* name, const char* name2);
 uls_tokdef_ptr_t find_tokdef_by_keyw(uls_tokdef_vx_ptr_t e_vx, const char* keyw);
-
-int append_tokdef_name_to_group(uls_tokdef_vx_ptr_t e_vx, uls_tokdef_name_ptr_t e_nam);
 void append_tokdef_to_group(uls_tokdef_vx_ptr_t e_vx, uls_tokdef_ptr_t e_target);
 #endif
 

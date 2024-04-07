@@ -51,7 +51,7 @@ int  test_mode = -1;
 int  opt_verbose;
 
 LPCTSTR config_name;
-uls_lex_t *sample_lex;
+uls_lex_ptr_t sample_lex;
 uls_log_t *sample_log;
 
 static void usage(void)
@@ -95,12 +95,12 @@ options(int opt, LPTSTR optarg)
 }
 
 static void
-dump_tstr(LPCTSTR tstr, int len)
+dump_tstr(LPCTSTR tstr, int len_tstr)
 {
 	TCHAR numbuf[32], tch;
 	int i, m, n, n_digits;
 
-	for (n_digits=0, n=len; n!=0; n/=10) {
+	for (n_digits=0, n=len_tstr; n!=0; n/=10) {
 		m = n % 10;
 		numbuf[n_digits++] = _T('0') + m;
 	}
@@ -124,17 +124,12 @@ dump_tstr(LPCTSTR tstr, int len)
 }
 
 void
-test_sprintf(uls_lex_ptr_t uls, uls_log_t* log)
+test_sprintf_str(uls_lex_ptr_t uls, uls_log_t* log)
 {
 	TCHAR buff[128];
 	char buff2[32];
-	int len, i, ui;
-	long long ll;
-	unsigned long long ull;
-	int tok;
+	int len;
 	LPCTSTR str = _T("hello");
-	double x;
-	long double xx;
 
 	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T(""));
 	dump_tstr(buff, len);
@@ -150,6 +145,16 @@ test_sprintf(uls_lex_ptr_t uls, uls_log_t* log)
 	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("%c he-%c-llo %c"),
 		buff[0], buff[1], buff[2]);
 	dump_tstr(buff, len);
+}
+
+void
+test_sprintf_int(uls_lex_ptr_t uls, uls_log_t* log)
+{
+	TCHAR buff[128];
+	int len, i, ui;
+	long long ll;
+	unsigned long long ull;
+	int tok;
 
 	i = 2008;
 	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("hello 0x%08X world"), i);
@@ -179,14 +184,47 @@ test_sprintf(uls_lex_ptr_t uls, uls_log_t* log)
 	i = 2008;
 	tok = uls_get_tok(uls);
 	uls_log(log, _T("buff = '%-12d, tok=%d:'%s'"), i, tok, uls_lexeme(uls));
+}
+
+void
+test_sprintf_float(uls_lex_ptr_t uls, uls_log_t* log)
+{
+	TCHAR buff[128];
+	int len;
+	double x;
+	long double xx;
 
 	x = 314159.2653589;
 	// use %f for printing 'double'
-	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("%.10f %.10e %.10g"), x, x, x);
+	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("%.5f %.5e %.5g"), x, x, x);
 	dump_tstr(buff, len);
 
 	xx = -0.00031415926535897;
-	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("%.10lf %.10le %.10lg"), xx, xx, xx);
+	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("%.7lf %.7le %.7lg"), xx, xx, xx);
+	dump_tstr(buff, len);
+
+	x = 0.0;
+	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("%f -- %.3f -- %0.3f -- %#.3f"), x, x, x, x);
+	dump_tstr(buff, len);
+
+	x = 0.31;
+	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("%f -- %.3f -- %0.3f -- %#.3f"), x, x, x, x);
+	dump_tstr(buff, len);
+
+	x = 31.158;
+	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("%f -- %.2f -- %0.2f -- %#.2f"), x, x, x, x);
+	dump_tstr(buff, len);
+
+	x = 31.158;
+	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("%f -- %.4f -- %0.4f -- %#.4f"), x, x, x, x);
+	dump_tstr(buff, len);
+
+	x = 31.158;
+	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("%8.4f -- %08.4f -- %#8.4f"), x, x, x);
+	dump_tstr(buff, len);
+
+	x = 31.158;
+	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("%-8.4f -- %-08.4f -- %-#8.4f"), x, x, x);
 	dump_tstr(buff, len);
 }
 
@@ -225,24 +263,30 @@ void sample_lex_log(LPCTSTR fmt, ...)
 }
 
 void
-test_log(uls_lex_t *uls, uls_log_t *log)
+test_log_str(uls_lex_ptr_t uls, uls_log_t *log)
 {
-	unsigned int ui;
-	long long ll;
-	int i;
 	int tok;
 	char buff2[32];
-
-	i = -3;
-	ui = 3;
-	err_log(_T("mesg = '%+5d' '%-3u'"), i, ui);
 
 	strcpy(buff2, "world");
 	err_log(_T("%hs: mesg = '%hs' '%-8hs'"), __func__, buff2, buff2);
 
 	tok = uls_get_tok(uls);
-	uls_printf(_T("stdout: <%w>: %t %k\n"), uls, uls, uls);
+	uls_printf(_T("stdout: <%w>: tok=%d %t %k\n"), uls, tok, uls, uls);
 	err_log(_T("err<%w>: %t %k"), uls, uls, uls);
+}
+
+void
+test_log_int(uls_lex_ptr_t uls, uls_log_t *log)
+{
+	unsigned int ui;
+	long long ll;
+	int i;
+	int tok;
+
+	i = -3;
+	ui = 3;
+	err_log(_T("mesg = '%+5d' '%-3u'"), i, ui);
 
 	i = 2011;
 	tok = uls_get_tok(uls);
@@ -332,10 +376,13 @@ _tmain(int n_targv, LPTSTR *targv)
 
 	switch (test_mode) {
 	case 0:
-		test_sprintf(sample_lex, sample_log);
+		test_sprintf_str(sample_lex, sample_log);
+		test_sprintf_int(sample_lex, sample_log);
+		test_sprintf_float(sample_lex, sample_log);
 		break;
 	case 1:
-		test_log(sample_lex, sample_log);
+		test_log_str(sample_lex, sample_log);
+		test_log_int(sample_lex, sample_log);
 		break;
 	case 2:
 		test_log_threads();

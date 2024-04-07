@@ -106,7 +106,10 @@ void finalize_sysprops(void);
 int uls_load_system_properties(const char *fpath, uls_sysinfo_ptr_t sysinfo);
 
 void uls_arch2be_array(char* ary, int n);
+void uls_be2arch_array(char* ary, int n);
+
 void uls_arch2le_array(char* ary, int n);
+void uls_le2arch_array(char* ary, int n);
 #endif
 
 #ifdef ULS_DECL_PUBLIC_PROC

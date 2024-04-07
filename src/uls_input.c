@@ -210,7 +210,7 @@ ULS_QUALIFIED_METHOD(input_quote_proc)(uls_input_ptr_t inp, uls_quotetype_ptr_t 
 
 int
 ULS_QUALIFIED_METHOD(input_space_proc)(const char* ch_ctx, uls_input_ptr_t inp,
-	_uls_ptrtype_tool(csz_str) ss_dst, int len_surplus, uls_ptrtype_tool(outparam) parms0)
+	_uls_ptrtype_tool(csz_str) ss_dst, uls_ptrtype_tool(outparam) parms0)
 {
 	int  n_lfs, stat = 0;
 	uls_type_tool(outparam) parms;
@@ -220,11 +220,11 @@ ULS_QUALIFIED_METHOD(input_space_proc)(const char* ch_ctx, uls_input_ptr_t inp,
 	parms.n1 = parms.n2 = 0;
 
 	do {
-		if (parms.lptr_end < parms.lptr + len_surplus) {
+		if (parms.lptr_end < parms.lptr + ULS_LEN_SURPLUS) {
 			inp->rawbuf_ptr = parms.lptr;
 			inp->rawbuf_bytes = (int) (parms.lptr_end - parms.lptr);
 
-			if (inp->refill(inp, len_surplus) < 0) {
+			if (inp->refill(inp, ULS_LEN_SURPLUS) < 0) {
 //				_uls_log(err_log)("%s: I/O error", __func__);
 				return -1;
 			}

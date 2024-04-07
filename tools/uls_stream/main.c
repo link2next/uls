@@ -192,7 +192,7 @@ static void usage_long(void)
 	err_log("");
 
 	err_log("You can use -C-option as below.");
-	err_log("  %s -C a.list /package/home/target-dir\n", progname);
+	err_log("  %s -C a.list /package/home/target-dir", progname);
 	err_log("The output file is specified with -o-option.");
 	err_log(" The default output-file in binary mode('-b') is the 'a.uls'.");
 
@@ -203,7 +203,8 @@ static void usage_long(void)
 	err_log("To read ULS-file,");
 	err_log("  %s -L sample.ulc input1.txt", progname);
 	err_log("  %s -L sample.ulc input1.uls", progname);
-	err_log("  %s -L sample.ulc -o a.txt input1.uls", progname); err_log("");
+	err_log("  %s -L sample.ulc -o a.txt input1.uls", progname);
+	err_log("");
 
 	err_log("You can use the -t-option to specify the format of output file.");
 	err_log("  %s -L sample.ulc -t bin-be input1.uls", progname);
@@ -521,10 +522,6 @@ main(int argc, char* argv[])
 		parms.line = uls_specname;
 		uls_get_spectype(ulc_config, uls_ptr(parms));
 	}
-
-	if (opt_verbose)
-		err_log("The output file depends on the lex-spec '%s'(%s)",
-			ulc_config, uls_specname);
 
 	if ((sam_lex=uls_create(ulc_config)) == uls_nil) {
 		err_log("Failed to create the uls lexical analyzer for '%s'.", ulc_config);

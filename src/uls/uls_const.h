@@ -58,10 +58,10 @@
 #define TMP_LANGS_FNAME      "uls_langs.txt"
 #define ULS_ULCNAME_DELIM    '/'
 
-#define ULS_VERSION_STR      _T("1.9.3")
-#define ULC2CLASS_PROGVER    _T("v2.7.1")
-#define ULF_GEN_PROGVER      _T("v1.6.1")
-#define ULS_STREAM_PROGVER   _T("v2.7.1")
+#define ULS_VERSION_STR      _T("1.9.4")
+#define ULC2CLASS_PROGVER    _T("v2.7.2")
+#define ULF_GEN_PROGVER      _T("v1.7.0")
+#define ULS_STREAM_PROGVER   _T("v2.8.0")
 #define ULC2YAML_PROGVER     _T("v1.0.0")
 
 #define ULS_INITIAL_NAME     _T("ULS(Unified Lexical Scheme)")
@@ -70,7 +70,7 @@
 #define ULS_URL              _T("https://sourceforge.net/projects/uls")
 #define ULS_LICENSE_NAME     _T("The MIT License (MIT)")
 #define ULS_COPYRIGHT_YEAR_START    2011
-#define ULS_COPYRIGHT_YEAR_CURRENT  2023
+#define ULS_COPYRIGHT_YEAR_CURRENT  2024
 
 #ifdef ULS_WINDOWS
 #define ULS_REG_HOME         L"HKLM:SOFTWARE\\UlsWin"
@@ -132,16 +132,19 @@
 #define ERR_TOK_IDX       8
 #define N_RESERVED_TOKS   9
 
-#define ULS_COMM_MARK_MAXSIZ       30
+#define ULS_COMM_MARK_MAXSIZ       15
 #define ULS_N_MAX_COMMTYPES        4
-#define ULS_QUOTE_MARK_MAXSIZ      7
+#define ULS_QUOTE_MARK_MAXSIZ      15
 #define ULS_N_MAX_QUOTETYPES       8
+
+#define ULS_LEN_SURPLUS MAX(ULS_COMM_MARK_MAXSIZ,ULS_QUOTE_MARK_MAXSIZ)
 
 #define N_ULC_SEARCH_PATHS         8
 #define ULS_MAGICCODE_SIZE         80
 
 #define ULS_LINEBUFF_SIZ           255
 #define ULS_FILEPATH_MAX           1023
+#define ULS_FILENAME_MAX           127
 
 #define ULS_LINEBUFF_SIZ__ULC      255
 #define ULS_LINEBUFF_SIZ__ULD      127
@@ -189,7 +192,7 @@
 #define ULS_CNST_NILSTR_SIZE       4
 #define ULS_SYNTAX_TABLE_SIZE      128
 #define ULS_TOKTOWER_DFLSIZ        16
-#define ULF_HASH_TABLE_SIZE        111
+#define ULF_HASH_TABLE_SIZE        37
 
 #define ULC_VERSION_MAJOR          2
 #define ULC_VERSION_MINOR          3
@@ -200,20 +203,17 @@
 #define ULS_VERSION_STREAM_DEBUG   0
 
 #define ULF_VERSION_MAJOR          2
-#define ULF_VERSION_MINOR          1
-#define ULF_VERSION_DEBUG          0
+#define ULF_VERSION_MINOR          2
+#define ULF_VERSION_DEBUG          1
 
 #define ULF_VERSION_HASHFUNC_MAJOR 1
-#define ULF_VERSION_HASHFUNC_MINOR 0
+#define ULF_VERSION_HASHFUNC_MINOR 1
 #define ULF_VERSION_HASHFUNC_DEBUG 0
 
-#define ULS_HASH_ALGORITHM "ULF-HASH"
+#define ULS_HASH_ALGORITHM "ULF-HASH-3"
 
-// .', 0 1 2 3 4 5 6 7 8 9
+/* ch = '\n' '\t', or isgraph(ch) */
 #define ULS_CH_GUARD   0x01
-
-/* one-char token candidate */
-#define ULS_CH_1       0x02
 
 /* the tokens consiting of multi-chars. */
 #define ULS_CH_2PLUS   0x04

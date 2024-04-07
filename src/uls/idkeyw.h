@@ -39,34 +39,32 @@ extern "C" {
 #endif
 
 #ifdef ULS_DECL_PUBLIC_TYPE
-ULS_DEFINE_DELEGATE_BEGIN(hashfunc, int)(uls_voidptr_t tbl_info, const char *name);
+ULS_DECLARE_STRUCT(hash_stat);
+ULS_DEFINE_DELEGATE_BEGIN(hashfunc, int)(uls_hash_stat_ptr_t hs, const char *name);
 ULS_DEFINE_DELEGATE_END(hashfunc);
 #endif
 
 #ifdef ULS_DEF_PUBLIC_TYPE
-ULS_DEFINE_STRUCT(dflhash_state)
+ULS_DEFINE_STRUCT(hash_stat)
 {
-	int        n_slots;
-	int        n_shifts;
-	uls_uint32     init_hcode;
+	uls_def_intarray(weight);
 };
 
 ULS_DEFINE_STRUCT(kwtable)
 {
-	uls_voidptr_t  hash_stat;
 	uls_decl_parray(bucket_head, tokdef);
 
 	uls_callback_type_this(strcmp_proc) str_ncmp;
 	uls_callback_type_this(hashfunc) hashfunc;
 
-	uls_dflhash_state_t dflhash_stat;
+	uls_hash_stat_t hash_stat;
 };
 
 ULS_DEFINE_STRUCT(keyw_stat)
 {
 	const char *keyw;
-	int freq;
 	uls_tokdef_ptr_t keyw_info;
+	int freq;
 };
 ULS_DEF_PARRAY(keyw_stat);
 
@@ -78,17 +76,16 @@ ULS_DEFINE_STRUCT(keyw_stat_list)
 
 #if defined(__ULS_IDKEYW__) || defined(ULS_DECL_PRIVATE_PROC)
 ULS_DECL_STATIC int __keyw_strncmp_case_sensitive(const char* str1, const char* str2, int len);
-ULS_DECL_STATIC int __keyw_hashfunc_case_sensitive(uls_voidptr_t tbl_info, const char *name);
+ULS_DECL_STATIC int __keyw_hashfunc_case_sensitive(uls_hash_stat_ptr_t hs, const char *name);
 ULS_DECL_STATIC int __keyw_strncmp_case_insensitive(const char* wrd, const char* keyw, int len);
-ULS_DECL_STATIC int __keyw_hashfunc_case_insensitive(uls_voidptr_t tbl_info, const char *name);
-ULS_DECL_STATIC void __init_kwtable_buckets(uls_kwtable_ptr_t tbl, int n_slots);
+ULS_DECL_STATIC int __keyw_hashfunc_case_insensitive(uls_hash_stat_ptr_t hs, const char *name);
+ULS_DECL_STATIC void __init_kwtable_buckets(uls_kwtable_ptr_t tbl);
 ULS_DECL_STATIC int __export_kwtable(uls_kwtable_ptr_t tbl, uls_ref_parray(lst,keyw_stat), int n_lst);
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC
 void uls_init_kwtable(uls_kwtable_ptr_t tbl);
-void uls_reset_kwtable(uls_kwtable_ptr_t tbl, int n_slots, uls_hashfunc_t hashfunc, uls_voidptr_t hash_stat);
-void uls_reset_kwtable_2(uls_kwtable_ptr_t tbl, int n_slots, int case_insensitive);
+void uls_reset_kwtable(uls_kwtable_ptr_t tbl, int case_insensitive);
 void uls_deinit_kwtable(uls_kwtable_ptr_t tbl);
 
 uls_tokdef_ptr_t uls_find_kw(uls_kwtable_ptr_t tbl, uls_ptrtype_tool(outparam) parms);
@@ -101,9 +98,13 @@ uls_tokdef_ptr_t is_keyword_idstr(uls_kwtable_ptr_t tbl, const char* keyw, int l
 #ifdef ULS_DECL_PUBLIC_PROC
 int keyw_stat_comp_by_keyw(const uls_voidptr_t a, const uls_voidptr_t b);
 
+ULS_DLL_EXTERN void uls_init_hash_stat(uls_hash_stat_ptr_t hs);
+ULS_DLL_EXTERN void uls_deinit_hash_stat(uls_hash_stat_ptr_t hs);
+ULS_DLL_EXTERN void uls_copy_hash_stat(uls_hash_stat_ptr_t hs_src,
+	uls_hash_stat_ptr_t hs_dst);
+
 ULS_DLL_EXTERN uls_hashfunc_t uls_get_hashfunc(const char* hashname, int case_insensitive);
 ULS_DLL_EXTERN uls_keyw_stat_list_ptr_t ulc_export_kwtable(uls_kwtable_ptr_t tbl);
-ULS_DLL_EXTERN uls_keyw_stat_ptr_t ulc_search_kwstat_list(uls_keyw_stat_list_ptr_t kwslst, const char* str);
 ULS_DLL_EXTERN void ulc_free_kwstat_list(uls_keyw_stat_list_ptr_t kwslst);
 #endif
 

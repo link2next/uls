@@ -43,32 +43,18 @@
 int
 ULS_QUALIFIED_METHOD(splitint)(const char* line, uls_ptrtype_tool(outparam) parms)
 {
-	int   n, i=parms->n;
-	int   minus=0, ch;
+	int  i = parms->n1;
+	char ch;
+	int rc;
 
 	for ( ; (ch=line[i])==' ' || ch=='\t'; i++)
 		/* NOTHING */;
 
-	if (line[i] == '-') {
-		minus = 1;
-		++i;
-	}
+	rc = _uls_tool(is_pure_integer)(line + i, parms);
+	if (rc < 0) rc = -rc;
+	parms->n1 = i += rc;
 
-	if (!_uls_tool_(isdigit)(ch=line[i])) {
-		return 0;
-	} else {
-		n = ch - '0';
-		++i;
-	}
-
-	for ( ; _uls_tool_(isdigit)(ch=line[i]); i++) {
-		n = n*10 + (ch - '0');
-	}
-
-	if (minus) n = -n;
-	parms->n = i;
-
-	return n;
+	return parms->n;
 }
 
 const char*
@@ -264,7 +250,7 @@ ULS_QUALIFIED_METHOD(uls_quick_sort)(uls_native_vptr_t ary, int n_ary, int elmt_
 	_uls_quicksort_vptr(slots_obj, n_ary, sortcmp_obj4sort);
 
 	siz = n_ary * elmt_size;
-	ary_bak = uls_malloc(siz);
+	ary_bak = _uls_tool_(malloc)(siz);
 	uls_memcopy(ary_bak, ary, siz);
 
 	for (i=0; i<n_ary; i++) {
@@ -395,8 +381,8 @@ ULS_QUALIFIED_METHOD(uls_get_simple_escape_str)(char quote_ch, uls_ptrtype_tool(
 {
 	const char *lptr = parms->lptr;
 	char* outbuf = parms->line;
-	int rval, escape = 0, j, k=0;
 	uls_type_tool(outparam) parms1;
+	int escape = 0, j, k=0;
 	char ch, ch2;
 
 	for ( ; ; lptr++) {
@@ -429,7 +415,7 @@ ULS_QUALIFIED_METHOD(uls_get_simple_escape_str)(char quote_ch, uls_ptrtype_tool(
 				lptr += j;
 			} else {
 				parms1.x1 = ch;
-				if ((rval = uls_get_simple_escape_char(uls_ptr(parms1))) > 0) {
+				if (uls_get_simple_escape_char(uls_ptr(parms1))) {
 					outbuf[k++] = (char) parms1.x2;
 				} else {
 					outbuf[k++] = '\\'; outbuf[k++] = ch; // copy it verbatim

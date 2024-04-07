@@ -362,16 +362,16 @@ ULS_QUALIFIED_METHOD(__fmtproc_f_e_g)
 	(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx, double num_f)
 {
 	uls_lf_convflag_ptr_t perfmt = uls_ptr(lf_ctx->perfmt);
-	char  *wrdptr;
+	char  *wrdptr, buff1[8];
 	int    minus, n_expo, len;
-	int    numbuf_len1, numbuf_len2;
 	char   *numstr;
 
 	csz_str_ptr_t numbuf1 = lf_ctx->numbuf1;
 	csz_str_ptr_t numbuf2 = lf_ctx->numbuf2;
 
-	numbuf_len1 = csz_length(numbuf1);
-	numbuf_len2 = csz_length(numbuf2);
+	if ((len = uls_ieee754_double_isspecial(num_f, buff1)) > 0) {
+		return puts_proc(x_dat, buff1, len);
+	}
 
 	if (num_f < 0.) {
 		minus = 1;
@@ -380,25 +380,24 @@ ULS_QUALIFIED_METHOD(__fmtproc_f_e_g)
 		minus = 0;
 	}
 
+	csz_reset(numbuf1);
+	csz_reset(numbuf2);
+
 	n_expo = uls_lf_double2digits(num_f, perfmt->precision, numbuf1);
-	numstr = (char *) csz_text(numbuf1) + numbuf_len1;
+	numstr = (char *) csz_text(numbuf1);
 
 	if ((perfmt->flags & (ULS_LF_PERCENT_E | ULS_LF_PERCENT_G))==0) {
-		uls_lf_digits_to_percent_f(numstr, minus, n_expo, perfmt->precision, numbuf2);
+		uls_lf_digits_to_percent_f(numstr, minus, n_expo, perfmt->precision, perfmt->flags, numbuf2);
 	} else if (perfmt->flags & ULS_LF_PERCENT_E) {
 		uls_lf_digits_to_percent_e(numstr, minus, n_expo, perfmt->precision, numbuf2);
 	} else if (perfmt->flags & ULS_LF_PERCENT_G) {
-		uls_lf_digits_to_percent_g(numstr, minus, n_expo, perfmt->precision, numbuf2);
+		uls_lf_digits_to_percent_g(numstr, minus, n_expo, perfmt->precision, perfmt->flags, numbuf2);
 	}
 
-	wrdptr = (char *) csz_text(numbuf2) + numbuf_len2;
-	len = csz_length(numbuf2) - numbuf_len2;
+	wrdptr = (char *) csz_text(numbuf2);
+	len = csz_length(numbuf2);
 
 	len = uls_lf_fill_numstr(x_dat, puts_proc, perfmt, wrdptr, len);
-
-	csz_truncate(numbuf1, numbuf_len1);
-	csz_truncate(numbuf2, numbuf_len2);
-
 	return len;
 }
 
@@ -435,16 +434,16 @@ ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(__fmtproc_lf_le_lg)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx, long double num_lf)
 {
 	uls_lf_convflag_ptr_t perfmt = uls_ptr(lf_ctx->perfmt);
-	char  *wrdptr;
-	int  minus, n_expo, len;
-	int  numbuf_len1, numbuf_len2;
+	char  *wrdptr, buff1[8];
+	int    minus, n_expo, len;
 	char   *numstr;
 
 	csz_str_ptr_t numbuf1 = lf_ctx->numbuf1;
 	csz_str_ptr_t numbuf2 = lf_ctx->numbuf2;
 
-	numbuf_len1 = csz_length(numbuf1);
-	numbuf_len2 = csz_length(numbuf2);
+	if ((len = uls_ieee754_longdouble_isspecial(num_lf, buff1)) > 0) {
+		return puts_proc(x_dat, buff1, len);
+	}
 
 	if (num_lf < 0.) {
 		minus = 1;
@@ -453,25 +452,24 @@ ULS_QUALIFIED_METHOD(__fmtproc_lf_le_lg)(uls_voidptr_t x_dat, uls_lf_puts_t puts
 		minus = 0;
 	}
 
+	csz_reset(numbuf1);
+	csz_reset(numbuf2);
+
 	n_expo = uls_lf_longdouble2digits(num_lf, perfmt->precision, numbuf1);
-	numstr = (char *) csz_text(numbuf1) + numbuf_len1;
+	numstr = (char *) csz_text(numbuf1);
 
 	if ((perfmt->flags & (ULS_LF_PERCENT_E | ULS_LF_PERCENT_G))==0) {
-		uls_lf_digits_to_percent_f(numstr, minus, n_expo, perfmt->precision, numbuf2);
+		uls_lf_digits_to_percent_f(numstr, minus, n_expo, perfmt->precision, perfmt->flags, numbuf2);
 	} else if (perfmt->flags & ULS_LF_PERCENT_E) {
 		uls_lf_digits_to_percent_e(numstr, minus, n_expo, perfmt->precision, numbuf2);
 	} else if (perfmt->flags & ULS_LF_PERCENT_G) {
-		uls_lf_digits_to_percent_g(numstr, minus, n_expo, perfmt->precision, numbuf2);
+		uls_lf_digits_to_percent_g(numstr, minus, n_expo, perfmt->precision, perfmt->flags, numbuf2);
 	}
 
-	wrdptr = (char *) csz_text(numbuf2) + numbuf_len2;
-	len = csz_length(numbuf2) - numbuf_len2;
+	wrdptr = (char *) csz_text(numbuf2);
+	len = csz_length(numbuf2);
 
 	len = uls_lf_fill_numstr(x_dat, puts_proc, perfmt, wrdptr, len);
-
-	csz_truncate(numbuf1, numbuf_len1);
-	csz_truncate(numbuf2, numbuf_len2);
-
 	return len;
 }
 
@@ -906,9 +904,9 @@ ULS_QUALIFIED_METHOD(uls_pars_perfmt)(uls_lf_convflag_ptr_t p, const char* fmt)
 		} else if (uls_isdigit(ch)) {
 			p->precision = __uls_lf_skip_atou(uls_ptr(fmt));
 		}
+	} else {
+		if (p->flags & ULS_LF_LEFT_JUSTIFIED) p->flags &= ~ULS_LF_ZEROPAD;
 	}
-
-	if (p->flags & ULS_LF_LEFT_JUSTIFIED) p->flags &= ~ULS_LF_ZEROPAD;
 
 	return fmt;
 }

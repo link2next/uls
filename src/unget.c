@@ -120,9 +120,8 @@ ULS_QUALIFIED_METHOD(__push_and_alloc_line_right)(uls_lex_ptr_t uls, int len,
 
 	old_tag = __uls_get_tag(uls);
 	old_lno = __uls_get_lineno(uls);
-
 	ctx = uls_push_context(uls, nilptr);
-	uls_context_set_tag(ctx, old_tag, old_lno);
+	uls_ctx_set_tag(ctx, old_tag, old_lno);
 
 	inp = ctx->input;
 	inp->rawbuf_ptr = "";
@@ -257,7 +256,7 @@ ULS_QUALIFIED_METHOD(__uls_unget_tok)(uls_lex_ptr_t uls)
 		lexseg_prev = uls_get_array_slot_type10(uls_ptr(ctx->lexsegs), ctx->i_lexsegs - 1);
 		n_lfs = lexseg_prev->n_lfs_raw;
 		ctx = __uls_unget_quote(uls, __uls_lexeme(uls), __uls_lexeme_len(uls), uls->tokdef_vx, n_lfs);
-		uls_context_inc_lineno(ctx, -n_lfs);
+		__uls_ctx_inc_lineno(ctx, -n_lfs);
 
 	} else {
 		lxm = __uls_lexeme(uls);
@@ -281,7 +280,7 @@ ULS_QUALIFIED_METHOD(__uls_unget_tok)(uls_lex_ptr_t uls)
 		lptr += l_lxm;
 		*lptr = ' ';
 
-		uls_context_inc_lineno(ctx, -n_lfs);
+		__uls_ctx_inc_lineno(ctx, -n_lfs);
 	}
 
 	return ctx;
@@ -430,8 +429,8 @@ void
 ULS_QUALIFIED_METHOD(uls_unget_lexeme)(uls_lex_ptr_t uls, const char *lxm, int tok_id)
 {
 	uls_context_ptr_t ctx = uls->xcontext.context;
-	uls_type_tool(outparam) parms;
 	uls_decl_parray_slots_init(slots_rsv, tokdef_vx, uls_ptr(uls->tokdef_vx_rsvd));
+	uls_type_tool(outparam) parms;
 	int k, l_lxm, l2_lxm, n_lfs;
 	char *lptr, *lxm_buff = NULL;
 	const char *lxm_aux = "";
@@ -505,7 +504,7 @@ ULS_QUALIFIED_METHOD(uls_unget_ch)(uls_lex_ptr_t uls, uls_wch_t wch)
 
 	ctx = __uls_unget_str(uls, ch_str, rc);
 	if (wch == '\n') {
-		uls_context_inc_lineno(ctx, -1);
+		__uls_ctx_inc_lineno(ctx, -1);
 	}
 }
 
@@ -548,7 +547,7 @@ ULS_QUALIFIED_METHOD(ulsjava_unget_lexeme)(uls_lex_ptr_t uls, const uls_native_v
 
 #ifndef ULS_DOTNET
 int
-ULS_QUALIFIED_METHOD(ulsjava_peek_ch)(uls_lex_t* uls, int* tok_peek)
+ULS_QUALIFIED_METHOD(ulsjava_peek_ch)(uls_lex_ptr_t uls, int* tok_peek)
 {
 	uls_nextch_detail_t detail_ch;
 	uls_wch_t wch;
@@ -562,7 +561,7 @@ ULS_QUALIFIED_METHOD(ulsjava_peek_ch)(uls_lex_t* uls, int* tok_peek)
 }
 
 int
-ULS_QUALIFIED_METHOD(ulsjava_get_ch)(uls_lex_t* uls, int* tok_peek)
+ULS_QUALIFIED_METHOD(ulsjava_get_ch)(uls_lex_ptr_t uls, int* tok_peek)
 {
 	uls_nextch_detail_t detail_ch;
 	uls_wch_t wch;
