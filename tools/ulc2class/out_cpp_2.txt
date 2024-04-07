@@ -46,13 +46,13 @@ class Sample2 : public uls::crux::UlsLex {
 	static const int            BEGIN = 92;
 	static const int              BEG = 92;
 	static const int              AND = 93;
-	static const int        AND_ALIAS = 93;
-	static const int             AND2 = 93;
-	static const int           AANNDD = 93;
 	static const int           ANDAND = 93;
+	static const int           AANNDD = 93;
+	static const int             AND2 = 93;
+	static const int        AND_ALIAS = 93;
 	static const int            MINUS = 94;
-	static const int              OR2 = 94;
 	static const int               OR = 94;
+	static const int              OR2 = 94;
 	static const int               EQ = 95;
 	static const int             EQEQ = 96;
 	static const int              NEQ = 97;
@@ -69,6 +69,6 @@ class Sample2 : public uls::crux::UlsLex {
 
 	static const int            IDENT = 210;
 
-	Sample2(std::tstring& ulc_fpath)
+	Sample2(std::string &ulc_fpath)
 		 : uls::crux::UlsLex(ulc_fpath) {}
 };

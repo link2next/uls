@@ -34,10 +34,8 @@
 #ifndef __ULS_LF_SWPRINTF_H__
 #define __ULS_LF_SWPRINTF_H__
 
-#include "uls/uls_auw.h"
-#ifdef _ULS_INTERNAL_USE_ONLY
 #include "uls/uls_lf_sprintf.h"
-#endif
+#include <wchar.h>
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
@@ -86,27 +84,5 @@ ULS_DLL_EXTERN int uls_lf_xwprintf_generic(uls_voidptr_t x_dat, uls_lf_ptr_t uls
 #ifdef _ULS_CPLUSPLUS
 }
 #endif
-
-#ifdef _ULS_USE_ULSCOMPAT
-#ifdef ULS_USE_WSTR
-#define uls_lf_init_convspec_map uls_lf_init_convspec_wmap
-#define uls_lf_create_convspec_map uls_lf_create_convspec_wmap
-
-#define uls_lf_init uls_wlf_init
-#define uls_lf_deinit uls_wlf_deinit
-#define uls_lf_create uls_wlf_create
-#define uls_lf_destroy uls_wlf_destroy
-
-#define __uls_lf_vxprintf __uls_lf_vxwprintf
-#define uls_lf_vxprintf uls_lf_vxwprintf
-#define __uls_lf_xprintf __uls_lf_xwprintf
-#define uls_lf_xprintf uls_lf_xwprintf
-
-#define __uls_lf_vxprintf_generic __uls_lf_vxwprintf_generic
-#define uls_lf_vxprintf_generic uls_lf_vxwprintf_generic
-#define __uls_lf_xprintf_generic __uls_lf_xwprintf_generic
-#define uls_lf_xprintf_generic uls_lf_xwprintf_generic
-#endif
-#endif // _ULS_USE_ULSCOMPAT
 
 #endif // __ULS_LF_SWPRINTF_H__

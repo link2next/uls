@@ -32,82 +32,12 @@
 */
 
 #include "MkfLex.h"
-#include <uls/UlsUtils.h>
-#include <iostream>
+
+#include <string.h>
+#include <ctype.h>
 
 using namespace std;
 using namespace uls::collection;
-
-StringBuilder::StringBuilder()
-{
-	siz_mBuff = 32;
-	mBuff = (LPTSTR) malloc(siz_mBuff * sizeof(TCHAR));
-	sync = true;
-}
-
-StringBuilder::~StringBuilder()
-{
-	if (siz_mBuff > 0) {
-		free(mBuff);
-		mBuff = NULL;
-		siz_mBuff = 0;
-	}
-}
-
-int
-StringBuilder::len()
-{
-	return (int) m_stream.tellp();
-}
-
-void
-StringBuilder::clear()
-{
-	m_stream.str(_T(""));
-	m_stream.clear();
-	m_sbuff = _T("");
-	sync = true;
-}
-
-std::tstring&
-StringBuilder::str()
-{
-	if (sync == false) {
-		m_sbuff = m_stream.str();
-		sync = true;
-	}
-
-	return m_sbuff;
-}
-
-void
-StringBuilder::append(LPCTSTR str, int len)
-{
-	if (len < 0) {
-		len = uls::strLength(str);
-		m_stream << str;
-	} else if (len > 0) {
-		if (len >= siz_mBuff) {
-			siz_mBuff = len + 1;
-			mBuff = (LPTSTR) realloc(mBuff, siz_mBuff * sizeof(TCHAR));
-		}
-		uls::memcopy(mBuff, str, len * sizeof(TCHAR));
-		mBuff[len] = _T('\0');
-		m_stream << mBuff;
-	}
-	sync = false;
-}
-
-void
-StringBuilder::append(TCHAR ch)
-{
-	TCHAR buff[4];
-
-	buff[0] = ch;
-	buff[1] = _T('\0');
-	m_stream << buff;
-	sync = false;
-}
 
 // <brief>
 // Sets the input file to be tokenized.
@@ -115,9 +45,9 @@ StringBuilder::append(TCHAR ch)
 // <parm name="fpath">The path of file</parm>
 // <return>0 if it succeeds, otherwise -1</return>
 int
-MkfLex::include(tstring& fpath)
+MkfLex::include(string& fpath)
 {
-	if (fpath != _T("")) {
+	if (fpath != "") {
 		if (pushFile(fpath) == false) {
 			return -1;
 		}
@@ -126,30 +56,32 @@ MkfLex::include(tstring& fpath)
 	tabblk_ctx.prev_ch = -1;
 	tabblk_ctx.prepare_word = -1;
 
-	tok_str = _T("");
+	tok_str = "";
 	tok_id = NONE;
 
 	return 0;
 }
 
-MkfLex::MkfLex(tstring& config_name)
+MkfLex::MkfLex(string& config_name)
 	: MkfLexBasis(config_name)
 {
-	tstring comm_patstr = _T("\n\t");
+	string comm_patstr = string("\n\t");
 	changeLiteralAnalyzer(comm_patstr, tabblk_analyzer, &tabblk_ctx);
+	csz_init(&tokbuf, 128);
 
 	tabblk_ctx.prev_ch = -1;
 	tabblk_ctx.prefix_tabs = 1;
 
-	tstring nil_fpath = _T("");
+	string nil_fpath = "";
 	include(nil_fpath);
 	tok_ungot = false;
 }
 
 MkfLex::~MkfLex()
 {
-	tstring nil_fpath = _T("");
+	string nil_fpath = "";
 	include(nil_fpath);
+	csz_deinit(&tokbuf);
 }
 
 // <brief>
@@ -196,7 +128,7 @@ MkfLex::tabblk_analyzer(uls_litstr_t *lit)
 	if (ch == '\n') {
 		++lit_ctx->n_lfs;
 		if (mkf_ctx->prev_ch != '\\') {
-			uls_litstr_putc(lit_ctx, ch);
+			csz_putc(lit_ctx->ss_dst, ch);
 		}
 
 	} else if (ch == '\\') {
@@ -205,12 +137,11 @@ MkfLex::tabblk_analyzer(uls_litstr_t *lit)
 		if (mkf_ctx->prefix_tabs) {
 			if (ch != '\t') { // remove the front tabs in all the command lines.
 				mkf_ctx->prefix_tabs = 0;
-				uls_litstr_putc(lit_ctx, ch);
+				csz_putc(lit_ctx->ss_dst, ch);
 			}
 		} else {
-			if (mkf_ctx->prev_ch == '\\')
-				uls_litstr_putc(lit_ctx, '\\');
-			uls_litstr_putc(lit_ctx, ch);
+			if (mkf_ctx->prev_ch == '\\') csz_putc(lit_ctx->ss_dst, '\\');
+			csz_putc(lit_ctx->ss_dst, ch);
 		}
 	}
 
@@ -227,28 +158,28 @@ MkfLex::tabblk_analyzer(uls_litstr_t *lit)
 // <parm name="ch">The right quotation mark</parm>
 // <return>The updated cursor of 'tokbuf'</return>
 int
-MkfLex::expect_quotestr(TCHAR ch)
+MkfLex::expect_quotestr(char ch)
 {
-	tstring *lxm;
+	string *lxm;
 	int len;
-	LPCTSTR  ptr;
-	TCHAR tch;
+	const char *  ptr;
+	char tch;
 
 	MkfLexBasis::getTok();
-	UlsLex::getTokStr(&lxm);
+	MkfLexBasis::getTokStr(&lxm);
 
-	ptr = (LPCTSTR) lxm->c_str();
+	ptr = (const char *) lxm->c_str();
 	len = (int) lxm->length();
 
-	tch = (TCHAR) ch;
-	tokbuf.append(tch);
+	tch = (char) ch;
+	csz_append(&tokbuf, (const char *) &tch, sizeof(char));
 
-	tokbuf.append(ptr, len);
+	csz_append(&tokbuf, (const char *) ptr, len * sizeof(char));
 
-	tch = (TCHAR) ch;
-	tokbuf.append(tch);
+	tch = (char) ch;
+	csz_append(&tokbuf, (const char *) &tch, sizeof(char));
 
-	return tokbuf.len();
+	return csz_length(&tokbuf);
 }
 
 // <brief>
@@ -262,7 +193,7 @@ MkfLex::expect_word(void)
 	int escape = 0;
 	bool is_quote;
 	uls_wch_t wch;
-	TCHAR tch;
+	char tch;
 
 	while (1) {
 		if ((wch=MkfLexBasis::peekCh(&is_quote)) == ULS_UCH_NONE) {
@@ -270,7 +201,7 @@ MkfLex::expect_word(void)
 		}
 
 		if (is_quote == true) {
-			if (wch == _T('\n')) {
+			if (wch == '\n') {
 				break;
 			}
 			expect_quotestr(wch);
@@ -278,37 +209,37 @@ MkfLex::expect_word(void)
 		}
 
 		if (escape) {
-			if ((wch=MkfLexBasis::getCh(NULL)) != _T('\n')) {
-				tch = _T('\\');
-				tokbuf.append(tch);
+			if ((wch=MkfLexBasis::getCh(NULL)) != '\n') {
+				tch = '\\';
+				csz_append(&tokbuf, (const char *) &tch, sizeof(char));
 
-				tch = (TCHAR) wch;
-				tokbuf.append(tch);
+				tch = (char) wch;
+				csz_append(&tokbuf, (const char *) &tch, sizeof(char));
 			}
 			escape = 0;
 			continue;
 		}
 
-		if (wch == _T('\n')) {
+		if (wch == '\n') {
 			break;
 		}
 
-		if ((wch = MkfLexBasis::getCh(&is_quote)) == _T('\\')) {
+		if ((wch = MkfLexBasis::getCh(&is_quote)) == '\\') {
 			escape = 1;
 
 		} else if (is_quote) {
 			expect_quotestr(wch);
 
 		} else {
-			tch = (TCHAR) wch;
-			tokbuf.append(tch);
+			tch = (char) wch;
+			csz_append(&tokbuf, (const char *) &tch, sizeof(char));
 		}
 	}
 
-	tok_str = tokbuf.str();
+	tok_str = string(csz_text(&tokbuf));
 	tabblk_ctx.prepare_word = -1;
 
-	return tokbuf.len();
+	return csz_length(&tokbuf);
 }
 
 // <brief>
@@ -319,29 +250,30 @@ MkfLex::expect_word(void)
 int
 MkfLex::expect_number(void)
 {
-	tstring *lxm;
-	LPCTSTR ptr;
+	string *lxm;
+	const char * ptr;
 	int tok, len;
-	TCHAR  tch;
+	char  tch;
 
 	tok = MkfLexBasis::getTok();
 	expect(NUM);
 
-	UlsLex::getTokStr(&lxm);
+	MkfLexBasis::getTokStr(&lxm);
 
-	ptr = (LPCTSTR) lxm->c_str();
+	ptr = (const char *) lxm->c_str();
 	len = (int) lxm->length();
 
-	tch = _T('0');
-	tokbuf.append(tch);
+	tch = '0';
+	csz_append(&tokbuf, (const char *) &tch, sizeof(char));
 
-	tch = _T('x');
-	tokbuf.append(tch);
+	tch = 'x';
+	csz_append(&tokbuf, (const char *) &tch, sizeof(char));
 
-	tokbuf.append(ptr, len);
+	csz_append(&tokbuf, (const char *) ptr, len * sizeof(char));
 
 	tabblk_ctx.prepare_word = -1;
-	return tokbuf.len();
+
+	return csz_length(&tokbuf);
 }
 
 // <brief>
@@ -351,19 +283,19 @@ MkfLex::expect_number(void)
 void
 MkfLex::get_token(void)
 {
-	tstring *lxm;
+	string *lxm;
 	int tok, len;
 	bool is_quote;
 	uls_wch_t wch;
-	LPCTSTR ptr;
-	TCHAR tch;
+	const char * ptr;
+	char tch;
 
 	if (tok_ungot == true) {
 		tok_ungot = false;
 		return;
 	}
 
-	tokbuf.clear();
+	csz_reset(&tokbuf);
 
 	if (tabblk_ctx.prepare_word > 0) {
 		expect_word();
@@ -376,8 +308,8 @@ MkfLex::get_token(void)
 	if ((wch = MkfLexBasis::peekCh(&is_quote))  == '-') {
 		MkfLexBasis::getCh(NULL);
 
-		tch = _T('-');
-		tokbuf.append(tch);
+		tch = '-';
+		csz_append(&tokbuf, (const char *) &tch, sizeof(char));
 
 		wch = MkfLexBasis::peekCh(&is_quote);
 		if (isdigit(wch)) {
@@ -394,14 +326,14 @@ MkfLex::get_token(void)
 		tok = NUM;
 		wch = MkfLexBasis::peekCh(&is_quote);
 
-	} else if (isalpha(wch) || wch == _T('_')) {
+	} else if (isalpha(wch) || wch == '_') {
 		// keyword?
 		tok = MkfLexBasis::getTok();
-		UlsLex::getTokStr(&lxm);
+		MkfLexBasis::getTokStr(&lxm);
 
-		ptr = (LPCTSTR) lxm->c_str();
+		ptr = (const char *) lxm->c_str();
 	 	len = (int) lxm->length();
-	 	tokbuf.append(ptr, len);
+	 	csz_append(&tokbuf, (const char *) ptr, len * sizeof(char));
 
 		wch = MkfLexBasis::peekCh(&is_quote);
 
@@ -411,28 +343,28 @@ MkfLex::get_token(void)
 
 	if (wch == ULS_UCH_NONE) {
 		MkfLexBasis::getTok();
-		UlsLex::getTokStr(&lxm);
+		MkfLexBasis::getTokStr(&lxm);
 
 		if (tok == NONE) tok = MkfLexBasis::getTokNum();
 
-		ptr = (LPCTSTR) lxm->c_str();
+		ptr = (const char *) lxm->c_str();
 		len = (int) lxm->length();
 
-		tokbuf.clear();
-		tokbuf.append(ptr, len);
+		csz_reset(&tokbuf);
+		csz_append(&tokbuf, (const char *) ptr, len * sizeof(char));
 
-		tch = _T('\0');
-		tokbuf.append(tch);
+		tch = '\0';
+		csz_append(&tokbuf, (const char *) &tch, sizeof(char));
 
 		tabblk_ctx.prepare_word = -1;
 
-		tok_str = tokbuf.str();
+		tok_str = string(csz_text(&tokbuf));
 		tok_id = tok;
 
 		return;
 	}
 
-	if (isalnum(wch) || uls::strFindIndex(_T("./-%"), (TCHAR) wch) >= 0) {
+	if (isalnum(wch) || tcschr("./-%", (char) wch) != NULL) {
 		// 'makefile-word' processing, ...
 		do {
 			if (isdigit(wch)) {
@@ -440,19 +372,19 @@ MkfLex::get_token(void)
 
 			} else if (isalpha(wch)) {
 				MkfLexBasis::getTok();
-				UlsLex::getTokStr(&lxm);
+				MkfLexBasis::getTokStr(&lxm);
 
-				ptr = (LPCTSTR) lxm->c_str();
+				ptr = (const char *) lxm->c_str();
 			 	len = (int) lxm->length();
-			 	tokbuf.append(ptr, len);
+			 	csz_append(&tokbuf, (const char *) ptr, len * sizeof(char));
 
 	 		} else {
-	 			if (uls::strFindIndex(_T("./-%" "@#(){}"), (TCHAR) wch) < 0) break;
+	 			if (tcschr("./-%" "@#(){}", (char) wch) == NULL) break;
 
 				wch = MkfLexBasis::getCh(NULL);
 
-				tch = (TCHAR) wch;
-				tokbuf.append(tch);
+				tch = (char) wch;
+				csz_append(&tokbuf, (const char *) &tch, sizeof(char));
 			}
 	 	} while ((wch=MkfLexBasis::peekCh(&is_quote)) != ULS_UCH_NONE);
 
@@ -461,14 +393,14 @@ MkfLex::get_token(void)
 
 	if (tok == NONE) {
 		tok = MkfLexBasis::getTok();
-		UlsLex::getTokStr(&lxm);
+		MkfLexBasis::getTokStr(&lxm);
 
-		ptr = (LPCTSTR) lxm->c_str();
+		ptr = (const char *) lxm->c_str();
 	 	len = (int) lxm->length();
-	 	tokbuf.append(ptr, len);
+	 	csz_append(&tokbuf, (const char *) ptr, len * sizeof(char));
 	}
 
-	tok_str = tokbuf.str();
+	tok_str = string(csz_text(&tokbuf));
 
 	// The 'prepare_word' is the value of assignment, '=', '+=', ':=', '?='.
 	if (tabblk_ctx.prepare_word < 0) {
@@ -476,7 +408,7 @@ MkfLex::get_token(void)
 		else if (tok == INCLUDE) tabblk_ctx.prepare_word = 1;
 
 	} else if (tabblk_ctx.prepare_word == 0) {
-		if (tok == _T('=') || tok == ADDASGN ||
+		if (tok == '=' || tok == ADDASGN ||
 			tok == QUESTASGN || tok == COLONASGN)
 			tabblk_ctx.prepare_word = 1;
 		else
@@ -503,8 +435,38 @@ MkfLex::getTokNum(void)
 	return tok_id;
 }
 
+std::string&
+MkfLex::getTokStr(void)
+{
+	return tok_str;
+}
+
+// <brief>
+// This is a virtual method, inherited from 'UlsLex' class.
+// But we don't need this method yet to process 'Makefile' files.
+// </brief>
+string MkfLex::getKeywordStr(int t)
+{
+	return string("<unknown>");
+}
+
 void
 MkfLex::ungetTok(void)
 {
 	tok_ungot = true;
+}
+
+
+const char *
+MkfLex::tcschr(const char * tstr, char tch)
+{
+	int i;
+
+	for (i=0; tstr[i] != '\0'; i++) {
+		if (tstr[i] == tch) {
+			return tstr + i;
+		}
+	}
+
+	return NULL;
 }

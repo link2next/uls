@@ -45,9 +45,6 @@ extern "C" {
 #endif
 
 #ifdef ULS_DECL_PROTECTED_TYPE
-// the flags of uls_xcontext_t
-#define ULS_XCTX_FL_IGNORE_LF      0x01
-
 // the flags of uls_context_t
 #define ULS_CTX_FL_WANT_EOFTOK     0x01
 #define ULS_CTX_FL_EOF             0x02
@@ -58,7 +55,17 @@ extern "C" {
 #define ULS_CTX_FL_ERR             0x40
 #define ULS_CTX_FL_GETTOK_RAW      0x80
 #define ULS_CTX_FL_FILL_RAW        0x100
-#define ULS_CTX_FL_TOKSTR_AUX      0x200
+
+// the flags of uls_xcontext_t
+#define ULS_XCTX_FL_IGNORE_LF   0x01
+
+#define uls_is_ch_space(uls, wch)     (wch < ULS_SYNTAX_TABLE_SIZE && (uls)->ch_context[wch] == 0)
+#define uls_is_ch_idfirst(uls, wch)   (wch < ULS_SYNTAX_TABLE_SIZE && (uls)->ch_context[wch] & ULS_CH_IDFIRST)
+#define uls_is_ch_id(uls, wch)        (wch < ULS_SYNTAX_TABLE_SIZE && (uls)->ch_context[wch] & ULS_CH_ID)
+#define uls_is_ch_quote(uls, wch)     (wch < ULS_SYNTAX_TABLE_SIZE && (uls)->ch_context[wch] & ULS_CH_QUOTE)
+#define uls_is_ch_1ch_token(uls, wch) (wch < ULS_SYNTAX_TABLE_SIZE && (uls)->ch_context[wch] & ULS_CH_1)
+#define uls_is_ch_2ch_token(uls, wch) (wch < ULS_SYNTAX_TABLE_SIZE && (uls)->ch_context[wch] & ULS_CH_2PLUS)
+#define uls_is_ch_comm(uls, wch)      (wch < ULS_SYNTAX_TABLE_SIZE && (uls)->ch_context[wch] & ULS_CH_COMM)
 
 #define uls_context_get_tag(ctx) (_uls_tool(csz_text)(uls_ptr((ctx)->tag)))
 #define uls_context_get_taglen(ctx) (csz_length(uls_ptr((ctx)->tag)))
@@ -70,9 +77,6 @@ extern "C" {
 
 #ifdef ULS_DECL_PUBLIC_TYPE
 ULS_DECLARE_STRUCT(xcontext);
-#ifdef ULS_DOTNET
-ULS_DECLARE_STRUCT(lex);
-#endif
 
 ULS_DEFINE_DELEGATE_BEGIN(gettok, int)(uls_lex_ptr_t uls);
 ULS_DEFINE_DELEGATE_END(gettok);
@@ -136,11 +140,10 @@ ULS_DEFINE_STRUCT(context)
 
 	int        tok;
 	const char *s_val;
-	int        s_val_len, s_val_wchars;
+	int        s_val_len, s_val_uchars;
 
 	uls_type_tool(outbuf) tokbuf;
-	uls_type_tool(outbuf) tokbuf_aux;
-	int        l_tokbuf_aux, n_digits, n_expo;
+	int        n_digits, expo;
 
 	uls_tokdef_vx_ptr_t anonymous_uchar_vx;
 	uls_userdata_ptr_t user_data;

@@ -2,7 +2,7 @@
 include $(top_srcdir)/uls.config
 
 all:
-	@echo "ax_etc_dir = '$(ax_etc_dir)'"
+	@echo "etc_dir = '$(etc_dir)'"
 
 install:
 	install -m755 -d "$(includedir)/uls" "$(datadir)/uls/ulcs"

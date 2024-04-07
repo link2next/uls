@@ -40,7 +40,7 @@ const char *progname;
 int  opt_mode;
 int  opt_verbose;
 
-uls_lex_ptr_t ulc_lex;
+uls_lex_t *ulc_lex;
 char *outfile_xml;
 FILE *fout_xml;
 
@@ -235,7 +235,9 @@ main(int argc, char* argv[])
 {
 	char *input_file;
 	int i0;
-
+#ifdef _ULS_WANT_STATIC_LIBS
+	initialize_uls();
+#endif
 	if ((i0=parse_options(argc, argv)) <= 0) {
 		return i0;
 	}

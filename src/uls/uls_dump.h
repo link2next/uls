@@ -38,10 +38,6 @@
 extern "C" {
 #endif
 
-#if defined(__ULS_DUMP__) || defined(ULS_DECL_PRIVATE_PROC)
-ULS_DECL_STATIC void dump_tokdef__char_context(uls_lex_ptr_t uls, int flag);
-#endif
-
 #ifdef ULS_DECL_PUBLIC_PROC
 ULS_DLL_EXTERN void ulc_dump_tokdef_sorted(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN void uls_dump_char_context(uls_lex_ptr_t uls);
@@ -49,26 +45,15 @@ ULS_DLL_EXTERN void uls_dump_char_context(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN void uls_dump_quote(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN void uls_dump_1char(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN void uls_dump_2char(uls_lex_ptr_t uls);
+
 ULS_DLL_EXTERN void uls_dump_utf8(uls_lex_ptr_t uls);
-
-ULS_DLL_EXTERN void print_tokdef_vx_char(uls_wch_t wch, uls_tokdef_vx_ptr_t e_vx);
-ULS_DLL_EXTERN void uls_dump_tokdef_vx(uls_tokdef_vx_ptr_t e_vx);
-
+ULS_DLL_EXTERN void uls_dump_char_tokmap(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN void uls_dump_tokdef_rsvd(uls_lex_ptr_t uls);
-ULS_DLL_EXTERN void uls_dump_list_tokdef_vx(uls_lex_ptr_t uls);
+ULS_DLL_EXTERN void uls_dump_tokdef_vx(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN void uls_dump_tokdef_names(uls_lex_ptr_t uls);
 
 ULS_DLL_EXTERN void dump_fd_tower(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN void uls_dump_kwtable(uls_kwtable_ptr_t tbl);
-
-ULS_DLL_EXTERN void dump_tokdef__yaml_commtype(int ind, uls_lex_ptr_t uls, uls_commtype_ptr_t cmt);
-ULS_DLL_EXTERN void dump_tokdef__yaml_quotetype(int ind, uls_lex_ptr_t uls, uls_quotetype_ptr_t qmt);
-ULS_DLL_EXTERN void dump_tokdef__yaml_rename(uls_lex_ptr_t uls);
-ULS_DLL_EXTERN void dump_tokdef__yaml(uls_lex_ptr_t uls);
-
-ULS_DLL_EXTERN int uls_dump_tokdef__yaml(const char *ulc_config, FILE *fout, int flags);
-
-
 #endif
 
 #ifdef _ULS_CPLUSPLUS

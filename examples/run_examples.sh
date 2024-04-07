@@ -72,20 +72,19 @@ rm -f $tmp_sysprops_fpath
 
 LD_LIBRARY_PATH=/usr/lib/uls:/usr/local/lib:/usr/local/lib64
 LD_LIBRARY_PATH=$ULS_DLLPATH:$LD_LIBRARY_PATH
-if [ $# -ge 2 ]; then
-	LD_LIBRARY_PATH=$2:$LD_LIBRARY_PATH
+if [ $# -ge 1 ]; then
+	LD_LIBRARY_PATH=$1:$LD_LIBRARY_PATH
 fi
 export LD_LIBRARY_PATH
 
 test_prog=
 temp_dir=/tmp
-tst_idx=0
+tmpfile1="$temp_dir/lex1_res.txt"
 
 test_1case()
 {
 	local outfile_res=$1
 	local infile=$2
-	local tmpfile1="$temp_dir/lex$$_res${tst_idx}.txt"
 
 	cmdline="./$test_prog"
 
@@ -95,19 +94,21 @@ test_1case()
 		$cmdline > $tmpfile1
 	fi
 
-	if [ $? != 0 -o ! -f "$tmpfile1" ]; then
+	if [ $? != 0 ]; then
 		echo "fail to exec $test_prog";
 		return 1
 	fi
 
 	diff -q $tmpfile1 $outfile_res;
 	# assert: $outfile_res exists
-	if [ $? != 0 ]; then
-		echo "fail(stdout): diff for '$test_prog'";
-	else
-		rm $tmpfile1
+	if [ -f $outfile_res1 ]; then
+		diff -q $tmpfile1 $outfile_res;
+		if [ $? != 0 ]; then
+			echo "fail(stdout): diff for '$test_prog'";
+		fi
 	fi
 
+	rm $tmpfile1
 	return 0
 }
 
@@ -132,7 +133,6 @@ for f in $EXES; do
 
 	if [ -f $out_file ]; then
 		echo "   $test_prog($in_file, $out_file)..."
-		tst_idx=$(($tst_idx+1))
 		test_1case $out_file $in_file 
 	fi
 

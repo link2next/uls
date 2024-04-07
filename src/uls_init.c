@@ -52,6 +52,7 @@ ULS_DECL_STATIC void
 ULS_QUALIFIED_METHOD(__finalize_uls)(void)
 {
 	finalize_uls_litesc();
+	finalize_ulc_lexattr();
 
 	if (uls_langs != nilptr) {
 		uls_destroy_lang_list(uls_langs);
@@ -61,9 +62,7 @@ ULS_QUALIFIED_METHOD(__finalize_uls)(void)
 	unload_uch_ranges_list();
 
 	ulc_set_searchpath(NULL);
-#ifndef ULS_DOTNET
 	finalize_uls_util();
-#endif
 }
 
 ULS_DECL_STATIC int
@@ -71,11 +70,10 @@ ULS_QUALIFIED_METHOD(__initialize_uls)(void)
 {
 	char pathbuff[ULS_FILEPATH_MAX+1];
 
-#ifndef ULS_DOTNET
 	if (_uls_tool(initialize_uls_util)() < 0) {
 		return -1;
 	}
-#endif
+
 	if (load_uch_ranges_list() < 0) {
 		_uls_log(err_log)("ULS: can't find the file for unicode id ranges!");
 		return -1;
@@ -92,6 +90,7 @@ ULS_QUALIFIED_METHOD(__initialize_uls)(void)
 		}
 	}
 
+	initialize_ulc_lexattr();
 	initialize_uls_litesc();
 
 	_uls_sysinfo_(initialized) = 1;
@@ -172,9 +171,18 @@ ULS_QUALIFIED_METHOD(_finalize_uls)(void)
 }
 
 void
-ULS_QUALIFIED_METHOD(initialize_uls)(void)
+ULS_QUALIFIED_METHOD(initialize_uls_static)(void)
 {
 	_initialize_uls();
+}
+
+void
+ULS_QUALIFIED_METHOD(initialize_uls)(void)
+{
+	initialize_uls_static();
+#ifdef ULS_NO_SUPPORT_FINALCALL
+	atexit(__finalize_uls);
+#endif
 }
 
 void

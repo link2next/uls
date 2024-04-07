@@ -4,8 +4,6 @@ ACLOCAL_AMFLAGS = -I m4
 noinst_PROGRAMS = strings
 strings_SOURCES = strings.c
 strings_CFLAGS = -Wall
-#strings_CPPFLAGS = -DULS_USE_WSTR -I$(top_srcdir)/ulscompat -I$(top_srcdir)/src
-#strings_LDADD = $(top_builddir)/ulscompat/libulscompat.la $(top_builddir)/src/libuls.la
 strings_CPPFLAGS = -I$(top_srcdir)/src
 strings_LDADD = $(top_builddir)/src/libuls.la
 

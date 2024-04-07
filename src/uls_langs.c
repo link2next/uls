@@ -277,7 +277,6 @@ ULS_QUALIFIED_METHOD(uls_init_lang_list)(uls_lang_list_ptr_t tbl)
 	for (i=0; i<ULC_ALIAS_HASHTABLE_SIZ; i++) {
 		slots_ht[i] = nilptr;
 	}
-	tbl->hashtbl.n = ULC_ALIAS_HASHTABLE_SIZ;
 
 	uls_init_array_type10(uls_ptr(tbl->langs), lang, 0);
 	uls_init_array_type10(uls_ptr(tbl->alias_pool), alias, 0);

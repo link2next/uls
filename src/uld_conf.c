@@ -34,7 +34,6 @@
 #ifndef ULS_EXCLUDE_HFILES
 #define __ULD_CONF__
 #include "uls/uld_conf.h"
-#include "uls/uls_core.h"
 #include "uls/uls_misc.h"
 #include "uls/uls_fileio.h"
 #include "uls/uls_log.h"
@@ -54,9 +53,9 @@ ULS_QUALIFIED_METHOD(srch_vx_by_toknam)(const uls_voidptr_t a, const uls_voidptr
 {
 	const uls_ptrtype_tool(outparam) parms = (const uls_ptrtype_tool(outparam)) b;
 	const char *name = parms->lptr;
-	const uls_tokdef_vx_ptr_t e_vx = (const uls_tokdef_vx_ptr_t ) a;
+	const uls_tokdef_vx_ptr_t e = (const uls_tokdef_vx_ptr_t ) a;
 
-	return _uls_tool_(strcmp)(uls_get_namebuf_value(e_vx->name), name);
+	return _uls_tool_(strcmp)(uls_get_namebuf_value(e->name), name);
 }
 
 ULS_DECL_STATIC void
@@ -69,18 +68,56 @@ ULS_QUALIFIED_METHOD(__change_tok_id)(uls_tokdef_vx_ptr_t e_vx, int tok_id)
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(add_aliases_to_token)(uls_tokdef_vx_ptr_t e_vx, uls_ptrtype_tool(wrd) wrdx)
+ULS_QUALIFIED_METHOD(__change_tok_nam)(uls_tokdef_vx_ptr_t e0_vx, const char* name, const char* name2)
 {
-	char *wrd;
+	int stat = 0;
+	uls_tokdef_name_ptr_t e_nam;
+
+	if (canbe_tokname(name2) <= 0) {
+		_uls_log(err_log)("%s: not token name!", name2);
+		return -1;
+	}
+
+	if (e0_vx == nilptr || (name != NULL && uls_streql(name, name2))) { // the current token leader
+		_uls_log(err_log)("%s: can't find the token leader of '%s'", __func__, name);
+		return -1;
+	}
+
+	if (name == NULL || uls_streql(uls_get_namebuf_value(e0_vx->name), name)) {
+		uls_set_namebuf_value(e0_vx->name, name2);
+		stat = 1; // found & changed!
+
+	} else if ((e_nam = find_tokdef_name(e0_vx, name, nilptr)) != nilptr) {
+		uls_set_namebuf_value(e_nam->name, name2);
+		e_nam->flags |= ULS_VX_TOKNAM_CHANGED;
+		stat = 1; // found & changed!
+	}
+
+	return stat;
+}
+
+ULS_DECL_STATIC int
+ULS_QUALIFIED_METHOD(add_aliases_to_token)(uls_tokdef_vx_ptr_t e0_vx, const char *wrd, uls_ptrtype_tool(wrd) wrdx)
+{
+	uls_tokdef_name_ptr_t e_nam, e_nam_prev;
+	uls_type_tool(outparam) parms1;
 	int n;
 
-	for (n=0; *(wrd = __uls_tool_(splitstr)(wrdx)) != '\0'; n++) {
+	for (n=0; *wrd != '\0'; n++) {
 		if (canbe_tokname(wrd) <= 0) {
-			_uls_log(err_log)("%s: not good as token name!", wrd);
 			n = -1; break;
 		}
 
-		uls_add_tokdef_vx_name(e_vx, wrd);
+		e_nam = find_tokdef_name(e0_vx, wrd, uls_ptr(parms1));
+		e_nam_prev = (uls_tokdef_name_ptr_t) parms1.data;
+
+		if (e_nam == nilptr) {
+			e_nam = alloc_tokdef_name(wrd, e0_vx);
+			e_nam->flags |= ULS_VX_TOKNAM_CHANGED;
+			insert_tokdef_name_to_group(e0_vx, e_nam_prev, e_nam);
+		}
+
+		wrd = __uls_tool_(splitstr)(wrdx);
 	}
 
 	return n;
@@ -89,10 +126,8 @@ ULS_QUALIFIED_METHOD(add_aliases_to_token)(uls_tokdef_vx_ptr_t e_vx, uls_ptrtype
 int
 ULS_QUALIFIED_METHOD(uld_pars_line)(int lno, uls_ptrtype_tool(wrd) wrdx, uld_line_ptr_t tok_names)
 {
-	uls_type_tool(outparam) parms1;
 	const char *name, *name2, *wrd;
-	int tok_id, changed, rc, stat=0;
-	char *lptr;
+	int tok_id, tok_id_changed, stat=0;
 
 	name = __uls_tool_(splitstr)(wrdx); // token-name
 
@@ -102,45 +137,35 @@ ULS_QUALIFIED_METHOD(uld_pars_line)(int lno, uls_ptrtype_tool(wrd) wrdx, uld_lin
 		return -1;
 	}
 
-	wrdx->lptr = _uls_tool(skip_blanks)(wrdx->lptr);
-	if (_uls_tool(is_pure_integer)(wrd, nilptr) > 0) {
-		tok_id = _uls_tool_(atoi)(wrd);
-		changed = 1;
+	if (canbe_tokname(wrd) <= 0) {
 		name2 = NULL;
-
 	} else {
-		if (canbe_tokname(wrd) <= 0) {
-			_uls_log(err_log)("#%d: %s can't be used as token-name.", lno, wrd);
-			return -1;
-		}
 		name2 = wrd;
+		wrd = __uls_tool_(splitstr)(wrdx);
+	}
 
+	if (_uls_tool(is_pure_int_number)(wrd) > 0) {
+		tok_id = _uls_tool_(atoi)(wrd);
+		tok_id_changed = 1;
+		wrd = __uls_tool_(splitstr)(wrdx);
+	} else {
 		tok_id = 0;
-		changed = 0;
-
-		lptr = wrdx->lptr;
-		if ((rc=_uls_tool(is_pure_integer)(lptr, uls_ptr(parms1))) != 0) {
-			tok_id = parms1.n;
-			changed = 1;
-			if (rc < 0) rc = -rc;
-			lptr += rc;
-		}
-		wrdx->lptr = lptr;
+		tok_id_changed = 0;
 	}
 
 	tok_names->name = name;
 	tok_names->name2 = name2;
-	tok_names->tokid_changed = changed;
+	tok_names->tokid_changed = tok_id_changed;
 	tok_names->tokid = tok_id;
-	tok_names->aliases = wrdx->lptr;
+	tok_names->aliases = wrd;
 
 	return stat;
 }
 
 int
-ULS_QUALIFIED_METHOD(uld_proc_line)(int lno, char* lptr, uls_lex_ptr_t uls, int n2_vx_namelist)
+ULS_QUALIFIED_METHOD(uld_proc_line)(const char *tag, int lno,
+	char* lptr, uls_lex_ptr_t uls, int n2_vx_namelist)
 {
-	const char *tag = "uld";
 	int stat=0;
 	uls_tokdef_vx_ptr_t e0_vx;
 	uld_line_t tok_names;
@@ -159,7 +184,7 @@ ULS_QUALIFIED_METHOD(uld_proc_line)(int lno, char* lptr, uls_lex_ptr_t uls, int 
 		return -1;
 	}
 
-	if (tok_names.name2 != NULL && uls_change_tokdef_vx_name(e0_vx, NULL, tok_names.name2) < 0) {
+	if (tok_names.name2 != NULL && __change_tok_nam(e0_vx, NULL, tok_names.name2) < 0) {
 		_uls_log(err_log)("%s<%d>: can't change the token name", tag, lno);
 		_uls_log(err_log)("\t:'%s' to '%s'", tok_names.name, tok_names.name2);
 		return -1;
@@ -169,7 +194,7 @@ ULS_QUALIFIED_METHOD(uld_proc_line)(int lno, char* lptr, uls_lex_ptr_t uls, int 
 		__change_tok_id(e0_vx, tok_names.tokid);
 	}
 
-	if (add_aliases_to_token(e0_vx, uls_ptr(wrdx)) < 0) {
+	if (add_aliases_to_token(e0_vx, tok_names.aliases, uls_ptr(wrdx)) < 0) {
 		_uls_log(err_log)("%s<%d>: column is not name!", tag, lno);
 		stat = -1;
 	}
@@ -193,10 +218,10 @@ ULS_QUALIFIED_METHOD(uld_find_tokdef_vx)(uls_lex_ptr_t uls, int n_slots_vx, cons
 }
 
 int
-ULS_QUALIFIED_METHOD(uld_add_aliases)(uls_tokdef_vx_ptr_t e_vx, const char *line_aliases)
+ULS_QUALIFIED_METHOD(uld_add_aliases)(uls_tokdef_vx_ptr_t e0_vx, const char *line_aliases)
 {
 	uls_type_tool(wrd) wrdx;
-	char *line;
+	char *line, *wrd;
 	int stat = 0;
 
 	if (line_aliases == NULL || *line_aliases == '\0') {
@@ -205,7 +230,8 @@ ULS_QUALIFIED_METHOD(uld_add_aliases)(uls_tokdef_vx_ptr_t e_vx, const char *line
 
 	line = _uls_tool_(strdup)(line_aliases, -1);
 	wrdx.lptr = line;
-	if (add_aliases_to_token(e_vx, uls_ptr(wrdx)) < 0) {
+	wrd = __uls_tool_(splitstr)(uls_ptr(wrdx));
+	if (add_aliases_to_token(e0_vx, wrd, uls_ptr(wrdx)) < 0) {
 		stat = -1;
 	}
 
@@ -214,7 +240,7 @@ ULS_QUALIFIED_METHOD(uld_add_aliases)(uls_tokdef_vx_ptr_t e_vx, const char *line
 }
 
 int
-ULS_QUALIFIED_METHOD(uld_load_fp)(uls_lex_ptr_t uls, FILE *fin_uld)
+ULS_QUALIFIED_METHOD(uld_load_fp)(uls_lex_ptr_t uls, FILE *fin_uld, const char *tag)
 {
 	char linebuff[ULS_LINEBUFF_SIZ__ULD+1], *lptr;
 	int  n2_vx_namelist, linelen, lno=0, stat=0;
@@ -237,14 +263,14 @@ ULS_QUALIFIED_METHOD(uld_load_fp)(uls_lex_ptr_t uls, FILE *fin_uld)
 			*lptr == '#' || (lptr[0]=='/' && lptr[1]=='/'))
 			continue;
 
-		if (uld_proc_line(lno, lptr, uls, n2_vx_namelist) < 0) {
+		if (uld_proc_line(tag, lno, lptr, uls, n2_vx_namelist) < 0) {
 			stat = -1;
 			break;
 		}
 	}
 
 	if (uld_post_names(names_map) < 0) {
-		_uls_log(err_log)("can't process uld-file");
+		_uls_log(err_log)("can't process uld-file %s", tag);
 		stat = -1;
 	}
 
@@ -313,7 +339,7 @@ ULS_QUALIFIED_METHOD(uld_change_names)(uld_names_map_ptr_t names_map, uld_line_p
 }
 
 int
-ULS_QUALIFIED_METHOD(__uld_post_names)(uld_names_map_ptr_t names_map)
+ULS_QUALIFIED_METHOD(uld_post_names)(uld_names_map_ptr_t names_map)
 {
 	uls_lex_ptr_t uls = names_map->uls;
 	uls_decl_parray_slots_init(slots_vx, tokdef_vx, uls_ptr(uls->tokdef_vx_array));
@@ -328,7 +354,18 @@ ULS_QUALIFIED_METHOD(__uld_post_names)(uld_names_map_ptr_t names_map)
 	prev_tok_id = e_vx->tok_id;
 	prev_tok_nam = uls_get_namebuf_value(e_vx->name);
 
-	for (i=1; i < n_slots_vx; i++) {
+	for (i=1; ; i++) {
+		if (i >= n_slots_vx) {
+			if (classify_tok_group(uls) < 0) {
+				_uls_log(err_log)("%s: lex-conf file not consistent!", __func__);
+				stat = -1;
+			} else {
+				uls->xcontext.context->tok = uls->xcontext.toknum_EOI;
+			}
+
+			break;
+		}
+
 		e_vx = slots_vx[i];
 
 		if (e_vx->tok_id == prev_tok_id) {
@@ -342,25 +379,6 @@ ULS_QUALIFIED_METHOD(__uld_post_names)(uld_names_map_ptr_t names_map)
 	}
 
 	uls_dealloc_object(names_map);
-	return stat;
-}
-
-int
-ULS_QUALIFIED_METHOD(uld_post_names)(uld_names_map_ptr_t names_map)
-{
-	int stat = 0;
-	uls_lex_ptr_t uls = names_map->uls;
-
-	if (__uld_post_names(names_map) < 0) {
-		stat = -1;
-	} else {
-		if (classify_tok_group(uls) < 0) {
-			_uls_log(err_log)("%s: lex-conf file not consistent!", __func__);
-			stat = -1;
-		} else {
-			assign_tok_group(uls);
-		}
-	}
 
 	return stat;
 }
@@ -375,7 +393,7 @@ ULS_QUALIFIED_METHOD(uld_change_tok_id)(uls_tokdef_vx_ptr_t e_vx, int tok_id)
 int
 ULS_QUALIFIED_METHOD(uld_change_tok_names)(uls_tokdef_vx_ptr_t e_vx, const char* name2, const char *line_aliases)
 {
-	if (name2 != NULL && uls_change_tokdef_vx_name(e_vx, NULL, name2) < 0) {
+	if (name2 != NULL && __change_tok_nam(e_vx, NULL, name2) < 0) {
 		return -1;
 	}
 

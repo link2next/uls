@@ -71,6 +71,27 @@ ULS_QUALIFIED_METHOD(splitint)(const char* line, uls_ptrtype_tool(outparam) parm
 	return n;
 }
 
+int
+ULS_QUALIFIED_METHOD(canbe_tokname)(const char *str)
+{
+	int i, val;
+	char ch;
+
+	for (i=0; (ch=str[i])!='\0'; i++) {
+		if (i > 0) {
+			val = _uls_tool_(isalnum)(ch) || (ch == '_');
+		} else {
+			val = _uls_tool_(isalpha)(ch) || (ch == '_');
+		}
+		if (val == 0) return 0;
+	}
+
+	if (i > ULS_LEXSTR_MAXSIZ)
+		return 0;
+
+	return i;
+}
+
 const char*
 ULS_QUALIFIED_METHOD(uls_skip_multiline_comment)(uls_ptrtype_tool(parm_line) parm_ln)
 {
@@ -139,7 +160,6 @@ ULS_QUALIFIED_METHOD(uls_gauss_log2)(unsigned int n, uls_ptrtype_tool(outparam) 
 	return parms->x2;
 }
 
-#ifndef ULS_DOTNET
 ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(sortcmp_obj4sort)(const uls_voidptr_t a, const uls_voidptr_t b)
 {
@@ -148,7 +168,6 @@ ULS_QUALIFIED_METHOD(sortcmp_obj4sort)(const uls_voidptr_t a, const uls_voidptr_
 
 	return e1->cmpfunc(e1->vptr, e2->vptr);
 }
-#endif
 
 ULS_DECL_STATIC void
 ULS_QUALIFIED_METHOD(downheap_vptr)(uls_heaparray_ptr_t hh, unsigned int i0)
@@ -238,7 +257,6 @@ ULS_QUALIFIED_METHOD(build_heaptree_vptr)(uls_heaparray_ptr_t hh,
 	}
 }
 
-#ifndef ULS_DOTNET
 void
 ULS_QUALIFIED_METHOD(uls_quick_sort)(uls_native_vptr_t ary, int n_ary, int elmt_size, uls_sort_cmpfunc_t cmpfunc)
 {
@@ -259,7 +277,6 @@ ULS_QUALIFIED_METHOD(uls_quick_sort)(uls_native_vptr_t ary, int n_ary, int elmt_
 		obj4sort->idx = i;
 		obj4sort->cmpfunc = cmpfunc;
 	}
-	obj4_sort_ary.n = n_ary;
 
 	_uls_quicksort_vptr(slots_obj, n_ary, sortcmp_obj4sort);
 
@@ -308,7 +325,6 @@ ULS_QUALIFIED_METHOD(uls_bi_search)(const uls_voidptr_t keyw,
 
 	return nilptr;
 }
-#endif // ULS_DOTNET
 
 void
 ULS_QUALIFIED_METHOD(uls_quick_sort_vptr)(_uls_decl_array(ary,uls_voidptr_t),
@@ -559,4 +575,37 @@ ULS_QUALIFIED_METHOD(uls_get_spec_fp)(const char* dirpath_list, const char* fpat
 	}
 
 	return fp_in;
+}
+
+int
+ULS_QUALIFIED_METHOD(uls_cmd_run)(uls_array_ref_slots_type00(cmdlst,cmd), int n_cmdlst, const char* keyw,
+	char *line, uls_voidptr_t data)
+{
+	int stat = -2;
+	int   low, high, mid, cond;
+	uls_cmd_ptr_t cmd;
+
+	low = 0;
+	high = n_cmdlst - 1;
+
+	while (low <= high) {
+		mid = (low + high) / 2;
+		cmd = uls_get_array_slot(cmdlst,mid);
+
+		if ((cond = _uls_tool_(strcmp)(cmd->name, keyw)) < 0) {
+			low = mid + 1;
+		} else if (cond > 0) {
+			high = mid - 1;
+		} else {
+			cmd->user_data = data;
+			if (cmd->proc(line, cmd) < 0) {
+				stat = -1;
+			} else {
+				stat = 0;
+			}
+			break;
+		}
+	}
+
+	return stat;
 }

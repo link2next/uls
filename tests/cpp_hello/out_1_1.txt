@@ -6,7 +6,7 @@ Testing ULS in C++ ...
 	[        ]          { at in_1_1.txt:0003
 	[      ID]        AAA at in_1_1.txt:0004
 	[        ]          = at in_1_1.txt:0004
-	[     NUM]          1 UL at in_1_1.txt:0004
+	[     NUM]       1 UL at in_1_1.txt:0004
 	[        ]          ; at in_1_1.txt:0004
 	[        ]          - at in_1_1.txt:0005
 	[      ID]        BBB at in_1_1.txt:0005
@@ -17,8 +17,7 @@ Testing ULS in C++ ...
 	[        ]          ; at in_1_1.txt:0005
 	[      ID] VERY_VERY_LONG_IDENTIFIER1_IS_OK at in_1_1.txt:0007
 	[        ]          = at in_1_1.txt:0007
-	[        ]          - at in_1_1.txt:0007
-	[     NUM]          1 at in_1_1.txt:0007
+	[     NUM]         -1 at in_1_1.txt:0007
 	[        ]          ; at in_1_1.txt:0007
 	[      IF]         if at in_1_1.txt:0009
 	[        ]          ( at in_1_1.txt:0009
@@ -35,31 +34,28 @@ Testing ULS in C++ ...
 	[        ]          ; at in_1_1.txt:0010
 	[      ID]        EEE at in_1_1.txt:0011
 	[        ]          = at in_1_1.txt:0011
-	[     NUM]     0xFFFE at in_1_1.txt:0011
+	[     NUM]       FFFE at in_1_1.txt:0011
 	[        ]          ; at in_1_1.txt:0011
 	[        ]          } at in_1_1.txt:0012
 	[      ID]        XXX at in_1_1.txt:0014
 	[        ]          = at in_1_1.txt:0014
-	[        ]          - at in_1_1.txt:0014
-	[     NUM] .00031415926 at in_1_1.txt:0014
+	[     NUM] -.31415926E-3 at in_1_1.txt:0014
 	[        ]          ; at in_1_1.txt:0014
 	[      ID]        XXX at in_1_1.txt:0015
 	[        ]          = at in_1_1.txt:0015
-	[        ]          - at in_1_1.txt:0015
-	[     NUM] .00031415926 f at in_1_1.txt:0015
+	[     NUM] -.31415926E-3 f at in_1_1.txt:0015
 	[        ]          ; at in_1_1.txt:0015
 	[      ID]        BBB at in_1_1.txt:0016
 	[        ]          = at in_1_1.txt:0016
-	[        ]          - at in_1_1.txt:0016
-	[     NUM]       7094 at in_1_1.txt:0016
+	[     NUM]      -1BB6 at in_1_1.txt:0016
 	[        ]          ; at in_1_1.txt:0016
 	[      ID]        AAA at in_1_1.txt:0017
 	[        ]          = at in_1_1.txt:0017
-	[     NUM]      0x1A4 at in_1_1.txt:0017
+	[     NUM]        1A4 at in_1_1.txt:0017
 	[        ]          ; at in_1_1.txt:0017
 	[      ID]        XXX at in_1_1.txt:0018
 	[        ]          = at in_1_1.txt:0018
-	[     NUM]         0. at in_1_1.txt:0018
+	[     NUM]         .0 at in_1_1.txt:0018
 	[        ]          ; at in_1_1.txt:0018
 	[      ID]        YYY at in_1_1.txt:0019
 	[        ]          = at in_1_1.txt:0019
@@ -67,6 +63,6 @@ Testing ULS in C++ ...
 	[        ]          ; at in_1_1.txt:0019
 	[      ID]        XXX at in_1_1.txt:0020
 	[        ]          = at in_1_1.txt:0020
-	[     NUM] 3.1415926535897932384 at in_1_1.txt:0020
+	[     NUM] .31415926535897932384E1 at in_1_1.txt:0020
 	[        ]          ; at in_1_1.txt:0020
 	[        ]          } at in_1_1.txt:0021

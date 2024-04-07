@@ -33,57 +33,52 @@
 
 #include "Html5Lex.h"
 #include <uls/UlsUtils.h>
-#include <iostream>
 
 using namespace std;
+using namespace uls;
 using namespace uls::collection;
 
 namespace
 {
-	tstring config_name = _T("html5.ulc");
-	LPCTSTR PACKAGE_NAME = _T("Html5Toks");
+	string config_name = "html5.ulc";
+	const char * PACKAGE_NAME = "Html5Toks";
 	int  opt_verbose;
 
 	void Usage(void)
 	{
-		otstringstream oss;
-
-		oss << _T("Dumping the tokens in html5-file defined as in 'sample.ulc'") << _tendl;
-		oss << _T("Usage:") << PACKAGE_NAME << _T(" <html5-file>") << _tendl;
-		_tcerr << oss.str() << _tendl;
+		err_log("usage(%s): dumping the tokens defined as in 'sample.ulc'", PACKAGE_NAME);
+		err_log("\t%s <filepath>", PACKAGE_NAME);
 	}
 
 	void Version(void)
 	{
-		otstringstream oss;
-
-		oss << ULS_GREETING << _tendl;
-		oss << _T("Copyright (C) ") << ULS_COPYRIGHT_YEAR_START << _T("-") <<  ULS_COPYRIGHT_YEAR_CURRENT << _T(" All rights reserved.") << _tendl;
-		oss << _T("Unless required by applicable law or agreed to in writing, software") << _tendl;
-		oss << _T("distributed under the License is distributed on an \"AS IS\" BASIS,") << _tendl;
-		oss << _T("WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.") << _tendl;
-
-		_tcerr << oss.str() << _tendl;
+		err_log(ULS_GREETING);
+		err_log("Copyright (C) %d-%d All rights reserved.",
+			ULS_COPYRIGHT_YEAR_START, ULS_COPYRIGHT_YEAR_CURRENT);
+		err_log("Unless required by applicable law or agreed to in writing, software");
+		err_log("distributed under the License is distributed on an \"AS IS\" BASIS,");
+		err_log("WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.");
+		err_log("");
 	}
 
-	int html5toks_options(int opt, LPTSTR optarg)
+	int html5toks_options(int opt, char * optarg)
 	{
 		int   stat = 0;
 
 		switch (opt) {
-		case _T('v'):
+		case 'v':
 			opt_verbose = 1;
 			break;
-		case _T('h'):
+		case 'h':
 			Usage();
 			stat = 1;
 			break;
-		case _T('V'):
+		case 'V':
 			Version();
 			stat = 1;
 			break;
 		default:
-			_tcerr << _T("undefined option -") << (TCHAR) opt << _tendl;
+			err_log("undefined option -%c", opt);
 			stat = -1;
 			break;
 		}
@@ -99,26 +94,23 @@ namespace
 	void dumpToken(Html5Lex *html5lex)
 	{
 		int t = html5lex->getTokNum();
-
-		tstring* lxm;
-		html5lex->getTokStr(&lxm);
-		LPCTSTR tstr = lxm->c_str();
+		const char * tstr = html5lex->getTokStr().c_str();
 
 		switch (t) {
 		case Html5Lex::ID:
-			html5lex->printf(_T("\t[     ID] %s\n"), tstr);
+			uls_printf("\t[     ID] %s\n", tstr);
 			break;
 		case Html5Lex::NUM:
-			html5lex->printf(_T("\t[    NUM] %s\n"), tstr);
+			uls_printf("\t[    NUM] %s\n", tstr);
 			break;
 		case Html5Lex::TEXT:
-			html5lex->printf(_T("\t[   TEXT] $%s$\n"), tstr);
+			uls_printf("\t[   TEXT] $%s$\n", tstr);
 			break;
 		case Html5Lex::TAGBEGIN:
-			html5lex->printf(_T("\t[    TAG] %s\n"), tstr);
+			uls_printf("\t[    TAG] %s\n", tstr);
 			break;
 		case Html5Lex::TAGEND:
-			html5lex->printf(_T("\t[   /TAG] %s\n"), tstr);
+			uls_printf("\t[   /TAG] %s\n", tstr);
 			break;
 		default:
 			html5lex->dumpTok();
@@ -140,27 +132,27 @@ namespace
 }
 
 int
-_tmain(int n_targv, LPTSTR *targv)
+main(int argc, char **argv)
 {
 	Html5Lex *html5lex;
-	tstring input_file;
+	string input_file;
 	int   i0;
 
-	if ((i0=uls::parseCommandOptions(n_targv, targv, _T("vhV"), html5toks_options)) <= 0) {
+	if ((i0=uls_getopts(argc, argv, "vhV", html5toks_options)) <= 0) {
 		return i0;
 	}
 
 	html5lex = new Html5Lex(config_name);
 
-	if (i0 < n_targv) {
-		input_file = targv[i0];
+	if (i0 < argc) {
+		input_file = argv[i0];
 	} else {
 		Usage();
 		return 1;
 	}
 
 	if (html5lex->setFile(input_file) < 0) {
-		_tcerr << _T(": Can't open ") << input_file << _tendl;
+		err_log("%s: file open error", input_file.c_str());
 	} else {
 		dumpTokens(html5lex);
 	}
@@ -169,17 +161,4 @@ _tmain(int n_targv, LPTSTR *targv)
 	return 0;
 }
 
-#ifndef __WINDOWS__
-int
-main(int argc, char *argv[])
-{
-	LPTSTR *targv;
-	int stat;
 
-	ULSCPP_GET_WARGS_LIST(argc, argv, targv);
-	stat = _tmain(argc, targv);
-	ULSCPP_PUT_WARGS_LIST(argc, targv);
-
-	return stat;
-}
-#endif

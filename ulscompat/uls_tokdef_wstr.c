@@ -31,11 +31,17 @@
     Stanley Hong <link2next@gmail.com>, Jul 2015.
   </author>
 */
+#include "uls/uls_lex.h"
+#include "uls/uls_misc.h"
+#include "uls/uls_util.h"
+#include "uls/uls_tokdef.h"
+#include "uls/uls_auw.h"
 
+#include "uls/uls_wlex.h"
 #include "uls/uls_tokdef_wstr.h"
 #include "uls/uls_util_wstr.h"
 #include "uls/uls_wlog.h"
-#include "uls/uls_misc.h"
+
 
 ULS_DECL_STATIC int
 id2wstr_pair_finder(const uls_voidptr_t e, const uls_voidptr_t ptr_t)

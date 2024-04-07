@@ -28,10 +28,26 @@
  *  This file is part of ULS, Unified Lexical Scheme.
  */
 #ifndef ULS_EXCLUDE_HFILES
-#define __ULS_TOKDEF__
 #include "uls/uls_tokdef.h"
 #include "uls/uls_log.h"
 #endif
+
+void
+ULS_QUALIFIED_METHOD(print_tokdef_vx_char)(uls_wch_t wch, uls_tokdef_vx_ptr_t e_vx)
+{
+	int tokid = e_vx->tok_id;
+
+	if (_uls_tool_(isgraph)(wch)) {
+		_uls_log_(printf)("\t'%c' (%3u)", wch, wch);
+		if (wch != tokid) {
+			_uls_log_(printf)("  --> %d\n", tokid);
+		} else {
+			_uls_log_(printf)("\n");
+		}
+	} else {
+		_uls_log_(printf)("\t    (%3u)  --> %d\n", wch, tokid);
+	}
+}
 
 int
 ULS_QUALIFIED_METHOD(__is_in_ilist)(int *ilst, int n_ilst, int val)
@@ -49,8 +65,9 @@ ULS_QUALIFIED_METHOD(uls_create_tokdef)(void)
 {
 	uls_tokdef_ptr_t e;
 
-	e = uls_alloc_object_clear(uls_tokdef_t);
-	uls_init_namebuf(e->keyword, ULS_TOKNAM_MAXSIZ);
+	e = uls_alloc_object(uls_tokdef_t);
+	uls_initial_zerofy_object(e);
+	uls_init_namebuf(e->keyword, ULS_LEXSTR_MAXSIZ);
 
 	return e;
 }
@@ -68,7 +85,7 @@ ULS_QUALIFIED_METHOD(__init_tokdef_vx)(uls_tokdef_vx_ptr_t e_vx)
 	e_vx->flags = 0;
 	e_vx->tok_id = 0;
 
-	uls_init_namebuf(e_vx->name, ULS_TOKNAM_MAXSIZ);
+	uls_init_namebuf(e_vx->name, ULS_LEXSTR_MAXSIZ);
 	e_vx->l_name = 0;
 
 	e_vx->extra_tokdef = nilptr;
@@ -87,16 +104,17 @@ ULS_QUALIFIED_METHOD(uls_init_tokdef_vx)(uls_tokdef_vx_ptr_t e_vx, int tok_id, c
 
 	if (e != nilptr) {
 		e->view = e_vx;
+		e->name = uls_get_namebuf_value(e_vx->name);
 	}
 }
 
 void
 ULS_QUALIFIED_METHOD(uls_deinit_tokdef_vx)(uls_tokdef_vx_ptr_t e_vx)
 {
-	uls_tokdef_name_ptr_t e_nam, e_nam_next;
+	uls_tokdef_name_ptr_t e_nam, e_nam_prev;
 
-	for (e_nam=e_vx->tokdef_names; e_nam != nilptr; e_nam = e_nam_next) {
-		e_nam_next = e_nam->next;
+	for (e_nam=e_vx->tokdef_names; e_nam != nilptr; e_nam = e_nam_prev) {
+		e_nam_prev = e_nam->prev;
 		dealloc_tokdef_name(e_nam);
 	}
 
@@ -109,7 +127,6 @@ ULS_QUALIFIED_METHOD(uls_create_tokdef_vx)(int tok_id, const char* name, uls_tok
 {
 	uls_tokdef_vx_ptr_t e_vx;
 
-	if (name == NULL) name = "";
 	e_vx = uls_alloc_object(uls_tokdef_vx_t);
 	uls_init_tokdef_vx(e_vx, tok_id, name, e);
 
@@ -124,15 +141,19 @@ ULS_QUALIFIED_METHOD(uls_destroy_tokdef_vx)(uls_tokdef_vx_ptr_t e_vx)
 }
 
 ULS_QUALIFIED_RETTYP(uls_tokdef_name_ptr_t)
-ULS_QUALIFIED_METHOD(alloc_tokdef_name)(const char *name)
+ULS_QUALIFIED_METHOD(alloc_tokdef_name)(const char *name, uls_tokdef_vx_ptr_t view)
 {
 	uls_tokdef_name_ptr_t e_nam;
 
-	e_nam = uls_alloc_object_clear(uls_tokdef_name_t);
-	uls_init_namebuf(e_nam->name, ULS_TOKNAM_MAXSIZ);
+	e_nam = uls_alloc_object(uls_tokdef_name_t);
+	uls_initial_zerofy_object(e_nam);
+
+	uls_init_namebuf(e_nam->name, ULS_LEXSTR_MAXSIZ);
 	uls_set_namebuf_value(e_nam->name, name);
 
-	e_nam->next = nilptr;
+	e_nam->view = view;
+	e_nam->prev = nilptr;
+
 	return e_nam;
 }
 
@@ -143,49 +164,60 @@ ULS_QUALIFIED_METHOD(dealloc_tokdef_name)(uls_tokdef_name_ptr_t e_nam)
 	uls_dealloc_object(e_nam);
 }
 
-int
-ULS_QUALIFIED_METHOD(canbe_tokname)(const char *str)
-{
-	int i, val;
-	char ch;
-
-	if (str == NULL || *str == '\0') return 0;
-
-	for (i=0; (ch=str[i])!='\0'; i++) {
-		if (i > 0) {
-			val = _uls_tool_(isalnum)(ch) || (ch == '_');
-		} else {
-			val = _uls_tool_(isalpha)(ch) || (ch == '_');
-		}
-		if (val == 0) return 0;
-	}
-
-	if (i > ULS_TOKNAM_MAXSIZ)
-		return 0;
-
-	return i;
-}
-
 ULS_QUALIFIED_RETTYP(uls_tokdef_name_ptr_t)
-ULS_QUALIFIED_METHOD(find_tokdef_alias)(uls_tokdef_vx_ptr_t e_vx, const char* name)
+ULS_QUALIFIED_METHOD(find_tokdef_name)(uls_tokdef_vx_ptr_t e_vx_leader, const char* name, uls_ptrtype_tool(outparam) parms)
 {
-	uls_tokdef_name_ptr_t e_nam;
+	uls_tokdef_name_ptr_t e, e_prev=nilptr;
 
-	for (e_nam=e_vx->tokdef_names; e_nam != nilptr; e_nam = e_nam->next) {
-		if (uls_streql(uls_get_namebuf_value(e_nam->name), name)) {
+	for (e=e_vx_leader->tokdef_names; e != nilptr; e = e->prev) {
+		if (uls_streql(uls_get_namebuf_value(e->name), name)) {
 			break;
 		}
+		e_prev = e;
 	}
 
-	return e_nam;
+	if (parms != nilptr) {
+		parms->data = e_prev;
+	}
+
+	return e;
+}
+
+void
+ULS_QUALIFIED_METHOD(insert_tokdef_name_to_group)(uls_tokdef_vx_ptr_t e_vx_leader,
+	uls_tokdef_name_ptr_t e_nam_prev, uls_tokdef_name_ptr_t e_nam)
+{
+	if (e_nam_prev != nilptr) {
+		e_nam->prev = e_nam_prev->prev;
+		e_nam_prev->prev = e_nam;
+	} else {
+		e_nam->prev = e_vx_leader->tokdef_names;
+		e_vx_leader->tokdef_names = e_nam;
+	}
+}
+
+int
+ULS_QUALIFIED_METHOD(append_tokdef_name_to_group)(uls_tokdef_vx_ptr_t e_vx_leader, uls_tokdef_name_ptr_t e_nam)
+{
+	uls_tokdef_name_ptr_t e, e_prev=nilptr;
+
+	for (e=e_vx_leader->tokdef_names; e != nilptr; e = e->prev) {
+		if (uls_streql(uls_get_namebuf_value(e->name), uls_get_namebuf_value(e_nam->name))) {
+			return 0;
+		}
+		e_prev = e;
+	}
+
+	insert_tokdef_name_to_group(e_vx_leader, e_prev, e_nam);
+	return 1;
 }
 
 ULS_QUALIFIED_RETTYP(uls_tokdef_ptr_t)
-ULS_QUALIFIED_METHOD(find_tokdef_by_keyw)(uls_tokdef_vx_ptr_t e_vx, const char* keyw)
+ULS_QUALIFIED_METHOD(search_tokdef_group)(uls_tokdef_vx_ptr_t e_vx_leader, const char* keyw)
 {
 	uls_tokdef_ptr_t e;
 
-	for (e=e_vx->base; e != nilptr; e = e->next) {
+	for (e=e_vx_leader->base; e != nilptr; e = e->next) {
 		if (uls_streql(uls_get_namebuf_value(e->keyword), keyw)) {
 			return e;
 		}
@@ -194,83 +226,12 @@ ULS_QUALIFIED_METHOD(find_tokdef_by_keyw)(uls_tokdef_vx_ptr_t e_vx, const char* 
 	return nilptr;
 }
 
-ULS_DECL_STATIC void
-ULS_QUALIFIED_METHOD(insert_tokdef_name_to_group)(uls_tokdef_vx_ptr_t e_vx, uls_tokdef_name_ptr_t e_nam)
-{
-	// insert e_nam into the head.
-	e_nam->next = e_vx->tokdef_names;
-	e_vx->tokdef_names = e_nam;
-}
-
-int
-ULS_QUALIFIED_METHOD(append_tokdef_name_to_group)(uls_tokdef_vx_ptr_t e_vx, uls_tokdef_name_ptr_t e0_nam)
-{
-	uls_tokdef_name_ptr_t e_nam;
-	const char *name0 = uls_get_namebuf_value(e0_nam->name);
-
-	for (e_nam = e_vx->tokdef_names; e_nam != nilptr; e_nam = e_nam->next) {
-		if (uls_streql(uls_get_namebuf_value(e_nam->name), name0)) {
-			return 0;
-		}
-	}
-
-	insert_tokdef_name_to_group(e_vx, e0_nam);
-	return 1;
-}
-
-int
-ULS_QUALIFIED_METHOD(uls_change_tokdef_vx_name)(uls_tokdef_vx_ptr_t e_vx, const char* name, const char* name2)
-{
-	int stat = 0;
-	uls_tokdef_name_ptr_t e_nam;
-
-	if (name != NULL && uls_streql(name, name2)) {
-		return 0;
-	}
-
-	if (canbe_tokname(name2) <= 0) {
-		_uls_log(err_log)("%s: not token name!", name2);
-		return -1;
-	}
-
-	if (name == NULL || uls_streql(uls_get_namebuf_value(e_vx->name), name)) {
-		uls_set_namebuf_value(e_vx->name, name2);
-		stat = 1; // found & changed!
-
-	} else if ((e_nam = find_tokdef_alias(e_vx, name)) != nilptr) {
-		uls_set_namebuf_value(e_nam->name, name2);
-		stat = 1; // found & changed!
-	}
-
-	return stat;
-}
-
-int
-ULS_QUALIFIED_METHOD(uls_add_tokdef_vx_name)(uls_tokdef_vx_ptr_t e_vx, const char* name)
-{
-	int stat = 0;
-	uls_tokdef_name_ptr_t e_nam;
-
-	if (uls_get_namebuf_value(e_vx->name)[0] == '\0') {
-		uls_set_namebuf_value(e_vx->name, name);
-		return 1;
-	}
-
-	if ((e_nam = find_tokdef_alias(e_vx, name)) == nilptr) {
-		e_nam = alloc_tokdef_name(name);
-		append_tokdef_name_to_group(e_vx, e_nam);
-		stat = 1;
-	}
-
-	return stat;
-}
-
 void
-ULS_QUALIFIED_METHOD(append_tokdef_to_group)(uls_tokdef_vx_ptr_t e_vx, uls_tokdef_ptr_t e_target)
+ULS_QUALIFIED_METHOD(append_tokdef_to_group)(uls_tokdef_vx_ptr_t e_vx_leader, uls_tokdef_ptr_t e_target)
 {
 	uls_tokdef_ptr_t e, e_prev=nilptr;
 
-	for (e=e_vx->base; e != nilptr; e = e->next) {
+	for (e=e_vx_leader->base; e != nilptr; e = e->next) {
 		e_prev = e;
 	}
 
@@ -278,7 +239,7 @@ ULS_QUALIFIED_METHOD(append_tokdef_to_group)(uls_tokdef_vx_ptr_t e_vx, uls_tokde
 		e_target->next = e_prev->next;
 		e_prev->next = e_target;
 	} else {
-		e_target->next = e_vx->base;
-		e_vx->base = e_target;
+		e_target->next = e_vx_leader->base;
+		e_vx_leader->base = e_target;
 	}
 }

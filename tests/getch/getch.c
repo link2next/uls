@@ -35,51 +35,52 @@
 #include "uls/uls_lex.h"
 #include "uls/uls_log.h"
 #include "uls/uls_util.h"
+#include "uls/uls_init.h"
 
 #include <stdlib.h>
 #include <string.h>
 
 #include "sample_lex.h"
 
-LPCTSTR progname;
+const char *progname;
 int  test_mode = -1;
 int  opt_verbose;
-LPCTSTR config_name;
-LPTSTR input_file;
+const char *config_name;
+char *input_file;
 uls_lex_t *sample_lex;
 
 static void usage(void)
 {
-	err_log(_T("usage: %s [-m <test-mode>] <input-file>"), progname);
-	err_log(_T("\t%s input1.txt"), progname);
-	err_log(_T("\t%s -m1 input1.txt"), progname);
+	err_log("usage: %s [-m <test-mode>] <input-file>", progname);
+	err_log("\t%s input1.txt", progname);
+	err_log("\t%s -m1 input1.txt", progname);
 }
 
 static int
-options(int opt, LPTSTR optarg)
+options(int opt, char* optarg)
 {
 	int stat = 0;
 
 	switch (opt) {
-	case _T('c'):
+	case 'c':
 		config_name = optarg;
 		break;
 
-	case _T('m'):
-		test_mode = ult_str2int(optarg);
+	case 'm':
+		test_mode = atoi(optarg);
 		break;
 
-	case _T('v'):
+	case 'v':
 		opt_verbose = 1;
 		break;
 
-	case _T('h'):
+	case 'h':
 		usage();
 		stat = 1;
 		break;
 
 	default:
-		err_log(_T("undefined option -%c"), opt);
+		err_log("undefined option -%c", opt);
 		usage();
 		stat = -1;
 		break;
@@ -111,9 +112,9 @@ test_get_ch(void)
 
 		if (is_quote) {
 			tok_id = uls_get_tok(sample_lex);
-			uls_printf(_T(" str = '%s' (%d)\n"), uls_lexeme(sample_lex), tok_id);
+			uls_printf(" str = '%s' (%d)\n", uls_lexeme(sample_lex), tok_id);
 		} else {
-			uls_printf(_T(" ch = '%c'\n"), (char) wch);
+			uls_printf(" ch = '%c'\n", (char) wch);
 		}
 	}
 	uls_dismiss_input(sample_lex);
@@ -124,7 +125,7 @@ test_want_eof(void)
 {
 	int tok_id;
 
-	uls_set_line(sample_lex, _T("hello world"), -1, 0); // ULS_WANT_EOFTOK
+	uls_set_line(sample_lex, "hello world", -1, 0); // ULS_WANT_EOFTOK
 
 	while (1) {
 		tok_id = uls_get_tok(sample_lex);
@@ -147,12 +148,12 @@ test_want_eof(void)
 static void
 dump_next_tok(int linefeed)
 {
-	LPCTSTR suff = NULL;
+	const char *suff = NULL;
 
-	if (linefeed) suff = _T("\n");
+	if (linefeed) suff = "\n";
 
 	uls_get_tok(sample_lex);
-	uls_dump_tok(sample_lex, _T("\t"), suff);
+	uls_dump_tok(sample_lex, "\t", suff);
 }
 
 int
@@ -161,41 +162,41 @@ test_unget(void)
 	void *xdef;
 	int rc;
 
-	err_log(_T("setting tok-info of tokID:%d ..."), tokID);
+	err_log("setting tok-info of tokID:%d ...", tokID);
 	if ((rc = uls_set_extra_tokdef(sample_lex, tokID, (void *) 0x777)) < 0) {
-		err_log(_T("can't find the tok-info of tokID:%d"), tokID);
+		err_log("can't find the tok-info of tokID:%d", tokID);
 		return -1;
 	}
 
-	uls_set_line(sample_lex, _T("hello world"), -1, 0);
+	uls_set_line(sample_lex, "hello world", -1, 0);
 
-	/* 1 */
+/* 1 */
 	dump_next_tok(0);
 	xdef = uls_get_current_extra_tokdef(sample_lex);
-	uls_printf(_T(" --- xdef[tokID] = 0x%X\n"), xdef);
+	uls_printf(" --- xdef[tokID] = 0x%X\n", xdef);
 
-	/* 2 */
+/* 2 */
 	uls_unget_tok(sample_lex);
 	dump_next_tok(0);
 	xdef = uls_get_current_extra_tokdef(sample_lex);
-	uls_printf(_T(" --- xdef[tokID] = 0x%X\n"), xdef);
+	uls_printf(" --- xdef[tokID] = 0x%X\n", xdef);
 
-	/* 3 */
+/* 3 */
 	uls_skip_blanks(sample_lex);
-	uls_unget_str(sample_lex, _T("hello"));
+	uls_unget_str(sample_lex, "hello");
 	dump_next_tok(1);
 
-	/* 4 */
-	uls_unget_str(sample_lex, _T("hello"));
-	uls_unget_ch(sample_lex, _T('w'));
+/* 4 */
+	uls_unget_str(sample_lex, "hello");
+	uls_unget_ch(sample_lex, 'w');
 	dump_next_tok(1);
 
-	/* 5 */
-	uls_unget_lexeme(sample_lex, _T(".314"), tokNUM);
+/* 5 */
+	uls_unget_lexeme(sample_lex, ".314", tokNUM);
 	dump_next_tok(1);
 
-	/* 6 */
-	uls_unget_lexeme(sample_lex, _T(" world hello "), tokDQUOTE);
+/* 6 */
+	uls_unget_lexeme(sample_lex, " world hello ", tokDQUOTE);
 	dump_next_tok(1);
 
 	uls_dismiss_input(sample_lex);
@@ -204,23 +205,24 @@ test_unget(void)
 }
 
 int
-_tmain(int n_targv, LPTSTR *targv)
+main(int argc, char* argv[])
 {
 	int i0;
 
-	progname = uls_split_filepath(targv[0], NULL);
-	config_name = _T("sample.ulc");
+	initialize_uls();
+	progname = uls_filename(argv[0], NULL);
+	config_name = "sample.ulc";
 
-	if ((i0=uls_getopts(n_targv, targv, _T("c:m:vh"), options)) <= 0) {
+	if ((i0=uls_getopts(argc, argv, "c:m:vh", options)) <= 0) {
 		return i0;
 	}
 
-	if (i0 < n_targv) {
-		input_file = targv[i0];
+	if (i0 < argc) {
+		input_file = argv[i0];
 	}
 
 	if ((sample_lex = uls_create(config_name)) == NULL) {
-		err_log(_T("can't create uls-object"));
+		err_log("can't create uls-object");
 		return -1;
 	}
 
@@ -241,17 +243,4 @@ _tmain(int n_targv, LPTSTR *targv)
 	uls_destroy(sample_lex);
 
 	return 0;
-}
-
-int
-main(int argc, char *argv[])
-{
-	LPTSTR *targv;
-	int stat;
-
-	ULS_GET_WARGS_LIST(argc, argv, targv);
-	stat = _tmain(argc, targv);
-	ULS_PUT_WARGS_LIST(argc, targv);
-
-	return stat;
 }

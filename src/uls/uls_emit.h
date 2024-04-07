@@ -45,7 +45,7 @@ extern "C" {
 #define ULS_FL_WANT_RESERVED_TOKS 0x04
 #define ULS_FL_WANT_WRAPPER       0x08
 #define ULS_FL_ULD_FILE           0x10
-
+#define ULS_FL_STRFMT_WSTR        0x40
 #define ULS_FL_C_GEN              0x0100
 #define ULS_FL_CPP_GEN            0x0200
 #define ULS_FL_CPPCLI_GEN         0x0400
@@ -98,14 +98,12 @@ ULS_DECL_STATIC void print_tokdef_enum_constants(uls_lex_ptr_t uls,
 ULS_DECL_STATIC int __print_uld_lineproc_1(uld_line_ptr_t tok_names, int n_tabs, const char *lptr);
 ULS_DECL_STATIC int __print_uld_lineproc_2(uld_line_ptr_t tok_names, int n_tabs, const char *lptr);
 
+ULS_DECL_STATIC int __print_uld_lineproc_3(uld_line_ptr_t tok_names, int n_tabs, const char *lptr, const char *nilmark);
 ULS_DECL_STATIC int __print_uld_lineproc_3cpp(uld_line_ptr_t tok_names, int n_tabs, const char *lptr);
 ULS_DECL_STATIC int __print_uld_lineproc_3cs(uld_line_ptr_t tok_names, int n_tabs, const char *lptr);
-ULS_DECL_STATIC int __print_uld_lineproc_3java(uld_line_ptr_t tok_names, int n_tabs, const char *lptr);
 
 ULS_DECL_STATIC int __print_uld_c_source_1_fp(int n_tabs, FILE *fin_uld);
 ULS_DECL_STATIC int __print_uld_c_source_2_fp(int n_tabs, FILE *fin_uld);
-ULS_DECL_STATIC int collect_printable_list_of_tokdef_vx(uls_lex_ptr_t uls,
-	uls_parms_emit_ptr_t emit_parm, uls_ref_parray(tokdef_ary_prn,tokdef_vx));
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC

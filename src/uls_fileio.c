@@ -34,7 +34,6 @@
 #ifndef ULS_EXCLUDE_HFILES
 #define __ULS_FILEIO__
 #include "uls/uls_fileio.h"
-#include "uls/uls_misc.h"
 #include "uls/uls_auw.h"
 #include "uls/uls_log.h"
 
@@ -294,7 +293,7 @@ ULS_QUALIFIED_METHOD(uls_readn)(int fd, uls_native_vptr_t vptr, int n)
 		if ((rc=uls_fd_read(fd, ptr, nleft)) < 0) {
 			if (errno == EINTR)  continue;
 			if (errno == EAGAIN || errno == EWOULDBLOCK) {
-				uls_msleep(10);
+//				usleep(100000);
 				continue;
 			} else {
 				_uls_log(err_log)("%s: %s", __func__, strerror(errno));
@@ -326,7 +325,7 @@ ULS_QUALIFIED_METHOD(uls_writen)(int fd, uls_native_vptr_t vptr, int n)
 		if ((rc=uls_fd_write(fd, ptr, nleft)) < 0) {
 			if (errno == EINTR)  continue;
 			if (errno == EAGAIN || errno == EWOULDBLOCK) {
-				uls_msleep(10);
+//				usleep(100000);
 				continue;
 			} else {
 				_uls_log(err_log)("%s: %s", __func__, strerror(errno));
@@ -765,11 +764,21 @@ ULS_QUALIFIED_METHOD(uls_fd_open)(const char* fpath, int mode)
 void
 ULS_QUALIFIED_METHOD(uls_put_binstr)(const char* str, int len, int fd)
 {
+	if (str == NULL) {
+		_uls_log_primitive(err_panic)("put_bin_str: invalid parameter!");
+	}
+
 	if (len < 0) len = uls_strlen(str);
 
 	if (uls_fd_write(fd, str, len) < 0) {
 		_uls_log_primitive(err_panic)("put_bin_str: write error!");
 	}
+}
+
+void
+ULS_QUALIFIED_METHOD(uls_putstr)(const char* str)
+{
+	uls_put_binstr(str, -1, _uls_stdio_fd(1));
 }
 
 int

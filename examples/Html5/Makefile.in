@@ -208,9 +208,6 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
 GREP = @GREP@
-HAVE_JAVA = @HAVE_JAVA@
-HAVE_JAVAC = @HAVE_JAVAC@
-HAVE_JAVAH = @HAVE_JAVAH@
 HELP2MAN = @HELP2MAN@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
@@ -264,9 +261,6 @@ am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
 am__tar = @am__tar@
 am__untar = @am__untar@
-ax_etc_dir = @ax_etc_dir@
-ax_jdk_cppflags = @ax_jdk_cppflags@
-ax_jdk_ldflags = @ax_jdk_ldflags@
 bindir = @bindir@
 build = @build@
 build_alias = @build_alias@
@@ -278,6 +272,7 @@ datadir = @datadir@
 datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
+etc_dir = @etc_dir@
 exec_prefix = @exec_prefix@
 host = @host@
 host_alias = @host_alias@
@@ -314,10 +309,10 @@ uls_bin_dir = $(uls_inst_dir)/bin
 uls_inc_dir = $(uls_inst_dir)/include
 uls_lib_dir = $(uls_inst_dir)/lib
 ulc2class_exe = $(uls_bin_dir)/ulc2class
+ACLOCAL_AMFLAGS = -I m4
 Html5Toks_SOURCES = Html5Toks.cpp Html5Lex.cpp
-#Html5Toks_CPPFLAGS = -std=c++11 -I$(uls_inc_dir) -DULS_USE_WSTR
-Html5Toks_CPPFLAGS = -std=c++11 -I$(uls_inc_dir)
-Html5Toks_LDADD = -L$(uls_lib_dir) -lulscpp -luls
+Html5Toks_CPPFLAGS = -I$(uls_inc_dir)
+Html5Toks_LDADD = -L$(uls_lib_dir) -lulscpp -lulscompat -luls
 all: all-am
 
 .SUFFIXES:

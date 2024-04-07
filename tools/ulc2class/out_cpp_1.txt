@@ -90,6 +90,6 @@ class Sample1 : public uls::crux::UlsLex {
 	static const int         VOLATILE = 193;
 	static const int            WHILE = 194;
 
-	Sample1(std::tstring& ulc_fpath)
+	Sample1(std::string &ulc_fpath)
 		 : uls::crux::UlsLex(ulc_fpath) {}
 };

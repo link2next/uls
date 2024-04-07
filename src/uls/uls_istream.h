@@ -57,7 +57,7 @@ ULS_DEFINE_STRUCT(istream)
 #ifdef ULS_FDF_SUPPORT
 	fdf_t   *fdf; // fd ---> fdf --->
 #endif
-	char    *firstline;
+	uls_def_namebuf(firstline, ULS_MAGICCODE_SIZE); // for magic-code-string
 	int     len_firstline;
 	int     start_off;
 
@@ -87,6 +87,7 @@ void uls_ungrab_fd_utf(uls_source_ptr_t isrc);
 
 uls_tmpl_pool_ptr_t uls_import_tmpls(uls_tmpl_list_ptr_t tmpl_list, uls_lex_ptr_t uls);
 int uls_bind_tmpls(uls_istream_ptr_t istr, uls_tmpl_list_ptr_t tmpl_list);
+int __uls_bind_istream_tmpls(uls_istream_ptr_t istr, uls_lex_ptr_t uls, uls_tmpl_list_ptr_t tmpl_list);
 
 int uls_fill_fd_stream(uls_source_ptr_t isrc, char* buf, int buflen, int bufsiz);
 void uls_ungrab_fd_stream(uls_source_ptr_t isrc);

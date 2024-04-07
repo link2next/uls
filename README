@@ -1,14 +1,13 @@
-
+      
               ULS(Unified Lexical Scheme)
 
   What is it?
   -----------
-   ULS(Unified Lexical Scheme) is a library for creating lexical analyzer
-   from language specification file. The project ULS has been started
+   ULS(Unified Lexical Scheme) is a class library for creating lexical analyzer 
+   from language specification file. The project ULS project has been started 
    for the purpose of providing compiler creators with a intuitive, practical, flexible language design.
-   It consists of C/C++, C#/Java libraries with a few of tools and runs on Linux, Windows, and MacOS.
-   The version 1.0 of ULS has been released by Stanley Hong <link2next@gmail.com>, 2011.
-
+   It consists of C/C++, C#/Java libraries with a few of tools and runs on Linux, Windows, and macOS.
+   The version 1.0 of ULS was released by Stanley Hong <link2next@gmail.com>, 2011.
 
   Key Features
   -------------
@@ -50,7 +49,7 @@
 
      o line      : You can give a literal line as input by calling uls_set_line(), uls_push_line().
 
-     o log       : ULS has a unique logging system(uls_lf_*) with vararg style.
+     o log       : ULS has a unique logging system(uls_lf_*) with vararg style. 
                    The 'log' demonstrates how to use the uls_lf.
                    With this logging system, you can log error-messages.
                       It includes the error-location(%w) and token-name(%k).
@@ -79,7 +78,7 @@
      o Css3      : Using the uls-c++ library, it scans css3 file and dump its tokens to the standard output.
 
      o Html5     : Using the uls-c++ library, it scans html file and dump its tokens to the standard output.
-
+ 
      o Shell     : Using the uls-c++ library, it scans shell-script file and dump its tokens to the standard output.
 
      o Mkf       : Using the uls-c++ library, it scans 'Makefile' file and dump its tokens to the standard output.
@@ -90,9 +89,10 @@
    In Windows, There is a (VS2012) solution file in 'UlsWin\UlsCppExamples'.
 
 
+
   Documentation
   -------------
-   There are an user-guide uls_ug-0.8.x.pdf and manuals on tools, ulc2class.txt, ulf_gen.txt, uls_stream in 'doc'.
+   There are an user-guide uls_ug-0.8.x.pdf and manuals on tools, ulc2class.txt, ulf_gen.txt, uls_stream in 'doc'. 
 
    You can see the manuals on 'ulc2class', 'uls_stream', 'ulf_gen' on linux after installing the package.
    To see the man-pages, type
@@ -104,45 +104,39 @@
     you may need to add the path to the environment variable 'MANPATH' to see them.
 
 
+
   Installation
   ------------
-   On Debian platforms like Debian, Ubuntu, Mint, two deb-files is provided.
-      uls-1.8.x-amd64.deb: for 64-bit mach(x86_64, amd64)
-
+   On Debian platforms like Debian, Ubuntu, Mint, two deb-files is provided. 
+      o uls_1.x.y_amd64.deb: for 64-bit mach(x86_64, amd64)
    To install the deb-file, download the proper file on the site(http://www.sourceforge.net/projects/uls).
 
    Enter the command as follows.
-      $ sudo gdebi uls-1.8.x-amd64.deb
+      sudo gdebi uls_1.x.y_amd64.deb
 
    To test the ULS, setup the examples of ULS by entering the command 'setup_uls_examples'.
-      $ setup_uls_examples <dest-dir>
+      setup_uls_examples <dest-dir>
    There'll be a directory called 'uls_examples' in the <dest-dir>.
 
    To build the examples, do the followings
-      $ ./configure
-      $ make
+      1. ./configure
+      2. make
+   Refer to the section 'Demos' below to examine the executions.
 
-   Refer to the section 'Demos' below to see how to examine the executions of uls demoes.
-
-   The installation process of ULS from code sources conforms
+   ULS The installation process of ULS from code sources conforms
       the GNU conventional process on Linux platform.
-
       1 To configure the package,
          $ ./configure
 
         The default installation directory is '/usr/local', which is arranged by 'configure' script.
-
         If you want to install ULS to directory other than '/usr/local',
              add the 'prefix' option to it:
-           $ configure --prefix=<install_dir>
-
-        If you build without java support, specify the option as follows:
-           $ configure --without-java
+         $ configure --prefix=<install_dir>
 
       2. To build the package,
          $ make
 
-      3. To test it,
+      3. To test it, 
          $ make check
 
       4. To install it,
@@ -151,14 +145,14 @@
       5. To test the installed package,
          $ cd examples
          $ make
-         $ make check
+         $ make check 
 
-      6. To uninstall the package, run the following command:
-         $ sudo <install_dir>/bin/uninstall_uls
+      6. To uninstall the package,
+         $ <install_dir>/bin/uninstall_uls
 
-   For Windows users who want build it from source files,
-     the another zip-file package uls-windows-1.8.x.zip is distributed.
-     Unzip the zip-file and there's a directory called 'vs2022' in the source tree.
+   On Windows platforms(Windows7 or 10),
+     There's a directory called UlsWin in the source code. 
+     Unzip the zip-file.
      Run the Visual Studio and open the solution 'UlsWin.sln' in the directory.
 
 
@@ -189,26 +183,28 @@
    Please see the file called INSTALL.txt to see how to use ULS in Windows or Eclipse.
 
 
+
   Tested Platforms
   ------------
    ULS is tested on following platforms.
-     o Linux Mint 20.2 
-     o Windows 10
-     o MacOS(Ventura)
+      o Ubuntu 18.04.2
+      o Linux Mint 18.1
+      o Centos 6.8
+      o Windows 7 & 10
+   Maybe, it works on similar or later version of above platforms.
 
 
   Prerequisite packages
   ------------
-     o glibc
-     o gcc
-     o g++
-     o make
-     o libtool
-     o help2man
-     o bison
-     o autoconf
-     o bash
-
+   o glibc
+   o gcc
+   o g++ 
+   o make
+   o libtool
+   o help2man 
+   o bison
+   o autoconf
+   o bash
   The above packages is needed to build ULS from code sources.
   The package is dependant on libc6(glibc) to run.
 
@@ -226,7 +222,7 @@
 
   Contacts
   --------
-     o If you have a concrete bug report for ULS, go to the
-       ULS Bug Database and submit your report:
-       'https://sourceforge.net/projects/ULS' -- 'Tracker' -- 'Bugs'
+   o If you have a concrete bug report for ULS, go to the
+        ULS Bug Database and submit your report:
+        'https://sourceforge.net/projects/ULS' -- 'Tracker' -- 'Bugs'
 

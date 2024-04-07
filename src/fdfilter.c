@@ -217,7 +217,7 @@ fdf_close(fdf_t* fdf)
 int
 fdf_iprovider_simple(int fdin, int writefd)
 {
-	int	rc, stat = 1;
+	int rc, stat = 1;
 	char buff[1024];
 
 	while (stat > 0) {

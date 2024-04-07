@@ -196,6 +196,7 @@ dump_uls_files(int n_fpaths, const char** fpaths, FILE *fp_out)
 
 		rc = dump_uls_file(input_file, fp_out);
 		uls_mfree(input_file);
+
 		if (rc < 0) {
 			stat = -1;
 			break;

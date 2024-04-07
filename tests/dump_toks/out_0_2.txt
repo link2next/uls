@@ -1,116 +1,92 @@
-  2	[ NUMBER] 0
-  2	[       ] -
-  2	[ NUMBER] 0
-  3	[ NUMBER] 0
+  2	[ NUMBER] 0x0
+  2	[ NUMBER] 0x0
+  3	[ NUMBER] 0x0
   3	[       ] .
-  4	[       ] -
-  4	[ NUMBER] 0
+  4	[ NUMBER] 0x0
   4	[       ] -
   4	[       ] .
   6	[ NUMBER] 0xAF6
   6	[ NUMBER] 0xAF6
-  6	[       ] -
-  6	[ NUMBER] 0xAF6
+  6	[ NUMBER] -0xAF6
   6	[ NUMBER] 0xD75A
-  7	[ NUMBER] 0
-  7	[ NUMBER] 0
-  7	[ NUMBER] 0
+  7	[ NUMBER] 0x0
+  7	[ NUMBER] 0x0
+  7	[ NUMBER] 0x0
   7	[     ID] x
   9	[ NUMBER] 0x12F
-  9	[       ] -
-  9	[ NUMBER] 0x25C
- 10	[ NUMBER] 0
- 10	[ NUMBER] 0
- 10	[ NUMBER] 0
+  9	[ NUMBER] -0x25C
+ 10	[ NUMBER] 0x0
+ 10	[ NUMBER] 0x0
+ 10	[ NUMBER] 0x0
  10	[       ] $
- 11	[ NUMBER] 0
+ 11	[ NUMBER] 0x0
  11	[     ID] b
  11	[       ] $
  13	[ NUMBER] 0x1FD
  13	[ NUMBER] 0x1FD
- 13	[       ] -
- 13	[ NUMBER] 0x1FD
- 14	[ NUMBER] 0
- 14	[ NUMBER] 0
- 16	[       ] -
- 16	[ NUMBER] 0x1FD
+ 13	[ NUMBER] -0x1FD
+ 14	[ NUMBER] 0x0
+ 14	[ NUMBER] 0x0
+ 16	[ NUMBER] -0x1FD
  16	[       ] .
- 17	[ NUMBER] 0.0314
- 17	[       ] -
- 17	[ NUMBER] 3.1
+ 17	[ NUMBER] 0.314E-1
+ 17	[ NUMBER] -0.31E1
  18	[ NUMBER] 0.314
- 18	[ NUMBER] 3.14
- 18	[ NUMBER] 31.4
+ 18	[ NUMBER] 0.314E1
+ 18	[ NUMBER] 0.314E2
  19	[ NUMBER] 0.314
- 19	[ NUMBER] 0.000314
+ 19	[ NUMBER] 0.314E-3
  19	[ NUMBER] 0.314E8
- 20	[       ] -
- 20	[ NUMBER] 0.314
- 20	[       ] -
- 20	[ NUMBER] 0.314
- 21	[ NUMBER] 314.15
- 21	[       ] -
- 21	[ NUMBER] 5041.7094
+ 20	[ NUMBER] -0.314
+ 20	[ NUMBER] -0.314
+ 21	[ NUMBER] 0.31415E3
+ 21	[ NUMBER] -0.50417094E4
  23	[ NUMBER] 0.31415E-105
- 23	[       ] -
- 23	[ NUMBER] 0.31415E303
- 24	[ NUMBER] 0.0050417094
+ 23	[ NUMBER] -0.31415E303
+ 24	[ NUMBER] 0.50417094E-2
  24	[ NUMBER] 0.31415E1102
- 26	[ NUMBER] 314.
- 26	[       ] -
- 26	[ NUMBER] 0.314E7
- 26	[       ] -
- 26	[ NUMBER] 50.
- 27	[ NUMBER] 1.
+ 26	[ NUMBER] 0.314E3
+ 26	[ NUMBER] -0.314E7
+ 26	[ NUMBER] -0.5E2
+ 27	[ NUMBER] 0.1E1
  27	[ NUMBER] 0.1
- 27	[       ] -
- 27	[ NUMBER] 1.
- 27	[       ] -
- 27	[ NUMBER] 0.1
- 28	[ NUMBER] 1.
+ 27	[ NUMBER] -0.1E1
+ 27	[ NUMBER] -0.1
+ 28	[ NUMBER] 0.1E1
  28	[ NUMBER] 0.1
- 28	[ NUMBER] 1.1
- 29	[       ] -
- 29	[ NUMBER] 1.
- 29	[       ] -
- 29	[ NUMBER] 0.1
- 29	[       ] -
- 29	[ NUMBER] 1.1
- 30	[ NUMBER] 2591.7094
- 30	[ NUMBER] 2591.7094
- 30	[ NUMBER] 504100.2638
- 30	[ NUMBER] 504100.2638
+ 28	[ NUMBER] 0.11E1
+ 29	[ NUMBER] -0.1E1
+ 29	[ NUMBER] -0.1
+ 29	[ NUMBER] -0.11E1
+ 30	[ NUMBER] 0.25917094E4
+ 30	[ NUMBER] 0.25917094E4
+ 30	[ NUMBER] 0.5041002638E6
+ 30	[ NUMBER] 0.5041002638E6
  30	[ NUMBER] 0.50419771
- 31	[ NUMBER] 0.00050412591
- 31	[ NUMBER] 10.
- 31	[ NUMBER] 10.00025917094
- 33	[ NUMBER] 0.
- 33	[       ] -
- 33	[ NUMBER] 0.
- 33	[ NUMBER] 0.
- 34	[ NUMBER] 0.
- 34	[ NUMBER] 0.
- 34	[       ] -
- 34	[ NUMBER] 0.
- 34	[       ] -
- 34	[ NUMBER] 0.
- 35	[ NUMBER] 0.
- 35	[       ] -
- 35	[ NUMBER] 0.
- 36	[ NUMBER] 0
- 36	[ NUMBER] 0
+ 31	[ NUMBER] 0.50412591E-3
+ 31	[ NUMBER] 0.1E2
+ 31	[ NUMBER] 0.1000025917094E2
+ 33	[ NUMBER] 0.0
+ 33	[ NUMBER] 0.0
+ 33	[ NUMBER] 0.0
+ 34	[ NUMBER] 0.0
+ 34	[ NUMBER] 0.0
+ 34	[ NUMBER] 0.0
+ 34	[ NUMBER] 0.0
+ 35	[ NUMBER] 0.0
+ 35	[ NUMBER] 0.0
+ 36	[ NUMBER] 0.0
+ 36	[ NUMBER] 0x0
  36	[     ID] E
- 36	[       ] -
- 36	[ NUMBER] 3
- 36	[ NUMBER] 0.
- 36	[ NUMBER] 0.
- 38	[ NUMBER] 314
- 38	[       ] -
- 38	[ NUMBER] 314
- 39	[ NUMBER] 3.14
- 39	[ NUMBER] 0.00301
+ 36	[ NUMBER] -0x3
+ 36	[ NUMBER] 0.0
+ 36	[ NUMBER] 0.0
+ 38	[ NUMBER] 0x13A
+ 38	[ NUMBER] -0x13A
+ 39	[ NUMBER] 0.314E1
+ 39	[ NUMBER] 0.301E-2
  39	[ NUMBER] 0.301
  39	[ NUMBER] 0.301E13
  41	[ NUMBER] 0x54321
- 41	[ NUMBER] 54321
- 41	[ NUMBER] 54321.12345
+ 41	[ NUMBER] 0xD431
+ 41	[ NUMBER] 0.5432112345E5

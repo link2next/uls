@@ -31,10 +31,11 @@
     Stanley Hong <link2next@gmail.com>, 2011.
   </author>
 */
-
+#define __ULS_LF_SWPRINTF__
 #include "uls/uls_lf_swprintf.h"
 #include "uls/uls_util_wstr.h"
-#include "uls/uls_wlog.h"
+#include "uls/uls_lex.h"
+#include "uls/uls_log.h"
 
 ULS_DECL_STATIC uls_lf_map_t dfl_convspec_wmap;
 
@@ -74,6 +75,7 @@ uls_lf_init_convspec_wmap(uls_lf_map_ptr_t lf_map, int flags)
 		return -1;
 
 	uls_lf_register_convspec(lf_map, "s", fmtproc_ws);
+	uls_lf_register_convspec(lf_map, "S", fmtproc_ws);
 
 	return 0;
 }
@@ -114,6 +116,7 @@ uls_wlf_init(uls_lf_ptr_t uls_lf, uls_lf_map_ptr_t map, uls_voidptr_t x_dat, uls
 	uls_wlf_shell_ptr_t wlf;
 
 	if (map == nilptr) map = uls_ptr(dfl_convspec_wmap);
+
 	if (uls_lf_init(uls_lf, map, x_dat, puts_proc) < 0)
 		return -1;
 

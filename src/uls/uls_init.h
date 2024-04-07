@@ -57,6 +57,7 @@ void _finalize_uls(void);
 #endif
 
 #ifdef ULS_DECL_PUBLIC_PROC
+ULS_DLL_EXTERN void initialize_uls_static(void);
 ULS_DLL_EXTERN void initialize_uls(void);
 ULS_DLL_EXTERN void finalize_uls(void);
 #endif

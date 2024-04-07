@@ -30,7 +30,6 @@
 #ifndef ULS_EXCLUDE_HFILES
 #define __ULS_ISTREAM__
 #include "uls/uls_istream.h"
-#include "uls/uls_sysprops.h"
 #include "uls/utf8_enc.h"
 #include "uls/uls_misc.h"
 #include "uls/uls_log.h"
@@ -42,12 +41,13 @@ ULS_DECL_STATIC void
 ULS_QUALIFIED_METHOD(__init_istream)(uls_istream_ptr_t istr)
 {
 	uls_init_namebuf(istr->filepath, ULS_FILEPATH_MAX);
+	uls_init_namebuf(istr->firstline, ULS_MAGICCODE_SIZE);
+
 	uls_init_stream_header(uls_ptr(istr->header));
 
 	istr->fd = -1;
 	istr->start_off = -1;
 
-	istr->firstline = (char *) uls_malloc_buffer(ULS_MAGICCODE_SIZE + 1);
 	_uls_tool_(init_tempfile)(uls_ptr(istr->uld_file));
 }
 
@@ -75,12 +75,13 @@ ULS_QUALIFIED_METHOD(__destroy_istream)(uls_istream_ptr_t istr)
 {
 	istr->ref_cnt = 0;
 	istr->fd = -1;
-	uls_mfree(istr->firstline);
 
 	_uls_tool_(deinit_tempfile)(uls_ptr(istr->uld_file));
 	uls_deinit_stream_header(uls_ptr(istr->header));
 
 	uls_deinit_namebuf(istr->filepath);
+	uls_deinit_namebuf(istr->firstline);
+
 	uls_dealloc_object(istr);
 }
 
@@ -148,7 +149,7 @@ ULS_QUALIFIED_METHOD(make_eoif_lexeme_bin)(uls_context_ptr_t ctx, int tok_id, co
 
 	ctx->s_val = ctx->tokbuf.buf;
 	ctx->s_val_len = txtlen;
-	ctx->s_val_wchars = _uls_tool(ustr_num_wchars)(ctx->s_val, txtlen, nilptr);
+	ctx->s_val_uchars = _uls_tool(ustr_num_wchars)(ctx->s_val, txtlen, nilptr);
 }
 
 int
@@ -169,16 +170,22 @@ ULS_QUALIFIED_METHOD(uls_check_stream_ver)(uls_stream_header_ptr_t hdr, uls_lex_
 int
 ULS_QUALIFIED_METHOD(get_rawfile_subtype)(char *buff, int n_bytes, uls_ptrtype_tool(outparam) parms)
 {
-	int mode = -1, byte_order = -1, reverse = 0, fpos = 0;
+	int mode, reverse, fpos;
+	uls_uint16 BOM16;
+	uls_uint32 BOM32;
+
+	mode = -1;
+	reverse = 0;
+	fpos = 0;
 
 	if (n_bytes >= 4) {
-		if (buff[0] == 0 && buff[1] == 0 && buff[2] == 0xFE && buff[3] == 0xFF) {
+		if ((BOM32 = *((uls_uint32 *) buff)) == 0x0000FEFF) {
 			mode = UTF_INPUT_FORMAT_32;
-			byte_order = ULS_BIG_ENDIAN;
+			reverse = 0;
 			fpos = 4;
-		} else if (buff[0] == 0xFF && buff[1] == 0xFE && buff[2] == 0 && buff[3] == 0) {
+		} else if (BOM32 == 0xFFFE0000) {
 			mode = UTF_INPUT_FORMAT_32;
-			byte_order = ULS_LITTLE_ENDIAN;
+			reverse = 1;
 			fpos = 4;
 		}
 	}
@@ -191,27 +198,15 @@ ULS_QUALIFIED_METHOD(get_rawfile_subtype)(char *buff, int n_bytes, uls_ptrtype_t
 	}
 
 	if (mode < 0 && n_bytes >= 2) {
-		if (buff[0] == 0xFE && buff[1] == 0xFF) {
+		if ((BOM16 = *((uls_uint16 *) buff)) == 0xFEFF) {
 			mode = UTF_INPUT_FORMAT_16;
-			byte_order = ULS_BIG_ENDIAN;
+			reverse = 0;
 			fpos = 2;
-		} else if (buff[0] == 0xFF && buff[1] == 0xFE) {
+		} else if (BOM16 == 0xFFFE) {
 			mode = UTF_INPUT_FORMAT_16;
-			byte_order = ULS_LITTLE_ENDIAN;
+			reverse = 1;
 			fpos = 2;
 		}
-	}
-
-	if (fpos > 0) {
-		if (_uls_sysinfo_(ULS_BYTE_ORDER) == ULS_LITTLE_ENDIAN) {
-			if (byte_order == ULS_BIG_ENDIAN) reverse = 1;
-		} else {
-			if (byte_order == ULS_LITTLE_ENDIAN) reverse = 1;
-		}
-	}
-
-	if (mode < 0) {
-		mode = UTF_INPUT_FORMAT_8;
 	}
 
 	parms->n1 = mode; // n1:subtype
@@ -359,17 +354,21 @@ ULS_QUALIFIED_METHOD(uls_bind_tmpls)(uls_istream_ptr_t istr, uls_tmpl_list_ptr_t
 }
 
 int
+ULS_QUALIFIED_METHOD(__uls_bind_istream_tmpls)(uls_istream_ptr_t istr, uls_lex_ptr_t uls, uls_tmpl_list_ptr_t tmpl_list)
+{
+	if (uls_bind_istream(istr, uls) < 0) {
+		_uls_log(err_log)("%s: not compatible uls-file.", __func__);
+		return -1;
+	}
+
+	return uls_bind_tmpls(istr, tmpl_list);
+}
+
+int
 ULS_QUALIFIED_METHOD(uls_fill_fd_stream)(uls_source_ptr_t isrc, char* buf, int buflen, int bufsiz)
 {
 	uls_istream_ptr_t istr = (uls_istream_ptr_t) isrc->usrc;
-	int rc;
-
-	rc = _uls_tool_(readn)(istr->fd, buf + buflen, bufsiz - buflen);
-	if (rc == 0) {
-		isrc->flags |= ULS_ISRC_FL_EOF;
-	}
-
-	return rc;
+	return _uls_tool_(readn)(istr->fd, buf + buflen, bufsiz - buflen);
 }
 
 void
@@ -384,10 +383,7 @@ ULS_QUALIFIED_METHOD(uls_gettok_bin)(uls_lex_ptr_t uls)
 {
 	uls_context_ptr_t ctx = uls->xcontext.context;
 	uls_decl_parray_slots_init(slots_rsv, tokdef_vx, uls_ptr(uls->tokdef_vx_rsvd));
-	uls_tokdef_vx_ptr_t e_vx;
-
 	const char     *lptr, *pckptr;
-	char *lptr2;
 	int    tok_id, rc, txtlen;
 	uls_uint32  *hdrbuf;
 	uls_type_tool(outparam) parms;
@@ -440,26 +436,13 @@ ULS_QUALIFIED_METHOD(uls_gettok_bin)(uls_lex_ptr_t uls)
 
 	ctx->flags |= ULS_CTX_FL_EXTERN_TOKBUF;
 
-	if (tok_id == uls->xcontext.toknum_NUMBER) { // numstr ' ' number-suffix
-		for (lptr2 = (char *) lptr; *lptr2 != '\0'; lptr2++) {
-			if (*lptr2 == ' ') {
-				*lptr2 = '\0';
-				txtlen = (int) (lptr2 - lptr);
-				break;
-			}
-		}
-	}
-
 	ctx->tok = tok_id;
 	ctx->s_val = lptr;
 	ctx->s_val_len = txtlen;
-	ctx->s_val_wchars = _uls_tool(ustr_num_wchars)(ctx->s_val, txtlen, nilptr);
+	ctx->s_val_uchars = _uls_tool(ustr_num_wchars)(ctx->s_val, txtlen, nilptr);
 
-	if ((e_vx = uls_find_tokdef_vx(uls, tok_id)) == nilptr) {
-		e_vx = set_err_tok(uls, "Unknown token-id!");
-	}
+	uls->tokdef_vx = uls_find_tokdef_vx_force(uls, tok_id);
 
-	uls->tokdef_vx = e_vx;
 	return 0;
 }
 
@@ -626,18 +609,17 @@ ULS_QUALIFIED_METHOD(uls_open_istream)(int fd)
 		return nilptr;
 
 	} else if (len < magic_code_len || !uls_streql(linebuff, magic_code)) { // including EOF(len==0)
-		_uls_tool_(memcopy)(istr->firstline, linebuff, len);
-		istr->firstline[len] = '\0';
+		uls_set_namebuf_value_2(istr->firstline, linebuff, len);
 		istr->len_firstline = len;
 
-		// in order to compare it with the UTF-BOM
-		fpos = get_rawfile_subtype(istr->firstline, istr->len_firstline, uls_ptr(parms));
+		fpos = get_rawfile_subtype(uls_get_namebuf_value(istr->firstline), istr->len_firstline, uls_ptr(parms));
 		istr->header.subtype = parms.n1;
 		istr->header.reverse = parms.n2;
 
+		// can lseek for regular(!) files.
 		if (uls_fd_seek(istr->fd, fpos, SEEK_SET) == fpos) {
-			// Invalidate the firstline[] read in the file.
-			istr->firstline[0] = '\0';
+			// then invalidate the firstline[] read in the file.
+			uls_set_namebuf_value(istr->firstline, "");
 			istr->len_firstline = 0;
 		}
 
@@ -870,6 +852,7 @@ ULS_QUALIFIED_METHOD(uls_bind_istream)(uls_istream_ptr_t istr, uls_lex_ptr_t uls
 		if (!check_istr_compatibility(istr, uls)) {
 			return -1;
 		}
+
 		uls_grab(uls);
 	}
 
@@ -878,6 +861,7 @@ ULS_QUALIFIED_METHOD(uls_bind_istream)(uls_istream_ptr_t istr, uls_lex_ptr_t uls
 	}
 
 	istr->uls = uls;
+
 	return 0;
 }
 

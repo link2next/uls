@@ -1,10 +1,12 @@
 include ../cfg.mk
 
+ACLOCAL_AMFLAGS = -I m4
+
 bin_PROGRAMS = MkfToks
 MkfToks_SOURCES = MkfToks.cpp MkfLex.cpp
-#MkfToks_CPPFLAGS = -std=c++11 -I$(uls_inc_dir) -DULS_USE_WSTR
-MkfToks_CPPFLAGS = -std=c++11 -I$(uls_inc_dir)
-MkfToks_LDADD = -L$(uls_lib_dir) -lulscpp -luls
+
+MkfToks_CPPFLAGS = -I$(uls_inc_dir)
+MkfToks_LDADD = -L$(uls_lib_dir) -lulscpp -lulscompat -luls
 
 $(MkfToks_SOURCES): MkfLexBasis.h
 

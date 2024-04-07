@@ -2,7 +2,7 @@
 	[     LF]
 	[   WORD] dstdir=/tmp/v
 	[     LF]
-	[   WORD] n_relvers=24
+	[   WORD] n_relvers=0x18
 	[     LF]
 	[     LF]
 	[   WORD] zbin_target
@@ -11,7 +11,7 @@
 	[     LF]
 	[       ] {
 	[     LF]
-	[   WORD] ver=$1
+	[   WORD] ver=$0x1
 	[     LF]
 	[     LF]
 	[     IF] if
@@ -32,7 +32,7 @@
 	[   WORD] pre$ver
 	[     LF]
 	[     LF]
-	[   WORD] i=1
+	[   WORD] i=0x1
 	[     LF]
 	[  WHILE] while
 	[       ] [
@@ -60,7 +60,7 @@
 	[     LF]
 	[     FI] fi
 	[     LF]
-	[   WORD] i=$(($i+1))
+	[   WORD] i=$(($i+0x1))
 	[     LF]
 	[   DONE] done
 	[     LF]
@@ -77,7 +77,7 @@
 	[     LF]
 	[       ] {
 	[     LF]
-	[   WORD] ver=$1
+	[   WORD] ver=$0x1
 	[     LF]
 	[     LF]
 	[     IF] if
@@ -96,7 +96,7 @@
 	[     FI] fi
 	[     LF]
 	[     LF]
-	[   WORD] i=1
+	[   WORD] i=0x1
 	[     LF]
 	[  WHILE] while
 	[       ] [
@@ -122,7 +122,7 @@
 	[     LF]
 	[     FI] fi
 	[     LF]
-	[   WORD] i=$(($i+1))
+	[   WORD] i=$(($i+0x1))
 	[     LF]
 	[   DONE] done
 	[     LF]
@@ -142,16 +142,16 @@
 	[ LITSTR] usage: zx_target.sh <file1> <file2>
 	[     LF]
 	[   WORD] exit
-	[    NUM] 1
+	[    NUM] 0x1
 	[     LF]
 	[     FI] fi
 	[     LF]
 	[     LF]
-	[   WORD] cmd_mode=$1
+	[   WORD] cmd_mode=$0x1
 	[     LF]
-	[   WORD] start_prodid=$2
+	[   WORD] start_prodid=$0x2
 	[     LF]
-	[   WORD] end_prodid=$3
+	[   WORD] end_prodid=$0x3
 	[     LF]
 	[     LF]
 	[     IF] if
@@ -177,7 +177,7 @@
 	[   WORD] zbin_target
 	[   WORD] $i
 	[     LF]
-	[   WORD] i=$(($i+1))
+	[   WORD] i=$(($i+0x1))
 	[     LF]
 	[   DONE] done
 	[     LF]
@@ -207,7 +207,7 @@
 	[   WORD] wbin_target
 	[   WORD] $i
 	[     LF]
-	[   WORD] i=$(($i+1))
+	[   WORD] i=$(($i+0x1))
 	[     LF]
 	[   DONE] done
 	[     LF]

@@ -48,7 +48,7 @@ EQL        ==
 NEQ        ~=
 
 ARRAY_MUL   .*
-ARRAY_DIV_L .\\
+ARRAY_DIV_L .\
 ARRAY_DIV_R ./
 ARRAY_POW   .^
 #NONCONJ_TRANSPOSE .'

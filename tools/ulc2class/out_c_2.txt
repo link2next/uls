@@ -42,13 +42,13 @@
 #define            BEGIN  92
 #define              BEG  92
 #define              AND  93
-#define        AND_ALIAS  93
-#define             AND2  93
-#define           AANNDD  93
 #define           ANDAND  93
+#define           AANNDD  93
+#define             AND2  93
+#define        AND_ALIAS  93
 #define            MINUS  94
-#define              OR2  94
 #define               OR  94
+#define              OR2  94
 #define               EQ  95
 #define             EQEQ  96
 #define              NEQ  97

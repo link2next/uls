@@ -32,58 +32,52 @@
 */
 #include "EngLex.h"
 #include <uls/UlsUtils.h>
-#include <iostream>
 
 using namespace std;
+using namespace uls;
 using namespace uls::collection;
 
 namespace
 {
-	LPCTSTR PACKAGE_NAME = _T("EngToks");
-	tstring config_name = _T("eng.ulc");
+	const char * PACKAGE_NAME = "EngToks";
+	string config_name = "eng.ulc";
 	int  opt_verbose;
 
 	void Usage(void)
 	{
-		otstringstream oss;
-
-		oss << _T("Dumping the tokens in plain English text.") << _tendl;
-		oss << _T("Usage:") << PACKAGE_NAME << _T(" <english text>") << _tendl;
-
-		_tcerr << oss.str() << _tendl;
+		err_log("Where the 'simplest.ulc' is:");
+		listUlcSearchPaths();
 	}
 
 	void Version(void)
 	{
-		otstringstream oss;
-
-		oss << ULS_GREETING << _tendl;
-		oss << _T("Copyright (C) ") << ULS_COPYRIGHT_YEAR_START << _T("-") <<  ULS_COPYRIGHT_YEAR_CURRENT << _T(" All rights reserved.") << _tendl;
-		oss << _T("Unless required by applicable law or agreed to in writing, software") << _tendl;
-		oss << _T("distributed under the License is distributed on an \"AS IS\" BASIS,") << _tendl;
-		oss << _T("WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.") << _tendl;
-
-		_tcerr << oss.str() << _tendl;
+		err_log(ULS_GREETING);
+		err_log("Copyright (C) %d-%d All rights reserved.",
+			ULS_COPYRIGHT_YEAR_START, ULS_COPYRIGHT_YEAR_CURRENT);
+		err_log("Unless required by applicable law or agreed to in writing, software");
+		err_log("distributed under the License is distributed on an \"AS IS\" BASIS,");
+		err_log("WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.");
+		err_log("");
 	}
 
-	int engtoks_options(int opt, LPTSTR optarg)
+	int engtoks_options(int opt, char * optarg)
 	{
 		int   stat = 0;
 
 		switch (opt) {
-		case _T('v'):
+		case 'v':
 			opt_verbose = 1;
 			break;
-		case _T('h'):
+		case 'h':
 			Usage();
 			stat = 1;
 			break;
-		case _T('V'):
+		case 'V':
 			Version();
 			stat = 1;
 			break;
 		default:
-			_tcerr << _T("undefined option -") << (TCHAR) opt << _tendl;
+			err_log("undefined option -%c", opt);
 			stat = -1;
 			break;
 		}
@@ -99,18 +93,15 @@ namespace
 	void dumpToken(EngLex *englex)
 	{
 		int t = englex->getTokNum();
-
-		tstring* lxm;
-		englex->getTokStr(&lxm);
-		LPCTSTR tstr = lxm->c_str();
+		const char * tstr = englex->getTokStr().c_str();
 
 		switch (t) {
 		case EngLex::WORD:
-			englex->printf(_T("\t[   WORD] %s\n"), tstr);
+			uls_printf("\t[   WORD] %s\n", tstr);
 			break;
 
 		case EngLex::NUM:
-			englex->printf(_T("\t[    NUM] %s\n"), tstr);
+			uls_printf("\t[    NUM] %s\n", tstr);
 			break;
 
 		default:
@@ -136,27 +127,27 @@ namespace
 }
 
 int
-_tmain(int n_targv, LPTSTR *targv)
+main(int argc, char **argv)
 {
 	EngLex *englex;
-	tstring input_file;
+	string input_file;
 	int   i0;
 
-	if ((i0=uls::parseCommandOptions(n_targv, targv, _T("vhV"), engtoks_options)) <= 0) {
+	if ((i0=uls_getopts(argc, argv, "vhV", engtoks_options)) <= 0) {
 		return i0;
 	}
 
 	englex = new EngLex(config_name);
 
-	if (i0 < n_targv) {
-		input_file = targv[i0];
+	if (i0 < argc) {
+		input_file = argv[i0];
 	} else {
 		Usage();
 		return 1;
 	}
 
 	if (englex->set_input_file(input_file) < 0) {
-		_tcerr << _T(": Can't open ") << input_file << _tendl;
+		err_log("can't open '%s'", input_file.c_str());
 	} else {
 		dumpTokens(englex);
 	}
@@ -165,17 +156,3 @@ _tmain(int n_targv, LPTSTR *targv)
 	return 0;
 }
 
-#ifndef __WINDOWS__
-int
-main(int argc, char *argv[])
-{
-	LPTSTR *targv;
-	int stat;
-
-	ULSCPP_GET_WARGS_LIST(argc, argv, targv);
-	stat = _tmain(argc, targv);
-	ULSCPP_PUT_WARGS_LIST(argc, targv);
-
-	return stat;
-}
-#endif

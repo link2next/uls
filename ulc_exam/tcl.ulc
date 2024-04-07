@@ -40,7 +40,7 @@ CONCAT           concat
 CONSOLE          console
 CONTINUE         continue
 ERROR            error
-ENDFILE          eof
+EOF              eof
 EVAL             eval
 EXEC             exec
 EXIT             exit

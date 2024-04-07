@@ -89,8 +89,8 @@ uls::crux::UlsOStream::UlsOStream
 {
 	const char *ustr0, *ustr1;
 
-	ustr0 = filepath.c_str();
-	ustr1 = subtag;
+	_ULSCPP_NSTR2USTR(filepath.c_str(), ustr0, 0);
+	_ULSCPP_NSTR2USTR(subtag, ustr1, 1);
 
 	if (makeOStream_ustr(ustr0, lex, ustr1, numbering) == false) {
 		cerr << "can't create uls (output) stream object!" << endl;
@@ -149,13 +149,12 @@ uls::crux::UlsOStream::getCore(void)
 // <parm name="tokstr">the lexeme associated with the 'tokid'</parm>
 // <return>none</return>
 void
-uls::crux::UlsOStream::printTok(int tokid, const string& tokstr)
+uls::crux::UlsOStream::printTok(int tokid, string& tokstr)
 {
 	const char *ustr;
 	int len, rc;
 
-	ustr = tokstr.c_str();
-	len = uls_strlen(ustr);
+	len = _ULSCPP_NSTR2USTR(tokstr.c_str(), ustr, 0);
 
 	rc = __uls_print_tok(out_hdr, tokid, ustr, len);
 	if (rc < 0)
@@ -163,7 +162,7 @@ uls::crux::UlsOStream::printTok(int tokid, const string& tokstr)
 }
 
 void
-uls::crux::UlsOStream::printTok(int tokid, const std::wstring& wtokstr)
+uls::crux::UlsOStream::printTok(int tokid, std::wstring& wtokstr)
 {
 	const char *ustr;
 	int len, rc;
@@ -181,20 +180,19 @@ uls::crux::UlsOStream::printTok(int tokid, const std::wstring& wtokstr)
 // <parm name="tagstr">the tag of the source file.</parm>
 // <return>none</return>
 void
-uls::crux::UlsOStream::printTokLineNum(int lno, const string& tagstr)
+uls::crux::UlsOStream::printTokLineNum(int lno, string& tagstr)
 {
 	const char *ustr;
 	int len, rc;
 
-	ustr = tagstr.c_str();
-	len = uls_strlen(ustr);
+	len = _ULSCPP_NSTR2USTR(tagstr.c_str(), ustr, 0);
 	rc = __uls_print_tok_linenum(out_hdr, lno, ustr, len);
 	if (rc < 0)
 		cerr << "can't a print linenum-token!" << endl;
 }
 
 void
-uls::crux::UlsOStream::printTokLineNum(int lno, const std::wstring& wtagstr)
+uls::crux::UlsOStream::printTokLineNum(int lno, std::wstring& wtagstr)
 {
 	const char *ustr;
 	int len, rc;
@@ -204,7 +202,6 @@ uls::crux::UlsOStream::printTokLineNum(int lno, const std::wstring& wtagstr)
 	if (rc < 0)
 		cerr << "can't a print linenum-token!" << endl;
 }
-
 // <brief>
 // Start writing the lexical streaming with input-stream 'ifile'.
 // </brief>

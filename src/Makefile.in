@@ -141,15 +141,15 @@ am_libuls_la_OBJECTS = libuls_la-uls_prim.lo libuls_la-uls_misc.lo \
 	libuls_la-fdfilter.lo libuls_la-uls_ieee754.lo \
 	libuls_la-uls_lf_percent_f.lo libuls_la-uls_lf_sprintf.lo \
 	libuls_la-uls_print.lo libuls_la-uls_tokdef.lo \
-	libuls_la-onechar.lo libuls_la-twoplus.lo libuls_la-idkeyw.lo \
-	libuls_la-uls_context.lo libuls_la-uls_sysprops.lo \
-	libuls_la-uls_langs.lo libuls_la-uls_freq.lo \
-	libuls_la-uls_conf.lo libuls_la-uld_conf.lo \
-	libuls_la-uls_core.lo libuls_la-uls_num.lo libuls_la-litesc.lo \
-	libuls_la-litstr.lo libuls_la-uls_input.lo \
-	libuls_la-uls_lex.lo libuls_la-unget.lo libuls_la-uls_emit.lo \
-	libuls_la-uls_dump.lo libuls_la-uls_stream.lo \
-	libuls_la-uls_istream.lo libuls_la-uls_ostream.lo \
+	libuls_la-twoplus.lo libuls_la-onechar.lo libuls_la-idkeyw.lo \
+	libuls_la-uls_freq.lo libuls_la-uls_conf.lo \
+	libuls_la-uld_conf.lo libuls_la-uls_emit.lo \
+	libuls_la-uls_context.lo libuls_la-uls_langs.lo \
+	libuls_la-uls_core.lo libuls_la-uls_lex.lo libuls_la-unget.lo \
+	libuls_la-uls_stream.lo libuls_la-uls_istream.lo \
+	libuls_la-uls_ostream.lo libuls_la-uls_num.lo \
+	libuls_la-litesc.lo libuls_la-litstr.lo libuls_la-uls_input.lo \
+	libuls_la-uls_sysprops.lo libuls_la-uls_dump.lo \
 	libuls_la-uls_init.lo
 libuls_la_OBJECTS = $(am_libuls_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -292,9 +292,6 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
 GREP = @GREP@
-HAVE_JAVA = @HAVE_JAVA@
-HAVE_JAVAC = @HAVE_JAVAC@
-HAVE_JAVAH = @HAVE_JAVAH@
 HELP2MAN = @HELP2MAN@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
@@ -348,9 +345,6 @@ am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
 am__tar = @am__tar@
 am__untar = @am__untar@
-ax_etc_dir = @ax_etc_dir@
-ax_jdk_cppflags = @ax_jdk_cppflags@
-ax_jdk_ldflags = @ax_jdk_ldflags@
 bindir = @bindir@
 build = @build@
 build_alias = @build_alias@
@@ -362,6 +356,7 @@ datadir = @datadir@
 datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
+etc_dir = @etc_dir@
 exec_prefix = @exec_prefix@
 host = @host@
 host_alias = @host_alias@
@@ -394,8 +389,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 uls_ver_major = 1
 uls_ver_minor = 9
-uls_ver_debug = 3
-uls_ver = $(uls_ver_major).$(uls_ver_minor).$(uls_ver_debug)
+uls_ver_debug = 0
 so_current = 1
 so_revision = 0
 so_age = 0
@@ -408,24 +402,22 @@ libuls_la_SOURCES = \
 	uls_prim.c uls_misc.c uls_util.c uls_version.c uls_auw.c uls_fileio.c \
 	utf8_enc.c utf_file.c uls_log.c csz_stream.c fdfilter.c \
 	uls_ieee754.c uls_lf_percent_f.c uls_lf_sprintf.c uls_print.c \
-	uls_tokdef.c onechar.c twoplus.c idkeyw.c uls_context.c \
-	uls_sysprops.c uls_langs.c uls_freq.c uls_conf.c uld_conf.c \
-	uls_core.c uls_num.c litesc.c litstr.c uls_input.c uls_lex.c \
-	unget.c uls_emit.c uls_dump.c \
-	uls_stream.c uls_istream.c uls_ostream.c \
-	uls_init.c
+	uls_tokdef.c twoplus.c onechar.c idkeyw.c uls_freq.c uls_conf.c uld_conf.c uls_emit.c \
+	uls_context.c uls_langs.c uls_core.c uls_lex.c unget.c uls_stream.c uls_istream.c uls_ostream.c \
+	uls_num.c litesc.c litstr.c uls_input.c uls_sysprops.c \
+	uls_dump.c uls_init.c
 
 noinst_HEADERS = 
-include_HEADERS = uls.h
+include_HEADERS = uls.h 
 libuls_la_CPPFLAGS = -D_ULS_IMPLDLL -DULS_SRC_DIR=\"$(PWD)\" \
-	-DULS_ETC_DIR=\"$(ax_etc_dir)\" \
+	-DULS_ETC_DIR=\"$(etc_dir)\" \
 	-include $(CONFIG_HEADER) -I$(top_srcdir)
 
 libuls_la_CFLAGS = -funsigned-char \
 	-Wall -Wno-char-subscripts -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast
 
 libuls_la_LDFLAGS = -version-info $(so_current):$(so_revision):$(so_age)
-libuls_la_LIBADD = -lpthread
+libuls_la_LIBADD = -lpthread 
 ACLOCAL_AMFLAGS = -I m4
 all: all-am
 
@@ -684,13 +676,6 @@ libuls_la-uls_tokdef.lo: uls_tokdef.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -c -o libuls_la-uls_tokdef.lo `test -f 'uls_tokdef.c' || echo '$(srcdir)/'`uls_tokdef.c
 
-libuls_la-onechar.lo: onechar.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -MT libuls_la-onechar.lo -MD -MP -MF $(DEPDIR)/libuls_la-onechar.Tpo -c -o libuls_la-onechar.lo `test -f 'onechar.c' || echo '$(srcdir)/'`onechar.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libuls_la-onechar.Tpo $(DEPDIR)/libuls_la-onechar.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='onechar.c' object='libuls_la-onechar.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -c -o libuls_la-onechar.lo `test -f 'onechar.c' || echo '$(srcdir)/'`onechar.c
-
 libuls_la-twoplus.lo: twoplus.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -MT libuls_la-twoplus.lo -MD -MP -MF $(DEPDIR)/libuls_la-twoplus.Tpo -c -o libuls_la-twoplus.lo `test -f 'twoplus.c' || echo '$(srcdir)/'`twoplus.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libuls_la-twoplus.Tpo $(DEPDIR)/libuls_la-twoplus.Plo
@@ -698,33 +683,19 @@ libuls_la-twoplus.lo: twoplus.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -c -o libuls_la-twoplus.lo `test -f 'twoplus.c' || echo '$(srcdir)/'`twoplus.c
 
+libuls_la-onechar.lo: onechar.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -MT libuls_la-onechar.lo -MD -MP -MF $(DEPDIR)/libuls_la-onechar.Tpo -c -o libuls_la-onechar.lo `test -f 'onechar.c' || echo '$(srcdir)/'`onechar.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libuls_la-onechar.Tpo $(DEPDIR)/libuls_la-onechar.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='onechar.c' object='libuls_la-onechar.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -c -o libuls_la-onechar.lo `test -f 'onechar.c' || echo '$(srcdir)/'`onechar.c
+
 libuls_la-idkeyw.lo: idkeyw.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -MT libuls_la-idkeyw.lo -MD -MP -MF $(DEPDIR)/libuls_la-idkeyw.Tpo -c -o libuls_la-idkeyw.lo `test -f 'idkeyw.c' || echo '$(srcdir)/'`idkeyw.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libuls_la-idkeyw.Tpo $(DEPDIR)/libuls_la-idkeyw.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='idkeyw.c' object='libuls_la-idkeyw.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -c -o libuls_la-idkeyw.lo `test -f 'idkeyw.c' || echo '$(srcdir)/'`idkeyw.c
-
-libuls_la-uls_context.lo: uls_context.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -MT libuls_la-uls_context.lo -MD -MP -MF $(DEPDIR)/libuls_la-uls_context.Tpo -c -o libuls_la-uls_context.lo `test -f 'uls_context.c' || echo '$(srcdir)/'`uls_context.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libuls_la-uls_context.Tpo $(DEPDIR)/libuls_la-uls_context.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='uls_context.c' object='libuls_la-uls_context.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -c -o libuls_la-uls_context.lo `test -f 'uls_context.c' || echo '$(srcdir)/'`uls_context.c
-
-libuls_la-uls_sysprops.lo: uls_sysprops.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -MT libuls_la-uls_sysprops.lo -MD -MP -MF $(DEPDIR)/libuls_la-uls_sysprops.Tpo -c -o libuls_la-uls_sysprops.lo `test -f 'uls_sysprops.c' || echo '$(srcdir)/'`uls_sysprops.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libuls_la-uls_sysprops.Tpo $(DEPDIR)/libuls_la-uls_sysprops.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='uls_sysprops.c' object='libuls_la-uls_sysprops.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -c -o libuls_la-uls_sysprops.lo `test -f 'uls_sysprops.c' || echo '$(srcdir)/'`uls_sysprops.c
-
-libuls_la-uls_langs.lo: uls_langs.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -MT libuls_la-uls_langs.lo -MD -MP -MF $(DEPDIR)/libuls_la-uls_langs.Tpo -c -o libuls_la-uls_langs.lo `test -f 'uls_langs.c' || echo '$(srcdir)/'`uls_langs.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libuls_la-uls_langs.Tpo $(DEPDIR)/libuls_la-uls_langs.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='uls_langs.c' object='libuls_la-uls_langs.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -c -o libuls_la-uls_langs.lo `test -f 'uls_langs.c' || echo '$(srcdir)/'`uls_langs.c
 
 libuls_la-uls_freq.lo: uls_freq.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -MT libuls_la-uls_freq.lo -MD -MP -MF $(DEPDIR)/libuls_la-uls_freq.Tpo -c -o libuls_la-uls_freq.lo `test -f 'uls_freq.c' || echo '$(srcdir)/'`uls_freq.c
@@ -747,12 +718,68 @@ libuls_la-uld_conf.lo: uld_conf.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -c -o libuls_la-uld_conf.lo `test -f 'uld_conf.c' || echo '$(srcdir)/'`uld_conf.c
 
+libuls_la-uls_emit.lo: uls_emit.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -MT libuls_la-uls_emit.lo -MD -MP -MF $(DEPDIR)/libuls_la-uls_emit.Tpo -c -o libuls_la-uls_emit.lo `test -f 'uls_emit.c' || echo '$(srcdir)/'`uls_emit.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libuls_la-uls_emit.Tpo $(DEPDIR)/libuls_la-uls_emit.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='uls_emit.c' object='libuls_la-uls_emit.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -c -o libuls_la-uls_emit.lo `test -f 'uls_emit.c' || echo '$(srcdir)/'`uls_emit.c
+
+libuls_la-uls_context.lo: uls_context.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -MT libuls_la-uls_context.lo -MD -MP -MF $(DEPDIR)/libuls_la-uls_context.Tpo -c -o libuls_la-uls_context.lo `test -f 'uls_context.c' || echo '$(srcdir)/'`uls_context.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libuls_la-uls_context.Tpo $(DEPDIR)/libuls_la-uls_context.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='uls_context.c' object='libuls_la-uls_context.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -c -o libuls_la-uls_context.lo `test -f 'uls_context.c' || echo '$(srcdir)/'`uls_context.c
+
+libuls_la-uls_langs.lo: uls_langs.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -MT libuls_la-uls_langs.lo -MD -MP -MF $(DEPDIR)/libuls_la-uls_langs.Tpo -c -o libuls_la-uls_langs.lo `test -f 'uls_langs.c' || echo '$(srcdir)/'`uls_langs.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libuls_la-uls_langs.Tpo $(DEPDIR)/libuls_la-uls_langs.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='uls_langs.c' object='libuls_la-uls_langs.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -c -o libuls_la-uls_langs.lo `test -f 'uls_langs.c' || echo '$(srcdir)/'`uls_langs.c
+
 libuls_la-uls_core.lo: uls_core.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -MT libuls_la-uls_core.lo -MD -MP -MF $(DEPDIR)/libuls_la-uls_core.Tpo -c -o libuls_la-uls_core.lo `test -f 'uls_core.c' || echo '$(srcdir)/'`uls_core.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libuls_la-uls_core.Tpo $(DEPDIR)/libuls_la-uls_core.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='uls_core.c' object='libuls_la-uls_core.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -c -o libuls_la-uls_core.lo `test -f 'uls_core.c' || echo '$(srcdir)/'`uls_core.c
+
+libuls_la-uls_lex.lo: uls_lex.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -MT libuls_la-uls_lex.lo -MD -MP -MF $(DEPDIR)/libuls_la-uls_lex.Tpo -c -o libuls_la-uls_lex.lo `test -f 'uls_lex.c' || echo '$(srcdir)/'`uls_lex.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libuls_la-uls_lex.Tpo $(DEPDIR)/libuls_la-uls_lex.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='uls_lex.c' object='libuls_la-uls_lex.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -c -o libuls_la-uls_lex.lo `test -f 'uls_lex.c' || echo '$(srcdir)/'`uls_lex.c
+
+libuls_la-unget.lo: unget.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -MT libuls_la-unget.lo -MD -MP -MF $(DEPDIR)/libuls_la-unget.Tpo -c -o libuls_la-unget.lo `test -f 'unget.c' || echo '$(srcdir)/'`unget.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libuls_la-unget.Tpo $(DEPDIR)/libuls_la-unget.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='unget.c' object='libuls_la-unget.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -c -o libuls_la-unget.lo `test -f 'unget.c' || echo '$(srcdir)/'`unget.c
+
+libuls_la-uls_stream.lo: uls_stream.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -MT libuls_la-uls_stream.lo -MD -MP -MF $(DEPDIR)/libuls_la-uls_stream.Tpo -c -o libuls_la-uls_stream.lo `test -f 'uls_stream.c' || echo '$(srcdir)/'`uls_stream.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libuls_la-uls_stream.Tpo $(DEPDIR)/libuls_la-uls_stream.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='uls_stream.c' object='libuls_la-uls_stream.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -c -o libuls_la-uls_stream.lo `test -f 'uls_stream.c' || echo '$(srcdir)/'`uls_stream.c
+
+libuls_la-uls_istream.lo: uls_istream.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -MT libuls_la-uls_istream.lo -MD -MP -MF $(DEPDIR)/libuls_la-uls_istream.Tpo -c -o libuls_la-uls_istream.lo `test -f 'uls_istream.c' || echo '$(srcdir)/'`uls_istream.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libuls_la-uls_istream.Tpo $(DEPDIR)/libuls_la-uls_istream.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='uls_istream.c' object='libuls_la-uls_istream.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -c -o libuls_la-uls_istream.lo `test -f 'uls_istream.c' || echo '$(srcdir)/'`uls_istream.c
+
+libuls_la-uls_ostream.lo: uls_ostream.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -MT libuls_la-uls_ostream.lo -MD -MP -MF $(DEPDIR)/libuls_la-uls_ostream.Tpo -c -o libuls_la-uls_ostream.lo `test -f 'uls_ostream.c' || echo '$(srcdir)/'`uls_ostream.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libuls_la-uls_ostream.Tpo $(DEPDIR)/libuls_la-uls_ostream.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='uls_ostream.c' object='libuls_la-uls_ostream.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -c -o libuls_la-uls_ostream.lo `test -f 'uls_ostream.c' || echo '$(srcdir)/'`uls_ostream.c
 
 libuls_la-uls_num.lo: uls_num.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -MT libuls_la-uls_num.lo -MD -MP -MF $(DEPDIR)/libuls_la-uls_num.Tpo -c -o libuls_la-uls_num.lo `test -f 'uls_num.c' || echo '$(srcdir)/'`uls_num.c
@@ -782,26 +809,12 @@ libuls_la-uls_input.lo: uls_input.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -c -o libuls_la-uls_input.lo `test -f 'uls_input.c' || echo '$(srcdir)/'`uls_input.c
 
-libuls_la-uls_lex.lo: uls_lex.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -MT libuls_la-uls_lex.lo -MD -MP -MF $(DEPDIR)/libuls_la-uls_lex.Tpo -c -o libuls_la-uls_lex.lo `test -f 'uls_lex.c' || echo '$(srcdir)/'`uls_lex.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libuls_la-uls_lex.Tpo $(DEPDIR)/libuls_la-uls_lex.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='uls_lex.c' object='libuls_la-uls_lex.lo' libtool=yes @AMDEPBACKSLASH@
+libuls_la-uls_sysprops.lo: uls_sysprops.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -MT libuls_la-uls_sysprops.lo -MD -MP -MF $(DEPDIR)/libuls_la-uls_sysprops.Tpo -c -o libuls_la-uls_sysprops.lo `test -f 'uls_sysprops.c' || echo '$(srcdir)/'`uls_sysprops.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libuls_la-uls_sysprops.Tpo $(DEPDIR)/libuls_la-uls_sysprops.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='uls_sysprops.c' object='libuls_la-uls_sysprops.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -c -o libuls_la-uls_lex.lo `test -f 'uls_lex.c' || echo '$(srcdir)/'`uls_lex.c
-
-libuls_la-unget.lo: unget.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -MT libuls_la-unget.lo -MD -MP -MF $(DEPDIR)/libuls_la-unget.Tpo -c -o libuls_la-unget.lo `test -f 'unget.c' || echo '$(srcdir)/'`unget.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libuls_la-unget.Tpo $(DEPDIR)/libuls_la-unget.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='unget.c' object='libuls_la-unget.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -c -o libuls_la-unget.lo `test -f 'unget.c' || echo '$(srcdir)/'`unget.c
-
-libuls_la-uls_emit.lo: uls_emit.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -MT libuls_la-uls_emit.lo -MD -MP -MF $(DEPDIR)/libuls_la-uls_emit.Tpo -c -o libuls_la-uls_emit.lo `test -f 'uls_emit.c' || echo '$(srcdir)/'`uls_emit.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libuls_la-uls_emit.Tpo $(DEPDIR)/libuls_la-uls_emit.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='uls_emit.c' object='libuls_la-uls_emit.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -c -o libuls_la-uls_emit.lo `test -f 'uls_emit.c' || echo '$(srcdir)/'`uls_emit.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -c -o libuls_la-uls_sysprops.lo `test -f 'uls_sysprops.c' || echo '$(srcdir)/'`uls_sysprops.c
 
 libuls_la-uls_dump.lo: uls_dump.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -MT libuls_la-uls_dump.lo -MD -MP -MF $(DEPDIR)/libuls_la-uls_dump.Tpo -c -o libuls_la-uls_dump.lo `test -f 'uls_dump.c' || echo '$(srcdir)/'`uls_dump.c
@@ -809,27 +822,6 @@ libuls_la-uls_dump.lo: uls_dump.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='uls_dump.c' object='libuls_la-uls_dump.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -c -o libuls_la-uls_dump.lo `test -f 'uls_dump.c' || echo '$(srcdir)/'`uls_dump.c
-
-libuls_la-uls_stream.lo: uls_stream.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -MT libuls_la-uls_stream.lo -MD -MP -MF $(DEPDIR)/libuls_la-uls_stream.Tpo -c -o libuls_la-uls_stream.lo `test -f 'uls_stream.c' || echo '$(srcdir)/'`uls_stream.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libuls_la-uls_stream.Tpo $(DEPDIR)/libuls_la-uls_stream.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='uls_stream.c' object='libuls_la-uls_stream.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -c -o libuls_la-uls_stream.lo `test -f 'uls_stream.c' || echo '$(srcdir)/'`uls_stream.c
-
-libuls_la-uls_istream.lo: uls_istream.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -MT libuls_la-uls_istream.lo -MD -MP -MF $(DEPDIR)/libuls_la-uls_istream.Tpo -c -o libuls_la-uls_istream.lo `test -f 'uls_istream.c' || echo '$(srcdir)/'`uls_istream.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libuls_la-uls_istream.Tpo $(DEPDIR)/libuls_la-uls_istream.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='uls_istream.c' object='libuls_la-uls_istream.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -c -o libuls_la-uls_istream.lo `test -f 'uls_istream.c' || echo '$(srcdir)/'`uls_istream.c
-
-libuls_la-uls_ostream.lo: uls_ostream.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -MT libuls_la-uls_ostream.lo -MD -MP -MF $(DEPDIR)/libuls_la-uls_ostream.Tpo -c -o libuls_la-uls_ostream.lo `test -f 'uls_ostream.c' || echo '$(srcdir)/'`uls_ostream.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libuls_la-uls_ostream.Tpo $(DEPDIR)/libuls_la-uls_ostream.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='uls_ostream.c' object='libuls_la-uls_ostream.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -c -o libuls_la-uls_ostream.lo `test -f 'uls_ostream.c' || echo '$(srcdir)/'`uls_ostream.c
 
 libuls_la-uls_init.lo: uls_init.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -MT libuls_la-uls_init.lo -MD -MP -MF $(DEPDIR)/libuls_la-uls_init.Tpo -c -o libuls_la-uls_init.lo `test -f 'uls_init.c' || echo '$(srcdir)/'`uls_init.c

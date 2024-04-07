@@ -169,7 +169,7 @@ RADIO          Radio
 TOOLBAR        toolbar
 CLOSE          close
 INNERHEIGHT    innerHeight
-NUM            Number
+NUMBER         Number
 REF            ref
 TOP            top
 CLOSED         closed

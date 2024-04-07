@@ -39,8 +39,6 @@
 #include <uls/UlsOStream.h>
 
 #include <iostream>
-#include <string>
-#include <sstream>
 
 #include <uls/uls_util.h>
 
@@ -49,56 +47,50 @@ using namespace uls::crux;
 
 namespace
 {
-	LPCTSTR PACKAGE_NAME = _T("DumpToks");
+	const char * PACKAGE_NAME = "DumpToks";
 	int  opt_verbose;
-	tstring config_name;
-	tstring input_file;
+	string config_name;
+	string input_file;
 
 	void Usage(void)
 	{
-		otstringstream oss;
-
-		oss << _T("Usage: ") << PACKAGE_NAME << _T(" [-L <ulc-file>] <file>") << _tendl;
-		oss << _T("   Dumping the tokens under <ulc-file> in file specified in argv[].") << _tendl;
-		oss << _T("Home page: ") << ULS_URL << _tendl;
-
-		_tcerr << oss.str() << _tendl;
+		err_log("Usage: %s [-L <ulc-file>] <file>", PACKAGE_NAME);
+		err_log("   Dumping the tokens under <ulc-file> in file specified in argv[].", PACKAGE_NAME);
+		err_log("%s home page: <%s>\n", PACKAGE_NAME, ULS_URL);
 	}
 
 	void Version(void)
 	{
-		otstringstream oss;
-
-		oss << ULS_GREETING << _tendl;
-		oss << _T("Copyright (C) ") << ULS_COPYRIGHT_YEAR_START << _T("-") <<  ULS_COPYRIGHT_YEAR_CURRENT << _T(" All rights reserved.") << _tendl;
-		oss << _T("Unless required by applicable law or agreed to in writing, software") << _tendl;
-		oss << _T("distributed under the License is distributed on an \"AS IS\" BASIS,") << _tendl;
-		oss << _T("WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.") << _tendl;
-
-		_tcerr << oss.str() << _tendl;
+		err_log(ULS_GREETING);
+		err_log("Copyright (C) %d-%d All rights reserved.",
+			ULS_COPYRIGHT_YEAR_START, ULS_COPYRIGHT_YEAR_CURRENT);
+		err_log("Unless required by applicable law or agreed to in writing, software");
+		err_log("distributed under the License is distributed on an \"AS IS\" BASIS,");
+		err_log("WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.");
+		err_log("");
 	}
 
-	int options(int opt, LPTSTR optarg)
+	int options(int opt, char * optarg)
 	{
 		int   stat = 0;
 
 		switch (opt) {
-		case _T('L'):
+		case 'L':
 			config_name = optarg;
 			break;
-		case _T('v'):
+		case 'v':
 			opt_verbose = 1;
 			break;
-		case _T('h'):
+		case 'h':
 			Usage();
 			stat = 1;
 			break;
-		case _T('V'):
+		case 'V':
 			Version();
 			stat = 1;
 			break;
 		default:
-			_tcerr << _T("undefined option -") << (TCHAR) opt << _tendl;
+			err_log("undefined option -%c", opt);
 			stat = -1;
 			break;
 		}
@@ -158,36 +150,36 @@ namespace
 
 		for (i = 0; i < 5; i++) {
 			xdef = xdefs_list + i;
-			lex->printf(_T("\txdefs[%d] = %d\n"), i, xdef->tok_id);
+			uls_printf("\txdefs[%d] = %d\n", i, xdef->tok_id);
 			lex->setExtraTokdef(xdef->tok_id, xdef);
 		}
 
-		LPCTSTR line = _T("C++ *hello/ &world^\n\t\n");
-		lex->pushLine(line);
+		string line = string("C++ *hello/ &world^\n\t\n");
+		lex->pushLine(line.c_str());
 
 		while ((t=lex->getToken()) != lex->toknum_EOI) {
-			lex->dumpTok(_T("\t"), _T(""));
+			lex->dumpTok("\t", "");
 
 			xdef = (sample_xdef *) lex->getExtraTokdef();
 			if (xdef != NULL)
-				lex->printf(_T(" prec=%d node_id=%d"), xdef->prec, xdef->node_id);
-			lex->printf(_T("\n"));
+				lex->printf(" prec=%d node_id=%d", xdef->prec, xdef->node_id);
+			lex->printf("\n");
 		}
 
 		delete []xdefs_list;
 	}
 
-	bool test_streaming(UlsLex *lex, tstring out_dir)
+	bool test_streaming(UlsLex *lex, string out_dir)
 	{
-		tstring uls_file;
-		tstring *lxm;
+		string uls_file;
+		string *lxm;
 		int t;
 
 		uls_file = out_dir;
 		uls_file += ULS_FILEPATH_DELIM;
-		uls_file += _T("a2.uls");
+		uls_file += "a2.uls";
 
-		UlsOStream *ofile = new UlsOStream(uls_file, lex, _T("<<tag>>"));
+		UlsOStream *ofile = new UlsOStream(uls_file, lex, "<<tag>>");
 		UlsIStream *ifile = new UlsIStream(input_file);
 
 		ofile->startStream(*ifile);
@@ -204,7 +196,7 @@ namespace
 		while (1) {
 			t = lex->getTok();
 			if (t == lex->toknum_EOI) break;
-			lex->printf(_T("\t[%7t]  %s\n"), lxm->c_str());
+			lex->printf("\t[%7t]  %s\n", lxm->c_str());
 		}
 
 		delete ifile;
@@ -212,22 +204,22 @@ namespace
 		return true;
 	}
 
-	bool test_tokseq(UlsLex *lex, tstring out_dir)
+	bool test_tokseq(UlsLex *lex, string out_dir)
 	{
 		UlsTmplList  tmpl_list;
-		tstring uls_file;
-		tstring *lxm;
-		int t, stat = 0;
+		string uls_file;
+		string *lxm;
+		int t, stat=0;
 
 		uls_file = out_dir;
 		uls_file += ULS_FILEPATH_DELIM;
-		uls_file += _T("a3.uls");
+		uls_file += "a3.uls";
 
-		tmpl_list.setValue(_T("TVAR1"), _T("unsigned long long"));
-		tmpl_list.setValue(_T("TVAR2"), _T("long double"));
+		tmpl_list.setValue("TVAR1", "unsigned long long");
+		tmpl_list.setValue("TVAR2", "long double");
 
 		// Write a output-stream
-		UlsOStream *ofile = new UlsOStream(uls_file, lex, _T("<<tag>>"));
+		UlsOStream *ofile = new UlsOStream(uls_file, lex, "<<tag>>");
 		lex->pushFile(input_file);
 		lex->getTokStr(&lxm);
 
@@ -260,7 +252,7 @@ namespace
 		while (1) {
 			t = lex->getTok();
 			if (t == lex->toknum_EOI) break;
-			lex->printf(_T("\t[%7t] %s\n"), lxm->c_str());
+			lex->printf("\t[%7t] %s\n", lxm->c_str());
 		}
 
 		delete ifile;
@@ -270,67 +262,50 @@ namespace
 }
 
 int
-_tmain(int n_targv, LPTSTR *targv)
+main(int argc, char **argv)
 {
-	tstring out_dir;
+	string out_dir;
 	int   i0;
 
-	if ((i0=uls::parseCommandOptions(n_targv, targv, _T("L:vhV"), options)) <= 0) {
+	if ((i0=uls_getopts(argc, argv, "L:vhV", options)) <= 0) {
 		return i0;
 	}
 
-	if (config_name.compare(_T("")) == 0)
-		config_name = _T("dumptoks.ulc");
+	if (config_name.compare("") == 0)
+		config_name = "dumptoks.ulc";
 
-	out_dir = _T(".");
+	out_dir = ".";
 
-	if (i0 < n_targv) {
-		input_file = targv[i0];
+	if (i0 < argc) {
+		input_file = argv[i0];
 	} else {
-		input_file = _T("dumptoks_sam.txt");
+		input_file = "dumptoks_sam.txt";
 	}
 
-	if (i0 + 1 < n_targv) {
-		out_dir = targv[i0 + 1];
-		if (uls::direntExist(out_dir.c_str()) != ST_MODE_DIR) {
-			_tcerr << out_dir << _T(": not a directory") << _tendl;
-			return -1;
+	if (i0 + 1 < argc) {
+		out_dir = argv[i0 + 1];
+		if (uls_dirent_exist(out_dir.c_str()) != ST_MODE_DIR) {
+			err_panic("%s: not a directory'", out_dir.c_str());
 		}
 	}
 
-	UlsLex *sample1_lex = new UlsLex(_T("simple"));
+	UlsLex *sample1_lex = new UlsLex("simple");
 	UlsLex *sample2_lex = new UlsLex(config_name);
 
 	if (sample1_lex == NULL || sample2_lex == NULL) {
 		uls::listUlcSearchPaths();
-		_tcerr << _T("Can't init uls-object") << _tendl;
-		return -1;
+		err_panic("%s: can't init uls-object", __func__);
 	}
 
 	test_extra_tokdefs(sample2_lex);
 
-	_tcout << _T(" ----------- ----------- ----------- ----------- -----------") << _tendl;
+	uls_printf(" ----------- ----------- ----------- ----------- ----------- \n");
 	test_streaming(sample1_lex, out_dir);
 
-	_tcout << _T(" ----------- ----------- ----------- ----------- -----------") << _tendl;
+	uls_printf(" ----------- ----------- ----------- ----------- ----------- \n");
 	test_tokseq(sample2_lex, out_dir);
 
 	delete sample1_lex;
 	delete sample2_lex;
 	return 0;
 }
-
-#ifndef __WINDOWS__
-int
-main(int argc, char *argv[])
-{
-	LPTSTR *targv;
-	int stat;
-
-	ULSCPP_GET_WARGS_LIST(argc, argv, targv);
-	stat = _tmain(argc, targv);
-	ULSCPP_PUT_WARGS_LIST(argc, targv);
-
-	return stat;
-}
-#endif

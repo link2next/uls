@@ -31,11 +31,10 @@
     Stanley Hong <link2next@gmail.com>, Jan 2015.
   </author>
 */
-
-#include "uls/uls_lf_swprintf.h"
-#include "uls/uls_fileio_wstr.h"
-#include "uls/uls_util_wstr.h"
+#define __ULS_WPRINT__
 #include "uls/uls_wprint.h"
+#include "uls/uls_fileio.h"
+#include "uls/uls_util_wstr.h"
 
 ULS_DECL_STATIC uls_lf_ptr_t str_wlf, file_wlf, csz_wlf;
 ULS_DECL_STATIC uls_lf_ptr_t prn_wlf;

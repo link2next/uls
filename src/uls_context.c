@@ -47,7 +47,7 @@ ULS_QUALIFIED_METHOD(__xcontext_binfd_filler)(uls_xcontext_ptr_t xctx)
 		return 0;
 	}
 
-	if ((n=uls_input_read(uls_ptr(inp->isource), inp->rawbuf.buf, inp->rawbuf_bytes, inp->rawbuf.siz)) <= 0) {
+	if ((n=uls_input_readn(uls_ptr(inp->isource), inp->rawbuf.buf, inp->rawbuf_bytes, inp->rawbuf.siz)) <= 0) {
 		if (n == 0) {
 			xctx->context->flags |= ULS_CTX_FL_EOF;
 		} else {
@@ -173,17 +173,18 @@ ULS_QUALIFIED_METHOD(__xcontext_txtfd_filler)(uls_xcontext_ptr_t xctx, uls_ptrty
 	const char *txtptr;
 	uls_type_tool(outparam) parms2;
 
-	//         inp->rawbuf_bytes < inp->rawbuf_siz
 	uls_regulate_rawbuf(inp);
 
 again_1:
-	if ((rc=uls_input_read(uls_ptr(inp->isource), inp->rawbuf.buf, inp->rawbuf_bytes, inp->rawbuf.siz)) < 0) {
+	n = inp->rawbuf.siz - inp->rawbuf_bytes;
+	lptr = inp->rawbuf.buf + inp->rawbuf_bytes;
+
+	if ((rc=uls_input_readn(uls_ptr(inp->isource), inp->rawbuf.buf, inp->rawbuf_bytes, inp->rawbuf.siz)) < 0) {
 		if (inp->rawbuf_bytes > 0)
 			_uls_log(err_log)("%s: redundant %d-bytes exist!", __func__, inp->rawbuf_bytes);
 		return -1;
-	}
 
-	if (rc == 0) {
+	} else if (rc == 0) {
 		if (inp->rawbuf_bytes == 0) {
 			parms->n = n_recs;
 			return 0;
@@ -302,7 +303,6 @@ ULS_QUALIFIED_METHOD(__check_rec_boundary_host_order)(uls_xcontext_ptr_t xctx, c
 		add_bin_packet_to_zbuf(tok_id, txtlen, txtptr, ss_dst);
 	}
 
-	// reclen > ULS_BIN_RECHDR_SZ > 0
 	return reclen;
 }
 
@@ -350,7 +350,6 @@ ULS_QUALIFIED_METHOD(__check_rec_boundary_reverse_order)(uls_xcontext_ptr_t xctx
 		add_bin_packet_to_zbuf(tok_id, txtlen, txtptr, ss_dst);
 	}
 
-	// reclen > ULS_BIN_RECHDR_SZ > 0
 	return reclen;
 }
 
@@ -376,7 +375,7 @@ ULS_QUALIFIED_METHOD(__check_rec_boundary_bin)(uls_xcontext_ptr_t xctx, uls_xctx
 			m2 = reclen - n;  // need m2 more bytes to complete a record.
 
 			_uls_tool(str_modify)(uls_ptr(inp->rawbuf), inp->rawbuf_bytes, NULL, m2);
-			if (uls_input_read(uls_ptr(inp->isource), inp->rawbuf.buf, inp->rawbuf_bytes, reclen) < m2) {
+			if (uls_input_readn(uls_ptr(inp->isource), inp->rawbuf.buf, inp->rawbuf_bytes, reclen) < m2) {
 				_uls_log(err_log)("%s: file error", __func__);
 				return -1;
 			}
@@ -499,7 +498,7 @@ ULS_QUALIFIED_METHOD(uls_init_context)(uls_context_ptr_t ctx, uls_gettok_t getto
 {
 	uls_input_ptr_t   inp;
 	uls_lexseg_ptr_t lexseg;
-	int i, n;
+	int i;
 
 	ctx->flags = 0;
 	_uls_tool(csz_init)(uls_ptr(ctx->tag), 128);
@@ -509,6 +508,7 @@ ULS_QUALIFIED_METHOD(uls_init_context)(uls_context_ptr_t ctx, uls_gettok_t getto
 	ctx->input = inp = uls_create_input();
 
 	_uls_tool(csz_init)(uls_ptr(ctx->zbuf1), ULS_FDZBUF_INITSIZE);
+	_uls_tool(csz_add_eos)(uls_ptr(ctx->zbuf1));
 	_uls_tool(csz_init)(uls_ptr(ctx->zbuf2), ULS_FDZBUF_INITSIZE);
 
 	ctx->lptr = ctx->line = ctx->cnst_nilstr;
@@ -533,14 +533,10 @@ ULS_QUALIFIED_METHOD(uls_init_context)(uls_context_ptr_t ctx, uls_gettok_t getto
 
 	ctx->tok = tok0;
 	ctx->s_val = ctx->tokbuf.buf;
-	ctx->s_val_len = ctx->s_val_wchars = 0;
+	ctx->s_val_len = ctx->s_val_uchars = 0;
 
-	n = (ULS_LEXSTR_MAXSIZ+1) << 1;
-	_uls_tool(str_init)(uls_ptr(ctx->tokbuf), n);
-	ctx->n_digits = ctx->n_expo = 0;
-
-	_uls_tool(str_init)(uls_ptr(ctx->tokbuf_aux), n);
-	ctx->l_tokbuf_aux = -1;
+	_uls_tool(str_init)(uls_ptr(ctx->tokbuf), (ULS_LEXSTR_MAXSIZ+1)<<1);
+	ctx->n_digits = ctx->expo = 0;
 
 	ctx->anonymous_uchar_vx = uls_create_tokdef_vx(0, "", nilptr); // 0: nonsense
 	ctx->anonymous_uchar_vx->flags |= ULS_VX_ANONYMOUS;
@@ -563,7 +559,6 @@ ULS_QUALIFIED_METHOD(uls_deinit_context)(uls_context_ptr_t ctx)
 
 	_uls_tool(csz_deinit)(uls_ptr(ctx->tag));
 	_uls_tool(str_free)(uls_ptr(ctx->tokbuf));
-	_uls_tool(str_free)(uls_ptr(ctx->tokbuf_aux));
 	ctx->gettok = nilptr;
 	ctx->prev = nilptr;
 
@@ -602,6 +597,7 @@ ULS_QUALIFIED_METHOD(uls_xcontext_init)(uls_xcontext_ptr_t xctx, uls_gettok_t ge
 
 	xctx->context = uls_alloc_object(uls_context_t); // initial-context
 	uls_init_context(xctx->context, gettok, xctx->toknum_NONE);
+	uls_input_set_fl(xctx->context->input, ULS_INP_FL_READONLY);
 }
 
 void
@@ -708,7 +704,7 @@ ULS_QUALIFIED_METHOD(xcontext_raw_filler)(uls_xcontext_ptr_t xctx)
 		if ((ch=*lptr) < ULS_SYNTAX_TABLE_SIZE) {
 			ch_grp = ch_ctx[ch];
 		} else {
-			ch_grp = ULS_CH_COMM | ULS_CH_QUOTE;
+			ch_grp = 0xFF & ~(ULS_CH_COMM | ULS_CH_QUOTE);
 		}
 
 		if (ch_grp == 0) {
@@ -807,11 +803,10 @@ ULS_QUALIFIED_METHOD(xcontext_raw_filler)(uls_xcontext_ptr_t xctx)
 	inp->rawbuf_ptr = lptr;
 	inp->rawbuf_bytes = (int) (lptr_end - lptr);
 
-	_uls_tool(csz_text)(ss_dst1);
-
 	lexseg = uls_get_array_slot_type10(uls_ptr(ctx->lexsegs), n_segs);
 	uls_reset_lexseg(lexseg, offset1, csz_length(ss_dst1) - offset1, -1, -1, nilptr);
 
+	_uls_tool(csz_text)(ss_dst1);
 	ctx->n_lexsegs = n_segs;
 	lexseg = uls_get_array_slot_type10(uls_ptr(ctx->lexsegs), 0);
 

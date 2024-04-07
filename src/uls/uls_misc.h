@@ -69,6 +69,10 @@ ULS_DEFINE_DELEGATE_END(sort_cmpfunc);
 
 ULS_DEFINE_DELEGATE_BEGIN(bi_comp,int)(const uls_voidptr_t a, const uls_voidptr_t keyw);
 ULS_DEFINE_DELEGATE_END(bi_comp);
+
+ULS_DECLARE_STRUCT(cmd);
+ULS_DEFINE_DELEGATE_BEGIN(cmd_proc,int)(char *line, uls_cmd_ptr_t cmd);
+ULS_DEFINE_DELEGATE_END(cmd_proc);
 #endif
 
 #ifdef ULS_DEF_PROTECTED_TYPE
@@ -88,17 +92,26 @@ ULS_DEFINE_STRUCT(obj4sort)
 ULS_DEF_PARRAY(obj4sort);
 #endif
 
+#ifdef ULS_DEF_PUBLIC_TYPE
+ULS_DEFINE_STRUCT(cmd)
+{
+	const char     *name;
+	uls_cmd_proc_t proc;
+	uls_voidptr_t  user_data;
+};
+ULS_DEF_ARRAY_TYPE00(cmd, CMD_TYPE00_ULC_N_LEXATTRS, ULC_N_LEXATTRS);
+#endif
+
 #if defined(__ULS_MISC__) || defined(ULS_DECL_PRIVATE_PROC)
 ULS_DECL_STATIC unsigned int uls_gauss_log2(unsigned int n, uls_ptrtype_tool(outparam) parms);
 ULS_DECL_STATIC void downheap_vptr(uls_heaparray_ptr_t hh, unsigned int i0);
 ULS_DECL_STATIC void extract_top_vptr(uls_heaparray_ptr_t hh);
-#ifndef ULS_DOTNET
 ULS_DECL_STATIC int sortcmp_obj4sort(const uls_voidptr_t a, const uls_voidptr_t b);
-#endif
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC
 int splitint(const char* line, uls_ptrtype_tool(outparam) parms);
+int canbe_tokname(const char *str);
 
 const char* uls_skip_multiline_comment(uls_ptrtype_tool(parm_line) parm_ln);
 const char* uls_skip_singleline_comment(uls_ptrtype_tool(parm_line) parm_ln);
@@ -116,12 +129,12 @@ int uls_get_simple_unescape_str(uls_ptrtype_tool(outparam) parms);
 
 FILE* uls_get_spec_fp(const char* dirpath_list, const char* fpath, uls_ptrtype_tool(outparam) parms);
 
-#ifndef ULS_DOTNET
+ULS_DLL_EXTERN int uls_cmd_run(uls_array_ref_slots_type00(cmdlst,cmd), int n_cmdlst, const char* keyw, char *line, uls_voidptr_t data);
+
 ULS_DLL_EXTERN void uls_quick_sort(uls_native_vptr_t ary, int n_ary, int elmt_size, uls_sort_cmpfunc_t cmpfunc);
 ULS_DLL_EXTERN uls_voidptr_t uls_bi_search(const uls_voidptr_t keyw, uls_native_vptr_t ary, int n_ary, int elmt_size, uls_bi_comp_t cmpfunc);
 #if defined(ULS_WINDOWS)
 ULS_DLL_EXTERN char* uls_win32_lookup_regval(wchar_t* reg_dir, uls_outparam_ptr_t parms);
-#endif
 #endif
 
 #endif // ULS_DECL_PROTECTED_PROC

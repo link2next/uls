@@ -31,12 +31,10 @@
     Stanley Hong <link2next@gmail.com>, Jan 2015.
   </author>
 */
-
-#include "uls/uls_lf_swprintf.h"
-#include "uls/uls_fileio_wstr.h"
 #include "uls/uls_util_wstr.h"
-#include "uls/uls_wprint.h"
 #include "uls/uls_wlog.h"
+#include "uls/uls_fileio.h"
+
 
 void
 uls_wputstr(const wchar_t *wstr)
@@ -61,213 +59,6 @@ uls_wputstr(const wchar_t *wstr)
 	}
 
 	csz_deinit(uls_ptr(csz));
-}
-
-void
-ult_dump_utf8str_wstr(const wchar_t *wstr)
-{
-	int wlen = uls_wcslen(wstr);
-	char *ustr;
-	csz_str_t csz;
-
-	csz_init(uls_ptr(csz), (wlen+1)*ULS_UTF8_CH_MAXLEN);
-
-	if ((ustr = uls_wstr2ustr(wstr, wlen, uls_ptr(csz))) == NULL) {
-		err_wlog(L"encoding error!");
-	} else {
-		ult_dump_utf8str(ustr);
-	}
-
-	csz_deinit(uls_ptr(csz));
-}
-
-int
-uls_wstr2int(const wchar_t *wstr)
-{
-	int i, minus, n = 0;
-	wchar_t wch;
-
-	if (wstr[0] == L'-') {
-		minus = 1;
-		i = 1;
-	} else {
-		minus = 0;
-		i = 0;
-	}
-
-	for ( ; ; i++) {
-		if ((wch=wstr[i]) > L'9' || wch < L'0')
-			break;
-		n = wch - L'0' + n * 10;
-	}
-
-	if (minus) n = -n;
-	return n;
-}
-
-int
-uls_wstrlen(const wchar_t* wstr)
-{
-	const wchar_t* wptr;
-
-	for (wptr = wstr; *wptr != L'\0'; wptr++)
-		/* NOTHING */;
-
-	return (int) (wptr - wstr);
-}
-
-int
-uls_wstreql(const wchar_t *wstr1, const wchar_t *wstr2)
-{
-	const wchar_t *ptr1=wstr1, *ptr2=wstr2;
-	wchar_t wch1, wch2;
-	int i, stat = 1; // true
-
-	for (i=0; ; i++, ptr1++, ptr2++) {
-		wch1 = *ptr1;
-		wch2 = *ptr2;
-
-		if (wch1 != wch2) {
-			stat = 0; // false
-			break;
-		}
-
-		if (wch1 == L'\0') break;
-	}
-
-	return stat;
-}
-
-int
-uls_wstrcpy(wchar_t *wbufptr, const wchar_t *wstr)
-{
-	const wchar_t *ptr;
-	wchar_t wch;
-
-	for (ptr=wstr; (wch=*ptr) != '\0'; ptr++) {
-		*wbufptr++ = wch;
-	}
-
-	*wbufptr = L'\0';
-	return (int) (ptr - wstr);
-}
-
-int
-uls_wstrcmp(const wchar_t *wstr1, const wchar_t *wstr2)
-{
-	const wchar_t *ptr1=wstr1, *ptr2=wstr2;
-	wchar_t wch1, wch2;
-	int i, stat = 0;
-
-	for (i=0; ; i++, ptr1++, ptr2++) {
-		wch1 = *ptr1;
-		wch2 = *ptr2;
-
-		if (wch1 != wch2) {
-			stat = (int) wch1 - (int) wch2;
-			break;
-		}
-
-		if (wch1 == L'\0') break;
-	}
-
-	return stat;
-}
-
-wchar_t*
-ult_skip_blanks_wstr(const wchar_t* lptr)
-{
-	wchar_t wch;
-
-	for ( ; (wch=*lptr)==L' ' || wch==L'\t'; lptr++)
-		/* nothing */;
-	return (wchar_t *) lptr;
-}
-
-wchar_t*
-ult_splitstr_wstr(wchar_t** p_wstr, int *p_wlen)
-{
-	wchar_t   *wstr = *p_wstr;
-	wchar_t   wch, *ptr, *ptr0;
-	int wlen;
-
-	ptr0 = ptr = ult_skip_blanks_wstr(wstr);
-
-	for (wlen = 0; (wch=*ptr) != L'\0'; ptr++) {
-		if (wch == L' ' || wch == L'\t') {
-			wlen = (int) (ptr - ptr0);
-			*ptr++ = L'\0';
-			break;
-		}
-	}
-
-	if (p_wlen != NULL) *p_wlen = wlen;
-	*p_wstr = ptr;
-	return ptr0;
-}
-
-wchar_t*
-ult_split_litstr_wstr(wchar_t *wstr, wchar_t qch)
-{
-	wchar_t   wch, *wptr, *wptr1;
-	int esc_ch = 0;
-
-	for (wptr1 = wptr = wstr; ; wptr++) {
-		wch = *wptr;
-		if (!uls_isprint(wch)) { // ctrl-ch or '\0'
-			if (wch != '\0') ++wptr;
-			break;
-		}
-
-		if (esc_ch) {
-			*wptr1++ = wch;
-			esc_ch = 0;
-		} else if (wch == L'\\') {
-			esc_ch = 1;
-		} else if (wch == qch) {
-			++wptr;
-			break;
-		} else {
-			*wptr1++ = wch;
-		}
-	}
-
-	*wptr1 = L'\0';
-	return wptr;
-}
-
-wchar_t*
-uls_wfilename(const wchar_t *wfilepath, int* len_fname)
-{
-	const wchar_t *ptr, *ptr0;
-	const wchar_t *wfilename;
-	int  len_wfilename, len, i;
-	wchar_t  wch;
-
-	if (wfilepath == NULL) return NULL;
-	for (ptr0 = NULL, ptr = wfilepath; (wch=*ptr) != L'\0'; ptr++) {
-		if (wch == ULS_FILEPATH_DELIM) ptr0 = ptr;
-	}
-
-	if (ptr0 != NULL) {
-		wfilename = ptr0 + 1;
-	} else {
-		wfilename = wfilepath;
-	}
-
-	len_wfilename = len = uls_wstrlen(wfilename);
-	for (i = len_wfilename - 1; i >= 0; i--) {
-		if (wfilename[i] == '.') {
-			len = i;
-			break;
-		}
-	}
-
-	if (len_fname != NULL) {
-		*len_fname = len;
-	}
-
-	return (wchar_t *) wfilename;
 }
 
 int
@@ -390,7 +181,8 @@ _uls_explode_wstr(uls_wrd_ptr_t uw, wchar_t delim_wch, uls_arglst_ptr_t arglst)
 					++k;
 				}
 
-				goto end_1;
+				uw->lptr = (char *) wlptr;
+				return k;
 			}
 
 			if (wch == delim_wch || (delim_wch == L' ' && wch == L'\t')) {
@@ -410,9 +202,7 @@ _uls_explode_wstr(uls_wrd_ptr_t uw, wchar_t delim_wch, uls_arglst_ptr_t arglst)
 		}
 	}
 
- end_1:
 	uw->lptr = (char *) wlptr;
-	arglst->args.n = k;
 	return k;
 }
 
@@ -446,7 +236,7 @@ int
 uls_getopts_wstr(int n_args, wchar_t* wargs[], const wchar_t* optwfmt, uls_woptproc_t wproc)
 {
 	const wchar_t  *cwptr;
-	wchar_t        *optwarg, *optwstr, nullbuff[4] = { '\0', };
+	wchar_t        *optwarg, *optwstr;
 	int            rc, opt, i, j, k;
 
 	for (i=1; i<n_args; i=k+1) {
@@ -459,7 +249,7 @@ uls_getopts_wstr(int n_args, wchar_t* wargs[], const wchar_t* optwfmt, uls_woptp
 			}
 
 			if ((cwptr=uls_wstrchr(optwfmt, opt)) == NULL) {
-				err_wlog(L"%hs: undefined option -%c", __func__, opt);
+				err_wlog(L"%s: undefined option -%c", __func__, opt);
 				return -1;
 			}
 
@@ -469,22 +259,22 @@ uls_getopts_wstr(int n_args, wchar_t* wargs[], const wchar_t* optwfmt, uls_woptp
 				} else if (k+1 < n_args && wargs[k+1][0] != L'-') {
 					optwarg = wargs[++k];
 				} else {
-					err_wlog(L"%hs: option -%c requires an arg.", __func__, opt);
+					err_wlog(L"%s: option -%c requires an arg.", __func__, opt);
 					return -1;
 				}
 
-				if ((rc = wproc(opt, optwarg)) != 0) {
+				if ((rc=wproc(opt, optwarg)) != 0) {
 					if (rc > 0) rc = 0;
-					else err_wlog(L"%hs: An Error in processing the option -%c.", __func__, opt);
+					else err_wlog(L"%s: error in -%c.", __func__, opt);
 					return rc;
 				}
 				break;
 
 			} else {
-				optwarg = nullbuff;
-				if ((rc = wproc(opt, optwarg)) != 0) {
+				optwarg = L"";
+				if ((rc=wproc(opt, optwarg)) != 0) {
 					if (rc > 0) rc = 0;
-					else err_wlog(L"%hs: error in -%c.", __func__, opt);
+					else err_wlog(L"%s: error in -%c.", __func__, opt);
 					return rc;
 				}
 				j++;
@@ -600,7 +390,7 @@ uls_set_warg_list(uls_warg_list_t *wlist, char **args, int n_args)
 		return;
 	}
 
-	wlist->wargs = (uls_warg_t *) uls_malloc(n_args * sizeof(uls_warg_t));
+	wlist->wargs = (uls_warg_t*) uls_malloc(n_args * sizeof(uls_warg_t));
 	wlist->n_wargs = n_args;
 
 	csz_init(&csz, -1);

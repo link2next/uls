@@ -34,10 +34,8 @@
 #ifndef __ULS_WLOG_H__
 #define __ULS_WLOG_H__
 
-#include "uls/uls_auw.h"
-#ifdef _ULS_INTERNAL_USE_ONLY
+#include "uls/uls_wprint.h"
 #include "uls/uls_log.h"
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
@@ -70,25 +68,5 @@ ULS_DLL_EXTERN void uls_wpanic(uls_log_ptr_t log, const wchar_t* wfmt, ...);
 #ifdef _ULS_CPLUSPLUS
 }
 #endif
-
-#ifdef _ULS_USE_ULSCOMPAT
-#ifdef ULS_USE_WSTR
-#define uls_init_log uls_init_wlog
-#define uls_deinit_log uls_deinit_wlog
-
-#define uls_create_log uls_create_wlog
-#define uls_destroy_log uls_destroy_wlog
-
-#define err_vlog err_vwlog
-#define err_log err_wlog
-#define err_vpanic err_vwpanic
-#define err_panic err_wpanic
-
-#define uls_vlog uls_vwlog
-#define uls_log uls_wlog
-#define uls_vpanic uls_vwpanic
-#define uls_panic uls_wpanic
-#endif
-#endif // _ULS_USE_ULSCOMPAT
 
 #endif // __ULS_WLOG_H__

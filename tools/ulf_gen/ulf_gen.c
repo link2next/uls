@@ -88,39 +88,39 @@ static const struct option longopts[] = {
 
 static void usage_synopsis(void)
 {
-	err_log("Usage: %s -L <ulc-file> [options] <file|dir>", progname);
-	err_log("  %s generates the frequencies of the keywords of a language.", progname);
-	err_log("       %s -L <ulc-file> <file1> <file2> ...", progname);
-	err_log("       %s -L <ulc-file> -o /usr/local/share/a.ulf <file1> <file2> ...", progname);
-	err_log("       %s -L <ulc-file> -l <list-file> <target-dir>", progname);
+	uls_printf("Usage: %s -L <ulc-file> [options] <file|dir>\n", progname);
+	uls_printf("  %s generates the frequencies of the keywords of a language.\n", progname);
+	uls_printf("       %s -L <ulc-file> <file1> <file2> ...\n", progname);
+	uls_printf("       %s -L <ulc-file> -o /usr/local/share/a.ulf <file1> <file2> ...\n", progname);
+	uls_printf("       %s -L <ulc-file> -l <list-file> <target-dir>\n", progname);
 }
 
 static void usage_desc(void)
 {
 #ifdef ULS_WINDOWS
-	err_log("  -L <ulc-spec>      Specify the lexical-spec(*.ulc) of the language");
-	err_log("  -l <list-file>     Specify the list of data source files");
-	err_log("  -o <a-file>        Specify the the output filepath(*.ulf)");
-	err_log("  -v, --verbose      verbose mode");
-	err_log("  -V, --version      Print the version information");
-	err_log("  -h, --help         Display the short help");
+	uls_printf("  -L <ulc-spec>      Specify the lexical-spec(*.ulc) of the language\n");
+	uls_printf("  -l <list-file>     Specify the list of data source files\n");
+	uls_printf("  -o <a-file>        Specify the the output filepath(*.ulf)\n");
+	uls_printf("  -v, --verbose      verbose mode\n");
+	uls_printf("  -V, --version      Print the version information\n");
+	uls_printf("  -h, --help         Display the short help\n");
 #else
-	err_log("  -L, --lang=<ulc-spec>   Specify the lexical-spec(*.ulc) of the language");
-	err_log("  -l, --list=<list-file>  Specify the list of data source files");
-	err_log("  -o, --output=<a-file>   Specify the the output filepath(*.ulf)");
-	err_log("  -v, --verbose           verbose mode");
-	err_log("  -V, --version           Print the version information");
-	err_log("  -h, --help              Display the short help");
+	uls_printf("  -L, --lang=<ulc-spec>   Specify the lexical-spec(*.ulc) of the language\n");
+	uls_printf("  -l, --list=<list-file>  Specify the list of data source files\n");
+	uls_printf("  -o, --output=<a-file>   Specify the the output filepath(*.ulf)\n");
+	uls_printf("  -v, --verbose           verbose mode\n");
+	uls_printf("  -V, --version           Print the version information\n");
+	uls_printf("  -h, --help              Display the short help\n");
 #endif
 }
 
 static void usage_brief(void)
 {
 	usage_synopsis();
-	err_log("");
+	uls_printf("\n");
 
 	usage_desc();
-	err_log("");
+	uls_printf("\n");
 }
 
 static void usage(void)
@@ -132,27 +132,27 @@ static void usage_long(void)
 {
 	usage_brief();
 
-	err_log("%s collects the usage statistics of given language", progname);
-	err_log(" by sampling from source code files.");
-	err_log("It dumps the frequencies of keywords.");
-	err_log("After saving them in the file suffixed by '*.ulf', you can use it together with its ulc-file.");
-	err_log("For example, Let the output file of 'sample.ulc' be 'sample.ulf'.");
-	err_log("The file 'sample.ulf' is together read if only it exists in the same directory of sample.ulc.");
-	err_log("The ulf-file is optional but can accelerates the generated lexical tokenizer.");
-	err_log("");
+	uls_printf("%s collects the usage statistics of given language", progname);
+	uls_printf(" by sampling from source code files.\n");
+	uls_printf("It dumps the frequencies of keywords.\n");
+	uls_printf("After saving them in the file suffixed by '*.ulf', you can use it together with its ulc-file.\n");
+	uls_printf("For example, Let the output file of 'sample.ulc' be 'sample.ulf'.\n");
+	uls_printf("The file 'sample.ulf' is together read if only it exists in the same directory of sample.ulc.\n");
+	uls_printf("The ulf-file is optional but can accelerates the generated lexical tokenizer.\n");
+	uls_printf("\n");
 
-	err_log("To get the ulf-file of 'sample.ulc' from listed source code files,");
-	err_log("  %s -L sample.ulc a.c b.c src/d.c", progname);
-	err_log("");
+	uls_printf("To get the ulf-file of 'sample.ulc' from listed source code files,\n");
+	uls_printf("  %s -L sample.ulc a.c b.c src/d.c\n", progname);
+	uls_printf("\n");
 
-	err_log("To save the output-file to other file path than default, use o-option.");
-	err_log("  %s -o /opt/share/b.ulf -L sample src/main.c src/main.h", progname);
-	err_log("");
+	uls_printf("To save the output-file to other file path than default, use o-option.\n");
+	uls_printf("  %s -o /opt/share/b.ulf -L sample src/main.c src/main.h\n", progname);
+	uls_printf("\n");
 
-	err_log("To process all the file paths in the list file 'a.list'");
-	err_log("  %s -L sample -l a.list /package/home", progname);
-	err_log("This processes all the file paths joined by '/package/home'.");
-	err_log("");
+	uls_printf("To process all the file paths in the list file 'a.list'\n");
+	uls_printf("  %s -L sample -l a.list /package/home\n", progname);
+	uls_printf("This processes all the file paths joined by '/package/home'.\n");
+	uls_printf("\n");
 }
 
 static int ulfgen_options(int opt, char* optarg)
@@ -298,9 +298,7 @@ proc_file(char *fpath, uls_keyw_stat_list_t *ks_lst)
 {
 	if (fpath == NULL) return 0;
 
-	if (uls_push_file(sam_lex, fpath, 0) < 0) {
-		return -1;
-	}
+	uls_push_file(sam_lex, fpath, 0);
 
 	if (opt_verbose >= 1)
 		err_log("processing %s, ...", fpath);
@@ -496,10 +494,7 @@ ulf_create_file_internal(FILE *fp_list, FILE *fp_out, int i0, int n_args, char *
 			return -1;
 		}
 
-		if (proc_filelist(fp_list, keyw_stat_list) < 0) {
-			err_log("Failed to process files in %s", target_dir);
-			return -1;
-		}
+		proc_filelist(fp_list, keyw_stat_list);
 
 		if (ult_chdir(home_dir) < 0) {
 			err_log("fail to chdir(%s)", home_dir);
@@ -532,6 +527,8 @@ main(int argc, char* argv[])
 	const char *conf_fname;
 	int i0, i, conf_fname_len, stat = 0;
 	int cse_insen;
+
+	initialize_uls();
 
 	progname = THIS_PROGNAME;
 	if (argc <= 1) {

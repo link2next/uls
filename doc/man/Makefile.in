@@ -184,9 +184,6 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
 GREP = @GREP@
-HAVE_JAVA = @HAVE_JAVA@
-HAVE_JAVAC = @HAVE_JAVAC@
-HAVE_JAVAH = @HAVE_JAVAH@
 HELP2MAN = @HELP2MAN@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
@@ -240,9 +237,6 @@ am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
 am__tar = @am__tar@
 am__untar = @am__untar@
-ax_etc_dir = @ax_etc_dir@
-ax_jdk_cppflags = @ax_jdk_cppflags@
-ax_jdk_ldflags = @ax_jdk_ldflags@
 bindir = @bindir@
 build = @build@
 build_alias = @build_alias@
@@ -254,6 +248,7 @@ datadir = @datadir@
 datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
+etc_dir = @etc_dir@
 exec_prefix = @exec_prefix@
 host = @host@
 host_alias = @host_alias@
@@ -445,7 +440,7 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic clean-libtool clean-local mostlyclean-am
+clean-am: clean-generic clean-libtool mostlyclean-am
 
 distclean: distclean-am
 	-rm -f Makefile
@@ -514,7 +509,7 @@ uninstall-man: uninstall-man1
 .MAKE: install-am install-strip
 
 .PHONY: all all-am check check-am clean clean-generic clean-libtool \
-	clean-local cscopelist-am ctags-am distclean distclean-generic \
+	cscopelist-am ctags-am distclean distclean-generic \
 	distclean-libtool distdir dvi dvi-am html html-am info info-am \
 	install install-am install-data install-data-am install-dvi \
 	install-dvi-am install-exec install-exec-am install-html \
@@ -530,19 +525,16 @@ uninstall-man: uninstall-man1
 
 
 ulc2class.1: $(top_builddir)/tools/ulc2class/ulc2class
-	-$(HELP2MAN) --no-discard-stderr -o $@ -s 1 --name="ulc2class" --help-option="-H" $(top_builddir)/tools/ulc2class/ulc2class
+	-$(HELP2MAN) -o $@ -s 1 --name="ulc2class" --help-option="-H" $(top_builddir)/tools/ulc2class/ulc2class
 
 ulf_gen.1: $(top_builddir)/tools/ulf_gen/ulf_gen
-	-$(HELP2MAN) --no-discard-stderr -o $@ -s 1 --name="ulf_gen" --help-option="-H" $(top_builddir)/tools/ulf_gen/ulf_gen
+	-$(HELP2MAN)  -o $@ -s 1 --name="ulf_gen" --help-option="-H" $(top_builddir)/tools/ulf_gen/ulf_gen
 
 uls_stream.1: $(top_builddir)/tools/uls_stream/uls_stream
-	-$(HELP2MAN) --no-discard-stderr -o $@ -s 1 --name="uls_stream" --help-option="-H" $(top_builddir)/tools/uls_stream/uls_stream
+	-$(HELP2MAN)  -o $@ -s 1 --name="uls_stream" --help-option="-H" $(top_builddir)/tools/uls_stream/uls_stream
 
 check:
 	touch $(dist_man_MANS)
-
-clean-local:
-	-rm -f $(dist_man_MANS)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

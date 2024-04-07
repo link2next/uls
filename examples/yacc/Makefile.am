@@ -1,5 +1,6 @@
 include ../cfg.mk
 
+ACLOCAL_AMFLAGS = -I m4
 YFLAGS = -d
 
 noinst_PROGRAMS = ulc2xml

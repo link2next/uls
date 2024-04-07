@@ -171,6 +171,7 @@ fi
 
 
 rm -f $DUMPFILE_TXT2
+
 rm -f $TMPL_ULSFILE
 if [ -f $DFL_OUTPUT_FILE ]; then
 	rm -f $DFL_OUTPUT_FILE

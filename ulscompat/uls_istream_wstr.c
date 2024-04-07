@@ -31,6 +31,9 @@
     Stanley Hong <link2next@gmail.com>, Jul 2015.
   </author>
 */
+#include "uls/uls_lex.h"
+#include "uls/uls_auw.h"
+#include "uls/uls_util.h"
 
 #include "uls/uls_istream_wstr.h"
 #include "uls/uls_util_wstr.h"
@@ -53,7 +56,7 @@ __set_tmpl_value_wstr(uls_tmpl_wstr_ptr_t tmpl_ext, const wchar_t *name, const w
 
 		} else {
 			if ((ustr = uls_wstr2ustr(wstr_list[i], -1, csz_ary[i])) == NULL) {
-				err_wlog(L"%hs: incorrect encoding!", __func__);
+				err_wlog(L"%s: incorrect encoding!", __func__);
 				return -1;
 			}
 		}
@@ -191,7 +194,7 @@ uls_find_tmpl_wstr(uls_tmpl_list_ptr_t tmpl_list, const wchar_t *name)
 	csz_init(uls_ptr(csz), -1);
 
 	if ((ustr = uls_wstr2ustr(name, -1, uls_ptr(csz))) == NULL) {
-		err_wlog(L"%hs: incorrect encoding!", __func__);
+		err_wlog(L"%s: incorrect encoding!", __func__);
 		tmpl = nilptr;
 	} else {
 		tmpl = uls_find_tmpl(tmpl_list, ustr);

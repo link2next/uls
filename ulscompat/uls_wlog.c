@@ -31,11 +31,15 @@
     Stanley Hong <link2next@gmail.com>, Jan 2015.
   </author>
 */
-
-#include "uls/uls_tokdef_wstr.h"
-#include "uls/uls_wlex.h"
-#include "uls/uls_lf_swprintf.h"
+#define __ULS_WLOG__
 #include "uls/uls_wlog.h"
+
+#include "uls/uls_auw.h"
+#include "uls/uls_fileio.h"
+
+#include "uls/uls_wlex.h"
+#include "uls/uls_util.h"
+#include "uls/uls_util_wstr.h"
 
 ULS_DECL_STATIC uls_lf_map_t logdfl_convspec_wmap;
 ULS_DECL_STATIC uls_lf_map_t log_convspec_wmap;
@@ -283,6 +287,7 @@ uls_create_wlog(uls_lf_map_ptr_t lf_map, uls_lex_ptr_t uls)
 	}
 
 	log->flags &= ~ULS_FL_STATIC;
+
 	return log;
 }
 

@@ -67,8 +67,8 @@ public:
 	}
 };
 
-LPCTSTR progname;
-tstring out_dir = _T(".");
+const char *progname;
+string out_dir = ".";
 int  opt_verbose;
 int  test_mode;
 
@@ -77,25 +77,25 @@ sample_xdef *xdefs_list;
 static void
 usage(void)
 {
-	err_log(_T("usage: %s [-m<0|1>] <input-file>"), progname);
+	err_log("usage: %s [-m<0|1>] <input-file>", progname);
 }
 
 static int
-cpphello_options(int opt, LPTSTR optarg)
+cpphello_options(int opt, char* optarg)
 {
 	int   stat = 0;
 
 	switch (opt) {
-	case _T('m'):
-		test_mode = ult_str2int(optarg);
+	case 'm':
+		test_mode = atoi(optarg);
 		break;
 
-	case _T('v'):
+	case 'v':
 		opt_verbose = 1;
 		break;
 
 	default:
-		err_log(_T("undefined option -%c"), opt);
+		err_log("undefined option -%c", opt);
 		stat = -1;
 		break;
 	}
@@ -106,7 +106,7 @@ cpphello_options(int opt, LPTSTR optarg)
 void
 test_input_string(Sample2Lex *sam_lex)
 {
-	sam_lex->pushLine(_T("C++ hello world\n\t\n"));
+	sam_lex->pushLine("C++ hello world\n\t\n");
 
 	while (sam_lex->getToken() != Sample2Lex::EOI) {
 		sam_lex->dumpTok();
@@ -114,26 +114,19 @@ test_input_string(Sample2Lex *sam_lex)
 }
 
 void
-test_input_file(Sample2Lex *sam_lex, tstring& filename)
+test_input_file(Sample2Lex *sam_lex, string& filename)
 {
-	tstring *lxm;
-	string numsuff;
+	string *lxm;
 
-	sam_lex->printf(_T("Welcome to ULS World!\n"));
-	sam_lex->printf(_T("Testing ULS in C++ ...\n"));
+	sam_lex->printf("Welcome to ULS World!\n");
+	sam_lex->printf("Testing ULS in C++ ...\n");
 
 	sam_lex->pushFile(filename);
 	sam_lex->setFileName(filename);
 
 	while (sam_lex->getToken() != Sample2Lex::EOI) {
 		sam_lex->getTokStr(&lxm);
-
-		sam_lex->printf(_T("\t[%8t] %10s"), lxm->c_str());
-		numsuff = sam_lex->lexemeNumberSuffix();
-		if (!numsuff.empty()) {
-			sam_lex->printf(_T(" %hs"), numsuff.c_str());
-		}
-		sam_lex->printf(_T(" at %w\n"));
+		sam_lex->printf("\t[%8t] %10s at %w\n", lxm->c_str());
 	}
 }
 
@@ -167,37 +160,37 @@ void test_extra_tokdefs(UlsLex *lex)
 
 	for (i = 0; i < 5; i++) {
 		xdef = xdefs_list + i;
-		uls_printf(_T("\txdefs[%d] = %d\n"), i, xdef->tok_id);
+		uls_printf("\txdefs[%d] = %d\n", i, xdef->tok_id);
 		lex->setExtraTokdef(xdef->tok_id, xdef);
 	}
 
-	tstring line = _T("C++ *hello/ &world^\n\t\n");
+	string line = string("C++ *hello/ &world^\n\t\n");
 	lex->pushLine(line.c_str());
 
 	while ((t=lex->getToken()) != lex->toknum_EOI) {
-		lex->dumpTok(_T("\t"), _T(""));
+		lex->dumpTok("\t", "");
 
 		xdef = (sample_xdef *) lex->getExtraTokdef();
 		if (xdef != NULL)
-			lex->printf(_T(" prec=%d node_id=%d"), xdef->prec, xdef->node_id);
-		lex->printf(_T("\n"));
+			lex->printf(" prec=%d node_id=%d", xdef->prec, xdef->node_id);
+		lex->printf("\n");
 	}
 
-	delete [] xdefs_list;
+	delete []xdefs_list;
 }
 
-bool test_simple_streaming(tstring& input_file, tstring& out_dir)
+bool test_simple_streaming(string& input_file, string& out_dir)
 {
-	UlsLex *lex = new UlsLex(_T("c++"));
-	tstring uls_file;
-	tstring *lxm;
+	UlsLex *lex = new UlsLex("c++");
+	string uls_file;
+	string *lxm;
 	int t;
 
 	uls_file = out_dir;
 	uls_file += ULS_FILEPATH_DELIM;
-	uls_file += _T("a2.uls");
+	uls_file += "a2.uls";
 
-	UlsOStream *ofile = new UlsOStream(uls_file, lex, _T("<<tag>>"));
+	UlsOStream *ofile = new UlsOStream(uls_file, lex, "<<tag>>");
 	UlsIStream *ifile = new UlsIStream(input_file);
 
 	ofile->startStream(*ifile);
@@ -214,7 +207,7 @@ bool test_simple_streaming(tstring& input_file, tstring& out_dir)
 	while (1) {
 		t = lex->getTok();
 		if (t == lex->toknum_EOI) break;
-		lex->printf(_T("\t[%7t]  %s\n"), lxm->c_str());
+		lex->printf("\t[%7t]  %s\n", lxm->c_str());
 	}
 
 	delete ifile;
@@ -223,22 +216,22 @@ bool test_simple_streaming(tstring& input_file, tstring& out_dir)
 	return true;
 }
 
-bool test_tokseq(UlsLex *lex, tstring& input_file, tstring& out_dir)
+bool test_tokseq(UlsLex *lex, string& input_file, string& out_dir)
 {
 	UlsTmplList  tmpl_list;
-	tstring uls_file;
-	tstring *lxm;
+	string uls_file;
+	string *lxm;
 	int t, stat=0;
 
 	uls_file = out_dir;
 	uls_file += ULS_FILEPATH_DELIM;
-	uls_file += _T("a3.uls");
+	uls_file += "a3.uls";
 
-	tmpl_list.setValue(_T("TVAR1"), _T("unsigned long long"));
-	tmpl_list.setValue(_T("TVAR2"), _T("long double"));
+	tmpl_list.setValue("TVAR1", "unsigned long long");
+	tmpl_list.setValue("TVAR2", "long double");
 
 	// Write a output-stream
-	UlsOStream *ofile = new UlsOStream(uls_file, lex, _T("<<tag>>"));
+	UlsOStream *ofile = new UlsOStream(uls_file, lex, "<<tag>>");
 	lex->pushFile(input_file);
 	lex->getTokStr(&lxm);
 
@@ -272,7 +265,7 @@ bool test_tokseq(UlsLex *lex, tstring& input_file, tstring& out_dir)
 	while (1) {
 		t = lex->getTok();
 		if (t == lex->toknum_EOI) break;
-		lex->printf(_T("\t[%7t] %s\n"), lxm->c_str());
+		lex->printf("\t[%7t] %s\n", lxm->c_str());
 	}
 
 	delete ifile;
@@ -281,27 +274,27 @@ bool test_tokseq(UlsLex *lex, tstring& input_file, tstring& out_dir)
 }
 
 int
-_tmain(int n_targv, LPTSTR *targv)
+main(int argc, char* argv[])
 {
 	Sample2Lex *sample1_lex;
 	UlsLex *sample2_lex;
-	tstring *input_fpath = NULL;
-	int i0, stat = 0;
+	string *input_fpath = NULL;
+	int i0, stat=0;
 
-	progname = uls_split_filepath(targv[0], NULL);
+	progname = argv[0];
 	test_mode = 0;
 
-	if ((i0=uls_getopts(n_targv, targv, _T("m:v"), cpphello_options)) <= 0) {
+	if ((i0=uls_getopts(argc, argv, "m:v", cpphello_options)) <= 0) {
 		usage();
-		return -1;
+		return i0;
 	}
 
-	if (i0 < n_targv) {
-		input_fpath = new tstring(targv[i0]);
+	if (i0 < argc) {
+		input_fpath = new string(argv[i0]);
 	}
 
 	sample1_lex = new Sample2Lex();
-	sample2_lex = new UlsLex(_T("dumptoks.ulc"));
+	sample2_lex = new UlsLex("dumptoks.ulc");
 
 	switch (test_mode) {
 	case 0:
@@ -340,17 +333,3 @@ _tmain(int n_targv, LPTSTR *targv)
 	return stat;
 }
 
-#ifndef __WINDOWS__
-int
-main(int argc, char *argv[])
-{
-	LPTSTR *targv;
-	int stat;
-
-	ULS_GET_WARGS_LIST(argc, argv, targv);
-	stat = _tmain(argc, targv);
-	ULS_PUT_WARGS_LIST(argc, targv);
-
-	return stat;
-}
-#endif

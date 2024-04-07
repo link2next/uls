@@ -43,6 +43,10 @@ ULS_QUALIFIED_METHOD(__init_system_info)(uls_sysinfo_ptr_t sysinfo, int poolsiz)
 	sysinfo->ulcs_dir = NULL;
 	sysinfo->ULS_BYTE_ORDER = uls_host_byteorder();
 
+	sysinfo->encoding = ULS_MBCS_UNKNOWN;
+	sysinfo->codepage = -1;
+	sysinfo->multibytes = 2;
+
 	sysinfo->LDBL_IEEE754_FMT = uls_check_longdouble_fmt(sysinfo->ULS_BYTE_ORDER);
 	if (sysinfo->LDBL_IEEE754_FMT == ULS_IEEE754_BINARY64) {
 		sysinfo->LDOUBLE_SIZE_BYTES = DOUBLE_SIZE_BYTES;
@@ -190,7 +194,7 @@ ULS_QUALIFIED_METHOD(uls_destroy_sysinfo)(uls_sysinfo_ptr_t sysinfo)
 int
 ULS_QUALIFIED_METHOD(uls_load_system_properties)(const char *fpath, uls_sysinfo_ptr_t sysinfo)
 {
-	const char utf8_bom[3] = { 0xEF, 0xBB, 0xBF };
+	const char utf8_bom[3] = { (char) 0xEF, (char) 0xBB, (char) 0xBF };
 	FILE *fp;
 	char linebuff[ULS_LINEBUFF_SIZ+1];
 	char *line, *name;

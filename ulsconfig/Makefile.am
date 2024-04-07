@@ -17,9 +17,9 @@ all:
 	fi
 
 install: all
-	install -m755 -d "$(includedir)/uls" "$(datadir)/uls/ulcs" "$(ax_etc_dir)" "$(bindir)"
-	install -m644 $(langs_infile) "$(ax_etc_dir)"/$(langs_outfile)
-	install -m644 $(idranges_infile) "$(ax_etc_dir)"/$(idranges_outfile)
+	install -m755 -d "$(includedir)/uls" "$(datadir)/uls/ulcs" "$(etc_dir)" "$(bindir)"
+	install -m644 $(langs_infile) "$(etc_dir)"/$(langs_outfile)
+	install -m644 $(idranges_infile) "$(etc_dir)"/$(idranges_outfile)
 	install -m755 uls_common.sh $(bindir)/
-	./gen_sysprops.sh "$(prefix)" "$(ax_etc_dir)" \
-		$(uls_ver_major).$(uls_ver_minor).$(uls_ver_debug) I "$(ax_etc_dir)"/$(sysprops_outfile)
+	./gen_sysprops.sh "$(prefix)" "$(etc_dir)" \
+		$(uls_ver_major).$(uls_ver_minor).$(uls_ver_debug) I "$(etc_dir)"/$(sysprops_outfile)

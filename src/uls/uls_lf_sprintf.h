@@ -31,7 +31,7 @@
     Stanley Hong <link2next@gmail.com>, July 2011.
   </author>
 */
-#if !defined(ULS_DOTNET) && !defined(__ULS_LF_SPRINTF_H__)
+#ifndef __ULS_LF_SPRINTF_H__
 #define __ULS_LF_SPRINTF_H__
 
 #ifndef ULS_EXCLUDE_HFILES
@@ -298,10 +298,6 @@ ULS_DLL_EXTERN int uls_lf_puts_null(uls_voidptr_t x_dat, const char* wrdptr, int
 
 #ifdef _ULS_CPLUSPLUS
 }
-#endif
-
-#ifdef ULS_USE_WSTR
-#include "uls/uls_lf_swprintf.h"
 #endif
 
 #endif // __ULS_LF_SPRINTF_H__

@@ -9,7 +9,7 @@ start_stream_filepath_bin(ostream_t *ostr, lex_t* uls, const char* fpath)
 	int stat = 0;
 
 	if ((istr = open_istream_file(fpath)) == NULL) {
-		err_log("%s: can't read %s", __func__, fpath);
+		err_log("%s: can't read %s", __FUNCTION__, fpath);
 		return -1;
 	}
 
@@ -19,7 +19,7 @@ start_stream_filepath_bin(ostream_t *ostr, lex_t* uls, const char* fpath)
 	}
 
 	if (push_istream(uls, istr, 0) < 0) {
-		err_log("%s: fail to prepare input-stream", __func__);
+		err_log("%s: fail to prepare input-stream", __FUNCTION__);
 		stat = -3; goto end_1;
 	}
 
@@ -71,19 +71,19 @@ write_stream_body_from_raw(int fd_list, lex_t* uls, ostream_t* ostr)
 	int  stat = 0;
 
 	if (bind_ostream(ostr, uls) < 0) {
-		err_log("%s: can't bind!", __func__);
+		err_log("%s: can't bind!", __FUNCTION__);
 		return -1;
 	}
 #ifdef ULS_FDF_SUPPORT
 	fdf_init(&fdfilter, fdf_iprovider_filelist, cmdline_filter);
 	if ((istr = open_istream_filter(&fdfilter, fd_list)) == NULL) {
-		err_log("%s: can't conjecture file type!", __func__);
+		err_log("%s: can't conjecture file type!", __FUNCTION__);
 		fdf_deinit(&fdfilter);
 		return -2;
 	}
 #else
 	if ((istr = open_istream(fd_list)) == NULL) {
-		err_log("%s: can't conjecture file type!", __func__);
+		err_log("%s: can't conjecture file type!", __FUNCTION__);
 		return -2;
 	}
 #endif
@@ -96,17 +96,17 @@ write_stream_body_from_raw(int fd_list, lex_t* uls, ostream_t* ostr)
 	}
 
 	if (bind_tmpl(istr, name_val, n_name_val, uls) < 0) {
-		err_log("%s: fail to prepare input-stream", __func__);
+		err_log("%s: fail to prepare input-stream", __FUNCTION__);
 		stat = -4; goto end_1;
 	}
 
 	if (push_istream(uls, istr, 0) < 0) {
-		err_log("%s: fail to prepare input-stream", __func__);
+		err_log("%s: fail to prepare input-stream", __FUNCTION__);
 		stat = -5; goto end_1;
 	}
 
 	if (start_stream(ostr, uls, ULS_LINE_NUMBERING) < 0) {
-		err_log("%s: fail to uls-streaming to %d", __func__);
+		err_log("%s: fail to uls-streaming to %d", __FUNCTION__);
 		stat = -6; goto end_1;
 	}
 
@@ -141,7 +141,7 @@ proc_filelist(int ftype, lex_t *uls)
 	}
 
 	if (bind_ostream(ostr, uls) < 0) {
-		err_log("%s: can't bind!", __func__);
+		err_log("%s: can't bind!", __FUNCTION__);
 		ostr->flags |= ULS_STREAM_ERR;
 		stat = -2; goto err_1;
 	}
@@ -155,7 +155,7 @@ proc_filelist(int ftype, lex_t *uls)
 			rc = write_stream_body_from_raw(fd_list, uls, ostr);
 		} else {
 			if ((fp_list=fdopen(fd_list, "r")) == NULL) {
-				err_log("%s: improper fd of list", __func__);
+				err_log("%s: improper fd of list", __FUNCTION__);
 				stat = -4;
 			} else {
 				rc = write_stream_body_from_bin(fp_list, uls, ostr);
@@ -181,7 +181,7 @@ proc_filelist(int ftype, lex_t *uls)
 
 		if (close_tempfile(&tmpfile, output_file) < 0) {
 			err_log("%s: can't move file %s into %s",
-				__func__, tmpfile.filepath, output_file);
+				__FUNCTION__, tmpfile.filepath, output_file);
 			stat = -7; goto err_1;
 		}
 	}

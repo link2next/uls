@@ -35,10 +35,8 @@
 #ifndef __ULS_ISTREAM_WSTR_H__
 #define __ULS_ISTREAM_WSTR_H__
 
-#include "uls/uls_auw.h"
-#ifdef _ULS_INTERNAL_USE_ONLY
+#include "uls/uls_lex.h"
 #include "uls/uls_istream.h"
-#endif
 #ifdef ULS_FDF_SUPPORT
 #include "uls/fdfilter.h"
 #endif
@@ -87,26 +85,5 @@ ULS_DLL_EXTERN uls_istream_ptr_t uls_open_istream_filter_file_wstr(fdf_t* fdf, c
 #ifdef _ULS_CPLUSPLUS
 }
 #endif
-
-#ifdef _ULS_USE_ULSCOMPAT
-#ifdef ULS_USE_WSTR
-#define uls_init_tmpls uls_init_tmpls_wstr
-#define uls_deinit_tmpls uls_deinit_tmpls_wstr
-#define uls_create_tmpls uls_create_tmpls_wstr
-#define uls_reset_tmpls uls_reset_tmpls_wstr
-#define uls_destroy_tmpls uls_destroy_tmpls_wstr
-
-#define uls_get_tmpl_value uls_get_tmpl_value_wstr
-#define uls_set_tmpl_value uls_set_tmpl_value_wstr
-#define uls_add_tmpl uls_add_tmpl_wstr
-
-#define uls_set_istream_tag uls_set_istream_wtag
-#define uls_open_istream_file uls_open_istream_file_wstr
-#ifdef ULS_FDF_SUPPORT
-#define uls_open_istream_filter_file uls_open_istream_filter_file_wstr
-#endif
-
-#endif // ULS_USE_WSTR
-#endif // _ULS_USE_ULSCOMPAT
 
 #endif // __ULS_ISTREAM_WSTR_H__

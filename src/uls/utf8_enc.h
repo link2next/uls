@@ -44,7 +44,7 @@ extern "C" {
 #endif
 
 #ifdef ULS_DECL_PROTECTED_TYPE
-#define ULS_FL_UTF_INBUF_BUF_ALLOCED 0x01
+#define ULS_FL_UTF_INBUF_BUF_ALLOCED 0x00000001
 
 #define UTF_INPUT_FORMAT_8       0
 #define UTF_INPUT_FORMAT_16      1
@@ -75,7 +75,6 @@ ULS_DEFINE_STRUCT_BEGIN(utf_inbuf)
 	int    bytesbuf_siz; // bytes unit
 	char   *wrdptr;    // reference to bytesbuf[]
 	int    n_wrds;     // 1, 2, 4 bytes unit
-	uls_wch_t wch_buffered;
 
 	int    fd;
 	int    is_eof;
@@ -88,6 +87,8 @@ ULS_DEFINE_STRUCT_BEGIN(utf_inbuf)
 #endif // ULS_DEF_PUBLIC_TYPE
 
 #if defined(__ULS_UTF8_ENC__) || defined(ULS_DECL_PRIVATE_PROC)
+ULS_DECL_STATIC int enc_utf16_to_utf8(uls_uint16 *codpnts, int n_codpnts, uls_outparam_ptr_t parms);
+
 ULS_DECL_STATIC int fill_utf8_buf(uls_utf_inbuf_ptr_t inp);
 ULS_DECL_STATIC int dec_utf8_buf(uls_utf_inbuf_ptr_t inp, uls_wch_t* out_buf, int out_bufsiz);
 
@@ -107,8 +108,6 @@ void uls_utf_reset_inbuf(uls_utf_inbuf_ptr_t inp, int mode);
 #ifdef ULS_DECL_PUBLIC_PROC
 int uls_fill_utf8str(uls_wch_t *uchs, int n_uchs,
 	char* utf8buf, int siz_utf8buf, int *p_len_utf8buf);
-int uls_fill_utf8buf(uls_utf_inbuf_ptr_t inp, char* utf8buf, int len_utf8buf, int siz_utf8buf);
-
 char* uls_enc_utf16str_to_utf8str(uls_uint16 *wstr1, int l_wstr1, uls_outparam_ptr_t parms);
 char* uls_enc_utf32str_to_utf8str(uls_uint32 *wstr1, int l_wstr1, uls_outparam_ptr_t parms);
 
@@ -116,8 +115,14 @@ int uls_utf_is_inbuf_empty(uls_utf_inbuf_ptr_t inp);
 void uls_utf_set_inbuf(uls_utf_inbuf_ptr_t inp, int fd);
 uls_utf_inbuf_ptr_t uls_utf_create_inbuf(char *buf, int bufsiz, int mode);
 void uls_utf_destroy_inbuf(uls_utf_inbuf_ptr_t inp);
-int uls_utf_drain_inbuf(uls_utf_inbuf_ptr_t inp, uls_wch_t *buf, int bufsiz);
 
+int uls_utf_drain_inbuf(uls_utf_inbuf_ptr_t inp, uls_wch_t *buf, int bufsiz);
+int uls_fill_utf8buf(uls_utf_inbuf_ptr_t inp, char* utf8buf, int len_utf8buf, int siz_utf8buf);
+
+int uls_enc_utf16file_to_8(int fd, int fd_out, int reverse);
+int uls_enc_utf8file_to_16(int fd, int fd_out, int reverse);
+int uls_enc_utf32file_to_8(int fd, int fd_out, int reverse);
+int uls_enc_utf8file_to_32(int fd, int fd_out, int reverse);
 #endif
 
 #ifdef _ULS_CPLUSPLUS

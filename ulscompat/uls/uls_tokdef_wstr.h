@@ -34,10 +34,8 @@
 #ifndef __ULS_TOKDEF_WSTR_H__
 #define __ULS_TOKDEF_WSTR_H__
 
-#include "uls/uls_auw.h"
-#ifdef _ULS_INTERNAL_USE_ONLY
-#include "uls/uls_tokdef.h"
-#endif
+#include "uls/uls_type.h"
+#include <wchar.h>
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {

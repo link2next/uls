@@ -86,9 +86,9 @@ ULS_DECL_STATIC int __export_kwtable(uls_kwtable_ptr_t tbl, uls_ref_parray(lst,k
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC
-void uls_init_kwtable(uls_kwtable_ptr_t tbl);
+void __init_kwtable(uls_kwtable_ptr_t tbl);
+void uls_init_kwtable(uls_kwtable_ptr_t tbl, int n_slots, int case_insensitive);
 void uls_reset_kwtable(uls_kwtable_ptr_t tbl, int n_slots, uls_hashfunc_t hashfunc, uls_voidptr_t hash_stat);
-void uls_reset_kwtable_2(uls_kwtable_ptr_t tbl, int n_slots, int case_insensitive);
 void uls_deinit_kwtable(uls_kwtable_ptr_t tbl);
 
 uls_tokdef_ptr_t uls_find_kw(uls_kwtable_ptr_t tbl, uls_ptrtype_tool(outparam) parms);

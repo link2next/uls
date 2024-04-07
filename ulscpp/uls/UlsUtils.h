@@ -34,11 +34,10 @@
 
 #include <uls/csz_stream.h>
 #include <uls/uls_util_wstr.h>
-#include <stdio.h>
 
 namespace uls {
 	namespace crux {
-		static const int ULSCPP_NUM_CSZ_BUFFS = 4;
+		static const int ULSCPP_NUM_CSZ_BUFFS = 2;
 
 		// <brief>
 		// the converters among ANSI-encoding, UTF8, Wide-strings
@@ -51,6 +50,7 @@ namespace uls {
 
 		public:
 			static const int CVT_MBSTR_USTR = 0;
+			static const int CVT_MBSTR_ASTR = 1;
 
 			// <brief>
 			// This is a constructor of UlsAuw.
@@ -65,6 +65,7 @@ namespace uls {
 			// <brief>
 			// converters among ANSI-encoding, UTF-8, and wide string
 			// </brief>
+			char *mbstr2mbstr(const char *mbstr, int mode, int slot_no);
 			char *wstr2mbstr(const wchar_t *wstr, int mode, int slot_no);
 			wchar_t *mbstr2wstr(const char *mbstr, int mode, int slot_no);
 
@@ -108,35 +109,16 @@ namespace uls {
 
 			wchar_t **exportWArgs(int *ptr_n_args);
 		};
+
 	}
 
-	ULSCPP_DLL_EXTERN void memcopy(void *dst, const void *src, int n);
-
-	ULSCPP_DLL_EXTERN int strLength(const char *str);
-	ULSCPP_DLL_EXTERN int strLength(const wchar_t *wstr);
-
-	ULSCPP_DLL_EXTERN int strFindIndex(const char *line, char ch0);
-	ULSCPP_DLL_EXTERN int strFindIndex(const wchar_t* wline, wchar_t wch0);
-
-	ULSCPP_DLL_EXTERN int direntExist(const char *fpath);
-	ULSCPP_DLL_EXTERN int direntExist(const wchar_t *wfpath);
-
-	ULSCPP_DLL_EXTERN FILE *fileOpenReadolnly(const char *fpath);
-	ULSCPP_DLL_EXTERN FILE *fileOpenReadolnly(const wchar_t *wfpath);
+	// <brief>
+	// convert the list of string to wide strings.
+	// </brief>
+	wchar_t** get_warg_list(char **argv, int n_argv);
 
 	// <brief>
-	// convert command args
+	// release the memory of list of wide strings.
 	// </brief>
-	ULSCPP_DLL_EXTERN wchar_t **getWargList(char **argv, int n_argv);
-	ULSCPP_DLL_EXTERN void putWargList(wchar_t **wargv, int n_wargv);
-
-	// <brief>
-	// parsing command args
-	// </brief>
-	typedef int (*optproc_t)(int opt, char* optarg);
-	ULSCPP_DLL_EXTERN int parseCommandOptions(int n_args, char *args[], const char *optfmt, optproc_t proc);
-
-	typedef int (*woptproc_t)(int opt, wchar_t* optarg);
-	ULSCPP_DLL_EXTERN int parseCommandOptions(int n_args, wchar_t *args[], const wchar_t *optfmt, woptproc_t wproc);
-
+	void put_warg_list(wchar_t **wargv, int n_wargv);
 }

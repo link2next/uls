@@ -37,7 +37,7 @@
 
 #ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_const.h"
-#if !defined(ULS_DOTNET) && !defined(USE_ULSNETJAVA)
+#if !defined(USE_ULSNETJAVA)
 #ifdef ULS_WINDOWS
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -75,25 +75,11 @@ extern "C" {
 #define uls_num2char_hex(val) (((val) >= 10) ?  (val) - 10 + 'A' : (val) + '0')
 #define uls_streql(a,b)  (_uls_tool_(strcmp)((const char*)(a),(const char*)(b))==0)
 
-#ifdef ULS_DOTNET
-#define ULS_QUALIFIED_METHOD(mthname) ULS_CLASS_NAME::mthname
-#define ULS_QUALIFIED_RETTYP(rettyp) ULS_CLASS_NAME::rettyp
-#else
 #define ULS_QUALIFIED_METHOD(mthname) mthname
 #define ULS_QUALIFIED_RETTYP(rettyp) rettyp
-#endif
 
 #ifdef ULS_DECL_BASIC_TYPES
-#ifdef ULS_DOTNET
-typedef System::Int16    uls_int16;
-typedef System::Int32    uls_int32;
-typedef System::Int64    uls_int64;
-typedef System::UInt16   uls_uint16;
-typedef System::UInt32   uls_uint32;
-typedef System::UInt64   uls_uint64;
 
-typedef System::Object ^uls_voidptr_t;
-#else
 #ifdef ULS_WINDOWS
 typedef int16_t       uls_int16;
 typedef int32_t       uls_int32;
@@ -110,12 +96,10 @@ typedef u_int32_t   uls_uint32;
 typedef u_int64_t   uls_uint64;
 #endif
 typedef void   *uls_voidptr_t;
-#endif // ULS_DOTNET
 
 typedef uls_uint32  uls_flags_t;
 typedef uls_uint32  uls_wch_t;
-typedef uls_uint32  uls_uch_t;
-
+#define ULS_UCH_EOS 0
 typedef void *uls_native_vptr_t;
 #endif // ULS_DECL_BASIC_TYPES
 
@@ -127,6 +111,7 @@ typedef void *uls_native_vptr_t;
 #define uls_get_namebuf_value(nam) (nam.str)
 #define uls_get_namebuf_length(nam) (nam.len)
 #define uls_set_namebuf_value(nam,str) _uls_tool_(set_nambuf)(uls_ptr(nam),str,-1)
+#define uls_set_namebuf_value_2(nam,str,len) _uls_tool_(set_nambuf)(uls_ptr(nam),str,len)
 
 // name-buffer(this)
 #define uls_def_namebuf_this(nam,siz) uls_nambuf_t nam
@@ -145,12 +130,13 @@ typedef void *uls_native_vptr_t;
 
 #else // ULS_CLASSIFY_SOURCE
 // name-buffer
-#define uls_def_namebuf(nam,siz) char  nam[(siz)+1]
+#define uls_def_namebuf(nam,siz) char  nam[siz+1]
 #define uls_init_namebuf(nam,siz) nam[0]='\0'
 #define uls_deinit_namebuf(nam)
 #define uls_get_namebuf_value(nam) (nam)
 #define uls_get_namebuf_length(nam) uls_strlen(nam)
 #define uls_set_namebuf_value(nam,str) uls_set_nambuf_raw(nam,sizeof(nam),str,-1)
+#define uls_set_namebuf_value_2(nam,str,len) uls_set_nambuf_raw(nam,sizeof(nam),str,len)
 
 // name-buffer(this)
 #define uls_def_namebuf_this uls_def_namebuf
@@ -159,6 +145,7 @@ typedef void *uls_native_vptr_t;
 #define uls_get_namebuf_value_this uls_get_namebuf_value
 #define uls_get_namebuf_length_this uls_get_namebuf_length
 #define uls_set_namebuf_value_this uls_set_namebuf_value
+#define uls_set_namebuf_value_2_this uls_set_namebuf_value_2
 
 // bytes pool
 #define uls_def_bytespool(nam,siz) char nam[siz]
@@ -166,92 +153,6 @@ typedef void *uls_native_vptr_t;
 #define uls_init_bytespool(nam,siz,no_clear) if (!no_clear) uls_bzero(nam,siz)
 #define uls_deinit_bytespool(nam)
 #endif // ULS_CLASSIFY_SOURCE
-
-#ifdef ULS_DOTNET
-#define uls_ptr(a) %(a)
-#define uls_nil  nullptr
-#define uls_ref_typ(typ) typ^
-#define uls_def_ptrvar(avar) ^avar
-
-#define _uls_type_this(ns,typnam) typnam##_t
-#define _uls_ptrtype_this(ns,typnam) typnam##_ptr_t
-#define uls_type_this(ns,typnam) uls_##typnam##_t
-#define uls_ptrtype_this(ns,typnam) uls_##typnam##_ptr_t
-#define uls_cast_ptrtype_this(ns,typnam,var1,var2) uls_ptrtype_this(ns,typnam) var1 = (uls_ptrtype_this(ns,typnam))(var2)
-
-#define _uls_type_ns(ns,typnam) ns::typnam##_t
-#define _uls_ptrtype_ns(ns,typnam) ns::typnam##_ptr_t
-#define uls_type_ns(ns,typnam) ns::uls_##typnam##_t
-#define uls_ptrtype_ns(ns,typnam) ns::uls_##typnam##_ptr_t
-#define uls_cast_ptrtype_ns(ns,typnam,var1,var2) uls_ptrtype_ns(ns,typnam) var1 = (uls_ptrtype_ns(ns,typnam))(var2)
-
-#define _uls_type_tool(typnam) _uls_type_ns(UlsToolbase,typnam)
-#define _uls_ptrtype_tool(typnam) _uls_ptrtype_ns(UlsToolbase,typnam)
-#define uls_type_tool(typnam) uls_type_ns(UlsToolbase,typnam)
-#define uls_ptrtype_tool(typnam) uls_ptrtype_ns(UlsToolbase,typnam)
-#define uls_cast_ptrtype_tool(typnam,var1,var2) uls_ptrtype_tool(typnam) var1 = (uls_ptrtype_tool(typnam))(var2)
-
-#define _ULS_DECLARE_STRUCT_BRIEF(typnam) ref struct typnam##_t
-#define _ULS_DEFINE_STRUCT_PTR(typnam) typedef ref struct typnam##_t ^typnam##_ptr_t
-#define _ULS_DECLARE_STRUCT(typnam) _ULS_DECLARE_STRUCT_BRIEF(typnam); _ULS_DEFINE_STRUCT_PTR(typnam)
-#define _ULS_DEFINE_STRUCT_BEGIN(typnam) _ULS_DECLARE_STRUCT_BRIEF(typnam)
-#define _ULS_DEFINE_STRUCT(typnam) _ULS_DECLARE_STRUCT(typnam); _ULS_DEFINE_STRUCT_BEGIN(typnam)
-
-#define ULS_DECLARE_STRUCT_BRIEF(typnam) ref struct uls_##typnam##_t
-#define ULS_DEFINE_STRUCT_PTR(typnam) typedef ref struct uls_##typnam##_t ^uls_##typnam##_ptr_t
-#define ULS_DECLARE_STRUCT(typnam) ULS_DECLARE_STRUCT_BRIEF(typnam); ULS_DEFINE_STRUCT_PTR(typnam)
-#define ULS_DEFINE_STRUCT_BEGIN(typnam) ULS_DECLARE_STRUCT_BRIEF(typnam)
-#define ULS_DEFINE_STRUCT(typnam) ULS_DECLARE_STRUCT(typnam); ULS_DEFINE_STRUCT_BEGIN(typnam)
-
-// delegate
-#define _ULS_DELEGATE_NAME(typnam) _uls_delegate_##typnam
-#define ULS_DELEGATE_NAME(typnam) uls_##typnam##_t
-#define ULS_DEFINE_DELEGATE_BEGIN(typnam,rtype) delegate rtype _ULS_DELEGATE_NAME(typnam)
-#define ULS_DEFINE_DELEGATE_END(typnam) typedef _ULS_DELEGATE_NAME(typnam) ^ULS_DELEGATE_NAME(typnam)
-
-#define uls_nameof_cb_varnam(mthnam) _cb_##mthnam
-#define uls_callback_type_ns(clsnam,typnam) clsnam::ULS_DELEGATE_NAME(typnam)
-#define uls_callback_type_this(typnam) ULS_DELEGATE_NAME(typnam)
-
-#define uls_ref_callback(o,mthnam) (o)->uls_nameof_cb_varnam(mthnam)
-#define uls_ref_callback_this(mthnam) uls_nameof_cb_varnam(mthnam)
-
-#define uls_def_callback(mthnam,typnam) uls_callback_type_this(typnam) uls_nameof_cb_varnam(mthnam)
-#define uls_def_callback_ns(mthnam,clsnam,typnam) uls_callback_type_ns(clsnam,typnam) uls_nameof_cb_varnam(mthnam)
-#define uls_def_callback_tool(mthnam,typnam) uls_def_callback_ns(mthnam,UlsToolbase,typnam)
-
-#define uls_alloc_callback(mthnam,typnam) uls_nameof_cb_varnam(mthnam) = gcnew _ULS_DELEGATE_NAME(typnam)(this,&ULS_QUALIFIED_METHOD(mthnam))
-#define uls_alloc_callback_ns(mthnam,clsnam,typnam) uls_nameof_cb_varnam(mthnam) = gcnew clsnam::_ULS_DELEGATE_NAME(typnam)(this,&ULS_QUALIFIED_METHOD(mthnam))
-#define uls_alloc_callback_tool(mthnam,clsnam) uls_alloc_callback_ns(mthnam,clsnam,UlsToolbase)
-
-#define uls_dealloc_callback(mthnam) delete uls_nameof_cb_varnam(mthnam)
-
-#define _uls_parray_this_(ns,typnam) uls_##typnam##_parray_t
-#define _uls_ptrparray_this_(ns,typnam) uls_##typnam##_parray_ptr_t
-#define _uls_parray_ns_(ns,typnam) ns::_uls_parray_this_(ns,typnam)
-#define _uls_ptrparray_ns_(ns,typnam) ns::_uls_ptrparray_this_(ns,typnam)
-
-#define __uls_array00_this_(ns,typnam,NN) uls_##typnam##_s00array##NN##_t
-#define __uls_ptrarray00_this_(ns,typnam,NN) uls_##typnam##_s00array##NN##_ptr_t
-#define __uls_array00_ns_(ns,typnam,NN) ns::__uls_array00_this_(ns,typnam,NN)
-#define __uls_ptrarray00_ns_(ns,typnam,NN) ns::__uls_ptrarray00_this_(ns,typnam,NN)
-
-#define _uls_array00_this_(ns,typnam,NN) __uls_array00_this_(ns,typnam,NN)
-#define _uls_ptrarray00_this_(ns,typnam,NN) __uls_ptrarray00_this_(ns,typnam,NN)
-#define _uls_array00_ns_(ns,typnam,NN) __uls_array00_ns_(ns,typnam,NN)
-#define _uls_ptrarray00_ns_(ns,typnam,NN) __uls_ptrarray00_ns_(ns,typnam,NN)
-
-#define _uls_array01_this_(ns,typnam) uls_##typnam##_s01array_t
-#define _uls_ptrarray01_this_(ns,typnam) uls_##typnam##_s01array_ptr_t
-#define _uls_array01_ns_(ns,typnam) ns::_uls_array01_this_(ns,typnam)
-#define _uls_ptrarray01_ns_(ns,typnam) ns::_uls_ptrarray01_this_(ns,typnam)
-
-#define _uls_array10_this_(ns,typnam) uls_##typnam##_s10array_t
-#define _uls_ptrarray10_this_(ns,typnam) uls_##typnam##_s10array_ptr_t
-#define _uls_array10_ns_(ns,typnam) ns::_uls_array10_this_(ns,typnam)
-#define _uls_ptrarray10_ns_(ns,typnam) ns::_uls_ptrarray10_this_(ns,typnam)
-
-#else // ULS_DOTNET
 
 #define uls_ptr(a) &(a)
 #define uls_nil  NULL
@@ -323,8 +224,6 @@ typedef void *uls_native_vptr_t;
 #define _uls_ptrarray10_this_(ns,typnam) uls_##typnam##_s10array_ptr_t
 #define _uls_array10_ns_(ns,typnam) _uls_array10_this_(ns,typnam)
 #define _uls_ptrarray10_ns_(ns,typnam) _uls_ptrarray10_this_(ns,typnam)
-
-#endif // ULS_DOTNET
 
 #define ULS_DEF_PARRAY(typnam) \
 	ULS_DECLARE_STRUCT(typnam##_parray); \
@@ -418,7 +317,6 @@ typedef void *uls_native_vptr_t;
 
 #endif // ULS_CLASSIFY_SOURCE
 
-#ifndef ULS_DOTNET
 ULS_DECLARE_STRUCT(lex);
 
 #define _uls_log_primitive(proc) proc##_primitive
@@ -430,34 +328,6 @@ ULS_DECLARE_STRUCT(lex);
 #define _uls_tool(proc) proc
 #define _uls_tool_(proc) uls_##proc
 #define __uls_tool_(proc) _uls_##proc
-#endif // ULS_DOTNET
-
-
-#ifdef ULS_DOTNET
-#define uls_initial_zerofy_object(obj)
-#define uls_alloc_object(typ) gcnew typ()
-#define uls_alloc_object_clear(typ) uls_alloc_object(typ)
-#define uls_dealloc_object(obj) do { (obj) = nullptr; } while (0)
-
-// arraytype
-#define _uls_type_array(typ) array<typ>^
-#define _uls_decl_array(name,typ) _uls_type_array(typ) name
-#define _uls_cast_array_type(typ) (array<typ>^)
-#define _uls_init_array(n,typ) gcnew array<typ>(n)
-#define _uls_deinit_array(ary) do { delete ary; (ary) = nullptr; } while (0)
-#define _uls_resize_array(ary,typ,n) Array::Resize(ary,n)
-
-// arraytype(ptr)
-#define uls_type_ptrarray_ns(ns,typnam,typmac) array<typmac(ns,typnam)^>^
-#define uls_decl_ptrarray_ns(name,ns,typnam,typmac) uls_type_ptrarray_ns(ns,typnam,typmac)name
-#define uls_cast_ptrarray_ns(ns,typnam,typmac) (uls_type_ptrarray_ns(ns,typnam,typmac))
-#define uls_ref_ptrarray_ns(name,ns,typnam,typmac) uls_decl_ptrarray_ns(name,ns,typnam,typmac)
-#define uls_ref_ptrarray_init_ns(name,ns,typnam,typmac,val) uls_ref_ptrarray_ns(name,ns,typnam,typmac)=(val)
-#define uls_init_ptrarray_ns(n,ns,typnam,typmac) gcnew array<typmac(ns,typnam)^>(n)
-#define uls_deinit_ptrarray_ns(ary) do { delete ary; (ary) = nullptr; } while (0)
-#define uls_resize_ptrarray_ns(ary,ns,typnam,typmac,n) Array::Resize(ary,n)
-
-#else // ULS_DOTNET
 
 #define uls_initial_zerofy_object(obj) uls_bzero(obj,sizeof(*(obj)))
 #define uls_alloc_object(typ) (typ*)uls_malloc(sizeof(typ))
@@ -481,8 +351,6 @@ ULS_DECLARE_STRUCT(lex);
 #define uls_init_ptrarray_ns(n,ns,typnam,typmac) (typmac(ns,typnam)**)uls_malloc_clear((n)*sizeof(typmac(ns,typnam)*))
 #define uls_deinit_ptrarray_ns(ary) uls_mfree(ary)
 #define uls_resize_ptrarray_ns(ary,ns,typnam,typmac,n) (ary)=(typmac(ns,typnam)**)uls_mrealloc(ary,(n)*sizeof(typmac(ns,typnam)*))
-
-#endif // ULS_DOTNET
 
 #define uls_type_ptrarray(typnam) uls_type_ptrarray_ns(none,typnam,uls_type_this)
 #define uls_decl_ptrarray(name,typnam) uls_decl_ptrarray_ns(name,none,typnam,uls_type_this)
@@ -576,12 +444,12 @@ ULS_DECLARE_STRUCT(lex);
 	} while (0)
 
 // type00
-#define uls_init_array_ns_type00(ary,ns,typnam,typmac,NN) do { int ii; \
+#define uls_init_array_ns_type00(ary,ns,typnam,typmac,NN) do { int i; \
 		(ary)->slots = uls_init_ptrarray_ns(NN, ns,typnam,typmac); (ary)->n = (ary)->n_alloc = (NN); \
-		for (ii=0; ii<(NN); ii++) { (ary)->slots[ii]=uls_alloc_object_clear(typmac(ns,typnam)); } \
+		for (i=0; i<(NN); i++) { (ary)->slots[i]=uls_alloc_object_clear(typmac(ns,typnam)); } \
 	} while (0)
-#define uls_deinit_array_ns_type00(ary,ns,typnam,typmac) do { int ii; \
-		for (ii=0; ii<(ary)->n; ii++) { uls_dealloc_object((ary)->slots[ii]); } \
+#define uls_deinit_array_ns_type00(ary,ns,typnam,typmac) do { int i; \
+		for (i=0; i<(ary)->n; i++) { uls_dealloc_object((ary)->slots[i]); } \
 		uls_deinit_ptrarray_ns((ary)->slots); \
 	} while (0)
 
@@ -590,21 +458,21 @@ ULS_DECLARE_STRUCT(lex);
 #define uls_get_array_slot_type00(ary,idx) _uls_get_stdary_slot((ary)->slots,idx)
 
 // type01
-#define uls_init_array_ns_type01(ary,ns,typnam,typmac,nn) do { int ii; \
+#define uls_init_array_ns_type01(ary,ns,typnam,typmac,nn) do { int i; \
 		(ary)->slots = uls_init_ptrarray_ns(nn, ns,typnam,typmac); (ary)->n = (ary)->n_alloc = (nn); \
-		for (ii=0; ii<(nn); ii++) { _uls_alloc_zary_slot((ary)->slots,ii,ns,typnam,typmac); } \
+		for (i=0; i<(nn); i++) { _uls_alloc_zary_slot((ary)->slots,i,ns,typnam,typmac); } \
 	} while (0)
-#define uls_deinit_array_ns_type01(ary,ns,typnam,typmac) do { int ii; \
-		for (ii=0; ii<(ary)->n; ii++) { _uls_dealloc_zary_slot((ary)->slots,ii,ns,typnam,typmac); } \
+#define uls_deinit_array_ns_type01(ary,ns,typnam,typmac) do { int i; \
+		for (i=0; i<(ary)->n; i++) { _uls_dealloc_zary_slot((ary)->slots,i,ns,typnam,typmac); } \
 		uls_deinit_ptrarray_ns((ary)->slots); \
 	} while (0)
 
-#define uls_init_array_ns_type01a(ary,ns,typnam,typmac,nn) do { int ii; \
+#define uls_init_array_ns_type01a(ary,ns,typnam,typmac,nn) do { int i; \
 		uls_init_array_ns_type01(ary,ns,typnam,typmac,nn); \
-		for (ii=0; ii<(nn); ii++) { uls_init_##typnam(uls_get_array_slot_type01(ary,ii)); } \
+		for (i=0; i<(nn); i++) { uls_init_##typnam(uls_get_array_slot_type01(ary,i)); } \
 	} while (0)
-#define uls_deinit_array_ns_type01a(ary,ns,typnam,typmac) do { int ii; \
-		for (ii=0; ii<(ary)->n; ii++) { uls_deinit_##typnam(uls_get_array_slot_type01(ary,ii)); } \
+#define uls_deinit_array_ns_type01a(ary,ns,typnam,typmac) do { int i; \
+		for (i=0; i<(ary)->n; i++) { uls_deinit_##typnam(uls_get_array_slot_type01(ary,i)); } \
 		uls_deinit_array_ns_type01(ary,ns,typnam,typmac); \
 	} while (0)
 
@@ -626,7 +494,7 @@ ULS_DECLARE_STRUCT(lex);
 		uls_deinit_parray(ary); \
 	} while (0)
 #define uls_resize_array_ns_type10(ary,ns,typnam,typmac,nn_alloc) do { \
-		int ii; for (ii=(nn_alloc); ii<(ary)->n; ii++) { _uls_dealloc_iary_slot((ary)->slots,ii,ns,typnam,typmac); } \
+		int i; for (i=(nn_alloc); i<(ary)->n; i++) { _uls_dealloc_iary_slot((ary)->slots,i,ns,typnam,typmac); } \
 		uls_resize_parray(ary,typnam,nn_alloc); \
 	} while (0)
 
@@ -708,12 +576,12 @@ ULS_DECLARE_STRUCT(lex);
 		uls_mfree((ary)->slots); (ary)->n = 0; \
 	} while (0)
 
-#define uls_init_array_ns_type01a(ary,ns,typnam,typmac,nn) do { int ii; \
+#define uls_init_array_ns_type01a(ary,ns,typnam,typmac,nn) do { int i; \
         	uls_init_array_ns_type01(ary,ns,typnam,typmac,nn); \
-		for (ii=0; ii<(nn); ii++) { uls_init_##typnam(uls_get_array_slot_type01(ary,ii)); } \
+		for (i=0; i<(nn); i++) { uls_init_##typnam(uls_get_array_slot_type01(ary,i)); } \
 	} while (0)
-#define uls_deinit_array_ns_type01a(ary,ns,typnam,typmac) do { int ii; \
-		for (ii=0; ii<(ary)->n; ii++) { uls_deinit_##typnam(uls_get_array_slot_type01(ary,ii)); } \
+#define uls_deinit_array_ns_type01a(ary,ns,typnam,typmac) do { int i; \
+		for (i=0; i<(ary)->n; i++) { uls_deinit_##typnam(uls_get_array_slot_type01(ary,i)); } \
 		uls_deinit_array_ns_type01(ary,ns,typnam,typmac); \
 	} while (0)
 
@@ -737,7 +605,7 @@ ULS_DECLARE_STRUCT(lex);
 		uls_mfree((ary)->slots); (ary)->n = (ary)->n_alloc = 0; \
 	} while (0)
 #define uls_resize_array_ns_type10(ary,ns,typnam,typmac,nn_alloc) do { \
-		int ii; for (ii=(nn_alloc); ii<(ary)->n; ii++) { _uls_dealloc_iary_slot((ary)->slots,ii,ns,typnam,typmac); } \
+		int i; for (i=(nn_alloc); i<(ary)->n; i++) { _uls_dealloc_iary_slot((ary)->slots,i,ns,typnam,typmac); } \
 		(ary)->slots=(typmac(ns,typnam)*)uls_mrealloc((ary)->slots,(nn_alloc)*sizeof(typmac(ns,typnam))); \
 		if ((nn_alloc) < (ary)->n) (ary)->n = (nn_alloc); (ary)->n_alloc = (nn_alloc); \
 	} while (0)
@@ -790,17 +658,31 @@ ULS_DECLARE_STRUCT(lex);
 #define uls_alloc_array_slot(ary,idx,typnam) _uls_alloc_iary_slot(ary,idx,none,typnam,uls_type_this)
 #define uls_dealloc_array_slot(ary,idx,typnam) _uls_dealloc_iary_slot(ary,idx,none,typnam,uls_type_this)
 
-#ifndef ULS_DOTNET
 #ifdef _ULSCPP_IMPLDLL
+#if defined(ULS_WINDOWS)
 #define _ULSCPP_AUWCVT_LEN(slot_no) auwcvt->get_slot_len(slot_no)
+#define _ULSCPP_USTR2NSTR(ustr, astr, slot_no) \
+	((astr) = auwcvt->mbstr2mbstr(ustr, UlsAuw::CVT_MBSTR_ASTR, slot_no),_ULSCPP_AUWCVT_LEN(slot_no))
+#define _ULSCPP_NSTR2USTR(astr, ustr, slot_no) \
+	((ustr) = auwcvt->mbstr2mbstr(astr, UlsAuw::CVT_MBSTR_USTR, slot_no),_ULSCPP_AUWCVT_LEN(slot_no))
+#else
+#define _ULSCPP_AUWCVT_LEN(slot_no) auwcvt->get_slot_len(slot_no)
+#define _ULSCPP_USTR2NSTR(ustr, astr, slot_no) ((astr) = (ustr),uls_strlen(astr))
+#define _ULSCPP_NSTR2USTR(astr, ustr, slot_no) ((ustr) = (astr),uls_strlen(ustr))
+#endif
 
 #define _ULSCPP_USTR2WSTR(ustr, wstr, slot_no) \
 	((wstr) = auwcvt->mbstr2wstr(ustr, UlsAuw::CVT_MBSTR_USTR, slot_no),_ULSCPP_AUWCVT_LEN(slot_no))
 
 #define _ULSCPP_WSTR2USTR(wstr, ustr, slot_no) \
 	((ustr) = auwcvt->wstr2mbstr(wstr, UlsAuw::CVT_MBSTR_USTR, slot_no),_ULSCPP_AUWCVT_LEN(slot_no))
+
+#define _ULSCPP_NSTR2WSTR(ustr, wstr, slot_no) \
+	((wstr) = auwcvt->mbstr2wstr(ustr, UlsAuw::CVT_MBSTR_USTR, slot_no),_ULSCPP_AUWCVT_LEN(slot_no))
+
+#define _ULSCPP_WSTR2NSTR(wstr, ustr, slot_no) \
+	((ustr) = auwcvt->wstr2mbstr(wstr, UlsAuw::CVT_MBSTR_USTR, slot_no),_ULSCPP_AUWCVT_LEN(slot_no))
 #endif // _ULSCPP_IMPLDLL
-#endif // ULS_DOTNET
 
 #define nilptr  uls_nil
 

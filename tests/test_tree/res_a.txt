@@ -49,14 +49,13 @@
                        [       ] (
                        [ DQUOTE] %s: can't read %s
                        [       ] ,
-                       [     ID] __func__
+                       [     ID] __FUNCTION__
                        [       ] ,
                        [     ID] fpath
                        [       ] )
                        [       ] ;
              s1.c:13   [ RETURN] return
-                       [       ] -
-                       [ NUMBER] 1
+                       [ NUMBER] -1
                        [       ] ;
              s1.c:14   [       ] }
              s1.c:16   [     IF] if
@@ -84,8 +83,7 @@
                        [       ] ;
              s1.c:18   [     ID] stat
                        [       ] =
-                       [       ] -
-                       [ NUMBER] 2
+                       [ NUMBER] -2
                        [       ] ;
                        [   GOTO] goto
                        [     ID] end_1
@@ -109,13 +107,12 @@
                        [       ] (
                        [ DQUOTE] %s: fail to prepare input-stream
                        [       ] ,
-                       [     ID] __func__
+                       [     ID] __FUNCTION__
                        [       ] )
                        [       ] ;
              s1.c:23   [     ID] stat
                        [       ] =
-                       [       ] -
-                       [ NUMBER] 3
+                       [ NUMBER] -3
                        [       ] ;
                        [   GOTO] goto
                        [     ID] end_1
@@ -144,8 +141,7 @@
                        [       ] ;
              s1.c:28   [     ID] stat
                        [       ] =
-                       [       ] -
-                       [ NUMBER] 4
+                       [ NUMBER] -4
                        [       ] ;
                        [   GOTO] goto
                        [     ID] end_1
@@ -181,7 +177,7 @@
              s1.c:40   [   CHAR] char
                        [     ID] linebuff
                        [       ] [
-                       [ NUMBER] 1024
+                       [ NUMBER] 400
                        [       ] ]
                        [       ] ,
                        [       ] *
@@ -357,12 +353,11 @@
                        [       ] (
                        [ DQUOTE] %s: can't bind!
                        [       ] ,
-                       [     ID] __func__
+                       [     ID] __FUNCTION__
                        [       ] )
                        [       ] ;
              s1.c:75   [ RETURN] return
-                       [       ] -
-                       [ NUMBER] 1
+                       [ NUMBER] -1
                        [       ] ;
              s1.c:76   [       ] }
              s1.c:77   [       ] #
@@ -399,7 +394,7 @@
                        [       ] (
                        [ DQUOTE] %s: can't conjecture file type!
                        [       ] ,
-                       [     ID] __func__
+                       [     ID] __FUNCTION__
                        [       ] )
                        [       ] ;
              s1.c:81   [     ID] fdf_deinit
@@ -409,8 +404,7 @@
                        [       ] )
                        [       ] ;
              s1.c:82   [ RETURN] return
-                       [       ] -
-                       [ NUMBER] 2
+                       [ NUMBER] -2
                        [       ] ;
              s1.c:83   [       ] }
              s1.c:84   [       ] #
@@ -433,12 +427,11 @@
                        [       ] (
                        [ DQUOTE] %s: can't conjecture file type!
                        [       ] ,
-                       [     ID] __func__
+                       [     ID] __FUNCTION__
                        [       ] )
                        [       ] ;
              s1.c:87   [ RETURN] return
-                       [       ] -
-                       [ NUMBER] 2
+                       [ NUMBER] -2
                        [       ] ;
              s1.c:88   [       ] }
              s1.c:89   [       ] #
@@ -506,8 +499,7 @@
                        [       ] ;
              s1.c:94   [     ID] stat
                        [       ] =
-                       [       ] -
-                       [ NUMBER] 3
+                       [ NUMBER] -3
                        [       ] ;
                        [   GOTO] goto
                        [     ID] end_1
@@ -534,13 +526,12 @@
                        [       ] (
                        [ DQUOTE] %s: fail to prepare input-stream
                        [       ] ,
-                       [     ID] __func__
+                       [     ID] __FUNCTION__
                        [       ] )
                        [       ] ;
              s1.c:100  [     ID] stat
                        [       ] =
-                       [       ] -
-                       [ NUMBER] 4
+                       [ NUMBER] -4
                        [       ] ;
                        [   GOTO] goto
                        [     ID] end_1
@@ -564,13 +555,12 @@
                        [       ] (
                        [ DQUOTE] %s: fail to prepare input-stream
                        [       ] ,
-                       [     ID] __func__
+                       [     ID] __FUNCTION__
                        [       ] )
                        [       ] ;
              s1.c:105  [     ID] stat
                        [       ] =
-                       [       ] -
-                       [ NUMBER] 5
+                       [ NUMBER] -5
                        [       ] ;
                        [   GOTO] goto
                        [     ID] end_1
@@ -594,13 +584,12 @@
                        [       ] (
                        [ DQUOTE] %s: fail to uls-streaming to %d
                        [       ] ,
-                       [     ID] __func__
+                       [     ID] __FUNCTION__
                        [       ] )
                        [       ] ;
              s1.c:110  [     ID] stat
                        [       ] =
-                       [       ] -
-                       [ NUMBER] 6
+                       [ NUMBER] -6
                        [       ] ;
                        [   GOTO] goto
                        [     ID] end_1
@@ -696,8 +685,7 @@
                        [       ] )
                        [       ] ;
              s1.c:135  [ RETURN] return
-                       [       ] -
-                       [ NUMBER] 1
+                       [ NUMBER] -1
                        [       ] ;
              s1.c:136  [       ] }
              s1.c:138  [     IF] if
@@ -730,8 +718,7 @@
                        [       ] ;
              s1.c:140  [     ID] stat
                        [       ] =
-                       [       ] -
-                       [ NUMBER] 1
+                       [ NUMBER] -1
                        [       ] ;
                        [   GOTO] goto
                        [     ID] err_1
@@ -753,7 +740,7 @@
                        [       ] (
                        [ DQUOTE] %s: can't bind!
                        [       ] ,
-                       [     ID] __func__
+                       [     ID] __FUNCTION__
                        [       ] )
                        [       ] ;
              s1.c:145  [     ID] ostr
@@ -766,8 +753,7 @@
                        [       ] ;
              s1.c:146  [     ID] stat
                        [       ] =
-                       [       ] -
-                       [ NUMBER] 2
+                       [ NUMBER] -2
                        [       ] ;
                        [   GOTO] goto
                        [     ID] err_1
@@ -805,8 +791,7 @@
                        [       ] ;
              s1.c:151  [     ID] stat
                        [       ] =
-                       [       ] -
-                       [ NUMBER] 3
+                       [ NUMBER] -3
                        [       ] ;
              s1.c:153  [       ] }
                        [   ELSE] else
@@ -852,13 +837,12 @@
                        [       ] (
                        [ DQUOTE] %s: improper fd of list
                        [       ] ,
-                       [     ID] __func__
+                       [     ID] __FUNCTION__
                        [       ] )
                        [       ] ;
              s1.c:159  [     ID] stat
                        [       ] =
-                       [       ] -
-                       [ NUMBER] 4
+                       [ NUMBER] -4
                        [       ] ;
              s1.c:160  [       ] }
                        [   ELSE] else
@@ -881,8 +865,7 @@
                        [       ] ;
              s1.c:163  [     ID] fd_list
                        [       ] =
-                       [       ] -
-                       [ NUMBER] 5
+                       [ NUMBER] -5
                        [       ] ;
              s1.c:164  [       ] }
              s1.c:165  [       ] }
@@ -895,8 +878,7 @@
                        [       ] {
              s1.c:168  [     ID] stat
                        [       ] =
-                       [       ] -
-                       [ NUMBER] 6
+                       [ NUMBER] -6
                        [       ] ;
              s1.c:169  [       ] }
              s1.c:170  [       ] }
@@ -955,7 +937,7 @@
                        [       ] (
                        [ DQUOTE] %s: can't move file %s into %s
                        [       ] ,
-             s1.c:184  [     ID] __func__
+             s1.c:184  [     ID] __FUNCTION__
                        [       ] ,
                        [     ID] tmpfile
                        [       ] .
@@ -966,8 +948,7 @@
                        [       ] ;
              s1.c:185  [     ID] stat
                        [       ] =
-                       [       ] -
-                       [ NUMBER] 7
+                       [ NUMBER] -7
                        [       ] ;
                        [   GOTO] goto
                        [     ID] err_1
@@ -1096,7 +1077,7 @@
        dir_a/s2.c:32   [   CHAR] char
                        [     ID] home_dir
                        [       ] [
-                       [ NUMBER] 1024
+                       [ NUMBER] 400
                        [       ] ]
                        [       ] ;
        dir_a/s2.c:33   [  CONST] const
@@ -1107,7 +1088,7 @@
        dir_a/s2.c:34   [   CHAR] char
                        [     ID] config_pathbuff
                        [       ] [
-                       [ NUMBER] 1024
+                       [ NUMBER] 400
                        [       ] ]
                        [       ] ;
        dir_a/s2.c:35   [   CHAR] char
@@ -1986,8 +1967,7 @@
                        [       ] (
                        [     ID] optarg
                        [       ] ,
-                       [       ] -
-                       [ NUMBER] 1
+                       [ NUMBER] -1
                        [       ] )
                        [       ] ;
        dir_a/s2.c:216  [     ID] path_normalize
@@ -2055,8 +2035,7 @@
                        [       ] (
                        [     ID] argv0
                        [       ] ,
-                       [       ] -
-                       [ NUMBER] 1
+                       [ NUMBER] -1
                        [       ] )
                        [       ] ;
        dir_a/s2.c:230  [     ID] path_normalize
@@ -2195,8 +2174,7 @@
                        [       ] ;
        dir_a/s2.c:255  [     ID] stat
                        [       ] =
-                       [       ] -
-                       [ NUMBER] 1
+                       [ NUMBER] -1
                        [       ] ;
        dir_a/s2.c:256  [       ] }
        dir_a/s2.c:257  [  BREAK] break
@@ -2224,8 +2202,7 @@
                        [       ] ;
        dir_a/s2.c:262  [     ID] stat
                        [       ] =
-                       [       ] -
-                       [ NUMBER] 1
+                       [ NUMBER] -1
                        [       ] ;
        dir_a/s2.c:263  [       ] }
        dir_a/s2.c:264  [  BREAK] break
@@ -2344,8 +2321,7 @@
                        [       ] ;
        dir_a/s2.c:310  [     ID] stat
                        [       ] =
-                       [       ] -
-                       [ NUMBER] 1
+                       [ NUMBER] -1
                        [       ] ;
        dir_a/s2.c:311  [  BREAK] break
                        [       ] ;
@@ -2439,8 +2415,7 @@
                        [       ] )
                        [       ] )
                        [    NEQ] !=
-                       [       ] -
-                       [ NUMBER] 1
+                       [ NUMBER] -1
                        [       ] )
                        [       ] {
        dir_a/s2.c:336  [     IF] if
@@ -2491,8 +2466,7 @@
                        [       ] )
                        [       ] {
        dir_a/s2.c:343  [ RETURN] return
-                       [       ] -
-                       [ NUMBER] 1
+                       [ NUMBER] -1
                        [       ] ;
        dir_a/s2.c:344  [       ] }
        dir_a/s2.c:345  [       ] #
@@ -2554,8 +2528,7 @@
                        [       ] )
                        [       ] ;
        dir_a/s2.c:358  [ RETURN] return
-                       [       ] -
-                       [ NUMBER] 1
+                       [ NUMBER] -1
                        [       ] ;
        dir_a/s2.c:359  [       ] }
        dir_a/s2.c:360  [     ID] target_dir
@@ -2569,8 +2542,7 @@
                        [       ] +
                        [       ] ]
                        [       ] ,
-                       [       ] -
-                       [ NUMBER] 1
+                       [ NUMBER] -1
                        [       ] )
                        [       ] ;
        dir_a/s2.c:361  [     ID] path_normalize
@@ -2654,8 +2626,7 @@
                        [       ] )
                        [       ] ;
        dir_a/s2.c:370  [ RETURN] return
-                       [       ] -
-                       [ NUMBER] 1
+                       [ NUMBER] -1
                        [       ] ;
        dir_a/s2.c:371  [       ] }
        dir_a/s2.c:373  [       ] }
@@ -2723,11 +2694,27 @@
                        [       ] *
                        [     ID] fp_out
                        [       ] ;
-       dir_a/s2.c:391  [     ID] progname
+       dir_a/s2.c:391  [     ID] initialize_uls
+                       [       ] (
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:392  [       ] #
+                       [     ID] ifndef
+                       [     ID] ULS_WINDOWS
+       dir_a/s2.c:393  [     ID] setlocale
+                       [       ] (
+                       [     ID] LC_CTYPE
+                       [       ] ,
+                       [ DQUOTE] 
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:394  [       ] #
+                       [     ID] endif
+       dir_a/s2.c:395  [     ID] progname
                        [       ] =
                        [     ID] THIS_PROGNAME
                        [       ] ;
-       dir_a/s2.c:392  [     ID] getcwd
+       dir_a/s2.c:396  [     ID] getcwd
                        [       ] (
                        [     ID] home_dir
                        [       ] ,
@@ -2737,7 +2724,7 @@
                        [       ] )
                        [       ] )
                        [       ] ;
-       dir_a/s2.c:394  [     IF] if
+       dir_a/s2.c:398  [     IF] if
                        [       ] (
                        [       ] (
                        [     ID] i0
@@ -2754,7 +2741,7 @@
                        [ NUMBER] 0
                        [       ] )
                        [       ] {
-       dir_a/s2.c:395  [     ID] err_log
+       dir_a/s2.c:399  [     ID] err_log
                        [       ] (
                        [ DQUOTE] i0=%d, argc=%d
                        [       ] ,
@@ -2763,7 +2750,7 @@
                        [     ID] argc
                        [       ] )
                        [       ] ;
-       dir_a/s2.c:396  [     ID] err_log
+       dir_a/s2.c:400  [     ID] err_log
                        [       ] (
                        [ DQUOTE] Type '%s -h'
                        [       ] ,
@@ -2773,22 +2760,22 @@
                        [       ] ]
                        [       ] )
                        [       ] ;
-       dir_a/s2.c:397  [ RETURN] return
+       dir_a/s2.c:401  [ RETURN] return
                        [     ID] i0
                        [       ] ;
-       dir_a/s2.c:398  [       ] }
-       dir_a/s2.c:400  [     IF] if
+       dir_a/s2.c:402  [       ] }
+       dir_a/s2.c:404  [     IF] if
                        [       ] (
                        [     ID] i0
                        [    GEQ] >=
                        [     ID] argc
                        [       ] )
                        [       ] {
-       dir_a/s2.c:401  [     ID] err_log
+       dir_a/s2.c:405  [     ID] err_log
                        [       ] (
                        [ DQUOTE] %s(%s), written by %s,\x0a\x09is provided under %s.
                        [       ] ,
-       dir_a/s2.c:402  [     ID] progname
+       dir_a/s2.c:406  [     ID] progname
                        [       ] ,
                        [     ID] ULF_GEN_PROGVER
                        [       ] ,
@@ -2797,29 +2784,29 @@
                        [     ID] ULS_LICENSE_NAME
                        [       ] )
                        [       ] ;
-       dir_a/s2.c:403  [     ID] usage
+       dir_a/s2.c:407  [     ID] usage
                        [       ] (
                        [       ] )
                        [       ] ;
-       dir_a/s2.c:404  [ RETURN] return
+       dir_a/s2.c:408  [ RETURN] return
                        [ NUMBER] 1
                        [       ] ;
-       dir_a/s2.c:405  [       ] }
-       dir_a/s2.c:407  [     IF] if
+       dir_a/s2.c:409  [       ] }
+       dir_a/s2.c:411  [     IF] if
                        [       ] (
                        [     ID] filelist
                        [    NEQ] !=
                        [     ID] NULL
                        [       ] )
                        [       ] {
-       dir_a/s2.c:408  [     IF] if
+       dir_a/s2.c:412  [     IF] if
                        [       ] (
                        [     ID] config_path
                        [     EQ] ==
                        [     ID] NULL
                        [       ] )
                        [       ] {
-       dir_a/s2.c:409  [     IF] if
+       dir_a/s2.c:413  [     IF] if
                        [       ] (
                        [       ] (
                        [     ID] ftype
@@ -2833,22 +2820,21 @@
                        [ NUMBER] 0
                        [       ] )
                        [       ] {
-       dir_a/s2.c:410  [     ID] err_log
+       dir_a/s2.c:414  [     ID] err_log
                        [       ] (
                        [ DQUOTE] Unknown spec-name, specify the ulc-file of input-files
                        [       ] )
                        [       ] ;
-       dir_a/s2.c:411  [ RETURN] return
-                       [       ] -
-                       [ NUMBER] 1
+       dir_a/s2.c:415  [ RETURN] return
+                       [ NUMBER] -1
                        [       ] ;
-       dir_a/s2.c:412  [       ] }
-       dir_a/s2.c:413  [     ID] config_path
+       dir_a/s2.c:416  [       ] }
+       dir_a/s2.c:417  [     ID] config_path
                        [       ] =
                        [     ID] config_pathbuff
                        [       ] ;
-       dir_a/s2.c:414  [       ] }
-       dir_a/s2.c:416  [     ID] get_specname
+       dir_a/s2.c:418  [       ] }
+       dir_a/s2.c:420  [     ID] get_specname
                        [       ] (
                        [     ID] config_path
                        [       ] ,
@@ -2857,23 +2843,23 @@
                        [     ID] NULL
                        [       ] )
                        [       ] ;
-       dir_a/s2.c:418  [     IF] if
+       dir_a/s2.c:422  [     IF] if
                        [       ] (
                        [     ID] opt_verbose
                        [       ] )
-       dir_a/s2.c:419  [     ID] err_log
+       dir_a/s2.c:423  [     ID] err_log
                        [       ] (
                        [ DQUOTE] The output file depends on the lex-spec '%s'
                        [       ] ,
                        [     ID] config_path
                        [       ] )
                        [       ] ;
-       dir_a/s2.c:421  [     ID] chdir
+       dir_a/s2.c:425  [     ID] chdir
                        [       ] (
                        [     ID] home_dir
                        [       ] )
                        [       ] ;
-       dir_a/s2.c:423  [     IF] if
+       dir_a/s2.c:427  [     IF] if
                        [       ] (
                        [       ] (
                        [     ID] uls
@@ -2887,26 +2873,25 @@
                        [     ID] NULL
                        [       ] )
                        [       ] {
-       dir_a/s2.c:424  [     ID] err_log
+       dir_a/s2.c:428  [     ID] err_log
                        [       ] (
                        [ DQUOTE] can't create a uls-object for lexical analysis.
                        [       ] )
                        [       ] ;
-       dir_a/s2.c:425  [ RETURN] return
-                       [       ] -
-                       [ NUMBER] 1
+       dir_a/s2.c:429  [ RETURN] return
+                       [ NUMBER] -1
                        [       ] ;
-       dir_a/s2.c:426  [       ] }
-       dir_a/s2.c:428  [     IF] if
+       dir_a/s2.c:430  [       ] }
+       dir_a/s2.c:432  [     IF] if
                        [       ] (
                        [     ID] opt_want_eof
                        [       ] )
-       dir_a/s2.c:429  [     ID] want_eof
+       dir_a/s2.c:433  [     ID] want_eof
                        [       ] (
                        [     ID] uls
                        [       ] )
                        [       ] ;
-       dir_a/s2.c:431  [     ID] stat
+       dir_a/s2.c:435  [     ID] stat
                        [       ] =
                        [     ID] proc_filelist
                        [       ] (
@@ -2915,28 +2900,28 @@
                        [     ID] uls
                        [       ] )
                        [       ] ;
-       dir_a/s2.c:432  [     ID] destroy
+       dir_a/s2.c:436  [     ID] destroy
                        [       ] (
                        [     ID] uls
                        [       ] )
                        [       ] ;
-       dir_a/s2.c:434  [ RETURN] return
+       dir_a/s2.c:438  [ RETURN] return
                        [     ID] stat
                        [       ] ;
-       dir_a/s2.c:435  [       ] }
-       dir_a/s2.c:437  [     IF] if
+       dir_a/s2.c:439  [       ] }
+       dir_a/s2.c:441  [     IF] if
                        [       ] (
                        [     ID] opt_write
                        [       ] )
                        [       ] {
-       dir_a/s2.c:438  [     IF] if
+       dir_a/s2.c:442  [     IF] if
                        [       ] (
                        [     ID] config_path
                        [     EQ] ==
                        [     ID] NULL
                        [       ] )
                        [       ] {
-       dir_a/s2.c:439  [     IF] if
+       dir_a/s2.c:443  [     IF] if
                        [       ] (
                        [     ID] guess_specname
                        [       ] (
@@ -2951,7 +2936,7 @@
                        [ NUMBER] 0
                        [       ] )
                        [       ] {
-       dir_a/s2.c:440  [     ID] err_log
+       dir_a/s2.c:444  [     ID] err_log
                        [       ] (
                        [ DQUOTE] can't open or don't know spec of %s
                        [       ] ,
@@ -2961,17 +2946,16 @@
                        [       ] ]
                        [       ] )
                        [       ] ;
-       dir_a/s2.c:441  [ RETURN] return
-                       [       ] -
-                       [ NUMBER] 1
+       dir_a/s2.c:445  [ RETURN] return
+                       [ NUMBER] -1
                        [       ] ;
-       dir_a/s2.c:442  [       ] }
-       dir_a/s2.c:444  [     ID] config_path
+       dir_a/s2.c:446  [       ] }
+       dir_a/s2.c:448  [     ID] config_path
                        [       ] =
                        [     ID] config_pathbuff
                        [       ] ;
-       dir_a/s2.c:445  [       ] }
-       dir_a/s2.c:447  [     ID] get_specname
+       dir_a/s2.c:449  [       ] }
+       dir_a/s2.c:451  [     ID] get_specname
                        [       ] (
                        [     ID] config_path
                        [       ] ,
@@ -2980,18 +2964,18 @@
                        [     ID] NULL
                        [       ] )
                        [       ] ;
-       dir_a/s2.c:449  [     IF] if
+       dir_a/s2.c:453  [     IF] if
                        [       ] (
                        [     ID] opt_verbose
                        [       ] )
-       dir_a/s2.c:450  [     ID] err_log
+       dir_a/s2.c:454  [     ID] err_log
                        [       ] (
                        [ DQUOTE] Loading uls config file '%s', ...
                        [       ] ,
                        [     ID] config_path
                        [       ] )
                        [       ] ;
-       dir_a/s2.c:452  [     IF] if
+       dir_a/s2.c:456  [     IF] if
                        [       ] (
                        [       ] (
                        [     ID] uls
@@ -3005,26 +2989,25 @@
                        [     ID] NULL
                        [       ] )
                        [       ] {
-       dir_a/s2.c:453  [     ID] err_log
+       dir_a/s2.c:457  [     ID] err_log
                        [       ] (
                        [ DQUOTE] can't create a uls-object for lexical analysis.
                        [       ] )
                        [       ] ;
-       dir_a/s2.c:454  [ RETURN] return
-                       [       ] -
-                       [ NUMBER] 1
+       dir_a/s2.c:458  [ RETURN] return
+                       [ NUMBER] -1
                        [       ] ;
-       dir_a/s2.c:455  [       ] }
-       dir_a/s2.c:457  [     IF] if
+       dir_a/s2.c:459  [       ] }
+       dir_a/s2.c:461  [     IF] if
                        [       ] (
                        [     ID] opt_want_eof
                        [       ] )
-       dir_a/s2.c:458  [     ID] want_eof
+       dir_a/s2.c:462  [     ID] want_eof
                        [       ] (
                        [     ID] uls
                        [       ] )
                        [       ] ;
-       dir_a/s2.c:460  [    FOR] for
+       dir_a/s2.c:464  [    FOR] for
                        [       ] (
                        [     ID] i
                        [       ] =
@@ -3039,7 +3022,7 @@
                        [       ] +
                        [       ] )
                        [       ] {
-       dir_a/s2.c:461  [     ID] input_file
+       dir_a/s2.c:465  [     ID] input_file
                        [       ] =
                        [     ID] strdup
                        [       ] (
@@ -3048,42 +3031,41 @@
                        [     ID] i
                        [       ] ]
                        [       ] ,
-                       [       ] -
-                       [ NUMBER] 1
+                       [ NUMBER] -1
                        [       ] )
                        [       ] ;
-       dir_a/s2.c:462  [     ID] path_normalize
+       dir_a/s2.c:466  [     ID] path_normalize
                        [       ] (
                        [     ID] input_file
                        [       ] ,
                        [     ID] input_file
                        [       ] )
                        [       ] ;
-       dir_a/s2.c:463  [     ID] write_file
+       dir_a/s2.c:467  [     ID] write_file
                        [       ] (
                        [     ID] uls
                        [       ] ,
                        [     ID] input_file
                        [       ] )
-                       [       ] ;
-       dir_a/s2.c:464  [       ] }
-       dir_a/s2.c:466  [     ID] destroy
-                       [       ] (
-                       [     ID] uls
-                       [       ] )
-                       [       ] ;
-       dir_a/s2.c:467  [ RETURN] return
-                       [     ID] stat
                        [       ] ;
        dir_a/s2.c:468  [       ] }
-       dir_a/s2.c:470  [     IF] if
+       dir_a/s2.c:470  [     ID] destroy
+                       [       ] (
+                       [     ID] uls
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:471  [ RETURN] return
+                       [     ID] stat
+                       [       ] ;
+       dir_a/s2.c:472  [       ] }
+       dir_a/s2.c:474  [     IF] if
                        [       ] (
                        [     ID] output_file
                        [    NEQ] !=
                        [     ID] NULL
                        [       ] )
                        [       ] {
-       dir_a/s2.c:471  [     IF] if
+       dir_a/s2.c:475  [     IF] if
                        [       ] (
                        [       ] (
                        [     ID] fp_out
@@ -3099,23 +3081,23 @@
                        [     ID] NULL
                        [       ] )
                        [       ] {
-       dir_a/s2.c:472  [     ID] err_log
+       dir_a/s2.c:476  [     ID] err_log
                        [       ] (
                        [ DQUOTE] can't create %s
                        [       ] ,
                        [     ID] output_file
                        [       ] )
                        [       ] ;
-       dir_a/s2.c:473  [       ] }
-       dir_a/s2.c:474  [       ] }
+       dir_a/s2.c:477  [       ] }
+       dir_a/s2.c:478  [       ] }
                        [   ELSE] else
                        [       ] {
-       dir_a/s2.c:475  [     ID] fp_out
+       dir_a/s2.c:479  [     ID] fp_out
                        [       ] =
                        [     ID] stdout
                        [       ] ;
-       dir_a/s2.c:476  [       ] }
-       dir_a/s2.c:478  [    FOR] for
+       dir_a/s2.c:480  [       ] }
+       dir_a/s2.c:482  [    FOR] for
                        [       ] (
                        [     ID] i
                        [       ] =
@@ -3130,7 +3112,7 @@
                        [       ] +
                        [       ] )
                        [       ] {
-       dir_a/s2.c:479  [     ID] input_file
+       dir_a/s2.c:483  [     ID] input_file
                        [       ] =
                        [     ID] strdup
                        [       ] (
@@ -3139,32 +3121,31 @@
                        [     ID] i
                        [       ] ]
                        [       ] ,
-                       [       ] -
-                       [ NUMBER] 1
+                       [ NUMBER] -1
                        [       ] )
                        [       ] ;
-       dir_a/s2.c:480  [     ID] path_normalize
+       dir_a/s2.c:484  [     ID] path_normalize
                        [       ] (
                        [     ID] input_file
                        [       ] ,
                        [     ID] input_file
                        [       ] )
                        [       ] ;
-       dir_a/s2.c:481  [     ID] dump_file
+       dir_a/s2.c:485  [     ID] dump_file
                        [       ] (
                        [     ID] input_file
                        [       ] ,
                        [     ID] fp_out
                        [       ] )
-                       [       ] ;
-       dir_a/s2.c:482  [       ] }
-       dir_a/s2.c:484  [     ID] fileclose
-                       [       ] (
-                       [     ID] fp_out
-                       [       ] )
-                       [       ] ;
-       dir_a/s2.c:485  [ RETURN] return
-                       [ NUMBER] 0
                        [       ] ;
        dir_a/s2.c:486  [       ] }
+       dir_a/s2.c:488  [     ID] fileclose
+                       [       ] (
+                       [     ID] fp_out
+                       [       ] )
+                       [       ] ;
+       dir_a/s2.c:489  [ RETURN] return
+                       [ NUMBER] 0
+                       [       ] ;
+       dir_a/s2.c:490  [       ] }
                        [    EOI] 

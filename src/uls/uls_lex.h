@@ -76,10 +76,8 @@ ULS_DLL_EXTERN void uls_set_utf16_line(uls_lex_ptr_t uls, uls_uint16* wline, int
 ULS_DLL_EXTERN void uls_push_utf32_line(uls_lex_ptr_t uls, uls_uint32* wline, int wlen);
 ULS_DLL_EXTERN void uls_set_utf32_line(uls_lex_ptr_t uls, uls_uint32* wline, int wlen);
 
-#ifndef ULS_DOTNET
 ULS_DLL_EXTERN int uls_push_istream_2(uls_lex_ptr_t uls, uls_istream_ptr_t istr,
 	const char** tmpl_nams, const char** tmpl_vals, int n_tmpls, int flags);
-#endif
 
 ULS_DLL_EXTERN int ulsjava_push_line(uls_lex_ptr_t uls, const void *line, int len, int flags);
 ULS_DLL_EXTERN int ulsjava_push_file(uls_lex_ptr_t uls, const void *filepath, int len_filepath, int flags);
@@ -87,20 +85,26 @@ ULS_DLL_EXTERN int ulsjava_push_file(uls_lex_ptr_t uls, const void *filepath, in
 ULS_DLL_EXTERN int ulsjava_set_line(uls_lex_ptr_t uls, const void *line, int len, int flags);
 ULS_DLL_EXTERN int ulsjava_set_file(uls_lex_ptr_t uls, const void *filepath, int len_filepath, int flags);
 
+ULS_DLL_EXTERN int _uls_MBCS(void);
+ULS_DLL_EXTERN int _uls_const_MBCS_UTF8(void);
+ULS_DLL_EXTERN int _uls_const_MBCS_MS_MBCS(void);
+
 ULS_DLL_EXTERN void uls_skip_white_spaces(uls_lex_ptr_t uls);
 #endif // ULS_DECL_PUBLIC_PROC
+
+#ifdef _ULS_CPLUSPLUS
+}
+#endif
 
 #ifdef _ULS_USEDLL
 #include "uls/litstr.h"
 #include "uls/unget.h"
-#endif
-
 #ifdef ULS_USE_WSTR
+#include "uls/uls_util_wstr.h"
+#include "uls/uls_wprint.h"
+#include "uls/uls_wlog.h"
 #include "uls/uls_wlex.h"
 #endif
-
-#ifdef _ULS_CPLUSPLUS
-}
 #endif
 
 #endif // __ULS_LEX_H__

@@ -137,7 +137,6 @@ ULS_QUALIFIED_METHOD(__init_kwtable_buckets)(uls_kwtable_ptr_t tbl, int n_slots)
 		for (i=0; i<n_slots; i++) {
 			slots_bh[i] = nilptr;
 		}
-		tbl->bucket_head.n = n_slots;
 
 		tbl->dflhash_stat.n_slots = n_slots;
 		tbl->dflhash_stat.n_shifts = _uls_tool_(range_of_bits)(n_slots) - 8;
@@ -177,13 +176,13 @@ ULS_QUALIFIED_METHOD(__export_kwtable)(uls_kwtable_ptr_t tbl, uls_ref_parray(lst
 			++k;
 		}
 	}
-	lst->n = k;
+
 	_uls_quicksort_vptr(slots_lst, k, keyw_stat_comp_by_keyw);
 	return k;
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_init_kwtable)(uls_kwtable_ptr_t tbl)
+ULS_QUALIFIED_METHOD(__init_kwtable)(uls_kwtable_ptr_t tbl)
 {
 	__init_kwtable_buckets(tbl, 0);
 
@@ -191,6 +190,22 @@ ULS_QUALIFIED_METHOD(uls_init_kwtable)(uls_kwtable_ptr_t tbl)
 
 	tbl->str_ncmp = uls_ref_callback_this(__keyw_strncmp_case_sensitive);
 	tbl->hashfunc = uls_ref_callback_this(__keyw_hashfunc_case_sensitive);
+}
+
+void
+ULS_QUALIFIED_METHOD(uls_init_kwtable)(uls_kwtable_ptr_t tbl, int n_slots, int case_insensitive)
+{
+	__init_kwtable_buckets(tbl, n_slots);
+
+	tbl->hash_stat = nilptr;
+
+	if (case_insensitive) {
+		tbl->str_ncmp = uls_ref_callback_this(__keyw_strncmp_case_insensitive);
+		tbl->hashfunc = uls_ref_callback_this(__keyw_hashfunc_case_insensitive);
+	} else {
+		tbl->str_ncmp = uls_ref_callback_this(__keyw_strncmp_case_sensitive);
+		tbl->hashfunc = uls_ref_callback_this(__keyw_hashfunc_case_sensitive);
+	}
 }
 
 void
@@ -203,23 +218,6 @@ ULS_QUALIFIED_METHOD(uls_reset_kwtable)(uls_kwtable_ptr_t tbl, int n_slots, uls_
 	tbl->hash_stat = hash_stat;
 	if (hashfunc != nilptr) {
 		tbl->hashfunc = hashfunc;
-	}
-}
-
-void
-ULS_QUALIFIED_METHOD(uls_reset_kwtable_2)(uls_kwtable_ptr_t tbl, int n_slots, int case_insensitive)
-{
-	uls_deinit_parray(uls_ptr(tbl->bucket_head));
-	__init_kwtable_buckets(tbl, n_slots);
-
-	tbl->hash_stat = nilptr;
-
-	if (case_insensitive) {
-		tbl->str_ncmp = uls_ref_callback_this(__keyw_strncmp_case_insensitive);
-		tbl->hashfunc = uls_ref_callback_this(__keyw_hashfunc_case_insensitive);
-	} else {
-		tbl->str_ncmp = uls_ref_callback_this(__keyw_strncmp_case_sensitive);
-		tbl->hashfunc = uls_ref_callback_this(__keyw_hashfunc_case_sensitive);
 	}
 }
 
@@ -244,7 +242,7 @@ ULS_QUALIFIED_METHOD(uls_find_kw)(uls_kwtable_ptr_t tbl, uls_ptrtype_tool(outpar
 	parms->n = hash_id;
 
 	for (e = slots_bh[hash_id]; e != nilptr; e = e->link) {
-		if (l_idstr == e->ulen_keyword &&
+		if (l_idstr == e->l_keyword &&
 			tbl->str_ncmp(idstr, uls_get_namebuf_value(e->keyword), l_idstr) == 0) {
 			e_found = e;
 			break;
@@ -263,7 +261,7 @@ ULS_QUALIFIED_METHOD(uls_add_kw)(uls_kwtable_ptr_t tbl, uls_tokdef_ptr_t e0)
 	uls_type_tool(outparam) parms;
 
 	parms.lptr = uls_get_namebuf_value(e0->keyword);
-	parms.len = e0->ulen_keyword;
+	parms.len = e0->l_keyword;
 	e = uls_find_kw(tbl, uls_ptr(parms));
 	hash_id = parms.n;
 

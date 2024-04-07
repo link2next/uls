@@ -35,59 +35,61 @@
 #include "uls/uls_lex.h"
 #include "uls/uls_log.h"
 #include "uls/uls_util.h"
+#include "uls/uls_init.h"
 
 #include <stdlib.h>
 #include <string.h>
 
 #include "gcc_lex.h"
 
-LPTSTR progname;
+const char *progname;
 int  opt_verbose;
 
 int   test_mode = -1;
-LPCTSTR config_name;
-LPCTSTR input_file;
+char *config_name;
+
+const char *input_file;
 
 uls_lex_t *gcc_lex;
 
-static LPTSTR lbuff;
+static char *lbuff;
 static int lbuff_siz;
 
 static void usage(void)
 {
-	err_log(_T("%s v1.0"), progname);
-	err_log(_T("  Dumps tokens in the inputfiles"));
-	err_log(_T("  according to the token defintions of %s"), config_name);
-	err_log(_T(""));
-	err_log(_T(" Usage:"));
-	err_log(_T("  %s <target-dir> <inputfile ...>"), progname);
-	err_log(_T(""));
-	err_log(_T("  For example,"));
-	err_log(_T("      %s kernel input1.txt"), progname);
-	err_log(_T("  A default config-file used, %s if you don't specifiy the config-file."), config_name);
+	err_log("%s v1.0", progname);
+	err_log("  Dumps tokens in the inputfiles");
+	err_log("  according to the token defintions of %s", config_name);
+	err_log("");
+	err_log(" Usage:");
+	err_log("  %s <target-dir> <inputfile ...>", progname);
+	err_log("");
+	err_log("  For example,");
+	err_log("      %s kernel input1.txt", progname);
+	err_log("  A default config-file used, %s if you don't specifiy the config-file.", config_name);
 }
 
 static int
-options(int opt, LPTSTR optarg)
+options(int opt, char* optarg)
 {
 	int stat = 0;
 
 	switch (opt) {
-	case _T('m'):
-		test_mode = ult_str2int(optarg);
+	case 'm':
+		test_mode = atoi(optarg);
 		break;
 
-	case _T('v'):
+	case 'v':
 		++opt_verbose;
 		break;
 
-	case _T('h'):
+	case 'h':
 		usage();
 		stat = 1;
 		break;
 
 	default:
-		err_log(_T("undefined option -%c"), opt);
+		err_log("undefined option -%c", opt);
 		usage();
 		stat = -1;
 		break;
@@ -97,33 +99,33 @@ options(int opt, LPTSTR optarg)
 }
 
 int
-proc_file_coord(LPCTSTR buf)
+proc_file_coord(const char *buf)
 {
 	int lno, len, siz;
-	LPTSTR lptr, wrd;
+	char *lptr, *wrd;
 
-	if ( (len = ult_str_length(buf))>= lbuff_siz) {
+	if ( (len = strlen(buf))>= lbuff_siz) {
 		siz = len + 128;
-		lbuff = (LPTSTR) uls_mrealloc(lbuff, siz * sizeof(TCHAR));
+		lbuff = (char *) uls_mrealloc(lbuff, siz);
 		lbuff_siz = siz;
 	}
 	// len  < buff_siz
 
-	uls_memcopy(lbuff, buf, len * sizeof(TCHAR));
-	lbuff[len] = _T('\0');
+	uls_memcopy(lbuff, buf, len);
+	lbuff[len] = '\0';
 	lptr = lbuff;
 
 	// line
-	wrd = ult_splitstr(&lptr, NULL);
-	lno = ult_str2int(wrd);
+	wrd = uls_splitstr(&lptr);
+	lno = atoi(wrd);
 
 	// filename
-	lptr = wrd = ult_skip_blanks(lptr);
-	if (*wrd == _T('\0')) {
+	lptr = wrd = skip_blanks(lptr);
+	if (*wrd == '\0') {
 		wrd = NULL;
 	} else {
 		++wrd;
-		lptr = ult_split_litstr(wrd, *lptr);
+		lptr = split_litstr(wrd, *lptr);
 	}
 
 	uls_set_tag(gcc_lex, wrd, lno - 1);
@@ -132,22 +134,22 @@ proc_file_coord(LPCTSTR buf)
 }
 
 int
-lex_input_file(LPCTSTR fpath)
+lex_input_file(const char *fpath)
 {
-	LPCTSTR tokstr;
+	const char *tokstr;
 	int t;
 
 	if (uls_push_file(gcc_lex, fpath, 0) < 0) {
-		err_log(_T("can't set the istream!"));
+		err_log("can't set the istream!");
 		return -1;
 	}
 
-	uls_set_tag(gcc_lex, fpath, -1);
+	uls_set_tag(gcc_lex, fpath, 1);
 
 	for ( ; ; ) {
-		if ((t = uls_get_tok(gcc_lex)) == TOK_EOI || t == TOK_ERR) {
+		if ((t=uls_get_tok(gcc_lex)) == TOK_EOI || t == TOK_ERR) {
 			if (t == TOK_ERR) {
-				err_log(_T("program abnormally terminated!"));
+				err_log("program abnormally terminated!");
 			}
 			break;
 		}
@@ -156,27 +158,27 @@ lex_input_file(LPCTSTR fpath)
 			continue;
 		}
 
-		tokstr = uls_tokstr(gcc_lex);
+		tokstr = uls_lexeme(gcc_lex);
 		if (t == TOK_WCOORD) {
 			proc_file_coord(tokstr);
 			continue;
 		}
 
-		uls_printf(_T("%s:%3d"), uls_get_tag(gcc_lex), uls_get_lineno(gcc_lex));
-		uls_dump_tok(gcc_lex, _T(" "), _T("\n"));
+		uls_printf("%s:%3d", uls_get_tag(gcc_lex), uls_get_lineno(gcc_lex));
+		uls_dump_tok(gcc_lex, " ", "\n");
 	}
 
 	return 0;
 }
 
 int
-test_gnu_c(LPTSTR *args, int n_args)
+test_gnu_c(const char **args, int n_args)
 {
-	LPCTSTR fpath;
+	const char *fpath;
 	int i, stat=0;
 
 	if (n_args < 1) {
-		err_log(_T("%hs: invalid parameter!"), __func__);
+		err_log("%s: invalid parameter!", __func__);
 		return -1;
 	}
 
@@ -195,36 +197,37 @@ test_gnu_c(LPTSTR *args, int n_args)
 int
 lex_input_line()
 {
-	LPCTSTR tokstr, tagstr;
+	const char *tokstr;
+	const char *tagstr;
 	int t;
 
-	if (uls_push_line(gcc_lex, _T("// comment here!\nTo parse\ngcc pre-processed files"), -1, 0) < 0) {
-		err_log(_T("can't set the istream!"));
+	if (uls_push_line(gcc_lex, "// comment here!\nTo parse\ngcc pre-processed files", -1, 0) < 0) {
+		err_log("can't set the istream!");
 		return -1;
 	}
 
 	for ( ; ; ) {
 		if ((t=uls_get_tok(gcc_lex)) == TOK_EOI || t == TOK_ERR) {
 			if (t == TOK_ERR) {
-				err_log(_T("program abnormally terminated!"));
+				err_log("program abnormally terminated!");
 			}
 			break;
 		}
 
-		tokstr = uls_tokstr(gcc_lex);
+		tokstr = uls_lexeme(gcc_lex);
 		if (t == TOK_WCOORD) {
 			proc_file_coord(tokstr);
 			continue;
 		}
 
 		tagstr = uls_get_tag(gcc_lex);
-		if (*tagstr != '\0') uls_printf(_T("%s:"), tagstr);
-		uls_printf(_T("%3d"), uls_get_lineno(gcc_lex));
+		if (*tagstr != '\0') uls_printf("%s:", tagstr);
+		uls_printf("%3d", uls_get_lineno(gcc_lex));
 
 		if (t == TOK_EOL) {
-			uls_printf(_T(" [    EOL]\n"));
+			uls_printf(" [    EOL]\n");
 		} else {
-			uls_dump_tok(gcc_lex, _T(" "), _T("\n"));
+			uls_dump_tok(gcc_lex, " ", "\n");
 		}
 	}
 
@@ -232,29 +235,30 @@ lex_input_line()
 }
 
 int
-_tmain(int n_targv, LPTSTR *targv)
+main(int argc, char* argv[])
 {
 	int i0;
 
-	progname = uls_split_filepath(targv[0], NULL);
-	config_name = _T("gcc.ulc");
+	initialize_uls();
+	progname = uls_filename(argv[0], NULL);
+	config_name = "gcc.ulc";
 
-	if ((i0=uls_getopts(n_targv, targv, _T("m:vhz"), options)) <= 0) {
+	if ((i0=uls_getopts(argc, argv, "m:vhz", options)) <= 0) {
 		return i0;
 	}
 
-	if (i0 < n_targv) {
-		input_file = targv[i0];
+	if (i0 < argc) {
+		input_file = argv[i0];
 	}
 
 	if ((gcc_lex=uls_create(config_name)) == NULL) {
-		err_log(_T("can't init uls-object"));
+		err_log("can't init uls-object");
 		return -1;
 	}
 
 	switch (test_mode) {
 	case 0:
-		test_gnu_c(targv + i0, n_targv - i0);
+		test_gnu_c((const char **) argv+i0, argc-i0);
 		break;
 	case 1:
 		lex_input_line();
@@ -269,17 +273,4 @@ _tmain(int n_targv, LPTSTR *targv)
 	uls_mfree(lbuff);
 
 	return 0;
-}
-
-int
-main(int argc, char *argv[])
-{
-	LPTSTR *targv;
-	int stat;
-
-	ULS_GET_WARGS_LIST(argc, argv, targv);
-	stat = _tmain(argc, targv);
-	ULS_PUT_WARGS_LIST(argc, targv);
-
-	return stat;
 }

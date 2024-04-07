@@ -31,9 +31,14 @@
     Stanley Hong <link2next@gmail.com>, Jun 2015.
   </author>
 */
+#include "uls/uls_lex.h"
+#include "uls/uls_util.h"
 
+#include "uls/uls_emit.h"
 #include "uls/uls_emit_wstr.h"
+#include "uls/uls_auw.h"
 #include "uls/uls_wlog.h"
+
 
 int
 uls_init_parms_emit_wstr(uls_parms_emit_ptr_t emit_parm,

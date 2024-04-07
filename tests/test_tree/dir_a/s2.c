@@ -388,6 +388,10 @@ main(int argc, char* argv[])
 	char *input_file;
 	FILE *fp_out;
 
+	initialize_uls();
+#ifndef ULS_WINDOWS
+	setlocale(LC_CTYPE, "");
+#endif
 	progname = THIS_PROGNAME;
 	getcwd(home_dir, sizeof(home_dir));
 

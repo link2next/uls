@@ -31,9 +31,11 @@
     Stanley Hong <link2next@gmail.com>, July 2016.
   </author>
 */
-
-#include "uls/uls_conf_wstr.h"
+#include "uls/uls_conf.h"
+#include "uls/uls_auw.h"
+#include "uls/uls_util.h"
 #include "uls/uls_wlog.h"
+
 
 int
 uls_is_valid_specpath_wstr(const wchar_t* wconfname)
