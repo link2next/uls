@@ -3,9 +3,8 @@ include ../cfg.mk
 bin_PROGRAMS = DumpToks
 DumpToks_SOURCES = DumpToks.cpp
 
-DumpToks_CFLAGS = -Wall -std=c++11
-#DumpToks_CPPFLAGS = -I$(uls_inc_dir) -DULS_USE_WSTR
-DumpToks_CPPFLAGS = -I$(uls_inc_dir)
+#DumpToks_CPPFLAGS = -Wall -std=c++11 -I$(uls_inc_dir) -DULS_USE_WSTR
+DumpToks_CPPFLAGS = -Wall -std=c++11 -I$(uls_inc_dir)
 DumpToks_LDADD = -L$(uls_lib_dir) -lulscpp -luls
 
 $(DumpToks_SOURCES): DumpToksBasis.h

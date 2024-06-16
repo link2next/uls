@@ -63,23 +63,21 @@ ULS_DEFINE_STRUCT(parms_emit)
 {
 	uls_flags_t flags;
 
-	const char *out_dpath, *out_fname;
-	const char *fpath_config, *fpath_ulc, *fpath_uld;
-	const char *ulc_name, *class_path;
+	const char *ulc_name, *filepath_conf;
 	const char *enum_name, *tok_pfx;
+	const char *class_name, *class_path;
 
-	char *pathbuff; // ULS_FILEPATH_MAX
-	char *fname_buff; // ULS_FILENAME_MAX
-	char *ename_buff; // ULS_FILENAME_MAX
-	char *class_name;
-
-	const char *fpath;
-	int len_fpath;
+	char *out_filepath, *ulc_filepath_enc;
+	const char *out_dpath, *out_fname;
+	int len_out_filepath;
 
 	uls_type_tool(arglst) name_components;
 	int n_name_components;
 
 	uls_voidptr_t ext_data;
+
+	char *fname_buff; // ULS_FILENAME_MAX
+	char *ename_buff; // ULS_FILENAME_MAX
 };
 #endif
 
@@ -134,10 +132,11 @@ int print_tokdef_java(uls_lex_ptr_t uls,
 
 #ifdef ULS_DECL_PUBLIC_PROC
 ULS_DLL_EXTERN int uls_init_parms_emit(uls_parms_emit_ptr_t emit_parm,
-	const char *out_dpath, const char *out_fname, const char *fpath_config,
-	const char* ulc_name, const char* class_path, const char *enum_name,
-	const char *tok_pfx, int flags);
-ULS_DLL_EXTERN int uls_deinit_parms_emit(uls_parms_emit_ptr_t emit_parm);
+	const char *out_dpath, const char *out_fname,
+	const char *filepath_cfg, const char* ulc_name,
+	const char* class_path, const char *enum_name,
+	const char *tok_pfx, const char *ulc_filepath, int flags);
+ULS_DLL_EXTERN void uls_deinit_parms_emit(uls_parms_emit_ptr_t emit_parm);
 ULS_DLL_EXTERN int uls_generate_tokdef_file(uls_lex_ptr_t uls, uls_parms_emit_ptr_t emit_parm);
 #endif
 

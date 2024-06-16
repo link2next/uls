@@ -27,7 +27,7 @@
 #pragma once
 
 #include <uls/UlsLex.h>
-#include <string>
+#include <uls/ulscpp_misc.h>
 
 class Sample1 : public uls::crux::UlsLex {
   public:
@@ -90,6 +90,6 @@ class Sample1 : public uls::crux::UlsLex {
 	static const int         VOLATILE = 193;
 	static const int            WHILE = 194;
 
-	Sample1(std::tstring& ulc_fpath)
-		 : uls::crux::UlsLex(ulc_fpath) {}
+	Sample1(uls::tstring filepath = _T("sample1.ulc"))
+		 : uls::crux::UlsLex(filepath) {}
 };

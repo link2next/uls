@@ -35,7 +35,7 @@
 #define __ULS_LF_SPRINTF__
 #include "uls/uls_lf_sprintf.h"
 #include "uls/uls_lf_percent_f.h"
-#include "uls/ieee754.h"
+
 #include "uls/uls_misc.h"
 #include "uls/uls_fileio.h"
 #include "uls/uls_auw.h"
@@ -357,6 +357,24 @@ ULS_QUALIFIED_METHOD(fmtproc_lx)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, u
 	return uls_lf_fill_numstr(x_dat, puts_proc, uls_ptr(lf_ctx->perfmt), wrdptr, len);
 }
 
+int
+ULS_QUALIFIED_METHOD(uls_ieee754_double_isspecial)(double x, char* nambuf)
+{
+	if (x != x) {
+		uls_strcpy(nambuf, "NaN");
+	} else if (x != 0.0 && x * 2 == x) {
+		if (x < 0.0) {
+			uls_strcpy(nambuf, "-INF");
+		} else {
+			uls_strcpy(nambuf, "INF");
+		}
+	} else {
+		nambuf[0] = '\0';
+	}
+
+	return uls_strlen(nambuf);
+}
+
 ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(__fmtproc_f_e_g)
 	(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx, double num_f)
@@ -428,6 +446,24 @@ ULS_QUALIFIED_METHOD(fmtproc_g)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, ul
 	num_f = (double) va_arg(lf_ctx->args, double);
 	lf_ctx->perfmt.flags |= ULS_LF_PERCENT_G;
 	return __fmtproc_f_e_g(x_dat, puts_proc, lf_ctx, num_f);
+}
+
+int
+ULS_QUALIFIED_METHOD(uls_ieee754_longdouble_isspecial)(long double x, char* nambuf)
+{
+	if (x != x) {
+		uls_strcpy(nambuf, "NaN");
+	} else if (x != 0.0 && x * 2 == x) {
+		if (x < 0.0) {
+			uls_strcpy(nambuf, "-INF");
+		} else {
+			uls_strcpy(nambuf, "INF");
+		}
+	} else {
+		nambuf[0] = '\0';
+	}
+
+	return uls_strlen(nambuf);
 }
 
 ULS_DECL_STATIC int

@@ -35,9 +35,6 @@
 
 #include "MkfLexBasis.h"
 
-#include <string>
-#include <sstream>
-
 namespace uls
 {
 namespace collection
@@ -49,8 +46,8 @@ namespace collection
 	};
 
 	class StringBuilder {
-		std::otstringstream m_stream;
-		std::tstring m_sbuff;
+		uls::otstringstream m_stream;
+		tstring m_sbuff;
 
 		TCHAR *mBuff;
 		int siz_mBuff;
@@ -65,12 +62,12 @@ namespace collection
 		void append(LPCTSTR str, int len = -1);
 		void append(TCHAR ch);
 
-		std::tstring& str();
+		tstring& str();
 	};
 
 	class MkfLex : public uls::collection::MkfLexBasis {
 		StringBuilder tokbuf;
-		std::tstring tok_str;
+		tstring tok_str;
 		int tok_id;
 		bool tok_ungot;
 
@@ -84,7 +81,7 @@ namespace collection
 	public:
 		mkf_tabblk_ctx_t tabblk_ctx;
 
-		MkfLex(std::tstring& config_name);
+		MkfLex(tstring& config_name);
 		~MkfLex();
 
 		// <brief>
@@ -102,7 +99,7 @@ namespace collection
 		// </brief>
 		// <parm name="fpath">The path of file</parm>
 		// <return>none</return>
-		int include(std::tstring& fpath);
+		int include(tstring& fpath);
 	};
 }
 }

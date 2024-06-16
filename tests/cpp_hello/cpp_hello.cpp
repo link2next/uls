@@ -39,12 +39,14 @@
 #include <uls/UlsLex.h>
 #include <uls/UlsIStream.h>
 #include <uls/UlsOStream.h>
+#include <uls/ulscpp_misc.h>
 #include <uls/uls_util.h>
 
 #include "Sample2Lex.h"
 
 using namespace std;
 using namespace uls::crux;
+using tstring = uls::tstring;
 using namespace AAA::BBB;
 
 class sample_xdef {
@@ -127,12 +129,13 @@ test_input_file(Sample2Lex *sam_lex, tstring& filename)
 
 	while (sam_lex->getToken() != Sample2Lex::EOI) {
 		sam_lex->getTokStr(&lxm);
-
 		sam_lex->printf(_T("\t[%8t] %10s"), lxm->c_str());
+
 		numsuff = sam_lex->lexemeNumberSuffix();
 		if (!numsuff.empty()) {
 			sam_lex->printf(_T(" %hs"), numsuff.c_str());
 		}
+
 		sam_lex->printf(_T(" at %w\n"));
 	}
 }
@@ -188,10 +191,17 @@ void test_extra_tokdefs(UlsLex *lex)
 
 bool test_simple_streaming(tstring& input_file, tstring& out_dir)
 {
-	UlsLex *lex = new UlsLex(_T("c++"));
+	UlsLex *lex;
 	tstring uls_file;
 	tstring *lxm;
 	int t;
+
+	try {
+		lex = new UlsLex(_T("c++"));
+	} catch (const invalid_argument& ex) {
+		err_log(_T("%s: Failed to create UlsLex!"), progname);
+		throw ex;
+	}
 
 	uls_file = out_dir;
 	uls_file += ULS_FILEPATH_DELIM;

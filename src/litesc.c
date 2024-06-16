@@ -92,17 +92,9 @@ ULS_QUALIFIED_METHOD(uls_init_escmap)(uls_escmap_ptr_t map)
 }
 
 void
-ULS_QUALIFIED_METHOD(__uls_deinit_escmap)(uls_escmap_ptr_t map)
-{
-	uls_deinit_parray(uls_ptr(map->escstr_list));
-}
-
-void
 ULS_QUALIFIED_METHOD(uls_deinit_escmap)(uls_escmap_ptr_t map)
 {
-	if ((map->flags & ULS_ESCMAP_SYSTEM) == 0) {
-		__uls_deinit_escmap(map);
-	}
+	uls_deinit_parray(uls_ptr(map->escstr_list));
 }
 
 ULS_QUALIFIED_RETTYP(uls_escmap_ptr_t)
@@ -123,7 +115,7 @@ ULS_QUALIFIED_METHOD(uls_dealloc_escmap)(uls_escmap_ptr_t map)
 
 	uls_deinit_escmap(map);
 
-	if ((flags & (ULS_FL_STATIC | ULS_ESCMAP_SYSTEM)) == 0) {
+	if (!(flags & ULS_FL_STATIC)) {
 		uls_dealloc_object(map);
 	}
 }
@@ -267,15 +259,14 @@ ULS_QUALIFIED_METHOD(uls_add_escstr)(uls_escmap_pool_ptr_t escmap_pool,
 	char *str2;
 	int ind;
 
-	if ((ind=uls_del_escstr(map, esc_ch)) < 0) {
+	if ((ind = uls_del_escstr(map, esc_ch)) < 0) {
 		return -1;
 	}
 
 	if ((escstr = uls_find_escstr_in_escmap(escmap_pool, esc_ch, str, len)) == nilptr) {
 		if (str != NULL) {
 			if (len < 0) len = _uls_tool_(strlen)(str);
-
-			if ((str2= _uls_tool(isp_find)(uls_ptr(escmap_pool->strpool), str, len)) == NULL) {
+			if ((str2 = _uls_tool(isp_find)(uls_ptr(escmap_pool->strpool), str, len)) == NULL) {
 				if ((str2 = _uls_tool(isp_insert)(uls_ptr(escmap_pool->strpool), str, len)) == NULL) {
 					return -1;
 				}
@@ -664,6 +655,10 @@ ULS_QUALIFIED_METHOD(uls_parse_escmap_feature)(uls_escmap_pool_ptr_t escmap_pool
 		esc_map = uls_ptr(uls_litesc->uls_escstr__verbatim);
 		parms->line = NULL;
 		return esc_map;
+	} else if (uls_streql(mode_str, "verbatim00")) {
+		esc_map = uls_ptr(uls_litesc->uls_escstr__verbatim_raw);
+		parms->line = NULL;
+		return esc_map;
 	} else if (uls_streql(mode_str, "verbatim1")) {
 		esc_map = uls_ptr(uls_litesc->uls_escstr__verbatim_moderate);
 		parms->line = NULL;
@@ -890,7 +885,7 @@ ULS_QUALIFIED_METHOD(initialize_uls_litesc)()
 	/* legacy */
 	map = uls_ptr(uls_litesc->uls_escstr__legacy);
 	uls_init_escmap(map);
-	map->flags |= ULS_FL_STATIC | ULS_ESCMAP_SYSTEM;
+	map->flags |= ULS_FL_STATIC;
 
 	uls_add_escstr(escmap_pool, map, 'n', "\n", 1);
 	uls_add_escstr(escmap_pool, map, 'r', "\r", 1);
@@ -903,7 +898,7 @@ ULS_QUALIFIED_METHOD(initialize_uls_litesc)()
 	/* legacy-full */
 	map = uls_ptr(uls_litesc->uls_escstr__legacy_full);
 	uls_init_escmap(map);
-	map->flags |= ULS_FL_STATIC | ULS_ESCMAP_SYSTEM;
+	map->flags |= ULS_FL_STATIC;
 
 	uls_add_escstr(escmap_pool, map, 'n', "\n", 1);
 	uls_add_escstr(escmap_pool, map, 'r', "\r", 1);
@@ -935,20 +930,25 @@ ULS_QUALIFIED_METHOD(initialize_uls_litesc)()
 	/* modern */
 	map = uls_ptr(uls_litesc->uls_escstr__modern);
 	uls_init_escmap(map);
-	map->flags |= ULS_FL_STATIC | ULS_ESCMAP_SYSTEM;
+	map->flags |= ULS_FL_STATIC;
 
 	uls_add_escstr(escmap_pool, map, 'n', "\n", 1);
 	uls_add_escstr(escmap_pool, map, 't', "\t", 1);
 
+	/* verbatim_raw */
+	map = uls_ptr(uls_litesc->uls_escstr__verbatim_raw);
+	uls_init_escmap(map);
+	map->flags |= ULS_FL_STATIC | ULS_ESCMAP_VERBOSE00;
+
 	/* verbatim */
 	map = uls_ptr(uls_litesc->uls_escstr__verbatim);
 	uls_init_escmap(map);
-	map->flags |= ULS_FL_STATIC | ULS_ESCMAP_SYSTEM;
+	map->flags |= ULS_FL_STATIC;
 
 	/* verbatim_moderate */
 	map = uls_ptr(uls_litesc->uls_escstr__verbatim_moderate);
 	uls_init_escmap(map);
-	map->flags |= ULS_FL_STATIC | ULS_ESCMAP_SYSTEM;
+	map->flags |= ULS_FL_STATIC;
 	uls_add_escstr(escmap_pool, map, ULS_ESCMAP_DFL_ESCSYM, buff, 1);
 
 	return 0;
@@ -958,19 +958,22 @@ void
 ULS_QUALIFIED_METHOD(finalize_uls_litesc)()
 {
 	/* modern */
-	__uls_deinit_escmap(uls_ptr(uls_litesc->uls_escstr__modern));
+	uls_deinit_escmap(uls_ptr(uls_litesc->uls_escstr__modern));
 
 	/* verbatim_moderate */
-	__uls_deinit_escmap(uls_ptr(uls_litesc->uls_escstr__verbatim_moderate));
+	uls_deinit_escmap(uls_ptr(uls_litesc->uls_escstr__verbatim_moderate));
 
 	/* verbatim */
-	__uls_deinit_escmap(uls_ptr(uls_litesc->uls_escstr__verbatim));
+	uls_deinit_escmap(uls_ptr(uls_litesc->uls_escstr__verbatim));
+
+	/* verbatim_raw */
+	uls_deinit_escmap(uls_ptr(uls_litesc->uls_escstr__verbatim_raw));
 
 	/* legacy-full */
-	__uls_deinit_escmap(uls_ptr(uls_litesc->uls_escstr__legacy_full));
+	uls_deinit_escmap(uls_ptr(uls_litesc->uls_escstr__legacy_full));
 
 	/* legacy */
-	__uls_deinit_escmap(uls_ptr(uls_litesc->uls_escstr__legacy));
+	uls_deinit_escmap(uls_ptr(uls_litesc->uls_escstr__legacy));
 
 	/* dealloc string pool */
 	uls_deinit_escmap_pool(uls_ptr(uls_litesc->escmap_pool__global));

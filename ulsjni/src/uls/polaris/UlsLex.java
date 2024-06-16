@@ -119,13 +119,15 @@ public class UlsLex implements AutoCloseable {
 		String sysprops_fname = "uls_sysprops.txt";
 		int ind;
 
-		NameOfDll = "ulsjni";
 		os_name = System.getProperty("os.name");
 		if (os_name.indexOf("indow")>=0) {
+			NameOfDll = "libulsjni";
+
 			sysprops_fpath = System.getenv("CommonProgramFiles");
 			sysprops_fpath += "\\UlsWin\\";
-			NameOfDll = "libulsjni";
-		} else if (os_name.indexOf("inux")>=0 || os_name.indexOf("nix")>=0) {
+
+		} else if (os_name.indexOf("inux")>=0 || os_name.indexOf("Mac")>=0 || os_name.indexOf("nix")>=0) {
+			NameOfDll = "ulsjni";
 			sysprops_fpath = "/usr/local/etc/uls/";
 			sysprops_fname = "uls.sysprops";
 
@@ -135,21 +137,13 @@ public class UlsLex implements AutoCloseable {
 				sysprops_fpath = "/tmp/";
 				sysprops_fname = "uls_sysprops.txt";
 			}
-		} else if (os_name.indexOf("Mac")>=0) {
-			sysprops_fpath = "/Applications/";
 
-			sysprops_fpath1 = sysprops_fpath + sysprops_fname;
-			File file1 = new File(sysprops_fpath1);
-			if (file1.exists() == false || file1.isFile() == false) {
-				sysprops_fpath = "/tmp/";
-				sysprops_fname = "uls_sysprops.txt";
-			}
 		} else {
+			NameOfDll = "ulsjni";
 			sysprops_fpath = "/tmp/";
 		}
 
 		sysprops_fpath += sysprops_fname;
-
 		BufferedReader infile = null;
 
 		try {
@@ -213,10 +207,16 @@ public class UlsLex implements AutoCloseable {
 
 	static {
 		get_dll_path();
-		System.setProperty("jna.library.path", PathOfDll);
+		System.setProperty("java.library.path", PathOfDll);
 		FileEnc = System.getProperty("file.encoding");
 
-		System.loadLibrary(NameOfDll);
+		try {
+			System.loadLibrary(NameOfDll);
+		} catch (UnsatisfiedLinkError e) {
+			System.err.println("UlsLex.java: error to loadLibrary(" + NameOfDll + ")");
+			System.err.println("  java.library.path = " + System.getProperty("java.library.path"));
+			System.exit(1);
+		}
 
 		WANT_EOFTOK = getFlagWantEofTok();
 

@@ -65,7 +65,7 @@ public class Sample2 : uls.polaris.UlsLex {
 
 	public const int            IDENT = 210;
 
-	public Sample2(String ulc_file)
-		: base(ulc_file) {
+	public Sample2(String filepath = "sample2.ulc")
+		: base(filepath) {
 	}
 } // End of Sample2

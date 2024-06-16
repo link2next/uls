@@ -193,6 +193,7 @@ test_sprintf_float(uls_lex_ptr_t uls, uls_log_t* log)
 	int len;
 	double x;
 	long double xx;
+	float y;
 
 	x = 314159.2653589;
 	// use %f for printing 'double'
@@ -225,6 +226,11 @@ test_sprintf_float(uls_lex_ptr_t uls, uls_log_t* log)
 
 	x = 31.158;
 	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("%-8.4f -- %-08.4f -- %-#8.4f"), x, x, x);
+	dump_tstr(buff, len);
+
+	x = 0.3;
+	y = 0.3;
+	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("%.5f %.5f %f %f"), x, y, x, y);
 	dump_tstr(buff, len);
 }
 
@@ -394,9 +400,8 @@ _tmain(int n_targv, LPTSTR *targv)
 		break;
 	}
 
+	uls_pop_all(sample_lex);
 	uls_destroy_log(sample_log);
-
-	uls_dismiss_input(sample_lex);
 	uls_destroy(sample_lex);
 
 	return 0;

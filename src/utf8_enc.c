@@ -135,7 +135,7 @@ int
 ULS_QUALIFIED_METHOD(uls_fill_utf8buf)(uls_utf_inbuf_ptr_t inp, char* utf8buf, int len0_utf8buf, int siz_utf8buf)
 {
 	int len_utf8buf = len0_utf8buf;
-	int wrdsiz = sizeof(uls_uint32);
+	int wrdsiz = sizeof(uls_wch_t);
 	int i, rc, n_words, n_bytes, n_uchbuf;
 	uls_wch_t *uchbuf, wch;
 
@@ -206,7 +206,6 @@ ULS_QUALIFIED_METHOD(uls_utf_init_inbuf)(uls_utf_inbuf_ptr_t inp,
 	}
 
 	inp->bytesbuf_siz = bufsiz;
-
 	uls_utf_reset_inbuf(inp, mode);
 }
 
@@ -228,7 +227,6 @@ ULS_QUALIFIED_METHOD(uls_utf_create_inbuf)(char *buf, int bufsiz, int mode)
 	uls_utf_inbuf_ptr_t inp;
 
 	inp = uls_alloc_object(uls_utf_inbuf_t);
-
 	uls_utf_init_inbuf(inp, buf, bufsiz, mode);
 	inp->flags &= ~ULS_FL_STATIC;
 

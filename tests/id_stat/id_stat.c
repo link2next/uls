@@ -250,7 +250,7 @@ comp_by_idname(const void *a, const void *b)
 int
 get_id_stats(int argc, LPTSTR argv[], int i0)
 {
-	id_stat_t *e;
+	id_stat_t *id_stat;
 	int i;
 
 	if (filelist != NULL ) {
@@ -288,8 +288,8 @@ get_id_stats(int argc, LPTSTR argv[], int i0)
 	qsort(id_stat_array, n_id_stat_array, sizeof(id_stat_t), comp_by_idname);
 
 	for (i=0; i<n_id_stat_array; i++) {
-		e = id_stat_array + i;
-		uls_printf(_T("%24s %8d\n"), e->name, e->freq);
+		id_stat = id_stat_array + i;
+		uls_printf(_T("%24s %8d\n"), id_stat->name, id_stat->freq);
 	}
 
 	return 0;

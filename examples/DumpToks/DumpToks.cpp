@@ -33,19 +33,18 @@
 */
 
 #include "DumpToksBasis.h"
-#include <uls/UlsUtils.h>
+
 #include <uls/UlsLex.h>
 #include <uls/UlsIStream.h>
 #include <uls/UlsOStream.h>
-
+#include <uls/UlsUtils.h>
 #include <iostream>
-#include <string>
-#include <sstream>
-
-#include <uls/uls_util.h>
 
 using namespace std;
 using namespace uls::crux;
+
+using tstring = uls::tstring;
+using otstringstream = uls::otstringstream;
 
 namespace
 {
@@ -217,7 +216,7 @@ namespace
 		UlsTmplList  tmpl_list;
 		tstring uls_file;
 		tstring *lxm;
-		int t, stat = 0;
+		int t;
 
 		uls_file = out_dir;
 		uls_file += ULS_FILEPATH_DELIM;

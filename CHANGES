@@ -1,10 +1,37 @@
 
+  v1.9.5
+  -----------
+    o Tested ulsjni with openjdk-15
+       Test it on MacOS(Sonoma)
+       Test it on Mint(20.2)
+
+    o In generating header files with ulc2class,
+      you can specify the default path of ulc-file needed in runtime.
+      If you enter the command like: 
+         $ ulc2class -lcpp /your/folder/sample1.ulc
+      the path '/your/folder/sample1.ulc' will be embedded in the generated file 
+         as a default path like: 
+       class Sample1Lex { 
+         ....
+         Sample1Lex(tstring filepath = "/your/folder/sample1.ulc");
+         ...
+       }
+
+     Try to enter the following one as well:
+         $ ulc2class -lcpp -n name.space.Sample1Lex -F /usr/yourrepo/sample1.ulc ./sample1.ulc
+
+    o Increased the (default) sampling number of ulf_gen
+       to generate parameters of the hash algorithm. 
+
+    o Increased the internal input buffer-size(4KiB) in uls_lex_t object
+       for performance enhancement.
+
   v1.9.4
   -----------
     o Enhanced the rountines parsing uld-file
 	a) Dumping a sample uld-file:
            Try to enter 'ulc2class -S java'.
-           It'll print a sample content for your uld file.  
+           It'll print a sample content for your uld file.
         b) Embedding uld-file into uls-file:
            The content of uld-file will be embedded in the generated uls-file
                 when creating uls-file using uld-file.
@@ -17,8 +44,8 @@
 
     o bug-fixes on
       a) line-numbering when it reads uld-files, ulf-files.
-      b) uls_printf(" %f -- %lf", x_double, xx_longdouble) 
-            In order to pad zeros at end of the printed floating number, try to the followings:
+      b) uls_printf(" %f -- %lf", x_double, xx_longdouble)
+        In order to pad zeros at end of the printed floating number, try to the followings:
              x = 3.14
              uls_printf("%.5f", x) --> '3.14'
              uls_printf("%0.5f", x) --> '3.14000'

@@ -292,7 +292,7 @@ ULS_QUALIFIED_METHOD(uls_input_reset)(uls_input_ptr_t inp, int bufsiz, int flags
 	if (bufsiz > 0) {
 		m = MAX(ULS_TXT_RECHDR_SZ,ULS_BIN_RECHDR_SZ);
 		if (bufsiz < m) bufsiz = m;
-		if ((bufsiz = uls_roundup(bufsiz, ULS_FDBUF_INITSIZE)) > inp->rawbuf.siz) {
+		if ((bufsiz = uls_roundup(bufsiz, ULS_INPUT_BUFSIZ)) > inp->rawbuf.siz) {
 			_uls_tool(str_free)(uls_ptr(inp->rawbuf));
 			_uls_tool(str_init)(uls_ptr(inp->rawbuf), bufsiz);
 		}
@@ -399,18 +399,18 @@ ULS_QUALIFIED_METHOD(uls_input_read)(uls_source_ptr_t isrc, char *buf, int bufle
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_input_refill_null)(uls_input_ptr_t inp, int n_bytes)
+ULS_QUALIFIED_METHOD(uls_input_refill_null)(uls_input_ptr_t inp, int n_req_bytes)
 {
 	inp->isource.flags |= ULS_ISRC_FL_EOF;
 	return inp->rawbuf_bytes;
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_input_refill_buffer)(uls_input_ptr_t inp, int n_bytes)
+ULS_QUALIFIED_METHOD(uls_input_refill_buffer)(uls_input_ptr_t inp, int n_req_bytes)
 {
 	int n, rc;
 
-	if (n_bytes <= inp->rawbuf_bytes) return inp->rawbuf_bytes;
+	if (n_req_bytes <= inp->rawbuf_bytes) return inp->rawbuf_bytes;
 	uls_regulate_rawbuf(inp);
 
 	if ((n = inp->rawbuf_bytes + ULS_UTF8_CH_MAXLEN) > inp->rawbuf.siz) {
@@ -425,7 +425,7 @@ ULS_QUALIFIED_METHOD(uls_input_refill_buffer)(uls_input_ptr_t inp, int n_bytes)
 			return -1;
 		}
 
-		if (rc == 0 || (inp->rawbuf_bytes += rc) >= n_bytes) {
+		if (rc == 0 || (inp->rawbuf_bytes += rc) >= n_req_bytes) {
 			break;
 		}
 		_uls_tool_(msleep)(15);
@@ -460,7 +460,7 @@ ULS_QUALIFIED_METHOD(uls_resize_rawbuf)(uls_input_ptr_t inp, int delta)
 	if (delta != 0) {
 		m = inp->rawbuf.siz + delta;
 		if (delta > 0) {
-			m = uls_roundup(m, ULS_FDBUF_INITSIZE);
+			m = uls_roundup(m, ULS_INPUT_BUFSIZ);
 		} else {
 			m = uls_roundup(m, sizeof(uls_wch_t));
 		}
@@ -493,7 +493,7 @@ ULS_QUALIFIED_METHOD(uls_ungrab_null_source)(uls_source_ptr_t isrc)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_fill_fd_source_utf8)(uls_source_ptr_t isrc, char* buf, int buflen, int bufsiz)
+ULS_QUALIFIED_METHOD(uls_fill_fd_isrc_utf8)(uls_source_ptr_t isrc, char* buf, int buflen, int bufsiz)
 {
 	const uls_ptrtype_tool(utf_inbuf) inp = (const uls_ptrtype_tool(utf_inbuf)) isrc->usrc;
 	int rc;

@@ -33,10 +33,10 @@
 
 #include "MkfLex.h"
 #include <uls/UlsUtils.h>
-#include <iostream>
 
 using namespace std;
 using namespace uls::collection;
+using tstring = uls::tstring;
 
 StringBuilder::StringBuilder()
 {
@@ -69,7 +69,7 @@ StringBuilder::clear()
 	sync = true;
 }
 
-std::tstring&
+tstring&
 StringBuilder::str()
 {
 	if (sync == false) {
@@ -167,7 +167,7 @@ int
 MkfLex::tabblk_analyzer(uls_litstr_t *lit)
 {
 	uls_litstr_context_ptr_t lit_ctx = uls_get_litstr__context(lit);
-	uls_quotetype_t *qmt = uls_get_litstr__quoteinfo(lit);
+//	uls_quotetype_t *qmt = uls_get_litstr__quoteinfo(lit);
 	mkf_tabblk_ctx_t  *mkf_ctx = (mkf_tabblk_ctx_t *) uls_get_litstr__user_data(lit);
 	const char *lptr = lit->lptr, *lptr_end = lit->lptr_end;
 	char ch;
@@ -321,10 +321,10 @@ MkfLex::expect_number(void)
 {
 	tstring *lxm;
 	LPCTSTR ptr;
-	int tok, len;
+	int len;
 	TCHAR  tch;
 
-	tok = MkfLexBasis::getTok();
+	MkfLexBasis::getTok();
 	expect(NUM);
 
 	UlsLex::getTokStr(&lxm);

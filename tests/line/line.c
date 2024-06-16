@@ -168,7 +168,6 @@ test_stage_5(void)
 	TCHAR linebuff[81];
 
 	ult_str_copy(linebuff, _T("hello ULS-world"));
-
 	uls_set_line(sample_lex, linebuff, -1, 0);
 
 	uls_get_tok(sample_lex);

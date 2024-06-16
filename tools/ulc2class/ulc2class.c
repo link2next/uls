@@ -50,6 +50,7 @@ const char *progname;
 char home_dir[ULS_FILEPATH_MAX+1];
 const char *opt_class_name;
 char *out_dirpath, *out_filepath, *out_filename, *out_filename0;
+char *ulc_filepath;
 const char *opt_enum_name;
 const char *opt_prefix;
 const char *opt_dump;
@@ -69,6 +70,7 @@ static const struct option longopts[] = {
 	{ "dirpath",       required_argument, NULL, 'd' },
 	{ "enum",          required_argument, NULL, 'e' },
 	{ "filename",      required_argument, NULL, 'f' },
+	{ "filepath",      required_argument, NULL, 'F' },
 	{ "group",         required_argument, NULL, 'g' }, // OBSOLETE:
 	{ "lang",          required_argument, NULL, 'l' },
 	{ "class-name",    required_argument, NULL, 'n' },
@@ -87,7 +89,7 @@ static const struct option longopts[] = {
 };
 #endif
 
-#define ULC2CLASS_OPTSTR "d:e:f:g:l:n:o:p:qsSvVHhyz:"
+#define ULC2CLASS_OPTSTR "d:e:f:F:g:l:n:o:p:qsSvVHhyz:"
 
 static void usage_synopsis()
 {
@@ -115,6 +117,7 @@ static void usage_desc()
 	err_log("  -o <filepath>     specify the output file path.");
 	err_log("  -p <prefix>       prepend <prefix> at the front of token-name.");
 	err_log("  -q                query the list of ulc names.");
+	err_log("  -F <filepath>     specify the filepath encoded in the generated file in case 'file.ulc' is specified.");
 	err_log("  -S                generates a sample uld-file.");
 	err_log("  -v                verbose mode.");
 	err_log("  -V                prints the version information.");
@@ -128,6 +131,7 @@ static void usage_desc()
 	err_log("  -o, --output <filepath>    specify the output file path.");
 	err_log("  -p, --prefix <prefix>      prepend <prefix> at the front of token-name.");
 	err_log("  -q, --query [lang-name]    query the list of ulc names.");
+	err_log("  -F, --filepath <filepath>  specify the filepath encoded in the generated file in case 'file.ulc' is specified.");
 	err_log("  -S, --uld-sample           generates a sample uld-file.");
 	err_log("  -v, --verbose              verbose mode.");
 	err_log("  -V, --version              prints the version information.");
@@ -354,6 +358,12 @@ ulc2class_options(int opt, char* optarg)
 		opt_query = 1;
 		break;
 
+	case 'F':
+		if (ulc_filepath != NULL) uls_mfree(ulc_filepath);
+		ulc_filepath = ult_strdup(optarg);
+		uls_path_normalize(ulc_filepath, ulc_filepath);
+		break;
+
 	case 'S':
 	case 's':
 		opt_uld_gen = 1;
@@ -409,8 +419,6 @@ parse_options(int argc, char* argv[])
 	if (ult_getcwd(home_dir, ULS_FILEPATH_MAX) < 0) {
 		err_panic("%s: fail to getcwd()", __func__);
 	}
-
-	opt_prefix = "";
 
 #ifdef HAVE_GETOPT
 	while ((opt=getopt_long(argc, argv, ULC2CLASS_OPTSTR, longopts, &longindex)) != -1) {
@@ -612,7 +620,7 @@ dump_tok_info(uls_lex_ptr_t uls)
 int
 main(int argc, char* argv[])
 {
-	const char *uld_file;
+	const char *conf_filepath;
 	int i0, rc, stat=0;
 	uls_parms_emit_t emit_parm;
 
@@ -651,13 +659,13 @@ main(int argc, char* argv[])
 
 	if (typ_fpath == ULS_NAME_FILEPATH_ULC) {
 		uls_path_normalize(ulc_config, ulc_config);
-		uld_file = ulc_config;
+		conf_filepath = ulc_config;
 	} else if (typ_fpath == ULS_NAME_FILEPATH_ULD) {
 		prn_flags |= ULS_FL_ULD_FILE;
 		uls_path_normalize(ulc_config, ulc_config);
-		uld_file = ulc_config;
+		conf_filepath = ulc_config;
 	} else { // ULS_NAME_SPECNAME
-		uld_file = NULL;
+		conf_filepath = NULL;
 	}
 
 	if (prn_flags & ULS_FL_VERBOSE) {
@@ -668,9 +676,6 @@ main(int argc, char* argv[])
 
 	if ((sam_lex=uls_create(ulc_config)) == uls_nil) {
 		err_log("%s: Failed to process the configuration file %s", progname, ulc_config);
-		if (typ_fpath != ULS_NAME_FILEPATH_ULD) {
-			ulc_list_searchpath(ulc_config);
-		}
 		return -1;
 	}
 
@@ -679,8 +684,11 @@ main(int argc, char* argv[])
 	} else if (opt_uld_gen) {
 		uld_dump_sample(sam_lex);
 	} else {
-		rc = uls_init_parms_emit(&emit_parm, out_dirpath, out_filename, uld_file,
-			specname, opt_class_name, opt_enum_name, opt_prefix,
+		rc = uls_init_parms_emit(&emit_parm,
+			out_dirpath, out_filename,
+			conf_filepath, specname,
+			opt_class_name, opt_enum_name,
+			opt_prefix, ulc_filepath,
 			prn_flags | ULS_FL_WANT_RESERVED_TOKS);
 		if (rc < 0) {
 			err_log("%s: fail to create source files for %s", progname, ulc_config);
@@ -698,6 +706,7 @@ main(int argc, char* argv[])
 	uls_mfree(out_filepath);
 	uls_mfree(out_filename0);
 	uls_mfree(out_filename);
+	uls_mfree(ulc_filepath);
 
 	return stat;
 }

@@ -164,7 +164,7 @@ ULS_QUALIFIED_RETTYP(uls_tokdef_vx_ptr_t)
 ULS_QUALIFIED_METHOD(is_keyword_twoplus)(uls_kwtable_twoplus_ptr_t tbl, const char *ch_ctx, const char *line)
 {
 	uls_twoplus_tree_ptr_t tree;
-	uls_tokdef_vx_ptr_t e_vx_ret = nilptr;
+	uls_tokdef_vx_ptr_t e_vx_ret;
 	uls_tokdef_ptr_t e;
 	int i, n, wlen;
 	char ch;

@@ -46,7 +46,6 @@ int  test_mode = -1;
 int  opt_verbose;
 LPCTSTR config_name;
 LPTSTR input_file;
-uls_lex_ptr_t sample_lex;
 
 static void usage(void)
 {
@@ -89,18 +88,18 @@ options(int opt, LPTSTR optarg)
 }
 
 void
-test_get_ch(void)
+test_get_ch(uls_lex_ptr_t uls)
 {
 	int tok_id, is_quote;
 	uls_nextch_detail_t detail;
 	uls_wch_t wch;
 
-	uls_set_file(sample_lex, input_file, 0);
-	// uls_set_line(sample_lex, "hello world", -1, 0);
+	uls_set_file(uls, input_file, 0);
+	// uls_set_line(uls, "hello world", -1, 0);
 
 	while (1) {
 		is_quote = 0;
-		if ((wch = uls_get_uch(sample_lex, &detail)) == ULS_UCH_NONE) {
+		if ((wch = uls_get_uch(uls, &detail)) == ULS_UCH_NONE) {
 			if (detail.tok == tokEOI || detail.tok == tokEOF) {
 				break;
 			}
@@ -110,95 +109,93 @@ test_get_ch(void)
 		}
 
 		if (is_quote) {
-			tok_id = uls_get_tok(sample_lex);
-			uls_printf(_T(" str = '%s' (%d)\n"), uls_lexeme(sample_lex), tok_id);
+			tok_id = uls_get_tok(uls);
+			uls_printf(_T(" str = '%s' (%d)\n"), uls_lexeme(uls), tok_id);
 		} else {
 			uls_printf(_T(" ch = '%c'\n"), (char) wch);
 		}
 	}
-	uls_dismiss_input(sample_lex);
+	uls_pop_all(uls);
 }
 
 void
-test_want_eof(void)
+test_want_eof(uls_lex_ptr_t uls)
 {
 	int tok_id;
 
-	uls_set_line(sample_lex, _T("hello world"), -1, 0); // ULS_WANT_EOFTOK
+	uls_set_line(uls, _T("hello world"), -1, 0); // ULS_WANT_EOFTOK
 
 	while (1) {
-		tok_id = uls_get_tok(sample_lex);
+		tok_id = uls_get_tok(uls);
 		if (tok_id == tokEOI) break;
 
-		uls_dumpln_tok(sample_lex);
+		uls_dumpln_tok(uls);
 	}
 
-	uls_push_file(sample_lex, input_file, 0);
-	uls_want_eof(sample_lex);
+	uls_push_file(uls, input_file, 0);
+	uls_want_eof(uls);
 
 	while (1) {
-		tok_id = uls_get_tok(sample_lex);
+		tok_id = uls_get_tok(uls);
 		if (tok_id == tokEOI) break;
 
-		uls_dumpln_tok(sample_lex);
+		uls_dumpln_tok(uls);
 	}
 }
 
 static void
-dump_next_tok(int linefeed)
+dump_next_tok(uls_lex_ptr_t uls, int linefeed)
 {
 	LPCTSTR suff = NULL;
 
 	if (linefeed) suff = _T("\n");
 
-	uls_get_tok(sample_lex);
-	uls_dump_tok(sample_lex, _T("\t"), suff);
+	uls_get_tok(uls);
+	uls_dump_tok(uls, _T("\t"), suff);
 }
 
 int
-test_unget(void)
+test_unget(uls_lex_ptr_t uls)
 {
 	void *xdef;
 	int rc;
 
 	err_log(_T("setting tok-info of tokID:%d ..."), tokID);
-	if ((rc = uls_set_extra_tokdef(sample_lex, tokID, (void *) 0x777)) < 0) {
+	if ((rc = uls_set_extra_tokdef(uls, tokID, (void *) 0x777)) < 0) {
 		err_log(_T("can't find the tok-info of tokID:%d"), tokID);
 		return -1;
 	}
 
-	uls_set_line(sample_lex, _T("hello world"), -1, 0);
+	uls_set_line(uls, _T("hello world"), -1, 0);
 
 	/* 1 */
-	dump_next_tok(0);
-	xdef = uls_get_current_extra_tokdef(sample_lex);
+	dump_next_tok(uls, 0);
+	xdef = uls_get_current_extra_tokdef(uls);
 	uls_printf(_T(" --- xdef[tokID] = 0x%X\n"), xdef);
 
 	/* 2 */
-	uls_unget_tok(sample_lex);
-	dump_next_tok(0);
-	xdef = uls_get_current_extra_tokdef(sample_lex);
+	uls_unget_tok(uls);
+	dump_next_tok(uls, 0);
+	xdef = uls_get_current_extra_tokdef(uls);
 	uls_printf(_T(" --- xdef[tokID] = 0x%X\n"), xdef);
 
 	/* 3 */
-	uls_skip_blanks(sample_lex);
-	uls_unget_str(sample_lex, _T("hello"));
-	dump_next_tok(1);
+	uls_skip_blanks(uls);
+	uls_unget_str(uls, _T("hello"));
+	dump_next_tok(uls, 1);
 
 	/* 4 */
-	uls_unget_str(sample_lex, _T("hello"));
-	uls_unget_ch(sample_lex, _T('w'));
-	dump_next_tok(1);
+	uls_unget_str(uls, _T("hello"));
+	uls_unget_ch(uls, _T('w'));
+	dump_next_tok(uls, 1);
 
 	/* 5 */
-	uls_unget_lexeme(sample_lex, _T(".314"), tokNUM);
-	dump_next_tok(1);
+	uls_unget_lexeme(uls, _T(".314"), tokNUM);
+	dump_next_tok(uls, 1);
 
 	/* 6 */
-	uls_unget_lexeme(sample_lex, _T(" world hello "), tokDQUOTE);
-	dump_next_tok(1);
-
-	uls_dismiss_input(sample_lex);
+	uls_unget_lexeme(uls, _T(" world hello "), tokDQUOTE);
+	dump_next_tok(uls, 1);
 
 	return 0;
 }
@@ -206,6 +203,7 @@ test_unget(void)
 int
 _tmain(int n_targv, LPTSTR *targv)
 {
+	uls_lex_ptr_t sample_lex;
 	int i0;
 
 	progname = uls_split_filepath(targv[0], NULL);
@@ -226,20 +224,19 @@ _tmain(int n_targv, LPTSTR *targv)
 
 	switch (test_mode) {
 	case 0:
-		test_get_ch();
+		test_get_ch(sample_lex);
 		break;
 	case 1:
-		test_want_eof();
+		test_want_eof(sample_lex);
 		break;
 	case 2:
-		test_unget();
+		test_unget(sample_lex);
 		break;
 	default:
 		break;
 	}
 
 	uls_destroy(sample_lex);
-
 	return 0;
 }
 

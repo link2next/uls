@@ -1,4 +1,4 @@
-   1 :  -7  ''
+initial-state:   1 :  -7  ''
    2 :  -3  '0'
 	i_val = 0
    2 :  45  '-'
@@ -150,3 +150,7 @@
 	i_val = 314
   35 :  -1  '35 10 in_1_2.txt'
 	EOF : 'in_1_2.txt'10
+final-state:   1 :   0  ''
+After EOI:   1 :   0  ''
+   1 :  -2  'hello'
+   1 :  -2  'world'

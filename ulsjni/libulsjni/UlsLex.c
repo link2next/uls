@@ -204,37 +204,37 @@ JNIEXPORT jstring JNICALL Java_uls_polaris_UlsLex_tok2name(JNIEnv *env, jobject 
 JNIEXPORT jboolean JNICALL Java_uls_polaris_UlsLex_isCharSpace(JNIEnv *env, jobject obj, jobject juls, jint jch)
 {
 	uls_lex_ptr_t uls = (uls_lex_ptr_t) (*env)->GetDirectBufferAddress(env, juls);
-	return _uls_is_ch_space(uls, jch) ? JNI_TRUE : JNI_FALSE;
+	return _uls_is_wch_space(uls, jch) ? JNI_TRUE : JNI_FALSE;
 }
 
 JNIEXPORT jboolean JNICALL Java_uls_polaris_UlsLex_isCharIdFirst(JNIEnv *env, jobject obj, jobject juls, jint jch)
 {
 	uls_lex_ptr_t uls = (uls_lex_ptr_t) (*env)->GetDirectBufferAddress(env, juls);
-	return _uls_is_ch_idfirst(uls, jch) ? JNI_TRUE : JNI_FALSE;
+	return _uls_is_wch_idfirst(uls, jch) ? JNI_TRUE : JNI_FALSE;
 }
 
 JNIEXPORT jboolean JNICALL Java_uls_polaris_UlsLex_isCharId(JNIEnv *env, jobject obj, jobject juls, jint jch)
 {
 	uls_lex_ptr_t uls = (uls_lex_ptr_t) (*env)->GetDirectBufferAddress(env, juls);
-	return _uls_is_ch_id(uls, jch) ? JNI_TRUE : JNI_FALSE;
+	return _uls_is_wch_id(uls, jch) ? JNI_TRUE : JNI_FALSE;
 }
 
 JNIEXPORT jboolean JNICALL Java_uls_polaris_UlsLex_isCharQuote(JNIEnv *env, jobject obj, jobject juls, jint jch)
 {
 	uls_lex_ptr_t uls = (uls_lex_ptr_t) (*env)->GetDirectBufferAddress(env, juls);
-	return _uls_is_ch_quote(uls, jch) ? JNI_TRUE : JNI_FALSE;
+	return _uls_is_wch_quote(uls, jch) ? JNI_TRUE : JNI_FALSE;
 }
 
 JNIEXPORT jboolean JNICALL Java_uls_polaris_UlsLex_isCharTokCh1(JNIEnv *env, jobject obj, jobject juls, jint jch)
 {
 	uls_lex_ptr_t uls = (uls_lex_ptr_t) (*env)->GetDirectBufferAddress(env, juls);
-	return _uls_is_ch_1ch_token(uls, jch) ? JNI_TRUE : JNI_FALSE;
+	return _uls_is_wch_1ch_token(uls, jch) ? JNI_TRUE : JNI_FALSE;
 }
 
 JNIEXPORT jboolean JNICALL Java_uls_polaris_UlsLex_isCharTokCh2(JNIEnv *env, jobject obj, jobject juls, jint jch)
 {
 	uls_lex_ptr_t uls = (uls_lex_ptr_t) (*env)->GetDirectBufferAddress(env, juls);
-	return _uls_is_ch_2ch_token(uls, jch) ? JNI_TRUE : JNI_FALSE;
+	return _uls_is_wch_2ch_token(uls, jch) ? JNI_TRUE : JNI_FALSE;
 }
 
 JNIEXPORT void JNICALL Java_uls_polaris_UlsLex_skipWhiteSpaces(JNIEnv *env, jobject obj, jobject juls)

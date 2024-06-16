@@ -101,7 +101,7 @@ options(int opt, LPTSTR optarg)
 }
 
 int
-test_initial_uls(LPCTSTR fpath)
+test_initial_state(LPCTSTR fpath)
 {
 	uls_lex_ptr_t uls = sample_lex;
 	double f_val;
@@ -110,15 +110,15 @@ test_initial_uls(LPCTSTR fpath)
 	int t, taglen;
 
 	if (uls_push_file(uls, fpath, ULS_WANT_EOFTOK) < 0) {
-		err_log(_T(" file open error"));
+		err_log(_T("file open error"));
 		return -1;
 	}
 
-	uls_printf(_T(" %3d : %3d  '%s'\n"),
+	uls_printf(_T("initial-state: %3d : %3d  '%s'\n"),
 		uls_get_lineno(uls), uls_tok(uls), uls_tokstr(uls));
 
 	for ( ; ; ) {
-		if ((t=uls_get_tok(uls)) == TOK_EOI) break;
+		if ((t = uls_get_tok(uls)) == TOK_EOI) break;
 
 		uls_printf(_T(" %3d : %3d  '%s'\n"),
 			uls_get_lineno(uls), uls_tok(uls), uls_tokstr(uls));
@@ -137,6 +137,20 @@ test_initial_uls(LPCTSTR fpath)
 		}
 	}
 
+	uls_printf(_T("final-state: %3d : %3d  '%s'\n"),
+		uls_get_lineno(uls), uls_tok(uls), uls_tokstr(uls));
+
+	uls_get_tok(uls);
+	uls_printf(_T("After EOI: %3d : %3d  '%s'\n"),
+		uls_get_lineno(uls), uls_tok(uls), uls_tokstr(uls));
+
+	uls_push_line(uls, _T("hello world"), -1, 0);
+	for ( ; ; ) {
+		if (uls_get_tok(uls) == TOK_EOI) break;
+		uls_printf(_T(" %3d : %3d  '%s'\n"),
+			uls_get_lineno(uls), uls_tok(uls), uls_tokstr(uls));
+	}
+
 	return 0;
 }
 
@@ -152,7 +166,7 @@ test_uls(LPCTSTR fpath)
 	}
 
 	if (uls_set_fd(uls, fd, ULS_DO_DUP) < 0) {
-		err_log(_T("Can't set the istream, '%s'"), fpath);
+		err_log(_T("Can't set the istream, %s."), fpath);
 		return -1;
 	}
 
@@ -161,7 +175,6 @@ test_uls(LPCTSTR fpath)
 	for ( ; ; ) {
 		if ((t=uls_get_tok(uls)) == TOK_ERR) {
 			err_log(_T("TOK_ERR!"));
-			uls_pop(uls);
 			break;
 		} else if (t == TOK_EOI) {
 			break;
@@ -196,6 +209,22 @@ sample_xdef_t xdefs[5] = {
 	{ '^', 23, 5, xor_nodetree }
 };
 
+static int
+my_gettok(void)
+{
+	uls_lex_ptr_t uls = sample_lex;
+	int tok_id;
+
+	tok_id = uls_get_tok(uls);
+	if (tok_id == '@') {
+		uls_get_tok(uls);
+		tok_id = TOK_USERDEF4;
+		uls_set_tok(uls, tok_id, NULL, 0);
+	}
+
+	return tok_id;
+}
+
 void
 test_uls_xdef(LPCTSTR fpath)
 {
@@ -219,7 +248,7 @@ test_uls_xdef(LPCTSTR fpath)
 	}
 
 	for ( ; ; ) {
-		if (uls_get_tok(uls) == TOK_EOI) break;
+		if (my_gettok() == TOK_EOI) break;
 
 		xdef = (sample_xdef_t *) uls_get_current_extra_tokdef(uls);
 
@@ -312,10 +341,14 @@ test_uls_isrc(LPCTSTR fpath)
 			err_log(_T("ErrorToken: %s"), tokstr);
 			break;
 		}
-		if (t == TOK_EOI) break;
+
+		if (t == TOK_EOI) {
+			break;
+		}
 
 		uls_printf(_T("#%d(%6d) :"), uls_get_lineno(uls), t);
 		tokstr = uls_tokstr(uls);
+
 		ult_dump_utf8str(tokstr);
 		uls_printf(_T("\n"));
 	}
@@ -347,7 +380,7 @@ _tmain(int n_targv, LPTSTR *targv)
 		test_uls(input_file);
 		break;
 	case 1:
-		test_initial_uls(input_file);
+		test_initial_state(input_file);
 		break;
 	case 2:
 		test_uls_xdef(input_file);

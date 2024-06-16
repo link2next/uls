@@ -145,8 +145,8 @@ int uls_input_read(uls_source_ptr_t isrc, char *buf, int buflen0, int bufsiz);
 void uls_regulate_rawbuf(uls_input_ptr_t inp);
 int uls_resize_rawbuf(uls_input_ptr_t inp, int delta);
 
-int uls_input_refill_null(uls_input_ptr_t inp, int n_bytes);
-int uls_input_refill_buffer(uls_input_ptr_t inp, int n_bytes);
+int uls_input_refill_null(uls_input_ptr_t inp, int n_req_bytes);
+int uls_input_refill_buffer(uls_input_ptr_t inp, int n_req_bytes);
 
 int uls_init_line_in_input(uls_input_ptr_t inp, const char* line, int n_bytes, int ipos);
 void uls_ungrab_linecheck(uls_source_ptr_t isrc);
@@ -154,7 +154,7 @@ void uls_ungrab_linecheck(uls_source_ptr_t isrc);
 int uls_fill_null_source(uls_source_ptr_t isrc, char* buf, int buflen, int bufsiz);
 void uls_ungrab_null_source(uls_source_ptr_t isrc);
 
-int uls_fill_fd_source_utf8(uls_source_ptr_t isrc, char *buf, int buflen, int bufsiz);
+int uls_fill_fd_isrc_utf8(uls_source_ptr_t isrc, char *buf, int buflen, int bufsiz);
 
 #endif // ULS_DECL_PROTECTED_PROC
 

@@ -86,7 +86,7 @@ public class Sample1 : uls.polaris.UlsLex {
 	public const int         VOLATILE = 193;
 	public const int            WHILE = 194;
 
-	public Sample1(String ulc_file)
-		: base(ulc_file) {
+	public Sample1(String filepath = "sample1.ulc")
+		: base(filepath) {
 	}
 } // End of Sample1

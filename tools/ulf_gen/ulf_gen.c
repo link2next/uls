@@ -42,7 +42,7 @@
 #include <time.h>
 
 #define THIS_PROGNAME "ulf_gen"
-#define DFL_N_SAMPLES 10
+#define DFL_N_SAMPLES 1000
 
 _ULS_DEFINE_STRUCT(round_stat)
 {
@@ -127,6 +127,7 @@ static void usage_desc(void)
 	err_log("  -l <list-file>     Specify the list of data source files");
 	err_log("  -o <a-file>        Specify the the output filepath(*.ulf)");
 	err_log("  -O <level=1,2,3>   Specify the optimizing level for hashcode");
+	err_log("  -n <num>           Specify the number of random samples");
 	err_log("  -v, --verbose      verbose mode");
 	err_log("  -V, --version      Print the version information");
 	err_log("  -h, --help         Display the short help");
@@ -135,6 +136,7 @@ static void usage_desc(void)
 	err_log("  -l, --list=<list-file>  Specify the list of data source files");
 	err_log("  -o, --output=<a-file>   Specify the the output filepath(*.ulf)");
 	err_log("  -O, --optimize <1,2,3>  Specify the optimizing level for hashcode");
+	err_log("  -n <num>                Specify the number of random samples");
 	err_log("  -v, --verbose           verbose mode");
 	err_log("  -V, --version           Print the version information");
 	err_log("  -h, --help              Display the short help");
@@ -216,6 +218,12 @@ static int ulfgen_options(int opt, char* optarg)
 		++opt_verbose;
 		break;
 
+	case 'V':
+		uls_printf("%s %s, written by %s,\n\tis provided under %s.\n",
+			progname, ULF_GEN_PROGVER, ULS_AUTHOR, ULS_LICENSE_NAME);
+		stat = 1;
+		break;
+
 	case 'H':
 		usage_long();
 		stat = 3;
@@ -224,12 +232,6 @@ static int ulfgen_options(int opt, char* optarg)
 	case 'h':
 		usage();
 		stat = 2;
-		break;
-
-	case 'V':
-		uls_printf("%s %s, written by %s,\n\tis provided under %s.\n",
-			progname, ULF_GEN_PROGVER, ULS_AUTHOR, ULS_LICENSE_NAME);
-		stat = 1;
 		break;
 
 	default:
@@ -350,7 +352,7 @@ dump_hash_freq(stat_of_round_ptr_t p_round)
 }
 
 int
-proc_file(char *fpath, uls_keyw_stat_list_t *ks_lst)
+proc_file(uls_keyw_stat_list_t *ks_lst, const char *fpath)
 {
 	if (fpath == NULL) return 0;
 
@@ -370,7 +372,7 @@ proc_file(char *fpath, uls_keyw_stat_list_t *ks_lst)
 }
 
 int
-proc_filelist(FILE *fp_list, uls_keyw_stat_list_t *ks_lst)
+proc_filelist(uls_keyw_stat_list_t *ks_lst, FILE *fp_list)
 {
 	char  linebuff[ULS_FILEPATH_MAX+1], *lptr, *fpath;
 	int   i, len, lno = 0, stat=0;
@@ -395,7 +397,7 @@ proc_filelist(FILE *fp_list, uls_keyw_stat_list_t *ks_lst)
 		}
 		fpath[++i] = '\0';
 
-		if (proc_file(fpath, ks_lst) < 0) {
+		if (proc_file(ks_lst, fpath) < 0) {
 			err_log("fail to process '%s'", fpath);
 			stat = -1;
 			break;
@@ -577,7 +579,7 @@ __create_file_internal(uls_keyw_stat_list_t *ks_lst, const char *tgt_dir,
 			return -1;
 		}
 
-		if (proc_filelist(fp_list, ks_lst) < 0) {
+		if (proc_filelist(ks_lst, fp_list) < 0) {
 			err_log("Failed to process files in %s", tgt_dir);
 			return -1;
 		}
@@ -589,7 +591,7 @@ __create_file_internal(uls_keyw_stat_list_t *ks_lst, const char *tgt_dir,
 
 	} else {
 		for (i = 0; i < n_args; i++) {
-			proc_file(args[i], ks_lst);
+			proc_file(ks_lst, args[i]);
 		}
 	}
 
@@ -627,7 +629,8 @@ __create_file_internal(uls_keyw_stat_list_t *ks_lst, const char *tgt_dir,
 }
 
 int
-main_proc(const char *tgt_dir, FILE *fp_list, int n_args, char *args[])
+main_proc(const char *tgt_dir, FILE *fp_list,
+	const char *out_filepath, int n_args, char *args[])
 {
 	int stat = 0;
 	uls_keyw_stat_list_t *ks_lst;
@@ -635,8 +638,8 @@ main_proc(const char *tgt_dir, FILE *fp_list, int n_args, char *args[])
 
 	g_hash_buckets = (int *) uls_malloc(ULF_HASH_TABLE_SIZE * sizeof(int));
 
-	if ((fp_out=uls_fp_open(out_file, ULS_FIO_CREAT)) == NULL) {
-		err_log("%s: fail to create '%s'", __func__, out_file);
+	if ((fp_out=uls_fp_open(out_filepath, ULS_FIO_CREAT)) == NULL) {
+		err_log("%s: fail to create '%s'", __func__, out_filepath);
 		return -1;
 	}
 
@@ -648,9 +651,8 @@ main_proc(const char *tgt_dir, FILE *fp_list, int n_args, char *args[])
 		stat = -1;
 	} else {
 		// ks_lst is sorted by keyw, alphabetic order
-		err_log("Writing the frequencies of keywords to %s, ...", out_file);
-		stat = __create_file_internal(ks_lst, tgt_dir,
-			fp_list, fp_out, n_args, args);
+		err_log("Writing the frequencies of keywords to %s, ...", out_filepath);
+		stat = __create_file_internal(ks_lst, tgt_dir, fp_list, fp_out, n_args, args);
 		ulc_free_kwstat_list(ks_lst);
 	}
 
@@ -681,7 +683,7 @@ main(int argc, char* argv[])
 		return -1;
 	}
 
-	if ((i0=parse_options(argc, argv)) <= 0) {
+	if ((i0 = parse_options(argc, argv)) <= 0) {
 		if (i0 < 0) err_log("Incorrect use of command options.");
 		return i0;
 	}
@@ -726,7 +728,7 @@ main(int argc, char* argv[])
 		return -1;
 	}
 
-	stat = main_proc(target_dir, fp_list, argc - i0, argv + i0);
+	stat = main_proc(target_dir, fp_list, out_file, argc - i0, argv + i0);
 
 	if (fp_list != NULL) {
 		uls_fp_close(fp_list);

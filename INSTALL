@@ -33,14 +33,9 @@
      $ make check
      $ sudo make install // install it using admin privilege.
 
-  1) Replace <PREFIX> with the file path on which ULS is installed.
+  1) Install openjdk-15.0.1 
+  2) Replace <PREFIX> with the file path on which ULS is installed.
     Unless it's specified, <PREFIX> will be '/usr/local'.
-
-  2) You can also change the admin-directory using the option of 'configure'
-      For instance, if you want it to be '/opt/uls_1_8/etc',
-           run 'configure' like this:
-           $ ./configure --with-etc-dir='/opt/uls_1_8/etc'
-      The default admin-directory is '/usr/local/etc/uls'.
 
   3) If you want not to install the java-api of uls, specify the option '--disable-java'
        $ ./configure --disable-java
@@ -146,15 +141,12 @@
   ---------------------
    The followings jdks are tested:
      a) oracle-jdk on MacOS
-       jdk-11.0.18_macos-x64_bin.dmg
+       openjdk-15.0.1_osx64_bin.tar
        After installing, it's necessary to set the environment variables:
           Set the environment variable JAVA_HOME
           Prepend the path '$JAVA_HOME/bin' in the environment PATH.
-     b) openjdk on Linux(Mint)
-       To install it, enter
-       $ sudo apt install openjdk-8-jdk-headless
-       $ sudo apt install openjdk-8-jdk
-       You may use oracle-jdk as well.
+     b) Install openjdk on Linux(Mint)
+        openjdk-15.0.1_linux-x64_bin.tar.gz 
      c) oracle-jdk-11 on Windows 10
        Read README in the subdirectory vs2022/UlsJava for Windows users
 

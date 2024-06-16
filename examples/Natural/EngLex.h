@@ -35,16 +35,13 @@
 
 #include "EngLexBasis.h"
 
-#include <string>
-#include <sstream>
-
 namespace uls
 {
 namespace collection
 {
 	class StringBuilder {
-		std::otstringstream m_stream;
-		std::tstring m_sbuff;
+		uls::otstringstream m_stream;
+		tstring m_sbuff;
 
 		TCHAR *mBuff;
 		int siz_mBuff;
@@ -60,12 +57,12 @@ namespace collection
 		void append(TCHAR ch);
 		void append(int n);
 
-		std::tstring& str();
+		tstring& str();
 	};
 
 	class EngLex : public uls::collection::EngLexBasis {
 		StringBuilder tokbuf;
-		std::tstring tok_str;
+		tstring tok_str;
 		int tok_id;
 		bool tok_ungot;
 
@@ -74,7 +71,7 @@ namespace collection
 
 	public:
 
-		EngLex(std::tstring& config_name);
+		EngLex(tstring& config_name);
 		~EngLex();
 
 		// <brief>
@@ -85,7 +82,7 @@ namespace collection
 		virtual int getTok(void);
 		virtual int getTokNum(void);
 
-		int set_input_file(std::tstring& fpath);
+		int set_input_file(tstring& fpath);
 		void ungetTok(void);
 	};
 }

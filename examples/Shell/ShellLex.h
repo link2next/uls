@@ -35,16 +35,13 @@
 
 #include "ShellLexBasis.h"
 
-#include <string>
-#include <sstream>
-
 namespace uls
 {
 namespace collection
 {
 	class StringBuilder {
-		std::otstringstream m_stream;
-		std::tstring m_sbuff;
+		uls::otstringstream m_stream;
+		tstring m_sbuff;
 
 		TCHAR *mBuff;
 		int siz_mBuff;
@@ -59,12 +56,12 @@ namespace collection
 		void append(LPCTSTR str, int len = -1);
 		void append(TCHAR ch);
 
-		std::tstring& str();
+		tstring& str();
 	};
 
 	class ShellLex : public uls::collection::ShellLexBasis {
 		StringBuilder tokbuf;
-		std::tstring tok_str;
+		tstring tok_str;
 		int tok_id;
 		bool tok_ungot;
 
@@ -73,7 +70,7 @@ namespace collection
 		void get_token(void);
 
 	public:
-		ShellLex(std::tstring& config_name);
+		ShellLex(tstring& config_name);
 		~ShellLex();
 
 		// <brief>
@@ -91,7 +88,7 @@ namespace collection
 		// </brief>
 		// <parm name="fpath">The path of file</parm>
 		// <return>none</return>
-		int source(std::tstring& fpath);
+		int source(tstring& fpath);
 	};
 }
 }

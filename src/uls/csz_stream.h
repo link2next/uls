@@ -71,7 +71,6 @@ extern "C" {
 #define csz_length(csz) ((csz)->len)
 #define csz_size(csz) ((csz)->pool.siz)
 #define csz_data_ptr(csz) ((csz)->pool.buf)
-#define csz_eos_ptr(csz) (csz_data_ptr(csz) + csz_length(csz))
 
 #endif // ULS_DECL_GLOBAL_TYPES
 

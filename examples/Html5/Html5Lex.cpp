@@ -32,14 +32,14 @@
 */
 
 #include "Html5Lex.h"
-#include <iostream>
-
 #include <uls/UlsUtils.h>
 #include <uls/uls_fileio.h>
+#include <iostream>
 
 using namespace std;
 using namespace uls::crux;
 using namespace uls::collection;
+using tstring = uls::tstring;
 
 StringBuilder::StringBuilder()
 {
@@ -72,7 +72,7 @@ StringBuilder::clear()
 	sync = true;
 }
 
-std::tstring&
+tstring&
 StringBuilder::str()
 {
 	if (sync == false) {

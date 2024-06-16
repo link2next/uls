@@ -61,7 +61,7 @@ const char*
 ULS_QUALIFIED_METHOD(uls_skip_multiline_comment)(uls_ptrtype_tool(parm_line) parm_ln)
 {
 	const char* lptr = parm_ln->lptr, *lptr_end=parm_ln->lptr_end;
-	int  ch, prev_ch, n=0;
+	int  ch, prev_ch, n = 0;
 
 	/*
 	 * ret-val == NULL : NOT FOUND, the end of c-style comment
@@ -75,7 +75,7 @@ ULS_QUALIFIED_METHOD(uls_skip_multiline_comment)(uls_ptrtype_tool(parm_line) par
 
 		if ((ch=*lptr) == '\n') ++n;
 
-		if (prev_ch == '*' && ch=='/') {
+		if (prev_ch == '*' && ch == '/') {
 			++lptr;
 			break;
 		}

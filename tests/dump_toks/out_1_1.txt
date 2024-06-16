@@ -1,4 +1,4 @@
-   1 :  -7  ''
+initial-state:   1 :  -7  ''
    1 :  -2  'AAA'
    1 :  61  '='
    1 :  45  '-'
@@ -29,3 +29,7 @@
 	f_val = 3.141592
    8 :  -1  '8 10 in_1_1.txt'
 	EOF : 'in_1_1.txt'10
+final-state:   1 :   0  ''
+After EOI:   1 :   0  ''
+   1 :  -2  'hello'
+   1 :  -2  'world'

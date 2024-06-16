@@ -119,6 +119,7 @@ void uls_init_quotetype(uls_quotetype_ptr_t qmt);
 void uls_deinit_quotetype(uls_quotetype_ptr_t qmt);
 
 int nothing_lit_analyzer(uls_litstr_ptr_t lit);
+int verbatim00_lit_analyzer(uls_litstr_ptr_t lit);
 
 int dfl_lit_analyzer_escape0(uls_litstr_ptr_t lit);
 int dfl_lit_analyzer_escape1(uls_litstr_ptr_t lit);
@@ -128,7 +129,7 @@ int dfl_lit_analyzer_escape2(uls_litstr_ptr_t lit);
 
 #ifdef ULS_DECL_PUBLIC_PROC
 int canbe_commtype_mark(char* wrd, uls_ptrtype_tool(outparam) parms);
-int canbe_quotetype_mark(const char *ch_ctx, char* wrd, uls_ptrtype_tool(outparam) parms);
+int canbe_quotetype_mark(char* wrd, uls_ptrtype_tool(outparam) parms);
 
 uls_quotetype_ptr_t uls_create_quotetype(void);
 void uls_destroy_quotetype(uls_quotetype_ptr_t qmt);

@@ -4,7 +4,7 @@ lib_LTLIBRARIES = libuls.la
 libuls_la_SOURCES = \
 	uls_prim.c uls_misc.c uls_util.c uls_version.c uls_auw.c uls_fileio.c \
 	utf8_enc.c utf_file.c uls_log.c csz_stream.c fdfilter.c \
-	uls_ieee754.c uls_lf_percent_f.c uls_lf_sprintf.c uls_print.c \
+	uls_lf_percent_f.c uls_lf_sprintf.c uls_print.c \
 	uls_tokdef.c onechar.c twoplus.c idkeyw.c uls_context.c \
 	uls_sysprops.c uls_langs.c uls_freq.c uls_conf.c uld_conf.c \
 	uls_core.c uls_num.c litesc.c litstr.c uls_input.c uls_lex.c \

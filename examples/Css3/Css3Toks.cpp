@@ -37,6 +37,9 @@
 using namespace std;
 using namespace uls::collection;
 
+using tstring = uls::tstring;
+using otstringstream = uls::otstringstream;
+
 namespace
 {
 	tstring config_name = _T("css3.ulc");

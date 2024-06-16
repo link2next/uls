@@ -32,14 +32,14 @@
   </author>
 */
 
-#include "uls.h"
-#include "uls/uls_util.h"
-#include "uls/uls_sysprops.h"
-#include "uls/uls_langs.h"
-#include "uls/uls_conf.h"
-#include "uls/uld_conf.h"
-#include "uls/uls_emit.h"
-#include "uls/uls_dump.h"
+#include <uls.h>
+#include <uls/uls_util.h>
+#include <uls/uls_sysprops.h>
+#include <uls/uls_langs.h>
+#include <uls/uls_conf.h>
+#include <uls/uld_conf.h>
+#include <uls/uls_emit.h>
+#include <uls/uls_dump.h>
 
 #include <string.h>
 #include <ctype.h>

@@ -37,9 +37,10 @@
 
 int
 uls_init_parms_emit_wstr(uls_parms_emit_ptr_t emit_parm,
-	const wchar_t *out_wdpath, const wchar_t *out_wfname, const wchar_t *wfpath_uld,
-	const wchar_t *ulc_wname, const wchar_t *class_wname, const wchar_t *enum_wname,
-	const wchar_t *tok_wpfx, uls_flags_t flags)
+	const wchar_t *out_wdpath, const wchar_t *out_wfname,
+	const wchar_t *wfpath_uld, const wchar_t *ulc_wname,
+	const wchar_t *class_wname, const wchar_t *enum_wname,
+	const wchar_t *tok_wpfx, const wchar_t *ulc_wfilepath, uls_flags_t flags)
 {
 	uls_emit_wshell_ptr_t wext = uls_alloc_object(uls_emit_wshell_t);
 	int i, stat = 0;
@@ -51,6 +52,7 @@ uls_init_parms_emit_wstr(uls_parms_emit_ptr_t emit_parm,
 	wext->wrdlst[4] = class_wname;
 	wext->wrdlst[5] = enum_wname;
 	wext->wrdlst[6] = tok_wpfx;
+	wext->wrdlst[7] = ulc_wfilepath;
 
 	for (i=0; i < N_PARMS_EMIT_WSTR; i++) {
 		if (wext->wrdlst[i] == NULL) {
@@ -58,7 +60,6 @@ uls_init_parms_emit_wstr(uls_parms_emit_ptr_t emit_parm,
 
 		} else {
 			csz_init(wext->csz_wrd_ary + i, -1);
-
 			if ((wext->ustr[i] = uls_wstr2ustr(wext->wrdlst[i], -1, wext->csz_wrd_ary + i)) == NULL) {
 				err_wlog(L"encoding error!");
 				stat = -1;
@@ -78,21 +79,22 @@ uls_init_parms_emit_wstr(uls_parms_emit_ptr_t emit_parm,
 	} else {
 		emit_parm->ext_data = (uls_voidptr_t) wext;
 		uls_init_parms_emit(emit_parm,
-			wext->ustr[0], wext->ustr[1], wext->ustr[2],
-			wext->ustr[3], wext->ustr[4], wext->ustr[5],
-			wext->ustr[6], flags);
+			wext->ustr[0], wext->ustr[1],
+			wext->ustr[2], wext->ustr[3],
+			wext->ustr[4], wext->ustr[5],
+			wext->ustr[6], wext->ustr[7], flags);
 	}
 
 	return stat;
 }
 
-int
+void
 uls_deinit_parms_emit_wstr(uls_parms_emit_ptr_t emit_parm)
 {
 	uls_emit_wshell_ptr_t wext = (uls_emit_wshell_ptr_t) emit_parm->ext_data;
-	int i, stat;
+	int i;
 
-	stat = uls_deinit_parms_emit(emit_parm);
+	uls_deinit_parms_emit(emit_parm);
 
 	for (i=0; i<N_PARMS_EMIT_WSTR; i++) {
 		if (wext->ustr[i] != NULL) {
@@ -101,5 +103,4 @@ uls_deinit_parms_emit_wstr(uls_parms_emit_ptr_t emit_parm)
 	}
 
 	uls_dealloc_object(wext);
-	return stat;
 }

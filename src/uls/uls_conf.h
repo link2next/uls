@@ -134,8 +134,8 @@ ULS_DECL_STATIC uls_tokdef_ptr_t __find_tokdef_by_keyw(uls_lex_ptr_t uls, const 
 ULS_DECL_STATIC uls_tokdef_vx_ptr_t __find_vx_by_tokid(uls_lex_ptr_t uls, int t, int area);
 
 ULS_DECL_STATIC int check_keyw_str(int lno, const char* str, uls_ptrtype_tool(outparam) parms);
-ULS_DECL_STATIC int is_str_contained_in_commtypes(uls_lex_ptr_t uls, const char *str);
-ULS_DECL_STATIC int is_str_contained_in_quotetypes(uls_lex_ptr_t uls, const char *str);
+ULS_DECL_STATIC int is_str_contained_in_commtypes(uls_lex_ptr_t uls, const char *str, int l_str);
+ULS_DECL_STATIC int is_str_contained_in_quotetypes(uls_lex_ptr_t uls, const char *str, int l_str);
 ULS_DECL_STATIC int make_tokdef_for_quotetype(uls_lex_ptr_t uls, uls_quotetype_ptr_t qmt, const char *qmt_name);
 
 ULS_DECL_STATIC char* find_cnst_suffix(char* cstr_pool, const char* str, int l_str, uls_ptrtype_tool(outparam) parms);
@@ -214,8 +214,8 @@ int comp_vx_by_tokid(const uls_voidptr_t a, const uls_voidptr_t b);
 
 int parse_id_ranges(uls_lex_ptr_t uls, int is_first, char *line);
 int uls_cmd_run(uls_lex_ptr_t uls, const char* keyw, char *line, uls_voidptr_t data);
-void load_initial_tokstate(uls_lex_ptr_t uls);
-void reset_context_tokid(uls_lex_ptr_t uls);
+void reset_context_ready(uls_lex_ptr_t uls);
+void reset_xcontext_tokid(uls_lex_ptr_t uls);
 #endif
 
 #ifdef ULS_DECL_PUBLIC_PROC

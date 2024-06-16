@@ -27,7 +27,7 @@
 #pragma once
 
 #include <uls/UlsLex.h>
-#include <string>
+#include <uls/ulscpp_misc.h>
 
 class Sample2 : public uls::crux::UlsLex {
   public:
@@ -69,6 +69,6 @@ class Sample2 : public uls::crux::UlsLex {
 
 	static const int            IDENT = 210;
 
-	Sample2(std::tstring& ulc_fpath)
-		 : uls::crux::UlsLex(ulc_fpath) {}
+	Sample2(uls::tstring filepath = _T("sample2.ulc"))
+		 : uls::crux::UlsLex(filepath) {}
 };

@@ -203,8 +203,6 @@ namespace uls {
 			// <brief>
 			// This Logs a formatted message.
 			// No need to append '\n' to the end of line 'fmt' as log() will automatically append it.
-			// You can use %t %w to print the current token information and its location.
-			// No need argument for %t and %w.
 			// </brief>
 			// <parm name="fmt">format string</parm>
 			// <return>void</return>
@@ -400,6 +398,7 @@ namespace uls {
 			// <return>none</return>
 			bool initUlsLex_ustr(const char *ulc_file);
 
+			UlsLex() = delete;
 			UlsLex(const char *ulc_file);
 			UlsLex(const wchar_t *ulc_wfile);
 
@@ -896,19 +895,15 @@ namespace uls {
 
 			// <brief>
 			// Logs formatted messages
-			// You can use %t %w to print the current token, its location.
-			// No need to append '\n' to the end of line 'fmt'.
 			//
 			// It's capable of printing the keyword string of token and input coordinate,
 			//    as well as the default conversion specifications.
-			//   a) %t: use to print the name of the current token
-			//   b) %k: use to print the keyword string of the current token
-			//   c) %w: use to print the coordinate of the current input file or source.
+			//   a) %w: use to print the coordinate of the current input file or source.
 			//          The 'coordinate' is composed of the tag and line number.
 			//
 			// The 'log' object has already a reference of the lexical object when it's created.
 			// Notice that there's no need to give the argument for the conversion specification
-			//     to process '%t', '%k', and '%w'
+			//     to process '%w'
 			// </brief>
 			// <parm name="fmt">format string</parm>
 			// <return>void</return>

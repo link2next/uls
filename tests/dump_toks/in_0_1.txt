@@ -22,5 +22,10 @@ main()
 	while (DDD <=EEE) {
 		YYY =  .3;
 	}
+	157Lident1
+
+	eurosign -> €
+	snowman1 -> ☃
+	snowman2 -> ☃$
 }
 

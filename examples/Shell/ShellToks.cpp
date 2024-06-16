@@ -38,6 +38,9 @@
 using namespace std;
 using namespace uls::collection;
 
+using tstring = uls::tstring;
+using otstringstream = uls::otstringstream;
+
 namespace
 {
 	LPCTSTR PACKAGE_NAME = _T("ShellToks");

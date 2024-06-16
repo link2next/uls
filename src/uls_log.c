@@ -271,6 +271,11 @@ ULS_QUALIFIED_METHOD(uls_init_log)(uls_log_ptr_t log, uls_lf_map_ptr_t lf_map, u
 void
 ULS_QUALIFIED_METHOD(uls_deinit_log)(uls_log_ptr_t log)
 {
+	if (log->uls == nilptr) {
+		err_log("%s: already called!", __func__);
+		return;
+	}
+
 	uls_lf_destroy(log->lf);
 
 	log->flags &= ULS_FL_STATIC;
@@ -371,7 +376,6 @@ ULS_QUALIFIED_METHOD(uls_vlog)(uls_log_ptr_t log, const char* fmt, va_list args)
 
 // <brief>
 // Logs a formatted message
-// You can use %t %w to print the current token, its location.
 // No need to append '\n' to the end of line 'fmt'
 // </brief>
 // <parm name="fmt">The template for message string</parm>

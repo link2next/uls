@@ -53,7 +53,7 @@ extern "C" {
 
 #if defined(__ULS_NUM__) || defined(ULS_DECL_PRIVATE_PROC)
 ULS_DECL_STATIC uls_uint64 get_uint64_from_radix_numstr(int radix, const char *numbuf, int numlen1);
-ULS_DECL_STATIC int uls_cvt_radix_simple_num(int radix1, const char *numbuf1, int numlen1, int radix2, uls_outbuf_ptr_t outbuf, int k);
+ULS_DECL_STATIC int cvt_radix_simple_num(int radix1, const char *numbuf1, int numlen1, int radix2, uls_outbuf_ptr_t outbuf, int k);
 
 ULS_DECL_STATIC int get_hexanum_from_octal(uls_outparam_ptr_t parms, int a_bits);
 ULS_DECL_STATIC int __skip_radix_numstr(uls_outparam_ptr_t parms, int radix,

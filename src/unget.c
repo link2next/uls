@@ -80,10 +80,8 @@ ULS_QUALIFIED_METHOD(__alloc_lexseg_and_zbuf)(uls_context_ptr_t ctx, uls_lexseg_
 	int k1, siz1, k2;
 
 	k1 = csz_length(uls_ptr(ctx->zbuf1));
-
 	siz1 = ULS_UNGETS_BUFSIZ + len;
 	ctx->line = lptr = _uls_tool(csz_modify)(uls_ptr(ctx->zbuf1), k1, NULL, siz1 + 1);
-
 	ctx->lptr = lptr += ULS_UNGETS_BUFSIZ;
 	ctx->line_end = lptr += len;
 	*lptr = '\0';
@@ -120,7 +118,8 @@ ULS_QUALIFIED_METHOD(__push_and_alloc_line_right)(uls_lex_ptr_t uls, int len,
 
 	old_tag = __uls_get_tag(uls);
 	old_lno = __uls_get_lineno(uls);
-	ctx = uls_push_context(uls, nilptr);
+
+	ctx = uls_push(uls);
 	uls_ctx_set_tag(ctx, old_tag, old_lno);
 
 	inp = ctx->input;
@@ -130,7 +129,6 @@ ULS_QUALIFIED_METHOD(__push_and_alloc_line_right)(uls_lex_ptr_t uls, int len,
 
 	ctx->flags |= ULS_CTX_FL_UNGET_CONTEXT;
 	ctx->flags &= ~ULS_CTX_FL_WANT_EOFTOK;
-
 	ctx->n_lexsegs = ctx->lexsegs.n - 1;
 
 	if (qstr == NULL) {
@@ -142,8 +140,8 @@ ULS_QUALIFIED_METHOD(__push_and_alloc_line_right)(uls_lex_ptr_t uls, int len,
 		ctx->i_lexsegs = ctx->n_lexsegs - 1;
 		lexseg = uls_get_array_slot_type10(uls_ptr(ctx->lexsegs), ctx->i_lexsegs);
 		lexseg->n_lfs_raw = num_lfs;
-		__alloc_lexseg_and_zbuf(ctx, lexseg, len, e_vx, qstr, qlen);
 
+		__alloc_lexseg_and_zbuf(ctx, lexseg, len, e_vx, qstr, qlen);
 		lexseg = uls_get_array_slot_type10(uls_ptr(ctx->lexsegs), ctx->n_lexsegs);
 		uls_reset_lexseg(lexseg, 0, 0, -1, -1, nilptr);
 	}
@@ -181,7 +179,8 @@ ULS_QUALIFIED_METHOD(__uls_unget_str)(uls_lex_ptr_t uls, const char* str, int le
 			} else if (ctx->i_lexsegs > 0) {
 				k1 = (int) (ctx->lptr - csz_data_ptr(uls_ptr(ctx->zbuf1)));
 				len1 = __advance_upto_nonspace(ctx);
-				lexseg = uls_get_array_slot_type10(uls_ptr(ctx->lexsegs), --ctx->i_lexsegs);
+				--ctx->i_lexsegs;
+				lexseg = uls_get_array_slot_type10(uls_ptr(ctx->lexsegs), ctx->i_lexsegs);
 				__alloc_lexseg_and_zbuf(ctx, lexseg, len + len1, nilptr, NULL, -1);
 				lptr1 = csz_data_ptr(uls_ptr(ctx->zbuf1)) + k1;
 			} else {
@@ -226,7 +225,8 @@ ULS_QUALIFIED_METHOD(__uls_unget_quote)(uls_lex_ptr_t uls,
 	if (ctx->flags & ULS_CTX_FL_GETTOK_RAW) {
 		if (ctx->flags & ULS_CTX_FL_UNGET_CONTEXT) {
 			if (ctx->i_lexsegs > 0) {
-				lexseg = uls_get_array_slot_type10(uls_ptr(ctx->lexsegs), --ctx->i_lexsegs);
+				--ctx->i_lexsegs;
+				lexseg = uls_get_array_slot_type10(uls_ptr(ctx->lexsegs), ctx->i_lexsegs);
 				__alloc_lexseg_and_zbuf(ctx, lexseg, 0, e_vx, qstr, qlen);
 				lexseg->n_lfs_raw = lf_delta;
 			} else {

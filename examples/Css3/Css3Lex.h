@@ -35,16 +35,13 @@
 
 #include "Css3LexBasis.h"
 
-#include <string>
-#include <sstream>
-
 namespace uls
 {
 namespace collection
 {
 	class StringBuilder {
-		std::otstringstream m_stream;
-		std::tstring m_sbuff;
+		uls::otstringstream m_stream;
+		uls::tstring m_sbuff;
 
 		TCHAR *mBuff;
 		int siz_mBuff;
@@ -59,12 +56,12 @@ namespace collection
 		void append(LPCTSTR str, int len = -1);
 		void append(TCHAR ch);
 
-		std::tstring& str();
+		uls::tstring& str();
 	};
 
 	class Css3Lex : public uls::collection::Css3LexBasis {
 		StringBuilder tokbuf;
-		std::tstring tok_str;
+		uls::tstring tok_str;
 		int tok_id;
 		bool tok_ungot;
 
@@ -74,7 +71,7 @@ namespace collection
 		void get_token(void);
 
 	public:
-		Css3Lex(std::tstring& config_name);
+		Css3Lex(uls::tstring& config_name);
 
 		// <brief>
 		// These are virtual methods inherited from 'UlsLex' class and
@@ -91,7 +88,7 @@ namespace collection
 		// </brief>
 		// <parm name="fpath">The path of file</parm>
 		// <return>none</return>
-		void setFile(std::tstring fpath);
+		void setFile(uls::tstring fpath);
 	};
 }
 }

@@ -52,8 +52,8 @@ using namespace uls::crux;
 uls::crux::UlsTmplList::UlsTmplList(int size)
 {
 	auwcvt = new UlsAuw();
-	hashtbl = new std::map<string,string>();
-	whashtbl = new std::map<wstring,wstring>();
+	hashtbl = new map<string,string>();
+	whashtbl = new map<wstring,wstring>();
 }
 
 uls::crux::UlsTmplList::~UlsTmplList()
@@ -81,7 +81,7 @@ uls::crux::UlsTmplList::clear(void)
 bool
 uls::crux::UlsTmplList::exist(const string& tnam) const
 {
-	std::map<string,string>::iterator it;
+	map<string,string>::iterator it;
 	bool stat;
 
 	it = hashtbl->find(tnam);
@@ -95,9 +95,9 @@ uls::crux::UlsTmplList::exist(const string& tnam) const
 }
 
 bool
-uls::crux::UlsTmplList::exist(const std::wstring& wtnam)  const
+uls::crux::UlsTmplList::exist(const wstring& wtnam)  const
 {
-	std::map<wstring,wstring>::iterator it;
+	map<wstring,wstring>::iterator it;
 	bool stat;
 
 	it = whashtbl->find(wtnam);
@@ -151,12 +151,12 @@ uls::crux::UlsTmplList::insert(const wchar_t *wtnam, const wchar_t *wtval)
 const char*
 uls::crux::UlsTmplList::getValue(const char*tnam)  const
 {
-	std::map<string,string>::iterator it;
+	map<string,string>::iterator it;
 	const char *tval = NULL;
 
 	it = hashtbl->find(string(tnam));
 	if (it != hashtbl->end()) {
-		std::pair<string,string> pp=*it;
+		pair<string,string> pp=*it;
 		tval = pp.second.c_str();
 	}
 
@@ -183,12 +183,12 @@ uls::crux::UlsTmplList::getValue(const string& tnam, string& tval) const
 const wchar_t*
 uls::crux::UlsTmplList::getValue(const wchar_t *wtnam) const
 {
-	std::map<wstring,wstring>::iterator it;
+	map<wstring,wstring>::iterator it;
 	const wchar_t *wtval = NULL;
 
 	it = whashtbl->find(wstring(wtnam));
 	if (it != whashtbl->end()) {
-		std::pair<wstring,wstring> pp=*it;
+		pair<wstring,wstring> pp=*it;
 		wtval = pp.second.c_str();
 	}
 
@@ -196,7 +196,7 @@ uls::crux::UlsTmplList::getValue(const wchar_t *wtnam) const
 }
 
 bool
-uls::crux::UlsTmplList::getValue(const std::wstring& wtnam, std::wstring& wtval) const
+uls::crux::UlsTmplList::getValue(const wstring& wtnam, wstring& wtval) const
 {
 	const wchar_t *wptr;
 	bool stat;
@@ -246,7 +246,7 @@ uls::crux::UlsTmplList::setValue(const wchar_t *wtnam, const wchar_t *wtval)
 }
 
 bool
-uls::crux::UlsTmplList::setValue(const std::wstring& wtnam, const std::wstring& wtval)
+uls::crux::UlsTmplList::setValue(const wstring& wtnam, const wstring& wtval)
 {
 	return setValue(wtnam.c_str(), wtval.c_str());
 }
@@ -258,11 +258,11 @@ int
 uls::crux::UlsTmplList::exportTmpls(uls_tmpl_list_t *tmpl_list)
 {
 	uls_reset_tmpls(tmpl_list, (int) hashtbl->size());
-	std::map<string,string>::iterator it;
+	map<string,string>::iterator it;
 	int n = 0;
 
 	for (it=hashtbl->begin(); it != hashtbl->end(); ++it) {
-		std::pair<string,string> pp=*it;
+		pair<string,string> pp=*it;
 
 		const char *ustr0, *ustr1;
 		ustr0 = pp.first.c_str();
@@ -282,11 +282,11 @@ uls::crux::UlsTmplList::exportTmpls(uls_tmpl_list_t *tmpl_list)
 int
 uls::crux::UlsTmplList::exportTmpls(UlsTmplList& tmpl_list_exp)
 {
-	std::map<string,string>::iterator it;
+	map<string,string>::iterator it;
 	int n=0;
 
 	for (it=hashtbl->begin(); it != hashtbl->end(); ++it) {
-		std::pair<string,string> pp=*it;
+		pair<string,string> pp=*it;
 		tmpl_list_exp.setValue(pp.first.c_str(), pp.second.c_str());
 		++n;
 	}
@@ -301,10 +301,10 @@ uls::crux::UlsTmplList::exportTmpls(UlsTmplList& tmpl_list_exp)
 void
 uls::crux::UlsTmplList::dump(void)
 {
-	std::map<string,string>::iterator it;
+	map<string,string>::iterator it;
 
 	for (it=hashtbl->begin(); it != hashtbl->end(); ++it) {
-		std::pair<string,string> pp=*it;
+		pair<string,string> pp=*it;
 		cout << pp.first << " :: '" << pp.second << "'" << endl;
 	}
 }

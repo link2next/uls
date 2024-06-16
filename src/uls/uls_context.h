@@ -157,7 +157,7 @@ ULS_DEFINE_STRUCT_BEGIN(xcontext)
 	uls_ref_bytespool(ch_context);
 
 	uls_ref_array_type01(commtypes, commtype); // ULS_N_MAX_COMMTYPES
-	int n2_commtypes;
+	int n_commtypes;
 
 	char *prepended_input;
 	int len_prepended_input, lfs_prepended_input;

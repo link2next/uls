@@ -313,9 +313,9 @@ uls_inc_dir = $(uls_inst_dir)/include
 uls_lib_dir = $(uls_inst_dir)/lib
 ulc2class_exe = $(uls_bin_dir)/ulc2class
 DumpToks_SOURCES = DumpToks.cpp
-DumpToks_CFLAGS = -Wall -std=c++11
-#DumpToks_CPPFLAGS = -I$(uls_inc_dir) -DULS_USE_WSTR
-DumpToks_CPPFLAGS = -I$(uls_inc_dir)
+
+#DumpToks_CPPFLAGS = -Wall -std=c++11 -I$(uls_inc_dir) -DULS_USE_WSTR
+DumpToks_CPPFLAGS = -Wall -std=c++11 -I$(uls_inc_dir)
 DumpToks_LDADD = -L$(uls_lib_dir) -lulscpp -luls
 all: all-am
 

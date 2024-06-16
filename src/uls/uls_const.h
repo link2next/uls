@@ -46,10 +46,8 @@
 #else
 #ifdef ULS_USE_WSTR
 #define _T(a) L##a
-#define TEXT(a) L##a
-#else
+#else // ULS_USE_WSTR
 #define _T(a) a
-#define TEXT(a) a
 #endif
 #endif // ULS_WINDOWS
 
@@ -58,7 +56,7 @@
 #define TMP_LANGS_FNAME      "uls_langs.txt"
 #define ULS_ULCNAME_DELIM    '/'
 
-#define ULS_VERSION_STR      _T("1.9.4")
+#define ULS_VERSION_STR      _T("1.9.5")
 #define ULC2CLASS_PROGVER    _T("v2.7.2")
 #define ULF_GEN_PROGVER      _T("v1.7.0")
 #define ULS_STREAM_PROGVER   _T("v2.8.0")
@@ -140,7 +138,7 @@
 #define ULS_LEN_SURPLUS MAX(ULS_COMM_MARK_MAXSIZ,ULS_QUOTE_MARK_MAXSIZ)
 
 #define N_ULC_SEARCH_PATHS         8
-#define ULS_MAGICCODE_SIZE         80
+#define ULS_MAGICCODE_BUFSIZ       80
 
 #define ULS_LINEBUFF_SIZ           255
 #define ULS_FILEPATH_MAX           1023
@@ -156,11 +154,9 @@
 
 #define ULS_LEXSEGS_MAX            63
 
-#define ULS_FDBUF_INITSIZE         1024
-#define ULS_FDBUF_INITSIZE_STREAM ((ULS_FDBUF_INITSIZE)<<1)
-
-#define ULS_FDZBUF_INITSIZE        (3*ULS_FDBUF_SIZE/2)
-#define ULS_FDBUF_SIZE             1024
+#define ULS_INPUT_BUFSIZ           4096
+#define ULS_ZBUF1_INITSIZE         4096
+#define ULS_ZBUF1_ROUGHSIZE        (ULS_ZBUF1_INITSIZE<<1)
 
 #define ULS_N_ONECHAR_TOKGRPS      4
 
@@ -190,6 +186,7 @@
 #define ULS_TWOPLUS_WMAXLEN        ULS_KWTABLE_TWOPLUS_SIZE
 
 #define ULS_CNST_NILSTR_SIZE       4
+#define ULS_ASCII_TABLE_SIZE       128
 #define ULS_SYNTAX_TABLE_SIZE      128
 #define ULS_TOKTOWER_DFLSIZ        16
 #define ULF_HASH_TABLE_SIZE        37
@@ -246,12 +243,12 @@
 #define ULS_UTF16_CODEPOINT_RSVD_END    0xDFFF
 #define ULS_UTF32_CODEPOINT_END         ULS_UTF8_CODEPOINT_END
 
-#define DOUBLE_EXPO_SIZE_BITS  11
+#define DOUBLE_EXPOSIZE_BITS  11
 #define DOUBLE_EXPO_BIAS      1023
 
 #define DOUBLE_SIZE_BYTES  SIZEOF_DOUBLE
-#define DOUBLE_SIZE_BITS   (DOUBLE_SIZE_BYTES*8)
-#define DOUBLE_MENTISA_STARTBIT  (1+DOUBLE_EXPO_SIZE_BITS)
+#define DOUBLE_SIZE_BITS   (DOUBLE_SIZE_BYTES<<3)
+#define DOUBLE_MENTISA_STARTBIT  (1+DOUBLE_EXPOSIZE_BITS)
 
 #define ULS_DECIMAL_SEPARATOR_DFL  0x01
 #define ULS_MAXLEN_NUMBER_PREFIX  7

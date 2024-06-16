@@ -34,7 +34,6 @@
 #ifndef ULS_EXCLUDE_HFILES
 #define __ULS_LF_PERCENT_F__
 #include "uls/uls_lf_percent_f.h"
-#include "uls/ieee754.h"
 #include <math.h>
 #endif
 
@@ -296,6 +295,7 @@ ULS_QUALIFIED_METHOD(uls_lf_longdouble2digits)(long double x, int n_precision, c
 	long double frac2;
 	int  n_expo;
 	int  a, j, n, n_first_zeros;
+	char *numbuf;
 
 	if (n_precision < 0) n_precision = ULS_FLOAT_DFLPREC;
 
@@ -361,6 +361,15 @@ ULS_QUALIFIED_METHOD(uls_lf_longdouble2digits)(long double x, int n_precision, c
 			csz_putc(numstr, '0' + (int) round_uup(x_int));
 		}
 	}
+
+	numbuf = (char *) csz_text(numstr);
+	for (j = csz_length(numstr) - 1; j >= 0; j--) {
+		if (numbuf[j] != '0') {
+			break;
+		}
+	}
+	++j;
+	csz_truncate(numstr, j);
 
 	return n_expo;
 }

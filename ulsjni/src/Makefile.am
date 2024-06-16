@@ -33,10 +33,9 @@ $(LIBPROG): $(OBJS2)
 # java --> jni-header
 define rule_java2hfile
 $(ULSJNI_INCDIR)/$1: $2
-	@if which javah > /dev/null; then \
+	@javac -h $(ULSJNI_INCDIR) $2; \
+	if [ \$? != 0 ]; then \
 		javah -o $(ULSJNI_INCDIR)/$1 $3; \
-	else \
-		javac -h $(ULSJNI_INCDIR) $2; \
 	fi
 endef
 $(foreach T,$(JNI_HFILES_DOTS),$(eval $(call rule_java2hfile,$(subst .,_,$(T)).h,$(subst .,/,$(T)).java,$(T))))
@@ -53,4 +52,5 @@ install: $(LIBPROG)
 
 clean-local:
 	@find $(ULSJNI_BINDIR) -name '*.class' -exec rm {} \;
+	@find . -name '*.class' -exec rm {} \;
 	rm -f $(LIBPROG)

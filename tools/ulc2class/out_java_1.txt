@@ -84,7 +84,11 @@ public class Sample1 extends uls.polaris.UlsLex {
 	public final int         VOLATILE = 193;
 	public final int            WHILE = 194;
 
-	public Sample1(String ulc_file) {
-		super(ulc_file);
+	public Sample1() {
+		super("sample1.ulc");
+	}
+
+	public Sample1(String filepath) {
+		super(filepath);
 	}
 }

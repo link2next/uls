@@ -223,6 +223,9 @@ int uls_lf_fill_ch(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, char ch_fill, i
 int uls_lf_fill_numstr(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc,
 	uls_lf_convflag_ptr_t p, const char* numstr, int l_numstr);
 
+int uls_ieee754_double_isspecial(double x, char* nambuf);
+int uls_ieee754_longdouble_isspecial(long double x, char* nambuf);
+
 int fmtproc_s(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx);
 int fmtproc_c(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx);
 void __add_convspec_linear(uls_lf_convspec_table_ptr_t tbl,

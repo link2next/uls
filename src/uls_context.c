@@ -173,7 +173,6 @@ ULS_QUALIFIED_METHOD(__xcontext_txtfd_filler)(uls_xcontext_ptr_t xctx, uls_ptrty
 	const char *txtptr;
 	uls_type_tool(outparam) parms2;
 
-	//         inp->rawbuf_bytes < inp->rawbuf_siz
 	uls_regulate_rawbuf(inp);
 
 again_1:
@@ -401,7 +400,7 @@ ULS_QUALIFIED_METHOD(is_commtype_start)(uls_xcontext_ptr_t xctx, const char *ptr
 	const char *str;
 	int i;
 
-	for (i=0; i<xctx->n2_commtypes; i++) {
+	for (i=0; i<xctx->n_commtypes; i++) {
 		cmt = uls_get_array_slot_type01(xctx->commtypes, i);
 
 		if (len < cmt->len_start_mark) continue;
@@ -509,8 +508,8 @@ ULS_QUALIFIED_METHOD(uls_init_context)(uls_context_ptr_t ctx, uls_gettok_t getto
 	uls_init_bytespool(ctx->cnst_nilstr, ULS_CNST_NILSTR_SIZE, 0);
 	ctx->input = inp = uls_create_input();
 
-	_uls_tool(csz_init)(uls_ptr(ctx->zbuf1), ULS_FDZBUF_INITSIZE);
-	_uls_tool(csz_init)(uls_ptr(ctx->zbuf2), ULS_FDZBUF_INITSIZE);
+	_uls_tool(csz_init)(uls_ptr(ctx->zbuf1), ULS_ZBUF1_INITSIZE);
+	_uls_tool(csz_init)(uls_ptr(ctx->zbuf2), ULS_ZBUF1_INITSIZE);
 
 	ctx->lptr = ctx->line = ctx->cnst_nilstr;
 	ctx->line_end = ctx->line;
@@ -618,7 +617,7 @@ ULS_QUALIFIED_METHOD(uls_xcontext_deinit)(uls_xcontext_ptr_t xctx)
 	uls_xcontext_reset(xctx);
 
 	xctx->commtypes = nilptr;
-	xctx->n2_commtypes = 0;
+	xctx->n_commtypes = 0;
 
 	uls_mfree(xctx->prepended_input);
 	xctx->len_prepended_input = xctx->lfs_prepended_input = 0;
@@ -680,7 +679,6 @@ ULS_QUALIFIED_METHOD(xcontext_raw_filler)(uls_xcontext_ptr_t xctx)
 	uls_type_tool(outparam) parms1;
 
 	offset1 = 0;
-
 	lptr1 = lptr = inp->rawbuf_ptr;
 	lptr_end = lptr + inp->rawbuf_bytes;
 
@@ -716,7 +714,7 @@ ULS_QUALIFIED_METHOD(xcontext_raw_filler)(uls_xcontext_ptr_t xctx)
 
 		if (ch_grp == 0) {
 			if ((rc = (int) (lptr-lptr1)) > 0) _uls_tool(csz_append)(ss_dst1, lptr1, rc);
-			if (csz_length(ss_dst1) >= ULS_FDBUF_SIZE) break;
+			if (csz_length(ss_dst1) >= ULS_ZBUF1_ROUGHSIZE) break;
 
 			inp->rawbuf_ptr = lptr;
 			inp->rawbuf_bytes = (int) (lptr_end - lptr);
@@ -825,8 +823,8 @@ int
 ULS_QUALIFIED_METHOD(xcontext_binfd_filler)(uls_xcontext_ptr_t xctx)
 {
 	uls_context_ptr_t ctx = xctx->context;
-	int rc;
 	uls_type_tool(parm_line) parm_ln1;
+	int rc;
 
 	do {
 		if ((rc = __xcontext_binfd_filler(xctx)) <= 0) {

@@ -592,12 +592,6 @@ uls_tokstr_len_wstr(uls_lex_ptr_t uls)
 	return wuls->wtokbuf2_len;
 }
 
-int
-uls_lexeme_chars_wstr(uls_lex_ptr_t uls)
-{
-	return uls_lexeme_len_wstr(uls);
-}
-
 wchar_t
 uls_peek_wch(uls_lex_ptr_t uls, uls_nextch_detail_ptr_t parms)
 {

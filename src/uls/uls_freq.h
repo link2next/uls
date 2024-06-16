@@ -48,8 +48,8 @@ extern "C" {
 _ULS_DEFINE_STRUCT(ulf_header)
 {
 	uls_type_tool(version) filever;
-	uls_def_intarray(weights);
 	uls_def_namebuf(hash_algorithm, ULS_LEXSTR_MAXSIZ);
+	uls_def_intarray(weights);
 };
 #endif
 
@@ -59,6 +59,7 @@ ULS_DECL_STATIC int ulf_read_header(FILE* fin, ulf_header_ptr_t hdr);
 ULS_DECL_STATIC uls_keyw_stat_list_ptr_t make_keyw_stat_for_load(
 	uls_tokdef_ptr_t tok_info_lst, int n_tok_info_lst, ulf_header_ptr_t hdr);
 ULS_DECL_STATIC void normalize_keyw_stat_list(uls_keyw_stat_list_ptr_t kwslst);
+ULS_DECL_STATIC void ulf_create_file_header(uls_hash_stat_ptr_t hs, FILE* fout);
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC
@@ -67,7 +68,6 @@ void ulf_deinit_header(ulf_header_ptr_t hdr);
 uls_keyw_stat_list_ptr_t ulf_load(uls_tokdef_ptr_t tok_info_lst, int n_tok_info_lst,
 	FILE *fin, ulf_header_ptr_t hdr);
 int keyw_stat_comp_by_freq(const uls_voidptr_t a, const uls_voidptr_t b);
-void ulf_create_file_header(uls_hash_stat_ptr_t hs, FILE* fout);
 #endif
 
 #ifdef ULS_DECL_PUBLIC_PROC

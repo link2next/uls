@@ -46,7 +46,7 @@ ULS_QUALIFIED_METHOD(__init_system_info)(uls_sysinfo_ptr_t sysinfo, int poolsiz)
 	sysinfo->LDBL_IEEE754_FMT = uls_check_longdouble_fmt(sysinfo->ULS_BYTE_ORDER);
 	if (sysinfo->LDBL_IEEE754_FMT == ULS_IEEE754_BINARY64) {
 		sysinfo->LDOUBLE_SIZE_BYTES = DOUBLE_SIZE_BYTES;
-		sysinfo->LDOUBLE_EXPOSIZE_BITS = DOUBLE_EXPO_SIZE_BITS;
+		sysinfo->LDOUBLE_EXPOSIZE_BITS = DOUBLE_EXPOSIZE_BITS;
 		sysinfo->LDOUBLE_EXPO_BIAS = DOUBLE_EXPO_BIAS;
 	} else if (sysinfo->LDBL_IEEE754_FMT == ULS_IEEE754_BINARY80) {
 		sysinfo->LDOUBLE_SIZE_BYTES = 10;

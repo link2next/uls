@@ -63,7 +63,11 @@ public class Sample2 extends uls.polaris.UlsLex {
 
 	public final int            IDENT = 210;
 
-	public Sample2(String ulc_file) {
-		super(ulc_file);
+	public Sample2() {
+		super("sample2.ulc");
+	}
+
+	public Sample2(String filepath) {
+		super(filepath);
 	}
 }

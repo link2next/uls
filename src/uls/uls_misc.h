@@ -119,7 +119,7 @@ FILE* uls_get_spec_fp(const char* dirpath_list, const char* fpath, uls_ptrtype_t
 #ifndef ULS_DOTNET
 ULS_DLL_EXTERN void uls_quick_sort(uls_native_vptr_t ary, int n_ary, int elmt_size, uls_sort_cmpfunc_t cmpfunc);
 ULS_DLL_EXTERN uls_voidptr_t uls_bi_search(const uls_voidptr_t keyw, uls_native_vptr_t ary, int n_ary, int elmt_size, uls_bi_comp_t cmpfunc);
-#if defined(ULS_WINDOWS)
+#ifdef ULS_WINDOWS
 ULS_DLL_EXTERN char* uls_win32_lookup_regval(wchar_t* reg_dir, uls_outparam_ptr_t parms);
 #endif
 #endif

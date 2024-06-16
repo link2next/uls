@@ -68,7 +68,7 @@ extern "C" {
 #define ULS_ESCMAP_MODERN_U4          0x0400
 #define ULS_ESCMAP_MODERN_U8          0x0800
 
-#define ULS_ESCMAP_SYSTEM             0x1000
+#define ULS_ESCMAP_VERBOSE00          0x1000
 
 #define ULS_ESCMAP_MODE__LEGACY            0x00010000
 #define ULS_ESCMAP_MODE__VERBATIM          0x00020000
@@ -125,6 +125,7 @@ ULS_DEFINE_STRUCT_BEGIN(litesc_sysinfo)
 
 	uls_escmap_t uls_escstr__legacy;
 	uls_escmap_t uls_escstr__legacy_full;
+	uls_escmap_t uls_escstr__verbatim_raw;
 	uls_escmap_t uls_escstr__verbatim;
 	uls_escmap_t uls_escstr__verbatim_moderate;
 	uls_escmap_t uls_escstr__modern;
@@ -154,7 +155,6 @@ void uls_deinit_escstr(uls_escstr_ptr_t escstr);
 void uls_dealloc_escstr(uls_escstr_ptr_t escstr);
 
 void uls_init_escmap(uls_escmap_ptr_t map);
-void __uls_deinit_escmap(uls_escmap_ptr_t map);
 void uls_deinit_escmap(uls_escmap_ptr_t map);
 uls_escmap_ptr_t uls_alloc_escmap();
 void uls_dealloc_escmap(uls_escmap_ptr_t map);

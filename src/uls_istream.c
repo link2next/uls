@@ -47,7 +47,7 @@ ULS_QUALIFIED_METHOD(__init_istream)(uls_istream_ptr_t istr)
 	istr->fd = -1;
 	istr->start_off = -1;
 
-	istr->firstline = (char *) _uls_tool_(malloc)(ULS_MAGICCODE_SIZE + 1);
+	istr->firstline = (char *) _uls_tool_(malloc)(ULS_MAGICCODE_BUFSIZ + 1);
 	_uls_tool_(init_tempfile)(uls_ptr(istr->uld_file));
 }
 
@@ -69,7 +69,7 @@ ULS_QUALIFIED_METHOD(__create_istream)(int fd)
 	return istr;
 }
 
-ULS_DECL_STATIC void
+void
 ULS_QUALIFIED_METHOD(__destroy_istream)(uls_istream_ptr_t istr)
 {
 	istr->ref_cnt = 0;
@@ -166,7 +166,7 @@ ULS_QUALIFIED_METHOD(uls_check_stream_ver)(uls_stream_header_ptr_t hdr, uls_lex_
 }
 
 int
-ULS_QUALIFIED_METHOD(get_rawfile_subtype)(char *buff, int n_bytes, uls_ptrtype_tool(outparam) parms)
+ULS_QUALIFIED_METHOD(get_rawfile_subtype)(const char *buff, int n_bytes, uls_ptrtype_tool(outparam) parms)
 {
 	int mode = -1, byte_order = -1, reverse = 0, fpos = 0;
 
@@ -412,7 +412,7 @@ ULS_QUALIFIED_METHOD(uls_gettok_bin)(uls_lex_ptr_t uls)
 	tok_id = hdrbuf[0];
 	txtlen = hdrbuf[1];
 
-	pckptr += 2*sizeof(uls_uint32);
+	pckptr += 2 * sizeof(uls_uint32);
 	lptr = *((char **) pckptr);
 
 	if (tok_id == uls->xcontext.toknum_LINENUM) {
@@ -552,7 +552,7 @@ ULS_QUALIFIED_METHOD(parse_uls_hdr)(char* line, int fd_in, uls_istream_ptr_t ist
 		remap_buff[remap_size] = '\0';
 
 		if ((fp_out = _uls_tool_(fopen_tempfile)(uls_ptr(istr->uld_file))) == NULL) {
-			_uls_log(err_log)("Error to reading istream");
+			_uls_log(err_log)("Error to reading input!");
 			uls_mfree(remap_buff);
 			return -1;
 		}
@@ -617,13 +617,13 @@ ULS_QUALIFIED_METHOD(uls_open_istream)(int fd)
 	}
 
 	linebuff[magic_code_len] = '\0';
-
 	if ((len=uls_fd_read(fd, linebuff, magic_code_len)) < 0) { // fd may be negative
-		_uls_log(err_log)("I/O Error: readline");
+		_uls_log(err_log)("I/O Error: read()");
 		__destroy_istream(istr);
 		return nilptr;
+	}
 
-	} else if (len < magic_code_len || !uls_streql(linebuff, magic_code)) { // including EOF(len==0)
+	if (len < magic_code_len || !uls_streql(linebuff, magic_code)) { // including EOF(len==0)
 		_uls_tool_(memcopy)(istr->firstline, linebuff, len);
 		istr->firstline[len] = '\0';
 		istr->len_firstline = len;
@@ -714,7 +714,7 @@ ULS_QUALIFIED_METHOD(uls_open_istream_file)(const char* fpath)
 		return nilptr;
 	}
 
-	istr->flags |= ULS_STREAM_FDCLOSE | ULS_STREAM_REWINDABLE;
+	istr->flags |= ULS_STREAM_FDCLOSE;
 	uls_set_namebuf_value(istr->filepath, fpath);
 
 	return istr;
@@ -737,8 +737,6 @@ ULS_QUALIFIED_METHOD(uls_open_istream_fp)(FILE *fp)
 		_uls_log(err_log)("%s: can't conjecture the type of file!", __func__);
 		return nilptr;
 	}
-
-	istr->flags |= ULS_STREAM_REWINDABLE;
 
 	return istr;
 }
@@ -776,7 +774,7 @@ ULS_QUALIFIED_METHOD(uls_open_istream_filter_file)(fdf_t* fdf, const char* fpath
 		return nilptr;
 	}
 
-	istr->flags |= ULS_STREAM_FDCLOSE | ULS_STREAM_REWINDABLE;
+	istr->flags |= ULS_STREAM_FDCLOSE;
 	uls_set_namebuf_value(istr->filepath, fpath);
 
 	return istr;
@@ -800,29 +798,12 @@ ULS_QUALIFIED_METHOD(uls_open_istream_filter_fp)(fdf_t* fdf, FILE *fp)
 		return nilptr;
 	}
 
-	istr->flags |= ULS_STREAM_REWINDABLE;
 	return istr;
 }
 
 #endif
 
 int
-ULS_QUALIFIED_METHOD(uls_rewind_istream)(uls_istream_ptr_t istr)
-{
-	int fpos = istr->start_off;
-
-	if ((istr->flags & ULS_STREAM_REWINDABLE) == 0) {
-		return -1;
-	}
-
-	if (uls_fd_seek(istr->fd, fpos, SEEK_SET) != fpos) {
-		return -1;
-	}
-
-	return 0;
-}
-
-void
 ULS_QUALIFIED_METHOD(uls_destroy_istream)(uls_istream_ptr_t istr)
 {
 	if (istr == nilptr || istr->ref_cnt <= 0) {
@@ -830,10 +811,10 @@ ULS_QUALIFIED_METHOD(uls_destroy_istream)(uls_istream_ptr_t istr)
 		if (istr != nilptr) {
 			_uls_log(err_log)("%s: ref_cnt(istr)=%d", __func__, istr->ref_cnt);
 		}
-		return;
+		return -1;
 	}
 
-	if (--istr->ref_cnt > 0) return;
+	if (--istr->ref_cnt > 0) return istr->ref_cnt;
 
 	if (istr->uls != nilptr) {
 		uls_ungrab(istr->uls);
@@ -855,6 +836,7 @@ ULS_QUALIFIED_METHOD(uls_destroy_istream)(uls_istream_ptr_t istr)
 #endif
 
 	__destroy_istream(istr);
+	return 0;
 }
 
 int
@@ -898,23 +880,6 @@ ULS_QUALIFIED_METHOD(uls_read_tok)(uls_istream_ptr_t istr, uls_ptrtype_tool(outp
 	}
 
 	return __uls_lexeme_len(uls);
-}
-
-int
-ULS_QUALIFIED_METHOD(_uls_get_raw_input_subtype)(FILE* fp)
-{
-	char linebuff[8];
-	int rc, subtype;
-	uls_type_tool(outparam) parms;
-
-	rc = (int) fread(linebuff, sizeof(char), sizeof(linebuff)-1, fp);
-	linebuff[rc] = '\0';
-
-	get_rawfile_subtype(linebuff, rc, uls_ptr(parms));
-	subtype = parms.n1;
-	rewind(fp);
-
-	return subtype;
 }
 
 int

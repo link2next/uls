@@ -160,38 +160,6 @@ ULS_QUALIFIED_METHOD(__init_kwtable_buckets)(uls_kwtable_ptr_t tbl)
 	uls_init_hash_stat(uls_ptr(tbl->hash_stat));
 }
 
-ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__export_kwtable)(uls_kwtable_ptr_t tbl, uls_ref_parray(lst, keyw_stat), int n_lst)
-{
-	uls_decl_parray_slots_init(slots_bh, tokdef, uls_ptr(tbl->bucket_head));
-	uls_decl_parray_slots_init(slots_lst, keyw_stat, lst);
-	uls_tokdef_ptr_t e;
-	uls_keyw_stat_ptr_t kwstat;
-	int i, k=0;
-
-	if (n_lst == 0) return 0;
-
-	for (i=0; i<tbl->bucket_head.n; i++) {
-		if (slots_bh[i] == nilptr) continue;
-
-		for (e=slots_bh[i]; e!=nilptr; e=e->link) {
-			if (k >= n_lst) return -n_lst;
-
-			kwstat = slots_lst[k] = uls_alloc_object(uls_keyw_stat_t);
-			kwstat->keyw = uls_get_namebuf_value(e->keyword);
-			kwstat->freq = 0; // initializing frequency to 0
-			kwstat->keyw_info = e;
-
-			++k;
-		}
-	}
-
-	lst->n = k;
-	_uls_quicksort_vptr(slots_lst, k, keyw_stat_comp_by_keyw);
-
-	return k;
-}
-
 void
 ULS_QUALIFIED_METHOD(uls_init_kwtable)(uls_kwtable_ptr_t tbl)
 {
@@ -288,7 +256,7 @@ ULS_QUALIFIED_METHOD(is_keyword_idstr)(uls_kwtable_ptr_t tbl, const char* keyw, 
 	uls_type_tool(outparam) parms;
 
 	parms.lptr = keyw;
-	parms.len =  l_keyw;
+	parms.len = l_keyw;
 
 	return uls_find_kw(tbl, uls_ptr(parms));
 }
@@ -300,6 +268,38 @@ ULS_QUALIFIED_METHOD(keyw_stat_comp_by_keyw)(const uls_voidptr_t a, const uls_vo
 	uls_keyw_stat_ptr_t b1 = (uls_keyw_stat_ptr_t ) b;
 
 	return _uls_tool_(strcmp)(a1->keyw, b1->keyw);
+}
+
+ULS_DECL_STATIC int
+ULS_QUALIFIED_METHOD(__export_kwtable)(uls_kwtable_ptr_t tbl, uls_ref_parray(lst, keyw_stat), int n_lst)
+{
+	uls_decl_parray_slots_init(slots_bh, tokdef, uls_ptr(tbl->bucket_head));
+	uls_decl_parray_slots_init(slots_lst, keyw_stat, lst);
+	uls_tokdef_ptr_t e;
+	uls_keyw_stat_ptr_t kwstat;
+	int i, k=0;
+
+	if (n_lst == 0) return 0;
+
+	for (i=0; i<tbl->bucket_head.n; i++) {
+		if (slots_bh[i] == nilptr) continue;
+
+		for (e = slots_bh[i]; e != nilptr; e = e->link) {
+			if (k >= n_lst) return -n_lst;
+
+			kwstat = slots_lst[k] = uls_alloc_object(uls_keyw_stat_t);
+			kwstat->keyw = uls_get_namebuf_value(e->keyword);
+			kwstat->freq = 0; // initializing frequency to 0
+			kwstat->keyw_info = e;
+
+			++k;
+		}
+	}
+
+	lst->n = k;
+	_uls_quicksort_vptr(slots_lst, k, keyw_stat_comp_by_keyw);
+
+	return k;
 }
 
 ULS_QUALIFIED_RETTYP(uls_keyw_stat_list_ptr_t)

@@ -35,9 +35,7 @@
 #pragma once
 
 #include "uls/UlsStream.h"
-
 #include <string>
-
 #include <uls/uls_ostream.h>
 
 namespace uls {

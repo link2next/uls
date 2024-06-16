@@ -33,11 +33,11 @@
 
 #include "EngLex.h"
 #include <uls/UlsUtils.h>
-#include <iostream>
 
 using namespace std;
 using namespace uls::crux;
 using namespace uls::collection;
+using tstring = uls::tstring;
 
 StringBuilder::StringBuilder()
 {
@@ -70,7 +70,7 @@ StringBuilder::clear()
 	sync = true;
 }
 
-std::tstring&
+tstring&
 StringBuilder::str()
 {
 	if (sync == false) {

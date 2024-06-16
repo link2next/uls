@@ -41,12 +41,22 @@ ULS_QUALIFIED_METHOD(ulf_read_config_var)(int lno, char* lptr, ulf_header_ptr_t 
 	uls_type_tool(outparam) parms;
 	uls_type_tool(wrd) wrdx;
 	const char  *wrd;
-	int i, stat = 0;
+	int i, len, stat = 0;
 
 	wrdx.lptr = lptr;
 	wrd = __uls_tool_(splitstr)(uls_ptr(wrdx));
 
-	if (uls_streql(wrd, "INITIAL_HASHCODE:")) {
+	if (uls_streql(wrd, "HASH_ALGORITHM:")) {
+		wrd = __uls_tool_(splitstr)(uls_ptr(wrdx));
+
+		len = _uls_tool_(str_toupper)(wrd, (char *) wrd, -1);
+		if (len > ULS_LEXSTR_MAXSIZ || !uls_streql(wrd, ULS_HASH_ALGORITHM)) {
+			stat = -1;
+		} else {
+			uls_set_namebuf_value(hdr->hash_algorithm, wrd);
+		}
+
+	} else if (uls_streql(wrd, "INITIAL_HASHCODE:")) {
 		for (i = 0; i < 3; i++) {
 			wrd = __uls_tool_(splitstr)(uls_ptr(wrdx));
 			if (*wrd == '\0') {
@@ -62,7 +72,6 @@ ULS_QUALIFIED_METHOD(ulf_read_config_var)(int lno, char* lptr, ulf_header_ptr_t 
 
 	} else if (uls_streql(wrd, "HASH_VERSION:")) {
 	} else if (uls_streql(wrd, "HASH_TABLE_SIZE:")) {
-	} else if (uls_streql(wrd, "HASH_ALGORITHM:")) {
 	} else {
 		_uls_log(err_log)("%s: unknown attribute in ULF", wrd);
 		stat = -1;
@@ -304,7 +313,7 @@ ULS_QUALIFIED_METHOD(keyw_stat_comp_by_freq)(const uls_voidptr_t a, const uls_vo
 	return a1->freq - b1->freq;
 }
 
-void
+ULS_DECL_STATIC void
 ULS_QUALIFIED_METHOD(ulf_create_file_header)(uls_hash_stat_ptr_t hs, FILE* fout)
 {
 	uls_ref_intarray(weights, hs->weight);

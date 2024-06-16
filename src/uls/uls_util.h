@@ -46,49 +46,16 @@
 extern "C" {
 #endif
 
-#ifdef ULS_WINDOWS
-
-#ifdef ULS_USE_WSTR
-#ifndef  tstring
-#define tstring wstring
-#endif
-#ifndef  otstringstream
-#define otstringstream wostringstream
-#endif
-#define _tcout wcout
-#define _tcerr wcerr
-#define _tendl L"\n"
-
-#ifndef _tmain
-#define _tmain wmain
-#endif
-
-#else // ULS_USE_WSTR
-#ifndef  tstring
-#define tstring string
-#endif
-#ifndef  otstringstream
-#define otstringstream ostringstream
-#endif
-#define _tcout cout
-#define _tcerr cerr
-#define _tendl "\n"
-
-#ifndef _tmain
-#define _tmain main
-#endif
-
-#endif // ULS_USE_WSTR
-#else // ULS_WINDOWS
-
+#ifndef ULS_WINDOWS
 #ifdef ULS_USE_WSTR
 typedef wchar_t TCHAR;
-#define tstring wstring
-#define otstringstream wostringstream
-#define _tcout wcout
-#define _tcerr wcerr
-#define _tendl L"\n"
+#else // ULS_USE_WSTR
+typedef char TCHAR;
+#endif
+typedef TCHAR *LPTSTR;
+typedef const TCHAR *LPCTSTR;
 
+#ifdef ULS_USE_WSTR
 #define uls_get_csz_tstr(csz) uls_get_csz_wstr(csz)
 #define ULS_GET_WARGS_LIST(argc,argv,targv) do { \
 	(targv) = ulscompat_get_warg_list(argv,argc); \
@@ -101,14 +68,6 @@ typedef wchar_t TCHAR;
 #define ULSCPP_PUT_WARGS_LIST(n_wargv,wargv) uls::putWargList(wargv,n_wargv)
 
 #else // ULS_USE_WSTR
-
-typedef char TCHAR;
-#define tstring string
-#define otstringstream ostringstream
-#define _tcout cout
-#define _tcerr cerr
-#define _tendl "\n"
-
 #define uls_get_csz_tstr(csz) csz_text(csz)
 #define ULS_GET_WARGS_LIST(argc,argv,targv) do { \
 	(targv) = (argv); \
@@ -119,11 +78,8 @@ typedef char TCHAR;
 	(targv) = (argv); \
 	} while (0)
 #define ULSCPP_PUT_WARGS_LIST(n_wargv,wargv)
-
 #endif // ULS_USE_WSTR
 
-typedef TCHAR *LPTSTR;
-typedef const TCHAR *LPCTSTR;
 #endif // ULS_WINDOWS
 
 #ifdef ULS_DECL_PUBLIC_TYPE

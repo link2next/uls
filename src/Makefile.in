@@ -138,10 +138,10 @@ am_libuls_la_OBJECTS = libuls_la-uls_prim.lo libuls_la-uls_misc.lo \
 	libuls_la-uls_auw.lo libuls_la-uls_fileio.lo \
 	libuls_la-utf8_enc.lo libuls_la-utf_file.lo \
 	libuls_la-uls_log.lo libuls_la-csz_stream.lo \
-	libuls_la-fdfilter.lo libuls_la-uls_ieee754.lo \
-	libuls_la-uls_lf_percent_f.lo libuls_la-uls_lf_sprintf.lo \
-	libuls_la-uls_print.lo libuls_la-uls_tokdef.lo \
-	libuls_la-onechar.lo libuls_la-twoplus.lo libuls_la-idkeyw.lo \
+	libuls_la-fdfilter.lo libuls_la-uls_lf_percent_f.lo \
+	libuls_la-uls_lf_sprintf.lo libuls_la-uls_print.lo \
+	libuls_la-uls_tokdef.lo libuls_la-onechar.lo \
+	libuls_la-twoplus.lo libuls_la-idkeyw.lo \
 	libuls_la-uls_context.lo libuls_la-uls_sysprops.lo \
 	libuls_la-uls_langs.lo libuls_la-uls_freq.lo \
 	libuls_la-uls_conf.lo libuls_la-uld_conf.lo \
@@ -190,7 +190,6 @@ am__depfiles_remade = ./$(DEPDIR)/libuls_la-csz_stream.Plo \
 	./$(DEPDIR)/libuls_la-uls_emit.Plo \
 	./$(DEPDIR)/libuls_la-uls_fileio.Plo \
 	./$(DEPDIR)/libuls_la-uls_freq.Plo \
-	./$(DEPDIR)/libuls_la-uls_ieee754.Plo \
 	./$(DEPDIR)/libuls_la-uls_init.Plo \
 	./$(DEPDIR)/libuls_la-uls_input.Plo \
 	./$(DEPDIR)/libuls_la-uls_istream.Plo \
@@ -394,7 +393,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 uls_ver_major = 1
 uls_ver_minor = 9
-uls_ver_debug = 4
+uls_ver_debug = 5
 uls_ver = $(uls_ver_major).$(uls_ver_minor).$(uls_ver_debug)
 so_current = 1
 so_revision = 1
@@ -407,7 +406,7 @@ lib_LTLIBRARIES = libuls.la
 libuls_la_SOURCES = \
 	uls_prim.c uls_misc.c uls_util.c uls_version.c uls_auw.c uls_fileio.c \
 	utf8_enc.c utf_file.c uls_log.c csz_stream.c fdfilter.c \
-	uls_ieee754.c uls_lf_percent_f.c uls_lf_sprintf.c uls_print.c \
+	uls_lf_percent_f.c uls_lf_sprintf.c uls_print.c \
 	uls_tokdef.c onechar.c twoplus.c idkeyw.c uls_context.c \
 	uls_sysprops.c uls_langs.c uls_freq.c uls_conf.c uld_conf.c \
 	uls_core.c uls_num.c litesc.c litstr.c uls_input.c uls_lex.c \
@@ -522,7 +521,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libuls_la-uls_emit.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libuls_la-uls_fileio.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libuls_la-uls_freq.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libuls_la-uls_ieee754.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libuls_la-uls_init.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libuls_la-uls_input.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libuls_la-uls_istream.Plo@am__quote@ # am--include-marker
@@ -648,13 +646,6 @@ libuls_la-fdfilter.lo: fdfilter.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='fdfilter.c' object='libuls_la-fdfilter.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -c -o libuls_la-fdfilter.lo `test -f 'fdfilter.c' || echo '$(srcdir)/'`fdfilter.c
-
-libuls_la-uls_ieee754.lo: uls_ieee754.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -MT libuls_la-uls_ieee754.lo -MD -MP -MF $(DEPDIR)/libuls_la-uls_ieee754.Tpo -c -o libuls_la-uls_ieee754.lo `test -f 'uls_ieee754.c' || echo '$(srcdir)/'`uls_ieee754.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libuls_la-uls_ieee754.Tpo $(DEPDIR)/libuls_la-uls_ieee754.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='uls_ieee754.c' object='libuls_la-uls_ieee754.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -c -o libuls_la-uls_ieee754.lo `test -f 'uls_ieee754.c' || echo '$(srcdir)/'`uls_ieee754.c
 
 libuls_la-uls_lf_percent_f.lo: uls_lf_percent_f.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -MT libuls_la-uls_lf_percent_f.lo -MD -MP -MF $(DEPDIR)/libuls_la-uls_lf_percent_f.Tpo -c -o libuls_la-uls_lf_percent_f.lo `test -f 'uls_lf_percent_f.c' || echo '$(srcdir)/'`uls_lf_percent_f.c
@@ -1008,7 +999,6 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/libuls_la-uls_emit.Plo
 	-rm -f ./$(DEPDIR)/libuls_la-uls_fileio.Plo
 	-rm -f ./$(DEPDIR)/libuls_la-uls_freq.Plo
-	-rm -f ./$(DEPDIR)/libuls_la-uls_ieee754.Plo
 	-rm -f ./$(DEPDIR)/libuls_la-uls_init.Plo
 	-rm -f ./$(DEPDIR)/libuls_la-uls_input.Plo
 	-rm -f ./$(DEPDIR)/libuls_la-uls_istream.Plo
@@ -1091,7 +1081,6 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/libuls_la-uls_emit.Plo
 	-rm -f ./$(DEPDIR)/libuls_la-uls_fileio.Plo
 	-rm -f ./$(DEPDIR)/libuls_la-uls_freq.Plo
-	-rm -f ./$(DEPDIR)/libuls_la-uls_ieee754.Plo
 	-rm -f ./$(DEPDIR)/libuls_la-uls_init.Plo
 	-rm -f ./$(DEPDIR)/libuls_la-uls_input.Plo
 	-rm -f ./$(DEPDIR)/libuls_la-uls_istream.Plo

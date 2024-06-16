@@ -205,7 +205,7 @@ ULS_QUALIFIED_METHOD(astr_lengthof_char)(const char* str)
 	char ch;
 	int n;
 
-	if ((ch=*str) & 0x80) {
+	if ((ch=*str) >= ULS_ASCII_TABLE_SIZE) {
 		n = _uls_sysinfo_(multibytes);
 	} else if (ch=='\0') {
 		n = 0;

@@ -37,6 +37,7 @@
 using namespace std;
 using namespace uls::crux;
 using namespace uls::collection;
+using tstring = uls::tstring;
 
 StringBuilder::StringBuilder()
 {
@@ -69,7 +70,7 @@ StringBuilder::clear()
 	sync = true;
 }
 
-std::tstring&
+tstring&
 StringBuilder::str()
 {
 	if (sync == false) {
@@ -161,8 +162,7 @@ void
 Css3Lex::get_token(void)
 {
 	uls_wch_t wch;
-	int tok, k;
-	int paren_lvl;
+	int tok, paren_lvl;
 	bool is_quote;
 	tstring *lxm;
 	TCHAR tch;
@@ -188,7 +188,7 @@ Css3Lex::get_token(void)
 		}
 
 		// url(../../image/a.png)
-		k = paren_lvl = 0;
+		paren_lvl = 0;
 		tokbuf.clear();
 		while ((wch=Css3LexBasis::peekCh(&is_quote)) != ')' || paren_lvl > 0) {
 			Css3LexBasis::getCh(&is_quote);
@@ -203,7 +203,6 @@ Css3Lex::get_token(void)
 			else if (wch == _T(')')) --paren_lvl;
 		}
 
-		k = tokbuf.len();
 		tok_str = tokbuf.str();
 		tok_id = CSS_PATH;
 

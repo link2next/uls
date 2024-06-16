@@ -32,6 +32,8 @@
 
 #pragma once
 
+#include <uls/uls_util.h>
+#include <uls/ulscpp_misc.h>
 #include <uls/csz_stream.h>
 #include <uls/uls_util_wstr.h>
 #include <stdio.h>
@@ -138,5 +140,4 @@ namespace uls {
 
 	typedef int (*woptproc_t)(int opt, wchar_t* optarg);
 	ULSCPP_DLL_EXTERN int parseCommandOptions(int n_args, wchar_t *args[], const wchar_t *optfmt, woptproc_t wproc);
-
 }

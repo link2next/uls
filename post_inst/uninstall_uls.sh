@@ -126,7 +126,7 @@ rm $tmp_sysprops_fpath
 
 if [ -z "$ULS_HOME" ]; then
 	echo "don't know where it's setup!"
-    exit 1
+	exit 1
 fi
 
 if [ "$ULS_HOME" = "/usr" -o "$ULS_HOME" = "/" ]; then

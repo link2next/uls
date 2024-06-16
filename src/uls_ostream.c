@@ -747,11 +747,8 @@ ULS_QUALIFIED_METHOD(uls_destroy_ostream)(uls_ostream_ptr_t ostr)
 
 	ostr->fd = -1;
 
-	if (ostr->uls != nilptr) {
-		uls_ungrab(ostr->uls);
-		ostr->uls = nilptr;
-	}
-
+	uls_ungrab(ostr->uls);
+	ostr->uls = nilptr;
 	__destroy_ostream(ostr);
 
 	return 0;

@@ -87,4 +87,15 @@
  23	[ NUMBER] 0.3
  23	[       ] ;
  24	[    END] }
- 25	[    END] }
+ 25	[ NUMBER] 157 L
+ 25	[     ID] ident1
+ 27	[     ID] eurosign
+ 27	[  ARROW] ->
+ 27	[EUROSIGN] €
+ 28	[     ID] snowman1
+ 28	[  ARROW] ->
+ 28	[       ] ☃
+ 29	[     ID] snowman2
+ 29	[  ARROW] ->
+ 29	[SNOWMAN] ☃$
+ 30	[    END] }

@@ -364,7 +364,9 @@ ULS_QUALIFIED_METHOD(uls_readline)(int fd, char* ptr, int n)
 		if ((rc=uls_fd_read(fd, ptr, 1)) < 0) {
 			if (errno==EINTR)  continue;
 			return -1;
-		} else if (rc==0) {
+		}
+
+		if (rc==0) {
 			break;
 		}
 
@@ -767,7 +769,7 @@ ULS_QUALIFIED_METHOD(uls_put_binstr)(const char* str, int len, int fd)
 {
 	if (len < 0) len = uls_strlen(str);
 
-	if (uls_fd_write(fd, str, len) < 0) {
+	if (len > 0 && uls_fd_write(fd, str, len) < 0) {
 		_uls_log_primitive(err_panic)("put_bin_str: write error!");
 	}
 }

@@ -98,6 +98,9 @@ ULS_DECL_STATIC int __uls_print_tok_number(uls_ostream_ptr_t ostr);
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC
+#define uls_ostr_grab(ostr) (++(ostr)->ref_cnt)
+#define uls_ostr_ungrab(ostr) uls_destroy_ostream(ostr)
+
 void uls_init_wr_packet(uls_wr_packet_ptr_t pkt);
 void uls_deinit_wr_packet(uls_wr_packet_ptr_t pkt);
 int uls_print_tok_eof(uls_ostream_ptr_t ostr);

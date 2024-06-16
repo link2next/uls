@@ -309,7 +309,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 uls_ver_major = 1
 uls_ver_minor = 9
-uls_ver_debug = 4
+uls_ver_debug = 5
 uls_ver = $(uls_ver_major).$(uls_ver_minor).$(uls_ver_debug)
 so_current = 1
 so_revision = 1
@@ -320,10 +320,13 @@ ulc2class_exe = $(top_builddir)/tools/ulc2class/ulc2class
 tests_libpath = $(top_builddir)/src:$(top_builddir)/ulscpp
 CONFIG_CLEAN_FILES = out*.uls
 cpp_hello_SOURCES = cpp_hello.cpp Sample2Lex.cpp
-cpp_hello_CFLAGS = -Wall -std=c++11
-#cpp_hello_CPPFLAGS = -I$(top_srcdir)/ulscpp -I$(top_srcdir)/ulscompat -I$(top_srcdir)/src -DULS_USE_WSTR
+
+#cpp_hello_CPPFLAGS = -Wall -std=c++11 \
+#  -I$(top_srcdir)/ulscpp -I$(top_srcdir)/ulscompat -I$(top_srcdir)/src -DULS_USE_WSTR
 #cpp_hello_LDADD = $(top_builddir)/ulscpp/libulscpp.la $(top_builddir)/ulscompat/libulscompat.la $(top_builddir)/src/libuls.la
-cpp_hello_CPPFLAGS = -I$(top_srcdir)/ulscpp -I$(top_srcdir)/src
+cpp_hello_CPPFLAGS = -Wall -std=c++11 \
+  -I$(top_srcdir)/ulscpp -I$(top_srcdir)/src
+
 cpp_hello_LDADD = $(top_builddir)/ulscpp/libulscpp.la $(top_builddir)/src/libuls.la
 ACLOCAL_AMFLAGS = -I m4
 all: all-am
@@ -565,7 +568,7 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic clean-libtool clean-noinstPROGRAMS \
+clean-am: clean-generic clean-libtool clean-local clean-noinstPROGRAMS \
 	mostlyclean-am
 
 distclean: distclean-am
@@ -639,15 +642,15 @@ uninstall-am:
 .MAKE: install-am install-strip
 
 .PHONY: CTAGS GTAGS TAGS all all-am am--depfiles check check-am clean \
-	clean-generic clean-libtool clean-noinstPROGRAMS cscopelist-am \
-	ctags ctags-am distclean distclean-compile distclean-generic \
-	distclean-libtool distclean-tags distdir dvi dvi-am html \
-	html-am info info-am install install-am install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
+	clean-generic clean-libtool clean-local clean-noinstPROGRAMS \
+	cscopelist-am ctags ctags-am distclean distclean-compile \
+	distclean-generic distclean-libtool distclean-tags distdir dvi \
+	dvi-am html html-am info info-am install install-am \
+	install-data install-data-am install-dvi install-dvi-am \
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
 	tags tags-am uninstall uninstall-am
@@ -662,6 +665,9 @@ $(cpp_hello_OBJECTS) : Sample2Lex.cpp Sample2Lex.h
 
 Sample2Lex.cpp Sample2Lex.h : sample2.uld
 	ULS_SYSPROPS=$(TMP_SYSPROPS) $(ulc2class_exe) -lcpp -n AAA.BBB.Sample2Lex -f Sample2Lex $<
+
+clean-local:
+	@rm -f Sample1Lex.cpp Sample1Lex.h Sample2Lex.cpp Sample2Lex.h
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

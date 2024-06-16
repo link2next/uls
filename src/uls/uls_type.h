@@ -60,7 +60,7 @@ extern "C" {
 #define MAX(a,b) ((a)>(b)?(a):(b))
 #endif
 
-#define uls_dim(A) (sizeof(A)/sizeof(A[0]))
+#define uls_dim(A) ((unsigned)(sizeof(A)/sizeof(A[0])))
 
 /* LOG_B, B ==2^LOG_B for some n */
 #define uls_floor_log2(A,LOG_B) ((A) &  ~((1 << (LOG_B)) - 1))

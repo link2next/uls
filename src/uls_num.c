@@ -642,7 +642,7 @@ ULS_QUALIFIED_METHOD(uls_cvt_radix_to_hexadecimal_str)(int radix, const char *nu
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(uls_cvt_radix_simple_num)(int radix1, const char *numbuf1, int numlen1, int radix2, uls_outbuf_ptr_t outbuf, int k)
+ULS_QUALIFIED_METHOD(cvt_radix_simple_num)(int radix1, const char *numbuf1, int numlen1, int radix2, uls_outbuf_ptr_t outbuf, int k)
 {
 	uls_uint64 num;
 	int k0, val;
@@ -696,7 +696,7 @@ ULS_QUALIFIED_METHOD(uls_radix2hexadecimal_str)(int radix1, const char *numbuf1,
 
 	if (n1_digits <= n_max_digits) {
 		// use system (built-in) integer register to convert
-		k = uls_cvt_radix_simple_num(radix1, numbuf1, n1_digits, radix2, outbuf, k);
+		k = cvt_radix_simple_num(radix1, numbuf1, n1_digits, radix2, outbuf, k);
 	} else {
 		k = uls_cvt_radix_to_hexadecimal_str(radix1, numbuf1, n1_digits, outbuf, k);
 	}

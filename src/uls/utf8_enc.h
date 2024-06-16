@@ -53,7 +53,7 @@ extern "C" {
 #define UTF_INPUT_FORMAT_REVERSE 0x10
 
 #ifdef _ULS_IMPLDLL
-#define UTF_INPUT_BUFSIZ 512
+#define UTF_INPUT_BUFSIZ 4096
 #endif
 #endif
 
@@ -73,8 +73,8 @@ ULS_DEFINE_STRUCT_BEGIN(utf_inbuf)
 
 	char   *bytesbuf;
 	int    bytesbuf_siz; // bytes unit
-	char   *wrdptr;    // reference to bytesbuf[]
-	int    n_wrds;     // 1, 2, 4 bytes unit
+	char   *wrdptr;      // reference to bytesbuf[]
+	int    n_wrds;       // 1, 2, 4 bytes unit
 	uls_wch_t wch_buffered;
 
 	int    fd;

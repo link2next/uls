@@ -101,7 +101,6 @@ ULS_DLL_EXTERN const wchar_t* uls_lexeme_wstr(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN int uls_lexeme_len_wstr(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN const wchar_t* uls_tokstr_wstr(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN int uls_tokstr_len_wstr(uls_lex_ptr_t uls);
-ULS_DLL_EXTERN int uls_lexeme_chars_wstr(uls_lex_ptr_t uls);
 
 ULS_DLL_EXTERN wchar_t uls_peek_wch(uls_lex_ptr_t uls, uls_nextch_detail_ptr_t parms);
 ULS_DLL_EXTERN wchar_t uls_get_wch(uls_lex_ptr_t uls, uls_nextch_detail_ptr_t parms);
@@ -169,9 +168,6 @@ ULS_DLL_EXTERN const wchar_t* uls_get_tag2_wstr(uls_lex_ptr_t uls, int *ptr_len_
 
 #undef uls_tokstr_len
 #define uls_tokstr_len uls_tokstr_len_wstr
-
-#undef uls_lexeme_chars
-#define uls_lexeme_chars uls_lexeme_chars_wstr
 
 #define uls_unget_lexeme uls_unget_lexeme_wstr
 #define uls_unget_str uls_unget_wstr

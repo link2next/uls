@@ -200,7 +200,7 @@ ULS_QUALIFIED_METHOD(canbe_commtype_mark)(char* wrd, uls_ptrtype_tool(outparam) 
 	for (i=0; (ch=buff[i]) != '\0'; i++) {
 		if (ch == '\n') {
 			++n;
-		} else if (!_uls_tool_(isgraph)(ch)) {
+		} else if (!_uls_tool_(isprint)(ch)) {
 			return 0;
 		}
 	}
@@ -210,7 +210,7 @@ ULS_QUALIFIED_METHOD(canbe_commtype_mark)(char* wrd, uls_ptrtype_tool(outparam) 
 }
 
 int
-ULS_QUALIFIED_METHOD(canbe_quotetype_mark)(const char *ch_ctx, char* wrd, uls_ptrtype_tool(outparam) parms)
+ULS_QUALIFIED_METHOD(canbe_quotetype_mark)(char* wrd, uls_ptrtype_tool(outparam) parms)
 {
 	char *buff = parms->line;
 	uls_type_tool(wrd) wrdx;
@@ -232,7 +232,7 @@ ULS_QUALIFIED_METHOD(canbe_quotetype_mark)(const char *ch_ctx, char* wrd, uls_pt
 	}
 
 	ch = buff[0];
-	if ((i == 1 && ch == '.') || uls_canbe_ch_idfirst(ch_ctx, ch)) {
+	if ((i == 1 && ch == '.')) {
 		return 0;
 	}
 
@@ -338,6 +338,35 @@ ULS_QUALIFIED_METHOD(nothing_lit_analyzer)(uls_litstr_ptr_t lit)
 }
 
 int
+ULS_QUALIFIED_METHOD(verbatim00_lit_analyzer)(uls_litstr_ptr_t lit)
+{
+	uls_litstr_context_ptr_t lit_ctx = uls_ptr(lit->context);
+	const char *lptr = lit->lptr, *lptr_end = lit->lptr_end;
+	uls_quotetype_ptr_t qmt = lit_ctx->qmt;
+	int j, rc, len;
+
+	if ((len = (int) (lptr_end - lptr)) < qmt->len_end_mark) {
+//		_uls_log(err_log)("%s: unterminated literal-string(verbatim00)", __func__);
+		return ULS_LITPROC_ERROR;
+	}
+
+	if (_uls_tool_(strncmp)(lptr, uls_get_namebuf_value(qmt->end_mark), qmt->len_end_mark) == 0) {
+		rc = qmt->len_end_mark;
+		len = ULS_LITPROC_ENDOFQUOTE;
+	} else {
+		if (len > ULS_UTF8_CH_MAXLEN) len = ULS_UTF8_CH_MAXLEN;
+		rc = _uls_tool_(decode_utf8)(lptr, len, NULL);
+		for (j = 0; j < rc; j++) {
+			_uls_tool(csz_putc)(lit_ctx->ss_dst, lptr[j]);
+		}
+		len = qmt->len_end_mark;
+	}
+
+	lit->lptr = lptr += rc;
+	return len;
+}
+
+int
 ULS_QUALIFIED_METHOD(dfl_lit_analyzer_escape0)(uls_litstr_ptr_t lit)
 {
 	uls_litstr_context_ptr_t lit_ctx = uls_ptr(lit->context);
@@ -354,34 +383,45 @@ ULS_QUALIFIED_METHOD(dfl_lit_analyzer_escape0)(uls_litstr_ptr_t lit)
 		return ULS_LITPROC_ERROR;
 	}
 
-	if (_uls_tool_(strncmp)(lptr, uls_get_namebuf_value(qmt->end_mark), qmt->len_end_mark) == 0) {
-		lit->lptr = lptr += qmt->len_end_mark;
-		return ULS_LITPROC_ENDOFQUOTE;
-	}
+	while (1) {
+		if ((len = (int) (lptr_end - lptr)) < qmt->len_end_mark) {
+			len = qmt->len_end_mark;
+			break;
+		}
 
-	if (len > ULS_UTF8_CH_MAXLEN) len = ULS_UTF8_CH_MAXLEN;
-	for (j=0; j<len; j++) buff[j] = lptr[j];
+		if (_uls_tool_(strncmp)(lptr, uls_get_namebuf_value(qmt->end_mark), qmt->len_end_mark) == 0) {
+			lptr += qmt->len_end_mark;
+			len = ULS_LITPROC_ENDOFQUOTE;
+			break;
+		}
 
-	rc = _uls_tool_(decode_utf8)(buff, j, &wch);
+		if (len > ULS_UTF8_CH_MAXLEN) len = ULS_UTF8_CH_MAXLEN;
+		for (j=0; j<len; j++) buff[j] = lptr[j];
 
-	if (wch == escmap->esc_sym) {
-		lit_ctx->litstr_proc = uls_ref_callback_this(dfl_lit_analyzer_escape1);
-		len = ULS_UTF8_CH_MAXLEN;
-	} else {
+		rc = _uls_tool_(decode_utf8)(buff, j, &wch);
+		if (wch == escmap->esc_sym) {
+			lptr += rc;
+			lit_ctx->litstr_proc = uls_ref_callback_this(dfl_lit_analyzer_escape1);
+			len = ULS_UTF8_CH_MAXLEN;
+			break;
+		}
+
 		if (wch == '\n') {
 			if ((qmt->flags & ULS_QSTR_MULTILINE) == 0) {
 //				_uls_log(err_log)("%s: unterminated literal-string", __func__);
-				return ULS_LITPROC_ERROR;
+				len = ULS_LITPROC_ERROR;
+				break;
 			}
 			++lit_ctx->n_lfs;
 		}
+
 		for (j=0; j<rc; j++) {
 			_uls_tool(csz_putc)(lit_ctx->ss_dst, lptr[j]);
 		}
-		len = qmt->len_end_mark;
+		lptr += rc;
 	}
 
-	lit->lptr = lptr += rc;
+	lit->lptr = lptr;
 	return len; // # of required bytes at the next stage.
 }
 
@@ -430,7 +470,6 @@ ULS_QUALIFIED_METHOD(dfl_lit_analyzer_escape1)(uls_litstr_ptr_t lit)
 	for (j=0; j<len; j++) buff[j] = lptr[j];
 
 	len1 = _uls_tool_(decode_utf8)(buff, j, &wch);
-
 	lptr += len1;
 	if (wch == '\n') {
 		++lit_ctx->n_lfs;

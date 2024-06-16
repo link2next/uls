@@ -1,15 +1,19 @@
-  2	[     ID] main
-  2	[       ] (
-  2	[       ] )
-  3	[  BEGIN] {
-  4	[     ID] ZZZ
-  4	[       ] =
-  4	[     ID] XXX
-  4	[       ] ^ prec=23 node_id=5
-  4	[     ID] AAA
-  4	[       ] & prec=24 node_id=4
-  4	[     ID] YYY
-  4	[       ] * prec=27 node_id=1
-  4	[     ID] BBB
-  4	[       ] ;
-  5	[    END] }
+  2	[ IMPORT] @import
+  2	[     ID] aaa
+  2	[       ] .
+  2	[     ID] bbb
+  4	[     ID] main
+  4	[       ] (
+  4	[       ] )
+  5	[  BEGIN] {
+  6	[     ID] ZZZ
+  6	[       ] =
+  6	[     ID] XXX
+  6	[       ] ^ prec=23 node_id=5
+  6	[     ID] AAA
+  6	[       ] & prec=24 node_id=4
+  6	[     ID] YYY
+  6	[       ] * prec=27 node_id=1
+  6	[     ID] BBB
+  6	[       ] ;
+  7	[    END] }

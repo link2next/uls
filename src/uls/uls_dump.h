@@ -40,6 +40,7 @@ extern "C" {
 
 #if defined(__ULS_DUMP__) || defined(ULS_DECL_PRIVATE_PROC)
 ULS_DECL_STATIC void dump_tokdef__char_context(uls_lex_ptr_t uls, int flag);
+ULS_DECL_STATIC void dump_char_context(uls_lex_ptr_t uls, int offset);
 #endif
 
 #ifdef ULS_DECL_PUBLIC_PROC

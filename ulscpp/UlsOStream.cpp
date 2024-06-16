@@ -98,7 +98,7 @@ uls::crux::UlsOStream::UlsOStream
 }
 
 uls::crux::UlsOStream::UlsOStream
-	(std::wstring& wfilepath, UlsLex *lex, const wchar_t *wsubtag, bool numbering)
+	(wstring& wfilepath, UlsLex *lex, const wchar_t *wsubtag, bool numbering)
 {
 	const char *ustr0, *ustr1;
 
@@ -163,7 +163,7 @@ uls::crux::UlsOStream::printTok(int tokid, const string& tokstr)
 }
 
 void
-uls::crux::UlsOStream::printTok(int tokid, const std::wstring& wtokstr)
+uls::crux::UlsOStream::printTok(int tokid, const wstring& wtokstr)
 {
 	const char *ustr;
 	int len, rc;
@@ -194,7 +194,7 @@ uls::crux::UlsOStream::printTokLineNum(int lno, const string& tagstr)
 }
 
 void
-uls::crux::UlsOStream::printTokLineNum(int lno, const std::wstring& wtagstr)
+uls::crux::UlsOStream::printTokLineNum(int lno, const wstring& wtagstr)
 {
 	const char *ustr;
 	int len, rc;

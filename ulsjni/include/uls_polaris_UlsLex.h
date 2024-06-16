@@ -475,14 +475,3 @@ JNIEXPORT jint JNICALL Java_uls_polaris_UlsLex_getFlagTmplsDup
 }
 #endif
 #endif
-/* Header for class uls_polaris_UlsLex_InputOpts */
-
-#ifndef _Included_uls_polaris_UlsLex_InputOpts
-#define _Included_uls_polaris_UlsLex_InputOpts
-#ifdef __cplusplus
-extern "C" {
-#endif
-#ifdef __cplusplus
-}
-#endif
-#endif
