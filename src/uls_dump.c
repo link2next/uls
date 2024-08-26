@@ -428,7 +428,6 @@ ULS_QUALIFIED_METHOD(dump_tokdef__yaml_quotetype)(int ind, uls_lex_ptr_t uls, ul
 {
 	int tok_id;
 	uls_type_tool(outparam) parms1;
-	uls_escmap_ptr_t esc_map;
 	char outbuf_keyw[128];
 	const char *tok_nam;
 
@@ -462,27 +461,6 @@ ULS_QUALIFIED_METHOD(dump_tokdef__yaml_quotetype)(int ind, uls_lex_ptr_t uls, ul
 		}
 		if (qmt->flags & ULS_QSTR_ASYMMETRIC) {
 			uls_sysprn_tabs(3, "- right_exclusive\n");
-		}
-	}
-
-	esc_map = qmt->escmap;
-	if (esc_map->flags & ULS_ESCMAP_MODE__MASK) {
-		uls_sysprn_tabs(2, "mode:\n");
-
-		if (esc_map->flags & ULS_ESCMAP_MODE__LEGACY) {
-			uls_sysprn_tabs(3, "- legacy\n");
-		}
-		if (esc_map->flags & ULS_ESCMAP_MODE__MODERN) {
-			uls_sysprn_tabs(3, "- modern\n");
-		}
-		if (esc_map->flags & ULS_ESCMAP_MODE__VERBATIM) {
-			uls_sysprn_tabs(3, "- verbatim\n");
-		}
-		if (esc_map->flags & ULS_ESCMAP_MODE__LEGACY_FULL) {
-			uls_sysprn_tabs(3, "- legacy_full\n");
-		}
-		if (esc_map->flags & ULS_ESCMAP_MODE__VERBATIM_MODERATE) {
-			uls_sysprn_tabs(3, "- verbatim_moderate\n");
 		}
 	}
 }

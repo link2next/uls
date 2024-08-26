@@ -156,8 +156,9 @@ ULS_QUALIFIED_METHOD(input_quote_proc)(uls_input_ptr_t inp, uls_quotetype_ptr_t 
 	uls_litstr_t lit;
 	uls_litstr_context_ptr_t lit_ctx = uls_ptr(lit.context);
 
+	int   len_emark = qmt->len_end_mark, n_qmt_lines = qmt->n_lfs;
 	const char *lptr, *lptr_end;
-	int   stat, n_bytes_req, n_qmt_lines=qmt->n_lfs;
+	int   stat, n_bytes_req;
 
 	lit_ctx->qmt = qmt;
 	lit_ctx->litstr_proc = qmt->litstr_analyzer;
@@ -167,9 +168,9 @@ ULS_QUALIFIED_METHOD(input_quote_proc)(uls_input_ptr_t inp, uls_quotetype_ptr_t 
 	lptr = inp->rawbuf_ptr;
 	lptr_end = lptr + inp->rawbuf_bytes;
 
-	n_bytes_req = _uls_tool_(strlen)(uls_get_namebuf_value(qmt->end_mark));
+	for (n_bytes_req = len_emark; ; ) {
+		if (n_bytes_req < ULS_UTF8_CH_MAXLEN) n_bytes_req = ULS_UTF8_CH_MAXLEN;
 
-	for ( ; ; ) {
 		if (lptr_end < lptr + n_bytes_req) {
 			inp->rawbuf_ptr = lptr;
 			inp->rawbuf_bytes = (int) (lptr_end - lptr);
@@ -183,6 +184,11 @@ ULS_QUALIFIED_METHOD(input_quote_proc)(uls_input_ptr_t inp, uls_quotetype_ptr_t 
 			lptr = inp->rawbuf_ptr;
 			lptr_end = lptr + inp->rawbuf_bytes;
 			// In case of EOF, lptr == lptr_end
+		}
+
+		if ((int) (lptr_end - lptr) < len_emark) {
+			stat = ULS_LITPROC_ERROR;
+			break;
 		}
 
 		lit.lptr = lptr;
@@ -202,9 +208,7 @@ ULS_QUALIFIED_METHOD(input_quote_proc)(uls_input_ptr_t inp, uls_quotetype_ptr_t 
 
 	inp->rawbuf_ptr = lptr;
 	inp->rawbuf_bytes = (int) (lptr_end - lptr);
-
 	parms->n = n_qmt_lines + lit_ctx->n_lfs;
-
 	return stat;
 }
 

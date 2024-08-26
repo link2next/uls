@@ -56,7 +56,7 @@
 #define TMP_LANGS_FNAME      "uls_langs.txt"
 #define ULS_ULCNAME_DELIM    '/'
 
-#define ULS_VERSION_STR      _T("1.9.5")
+#define ULS_VERSION_STR      _T("1.9.6")
 #define ULC2CLASS_PROGVER    _T("v2.7.2")
 #define ULF_GEN_PROGVER      _T("v1.7.0")
 #define ULS_STREAM_PROGVER   _T("v2.8.0")
@@ -192,7 +192,7 @@
 #define ULF_HASH_TABLE_SIZE        37
 
 #define ULC_VERSION_MAJOR          2
-#define ULC_VERSION_MINOR          3
+#define ULC_VERSION_MINOR          4
 #define ULC_VERSION_DEBUG          0
 
 #define ULS_VERSION_STREAM_MAJOR   2

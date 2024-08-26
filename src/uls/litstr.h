@@ -52,6 +52,11 @@ extern "C" {
 #define ULS_QSTR_OPEN          0x04
 #define ULS_QSTR_R_EXCLUSIVE   0x08
 #define ULS_QSTR_ASYMMETRIC    0x10
+#define ULS_QSTR_USERPROC      0x20
+
+#define ULS_QSTR_EOS           0x100
+#define ULS_QSTR_ESC           0x200
+#define ULS_QSTR_ETC           0x400
 
 ULS_DECLARE_STRUCT(litstr);
 ULS_DECLARE_STRUCT(litstr_context);
@@ -63,9 +68,9 @@ ULS_DEFINE_DELEGATE_END(litstr_analyzer);
 #ifdef ULS_DEF_PUBLIC_TYPE
 ULS_DEFINE_STRUCT(quotetype)
 {
-	int  tok_id;
-
 	uls_flags_t flags;
+
+	int  tok_id;
 	uls_tokdef_vx_ptr_t tokdef_vx;
 
 	uls_def_namebuf(start_mark, ULS_QUOTE_MARK_MAXSIZ);
@@ -74,8 +79,14 @@ ULS_DEFINE_STRUCT(quotetype)
 	uls_def_namebuf(end_mark, ULS_QUOTE_MARK_MAXSIZ);
 	int  len_end_mark;
 
-	uls_escmap_ptr_t escmap;
 	int  n_left_lfs, n_lfs;
+	uls_escmap_ptr_t escmap;
+
+	uls_wch_t eos_wch;
+	uls_def_bytespool(eos_utf8, ULS_UTF8_CH_MAXLEN + 1);
+
+	uls_wch_t escsym_wch;
+	uls_def_bytespool(escsym_utf8, ULS_UTF8_CH_MAXLEN + 1);
 
 	uls_callback_type_this(litstr_analyzer) litstr_analyzer;
 	uls_voidptr_t litstr_context;
@@ -98,8 +109,8 @@ ULS_DEFINE_STRUCT_BEGIN(litstr)
 	int len;
 
 	int map_flags;
-	uls_wch_t ch_escaped;
-	int  len_ch_escaped;
+	uls_wch_t ch_escape;
+	int  maxlen_esc_oxudigits;
 	uls_wch_t wch;
 
 	uls_litstr_context_t context;
@@ -108,22 +119,23 @@ ULS_DEFINE_STRUCT_BEGIN(litstr)
 #endif // ULS_DEF_PUBLIC_TYPE
 
 #ifdef ULS_DECL_PROTECTED_PROC
-uls_wch_t __dec_escaped_char_cont(char quote_ch, uls_litstr_ptr_t lit);
+int proc_litstr_eoi(uls_litstr_ptr_t lit, int len, const char *emark, int len_emark, _uls_ptrtype_tool(csz_str) outbuf);
+int __dec_escaped_char_cont(char quote_ch, uls_litstr_ptr_t lit);
 uls_wch_t uls_get_escape_char_initial(uls_litstr_ptr_t lit);
 uls_wch_t uls_get_escape_char_cont(uls_litstr_ptr_t lit);
 
-int __uls_analyze_esc_ch(uls_litstr_ptr_t lit, uls_escmap_ptr_t escmap, _uls_ptrtype_tool(csz_str) outbuf);
 uls_wch_t uls_get_escape_char(uls_litstr_ptr_t lit);
 int uls_get_escape_str(char quote_ch, uls_ptrtype_tool(wrd) wrdx);
 void uls_init_quotetype(uls_quotetype_ptr_t qmt);
 void uls_deinit_quotetype(uls_quotetype_ptr_t qmt);
 
 int nothing_lit_analyzer(uls_litstr_ptr_t lit);
-int verbatim00_lit_analyzer(uls_litstr_ptr_t lit);
 
 int dfl_lit_analyzer_escape0(uls_litstr_ptr_t lit);
 int dfl_lit_analyzer_escape1(uls_litstr_ptr_t lit);
 int dfl_lit_analyzer_escape2(uls_litstr_ptr_t lit);
+
+uls_escmap_ptr_t uls_parse_escmap(char *line, uls_quotetype_ptr_t qmt, uls_escmap_pool_ptr_t escmap_pool2);
 
 #endif
 

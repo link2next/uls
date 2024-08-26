@@ -94,3 +94,4 @@
 	[ LITSTR] $(RM) *.o a.out core sample_lex.h
 $(RM) $(PROG) *.bak *.~* $(PROG).exe .depend
 
+	[     LF]

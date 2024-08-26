@@ -1011,16 +1011,16 @@ int
 ULS_QUALIFIED_METHOD(uls_lf_fill_numstr)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc,
 	uls_lf_convflag_ptr_t p, const char* numstr, int l_numstr)
 {
-	int     width, len1, len2, len3, nn, rc;
+	int     width, len, len1, len2, nn, rc;
 	const char *ptr1, *ptr2;
 	char    prefix[16];
 
 	len1 = uls_lf_puts_prefix(prefix, p->flags);
 	len2 = l_numstr;
-	len3 = len1 + len2; /* prefix + number_str */
+	len = len1 + len2; /* prefix + number_str */
 
-	if ((width=p->width)<0) width = len3;
-	else if (len3 > width) width = len3;
+	if ((width=p->width)<0) width = len;
+	else if (len > width) width = len;
 
 	ptr1 = prefix;
 	ptr2 = numstr;
@@ -1033,7 +1033,7 @@ ULS_QUALIFIED_METHOD(uls_lf_fill_numstr)(uls_voidptr_t x_dat, uls_lf_puts_t puts
 		if (rc < 0) return -1;
 		nn += rc;
 
-		rc = uls_lf_fill_ch(x_dat, puts_proc, ' ', width - len3);
+		rc = uls_lf_fill_ch(x_dat, puts_proc, ' ', width - len);
 		if (rc < 0) return -1;
 		nn += rc;
 
@@ -1042,7 +1042,7 @@ ULS_QUALIFIED_METHOD(uls_lf_fill_numstr)(uls_voidptr_t x_dat, uls_lf_puts_t puts
 			nn = __puts_proc_str(x_dat, puts_proc, ptr1, len1);
 			if (nn < 0) return -1;
 
-			rc = uls_lf_fill_ch(x_dat, puts_proc, '0', width - len3);
+			rc = uls_lf_fill_ch(x_dat, puts_proc, '0', width - len);
 			if (rc < 0) return -1;
 			nn += rc;
 
@@ -1051,7 +1051,7 @@ ULS_QUALIFIED_METHOD(uls_lf_fill_numstr)(uls_voidptr_t x_dat, uls_lf_puts_t puts
 			nn += rc;
 
 		} else {
-			nn = uls_lf_fill_ch(x_dat, puts_proc, ' ', width - len3);
+			nn = uls_lf_fill_ch(x_dat, puts_proc, ' ', width - len);
 			if (nn < 0) return -1;
 
 			rc = __puts_proc_str(x_dat, puts_proc, ptr1, len1);

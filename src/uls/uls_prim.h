@@ -345,11 +345,11 @@ ULS_DLL_EXTERN void uls_resize_arglst(uls_arglst_ptr_t arglst, int n1_alloc);
 ULS_DLL_EXTERN int uls_append_arglst(uls_arglst_ptr_t arglst, uls_argstr_ptr_t arg);
 
 ULS_DLL_EXTERN int uls_encode_utf8(uls_wch_t wch, char* utf8buf, int siz_utf8buf);
-ULS_DLL_EXTERN int uls_decode_utf8(const char *utf8buf, int siz_utf8buf, uls_wch_t *p_val);
+ULS_DLL_EXTERN int uls_decode_utf8(const char *utf8buf, int siz_utf8buf, uls_wch_t *p_wch);
 ULS_DLL_EXTERN int uls_encode_utf16(uls_wch_t wch, uls_uint16 *utf16buf, int siz_utf16buf);
-ULS_DLL_EXTERN int uls_decode_utf16(const uls_uint16 *buf, int buf_len, uls_wch_t *p_val);
+ULS_DLL_EXTERN int uls_decode_utf16(const uls_uint16 *buf, int buf_len, uls_wch_t *p_wch);
 ULS_DLL_EXTERN int uls_encode_utf32(uls_wch_t wch, uls_uint32 *buf);
-ULS_DLL_EXTERN int uls_decode_utf32(const uls_uint32 buf, uls_wch_t *p_val);
+ULS_DLL_EXTERN int uls_decode_utf32(const uls_uint32 buf, uls_wch_t *p_wch);
 
 ULS_DLL_EXTERN int ustr_num_wchars(const char *str, int len, uls_outparam_ptr_t parms);
 #define ustr_num_chars ustr_num_wchars

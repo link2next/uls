@@ -1,0 +1,4 @@
+﻿Testing escaped-char in quoted strings...
+"\a\b\r\n\t\f\v"
+"\'\"\?\\"
+'\a\b\r\n\"\0\t\f\v\'\"\?\\'

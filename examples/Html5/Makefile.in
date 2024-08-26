@@ -112,6 +112,9 @@ AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+Html5Toks_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(Html5Toks_CXXFLAGS) \
+	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -315,9 +318,9 @@ uls_inc_dir = $(uls_inst_dir)/include
 uls_lib_dir = $(uls_inst_dir)/lib
 ulc2class_exe = $(uls_bin_dir)/ulc2class
 Html5Toks_SOURCES = Html5Toks.cpp Html5Lex.cpp
-
-#Html5Toks_CPPFLAGS = -Wall -std=c++11 -I$(uls_inc_dir) -DULS_USE_WSTR
-Html5Toks_CPPFLAGS = -Wall -std=c++11 -I$(uls_inc_dir)
+Html5Toks_CXXFLAGS = -Wall -std=c++11 
+#Html5Toks_CPPFLAGS = -I$(uls_inc_dir) -DULS_USE_WSTR
+Html5Toks_CPPFLAGS = -I$(uls_inc_dir)
 Html5Toks_LDADD = -L$(uls_lib_dir) -lulscpp -luls
 all: all-am
 
@@ -405,7 +408,7 @@ clean-binPROGRAMS:
 
 Html5Toks$(EXEEXT): $(Html5Toks_OBJECTS) $(Html5Toks_DEPENDENCIES) $(EXTRA_Html5Toks_DEPENDENCIES) 
 	@rm -f Html5Toks$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(Html5Toks_OBJECTS) $(Html5Toks_LDADD) $(LIBS)
+	$(AM_V_CXXLD)$(Html5Toks_LINK) $(Html5Toks_OBJECTS) $(Html5Toks_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -444,32 +447,32 @@ am--depfiles: $(am__depfiles_remade)
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
 
 Html5Toks-Html5Toks.o: Html5Toks.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Html5Toks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Html5Toks-Html5Toks.o -MD -MP -MF $(DEPDIR)/Html5Toks-Html5Toks.Tpo -c -o Html5Toks-Html5Toks.o `test -f 'Html5Toks.cpp' || echo '$(srcdir)/'`Html5Toks.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Html5Toks_CPPFLAGS) $(CPPFLAGS) $(Html5Toks_CXXFLAGS) $(CXXFLAGS) -MT Html5Toks-Html5Toks.o -MD -MP -MF $(DEPDIR)/Html5Toks-Html5Toks.Tpo -c -o Html5Toks-Html5Toks.o `test -f 'Html5Toks.cpp' || echo '$(srcdir)/'`Html5Toks.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Html5Toks-Html5Toks.Tpo $(DEPDIR)/Html5Toks-Html5Toks.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Html5Toks.cpp' object='Html5Toks-Html5Toks.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Html5Toks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Html5Toks-Html5Toks.o `test -f 'Html5Toks.cpp' || echo '$(srcdir)/'`Html5Toks.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Html5Toks_CPPFLAGS) $(CPPFLAGS) $(Html5Toks_CXXFLAGS) $(CXXFLAGS) -c -o Html5Toks-Html5Toks.o `test -f 'Html5Toks.cpp' || echo '$(srcdir)/'`Html5Toks.cpp
 
 Html5Toks-Html5Toks.obj: Html5Toks.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Html5Toks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Html5Toks-Html5Toks.obj -MD -MP -MF $(DEPDIR)/Html5Toks-Html5Toks.Tpo -c -o Html5Toks-Html5Toks.obj `if test -f 'Html5Toks.cpp'; then $(CYGPATH_W) 'Html5Toks.cpp'; else $(CYGPATH_W) '$(srcdir)/Html5Toks.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Html5Toks_CPPFLAGS) $(CPPFLAGS) $(Html5Toks_CXXFLAGS) $(CXXFLAGS) -MT Html5Toks-Html5Toks.obj -MD -MP -MF $(DEPDIR)/Html5Toks-Html5Toks.Tpo -c -o Html5Toks-Html5Toks.obj `if test -f 'Html5Toks.cpp'; then $(CYGPATH_W) 'Html5Toks.cpp'; else $(CYGPATH_W) '$(srcdir)/Html5Toks.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Html5Toks-Html5Toks.Tpo $(DEPDIR)/Html5Toks-Html5Toks.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Html5Toks.cpp' object='Html5Toks-Html5Toks.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Html5Toks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Html5Toks-Html5Toks.obj `if test -f 'Html5Toks.cpp'; then $(CYGPATH_W) 'Html5Toks.cpp'; else $(CYGPATH_W) '$(srcdir)/Html5Toks.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Html5Toks_CPPFLAGS) $(CPPFLAGS) $(Html5Toks_CXXFLAGS) $(CXXFLAGS) -c -o Html5Toks-Html5Toks.obj `if test -f 'Html5Toks.cpp'; then $(CYGPATH_W) 'Html5Toks.cpp'; else $(CYGPATH_W) '$(srcdir)/Html5Toks.cpp'; fi`
 
 Html5Toks-Html5Lex.o: Html5Lex.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Html5Toks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Html5Toks-Html5Lex.o -MD -MP -MF $(DEPDIR)/Html5Toks-Html5Lex.Tpo -c -o Html5Toks-Html5Lex.o `test -f 'Html5Lex.cpp' || echo '$(srcdir)/'`Html5Lex.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Html5Toks_CPPFLAGS) $(CPPFLAGS) $(Html5Toks_CXXFLAGS) $(CXXFLAGS) -MT Html5Toks-Html5Lex.o -MD -MP -MF $(DEPDIR)/Html5Toks-Html5Lex.Tpo -c -o Html5Toks-Html5Lex.o `test -f 'Html5Lex.cpp' || echo '$(srcdir)/'`Html5Lex.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Html5Toks-Html5Lex.Tpo $(DEPDIR)/Html5Toks-Html5Lex.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Html5Lex.cpp' object='Html5Toks-Html5Lex.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Html5Toks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Html5Toks-Html5Lex.o `test -f 'Html5Lex.cpp' || echo '$(srcdir)/'`Html5Lex.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Html5Toks_CPPFLAGS) $(CPPFLAGS) $(Html5Toks_CXXFLAGS) $(CXXFLAGS) -c -o Html5Toks-Html5Lex.o `test -f 'Html5Lex.cpp' || echo '$(srcdir)/'`Html5Lex.cpp
 
 Html5Toks-Html5Lex.obj: Html5Lex.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Html5Toks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Html5Toks-Html5Lex.obj -MD -MP -MF $(DEPDIR)/Html5Toks-Html5Lex.Tpo -c -o Html5Toks-Html5Lex.obj `if test -f 'Html5Lex.cpp'; then $(CYGPATH_W) 'Html5Lex.cpp'; else $(CYGPATH_W) '$(srcdir)/Html5Lex.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Html5Toks_CPPFLAGS) $(CPPFLAGS) $(Html5Toks_CXXFLAGS) $(CXXFLAGS) -MT Html5Toks-Html5Lex.obj -MD -MP -MF $(DEPDIR)/Html5Toks-Html5Lex.Tpo -c -o Html5Toks-Html5Lex.obj `if test -f 'Html5Lex.cpp'; then $(CYGPATH_W) 'Html5Lex.cpp'; else $(CYGPATH_W) '$(srcdir)/Html5Lex.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Html5Toks-Html5Lex.Tpo $(DEPDIR)/Html5Toks-Html5Lex.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Html5Lex.cpp' object='Html5Toks-Html5Lex.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Html5Toks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Html5Toks-Html5Lex.obj `if test -f 'Html5Lex.cpp'; then $(CYGPATH_W) 'Html5Lex.cpp'; else $(CYGPATH_W) '$(srcdir)/Html5Lex.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Html5Toks_CPPFLAGS) $(CPPFLAGS) $(Html5Toks_CXXFLAGS) $(CXXFLAGS) -c -o Html5Toks-Html5Lex.obj `if test -f 'Html5Lex.cpp'; then $(CYGPATH_W) 'Html5Lex.cpp'; else $(CYGPATH_W) '$(srcdir)/Html5Lex.cpp'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo

@@ -724,11 +724,9 @@ ULS_QUALIFIED_METHOD(xcontext_raw_filler)(uls_xcontext_ptr_t xctx)
 				return -1;
 			}
 
-			n_lfs = parms1.n;
-
+			inp->line_num += n_lfs = parms1.n;
 			lptr1 = lptr = inp->rawbuf_ptr;
 			lptr_end = lptr + inp->rawbuf_bytes;
-			inp->line_num += n_lfs;
 
 			if (rc == 0) break;
 
@@ -755,7 +753,14 @@ ULS_QUALIFIED_METHOD(xcontext_raw_filler)(uls_xcontext_ptr_t xctx)
 			inp->line_num += n_lfs;
 
 		} else if ((ch_grp & ULS_CH_QUOTE) &&
-			(qmt=uls_xcontext_find_quotetype(xctx, lptr, (int) (lptr_end - lptr))) != nilptr) {
+			(qmt = uls_xcontext_find_quotetype(xctx, lptr, (int) (lptr_end - lptr))) != nilptr) {
+
+			if (qmt->len_end_mark <= 0 &&
+				!(qmt->flags & (ULS_QSTR_OPEN | ULS_QSTR_NOTHING | ULS_QSTR_USERPROC)) ) {
+				_uls_log(err_log)("%s: literal string analyzer is NOT defined.", uls_get_namebuf_value(qmt->start_mark));
+				return -1;
+			}
+
 			if ((rc = (int) (lptr-lptr1)) > 0) _uls_tool(csz_append)(ss_dst1, lptr1, rc);
 			if (n_segs + 1 >= ctx->lexsegs.n) {
 				break;
@@ -780,7 +785,6 @@ ULS_QUALIFIED_METHOD(xcontext_raw_filler)(uls_xcontext_ptr_t xctx)
 
 			if (rc == ULS_LITPROC_ENDOFQUOTE) {
 				lexseg->n_lfs_raw = n_lfs;
-
 				lexseg->len_text = csz_length(ss_dst2) - lexseg->offset2;
 				// put '\0' at the end of literal string
 				_uls_tool(csz_add_eos)(ss_dst2);
@@ -807,7 +811,6 @@ ULS_QUALIFIED_METHOD(xcontext_raw_filler)(uls_xcontext_ptr_t xctx)
 
 	inp->rawbuf_ptr = lptr;
 	inp->rawbuf_bytes = (int) (lptr_end - lptr);
-
 	_uls_tool(csz_text)(ss_dst1);
 
 	lexseg = uls_get_array_slot_type10(uls_ptr(ctx->lexsegs), n_segs);
@@ -923,10 +926,11 @@ ULS_QUALIFIED_METHOD(uls_xcontext_change_litstr_analyzer)(uls_xcontext_ptr_t xct
 {
 	uls_decl_parray_slots_init(slots_qmt, quotetype, xctx->quotetypes);
 	uls_quotetype_ptr_t qmt;
-	int i, stat = -1;
+	int i, stat = -1, is_userproc = 1;
 
 	if (lit_analyzer == nilptr) {
 		lit_analyzer = uls_ref_callback_this(dfl_lit_analyzer_escape0);
+		is_userproc = 0;
 	}
 
 	for (i=0; i<xctx->quotetypes->n; i++) {
@@ -935,6 +939,11 @@ ULS_QUALIFIED_METHOD(uls_xcontext_change_litstr_analyzer)(uls_xcontext_ptr_t xct
 		if (uls_streql(uls_get_namebuf_value(qmt->start_mark), prefix)) {
 			qmt->litstr_analyzer = lit_analyzer;
 			qmt->litstr_context = dat;
+			if (is_userproc) {
+				qmt->flags |= ULS_QSTR_USERPROC;
+			} else {
+				qmt->flags &= ~ULS_QSTR_USERPROC;
+			}
 			stat = 0;
 			break;
 		}

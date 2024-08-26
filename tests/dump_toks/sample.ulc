@@ -1,4 +1,4 @@
-﻿#@ulc-2.3
+﻿#@ulc-2.4
 #
 #  ULC: Unified Lexical Configuration
 #
@@ -14,7 +14,7 @@ NUMBER_SUFFIXES: UL L LU ul lu f F
 COMMENT_TYPE: /* */
 COMMENT_TYPE: // \n
 
-QUOTE_TYPE: token=DQUOTE " x:\x2x u:\u4x
+QUOTE_TYPE: token=DQUOTE " x:\x2 u:\u4
 QUOTE_TYPE: token=BBQUOTE options=multiline,asymmetric  [[ ]] 
 QUOTE_TYPE: token=SQUOTE ' verbatim1
 

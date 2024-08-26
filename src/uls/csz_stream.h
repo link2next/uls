@@ -150,6 +150,7 @@ ULS_DLL_EXTERN char* csz_append(csz_str_ptr_t csz, const char* str, int len);
 ULS_DLL_EXTERN void csz_puts(csz_str_ptr_t csz, const char* str);
 ULS_DLL_EXTERN void csz_putc(csz_str_ptr_t csz, char ch);
 
+ULS_DLL_EXTERN void csz_add_ch(csz_str_ptr_t csz, char ch);
 ULS_DLL_EXTERN void csz_add_eos(csz_str_ptr_t csz);
 ULS_DLL_EXTERN char* csz_text(csz_str_ptr_t csz);
 ULS_DLL_EXTERN wchar_t* uls_get_csz_wstr(csz_str_ptr_t csz);

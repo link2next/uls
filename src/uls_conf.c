@@ -646,7 +646,8 @@ ULS_QUALIFIED_METHOD(read_config__COMMENT_TYPE)(char *line, uls_voidptr_t user_d
 	}
 
 	if (cmt_flags & ULS_COMM_ONELINE) {
-		cmt_mark2[0] = '\n'; cmt_mark2[1] = '\0';
+		cmt_mark2[0] = '\n';
+		cmt_mark2[1] = '\0';
 		parms2.line = cmt_mark2;
 		parms2.len = parms2.n = 1;
 	} else {
@@ -715,7 +716,7 @@ ULS_QUALIFIED_METHOD(parse_quotetype__options)(char *line, uls_quotetype_ptr_t q
 		} else if (uls_streql(wrd, "open")) {
 			qmt->litstr_analyzer = uls_ref_callback_this(nothing_lit_analyzer);
 			qmt->flags |= ULS_QSTR_OPEN;
-		} else if (uls_streql(wrd, "multiline")) {
+		} else if (uls_streql(wrd, "multiline") || uls_streql(wrd, "multline")) {
 			qmt->flags |= ULS_QSTR_MULTILINE;
 		} else if (uls_streql(wrd, "right_exclusive")) {
 			qmt->flags |= ULS_QSTR_R_EXCLUSIVE;
@@ -773,7 +774,8 @@ ULS_QUALIFIED_METHOD(uls_parse_quotetype_opts)(uls_ptrtype_tool(wrd) wrdx, uls_q
 	uls_ptrtype_tool(outparam) parms)
 {
 	char *lptr, *lptr1, ch;
-	int rc, proc_num, stat=0;
+	int j, rc, proc_num, stat = 0;
+	uls_wch_t wch;
 
 	parms->flags = 0; // tok_id NOT specified
 	parms->n = 0; // tok_id
@@ -786,6 +788,9 @@ ULS_QUALIFIED_METHOD(uls_parse_quotetype_opts)(uls_ptrtype_tool(wrd) wrdx, uls_q
 		} else if (!_uls_tool_(strncmp)(lptr, "options=", 8)) {
 			rc = 8;
 			proc_num = 1;
+		} else if (!_uls_tool_(strncmp)(lptr, "escsym=", 7)) {
+			rc = 7;
+			proc_num = 2;
 		} else {
 			proc_num = -1;
 			break;
@@ -809,7 +814,18 @@ ULS_QUALIFIED_METHOD(uls_parse_quotetype_opts)(uls_ptrtype_tool(wrd) wrdx, uls_q
 				stat = -1;
 				break;
 			}
-		} else { // NOT REACHED
+		} else if (proc_num == 2) { // escsym=
+			if ((rc = _uls_tool_(decode_utf8)(lptr1, -1, &wch)) <= 0 || lptr1[rc] != '\0') {
+				_uls_log(err_log)("%s: only multibytes 1-wchar for escsym is supported.", lptr1);
+				stat = -1;
+				break;
+			}
+
+			qmt->escsym_wch = wch;
+			for (j = 0; j < rc; j++) qmt->escsym_utf8[j] = lptr1[j];
+			qmt->escsym_utf8[j] = '\0';
+
+		} else { // NEVER-REACHED
 			_uls_log(err_log)("%s: unknown option!", lptr1);
 			stat = -1;
 			break;
@@ -870,6 +886,9 @@ ULS_DECL_STATIC void
 ULS_QUALIFIED_METHOD(__set_config_quoute_type)(uls_quotetype_ptr_t qmt,
 	const char *mark1, int len_mark1, int lfs_mark1, const char *mark2, int len_mark2, int lfs_mark2)
 {
+	int k, rc;
+	uls_wch_t wch;
+
 	// start mark
 	uls_set_namebuf_value(qmt->start_mark, mark1);
 	qmt->len_start_mark = len_mark1;
@@ -879,6 +898,17 @@ ULS_QUALIFIED_METHOD(__set_config_quoute_type)(uls_quotetype_ptr_t qmt,
 	uls_set_namebuf_value(qmt->end_mark, mark2);
 	qmt->len_end_mark = len_mark2;
 	qmt->n_lfs += lfs_mark2;
+
+	if (len_mark2 > 0 && (rc = _uls_tool_(decode_utf8)(mark2, len_mark2, &wch)) >= len_mark2) {
+		// 'mark2' is 1-wchar
+		for (k = 0; k < rc; k++) qmt->eos_utf8[k] = mark2[k];
+	} else {
+		wch = 0;
+		k = 0;
+	}
+
+	qmt->eos_wch = wch;
+	qmt->eos_utf8[k] = '\0';
 }
 
 ULS_DECL_STATIC int
@@ -959,6 +989,7 @@ ULS_QUALIFIED_METHOD(__read_config__QUOTE_TYPE)(char *line,
 			slots_qmt[k] = qmt;
 			break;
 		}
+
 		qmt2 = slots_qmt[j];
 		if (uls_streql(qmt_mark1, uls_get_namebuf_value(qmt2->start_mark))) {
 			uls_destroy_quotetype(qmt2);
@@ -967,29 +998,25 @@ ULS_QUALIFIED_METHOD(__read_config__QUOTE_TYPE)(char *line,
 			break;
 		}
 	}
+
 	__set_config_quoute_type(qmt, qmt_mark1, parms1.len, parms1.n, qmt_mark2, parms2.len, parms2.n);
 
 	parms.n1 = k;
 	parms.n2 = lno;
 	parms.lptr_end = tagstr;
 	if (set_config__QUOTE_TYPE__token(tok_id, tok_name, l_tok_name, qmt, uls, uls_ptr(parms)) < 0) {
-		return -1;
+		return -2;
 	}
 
-	if ((qmt->escmap = uls_parse_escmap(wrdx.lptr, uls_ptr(uls->escstr_pool))) == nilptr) {
-		_uls_log(err_log)("%s<%d>: Invalid format of escape-mapping of literal string.", tagstr, lno);
-		return -1;
-	}
-
-	if (qmt->escmap->flags & ULS_ESCMAP_VERBOSE00) {
-		qmt->litstr_analyzer = uls_ref_callback_this(verbatim00_lit_analyzer);
+	if ((qmt->escmap = uls_parse_escmap(wrdx.lptr, qmt, uls_ptr(uls->escstr_pool))) == nilptr) {
+		_uls_log(err_log)("%s<%d>: Invalid format of char-escape-mapping in literal string.", tagstr, lno);
+		return -3;
 	}
 
 	if (!is_quotestart_valid(uls, k)) {
-		_uls_log(err_log)("%s<%d>:  the start-mark is collided with previous defined quote-type. skipping, ...",
-			tagstr, lno);
+		_uls_log(err_log)("%s<%d>:  the start-mark is collided with previous defined quote-type. skipping, ...", tagstr, lno);
 		_uls_log(err_log)("\tstart-mark('%s')", uls_get_namebuf_value(qmt->start_mark));
-		return -1;
+		return -4;
 	}
 
 	return 0;
@@ -1001,15 +1028,15 @@ ULS_QUALIFIED_METHOD(read_config__QUOTE_TYPE)(char *line, uls_voidptr_t user_dat
 	uls_cast_ptrtype_tool(outparam, parms, user_data);
 	uls_lex_ptr_t uls = (uls_lex_ptr_t) parms->data;
 	const char* tagstr = parms->lptr_end;
-	int lno = parms->n, stat = 0;
+	int rc, lno = parms->n, stat = 0;
 	uls_quotetype_ptr_t qmt;
 
 	qmt = uls_create_quotetype();
 	qmt->litstr_analyzer = uls_ref_callback_this(dfl_lit_analyzer_escape0);
 
-	if (__read_config__QUOTE_TYPE(line, qmt, uls, tagstr, lno) < 0) {
+	if ((rc = __read_config__QUOTE_TYPE(line, qmt, uls, tagstr, lno)) < 0) {
+		if (rc == -1) uls_destroy_quotetype(qmt);
 		stat = -1;
-		uls_destroy_quotetype(qmt);
 	}
 
 	return stat;

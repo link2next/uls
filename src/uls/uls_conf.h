@@ -211,9 +211,10 @@ int check_if_keyw(uls_lex_ptr_t uls);
 int uls_classify_tok_group(uls_lex_ptr_t uls);
 
 int comp_vx_by_tokid(const uls_voidptr_t a, const uls_voidptr_t b);
-
 int parse_id_ranges(uls_lex_ptr_t uls, int is_first, char *line);
+
 int uls_cmd_run(uls_lex_ptr_t uls, const char* keyw, char *line, uls_voidptr_t data);
+
 void reset_context_ready(uls_lex_ptr_t uls);
 void reset_xcontext_tokid(uls_lex_ptr_t uls);
 #endif

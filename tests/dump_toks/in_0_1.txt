@@ -1,4 +1,4 @@
-main()
+﻿main()
 {
    AAA = 1;
    -BBB-CCC = 0;

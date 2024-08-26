@@ -112,6 +112,9 @@ AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+ShellToks_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(ShellToks_CXXFLAGS) \
+	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -315,9 +318,9 @@ uls_inc_dir = $(uls_inst_dir)/include
 uls_lib_dir = $(uls_inst_dir)/lib
 ulc2class_exe = $(uls_bin_dir)/ulc2class
 ShellToks_SOURCES = ShellToks.cpp ShellLex.cpp
-
-#ShellToks_CPPFLAGS = -Wall -std=c++11 -I$(uls_inc_dir) -DULS_USE_WSTR
-ShellToks_CPPFLAGS = -Wall -std=c++11 -I$(uls_inc_dir)
+ShellToks_CXXFLAGS = -Wall -std=c++11
+#ShellToks_CPPFLAGS = -I$(uls_inc_dir) -DULS_USE_WSTR
+ShellToks_CPPFLAGS = -I$(uls_inc_dir)
 ShellToks_LDADD = -L$(uls_lib_dir) -lulscpp -luls
 all: all-am
 
@@ -405,7 +408,7 @@ clean-binPROGRAMS:
 
 ShellToks$(EXEEXT): $(ShellToks_OBJECTS) $(ShellToks_DEPENDENCIES) $(EXTRA_ShellToks_DEPENDENCIES) 
 	@rm -f ShellToks$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(ShellToks_OBJECTS) $(ShellToks_LDADD) $(LIBS)
+	$(AM_V_CXXLD)$(ShellToks_LINK) $(ShellToks_OBJECTS) $(ShellToks_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -444,32 +447,32 @@ am--depfiles: $(am__depfiles_remade)
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
 
 ShellToks-ShellToks.o: ShellToks.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ShellToks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ShellToks-ShellToks.o -MD -MP -MF $(DEPDIR)/ShellToks-ShellToks.Tpo -c -o ShellToks-ShellToks.o `test -f 'ShellToks.cpp' || echo '$(srcdir)/'`ShellToks.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ShellToks_CPPFLAGS) $(CPPFLAGS) $(ShellToks_CXXFLAGS) $(CXXFLAGS) -MT ShellToks-ShellToks.o -MD -MP -MF $(DEPDIR)/ShellToks-ShellToks.Tpo -c -o ShellToks-ShellToks.o `test -f 'ShellToks.cpp' || echo '$(srcdir)/'`ShellToks.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ShellToks-ShellToks.Tpo $(DEPDIR)/ShellToks-ShellToks.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ShellToks.cpp' object='ShellToks-ShellToks.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ShellToks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ShellToks-ShellToks.o `test -f 'ShellToks.cpp' || echo '$(srcdir)/'`ShellToks.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ShellToks_CPPFLAGS) $(CPPFLAGS) $(ShellToks_CXXFLAGS) $(CXXFLAGS) -c -o ShellToks-ShellToks.o `test -f 'ShellToks.cpp' || echo '$(srcdir)/'`ShellToks.cpp
 
 ShellToks-ShellToks.obj: ShellToks.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ShellToks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ShellToks-ShellToks.obj -MD -MP -MF $(DEPDIR)/ShellToks-ShellToks.Tpo -c -o ShellToks-ShellToks.obj `if test -f 'ShellToks.cpp'; then $(CYGPATH_W) 'ShellToks.cpp'; else $(CYGPATH_W) '$(srcdir)/ShellToks.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ShellToks_CPPFLAGS) $(CPPFLAGS) $(ShellToks_CXXFLAGS) $(CXXFLAGS) -MT ShellToks-ShellToks.obj -MD -MP -MF $(DEPDIR)/ShellToks-ShellToks.Tpo -c -o ShellToks-ShellToks.obj `if test -f 'ShellToks.cpp'; then $(CYGPATH_W) 'ShellToks.cpp'; else $(CYGPATH_W) '$(srcdir)/ShellToks.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ShellToks-ShellToks.Tpo $(DEPDIR)/ShellToks-ShellToks.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ShellToks.cpp' object='ShellToks-ShellToks.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ShellToks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ShellToks-ShellToks.obj `if test -f 'ShellToks.cpp'; then $(CYGPATH_W) 'ShellToks.cpp'; else $(CYGPATH_W) '$(srcdir)/ShellToks.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ShellToks_CPPFLAGS) $(CPPFLAGS) $(ShellToks_CXXFLAGS) $(CXXFLAGS) -c -o ShellToks-ShellToks.obj `if test -f 'ShellToks.cpp'; then $(CYGPATH_W) 'ShellToks.cpp'; else $(CYGPATH_W) '$(srcdir)/ShellToks.cpp'; fi`
 
 ShellToks-ShellLex.o: ShellLex.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ShellToks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ShellToks-ShellLex.o -MD -MP -MF $(DEPDIR)/ShellToks-ShellLex.Tpo -c -o ShellToks-ShellLex.o `test -f 'ShellLex.cpp' || echo '$(srcdir)/'`ShellLex.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ShellToks_CPPFLAGS) $(CPPFLAGS) $(ShellToks_CXXFLAGS) $(CXXFLAGS) -MT ShellToks-ShellLex.o -MD -MP -MF $(DEPDIR)/ShellToks-ShellLex.Tpo -c -o ShellToks-ShellLex.o `test -f 'ShellLex.cpp' || echo '$(srcdir)/'`ShellLex.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ShellToks-ShellLex.Tpo $(DEPDIR)/ShellToks-ShellLex.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ShellLex.cpp' object='ShellToks-ShellLex.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ShellToks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ShellToks-ShellLex.o `test -f 'ShellLex.cpp' || echo '$(srcdir)/'`ShellLex.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ShellToks_CPPFLAGS) $(CPPFLAGS) $(ShellToks_CXXFLAGS) $(CXXFLAGS) -c -o ShellToks-ShellLex.o `test -f 'ShellLex.cpp' || echo '$(srcdir)/'`ShellLex.cpp
 
 ShellToks-ShellLex.obj: ShellLex.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ShellToks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ShellToks-ShellLex.obj -MD -MP -MF $(DEPDIR)/ShellToks-ShellLex.Tpo -c -o ShellToks-ShellLex.obj `if test -f 'ShellLex.cpp'; then $(CYGPATH_W) 'ShellLex.cpp'; else $(CYGPATH_W) '$(srcdir)/ShellLex.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ShellToks_CPPFLAGS) $(CPPFLAGS) $(ShellToks_CXXFLAGS) $(CXXFLAGS) -MT ShellToks-ShellLex.obj -MD -MP -MF $(DEPDIR)/ShellToks-ShellLex.Tpo -c -o ShellToks-ShellLex.obj `if test -f 'ShellLex.cpp'; then $(CYGPATH_W) 'ShellLex.cpp'; else $(CYGPATH_W) '$(srcdir)/ShellLex.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ShellToks-ShellLex.Tpo $(DEPDIR)/ShellToks-ShellLex.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ShellLex.cpp' object='ShellToks-ShellLex.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ShellToks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ShellToks-ShellLex.obj `if test -f 'ShellLex.cpp'; then $(CYGPATH_W) 'ShellLex.cpp'; else $(CYGPATH_W) '$(srcdir)/ShellLex.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ShellToks_CPPFLAGS) $(CPPFLAGS) $(ShellToks_CXXFLAGS) $(CXXFLAGS) -c -o ShellToks-ShellLex.obj `if test -f 'ShellLex.cpp'; then $(CYGPATH_W) 'ShellLex.cpp'; else $(CYGPATH_W) '$(srcdir)/ShellLex.cpp'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo

@@ -431,10 +431,16 @@ ULS_QUALIFIED_METHOD(csz_putc)(csz_str_ptr_t csz, char ch)
 }
 
 void
+ULS_QUALIFIED_METHOD(csz_add_ch)(csz_str_ptr_t csz, char ch)
+{
+	__str_putc(uls_ptr(csz->pool), csz->alloc_delta, csz->len, ch);
+	++csz->len;
+}
+
+void
 ULS_QUALIFIED_METHOD(csz_add_eos)(csz_str_ptr_t csz)
 {
-	__str_putc(uls_ptr(csz->pool), csz->alloc_delta, csz->len, '\0');
-	++csz->len;
+	csz_add_ch(csz, '\0');
 }
 
 char*

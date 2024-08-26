@@ -1874,7 +1874,7 @@ ULS_QUALIFIED_METHOD(uls_encode_utf8)(uls_wch_t wch, char* utf8buf, int siz_utf8
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_decode_utf8)(const char *utf8buf, int len_utf8buf, uls_wch_t *p_val)
+ULS_QUALIFIED_METHOD(uls_decode_utf8)(const char *utf8buf, int len_utf8buf, uls_wch_t *p_wch)
 {
 	const char *bufptr = utf8buf;
 	char ch, ch_mask, ch_ary[3] = { 0x20, 0x10, 0x08 };
@@ -1894,8 +1894,8 @@ ULS_QUALIFIED_METHOD(uls_decode_utf8)(const char *utf8buf, int len_utf8buf, uls_
 
 	ch = *bufptr;
 	if ((ch & 0xC0) != 0xC0) {
-		if (p_val != NULL) *p_val = ch;
-		return 1; // including '\0'
+		if (p_wch != NULL) *p_wch = ch;
+		return 1; // including ctrl-ch and '\0'
 	}
 
 	for (n=0; ; n++) {
@@ -1908,8 +1908,10 @@ ULS_QUALIFIED_METHOD(uls_decode_utf8)(const char *utf8buf, int len_utf8buf, uls_
 
 	// n-bytes followed additionally
 	i = 1 + n;
-	if (p_val == NULL) return i;
-	if (i > len_utf8buf) return -i;
+	if (i > len_utf8buf) {
+		if (p_wch != NULL) i = -i;
+		return i;
+	}
 
 	ch_mask = (1 << (6-n)) - 1;
 	val = ch & ch_mask;
@@ -1923,7 +1925,7 @@ ULS_QUALIFIED_METHOD(uls_decode_utf8)(const char *utf8buf, int len_utf8buf, uls_
 		val = (val << 6) | (ch & ch_mask);
 	}
 
-	*p_val = val;
+	if (p_wch != NULL) *p_wch = val;
 	return 1 + n;
 }
 
@@ -1961,7 +1963,7 @@ ULS_QUALIFIED_METHOD(uls_encode_utf16)(uls_wch_t wch, uls_uint16 *utf16buf, int 
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_decode_utf16)(const uls_uint16 *utf16buf, int len_utf16buf, uls_wch_t *p_val)
+ULS_QUALIFIED_METHOD(uls_decode_utf16)(const uls_uint16 *utf16buf, int len_utf16buf, uls_wch_t *p_wch)
 {
 	uls_wch_t wch;
 	int i, rc;
@@ -1987,14 +1989,14 @@ ULS_QUALIFIED_METHOD(uls_decode_utf16)(const uls_uint16 *utf16buf, int len_utf16
 			wch += 0x10000;
 		} else {
 			wch = 0;
-			if (p_val != NULL) rc = -rc;
+			if (p_wch != NULL) rc = -rc;
 		}
 	} else {
 		wch = utf16buf[0];
 		rc = 1;
 	}
 
-	if (p_val != NULL) *p_val = wch;
+	if (p_wch != NULL) *p_wch = wch;
 	return rc;
 }
 
@@ -2011,7 +2013,7 @@ ULS_QUALIFIED_METHOD(uls_encode_utf32)(uls_wch_t wch, uls_uint32 *buf)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_decode_utf32)(uls_uint32 buf, uls_wch_t *p_val)
+ULS_QUALIFIED_METHOD(uls_decode_utf32)(uls_uint32 buf, uls_wch_t *p_wch)
 {
 	uls_wch_t wch;
 
@@ -2020,7 +2022,7 @@ ULS_QUALIFIED_METHOD(uls_decode_utf32)(uls_uint32 buf, uls_wch_t *p_val)
 		return -1;
 	}
 
-	if (p_val != NULL) *p_val = wch;
+	if (p_wch != NULL) *p_wch = wch;
 	return 1;
 }
 

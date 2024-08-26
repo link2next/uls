@@ -132,6 +132,126 @@ proc_file_coord(LPCTSTR buf)
 }
 
 int
+uls_fill_FILE_source(uls_source_t* isrc, char* buf, int buflen, int bufsiz)
+{
+	static unsigned char utf8buf[ULS_UTF8_CH_MAXLEN];
+	static int len_utf8buf;
+
+	int buflen0 = buflen;
+	FILE  *fp = (FILE *) isrc->usrc;
+	int i, j, rc, n_bytes;
+
+	if (len_utf8buf > 0) {
+		for (j = 0 ; j < len_utf8buf; j++) {
+			buf[buflen + j] = utf8buf[j];
+		}
+	}
+
+	if ((buflen += len_utf8buf) >= bufsiz) {
+		return buflen - buflen0;
+	}
+
+	if ((n_bytes = fread(buf + buflen, sizeof(char), bufsiz - buflen, fp)) <= 0) {
+		if (n_bytes < 0 || ferror(fp)) {
+			n_bytes = -1;
+		} else if (feof(fp)) {
+			isrc->flags |= ULS_ISRC_FL_EOF;
+		}
+		return n_bytes;
+	}
+
+	for (i = buflen; i < n_bytes; i += rc) {
+		if ((rc = uls_decode_utf8(buf + i, n_bytes - i, NULL)) <= 0) {
+			if (rc < -ULS_UTF8_CH_MAXLEN || feof(fp)) {
+				return -2;
+			}
+			len_utf8buf = n_bytes - i;
+			for (j = 0; j < len_utf8buf; j++) {
+				utf8buf[j] = buf[i + j];
+			}
+			break;
+		}
+	}
+
+	return i - buflen0;
+}
+
+static void
+uls_ungrab_FILE_source(uls_source_t* isrc)
+{
+	FILE  *fp = (FILE *) isrc->usrc;
+	uls_fp_close(fp);
+}
+
+int
+test_uls_isrc(LPCTSTR fpath)
+{
+	uls_lex_ptr_t uls = gcc_lex;
+	LPCTSTR tokstr;
+	FILE   *fp;
+	int t, stat = 0;
+
+	if ((fp = uls_fp_open(fpath, ULS_FIO_READ)) == NULL) {
+		err_log(_T(" file open error"));
+		return -1;
+	}
+
+	uls_push_isrc(uls, (void *) fp,
+		uls_fill_FILE_source, uls_ungrab_FILE_source);
+
+	uls_set_tag(uls, fpath, -1);
+
+	for ( ; ; ) {
+		if ((t = uls_get_tok(uls)) == TOK_EOI || t == TOK_ERR) {
+			if (t == TOK_ERR) {
+				tokstr = uls_tokstr(uls);
+				err_log(_T("ErrorToken: %s"), tokstr);
+			}
+			stat = -1;
+			break;
+		}
+
+		if (t == TOK_EOL) {
+			continue;
+		}
+
+		tokstr = uls_tokstr(uls);
+		if (t == TOK_WCOORD) {
+			proc_file_coord(tokstr);
+			continue;
+		}
+
+		uls_printf(_T("%s:%3d"), uls_get_tag(uls), uls_get_lineno(uls));
+		uls_dump_tok(uls, _T(" "), _T("\n"));
+	}
+
+	return stat;
+}
+
+int
+test_gnu_c(LPTSTR *args, int n_args)
+{
+	LPCTSTR fpath;
+	int i, stat=0;
+
+	if (n_args < 1) {
+		err_log(_T("%hs: invalid parameter!"), __func__);
+		return -1;
+	}
+
+	for (i=0; i<n_args; i++) {
+		fpath = args[i];
+
+		if (test_uls_isrc(fpath) < 0) {
+			stat = -1;
+			break;
+		}
+	}
+
+	return stat;
+}
+
+int
 lex_input_file(LPCTSTR fpath)
 {
 	LPCTSTR tokstr;
@@ -153,6 +273,7 @@ lex_input_file(LPCTSTR fpath)
 		}
 
 		if (t == TOK_EOL) {
+
 			continue;
 		}
 
@@ -167,29 +288,6 @@ lex_input_file(LPCTSTR fpath)
 	}
 
 	return 0;
-}
-
-int
-test_gnu_c(LPTSTR *args, int n_args)
-{
-	LPCTSTR fpath;
-	int i, stat=0;
-
-	if (n_args < 1) {
-		err_log(_T("%hs: invalid parameter!"), __func__);
-		return -1;
-	}
-
-	for (i=0; i<n_args; i++) {
-		fpath = args[i];
-
-		if (lex_input_file(fpath) < 0) {
-			stat = -1;
-			break;
-		}
-	}
-
-	return stat;
 }
 
 int
@@ -259,7 +357,9 @@ _tmain(int n_targv, LPTSTR *targv)
 	case 1:
 		lex_input_line();
 		break;
-
+	case 2:
+		lex_input_file(targv[i0]);
+		break;
 	default:
 		break;
 	}

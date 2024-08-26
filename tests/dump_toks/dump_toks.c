@@ -317,17 +317,17 @@ uls_ungrab_FILE_source(uls_source_t* isrc)
 	uls_fp_close(fp);
 }
 
-void
+int
 test_uls_isrc(LPCTSTR fpath)
 {
 	uls_lex_ptr_t uls = sample_lex;
 	LPCTSTR tokstr;
 	FILE   *fp;
-	int t;
+	int t, stat = 0;
 
 	if ((fp = uls_fp_open(fpath, ULS_FIO_READ)) == NULL) {
 		err_log(_T(" file open error"));
-		return;
+		return -1;
 	}
 
 	uls_push_isrc(uls, (void *) fp,
@@ -336,13 +336,12 @@ test_uls_isrc(LPCTSTR fpath)
 	uls_set_tag(uls, fpath, 1);
 
 	for ( ; ; ) {
-		if ((t = uls_get_tok(uls)) == TOK_ERR) {
-			tokstr = uls_tokstr(uls);
-			err_log(_T("ErrorToken: %s"), tokstr);
-			break;
-		}
-
-		if (t == TOK_EOI) {
+		if ((t = uls_get_tok(uls)) == TOK_EOI || t == TOK_ERR) {
+			if (t == TOK_ERR) {
+				tokstr = uls_tokstr(uls);
+				err_log(_T("ErrorToken: %s"), tokstr);
+			}
+			stat = -1;
 			break;
 		}
 
@@ -352,6 +351,8 @@ test_uls_isrc(LPCTSTR fpath)
 		ult_dump_utf8str(tokstr);
 		uls_printf(_T("\n"));
 	}
+
+	return stat;
 }
 
 int

@@ -651,9 +651,7 @@ ULS_QUALIFIED_METHOD(uls_mkdir)(const char *filepath0)
 void
 ULS_QUALIFIED_METHOD(isp_init)(uls_isp_ptr_t isp, int init_size)
 {
-	if (init_size < 0)
-		init_size = 512;
-
+	if (init_size < 0) init_size = 256;
 	isp->buff = (char *) uls_malloc(init_size);
 	isp->siz_strpool = init_size;
 	isp->len_strpool = 0;
@@ -686,7 +684,7 @@ ULS_QUALIFIED_METHOD(isp_find)(uls_isp_ptr_t isp, const char* str, int len)
 		len = uls_strlen(str);
 	}
 
-	for (ind=0; ind < isp->len_strpool; ind += l+1) {
+	for (ind = 0; ind < isp->len_strpool; ind += l + 1) {
 		ptr = isp->buff + ind;
 
 		l = uls_strlen(ptr);

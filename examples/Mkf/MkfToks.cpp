@@ -176,7 +176,7 @@ _tmain(int n_targv, LPTSTR *targv)
 	}
 
 	if (mkflex->include(input_file) < 0) {
-		_tcerr << _T(": Can't open ") << input_file << _tendl;
+		_tcerr << _T("Can't open ") << input_file << _tendl;
 	} else {
 		dumpTokens(mkflex);
 	}

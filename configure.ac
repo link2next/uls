@@ -136,6 +136,7 @@ AC_CONFIG_FILES([Makefile
 	tests/tok_remap/Makefile
 	tests/two_lex/Makefile
 	tests/gcc_toks/Makefile
+	tests/file_enc/Makefile
 	examples/Makefile
 	examples/test_1st/Makefile
 	examples/tokseq/Makefile

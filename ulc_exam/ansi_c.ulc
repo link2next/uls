@@ -1,4 +1,4 @@
-﻿#@ulc-2.3
+﻿#@ulc-2.4
 #
 #  ULC for ANSI-C
 #
@@ -13,7 +13,7 @@ NUMBER_SUFFIXES: L l UL ul ULL ull LL f
 
 COMMENT_TYPE: /* */
 
-QUOTE_TYPE: token=DQUOTE "
+QUOTE_TYPE: token=DQUOTE " legacy(?)
 QUOTE_TYPE: token=SQUOTE ' verbatim1
 
 NOT_CHAR_TOK: `@_
@@ -62,6 +62,8 @@ EQL              ==
 NEQ              !=
 AND              &&
 OR               ||
+LSHIFT           <<
+RSHIFT           >>
 ADD_ASGN         +=
 SUB_ASGN         -=
 MUL_ASGN         *=

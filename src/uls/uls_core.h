@@ -273,7 +273,7 @@ int __uls_make_eoftok_lexeme(uls_ptrtype_tool(outbuf) outbuf, int lno, const cha
 
 int uls_fillbuff(uls_lex_ptr_t uls);
 int uls_clear_and_fillbuff(uls_lex_ptr_t uls);
-int uls_fillbuff_and_reset(uls_lex_ptr_t uls);
+int uls_fillbuff_and_reset(uls_lex_ptr_t uls, const char *str0);
 
 int uls_gettok_raw(uls_lex_ptr_t uls);
 uls_context_ptr_t uls_push(uls_lex_ptr_t uls);

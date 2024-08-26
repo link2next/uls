@@ -134,7 +134,7 @@ test_sprintf_str(uls_lex_ptr_t uls, uls_log_t* log)
 	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T(""));
 	dump_tstr(buff, len);
 
-	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("'%s' '%8s' %% '%-8s'"), str, str, str);
+	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("'%s' '%8s' %% % '%-8s'"), str, str, str);
 	dump_tstr(buff, len);
 
 	strcpy(buff2, "world");
@@ -228,8 +228,11 @@ test_sprintf_float(uls_lex_ptr_t uls, uls_log_t* log)
 	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("%-8.4f -- %-08.4f -- %-#8.4f"), x, x, x);
 	dump_tstr(buff, len);
 
-	x = 0.3;
-	y = 0.3;
+	x = 0.3; y = 0.3;
+	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("%.5f %.5f %f %f"), x, y, x, y);
+	dump_tstr(buff, len);
+
+	x = 1.0; y = 1.0;
 	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("%.5f %.5f %f %f"), x, y, x, y);
 	dump_tstr(buff, len);
 }

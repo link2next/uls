@@ -367,6 +367,7 @@ ULS_QUALIFIED_METHOD(uls_get_simple_escape_char)(uls_ptrtype_tool(outparam) parm
 	case 'f': ch2 = '\f'; break;
 	case 'v': ch2 = '\v'; break;
 	default :
+		// '0' is excluded
 		processed = 0;
 		ch2 = (char) parms->x1;
 		break;
@@ -382,7 +383,7 @@ ULS_QUALIFIED_METHOD(uls_get_simple_escape_str)(char quote_ch, uls_ptrtype_tool(
 	const char *lptr = parms->lptr;
 	char* outbuf = parms->line;
 	uls_type_tool(outparam) parms1;
-	int escape = 0, j, k=0;
+	int escape = 0, j, k = 0;
 	char ch, ch2;
 
 	for ( ; ; lptr++) {
@@ -440,7 +441,6 @@ ULS_QUALIFIED_METHOD(uls_get_simple_escape_str)(char quote_ch, uls_ptrtype_tool(
 
 	outbuf[k] = '\0';
 	parms->lptr = lptr;
-
 	return k;
 }
 

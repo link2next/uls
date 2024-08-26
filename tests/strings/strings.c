@@ -50,8 +50,6 @@ int  opt_verbose;
 LPCTSTR config_name;
 LPTSTR input_file;
 
-uls_lex_ptr_t sample_lex;
-
 static void usage(void)
 {
 	err_log(_T("%s v1.0"), progname);
@@ -100,31 +98,63 @@ options(int opt, LPTSTR optarg)
 }
 
 void
-test_uls_0(LPTSTR fpath)
+test_escchar_map(uls_lex_ptr_t uls, LPCTSTR fpath)
 {
 	int tok;
 	FILE *fp;
+	LPCTSTR qstr_type;
+	unsigned char ch, *lxm;
+	int i, rc, len;
 
 	if ((fp = uls_fp_open(fpath, ULS_FIO_READ)) == NULL) {
 		err_log(_T("can't open the file '%s'"), fpath);
 		return;
 	}
 
-	if (uls_push_fp(sample_lex, fp, 0) < 0) {
+	if (uls_push_fp(uls, fp, 0) < 0) {
 		err_log(_T("can't set the input '%s' to uls"), fpath);
 		return;
 	}
 
-	for ( ; ; ) {
-		tok = uls_get_tok(sample_lex);
-		if (tok == TOK_EOI) break;
+	for ( ; (tok = uls_get_tok(uls)) != TOK_EOI; ) {
+		lxm = (unsigned char *) uls_lexeme(uls);
 
-		if (tok == TOK_SQUOTE) {
-			uls_printf(_T("\t'%s'\n"), uls_lexeme(sample_lex));
-		} else if (tok == '"') {
-			uls_printf(_T("\t\"%s\"\n"), uls_lexeme(sample_lex));
-		} else if (tok == TOK_ID) {
-			uls_printf(_T("\t%s\n"), uls_lexeme(sample_lex));
+		if (tok == TOK_CS_QUOTE) {
+			qstr_type = _T("RAW");
+		} else if (tok == TOK_SQUOTE) {
+			qstr_type = _T("SQ");
+		} else if (tok == TOK_DQUOTE) {
+			qstr_type = _T("DQ");
+		} else if (tok == TOK_MQUOTE) {
+			qstr_type = _T("MQ");
+		} else if (tok == TOK_NQUOTE) {
+			qstr_type = _T("NQ");
+		} else {
+			qstr_type = NULL;
+		}
+
+		if (qstr_type != NULL) {
+			len = uls_lexeme_len(uls);
+			uls_printf(_T("#%-2d: %3s(%2d)"), uls_get_lineno(uls), qstr_type, len);
+			for (i = 0; i < len; i += rc) {
+				ch = lxm[i];
+
+				if (ch == '\\') {
+					rc = 1;
+				} else if (ch == 0xE2 && lxm[i+1] == 0x82 && lxm[i+2] == 0xAC) { // EuroSign
+					rc = 3;
+				} else {
+					rc = 0;
+				}
+
+				if (rc > 0) {
+					uls_printf(_T("  -"));
+				} else {
+					uls_printf(_T(" %02X"), ch);
+					rc = 1;
+				}
+			}
+			uls_printf(_T("\n"));
 		}
 	}
 
@@ -132,9 +162,10 @@ test_uls_0(LPTSTR fpath)
 }
 
 void
-test_uls_1(LPCTSTR fpath)
+test_escaped_eol_1(uls_lex_ptr_t uls, LPCTSTR fpath)
 {
-	int tok;
+	unsigned char ch, *lxm;
+	int i, len, tok;
 	FILE *fp;
 
 	if ((fp = uls_fp_open(fpath, ULS_FIO_READ)) == NULL) {
@@ -142,19 +173,60 @@ test_uls_1(LPCTSTR fpath)
 		return;
 	}
 
-	if (uls_push_fp(sample_lex, fp, 0) < 0) {
+	if (uls_push_fp(uls, fp, 0) < 0) {
+		err_log(_T("can't set the input '%s' to uls"), fpath);
+		return;
+	}
+
+	for ( ; (tok = uls_get_tok(uls)) != TOK_EOI; ) {
+		lxm = (unsigned char *) uls_lexeme(uls);
+		len = uls_lexeme_len(uls);
+
+		if (tok == TOK_NQUOTE) {
+			uls_printf(_T(" #%-02d(NQ) : \""), uls_get_lineno(uls));
+			for (i = 0; i < len; i++) {
+				ch = lxm[i];
+				if (uls_isprint(ch)) {
+					uls_printf(_T("%c"), ch);
+				} else {
+					uls_printf(_T("(%02X)"), ch);
+				}
+			}
+			uls_printf(_T("\"\n"));
+		}
+	}
+
+	uls_fp_close(fp);
+}
+
+void
+test_uls_2(uls_lex_ptr_t uls, LPTSTR fpath)
+{
+	int tok;
+	unsigned char *lxm;
+	FILE *fp;
+
+	if ((fp = uls_fp_open(fpath, ULS_FIO_READ)) == NULL) {
+		err_log(_T("can't open the file '%s'"), fpath);
+		return;
+	}
+
+	if (uls_push_fp(uls, fp, 0) < 0) {
 		err_log(_T("can't set the input '%s' to uls"), fpath);
 		return;
 	}
 
 	for ( ; ; ) {
-		tok = uls_get_tok(sample_lex);
-		if (tok == TOK_EOI) break;
+		tok = uls_get_tok(uls);
+		if (tok == TOK_ERR || tok == TOK_EOI) break;
+		lxm = (unsigned char *) uls_lexeme(uls);
 
-		if (tok == TOK_CS_QUOTE) {
-			uls_printf(_T("\t'%s'\n"), uls_lexeme(sample_lex));
-		} else if (tok == TOK_ID) {
-			uls_printf(_T("\t%s\n"), uls_lexeme(sample_lex));
+		if (tok == TOK_SQUOTE) {
+			uls_printf(_T("\t'%s'\n"), lxm);
+		} else if (tok == '"') {
+			uls_printf(_T("\t\"%s\"\n"), lxm);
+		} else if (tok == TOK_CS_QUOTE) {
+			uls_printf(_T("\t\"\"\"%s\"\"\"\n"), lxm);
 		}
 	}
 
@@ -162,8 +234,42 @@ test_uls_1(LPCTSTR fpath)
 }
 
 int
+test_uls_3(uls_lex_ptr_t uls, LPCTSTR fpath)
+{
+	int fd, t;
+
+	if ((fd = uls_fd_open(fpath, ULS_FIO_READ)) < 0) {
+		err_log(_T("%s: file open error"), fpath);
+		return -1;
+	}
+
+	if (uls_set_fd(uls, fd, ULS_DO_DUP) < 0) {
+		err_log(_T("Can't set the istream, %s."), fpath);
+		return -1;
+	}
+
+	uls_set_tag(uls, fpath, 1);
+
+	for ( ; ; ) {
+		if ((t=uls_get_tok(uls)) == TOK_ERR) {
+			err_log(_T("TOK_ERR!"));
+			break;
+		} else if (t == TOK_EOI) {
+			break;
+		}
+
+		uls_printf(_T("%3d"), uls_get_lineno(uls));
+		uls_dump_tok(uls, _T("\t"), _T("\n"));
+	}
+
+	close(fd);
+	return 0;
+}
+
+int
 _tmain(int n_targv, LPTSTR *targv)
 {
+	uls_lex_ptr_t sample_lex;
 	int i0;
 
 	progname = uls_split_filepath(targv[0], NULL);
@@ -173,7 +279,7 @@ _tmain(int n_targv, LPTSTR *targv)
 		return i0;
 	}
 
-	if ((sample_lex=uls_create(config_name)) == NULL) {
+	if ((sample_lex = uls_create(config_name)) == NULL) {
 		err_log(_T("can't init uls-object"));
 		return -1;
 	}
@@ -182,17 +288,22 @@ _tmain(int n_targv, LPTSTR *targv)
 
 	switch (test_mode) {
 	case 0:
-		test_uls_0(input_file);
+		test_escchar_map(sample_lex, input_file);
 		break;
 	case 1:
-		test_uls_1(input_file);
+		test_escaped_eol_1(sample_lex, input_file);
+		break;
+	case 2:
+		test_uls_2(sample_lex, input_file);
+		break;
+	case 3:
+		test_uls_3(sample_lex, input_file);
 		break;
 	default:
 		break;
 	}
 
 	uls_destroy(sample_lex);
-
 	return 0;
 }
 

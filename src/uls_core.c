@@ -620,7 +620,6 @@ ULS_QUALIFIED_METHOD(uls_dealloc_lex)(uls_lex_ptr_t uls)
 
 	uls_xcontext_deinit(uls_ptr(uls->xcontext));
 
-	uls_deinit_escmap_pool(uls_ptr(uls->escstr_pool));
 	uls_deinit_2char_table(uls_ptr(uls->twoplus_table));
 	uls_deinit_kwtable(uls_ptr(uls->idkeyw_table));
 	free_tokdef_array(uls);
@@ -646,6 +645,7 @@ ULS_QUALIFIED_METHOD(uls_dealloc_lex)(uls_lex_ptr_t uls)
 	}
 
 	uls_deinit_parray(uls_ptr(uls->quotetypes));
+	uls_deinit_escmap_pool(uls_ptr(uls->escstr_pool));
 
 	uls_deinit_namebuf(uls->ulc_name);
 	uls_deinit_bytespool(uls->ch_context);
@@ -738,12 +738,19 @@ ULS_QUALIFIED_METHOD(uls_clear_and_fillbuff)(uls_lex_ptr_t uls)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_fillbuff_and_reset)(uls_lex_ptr_t uls)
+ULS_QUALIFIED_METHOD(uls_fillbuff_and_reset)(uls_lex_ptr_t uls, const char *str0)
 {
-	uls_context_ptr_t ctx;
+	uls_context_ptr_t ctx = uls->xcontext.context;
 	int rc;
 
-	if ((rc=uls_clear_and_fillbuff(uls)) > 0) {
+	_uls_tool(csz_reset)(uls_ptr(ctx->zbuf1));
+	_uls_tool(csz_reset)(uls_ptr(ctx->zbuf2));
+
+	if (str0 != NULL) {
+		_uls_tool(csz_puts)(uls_ptr(ctx->zbuf1), str0);
+	}
+
+	if ((rc = uls_fillbuff(uls)) > 0) {
 		ctx = uls->xcontext.context;
 		ctx->tok = uls->xcontext.toknum_NONE;
 		ctx->tokbuf.buf[0] = '\0';
@@ -753,6 +760,7 @@ ULS_QUALIFIED_METHOD(uls_fillbuff_and_reset)(uls_lex_ptr_t uls)
 
 	return rc;
 }
+
 
 const char*
 ULS_QUALIFIED_METHOD(__uls_eof_tag)(const char *ptr, uls_ptrtype_tool(outparam) parms)
@@ -1021,6 +1029,7 @@ ULS_QUALIFIED_METHOD(__uls_change_isrc)(uls_lex_ptr_t uls, uls_voidptr_t usrc,
 	uls_xcontext_ptr_t xctx = uls_ptr(uls->xcontext);
 	uls_context_ptr_t ctx = uls->xcontext.context;
 	uls_input_ptr_t   inp = ctx->input;
+	const char *str0;
 	int start_lno;
 
 	uls_input_reset(inp, ULS_INPUT_BUFSIZ, -1);
@@ -1028,17 +1037,18 @@ ULS_QUALIFIED_METHOD(__uls_change_isrc)(uls_lex_ptr_t uls, uls_voidptr_t usrc,
 
 	start_lno = 1;
 	if (xctx->len_prepended_input > 0) {
-		_uls_tool(csz_append)(uls_ptr(ctx->zbuf1), xctx->prepended_input, xctx->len_prepended_input);
+		str0 = xctx->prepended_input;
 		start_lno -= xctx->lfs_prepended_input;
+	} else {
+		str0 = NULL;
 	}
 
-	__uls_ctx_set_lineno(ctx, start_lno);
-
-	if (uls_fillbuff_and_reset(uls) < 0) {
+	if (uls_fillbuff_and_reset(uls, str0) < 0) {
 		_uls_log(err_log)("%s: fail to fill the initial buff", __func__);
 		return -1;
 	}
 
+	__uls_ctx_set_lineno(ctx, start_lno);
 	return 0;
 }
 
@@ -1791,6 +1801,7 @@ ULS_QUALIFIED_METHOD(uls_pop)(uls_lex_ptr_t uls)
 	uls_dealloc_object(ctx);
 
 	uls->xcontext.context = ctx_prev;
+
 	return ctx_prev;
 }
 
@@ -1815,7 +1826,7 @@ ULS_QUALIFIED_METHOD(uls_push_line)(uls_lex_ptr_t uls, const char* line, int len
 	uls_push(uls);
 	__uls_change_line(uls, line, len, flags);
 
-	if (uls_fillbuff_and_reset(uls) < 0) {
+	if (uls_fillbuff_and_reset(uls, NULL) < 0) {
 		_uls_log(err_log)("%s: fail to fill the initial buff", __func__);
 		return -1;
 	}

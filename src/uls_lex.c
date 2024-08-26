@@ -247,7 +247,8 @@ ULS_QUALIFIED_METHOD(uls_push_istream)(uls_lex_ptr_t uls, uls_istream_ptr_t istr
 		stat = -5; goto end_1;
 	}
 
-	if (uls_fillbuff_and_reset(uls) < 0) {
+	if (uls_fillbuff_and_reset(uls, NULL) < 0) {
+		_uls_log(err_log)("%s: failed to fillbuff", __func__);
 		stat = -6; goto end_1;
 	}
 
@@ -315,7 +316,7 @@ ULS_QUALIFIED_METHOD(uls_push_istream_2)(uls_lex_ptr_t uls, uls_istream_ptr_t is
 		stat = -5; goto end_1;
 	}
 
-	if (uls_fillbuff_and_reset(uls) < 0) {
+	if (uls_fillbuff_and_reset(uls, NULL) < 0) {
 		stat = -6; goto end_1;
 	}
 
@@ -348,7 +349,6 @@ ULS_QUALIFIED_METHOD(uls_push_file)(uls_lex_ptr_t uls, const char* filepath, int
 	}
 
 	if (uls_push_istream(uls, istr, nilptr, flags) < 0) {
-		__destroy_istream(istr);
 		return -1;
 	}
 
@@ -384,7 +384,6 @@ ULS_QUALIFIED_METHOD(uls_push_fp)(uls_lex_ptr_t uls, FILE* fp, int flags)
 	}
 
 	if (uls_push_istream(uls, istr, nilptr, flags) < 0) {
-		__destroy_istream(istr);
 		return -1;
 	}
 
@@ -423,7 +422,6 @@ ULS_QUALIFIED_METHOD(uls_push_fd)(uls_lex_ptr_t uls, int fd, int flags)
 	}
 
 	if (uls_push_istream(uls, istr, nilptr, flags) < 0) {
-		__destroy_istream(istr);
 		if (fd2 != fd) _uls_tool_(fd_close)(fd2);
 		return -1;
 	}

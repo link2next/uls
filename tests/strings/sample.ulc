@@ -1,4 +1,4 @@
-﻿#@ulc-2.3
+﻿#@ulc-2.4
 #
 #  ULC: Unified Lexical Configuration
 #
@@ -9,9 +9,11 @@ ID_CHARS: _ 0-9 a-z A-Z
 
 NUMBER_PREFIXES: 0x:16 0:8
 
-QUOTE_TYPE: token=DQUOTE " verbatim1
-QUOTE_TYPE: token=127,SQUOTE ' 
-QUOTE_TYPE: options=asymmetric token=CS_QUOTE @" " verbatim0
+QUOTE_TYPE: token=DQUOTE " legacy('?)
+QUOTE_TYPE: token=SQUOTE ' verbatim1
+QUOTE_TYPE: token=100,MQUOTE escsym=€ ☃ modern(u4,U8)
+QUOTE_TYPE: token=101,NQUOTE $ modern(eol)
+QUOTE_TYPE: options=asymmetric,multiline token=CS_QUOTE @" " verbatim
 
 %%
 #
@@ -67,6 +69,5 @@ VOID     void
 VOLATILE volatile
 WHILE    while
 
-SQUOTE             127
 ZAB      BAZ
 TAB      \t

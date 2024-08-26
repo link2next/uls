@@ -112,6 +112,9 @@ AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+MkfToks_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(MkfToks_CXXFLAGS) \
+	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -315,9 +318,9 @@ uls_inc_dir = $(uls_inst_dir)/include
 uls_lib_dir = $(uls_inst_dir)/lib
 ulc2class_exe = $(uls_bin_dir)/ulc2class
 MkfToks_SOURCES = MkfToks.cpp MkfLex.cpp
-
-#MkfToks_CPPFLAGS = -Wall -std=c++11 -I$(uls_inc_dir) -DULS_USE_WSTR
-MkfToks_CPPFLAGS = -Wall -std=c++11 -I$(uls_inc_dir)
+MkfToks_CXXFLAGS = -Wall -std=c++11 
+#MkfToks_CPPFLAGS = -I$(uls_inc_dir) -DULS_USE_WSTR
+MkfToks_CPPFLAGS = -I$(uls_inc_dir)
 MkfToks_LDADD = -L$(uls_lib_dir) -lulscpp -luls
 all: all-am
 
@@ -405,7 +408,7 @@ clean-binPROGRAMS:
 
 MkfToks$(EXEEXT): $(MkfToks_OBJECTS) $(MkfToks_DEPENDENCIES) $(EXTRA_MkfToks_DEPENDENCIES) 
 	@rm -f MkfToks$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(MkfToks_OBJECTS) $(MkfToks_LDADD) $(LIBS)
+	$(AM_V_CXXLD)$(MkfToks_LINK) $(MkfToks_OBJECTS) $(MkfToks_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -444,32 +447,32 @@ am--depfiles: $(am__depfiles_remade)
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
 
 MkfToks-MkfToks.o: MkfToks.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(MkfToks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT MkfToks-MkfToks.o -MD -MP -MF $(DEPDIR)/MkfToks-MkfToks.Tpo -c -o MkfToks-MkfToks.o `test -f 'MkfToks.cpp' || echo '$(srcdir)/'`MkfToks.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(MkfToks_CPPFLAGS) $(CPPFLAGS) $(MkfToks_CXXFLAGS) $(CXXFLAGS) -MT MkfToks-MkfToks.o -MD -MP -MF $(DEPDIR)/MkfToks-MkfToks.Tpo -c -o MkfToks-MkfToks.o `test -f 'MkfToks.cpp' || echo '$(srcdir)/'`MkfToks.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/MkfToks-MkfToks.Tpo $(DEPDIR)/MkfToks-MkfToks.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='MkfToks.cpp' object='MkfToks-MkfToks.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(MkfToks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o MkfToks-MkfToks.o `test -f 'MkfToks.cpp' || echo '$(srcdir)/'`MkfToks.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(MkfToks_CPPFLAGS) $(CPPFLAGS) $(MkfToks_CXXFLAGS) $(CXXFLAGS) -c -o MkfToks-MkfToks.o `test -f 'MkfToks.cpp' || echo '$(srcdir)/'`MkfToks.cpp
 
 MkfToks-MkfToks.obj: MkfToks.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(MkfToks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT MkfToks-MkfToks.obj -MD -MP -MF $(DEPDIR)/MkfToks-MkfToks.Tpo -c -o MkfToks-MkfToks.obj `if test -f 'MkfToks.cpp'; then $(CYGPATH_W) 'MkfToks.cpp'; else $(CYGPATH_W) '$(srcdir)/MkfToks.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(MkfToks_CPPFLAGS) $(CPPFLAGS) $(MkfToks_CXXFLAGS) $(CXXFLAGS) -MT MkfToks-MkfToks.obj -MD -MP -MF $(DEPDIR)/MkfToks-MkfToks.Tpo -c -o MkfToks-MkfToks.obj `if test -f 'MkfToks.cpp'; then $(CYGPATH_W) 'MkfToks.cpp'; else $(CYGPATH_W) '$(srcdir)/MkfToks.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/MkfToks-MkfToks.Tpo $(DEPDIR)/MkfToks-MkfToks.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='MkfToks.cpp' object='MkfToks-MkfToks.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(MkfToks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o MkfToks-MkfToks.obj `if test -f 'MkfToks.cpp'; then $(CYGPATH_W) 'MkfToks.cpp'; else $(CYGPATH_W) '$(srcdir)/MkfToks.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(MkfToks_CPPFLAGS) $(CPPFLAGS) $(MkfToks_CXXFLAGS) $(CXXFLAGS) -c -o MkfToks-MkfToks.obj `if test -f 'MkfToks.cpp'; then $(CYGPATH_W) 'MkfToks.cpp'; else $(CYGPATH_W) '$(srcdir)/MkfToks.cpp'; fi`
 
 MkfToks-MkfLex.o: MkfLex.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(MkfToks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT MkfToks-MkfLex.o -MD -MP -MF $(DEPDIR)/MkfToks-MkfLex.Tpo -c -o MkfToks-MkfLex.o `test -f 'MkfLex.cpp' || echo '$(srcdir)/'`MkfLex.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(MkfToks_CPPFLAGS) $(CPPFLAGS) $(MkfToks_CXXFLAGS) $(CXXFLAGS) -MT MkfToks-MkfLex.o -MD -MP -MF $(DEPDIR)/MkfToks-MkfLex.Tpo -c -o MkfToks-MkfLex.o `test -f 'MkfLex.cpp' || echo '$(srcdir)/'`MkfLex.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/MkfToks-MkfLex.Tpo $(DEPDIR)/MkfToks-MkfLex.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='MkfLex.cpp' object='MkfToks-MkfLex.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(MkfToks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o MkfToks-MkfLex.o `test -f 'MkfLex.cpp' || echo '$(srcdir)/'`MkfLex.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(MkfToks_CPPFLAGS) $(CPPFLAGS) $(MkfToks_CXXFLAGS) $(CXXFLAGS) -c -o MkfToks-MkfLex.o `test -f 'MkfLex.cpp' || echo '$(srcdir)/'`MkfLex.cpp
 
 MkfToks-MkfLex.obj: MkfLex.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(MkfToks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT MkfToks-MkfLex.obj -MD -MP -MF $(DEPDIR)/MkfToks-MkfLex.Tpo -c -o MkfToks-MkfLex.obj `if test -f 'MkfLex.cpp'; then $(CYGPATH_W) 'MkfLex.cpp'; else $(CYGPATH_W) '$(srcdir)/MkfLex.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(MkfToks_CPPFLAGS) $(CPPFLAGS) $(MkfToks_CXXFLAGS) $(CXXFLAGS) -MT MkfToks-MkfLex.obj -MD -MP -MF $(DEPDIR)/MkfToks-MkfLex.Tpo -c -o MkfToks-MkfLex.obj `if test -f 'MkfLex.cpp'; then $(CYGPATH_W) 'MkfLex.cpp'; else $(CYGPATH_W) '$(srcdir)/MkfLex.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/MkfToks-MkfLex.Tpo $(DEPDIR)/MkfToks-MkfLex.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='MkfLex.cpp' object='MkfToks-MkfLex.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(MkfToks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o MkfToks-MkfLex.obj `if test -f 'MkfLex.cpp'; then $(CYGPATH_W) 'MkfLex.cpp'; else $(CYGPATH_W) '$(srcdir)/MkfLex.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(MkfToks_CPPFLAGS) $(CPPFLAGS) $(MkfToks_CXXFLAGS) $(CXXFLAGS) -c -o MkfToks-MkfLex.obj `if test -f 'MkfLex.cpp'; then $(CYGPATH_W) 'MkfLex.cpp'; else $(CYGPATH_W) '$(srcdir)/MkfLex.cpp'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
