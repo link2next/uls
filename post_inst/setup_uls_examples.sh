@@ -122,7 +122,7 @@ uls_etc_dir = $ULS_ETC
 uls_bin_dir = \$(uls_inst_dir)/bin
 uls_inc_dir = \$(uls_inst_dir)/include
 uls_lib_dir = \$(uls_inst_dir)/lib
-ulc2class_exe = LD_LIBRARY_PATH=\$(uls_lib_dir) \$(uls_bin_dir)/ulc2class
+ulc2class_exe = \$(uls_bin_dir)/ulc2class
 TXT
 }
 
@@ -139,12 +139,14 @@ echo "Creating the uls examples in $dest_dir ..."
 tar -C "$dest_dir" -xf $examples_tar
 doc_dir=$dest_dir/$pkg_fname/doc
 if [ $? != 0 ] || [ ! -d "$doc_dir" ]; then
-	echo "Fail to create the directory of uls-examples or"
+	echo "Failed to create the directory of uls-examples or"
 	echo "  can't find '$doc_dir'!"
 	exit 1
 fi
 
-cp -f "$ULS_SHARE"/*.pdf "$doc_dir"/
+if ls -1 "$ULS_SHARE"/*.pdf 1> /dev/null 2>&1; then
+	cp -f "$ULS_SHARE"/*.pdf "$doc_dir"/
+fi
 
 gen_mkcfg_of_uls_examples "$ULS_HOME" "$dest_dir/$pkg_fname/cfg.mk"
 cd "$dest_dir/$pkg_fname"

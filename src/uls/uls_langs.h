@@ -78,13 +78,15 @@ ULS_DEFINE_STRUCT_BEGIN(lang_list)
 
 #endif // ULS_DEF_PROTECTED_TYPE
 
-#ifdef __ULS_LANGS__
+#if defined(ULS_DOTNET) || defined(__ULS_LANGS__)
 #define EXTERNAL
 #else
 #define EXTERNAL extern
 #endif
 
+#if !defined(ULS_DOTNET) || defined(ULS_DEF_PROTECTED_DATA)
 EXTERNAL uls_lang_list_ptr_t uls_langs;
+#endif
 
 #if defined(__ULS_LANGS__) || defined(ULS_DECL_PRIVATE_PROC)
 ULS_DECL_STATIC unsigned int ulc_alias_hashfunc(const char *str, int n);

@@ -34,9 +34,10 @@
 #ifndef __ULS_UTIL_WSTR_H__
 #define __ULS_UTIL_WSTR_H__
 
-#include "uls/uls_util.h"
 #include "uls/uls_auw.h"
-#include "uls/uls_fileio.h"
+#ifdef _ULS_INTERNAL_USE_ONLY
+#include "uls/uls_util.h"
+#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
@@ -45,7 +46,18 @@ extern "C" {
 typedef int (*uls_woptproc_t)(int opt, wchar_t* optwarg);
 
 ULS_DLL_EXTERN void uls_wputstr(const wchar_t *wstr);
+ULS_DLL_EXTERN void ult_dump_utf8str_wstr(const wchar_t *wstr);
 
+ULS_DLL_EXTERN int uls_wstr2int(const wchar_t *wstr);
+ULS_DLL_EXTERN int uls_wstrlen(const wchar_t* wstr);
+ULS_DLL_EXTERN int uls_wstreql(const wchar_t *wstr1, const wchar_t *wstr2);
+ULS_DLL_EXTERN int uls_wstrcpy(wchar_t *wbufptr, const wchar_t *wstr);
+ULS_DLL_EXTERN int uls_wstrcmp(const wchar_t *wstr1, const wchar_t *wstr2);
+ULS_DLL_EXTERN wchar_t* ult_skip_blanks_wstr(const wchar_t* lptr);
+ULS_DLL_EXTERN wchar_t* ult_splitstr_wstr(wchar_t** p_wstr, int *p_wlen);
+ULS_DLL_EXTERN wchar_t* ult_split_litstr_wstr(wchar_t *wstr, wchar_t qch);
+
+ULS_DLL_EXTERN wchar_t* uls_wfilename(const wchar_t *wfilepath, int* len_fname);
 ULS_DLL_EXTERN int uls_path_normalize_wstr(const wchar_t* wfpath, wchar_t* wfpath2);
 ULS_DLL_EXTERN int uls_mkdir_wstr(const wchar_t *wfilepath);
 
@@ -86,4 +98,31 @@ ULS_DLL_EXTERN void ulscompat_put_warg_list(wchar_t **wargv, int n_wargv);
 }
 #endif
 
+#ifdef _ULS_USE_ULSCOMPAT
+#ifdef ULS_USE_WSTR
+#define uls_putstr uls_wputstr
+#define ult_dump_utf8str ult_dump_utf8str_wstr
+
+#define ult_str2int uls_wstr2int
+#define ult_str_length uls_wstrlen
+#define ult_str_equal uls_wstreql
+#define ult_str_copy uls_wstrcpy
+#define ult_str_compare uls_wstrcmp
+#define ult_skip_blanks ult_skip_blanks_wstr
+#define ult_splitstr ult_splitstr_wstr
+#define ult_split_litstr ult_split_litstr_wstr
+
+#define uls_split_filepath uls_wfilename
+#define uls_path_normalize uls_path_normalize_wstr
+#define uls_mkdir uls_mkdir_wstr
+
+#define uls_strdup uls_wstrdup
+#define uls_strchr uls_wstrchr
+#define uls_explode_str uls_explode_wstr
+
+#define uls_getopts uls_getopts_wstr
+#define cvt_ms_mbcs_filepath cvt_ms_mbcs_filepath_wstr
 #endif
+#endif // _ULS_USE_ULSCOMPAT
+
+#endif // __ULS_UTIL_WSTR_H__

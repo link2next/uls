@@ -45,7 +45,7 @@ extern "C" {
 #define ULS_FL_WANT_RESERVED_TOKS 0x04
 #define ULS_FL_WANT_WRAPPER       0x08
 #define ULS_FL_ULD_FILE           0x10
-#define ULS_FL_STRFMT_WSTR        0x40
+
 #define ULS_FL_C_GEN              0x0100
 #define ULS_FL_CPP_GEN            0x0200
 #define ULS_FL_CPPCLI_GEN         0x0400
@@ -63,23 +63,21 @@ ULS_DEFINE_STRUCT(parms_emit)
 {
 	uls_flags_t flags;
 
-	const char *out_dpath, *out_fname;
-	const char *fpath_config, *fpath_ulc, *fpath_uld;
-	const char *ulc_name, *class_path;
+	const char *ulc_name, *filepath_conf;
 	const char *enum_name, *tok_pfx;
+	const char *class_name, *class_path;
 
-	char *pathbuff; // ULS_FILEPATH_MAX
-	char *fname_buff; // ULS_LEXSTR_MAXSIZ
-	char *ename_buff; // ULS_LEXSTR_MAXSIZ
-	char *class_name;
-
-	const char *fpath;
-	int len_fpath;
+	char *out_filepath, *ulc_filepath_enc;
+	const char *out_dpath, *out_fname;
+	int len_out_filepath;
 
 	uls_type_tool(arglst) name_components;
 	int n_name_components;
 
 	uls_voidptr_t ext_data;
+
+	char *fname_buff; // ULS_FILENAME_MAX
+	char *ename_buff; // ULS_FILENAME_MAX
 };
 #endif
 
@@ -95,15 +93,15 @@ ULS_DECL_STATIC void print_tokdef_enum_constants(uls_lex_ptr_t uls,
 	uls_ref_parray(tokdef_ary_prn,tokdef_vx), int n_tokdef_ary_prn,
 	int n_tabs, const char* enum_name, const char* tok_pfx, int flags);
 
-ULS_DECL_STATIC int __print_uld_lineproc_1(uld_line_ptr_t tok_names, int n_tabs, const char *lptr);
 ULS_DECL_STATIC int __print_uld_lineproc_2(uld_line_ptr_t tok_names, int n_tabs, const char *lptr);
 
-ULS_DECL_STATIC int __print_uld_lineproc_3(uld_line_ptr_t tok_names, int n_tabs, const char *lptr, const char *nilmark);
 ULS_DECL_STATIC int __print_uld_lineproc_3cpp(uld_line_ptr_t tok_names, int n_tabs, const char *lptr);
 ULS_DECL_STATIC int __print_uld_lineproc_3cs(uld_line_ptr_t tok_names, int n_tabs, const char *lptr);
+ULS_DECL_STATIC int __print_uld_lineproc_3java(uld_line_ptr_t tok_names, int n_tabs, const char *lptr);
 
-ULS_DECL_STATIC int __print_uld_c_source_1_fp(int n_tabs, FILE *fin_uld);
 ULS_DECL_STATIC int __print_uld_c_source_2_fp(int n_tabs, FILE *fin_uld);
+ULS_DECL_STATIC int collect_printable_list_of_tokdef_vx(uls_lex_ptr_t uls,
+	uls_parms_emit_ptr_t emit_parm, uls_ref_parray(tokdef_ary_prn,tokdef_vx));
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC
@@ -112,9 +110,9 @@ int print_uld_source(FILE *fin_uld, int n_tabs, uls_proc_uld_line_t lineproc);
 void print_tokdef_c_header(uls_lex_ptr_t uls,
 	uls_ref_parray(tokdef_ary_prn,tokdef_vx), int n_tokdef_ary_prn, uls_parms_emit_ptr_t emit_parm);
 
-int __print_tokdef_c_source_fp(FILE *fin_uld, int typ);
-int __print_tokdef_c_source_file(const char *filepath, int typ);
-int print_tokdef_c_source(uls_parms_emit_ptr_t emit_parm, const char *base_ulc, int typ);
+int __print_tokdef_c_source_fp(FILE *fin_uld);
+int __print_tokdef_c_source_file(const char *filepath);
+int print_tokdef_c_source(uls_parms_emit_ptr_t emit_parm, const char *base_ulc);
 
 int print_tokdef_cpp_header(uls_lex_ptr_t uls,
 	uls_ref_parray(tokdef_ary_prn,tokdef_vx), int n_tokdef_ary_prn,
@@ -134,10 +132,11 @@ int print_tokdef_java(uls_lex_ptr_t uls,
 
 #ifdef ULS_DECL_PUBLIC_PROC
 ULS_DLL_EXTERN int uls_init_parms_emit(uls_parms_emit_ptr_t emit_parm,
-	const char *out_dpath, const char *out_fname, const char *fpath_config,
-	const char* ulc_name, const char* class_path, const char *enum_name,
-	const char *tok_pfx, int flags);
-ULS_DLL_EXTERN int uls_deinit_parms_emit(uls_parms_emit_ptr_t emit_parm);
+	const char *out_dpath, const char *out_fname,
+	const char *filepath_cfg, const char* ulc_name,
+	const char* class_path, const char *enum_name,
+	const char *tok_pfx, const char *ulc_filepath, int flags);
+ULS_DLL_EXTERN void uls_deinit_parms_emit(uls_parms_emit_ptr_t emit_parm);
 ULS_DLL_EXTERN int uls_generate_tokdef_file(uls_lex_ptr_t uls, uls_parms_emit_ptr_t emit_parm);
 #endif
 

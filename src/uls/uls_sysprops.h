@@ -65,7 +65,7 @@ ULS_DEFINE_STRUCT(sysinfo)
 
 	const char *etc_dir, *home_dir, *ulcs_dir;
 	char *ULC_SEARCH_PATH;
-	int  encoding, codepage, multibytes;
+	int  codepage, multibytes;
 
 	uls_decl_array_type00(properties, sysprop, ULS_N_SYSPROPS);
 	int n_properties;
@@ -75,13 +75,15 @@ ULS_DEFINE_STRUCT(sysinfo)
 };
 #endif // ULS_DEF_PUBLIC_TYPE
 
-#if defined(__ULS_SYSPROPS__)
+#if defined(ULS_DOTNET) || defined(__ULS_SYSPROPS__)
 #define EXTERNAL
 #else
 #define EXTERNAL extern
 #endif
 
+#if !defined(ULS_DOTNET) || defined(ULS_DEF_PUBLIC_DATA)
 EXTERNAL uls_sysinfo_ptr_t uls_sysinfo;
+#endif
 
 #if defined(__ULS_SYSPROPS__) || defined(ULS_DECL_PRIVATE_PROC)
 ULS_DECL_STATIC int __init_system_info(uls_sysinfo_ptr_t sysinfo, int poolsiz);
@@ -104,7 +106,10 @@ void finalize_sysprops(void);
 int uls_load_system_properties(const char *fpath, uls_sysinfo_ptr_t sysinfo);
 
 void uls_arch2be_array(char* ary, int n);
+void uls_be2arch_array(char* ary, int n);
+
 void uls_arch2le_array(char* ary, int n);
+void uls_le2arch_array(char* ary, int n);
 #endif
 
 #ifdef ULS_DECL_PUBLIC_PROC
@@ -112,7 +117,9 @@ ULS_DLL_EXTERN const char* uls_add_system_property(const char* name, const char*
 ULS_DLL_EXTERN const char* uls_get_system_property(const char* name);
 #endif
 
+#ifndef ULS_DOTNET
 #define _uls_sysinfo_(attr) uls_sysinfo->attr
+#endif
 
 #undef EXTERNAL
 #ifdef _ULS_CPLUSPLUS

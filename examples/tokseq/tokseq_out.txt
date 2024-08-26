@@ -1,157 +1,157 @@
-	[     ID] class
-	[     ID] TmplStack
+	[  IDENT] class
+	[  IDENT] TmplStack
 	[       ] {
-	[     ID] unsigned
-	[     ID] long
-	[     ID] long
+	[  IDENT] unsigned
+	[  IDENT] long
+	[  IDENT] long
 	[       ] *
-	[     ID] stkarray
+	[  IDENT] stkarray
 	[       ] ;
-	[     ID] int
-	[     ID] stksiz
+	[  IDENT] int
+	[  IDENT] stksiz
 	[       ] ,
-	[     ID] top
+	[  IDENT] top
 	[       ] ;
-	[     ID] public
+	[  IDENT] public
 	[       ] :
-	[     ID] TmplStack
+	[  IDENT] TmplStack
 	[       ] (
-	[     ID] int
-	[     ID] stacksize
+	[  IDENT] int
+	[  IDENT] stacksize
 	[       ] )
 	[       ] {
-	[     ID] if
+	[  IDENT] if
 	[       ] (
-	[     ID] stacksize
+	[  IDENT] stacksize
 	[       ] <
 	[       ] =
 	[ NUMBER] 0
 	[       ] )
-	[     ID] stacksize
+	[  IDENT] stacksize
 	[       ] =
 	[ NUMBER] 1
 	[       ] ;
-	[     ID] stkarray
+	[  IDENT] stkarray
 	[       ] =
-	[     ID] new
-	[     ID] unsigned
-	[     ID] long
-	[     ID] long
+	[  IDENT] new
+	[  IDENT] unsigned
+	[  IDENT] long
+	[  IDENT] long
 	[       ] [
-	[     ID] stacksize
+	[  IDENT] stacksize
 	[       ] ]
 	[       ] ;
-	[     ID] stksiz
+	[  IDENT] stksiz
 	[       ] =
-	[     ID] stacksize
+	[  IDENT] stacksize
 	[       ] ;
-	[     ID] top
+	[  IDENT] top
 	[       ] =
 	[ NUMBER] 0
 	[       ] ;
 	[       ] }
 	[       ] ~
-	[     ID] TmplStack
+	[  IDENT] TmplStack
 	[       ] (
 	[       ] )
 	[       ] {
-	[     ID] delete
+	[  IDENT] delete
 	[       ] [
 	[       ] ]
-	[     ID] stkarray
+	[  IDENT] stkarray
 	[       ] ;
 	[       ] }
-	[     ID] bool
-	[     ID] isEmpty
+	[  IDENT] bool
+	[  IDENT] isEmpty
 	[       ] (
 	[       ] )
 	[       ] {
-	[     ID] return
-	[     ID] top
+	[  IDENT] return
+	[  IDENT] top
 	[       ] =
 	[       ] =
 	[ NUMBER] 0
 	[       ] ?
-	[     ID] true
+	[  IDENT] true
 	[       ] :
-	[     ID] false
+	[  IDENT] false
 	[       ] ;
 	[       ] }
-	[     ID] bool
-	[     ID] isFull
+	[  IDENT] bool
+	[  IDENT] isFull
 	[       ] (
 	[       ] )
 	[       ] {
-	[     ID] return
-	[     ID] top
+	[  IDENT] return
+	[  IDENT] top
 	[       ] =
 	[       ] =
-	[     ID] stksiz
+	[  IDENT] stksiz
 	[       ] ?
-	[     ID] true
+	[  IDENT] true
 	[       ] :
-	[     ID] false
+	[  IDENT] false
 	[       ] ;
 	[       ] }
-	[     ID] void
-	[     ID] push
+	[  IDENT] void
+	[  IDENT] push
 	[       ] (
-	[     ID] const
-	[     ID] unsigned
-	[     ID] long
-	[     ID] long
+	[  IDENT] const
+	[  IDENT] unsigned
+	[  IDENT] long
+	[  IDENT] long
 	[       ] &
-	[     ID] elmt
+	[  IDENT] elmt
 	[       ] )
 	[       ] {
-	[     ID] if
+	[  IDENT] if
 	[       ] (
-	[     ID] isFull
+	[  IDENT] isFull
 	[       ] (
 	[       ] )
 	[       ] )
 	[       ] {
-	[     ID] return
+	[  IDENT] return
 	[       ] ;
 	[       ] }
-	[     ID] stkarray
+	[  IDENT] stkarray
 	[       ] [
-	[     ID] top
+	[  IDENT] top
 	[       ] +
 	[       ] +
 	[       ] ]
 	[       ] =
-	[     ID] elmt
+	[  IDENT] elmt
 	[       ] ;
 	[       ] }
-	[     ID] unsigned
-	[     ID] long
-	[     ID] long
-	[     ID] pop
+	[  IDENT] unsigned
+	[  IDENT] long
+	[  IDENT] long
+	[  IDENT] pop
 	[       ] (
 	[       ] )
 	[       ] {
-	[     ID] if
+	[  IDENT] if
 	[       ] (
-	[     ID] isEmpty
+	[  IDENT] isEmpty
 	[       ] (
 	[       ] )
 	[       ] )
 	[       ] {
-	[     ID] return
+	[  IDENT] return
 	[       ] ;
 	[       ] }
-	[     ID] else
+	[  IDENT] else
 	[       ] {
 	[       ] -
 	[       ] -
-	[     ID] top
+	[  IDENT] top
 	[       ] ;
 	[       ] }
-	[     ID] return
-	[     ID] stkarray
+	[  IDENT] return
+	[  IDENT] stkarray
 	[       ] [
-	[     ID] top
+	[  IDENT] top
 	[       ] ]
 	[       ] ;
 	[       ] }

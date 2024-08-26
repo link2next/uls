@@ -1,4 +1,4 @@
-﻿#@ulc-2.3
+﻿#@ulc-2.4
 #
 #  ULC: Unified Lexical Configuration
 #
@@ -14,7 +14,7 @@ COMMENT_TYPE: # \n
 QUOTE_TYPE: token=DQUOTE " verbatim1
 QUOTE_TYPE: token=SQUOTE ' verbatim1
 QUOTE_TYPE: options=asymmetric token=4,MKFCMD  \n\t  \t  
-QUOTE_TYPE: options=nothing token=12,NOQUOTE1  \\\n
+#QUOTE_TYPE: options=nothing token=12,NOQUOTE1  \\\n
 
 RENAME: NUMBER NUM
 RENAME: EOF ENDFILE

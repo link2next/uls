@@ -143,7 +143,7 @@ am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
 libulscpp_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(libulscpp_la_CXXFLAGS) \
 	$(CXXFLAGS) $(libulscpp_la_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -342,9 +342,10 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 uls_ver_major = 1
 uls_ver_minor = 9
-uls_ver_debug = 0
+uls_ver_debug = 6
+uls_ver = $(uls_ver_major).$(uls_ver_minor).$(uls_ver_debug)
 so_current = 1
-so_revision = 0
+so_revision = 1
 so_age = 0
 ULS_SYSPROPS = /usr/local/etc/uls/uls.sysprops
 TMP_SYSPROPS = /tmp/uls_sysprops.txt
@@ -357,10 +358,10 @@ libulscpp_la_SOURCES = \
 
 noinst_HEADERS = 
 include_HEADERS = 
+libulscpp_la_CXXFLAGS = -funsigned-char -std=c++11 -Wall -Wno-char-subscripts
 libulscpp_la_CPPFLAGS = -D_ULSCPP_IMPLDLL -include $(CONFIG_HEADER) \
 	-I$(top_srcdir)/ulscompat -I$(top_srcdir)/src
 
-libulscpp_la_CFLAGS = -funsigned-char -Wall -Wno-char-subscripts
 libulscpp_la_LIBADD = $(top_builddir)/ulscompat/libulscompat.la $(top_builddir)/src/libuls.la
 libulscpp_la_LDFLAGS = -version-info $(so_current):$(so_revision):$(so_age)
 ACLOCAL_AMFLAGS = -I m4
@@ -477,39 +478,39 @@ am--depfiles: $(am__depfiles_remade)
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
 
 libulscpp_la-UlsLex.lo: UlsLex.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libulscpp_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libulscpp_la-UlsLex.lo -MD -MP -MF $(DEPDIR)/libulscpp_la-UlsLex.Tpo -c -o libulscpp_la-UlsLex.lo `test -f 'UlsLex.cpp' || echo '$(srcdir)/'`UlsLex.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libulscpp_la_CPPFLAGS) $(CPPFLAGS) $(libulscpp_la_CXXFLAGS) $(CXXFLAGS) -MT libulscpp_la-UlsLex.lo -MD -MP -MF $(DEPDIR)/libulscpp_la-UlsLex.Tpo -c -o libulscpp_la-UlsLex.lo `test -f 'UlsLex.cpp' || echo '$(srcdir)/'`UlsLex.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libulscpp_la-UlsLex.Tpo $(DEPDIR)/libulscpp_la-UlsLex.Plo
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='UlsLex.cpp' object='libulscpp_la-UlsLex.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libulscpp_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libulscpp_la-UlsLex.lo `test -f 'UlsLex.cpp' || echo '$(srcdir)/'`UlsLex.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libulscpp_la_CPPFLAGS) $(CPPFLAGS) $(libulscpp_la_CXXFLAGS) $(CXXFLAGS) -c -o libulscpp_la-UlsLex.lo `test -f 'UlsLex.cpp' || echo '$(srcdir)/'`UlsLex.cpp
 
 libulscpp_la-UlsStream.lo: UlsStream.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libulscpp_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libulscpp_la-UlsStream.lo -MD -MP -MF $(DEPDIR)/libulscpp_la-UlsStream.Tpo -c -o libulscpp_la-UlsStream.lo `test -f 'UlsStream.cpp' || echo '$(srcdir)/'`UlsStream.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libulscpp_la_CPPFLAGS) $(CPPFLAGS) $(libulscpp_la_CXXFLAGS) $(CXXFLAGS) -MT libulscpp_la-UlsStream.lo -MD -MP -MF $(DEPDIR)/libulscpp_la-UlsStream.Tpo -c -o libulscpp_la-UlsStream.lo `test -f 'UlsStream.cpp' || echo '$(srcdir)/'`UlsStream.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libulscpp_la-UlsStream.Tpo $(DEPDIR)/libulscpp_la-UlsStream.Plo
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='UlsStream.cpp' object='libulscpp_la-UlsStream.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libulscpp_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libulscpp_la-UlsStream.lo `test -f 'UlsStream.cpp' || echo '$(srcdir)/'`UlsStream.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libulscpp_la_CPPFLAGS) $(CPPFLAGS) $(libulscpp_la_CXXFLAGS) $(CXXFLAGS) -c -o libulscpp_la-UlsStream.lo `test -f 'UlsStream.cpp' || echo '$(srcdir)/'`UlsStream.cpp
 
 libulscpp_la-UlsIStream.lo: UlsIStream.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libulscpp_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libulscpp_la-UlsIStream.lo -MD -MP -MF $(DEPDIR)/libulscpp_la-UlsIStream.Tpo -c -o libulscpp_la-UlsIStream.lo `test -f 'UlsIStream.cpp' || echo '$(srcdir)/'`UlsIStream.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libulscpp_la_CPPFLAGS) $(CPPFLAGS) $(libulscpp_la_CXXFLAGS) $(CXXFLAGS) -MT libulscpp_la-UlsIStream.lo -MD -MP -MF $(DEPDIR)/libulscpp_la-UlsIStream.Tpo -c -o libulscpp_la-UlsIStream.lo `test -f 'UlsIStream.cpp' || echo '$(srcdir)/'`UlsIStream.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libulscpp_la-UlsIStream.Tpo $(DEPDIR)/libulscpp_la-UlsIStream.Plo
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='UlsIStream.cpp' object='libulscpp_la-UlsIStream.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libulscpp_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libulscpp_la-UlsIStream.lo `test -f 'UlsIStream.cpp' || echo '$(srcdir)/'`UlsIStream.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libulscpp_la_CPPFLAGS) $(CPPFLAGS) $(libulscpp_la_CXXFLAGS) $(CXXFLAGS) -c -o libulscpp_la-UlsIStream.lo `test -f 'UlsIStream.cpp' || echo '$(srcdir)/'`UlsIStream.cpp
 
 libulscpp_la-UlsOStream.lo: UlsOStream.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libulscpp_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libulscpp_la-UlsOStream.lo -MD -MP -MF $(DEPDIR)/libulscpp_la-UlsOStream.Tpo -c -o libulscpp_la-UlsOStream.lo `test -f 'UlsOStream.cpp' || echo '$(srcdir)/'`UlsOStream.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libulscpp_la_CPPFLAGS) $(CPPFLAGS) $(libulscpp_la_CXXFLAGS) $(CXXFLAGS) -MT libulscpp_la-UlsOStream.lo -MD -MP -MF $(DEPDIR)/libulscpp_la-UlsOStream.Tpo -c -o libulscpp_la-UlsOStream.lo `test -f 'UlsOStream.cpp' || echo '$(srcdir)/'`UlsOStream.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libulscpp_la-UlsOStream.Tpo $(DEPDIR)/libulscpp_la-UlsOStream.Plo
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='UlsOStream.cpp' object='libulscpp_la-UlsOStream.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libulscpp_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libulscpp_la-UlsOStream.lo `test -f 'UlsOStream.cpp' || echo '$(srcdir)/'`UlsOStream.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libulscpp_la_CPPFLAGS) $(CPPFLAGS) $(libulscpp_la_CXXFLAGS) $(CXXFLAGS) -c -o libulscpp_la-UlsOStream.lo `test -f 'UlsOStream.cpp' || echo '$(srcdir)/'`UlsOStream.cpp
 
 libulscpp_la-UlsUtils.lo: UlsUtils.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libulscpp_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libulscpp_la-UlsUtils.lo -MD -MP -MF $(DEPDIR)/libulscpp_la-UlsUtils.Tpo -c -o libulscpp_la-UlsUtils.lo `test -f 'UlsUtils.cpp' || echo '$(srcdir)/'`UlsUtils.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libulscpp_la_CPPFLAGS) $(CPPFLAGS) $(libulscpp_la_CXXFLAGS) $(CXXFLAGS) -MT libulscpp_la-UlsUtils.lo -MD -MP -MF $(DEPDIR)/libulscpp_la-UlsUtils.Tpo -c -o libulscpp_la-UlsUtils.lo `test -f 'UlsUtils.cpp' || echo '$(srcdir)/'`UlsUtils.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libulscpp_la-UlsUtils.Tpo $(DEPDIR)/libulscpp_la-UlsUtils.Plo
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='UlsUtils.cpp' object='libulscpp_la-UlsUtils.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libulscpp_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libulscpp_la-UlsUtils.lo `test -f 'UlsUtils.cpp' || echo '$(srcdir)/'`UlsUtils.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libulscpp_la_CPPFLAGS) $(CPPFLAGS) $(libulscpp_la_CXXFLAGS) $(CXXFLAGS) -c -o libulscpp_la-UlsUtils.lo `test -f 'UlsUtils.cpp' || echo '$(srcdir)/'`UlsUtils.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo

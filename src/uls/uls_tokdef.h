@@ -48,8 +48,9 @@ extern "C" {
 
 #define ULS_VX_RSVD              0x01
 #define ULS_VX_TOKID_CHANGED     0x02
-#define ULS_VX_TOKNAM_CHANGED    0x04
 #define ULS_VX_ANONYMOUS         0x08
+#define ULS_VX_CHRMAP            0x10
+#define ULS_VX_REFERRED          0x20
 
 ULS_DECLARE_STRUCT(tokdef_vx);
 ULS_DECLARE_STRUCT(tokdef);
@@ -63,57 +64,55 @@ ULS_DEFINE_DELEGATE_END(strcmp_proc);
 #ifdef ULS_DEF_PUBLIC_TYPE
 ULS_DEFINE_STRUCT(tokdef_name)
 {
-	uls_flags_t flags; // ULS_VX_TOKNAM_CHANGED
-	uls_def_namebuf(name, ULS_LEXSTR_MAXSIZ);
-	uls_tokdef_vx_ptr_t view;
-	uls_tokdef_name_ptr_t prev;
+	uls_flags_t flags;
+	uls_def_namebuf(name, ULS_TOKNAM_MAXSIZ);
+	uls_tokdef_name_ptr_t next;
 };
 ULS_DEF_PARRAY(tokdef_name);
 
 ULS_DEFINE_STRUCT_BEGIN(tokdef_vx)
 {
 	uls_flags_t flags;
-	int  tok_id;
+	int  tok_id; // primary
 
-	uls_def_namebuf(name, ULS_LEXSTR_MAXSIZ);
+	uls_def_namebuf(name, ULS_TOKNAM_MAXSIZ);
 	int  l_name;
 
 	uls_voidptr_t extra_tokdef;
-	uls_tokdef_ptr_t base;
-	uls_tokdef_name_ptr_t tokdef_names;
+	uls_tokdef_ptr_t base; // list of tokdef
+	uls_tokdef_name_ptr_t tokdef_names; // list of aliases
 };
 ULS_DEF_PARRAY(tokdef_vx);
 
 ULS_DEFINE_STRUCT_BEGIN(tokdef)
 {
-	uls_def_namebuf(keyword, ULS_LEXSTR_MAXSIZ);
-	int  l_keyword;
+	uls_def_namebuf(keyword, ULS_TWOPLUS_WMAXLEN*ULS_UTF8_CH_MAXLEN); // primary
+	int  ulen_keyword, wlen_keyword;
 	int  keyw_type;
 
 	uls_tokdef_vx_ptr_t view;
 
-	const char *name;
-
-	// Hash link for same hash-value(keyword,l_keyword)
+	// Hash link for same hash-value(keyword,ulen_keyword)
 	uls_tokdef_ptr_t link;
 
-	// The pointer to the next 'uls_tokdef_t'
-	//    for grounping the elements with same view->tok_id
+	// The link for grounping the elements with same view->tok_id via tokdef_vx.base.
 	uls_tokdef_ptr_t next;
 };
 ULS_DEF_PARRAY(tokdef);
 
 #endif // ULS_DEF_PUBLIC_TYPE
 
+#if defined(__ULS_TOKDEF__) || defined(ULS_DECL_PRIVATE_PROC)
+ULS_DECL_STATIC void insert_tokdef_name_to_group(uls_tokdef_vx_ptr_t e_vx, uls_tokdef_name_ptr_t e_nam);
+#endif
+
 #ifdef ULS_DECL_PROTECTED_PROC
-void print_tokdef_vx_char(uls_wch_t wch, uls_tokdef_vx_ptr_t e_vx);
 void uls_init_tokdef_vx(uls_tokdef_vx_ptr_t e_vx, int tok_id, const char* name, uls_tokdef_ptr_t e);
 void uls_deinit_tokdef_vx(uls_tokdef_vx_ptr_t e_vx);
 #endif
 
 #ifdef ULS_DECL_PUBLIC_PROC
 int __is_in_ilist(int *ilst, int n_ilst, int val);
-
 uls_tokdef_ptr_t uls_create_tokdef(void);
 void uls_destroy_tokdef(uls_tokdef_ptr_t e);
 
@@ -121,15 +120,14 @@ void __init_tokdef_vx(uls_tokdef_vx_ptr_t e_vx);
 uls_tokdef_vx_ptr_t uls_create_tokdef_vx(int tok_id, const char* name, uls_tokdef_ptr_t e);
 void uls_destroy_tokdef_vx(uls_tokdef_vx_ptr_t e_vx);
 
-uls_tokdef_name_ptr_t alloc_tokdef_name(const char *name, uls_tokdef_vx_ptr_t view);
+int canbe_tokname(const char *str);
+uls_tokdef_name_ptr_t alloc_tokdef_name(const char *name);
 void dealloc_tokdef_name(uls_tokdef_name_ptr_t e_nam);
-
-uls_tokdef_name_ptr_t find_tokdef_name(uls_tokdef_vx_ptr_t e_vx_leader, const char* name, uls_ptrtype_tool(outparam) parms);
-void insert_tokdef_name_to_group(uls_tokdef_vx_ptr_t e_vx_leader, uls_tokdef_name_ptr_t e_nam_prev, uls_tokdef_name_ptr_t e_nam);
-int append_tokdef_name_to_group(uls_tokdef_vx_ptr_t e_vx_leader, uls_tokdef_name_ptr_t e_nam);
-
-uls_tokdef_ptr_t search_tokdef_group(uls_tokdef_vx_ptr_t e_vx_leader, const char* keyw);
-void append_tokdef_to_group(uls_tokdef_vx_ptr_t e_vx_leader, uls_tokdef_ptr_t e_target);
+uls_tokdef_name_ptr_t find_tokdef_alias(uls_tokdef_vx_ptr_t e_vx, const char* name);
+int uls_add_tokdef_vx_name(uls_tokdef_vx_ptr_t e_vx, const char* name);
+int uls_change_tokdef_vx_name(uls_tokdef_vx_ptr_t e_vx, const char* name, const char* name2);
+uls_tokdef_ptr_t find_tokdef_by_keyw(uls_tokdef_vx_ptr_t e_vx, const char* keyw);
+void append_tokdef_to_group(uls_tokdef_vx_ptr_t e_vx, uls_tokdef_ptr_t e_target);
 #endif
 
 #ifdef _ULS_CPLUSPLUS

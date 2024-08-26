@@ -88,7 +88,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-noinst_PROGRAMS = line_by_line$(EXEEXT)
+noinst_PROGRAMS = line$(EXEEXT)
 subdir = tests/line
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -103,16 +103,16 @@ CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 PROGRAMS = $(noinst_PROGRAMS)
-am_line_by_line_OBJECTS = line_by_line-line.$(OBJEXT)
-line_by_line_OBJECTS = $(am_line_by_line_OBJECTS)
-line_by_line_DEPENDENCIES = $(top_builddir)/src/libuls.la
+am_line_OBJECTS = line-line.$(OBJEXT)
+line_OBJECTS = $(am_line_OBJECTS)
+line_DEPENDENCIES = $(top_builddir)/src/libuls.la
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
-line_by_line_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(line_by_line_CFLAGS) \
-	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+line_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(line_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -128,7 +128,7 @@ am__v_at_1 =
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
-am__depfiles_remade = ./$(DEPDIR)/line_by_line-line.Po
+am__depfiles_remade = ./$(DEPDIR)/line-line.Po
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -148,8 +148,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(line_by_line_SOURCES)
-DIST_SOURCES = $(line_by_line_SOURCES)
+SOURCES = $(line_SOURCES)
+DIST_SOURCES = $(line_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -305,19 +305,22 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 uls_ver_major = 1
 uls_ver_minor = 9
-uls_ver_debug = 0
+uls_ver_debug = 6
+uls_ver = $(uls_ver_major).$(uls_ver_minor).$(uls_ver_debug)
 so_current = 1
-so_revision = 0
+so_revision = 1
 so_age = 0
 ULS_SYSPROPS = /usr/local/etc/uls/uls.sysprops
 TMP_SYSPROPS = /tmp/uls_sysprops.txt
 ulc2class_exe = $(top_builddir)/tools/ulc2class/ulc2class
 tests_libpath = $(top_builddir)/src:$(top_builddir)/ulscpp
+line_SOURCES = line.c
+line_CFLAGS = -Wall
+#line_CPPFLAGS = -DULS_USE_WSTR -I$(top_srcdir)/ulscompat -I$(top_srcdir)/src
+#line_LDADD = $(top_builddir)/ulscompat/libulscompat.la $(top_builddir)/src/libuls.la
+line_CPPFLAGS = -I$(top_srcdir)/src
+line_LDADD = $(top_builddir)/src/libuls.la
 ACLOCAL_AMFLAGS = -I m4
-line_by_line_SOURCES = line.c
-line_by_line_CFLAGS = -Wall
-line_by_line_CPPFLAGS = -I$(top_srcdir)/src
-line_by_line_LDADD = $(top_builddir)/src/libuls.la
 all: all-am
 
 .SUFFIXES:
@@ -362,9 +365,9 @@ clean-noinstPROGRAMS:
 	echo " rm -f" $$list; \
 	rm -f $$list
 
-line_by_line$(EXEEXT): $(line_by_line_OBJECTS) $(line_by_line_DEPENDENCIES) $(EXTRA_line_by_line_DEPENDENCIES) 
-	@rm -f line_by_line$(EXEEXT)
-	$(AM_V_CCLD)$(line_by_line_LINK) $(line_by_line_OBJECTS) $(line_by_line_LDADD) $(LIBS)
+line$(EXEEXT): $(line_OBJECTS) $(line_DEPENDENCIES) $(EXTRA_line_DEPENDENCIES) 
+	@rm -f line$(EXEEXT)
+	$(AM_V_CCLD)$(line_LINK) $(line_OBJECTS) $(line_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -372,7 +375,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/line_by_line-line.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/line-line.Po@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
 	@$(MKDIR_P) $(@D)
@@ -401,19 +404,19 @@ am--depfiles: $(am__depfiles_remade)
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
 
-line_by_line-line.o: line.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(line_by_line_CPPFLAGS) $(CPPFLAGS) $(line_by_line_CFLAGS) $(CFLAGS) -MT line_by_line-line.o -MD -MP -MF $(DEPDIR)/line_by_line-line.Tpo -c -o line_by_line-line.o `test -f 'line.c' || echo '$(srcdir)/'`line.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/line_by_line-line.Tpo $(DEPDIR)/line_by_line-line.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='line.c' object='line_by_line-line.o' libtool=no @AMDEPBACKSLASH@
+line-line.o: line.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(line_CPPFLAGS) $(CPPFLAGS) $(line_CFLAGS) $(CFLAGS) -MT line-line.o -MD -MP -MF $(DEPDIR)/line-line.Tpo -c -o line-line.o `test -f 'line.c' || echo '$(srcdir)/'`line.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/line-line.Tpo $(DEPDIR)/line-line.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='line.c' object='line-line.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(line_by_line_CPPFLAGS) $(CPPFLAGS) $(line_by_line_CFLAGS) $(CFLAGS) -c -o line_by_line-line.o `test -f 'line.c' || echo '$(srcdir)/'`line.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(line_CPPFLAGS) $(CPPFLAGS) $(line_CFLAGS) $(CFLAGS) -c -o line-line.o `test -f 'line.c' || echo '$(srcdir)/'`line.c
 
-line_by_line-line.obj: line.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(line_by_line_CPPFLAGS) $(CPPFLAGS) $(line_by_line_CFLAGS) $(CFLAGS) -MT line_by_line-line.obj -MD -MP -MF $(DEPDIR)/line_by_line-line.Tpo -c -o line_by_line-line.obj `if test -f 'line.c'; then $(CYGPATH_W) 'line.c'; else $(CYGPATH_W) '$(srcdir)/line.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/line_by_line-line.Tpo $(DEPDIR)/line_by_line-line.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='line.c' object='line_by_line-line.obj' libtool=no @AMDEPBACKSLASH@
+line-line.obj: line.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(line_CPPFLAGS) $(CPPFLAGS) $(line_CFLAGS) $(CFLAGS) -MT line-line.obj -MD -MP -MF $(DEPDIR)/line-line.Tpo -c -o line-line.obj `if test -f 'line.c'; then $(CYGPATH_W) 'line.c'; else $(CYGPATH_W) '$(srcdir)/line.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/line-line.Tpo $(DEPDIR)/line-line.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='line.c' object='line-line.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(line_by_line_CPPFLAGS) $(CPPFLAGS) $(line_by_line_CFLAGS) $(CFLAGS) -c -o line_by_line-line.obj `if test -f 'line.c'; then $(CYGPATH_W) 'line.c'; else $(CYGPATH_W) '$(srcdir)/line.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(line_CPPFLAGS) $(CPPFLAGS) $(line_CFLAGS) $(CFLAGS) -c -o line-line.obj `if test -f 'line.c'; then $(CYGPATH_W) 'line.c'; else $(CYGPATH_W) '$(srcdir)/line.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -546,7 +549,7 @@ clean-am: clean-generic clean-libtool clean-noinstPROGRAMS \
 	mostlyclean-am
 
 distclean: distclean-am
-		-rm -f ./$(DEPDIR)/line_by_line-line.Po
+		-rm -f ./$(DEPDIR)/line-line.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -592,7 +595,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-		-rm -f ./$(DEPDIR)/line_by_line-line.Po
+		-rm -f ./$(DEPDIR)/line-line.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -633,7 +636,7 @@ uninstall-am:
 check: all
 	@bash ../run_tests.sh $(noinst_PROGRAMS) $(tests_libpath) $(TMP_SYSPROPS)
 
-$(line_by_line_OBJECTS) : sample_lex.h
+$(line_OBJECTS) : sample_lex.h
 
 %_lex.h : %.ulc
 	ULS_SYSPROPS=$(TMP_SYSPROPS) $(ulc2class_exe) -lc -ptok $<

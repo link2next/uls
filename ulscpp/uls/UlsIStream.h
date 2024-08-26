@@ -80,15 +80,15 @@ namespace uls {
 			// Checks if the variable 'tnam' exists in the list.
 			// </brief>
 			// <return>true/false</return>
-			bool exist(std::string& tnam);
-			bool exist(std::wstring& tnam);
+			bool exist(const std::string& tnam) const;
+			bool exist(const std::wstring& tnam) const;
 
 			// <brief>
 			// It returns the length of the internal (template variable) list.
 			// It's less than or equal to the capacity of the list.
 			// </brief>
 			// <return># of arguments</return>
-			int length(void);
+			int length(void) const;
 
 			// <brief>
 			// It returns the value of 'tnam'.
@@ -98,10 +98,10 @@ namespace uls {
 			// <parm name="tnam">the name of template variable</parm>
 			// <parm name="tval">the value of the 'tnam', output parameter</parm>
 			// <return></return>
-			bool getValue(std::string& tnam, std::string& tval);
-			bool getValue(std::wstring& wtnam, std::wstring& wtval);
-			const char *getValue(const char*tnam);
-			const wchar_t *getValue(const wchar_t *wtnam);
+			bool getValue(const std::string& tnam, std::string& tval) const;
+			bool getValue(const std::wstring& wtnam, std::wstring& wtval) const;
+			const char *getValue(const char*tnam) const;
+			const wchar_t *getValue(const wchar_t *wtnam) const;
 
 			// <brief>
 			// This modifies the pair <tnam, tval> in the list if the item named 'tnam' exists.
@@ -109,8 +109,8 @@ namespace uls {
 			// <parm name="tnam">the name of template variable</parm>
 			// <parm name="tval">the value of the 'tnam'</parm>
 			// <return>none</return>
-			bool setValue(std::string& tnam, std::string& tval);
-			bool setValue(std::wstring& wtnam, std::wstring& wtval);
+			bool setValue(const std::string& tnam, const std::string& tval);
+			bool setValue(const std::wstring& wtnam, const std::wstring& wtval);
 			bool setValue(const char *tnam, const char *tval);
 			bool setValue(const wchar_t *nam, const wchar_t *tval);
 

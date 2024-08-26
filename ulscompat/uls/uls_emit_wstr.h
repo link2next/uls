@@ -34,14 +34,16 @@
 #ifndef __ULS_EMIT_WSTR_H__
 #define __ULS_EMIT_WSTR_H__
 
+#include "uls/uls_auw.h"
+#ifdef _ULS_INTERNAL_USE_ONLY
 #include "uls/uls_emit.h"
-#include "uls/uls_lex.h"
+#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
 #endif
 
-#define N_PARMS_EMIT_WSTR 7
+#define N_PARMS_EMIT_WSTR 8
 
 ULS_DEFINE_STRUCT(emit_wshell)
 {
@@ -51,14 +53,22 @@ ULS_DEFINE_STRUCT(emit_wshell)
 };
 
 ULS_DLL_EXTERN int uls_init_parms_emit_wstr(uls_parms_emit_ptr_t emit_parm,
-	const wchar_t *out_wdpath, const wchar_t *out_wfname, const wchar_t *wfpath_uld,
-	const wchar_t *ulc_wname, const wchar_t *class_wname, const wchar_t *enum_wname,
-	const wchar_t *tok_wpfx, uls_flags_t flags);
+	const wchar_t *out_wdpath, const wchar_t *out_wfname,
+	const wchar_t *wfpath_uld, const wchar_t *ulc_wname,
+	const wchar_t *class_wname, const wchar_t *enum_wname,
+	const wchar_t *tok_wpfx, const wchar_t *ulc_wfilepath, uls_flags_t flags);
 
-ULS_DLL_EXTERN int uls_deinit_parms_emit_wstr(uls_parms_emit_ptr_t emit_parm);
+ULS_DLL_EXTERN void uls_deinit_parms_emit_wstr(uls_parms_emit_ptr_t emit_parm);
 
 #ifdef _ULS_CPLUSPLUS
 }
 #endif
+
+#ifdef _ULS_USE_ULSCOMPAT
+#ifdef ULS_USE_WSTR
+#define uls_init_parms_emit uls_init_parms_emit_wstr
+#define uls_deinit_parms_emit uls_deinit_parms_emit_wstr
+#endif
+#endif // _ULS_USE_ULSCOMPAT
 
 #endif // __ULS_EMIT_WSTR_H__

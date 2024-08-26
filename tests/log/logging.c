@@ -36,10 +36,6 @@
 #include "uls/uls_lex.h"
 #include "uls/uls_log.h"
 #include "uls/uls_util.h"
-#include "uls/uls_init.h"
-#ifdef ULS_USE_WSTR
-#include "uls/ulscompat.h"
-#endif
 
 #include <stdlib.h>
 #include <string.h>
@@ -55,7 +51,7 @@ int  test_mode = -1;
 int  opt_verbose;
 
 LPCTSTR config_name;
-uls_lex_t *sample_lex;
+uls_lex_ptr_t sample_lex;
 uls_log_t *sample_log;
 
 static void usage(void)
@@ -99,12 +95,12 @@ options(int opt, LPTSTR optarg)
 }
 
 static void
-dump_tstr(LPCTSTR tstr, int len)
+dump_tstr(LPCTSTR tstr, int len_tstr)
 {
 	TCHAR numbuf[32], tch;
 	int i, m, n, n_digits;
 
-	for (n_digits=0, n=len; n!=0; n/=10) {
+	for (n_digits=0, n=len_tstr; n!=0; n/=10) {
 		m = n % 10;
 		numbuf[n_digits++] = _T('0') + m;
 	}
@@ -128,66 +124,116 @@ dump_tstr(LPCTSTR tstr, int len)
 }
 
 void
-test_sprintf(uls_lex_t* uls, uls_log_t* log)
+test_sprintf_str(uls_lex_ptr_t uls, uls_log_t* log)
 {
 	TCHAR buff[128];
-	int len, i, ui;
-	long long ii;
-	unsigned long long uii;
-	int tok;
+	char buff2[32];
+	int len;
 	LPCTSTR str = _T("hello");
-	double x;
-	long double xx;
 
-	len = uls_snprintf(buff, sizeof(buff), _T(""));
+	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T(""));
 	dump_tstr(buff, len);
 
-	len = uls_snprintf(buff, sizeof(buff), _T("'%s' '%8s' %% '%-8s'"), str, str, str);
+	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("'%s' '%8s' %% % '%-8s'"), str, str, str);
+	dump_tstr(buff, len);
+
+	strcpy(buff2, "world");
+	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("%hs: '%hs' '%8hs' %% '%-8hs'"), __func__, buff2, buff2, buff2);
 	dump_tstr(buff, len);
 
 	buff[0] = 'X'; buff[1] = 'Y'; buff[2] = 'Z';
-	len = uls_snprintf(buff, sizeof(buff), _T("%c he-%c-llo %c"),
+	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("%c he-%c-llo %c"),
 		buff[0], buff[1], buff[2]);
 	dump_tstr(buff, len);
+}
+
+void
+test_sprintf_int(uls_lex_ptr_t uls, uls_log_t* log)
+{
+	TCHAR buff[128];
+	int len, i, ui;
+	long long ll;
+	unsigned long long ull;
+	int tok;
 
 	i = 2008;
-	len = uls_snprintf(buff, sizeof(buff), _T("hello 0x%08X world"), i);
+	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("hello 0x%08X world"), i);
 	dump_tstr(buff, len);
 
 	i = 7;
-	len = uls_snprintf(buff, sizeof(buff), _T("%+5d"), i);
+	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("%+5d"), i);
 	dump_tstr(buff, len);
 
 	i = -9;
-	len = uls_snprintf(buff, sizeof(buff), _T("%5d<hello>"), i);
+	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("%5d<hello>"), i);
 	dump_tstr(buff, len);
 
 	ui = 7;
-	len = uls_snprintf(buff, sizeof(buff), _T("%-3u"), ui);
+	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("%-3u"), ui);
 	dump_tstr(buff, len);
 
 	ui = 2008;
-	ii = -35;
+	ll = -35;
 	tok = uls_get_tok(uls);
-	uls_log(log, _T("buff = '%lld', tok=%d:'%s'"), ii, tok, uls_lexeme(uls));
+	uls_log(log, _T("buff = '%lld', tok=%d:'%s'"), ll, tok, uls_lexeme(uls));
 
 	tok = uls_get_tok(uls);
-	uii = (unsigned long long) ii;
-	uls_log(log, _T("buff = '%llu+%u', tok=%d:'%s'"), uii, ui, tok, uls_lexeme(uls));
+	ull = (unsigned long long) ll;
+	uls_log(log, _T("buff = '%llu+%u', tok=%d:'%s'"), ull, ui, tok, uls_lexeme(uls));
 
 	i = 2008;
 	tok = uls_get_tok(uls);
 	uls_log(log, _T("buff = '%-12d, tok=%d:'%s'"), i, tok, uls_lexeme(uls));
+}
+
+void
+test_sprintf_float(uls_lex_ptr_t uls, uls_log_t* log)
+{
+	TCHAR buff[128];
+	int len;
+	double x;
+	long double xx;
+	float y;
 
 	x = 314159.2653589;
 	// use %f for printing 'double'
-	len = uls_snprintf(buff, sizeof(buff), _T("%.10f %.10e %.10g"), x, x, x);
-
+	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("%.5f %.5e %.5g"), x, x, x);
 	dump_tstr(buff, len);
 
 	xx = -0.00031415926535897;
-	len = uls_snprintf(buff, sizeof(buff), _T("%.10lf %.10le %.10lg"), xx, xx, xx);
+	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("%.7lf %.7le %.7lg"), xx, xx, xx);
+	dump_tstr(buff, len);
 
+	x = 0.0;
+	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("%f -- %.3f -- %0.3f -- %#.3f"), x, x, x, x);
+	dump_tstr(buff, len);
+
+	x = 0.31;
+	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("%f -- %.3f -- %0.3f -- %#.3f"), x, x, x, x);
+	dump_tstr(buff, len);
+
+	x = 31.158;
+	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("%f -- %.2f -- %0.2f -- %#.2f"), x, x, x, x);
+	dump_tstr(buff, len);
+
+	x = 31.158;
+	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("%f -- %.4f -- %0.4f -- %#.4f"), x, x, x, x);
+	dump_tstr(buff, len);
+
+	x = 31.158;
+	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("%8.4f -- %08.4f -- %#8.4f"), x, x, x);
+	dump_tstr(buff, len);
+
+	x = 31.158;
+	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("%-8.4f -- %-08.4f -- %-#8.4f"), x, x, x);
+	dump_tstr(buff, len);
+
+	x = 0.3; y = 0.3;
+	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("%.5f %.5f %f %f"), x, y, x, y);
+	dump_tstr(buff, len);
+
+	x = 1.0; y = 1.0;
+	len = uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("%.5f %.5f %f %f"), x, y, x, y);
 	dump_tstr(buff, len);
 }
 
@@ -226,10 +272,24 @@ void sample_lex_log(LPCTSTR fmt, ...)
 }
 
 void
-test_log(uls_lex_t *uls, uls_log_t *log)
+test_log_str(uls_lex_ptr_t uls, uls_log_t *log)
+{
+	int tok;
+	char buff2[32];
+
+	strcpy(buff2, "world");
+	err_log(_T("%hs: mesg = '%hs' '%-8hs'"), __func__, buff2, buff2);
+
+	tok = uls_get_tok(uls);
+	uls_printf(_T("stdout: <%w>: tok=%d %t %k\n"), uls, tok, uls, uls);
+	err_log(_T("err<%w>: %t %k"), uls, uls, uls);
+}
+
+void
+test_log_int(uls_lex_ptr_t uls, uls_log_t *log)
 {
 	unsigned int ui;
-	long long ii;
+	long long ll;
 	int i;
 	int tok;
 
@@ -237,24 +297,20 @@ test_log(uls_lex_t *uls, uls_log_t *log)
 	ui = 3;
 	err_log(_T("mesg = '%+5d' '%-3u'"), i, ui);
 
-	tok = uls_get_tok(uls);
-	uls_printf(_T("stdout: <%w>: %t %k\n"), uls, uls, uls);
-	err_log(_T("err<%w>: %t %k"), uls, uls, uls);
-
 	i = 2011;
 	tok = uls_get_tok(uls);
 	uls_log(log, _T("buff = '%-12d, tok=%d:'%s'"), i, tok, uls_lexeme(uls));
 
 	ui = 2015;
-	ii = -35;
+	ll = -35;
 	tok = uls_get_tok(uls);
-	uls_log(log, _T("buff = '%lld', tok=%d(%-5k) '%8t' at '%-12w' $"), ii, tok);
+	uls_log(log, _T("buff = '%lld', tok=%d(%-5k) '%8t' at '%-12w' $"), ll, tok);
 
 	uls_log(log, _T("buff = '%-12d, tok=%d:'%s'"), i, tok, uls_lexeme(uls));
-	uls_log(log, _T("buff = '%lld', tok=%d: %t at %w"), ii, tok);
+	uls_log(log, _T("buff = '%lld', tok=%d: %t at %w"), ll, tok);
 
 	tok = uls_get_tok(uls);
-	sample_lex_log(_T("buff = '%lld+%u', tok=%d: at %w"), ii, ui, tok);
+	sample_lex_log(_T("buff = '%lld+%u', tok=%d: at %w"), ll, ui, tok);
 }
 
 void *thr_task(void *param)
@@ -292,28 +348,19 @@ test_log_threads(void)
 }
 
 int
-main(int argc, char *argv[])
+_tmain(int n_targv, LPTSTR *targv)
 {
-	LPTSTR *targv;
-	LPTSTR input_file;
+	LPCTSTR input_file;
 	int i0;
-
-#ifdef ULS_USE_WSTR
-	initialize_ulscompat();
-#else
-	initialize_uls();
-#endif
-
-	ULS_GET_WARGS_LIST(argc, argv, targv);
 
 	progname = targv[0];
 	config_name = _T("sample.ulc");
 
-	if ((i0=uls_getopts(argc, targv, _T("a:m:vh"), options)) <= 0) {
+	if ((i0=uls_getopts(n_targv, targv, _T("a:m:vh"), options)) <= 0) {
 		return i0;
 	}
 
-	if (i0 >= argc) {
+	if (i0 >= n_targv) {
 		err_log(_T("need an input file"));
 		return -1;
 	}
@@ -338,10 +385,13 @@ main(int argc, char *argv[])
 
 	switch (test_mode) {
 	case 0:
-		test_sprintf(sample_lex, sample_log);
+		test_sprintf_str(sample_lex, sample_log);
+		test_sprintf_int(sample_lex, sample_log);
+		test_sprintf_float(sample_lex, sample_log);
 		break;
 	case 1:
-		test_log(sample_lex, sample_log);
+		test_log_str(sample_lex, sample_log);
+		test_log_int(sample_lex, sample_log);
 		break;
 	case 2:
 		test_log_threads();
@@ -353,12 +403,22 @@ main(int argc, char *argv[])
 		break;
 	}
 
+	uls_pop_all(sample_lex);
 	uls_destroy_log(sample_log);
-
-	uls_dismiss_input(sample_lex);
 	uls_destroy(sample_lex);
 
+	return 0;
+}
+
+int
+main(int argc, char *argv[])
+{
+	LPTSTR *targv;
+	int stat;
+
+	ULS_GET_WARGS_LIST(argc, argv, targv);
+	stat = _tmain(argc, targv);
 	ULS_PUT_WARGS_LIST(argc, targv);
 
-	return 0;
+	return stat;
 }

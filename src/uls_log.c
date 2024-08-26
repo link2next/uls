@@ -119,7 +119,7 @@ ULS_QUALIFIED_METHOD(finalize_uls_syserr)(void)
 int
 ULS_QUALIFIED_METHOD(uls_fmtproc_coord)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t ctx)
 {
-	uls_lex_t  *uls;
+	uls_lex_ptr_t uls;
 
 	uls = (uls_lex_ptr_t) va_arg(ctx->args, uls_lex_ptr_t);
 	return __uls_fmtproc_coord(x_dat, puts_proc, uls, ctx);
@@ -128,7 +128,7 @@ ULS_QUALIFIED_METHOD(uls_fmtproc_coord)(uls_voidptr_t x_dat, uls_lf_puts_t puts_
 int
 ULS_QUALIFIED_METHOD(uls_fmtproc_tokname)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t ctx)
 {
-	uls_lex_t  *uls;
+	uls_lex_ptr_t uls;
 
 	uls = (uls_lex_ptr_t) va_arg(ctx->args, uls_lex_ptr_t);
 	return __uls_fmtproc_tokname(x_dat, puts_proc, uls, ctx);
@@ -137,7 +137,7 @@ ULS_QUALIFIED_METHOD(uls_fmtproc_tokname)(uls_voidptr_t x_dat, uls_lf_puts_t put
 int
 ULS_QUALIFIED_METHOD(uls_fmtproc_keyword)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t ctx)
 {
-	uls_lex_t  *uls;
+	uls_lex_ptr_t uls;
 
 	uls = (uls_lex_ptr_t) va_arg(ctx->args, uls_lex_ptr_t);
 	return __uls_fmtproc_keyword(x_dat, puts_proc, uls, ctx);
@@ -146,21 +146,21 @@ ULS_QUALIFIED_METHOD(uls_fmtproc_keyword)(uls_voidptr_t x_dat, uls_lf_puts_t put
 int
 ULS_QUALIFIED_METHOD(uls_log_fmtproc_coord)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t ctx)
 {
-	uls_lex_t  *uls = (uls_lex_ptr_t) ctx->g_dat;
+	uls_lex_ptr_t uls = (uls_lex_ptr_t) ctx->g_dat;
 	return __uls_fmtproc_coord(x_dat, puts_proc, uls, ctx);
 }
 
 int
 ULS_QUALIFIED_METHOD(uls_log_fmtproc_tokname)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t ctx)
 {
-	uls_lex_t  *uls = (uls_lex_ptr_t) ctx->g_dat;
+	uls_lex_ptr_t uls = (uls_lex_ptr_t) ctx->g_dat;
 	return __uls_fmtproc_tokname(x_dat, puts_proc, uls, ctx);
 }
 
 int
 ULS_QUALIFIED_METHOD(uls_log_fmtproc_keyword)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t ctx)
 {
-	uls_lex_t  *uls = (uls_lex_ptr_t) ctx->g_dat;
+	uls_lex_ptr_t uls = (uls_lex_ptr_t) ctx->g_dat;
 	return __uls_fmtproc_keyword(x_dat, puts_proc, uls, ctx);
 }
 
@@ -271,14 +271,17 @@ ULS_QUALIFIED_METHOD(uls_init_log)(uls_log_ptr_t log, uls_lf_map_ptr_t lf_map, u
 void
 ULS_QUALIFIED_METHOD(uls_deinit_log)(uls_log_ptr_t log)
 {
-	uls_lex_ptr_t uls = log->uls;
+	if (log->uls == nilptr) {
+		err_log("%s: already called!", __func__);
+		return;
+	}
 
 	uls_lf_destroy(log->lf);
 
 	log->flags &= ULS_FL_STATIC;
 
+	uls_ungrab(log->uls);
 	log->uls = nilptr;
-	uls_ungrab(uls);
 
 	log->log_port = nilptr;
 	log->log_puts = uls_lf_puts_null;
@@ -373,7 +376,6 @@ ULS_QUALIFIED_METHOD(uls_vlog)(uls_log_ptr_t log, const char* fmt, va_list args)
 
 // <brief>
 // Logs a formatted message
-// You can use %t %w to print the current token, its location.
 // No need to append '\n' to the end of line 'fmt'
 // </brief>
 // <parm name="fmt">The template for message string</parm>

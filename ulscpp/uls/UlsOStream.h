@@ -35,9 +35,7 @@
 #pragma once
 
 #include "uls/UlsStream.h"
-
 #include <string>
-
 #include <uls/uls_ostream.h>
 
 namespace uls {
@@ -98,8 +96,8 @@ namespace uls {
 			// <parm name="tokid">the token number to be printed</parm>
 			// <parm name="tokstr">the lexeme associated with the 'tokid'</parm>
 			// <return>none</return>
-			void printTok(int tokid, std::string& tokstr);
-			void printTok(int tokid, std::wstring& tokstr);
+			void printTok(int tokid, const std::string& tokstr);
+			void printTok(int tokid, const std::wstring& tokstr);
 
 			// <brief>
 			// This method prints an annotation <linenum, tag> pair to the output file.
@@ -107,8 +105,8 @@ namespace uls {
 			// <parm name="lno">the line number of the source file</parm>
 			// <parm name="tagstr">the tag of the source file</parm>
 			// <return>none</return>
-			void printTokLineNum(int lno, std::string& tagstr);
-			void printTokLineNum(int lno, std::wstring& tagstr);
+			void printTokLineNum(int lno, const std::string& tagstr);
+			void printTokLineNum(int lno, const std::wstring& tagstr);
 
 			// <brief>
 			// Start writing the lexical streaming with input-stream 'ifile'.

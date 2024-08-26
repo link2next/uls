@@ -146,7 +146,7 @@ ULS_QUALIFIED_METHOD(uls_lf_number_Lu)(char *numstr, unsigned long long num, int
 		} while (num!=0);
 
 	} else {
-		base_mask = (1 << base_shift) - 1;
+		base_mask = (1ULL << base_shift) - 1;
 		do {
 			numstr[--i] = "0123456789ABCDEF"[ (int) (num & base_mask) ];
 			num >>= base_shift;
@@ -155,6 +155,8 @@ ULS_QUALIFIED_METHOD(uls_lf_number_Lu)(char *numstr, unsigned long long num, int
 
 	return i;
 }
+
+#ifndef ULS_DOTNET
 
 void
 ULS_QUALIFIED_METHOD(err_log_puts)(const char* mesg, int len)
@@ -327,6 +329,8 @@ err_panic_primitive(const char* fmt, ...)
 	exit(1);
 }
 
+#endif // ULS_DOTNET
+
 int
 ULS_QUALIFIED_METHOD(uls_isgraph)(int c)
 {
@@ -439,6 +443,22 @@ ULS_QUALIFIED_METHOD(is_num_radix)(uls_wch_t ch, int radix)
 }
 
 char
+ULS_QUALIFIED_METHOD(num2char_radix)(int val)
+{
+	char ch;
+
+	if (val < 10) {
+		ch ='0' + val;
+	} else if (val < 36) {
+		ch = val - 10 + 'A';
+	} else {
+		ch = '^';
+	}
+
+	return ch;
+}
+
+char
 ULS_QUALIFIED_METHOD(read_hexa_char)(char* ptr)
 {
 	unsigned n, ch_val = 0;
@@ -464,11 +484,75 @@ ULS_QUALIFIED_METHOD(read_hexa_char)(char* ptr)
 	return (char) ch_val;
 }
 
-int
-ULS_QUALIFIED_METHOD(is_pure_int_number)(const char* lptr)
+const char*
+ULS_QUALIFIED_METHOD(uls_get_standard_number_prefix)(int radix)
 {
-	int minus=0, pure=1, n;
-	const char* lptr0;
+	const char *prefix;
+
+	switch (radix) {
+	case 2:
+		prefix = "0b";
+		break;
+	case 3:
+		prefix = "0t";
+		break;
+	case 4:
+		prefix = "0q";
+		break;
+	case 8:
+		prefix = "0o";
+		break;
+	case 16:
+		prefix = "0x";
+		break;
+	default:
+		prefix = NULL;
+		break;
+	}
+
+	return prefix;
+}
+
+int
+ULS_QUALIFIED_METHOD(uls_find_standard_prefix_radix)(const char *line, int *ptr_radix)
+{
+	int ch, len_prefix = 0, radix;
+
+	if ((ch = line[0]) == '0') {
+		ch = line[1];
+		if (ch == 'x') { // hexa-decimal: 0x
+			len_prefix = 2;
+			radix = 16;
+		} else if (ch == 'o') { // octal, 0o
+			len_prefix = 2;
+			radix = 8;
+		} else if (ch == 'b') { // binary, 0b
+			len_prefix = 2;
+			radix = 2;
+		} else if (ch == 't') { // 0t
+			len_prefix = 2;
+			radix = 3;
+		} else if (ch == 'q') { // 0q
+			len_prefix = 2;
+			radix = 4;
+		} else {
+			len_prefix = 0;
+			radix = 10;
+		}
+	} else {
+		len_prefix = 0;
+		radix = 10;
+	}
+
+	*ptr_radix = radix;
+	return len_prefix;
+}
+
+int
+ULS_QUALIFIED_METHOD(is_pure_integer)(const char* lptr, uls_outparam_ptr_t parms)
+{
+	int minus = 0, pure = 1, num = 0, n_bytes;
+	const char* lptr1;
 	char ch;
 
 	if (*lptr == '-') {
@@ -476,20 +560,29 @@ ULS_QUALIFIED_METHOD(is_pure_int_number)(const char* lptr)
 		++lptr;
 	}
 
-	lptr0 = lptr;
-	for ( ; (ch=*lptr) !='\0'; lptr++) {
+	for (lptr1 = lptr; (ch=*lptr) !='\0'; lptr++) {
 		if (!uls_isdigit(ch)) {
 			pure = 0;
 			break;
 		}
+		num = num * 10 + (ch - '0');
 	}
 
-	if ((n = (int) (lptr - lptr0)) > 0) {
-		if (minus) ++n;
-		if (!pure) n = -n;
+	if ((n_bytes = (int) (lptr - lptr1)) > 0) {
+		if (minus) {
+			num = -num;
+			++n_bytes;
+		}
+		if (!pure) n_bytes = -n_bytes;
 	}
 
-	return n;
+	if (parms != nilptr) {
+		parms->flags = minus ? 1 : 0;
+		parms->len = n_bytes;
+		parms->n = num;
+	}
+
+	return n_bytes;
 }
 
 int
@@ -521,7 +614,25 @@ ULS_QUALIFIED_METHOD(is_pure_word)(const char* lptr, int must_id)
 int
 ULS_QUALIFIED_METHOD(uls_atoi)(const char *str)
 {
-	return atoi(str);
+	int i, minus, n = 0;
+	char ch;
+
+	if (str[0] == '-') {
+		minus = 1;
+		i = 1;
+	} else {
+		minus = 0;
+		i = 0;
+	}
+
+	for ( ; ; i++) {
+		if ((ch=str[i]) > '9' || ch < '0')
+			break;
+		n = ch - '0' + n * 10;
+	}
+
+	if (minus) n = -n;
+	return n;
 }
 
 void
@@ -608,6 +719,7 @@ ULS_QUALIFIED_METHOD(uls_index_range)(uls_outparam_ptr_t parms, int i2_limit)
 		i2p1 = i1;
 	}
 
+	// i1 <= i2p1
 	parms->n1 = i1;
 	parms->n2 = i2p1;
 
@@ -723,7 +835,7 @@ ULS_QUALIFIED_METHOD(uls_find_first_1bit)(char* srcptr,
 				return 1;
 			}
 
-			return 0; // NOT FOUND
+			return 0;
 		}
 
 		if ((j=__find_first_1bit(*dstptr, j1, 7))>=0) {
@@ -739,7 +851,7 @@ ULS_QUALIFIED_METHOD(uls_find_first_1bit)(char* srcptr,
 		if (srcptr[i] != 0) {
 			j = __find_first_1bit(srcptr[i], 0, 7);
 			if (found_bit != NULL) *found_bit = i*8 + j;
-			return 1; // FOUND
+			return 1;
 		}
 	}
 
@@ -747,7 +859,7 @@ ULS_QUALIFIED_METHOD(uls_find_first_1bit)(char* srcptr,
 		dstptr = srcptr + i2;
 		if ((j=__find_first_1bit(*dstptr, 0, j2))>=0) {
 			if (found_bit != NULL) *found_bit = i2*8 + j;
-			return 1; // FOUND
+			return 1;
 		}
 	}
 
@@ -788,7 +900,7 @@ ULS_QUALIFIED_METHOD(uls_check_longdouble_fmt)(int endian)
 {
 	long double temp_lf;
 	char *ptr = (char *) &temp_lf;
-	int f_siz=SIZEOF_LONG_DOUBLE;
+	int f_siz = SIZEOF_LONG_DOUBLE;
 	int j, ret_typ=-1, n_bits=0;
 
 	uls_bzero(ptr, f_siz);
@@ -817,7 +929,9 @@ ULS_QUALIFIED_METHOD(uls_check_longdouble_fmt)(int endian)
 	} else if (n_bits == 128) {
 		ret_typ = ULS_IEEE754_BINARY128;
 	} else {
+#ifdef ULS_DOTNET
 		ret_typ = ULS_IEEE754_BINARY64;
+#endif
 	}
 
 	return ret_typ;
@@ -897,7 +1011,7 @@ ULS_QUALIFIED_METHOD(uls_strchr)(const char* lptr, char ch0)
 	char ch;
 	int i;
 
-	if (ch0 >= 0x80) {
+	if (ch0 >= ULS_ASCII_TABLE_SIZE) {
 		return NULL;
 	}
 
@@ -915,7 +1029,7 @@ ULS_QUALIFIED_METHOD(uls_strchr_r)(const char* lptr, char ch)
 {
 	int i, len = uls_strlen(lptr);
 
-	if (ch >= 0x80) {
+	if (ch >= ULS_ASCII_TABLE_SIZE) {
 		return NULL;
 	}
 
@@ -1115,7 +1229,7 @@ ULS_QUALIFIED_METHOD(uls_init_nambuf)(uls_nambuf_ptr_t arg, int siz)
 {
 	// siz >= 0
 	arg->buf_siz = siz + 1;
-	arg->str = uls_malloc_buffer(arg->buf_siz);
+	arg->str = (char *) uls_malloc(arg->buf_siz);
 	arg->str[0] = '\0';
 	arg->len = 0;
 }
@@ -1149,11 +1263,13 @@ ULS_QUALIFIED_METHOD(uls_set_nambuf_raw)(char *argbuf, int argbuf_siz, const cha
 {
 	int len;
 
+	if (!argbuf_siz) return 0;
+
 	if (name_len < 0) {
 		name_len = uls_strlen(name);
 	}
 
-	if (name_len >= argbuf_siz) {
+	if (argbuf_siz > 0 && name_len >= argbuf_siz) {
 		name_len = argbuf_siz - 1;
 	}
 
@@ -1255,7 +1371,7 @@ ULS_QUALIFIED_METHOD(uls_strdup)(const char* str, int len)
 	if (len < 0)
 		len = uls_strlen(str);
 
-	ptr = uls_malloc_buffer(len + 1);
+	ptr = (char *) uls_malloc(len + 1);
 	uls_memcopy(ptr, str, len);
 	ptr[len] = '\0';
 
@@ -1293,17 +1409,6 @@ ULS_QUALIFIED_METHOD(uls_memmove)(void *dst, const void* src, int n)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_wstrlen)(const uls_wch_t* wstr)
-{
-	const uls_wch_t* wptr;
-
-	for (wptr=wstr; *wptr != ULS_UCH_EOS; wptr++)
-		/* NOTHING */;
-
-	return (int) (wptr - wstr);
-}
-
-int
 ULS_QUALIFIED_METHOD(uls_strlen)(const char* str)
 {
 	const char* ptr;
@@ -1319,26 +1424,42 @@ ULS_QUALIFIED_METHOD(uls_strcpy)(char* bufptr, const char* str)
 {
 	const char *ptr;
 	char ch;
+	int len;
 
-	for (ptr=str; (ch=*ptr) != '\0'; ptr++) {
-		*bufptr++ = ch;
+	if (str < bufptr) {
+		len = uls_strlen(str);
+		uls_memmove(bufptr, str, len);
+		bufptr += len;
+	} else {
+		for (ptr=str; (ch=*ptr) != '\0'; ptr++) {
+			*bufptr++ = ch;
+		}
+		len = (int) (ptr - str);
 	}
 
 	*bufptr = '\0';
-	return (int) (ptr - str);
+	return len;
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_strncpy)(char* bufptr, const char* ptr, int n)
+ULS_QUALIFIED_METHOD(uls_strncpy)(char* bufptr, const char* str, int n)
 {
+	const char *ptr;
 	char ch;
 	int i;
 
-	if (n < 0) n = uls_strlen(ptr);
+	if (n < 0) n = uls_strlen(str);
 
-	for (i=0; i<n; i++, ptr++) {
-		if ((ch=*ptr) == '\0') break;
-		*bufptr++ = ch;
+	if (str < bufptr) { // BUGFIX-296
+		for (i=0, ptr=str; i < n && *ptr != '\0' ; i++, ptr++)
+			/* NOTHING */;
+		uls_memmove(bufptr, str, i);
+		bufptr += i;
+	} else {
+		for (i=0, ptr=str; i<n; i++, ptr++) {
+			if ((ch=*ptr) == '\0') break;
+			*bufptr++ = ch;
+		}
 	}
 
 	*bufptr = '\0';
@@ -1410,9 +1531,11 @@ ULS_QUALIFIED_METHOD(_uls_explode_str)(uls_wrd_ptr_t uw, char delim_ch, int dups
 
 		for (lptr1=lptr; ; lptr++) {
 			if ((ch=*lptr) == '\0') {
+				len = (int) (lptr - lptr1);
 				if (lptr != lptr1) {
-					len = (int) (lptr - lptr1);
-					al[k] = arg = uls_create_argstr();
+					if ((arg=al[k]) == nilptr) {
+						al[k] = arg =  uls_create_argstr();
+					}
 					uls_set_argstr(arg, lptr1, len);
 					++k;
 				}
@@ -1422,7 +1545,9 @@ ULS_QUALIFIED_METHOD(_uls_explode_str)(uls_wrd_ptr_t uw, char delim_ch, int dups
 			if (ch == delim_ch || (delim_ch == ' ' && ch == '\t')) {
 				len = (int) (lptr - lptr1);
 				*lptr++ = '\0';
-				al[k] = arg = uls_create_argstr();
+				if ((arg=al[k]) == nilptr) {
+					al[k] = arg =  uls_create_argstr();
+				}
 				uls_set_argstr(arg, lptr1, len);
 				++k;
 				break;
@@ -1436,7 +1561,7 @@ ULS_QUALIFIED_METHOD(_uls_explode_str)(uls_wrd_ptr_t uw, char delim_ch, int dups
  			arg = al[i];
 			uls_copy_argstr(arg, arg->str, arg->len);
  		}
- 	}
+	}
 
 	uw->lptr = lptr;
 	arglst->args.n = k;
@@ -1482,7 +1607,7 @@ ULS_QUALIFIED_METHOD(uls_init_argstr)(uls_argstr_ptr_t arg, int siz)
 {
 	if (siz >= 0) {
 		arg->buf_siz = siz + 1;
-		arg->buf = uls_malloc_buffer(arg->buf_siz);
+		arg->buf = (char *) uls_malloc(arg->buf_siz);
 		arg->buf[0] = '\0';
 		arg->str = arg->buf;
 		arg->len = 0;
@@ -1632,6 +1757,7 @@ ULS_QUALIFIED_METHOD(uls_append_arglst)(uls_arglst_ptr_t arglst, uls_argstr_ptr_
 	return 0;
 }
 
+#ifndef ULS_DOTNET
 void*
 ULS_QUALIFIED_METHOD(uls_zalloc)(unsigned int n_bytes)
 {
@@ -1700,99 +1826,47 @@ ULS_QUALIFIED_METHOD(uls_filename)(const char *filepath, int* len_fname)
 	return fname;
 }
 
-int
-ULS_QUALIFIED_METHOD(ustr_num_wchars)(const char *str, int len, uls_outparam_ptr_t parms)
-{
-	int i, j, rc, n=0;
-	char buff[ULS_UTF8_CH_MAXLEN];
-	const char *bufptr, *ptr;
-
-	if (len < 0) {
-		for (ptr = str; *ptr != '\0'; ptr += rc) {
-			if ((rc = uls_decode_utf8(ptr, -1, NULL)) <= 0) {
-				return -1;
-			}
-			++n;
-		}
-		len = (int) (ptr - str);
-
-	} else {
-		for (i = 0, ptr = str; i < len; i += rc, ptr += rc) {
-			if (ptr[0] == '\0') {
-				len = (int) (ptr - str);
-				break;
-			}
-
-			if ((rc=len-i) >= ULS_UTF8_CH_MAXLEN) {
-				bufptr = ptr;
-				j = ULS_UTF8_CH_MAXLEN;
-			} else {
-				for (j=0; j<rc; j++) buff[j] = ptr[j];
-				bufptr = buff;
-			}
-
-			if ((rc = uls_decode_utf8(bufptr, j, NULL)) <= 0) {
-				return -2;
-			}
-			++n;
-		}
-	}
-
-	if (parms != nilptr) {
-		parms->n = n;
-		parms->len = len;
-	}
-
-	return n;
-}
+#endif // ULS_DOTNET
 
 int
 ULS_QUALIFIED_METHOD(uls_encode_utf8)(uls_wch_t wch, char* utf8buf, int siz_utf8buf)
 {
-	char buff[ULS_UTF8_CH_MAXLEN];
+	char tmpbuf[ULS_UTF8_CH_MAXLEN];
 	int i, rc;
 
-	if (siz_utf8buf < 0) {
-		siz_utf8buf = ULS_UTF8_CH_MAXLEN;
-	}
-
-	if (wch > UTF8_CODEPOINT_END) {
-		return -1;
-	}
+	if (siz_utf8buf < 0) siz_utf8buf = ULS_UTF8_CH_MAXLEN;
 
 	if (wch <= 0x7F) {
-		buff[0] = wch;
+		tmpbuf[0] = wch;
 		rc = 1;
 
 	} else if (wch <= 0x07FF) {
-		buff[0] = 0xC0 | (wch >> 6);
-		buff[1] = 0x80 | (0x3F & wch);
+		tmpbuf[0] = 0xC0 | (wch >> 6);
+		tmpbuf[1] = 0x80 | (0x3F & wch);
 		rc = 2;
 
 	} else if (wch <= 0xFFFF) {
-		buff[0] = 0xE0 | (wch >> 12);
-		buff[1] = 0x80 | (0x3F & (wch >> 6));
-		buff[2] = 0x80 | (0x3F & wch);
+		tmpbuf[0] = 0xE0 | (wch >> 12);
+		tmpbuf[1] = 0x80 | (0x3F & (wch >> 6));
+		tmpbuf[2] = 0x80 | (0x3F & wch);
 		rc = 3;
 
 	} else if (wch <= 0x1FFFFF) {
-		buff[0] = 0xF0 | (wch >> 18);
-		buff[1] = 0x80 | (0x3F & (wch >> 12));
-		buff[2] = 0x80 | (0x3F & (wch >> 6));
-		buff[3] = 0x80 | (0x3F & wch);
+		tmpbuf[0] = 0xF0 | (wch >> 18);
+		tmpbuf[1] = 0x80 | (0x3F & (wch >> 12));
+		tmpbuf[2] = 0x80 | (0x3F & (wch >> 6));
+		tmpbuf[3] = 0x80 | (0x3F & wch);
 		rc = 4;
 
 	} else {
-		return -1;
+		return -(ULS_UTF8_CH_MAXLEN + 1);
 	}
 
 	if (utf8buf != NULL) {
-		if (rc > siz_utf8buf) {
-			rc = 0;
+		if (siz_utf8buf < rc) {
+			rc = -rc;
 		} else {
-			for (i=0; i<rc; i++) {
-				utf8buf[i] = buff[i];
-			}
+			for (i=0; i<rc; i++) utf8buf[i] = tmpbuf[i];
 		}
 	}
 
@@ -1800,39 +1874,44 @@ ULS_QUALIFIED_METHOD(uls_encode_utf8)(uls_wch_t wch, char* utf8buf, int siz_utf8
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_decode_utf8)(const char *utf8buf, int siz_utf8buf, uls_wch_t *p_val)
+ULS_QUALIFIED_METHOD(uls_decode_utf8)(const char *utf8buf, int len_utf8buf, uls_wch_t *p_wch)
 {
 	const char *bufptr = utf8buf;
 	char ch, ch_mask, ch_ary[3] = { 0x20, 0x10, 0x08 };
 	uls_wch_t val;
 	int  n, i;
 
-	if (siz_utf8buf < 0) {
+	if (len_utf8buf < 0) {
 		for (i=0; i<ULS_UTF8_CH_MAXLEN; i++) {
-			if (utf8buf[i] == '\0') {
-				++i;
-				break;
-			}
+			if (utf8buf[i] == '\0') break;
 		}
-		siz_utf8buf = i;
+		if ((len_utf8buf = i) == 0) {
+			len_utf8buf = 1;
+		}
+	} else if (len_utf8buf == 0) {
+		return -(ULS_UTF8_CH_MAXLEN + 1);
 	}
 
 	ch = *bufptr;
-	if (p_val != NULL) *p_val = ch;
-
-	if ((ch & 0xC0) != 0xC0) return 1;
+	if ((ch & 0xC0) != 0xC0) {
+		if (p_wch != NULL) *p_wch = ch;
+		return 1; // including ctrl-ch and '\0'
+	}
 
 	for (n=0; ; n++) {
-		if (n>=3) return 1;
+		if (n >= 3) return -(ULS_UTF8_CH_MAXLEN + 2);
 		if ((ch_ary[n] & ch) == 0) {
 			++n;
 			break;
 		}
 	}
-	// n-bytes followed additionally
 
-	if (p_val == NULL) return 1 + n;
-	if (n >= siz_utf8buf) return -(1 + n);
+	// n-bytes followed additionally
+	i = 1 + n;
+	if (i > len_utf8buf) {
+		if (p_wch != NULL) i = -i;
+		return i;
+	}
 
 	ch_mask = (1 << (6-n)) - 1;
 	val = ch & ch_mask;
@@ -1841,53 +1920,79 @@ ULS_QUALIFIED_METHOD(uls_decode_utf8)(const char *utf8buf, int siz_utf8buf, uls_
 	for (i=0; i<n; i++) {
 		ch = *++bufptr;
 		if ((ch & 0xC0) != 0x80) {
-			return 1;
+			return -(ULS_UTF8_CH_MAXLEN + 3);
 		}
 		val = (val << 6) | (ch & ch_mask);
 	}
 
-	*p_val = val;
+	if (p_wch != NULL) *p_wch = val;
 	return 1 + n;
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_encode_utf16)(uls_wch_t wch, uls_uint16 *buf)
+ULS_QUALIFIED_METHOD(uls_encode_utf16)(uls_wch_t wch, uls_uint16 *utf16buf, int siz_utf16buf)
 {
 	uls_wch_t wch2;
-	int rc;
+	uls_uint16 tmpbuf[ULS_UTF16_CH_MAXLEN];
+	int i, rc;
 
-	if (wch > UTF16_CODEPOINT_END) {
-		rc = -1;
-	} else if (wch <= 0xFFFF) {
-		buf[0] = (uls_uint16) wch;
+	if (siz_utf16buf < 0) siz_utf16buf = ULS_UTF16_CH_MAXLEN;
+
+	if (wch <= 0xFFFF) {
+		tmpbuf[0] = (uls_uint16) wch;
 		rc = 1;
-	} else {
+	} else if (wch <= ULS_UTF16_CODEPOINT_END) {
 		wch2 = wch - 0x10000;
-		buf[0] = 0xD800 + (wch2 >> 10);
-		buf[1] = 0xDC00 + (wch2 & 0x3FF);
+		tmpbuf[0] = 0xD800 + (wch2 >> 10);
+		tmpbuf[1] = 0xDC00 + (wch2 & 0x3FF);
 		rc = 2;
+	} else {
+		rc = -(ULS_UTF16_CH_MAXLEN + 1);
+		utf16buf = NULL;
+	}
+
+	if (utf16buf != NULL) {
+		if (siz_utf16buf < rc) {
+			rc = -rc;
+		} else {
+			for (i=0; i<rc; i++) utf16buf[i] = tmpbuf[i];
+		}
 	}
 
 	return rc;
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_decode_utf16)(uls_uint16 *buf, int buf_len, uls_wch_t *p_wch)
+ULS_QUALIFIED_METHOD(uls_decode_utf16)(const uls_uint16 *utf16buf, int len_utf16buf, uls_wch_t *p_wch)
 {
 	uls_wch_t wch;
-	int rc;
+	int i, rc;
 
-	if (buf_len <= 0) return 0;
+	if (len_utf16buf < 0) {
+		for (i=0; i<ULS_UTF16_CH_MAXLEN; i++) {
+			if (utf16buf[i] == 0) break;
+		}
+		if ((len_utf16buf = i) == 0) {
+			len_utf16buf = 1;
+		}
+	} else if (len_utf16buf == 0) {
+		return -(ULS_UTF16_CH_MAXLEN + 1);
+	}
 
-	if (buf[0] >= UTF16_CODEPOINT_RSVD_START && buf[0] <= UTF16_CODEPOINT_RSVD_END) {
-		if (buf_len < 2) return 0;
-		if (buf[1] < 0xDC00 || buf[1] > 0xDFFF) return -1;
-		wch  = (buf[0] - 0xD800) << 10;
-		wch |= (buf[1] - 0xDC00);
-		wch += 0x10000;
+	if (utf16buf[0] >= ULS_UTF16_CODEPOINT_RSVD_START && utf16buf[0] <= ULS_UTF16_CODEPOINT_RSVD_END) {
 		rc = 2;
+		if (len_utf16buf >= 2) {
+			if (utf16buf[1] < 0xDC00 || utf16buf[1] > 0xDFFF)
+				return -(ULS_UTF16_CH_MAXLEN + 2);
+			wch  = (utf16buf[0] - 0xD800) << 10;
+			wch |= (utf16buf[1] - 0xDC00);
+			wch += 0x10000;
+		} else {
+			wch = 0;
+			if (p_wch != NULL) rc = -rc;
+		}
 	} else {
-		wch = buf[0];
+		wch = utf16buf[0];
 		rc = 1;
 	}
 
@@ -1898,7 +2003,7 @@ ULS_QUALIFIED_METHOD(uls_decode_utf16)(uls_uint16 *buf, int buf_len, uls_wch_t *
 int
 ULS_QUALIFIED_METHOD(uls_encode_utf32)(uls_wch_t wch, uls_uint32 *buf)
 {
-	if (wch > UTF32_CODEPOINT_END) {
+	if (wch > ULS_UTF32_CODEPOINT_END) {
 		return -1;
 	}
 
@@ -1913,12 +2018,50 @@ ULS_QUALIFIED_METHOD(uls_decode_utf32)(uls_uint32 buf, uls_wch_t *p_wch)
 	uls_wch_t wch;
 
 	wch = (uls_wch_t) buf;
-	if (wch > UTF32_CODEPOINT_END) {
+	if (wch > ULS_UTF32_CODEPOINT_END) {
 		return -1;
 	}
 
 	if (p_wch != NULL) *p_wch = wch;
 	return 1;
+}
+
+int
+ULS_QUALIFIED_METHOD(ustr_num_wchars)(const char *ustr, int len, uls_outparam_ptr_t parms)
+{
+	const char *cptr = ustr, *cptr_end;
+	int n, rc, wlen = 0, stat = 0;
+
+	if (len < 0) {
+		for ( ; *cptr != '\0'; cptr += rc) {
+			if ((rc = uls_decode_utf8(cptr, -1, NULL)) <= 0) {
+				if (rc < -ULS_UTF8_CH_MAXLEN) stat = -1;
+				break;
+			}
+			++wlen;
+		}
+	} else {
+		cptr_end = ustr + len;
+		for ( ; cptr < cptr_end; cptr += rc) {
+			n = (int) (cptr_end - cptr);
+			if ((rc = uls_decode_utf8(cptr, n, NULL)) <= 0) {
+				if (rc < -ULS_UTF8_CH_MAXLEN) stat = -1;
+				break;
+			} else if (rc > n) {
+				break;
+			}
+			++wlen;
+		}
+	}
+
+	len = (int) (cptr - ustr);
+	if (parms != nilptr) {
+		parms->n = wlen;
+		parms->len = len;
+	}
+
+	if (stat < 0) wlen = -1;
+	return wlen; // # of wchars
 }
 
 #if defined(HAVE_PTHREAD)
@@ -2058,4 +2201,14 @@ void
 ULS_QUALIFIED_METHOD(finalize_primitives)(void)
 {
 	uls_deinit_mutex(uls_ptr(uls_global_mtx));
+}
+
+void
+ULS_QUALIFIED_METHOD(uls_msleep)(int msecs)
+{
+#ifdef ULS_WINDOWS
+	Sleep(msecs);
+#else
+	usleep(msecs * 1000);
+#endif
 }

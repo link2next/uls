@@ -1,1 +1,1 @@
-stdout: <in_1_1.txt:0001>: NUMBER 1
+stdout: <in_1_1.txt:0001>: tok=-3 NUMBER 1

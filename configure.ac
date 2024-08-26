@@ -74,7 +74,6 @@ AC_CONFIG_FILES([Makefile
         tools/ulf_gen/Makefile
         tools/uls_stream/Makefile
         doc/Makefile
-        doc/man/Makefile
         tests/Makefile
         tests/cpp_hello/Makefile
         tests/dump_toks/Makefile
@@ -87,8 +86,8 @@ AC_CONFIG_FILES([Makefile
         tests/strings/Makefile
         tests/tok_remap/Makefile
         tests/two_lex/Makefile
-        tests/test_tree/Makefile
         tests/gcc_toks/Makefile
+        tests/file_enc/Makefile
         examples/Makefile
         examples/test_1st/Makefile
         examples/tokseq/Makefile

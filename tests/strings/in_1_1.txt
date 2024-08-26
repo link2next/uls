@@ -1,0 +1,12 @@
+ $... cr-lf \
+next-line$
+
+ $... lf-cr \
+next-line$
+
+ $ hello \☃ ...$
+
+    
+
+ $...line \ having CR$
+

@@ -58,7 +58,7 @@ if [ ! -e $TEST_DIR ]; then
 fi
 
 if [ ! -d $TEST_DIR ]; then
-	echo "'$TEST_DIR' is not a directory";
+	echo "'$TEST_DIR' is not a directory"
 	exit 1;
 fi
 
@@ -72,10 +72,10 @@ done
 
 for testfname in $TARGET_FILES; do
 	testfile="$testfname.uls"
-	echo "checking $testfile, ...";
+	echo "checking $testfile, ..."
 
 	for fmt in $BIN_FORMATS; do
-		echo "   ${fmt}-formatting, ...";
+		echo "   ${fmt}-formatting, ..."
 
 		cmdline="$PROG -t $fmt $testfile"
 		if [ "$opt_verbose" = "yes" ]; then
@@ -85,7 +85,7 @@ for testfname in $TARGET_FILES; do
 		if [ "$opt_noexec" = "no" ]; then
 			$cmdline
 			if [ $? != 0 ]; then
-				echo "FAIL: $cmdline";
+				echo "FAIL: $cmdline"
 				exit 1
 			fi
 		fi
@@ -97,7 +97,7 @@ for testfname in $TARGET_FILES; do
 		if [ "$opt_noexec" = "no" ]; then
 			$cmdline
 			if [ $? != 0 ]; then
-				echo "FAIL: $cmdline";
+				echo "FAIL: $cmdline"
 				exit 1
 			fi
 		fi
@@ -109,7 +109,7 @@ for testfname in $TARGET_FILES; do
 			fi
 			$cmdline
 			if [ $? != 0 ]; then
-				echo "FAIL: $fmt formatting of $testfile";
+				echo "FAIL: $fmt formatting of $testfile"
 				exit 1
 			fi
 		fi
@@ -147,7 +147,7 @@ if [ "$opt_verbose" = "yes" ]; then
 fi
 $cmdline
 if [ $? != 0 ]; then
-	echo "FAIL: $testfile";
+	echo "FAIL: $testfile"
 fi
 rm -f $DUMPFILE_TXT1
 
@@ -171,7 +171,6 @@ fi
 
 
 rm -f $DUMPFILE_TXT2
-
 rm -f $TMPL_ULSFILE
 if [ -f $DFL_OUTPUT_FILE ]; then
 	rm -f $DFL_OUTPUT_FILE

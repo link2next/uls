@@ -35,34 +35,49 @@
 
 #include "Html5LexBasis.h"
 
-#include <uls/csz_stream.h>
-#include <string>
-#include <stdio.h>
-
 namespace uls
 {
 namespace collection
 {
-	class Html5Lex : public uls::collection::Html5LexBasis {
-		csz_str_t tokbuf;
+	class StringBuilder {
+		uls::otstringstream m_stream;
+		tstring m_sbuff;
 
-		csz_str_t txt_buf;
+		TCHAR *mBuff;
+		int siz_mBuff;
+		bool sync;
+
+	public:
+		StringBuilder();
+		virtual ~StringBuilder();
+
+		void clear();
+		int len();
+		void append(LPCTSTR str, int len = -1);
+		void append(TCHAR ch);
+
+		tstring& str();
+	};
+
+	class Html5Lex : public uls::collection::Html5LexBasis {
+		StringBuilder tokbuf;
+		StringBuilder txtbuf;
 		int prepare_html_text;
 
 		FILE *fin_html;
 
-		std::string tok_str;
+		tstring tok_str;
 		int tok_id;
 		bool tok_ungot;
 
-		int run_to_tagbegin(FILE* fp, csz_str_t* txt_buf, int *is_trivial);
-		int pass_html_quote(FILE* fp, csz_str_t* txt_buf, int quote_ch);
-		int run_to_tagend(FILE* fp, csz_str_t* txt_buf);
-		int concat_lexeme(const char * str, int len);
+		int run_to_tagbegin(FILE* fp, int *is_trivial);
+		int pass_html_quote(FILE* fp, int quote_ch);
+		int run_to_tagend(FILE* fp);
+		int concat_lexeme(LPCTSTR str, int len);
 		void get_token(void);
 
 	public:
-		Html5Lex(std::string& config_name);
+		Html5Lex(tstring& config_name);
 		~Html5Lex();
 
 		// <brief>
@@ -71,19 +86,16 @@ namespace collection
 		// Those we need to tokenize HTML5 files are just getTok(), TokNum(), TokStr().
 		// </brief>
 		virtual int getTok(void);
-
 		virtual int getTokNum(void);
-		virtual std::string& getTokStr(void);
 
 		void ungetTok(void);
-		std::string getKeywordStr(int t);
 
 		// <brief>
 		// Sets the input file to be tokenized.
 		// </brief>
 		// <parm name="fpath">The path of file</parm>
 		// <return>none</return>
-		int setFile(std::string fpath);
+		int setFile(tstring fpath);
 	};
 }
 }

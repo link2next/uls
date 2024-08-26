@@ -22,42 +22,46 @@
  */
 
 /*
-  <file> ieee754.h </file>
+  <file> ulscpp_misc.h </file>
   <brief>
-    An implementation modf() for 'long double'.
-    This file is part of ULS, Unified Lexical Scheme.
   </brief>
   <author>
-    Stanley Hong <link2next@gmail.com>, May 2011.
+    Stanley Hong <link2next@gmail.com>, April, 2024.
   </author>
 */
 
-#ifndef __ULS_IEEE754_H__
-#define __ULS_IEEE754_H__
+#pragma once
 
-#ifndef ULS_EXCLUDE_HFILES
-#include "uls/uls_type.h"
+#include <uls/uls_config.h>
+
+#include <string>
+#include <sstream>
+
+namespace uls {
+#ifdef ULS_USE_WSTR
+typedef std::wstring tstring;
+typedef std::wostringstream otstringstream;
+#else
+typedef std::string tstring;
+typedef std::ostringstream otstringstream;
 #endif
 
-#ifdef _ULS_CPLUSPLUS
-extern "C" {
+#ifndef ULS_DONT_TSTR
+#ifdef ULS_USE_WSTR
+	#define _tcout std::wcout
+	#define _tcerr std::wcerr
+	#define _tendl L"\n"
+#else
+	#define _tcout std::cout
+	#define _tcerr std::cerr
+	#define _tendl "\n"
 #endif
-
-#if defined(__ULS_IEEE754__) || defined(ULS_DECL_PRIVATE_PROC)
-ULS_DECL_STATIC int get_ieee754_biased_expo(char* buff, int n_bits_expo);
-ULS_DECL_STATIC void put_ieee754_biased_expo(int m_expo, char* buff, int n_bits_expo);
+#ifdef ULS_WINDOWS
+#ifdef ULS_USE_WSTR
+	#define _tmain wmain
+#else
+	#define _tmain main
 #endif
-
-#ifdef ULS_DECL_PROTECTED_PROC
-void uls_ieee754_bankup_bits(char* srcptr, int start_bit, int end_bit, int n_shift);
-int uls_ieee754_longdouble_isspecial(long double x, char* nambuf);
-	// ret-val == 1 : x is a special-value with nambuf filled.
-	// ret-val == 0 x is a finite value
-long double uls_ieee754_modlf(long double x, long double* p_frac);
-#endif
-
-#ifdef _ULS_CPLUSPLUS
+#endif // ULS_WINDOWS
+#endif // ULS_DONT_TSTR
 }
-#endif
-
-#endif //  __ULS_IEEE754_H__

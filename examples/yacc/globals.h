@@ -45,7 +45,7 @@ extern const char *progname;
 extern int  opt_mode;
 extern int  opt_verbose;
 
-extern uls_lex_t *ulc_lex;
+extern uls_lex_ptr_t ulc_lex;
 extern char *outfile_xml;
 extern FILE *fout_xml;
 

@@ -31,9 +31,7 @@
     Stanley Hong <link2next@gmail.com>, Jul 2015.
   </author>
 */
-#include "uls/uls_lex.h"
-#include "uls/uls_util.h"
-#include "uls/uls_auw.h"
+
 #include "uls/uls_ostream_wstr.h"
 #include "uls/uls_wlog.h"
 
@@ -116,7 +114,7 @@ uls_create_ostream_file_wstr(const wchar_t* filepath, uls_lex_ptr_t uls, const w
 }
 
 int
-uls_print_tok_wstr(uls_ostream_ptr_t ostr, int tokid, const wchar_t* tokstr)
+__uls_print_tok_wstr(uls_ostream_ptr_t ostr, int tokid, const wchar_t* wtokstr, int l_wtokstr)
 {
 	char *ustr;
 	int  ulen, rc;
@@ -124,7 +122,7 @@ uls_print_tok_wstr(uls_ostream_ptr_t ostr, int tokid, const wchar_t* tokstr)
 
 	csz_init(uls_ptr(csz), -1);
 
-	if ((ustr = uls_wstr2ustr(tokstr, -1, uls_ptr(csz))) == NULL) {
+	if ((ustr = uls_wstr2ustr(wtokstr, l_wtokstr, uls_ptr(csz))) == NULL) {
 		err_wlog(L"encoding error!");
 		rc = -1;
 	} else {
@@ -136,23 +134,3 @@ uls_print_tok_wstr(uls_ostream_ptr_t ostr, int tokid, const wchar_t* tokstr)
 	return rc;
 }
 
-int
-uls_print_tok_linenum_wstr(uls_ostream_ptr_t ostr, int lno, const wchar_t* tag)
-{
-	char *ustr;
-	int  ulen, rc;
-	csz_str_t csz;
-
-	csz_init(uls_ptr(csz), -1);
-
-	if ((ustr = uls_wstr2ustr(tag, -1, uls_ptr(csz))) == NULL) {
-		err_wlog(L"encoding error!");
-		rc = -1;
-	} else {
-		ulen = csz_length(uls_ptr(csz));
-		rc = __uls_print_tok_linenum(ostr, lno, ustr, ulen);
-	}
-
-	csz_deinit(uls_ptr(csz));
-	return rc;
-}

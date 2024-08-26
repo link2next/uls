@@ -34,7 +34,6 @@
 #ifndef ULS_EXCLUDE_HFILES
 #define __ULS_LF_PERCENT_F__
 #include "uls/uls_lf_percent_f.h"
-#include "uls/ieee754.h"
 #include <math.h>
 #endif
 
@@ -77,19 +76,46 @@ ULS_QUALIFIED_METHOD(unsigned2str)(unsigned int n, csz_str_ptr_t ss)
 	return len;
 }
 
+ULS_DECL_STATIC void
+ULS_QUALIFIED_METHOD(__pad_zeros)(int n_zeros, unsigned int flags, csz_str_ptr_t ss)
+{
+	char ch;
+	int j;
+
+	if (n_zeros <= 0) return;
+
+	if (flags & ULS_LF_ZEROPAD) {
+		ch = '0';
+	} else if (flags & ULS_LF_SPECIAL_CHAR) {
+		ch = ' ';
+	} else {
+		ch = '\0';
+	}
+
+	if (ch != '\0') {
+		for (j = 0; j < n_zeros; j++) csz_putc(ss, ch);
+	}
+}
+
 int
 ULS_QUALIFIED_METHOD(uls_lf_digits_to_percent_f)
-	(char* numstr, int minus, int n_expo, int n_prec, csz_str_ptr_t ss)
+	(char* numstr, int minus, int n_expo, int n_prec, unsigned int flags, csz_str_ptr_t ss)
 {
 	char *ptr, ch;
-	int n, i0, j=0;
+	int j, n;
+
+	if (numstr[0] == '0' && numstr[1] == '\0') {
+		csz_putc(ss, '0');
+		csz_putc(ss, '.');
+		__pad_zeros(n_prec, flags, ss);
+		return csz_length(ss);
+	}
 
 	if (minus) {
 		csz_putc(ss, '-');
 	}
 
 	ptr = numstr;
-
 	if (n_expo > 0) {
 		for (n=0; n < n_expo; n++) {
 			if ((ch=*ptr) == '\0') {
@@ -100,25 +126,22 @@ ULS_QUALIFIED_METHOD(uls_lf_digits_to_percent_f)
 			}
 		}
 		csz_putc(ss, '.');
-		i0 = csz_length(ss);
+		j = 0;
 
 	} else {
 		csz_putc(ss, '0');
 		csz_putc(ss, '.');
-		i0 = csz_length(ss);
-
-		for (n=0; n<-n_expo && j<n_prec; n++, j++) {
+		for (j = n = 0; n < -n_expo && j < n_prec; n++, j++) {
 			csz_putc(ss, '0');
 		}
 	}
 
-	for ( ; (ch=*ptr)!='\0' && j<n_prec; ptr++, j++) {
+	for ( ; (ch=*ptr) != '\0' && j < n_prec; ptr++, j++) {
 		csz_putc(ss, ch);
 	}
 
-	for ( ; j<n_prec; j++) csz_putc(ss, ' ');
-
-	return csz_length(ss) - i0; // # of digits written below '.'
+	__pad_zeros(n_prec - j, flags, ss);
+	return csz_length(ss);
 }
 
 void
@@ -144,7 +167,7 @@ ULS_QUALIFIED_METHOD(uls_lf_digits_to_percent_e)
 	--n_expo;
 
 	ptr = numstr + 1;
-	for ( ; *ptr != '\0' && j < n_expo+n_prec; ptr++, j++) {
+	for ( ; *ptr != '\0' && j < n_prec; ptr++, j++) { // n_expo+n_prec
 		csz_putc(ss, *ptr);
 	}
 
@@ -164,7 +187,7 @@ ULS_QUALIFIED_METHOD(uls_lf_digits_to_percent_e)
 
 void
 ULS_QUALIFIED_METHOD(uls_lf_digits_to_percent_g)
-	(char* numstr, int minus, int n_expo, int n_prec, csz_str_ptr_t ss)
+	(char* numstr, int minus, int n_expo, int n_prec, unsigned int flags, csz_str_ptr_t ss)
 {
 	int len;
 
@@ -173,7 +196,7 @@ ULS_QUALIFIED_METHOD(uls_lf_digits_to_percent_g)
 	if (n_expo < -4 || len >= n_prec) {
 		uls_lf_digits_to_percent_e(numstr, minus, n_expo, n_prec, ss);
 	} else {
-		uls_lf_digits_to_percent_f(numstr, minus, n_expo, n_prec, ss);
+		uls_lf_digits_to_percent_f(numstr, minus, n_expo, n_prec, flags, ss);
 	}
 }
 
@@ -183,23 +206,25 @@ ULS_QUALIFIED_METHOD(uls_lf_double2digits)(double x, int n_precision, csz_str_pt
 	double frac, x_int;
 	double frac2;
 	int  n_expo;
-	int  a, j, k0, n, n_first_zeros;
+	int  a, j, n, n_first_zeros;
+	char *numbuf;
 
 	if (n_precision < 0) n_precision = ULS_FLOAT_DFLPREC;
 
 	if (x == 0.) {
 		csz_putc(numstr, '0');
 		return 1;
-	} else if (x < 0.) {
+	}
+
+	if (x < 0.) {
 		x = -x;
 	}
 
 	frac = modf(x, uls_ptr(x_int));
 
-	k0 = csz_length(numstr);
 	j = 0; // for the 'n_precision'
 
-	if (frac==0.) {
+	if (frac == 0.) {
 		for (n_first_zeros=0; x_int>.1; ) {
 			frac2 = modf(x_int/10., uls_ptr(x_int));
 
@@ -215,8 +240,8 @@ ULS_QUALIFIED_METHOD(uls_lf_double2digits)(double x, int n_precision, csz_str_pt
 			csz_putc(numstr, '0' + round_uup(frac2 * 10.));
 		}
 
-		n = csz_length(numstr) - k0;
-		reverse_char_array(csz_text(numstr)+k0, n);
+		n = csz_length(numstr);
+		reverse_char_array(csz_text(numstr), n);
 		n_expo = n + n_first_zeros; // 10^n_expo
 
 	} else {
@@ -225,15 +250,14 @@ ULS_QUALIFIED_METHOD(uls_lf_double2digits)(double x, int n_precision, csz_str_pt
 			csz_putc(numstr, '0' + round_uup(frac2 * 10.));
 		}
 
-		n = csz_length(numstr) - k0;
-		reverse_char_array(csz_text(numstr)+k0, n);
+		n = csz_length(numstr);
+		reverse_char_array(csz_text(numstr), n);
 
 		if (n == 0) {
 			n_first_zeros = 0;
-			for ( ; frac!=0.; j++) {
+			for ( ; frac != 0.; j++) {
 				frac = modf(frac*10., uls_ptr(x_int));
-
-				if (x_int>.1) {
+				if (x_int > 0.1) {
 					csz_putc(numstr, '0' + (int) round_uup(x_int));
 					++j;
 					break;
@@ -252,6 +276,15 @@ ULS_QUALIFIED_METHOD(uls_lf_double2digits)(double x, int n_precision, csz_str_pt
 		}
 	}
 
+	numbuf = (char *) csz_text(numstr);
+	for (j = csz_length(numstr) - 1; j >= 0; j--) {
+		if (numbuf[j] != '0') {
+			break;
+		}
+	}
+	++j;
+	csz_truncate(numstr, j);
+
 	return n_expo;
 }
 
@@ -261,24 +294,26 @@ ULS_QUALIFIED_METHOD(uls_lf_longdouble2digits)(long double x, int n_precision, c
 	long double frac, x_int;
 	long double frac2;
 	int  n_expo;
-	int  a, j, k0, n, n_first_zeros;
+	int  a, j, n, n_first_zeros;
+	char *numbuf;
 
 	if (n_precision < 0) n_precision = ULS_FLOAT_DFLPREC;
 
 	if (x == 0.) {
 		csz_putc(numstr, '0');
 		return 1;
-	} else if (x < 0.) {
+	}
+
+	if (x < 0.) {
 		x = -x;
 	}
 
-	x_int = uls_ieee754_modlf(x, uls_ptr(frac));
-	k0 = csz_length(numstr);
-	j = 0; // for the 'n_precision'
+	frac = modfl(x, uls_ptr(x_int));
+	j = 0;
 
-	if (frac==0.) {
+	if (frac == 0.) {
 		for (n_first_zeros=0; x_int>.1; ) {
-			x_int = uls_ieee754_modlf(x_int/10., uls_ptr(frac2));
+			frac2 = modfl(x_int/10., uls_ptr(x_int));
 			if ((a=round_uup(10. * frac2)) != 0) {
 				csz_putc(numstr, '0' + a);
 				break;
@@ -287,29 +322,28 @@ ULS_QUALIFIED_METHOD(uls_lf_longdouble2digits)(long double x, int n_precision, c
 		}
 
 		for ( ; x_int>.1; ) {
-			x_int = uls_ieee754_modlf(x_int/10., uls_ptr(frac2));
+			frac2 = modfl(x_int/10., uls_ptr(x_int));
 			csz_putc(numstr, '0' + round_uup(frac2 * 10.));
 		}
 
-		n = csz_length(numstr) - k0;
-		reverse_char_array(csz_text(numstr)+k0, n);
+		n = csz_length(numstr);
+		reverse_char_array(csz_text(numstr), n);
 		n_expo = n + n_first_zeros; // 10^n_expo
 
 	} else {
 		for ( ; x_int>.1; ) {
-			x_int = uls_ieee754_modlf(x_int/10., uls_ptr(frac2));
-			// a == 0, 1, ... 9
+			frac2 = modfl(x_int/10., uls_ptr(x_int));
 			csz_putc(numstr, '0' + round_uup(frac2 * 10.));
 		}
 
-		n = csz_length(numstr) - k0;
-		reverse_char_array(csz_text(numstr)+k0, n);
+		n = csz_length(numstr);
+		reverse_char_array(csz_text(numstr), n);
 
 		if (n == 0) {
 			n_first_zeros = 0;
-			for ( ; frac!=0.; j++) {
-				x_int = uls_ieee754_modlf(frac * 10., uls_ptr(frac));
-				if (x_int>.1) {
+			for ( ; frac != 0.; j++) {
+				frac = modfl(frac * 10., uls_ptr(x_int));
+				if (x_int > 0.1) {
 					csz_putc(numstr, '0' + (int) round_uup(x_int));
 					++j;
 					break;
@@ -323,10 +357,19 @@ ULS_QUALIFIED_METHOD(uls_lf_longdouble2digits)(long double x, int n_precision, c
 		}
 
 		for ( ; j < n_precision && frac!=0.; j++) {
-			x_int = uls_ieee754_modlf(frac * 10., uls_ptr(frac));
+			frac = modfl(frac * 10., uls_ptr(x_int));
 			csz_putc(numstr, '0' + (int) round_uup(x_int));
 		}
 	}
+
+	numbuf = (char *) csz_text(numstr);
+	for (j = csz_length(numstr) - 1; j >= 0; j--) {
+		if (numbuf[j] != '0') {
+			break;
+		}
+	}
+	++j;
+	csz_truncate(numstr, j);
 
 	return n_expo;
 }

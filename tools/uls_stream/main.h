@@ -49,6 +49,6 @@ extern uls_tmpl_list_t tmpl_list;
 extern int exist_name_val_ent(const char* name);
 extern int add_name_val_ent(const char *name, const char *val);
 
-extern uls_lex_t *sam_lex;
+extern uls_lex_ptr_t sam_lex;
 
 #endif

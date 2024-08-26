@@ -32,22 +32,97 @@
 */
 
 #include "EngLex.h"
-
-#include <string.h>
-#include <ctype.h>
+#include <uls/UlsUtils.h>
 
 using namespace std;
 using namespace uls::crux;
 using namespace uls::collection;
+using tstring = uls::tstring;
 
-EngLex::EngLex(string& config_name)
+StringBuilder::StringBuilder()
+{
+	siz_mBuff = 32;
+	mBuff = (LPTSTR) malloc(siz_mBuff * sizeof(TCHAR));
+	sync = true;
+}
+
+StringBuilder::~StringBuilder()
+{
+	if (siz_mBuff > 0) {
+		free(mBuff);
+		mBuff = NULL;
+		siz_mBuff = 0;
+	}
+}
+
+int
+StringBuilder::len()
+{
+	return (int) m_stream.tellp();
+}
+
+void
+StringBuilder::clear()
+{
+	m_stream.str(_T(""));
+	m_stream.clear();
+	m_sbuff = _T("");
+	sync = true;
+}
+
+tstring&
+StringBuilder::str()
+{
+	if (sync == false) {
+		m_sbuff = m_stream.str();
+		sync = true;
+	}
+
+	return m_sbuff;
+}
+
+void
+StringBuilder::append(LPCTSTR str, int len)
+{
+	if (len < 0) {
+		len = uls::strLength(str);
+		m_stream << str;
+	} else if (len > 0) {
+		if (len >= siz_mBuff) {
+			siz_mBuff = len + 1;
+			mBuff = (LPTSTR) realloc(mBuff, siz_mBuff * sizeof(TCHAR));
+		}
+		uls::memcopy(mBuff, str, len * sizeof(TCHAR));
+		mBuff[len] = _T('\0');
+		m_stream << mBuff;
+	}
+	sync = false;
+}
+
+void
+StringBuilder::append(TCHAR ch)
+{
+	TCHAR buff[4];
+
+	buff[0] = ch;
+	buff[1] = _T('\0');
+	m_stream << buff;
+	sync = false;
+}
+
+void
+StringBuilder::append(int n)
+{
+	m_stream << n;
+	sync = false;
+}
+
+EngLex::EngLex(tstring& config_name)
 	: EngLexBasis(config_name)
 {
-	csz_init(&tokbuf, 128);
+	tstring nil_str = _T("");
 
-	string nil_str = "";
-
-	tok_str = "";
+	tok_str = _T("");
 	tok_id = NONE;
 
 	tok_ungot = false;
@@ -55,12 +130,10 @@ EngLex::EngLex(string& config_name)
 
 EngLex::~EngLex()
 {
-	string nil_str = "";
+	tstring nil_str = _T("");
 
-	tok_str = "";
+	tok_str = _T("");
 	tok_id = NONE;
-
-	csz_deinit(&tokbuf);
 }
 
 // <brief>
@@ -69,11 +142,11 @@ EngLex::~EngLex()
 // <parm name="fpath">The path of file</parm>
 // <return>0 if it succeeds, otherwise -1</return>
 int
-EngLex::set_input_file(string& fpath)
+EngLex::set_input_file(tstring& fpath)
 {
 	pushFile(fpath);
 
-	tok_str = "";
+	tok_str = _T("");
 	tok_id = NONE;
 
 	return 0;
@@ -82,17 +155,14 @@ EngLex::set_input_file(string& fpath)
 void
 EngLex::expect_number(void)
 {
-	unsigned int num;
-	char num_buf[32];
-	char ch;
-	const char * ptr;
-	int len, i;
-	string lxm;
+	int num;
+	tstring lxm;
 
 	expect(NUM);
 	EngLexBasis::getLexeme(lxm);
 	num = LexemeAsInt(lxm);
-	len = uls_zprintf(&tokbuf, "%u", num);
+
+	tokbuf.append(num);
 }
 
 // <brief>
@@ -104,19 +174,19 @@ EngLex::get_token(void)
 {
 	int tok, len;
 	bool is_quote;
-	const char * ptr;
+	tstring *lxm;
+	LPCTSTR ptr;
 	uls_wch_t wch;
-	string *lxm;
 
 	if (tok_ungot == true) {
 		tok_ungot = false;
 		return;
 	}
 
-	csz_reset(&tokbuf);
+	tokbuf.clear();
 
 	tok = EngLexBasis::getTok();
-	EngLexBasis::getTokStr(&lxm);
+	UlsLex::getTokStr(&lxm);
 
 	if (tok != NUM) {
 		tok_id = tok;
@@ -130,21 +200,21 @@ EngLex::get_token(void)
 	if (isalpha(wch)) {
 		tok = EngLexBasis::getTok();
 
-		ptr = (const char *) lxm->c_str();
+		ptr = (LPCTSTR) lxm->c_str();
 	 	len = (int) lxm->length();
 
 	 	tok = WORD;
-	 	csz_append(&tokbuf, (const char *) ptr, len * sizeof(char));
+	 	tokbuf.append(ptr, len);
 	}
 
 	if (tok == NONE) {
 		tok = EngLexBasis::getTok();
-		ptr = (const char *) lxm->c_str();
+		ptr = (LPCTSTR) lxm->c_str();
 	 	len = (int) lxm->length();
-	 	csz_append(&tokbuf, (const char *) ptr, len * sizeof(char));
+	 	tokbuf.append(ptr, len);
 	}
 
-	tok_str = string(csz_text(&tokbuf));
+	tok_str = tokbuf.str();
 	tok_id = tok;
 }
 
@@ -160,19 +230,6 @@ int
 EngLex::getTokNum(void)
 {
 	return tok_id;
-}
-
-std::string&
-EngLex::getTokStr(void)
-{
-	return tok_str;
-}
-
-// <brief>
-// </brief>
-string EngLex::getKeywordStr(int t)
-{
-	return string("<unknown>");
 }
 
 void

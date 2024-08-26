@@ -1,4 +1,4 @@
-﻿#@ulc-2.3
+﻿#@ulc-2.4
 #
 # Unified Lexical Configuration
 #
@@ -33,7 +33,7 @@ EOI     <EOI>         1
 ID      <ID>          2
 NUM     <NUMBER>      3
 
-AT_IDENTITY    @@IDENTITY   256
+AT_IDENTITY    @@     256
 
 ENCRYPTION     ENCRYPTION
 ORDER          ORDER

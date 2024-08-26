@@ -1,0 +1,8 @@
+	"hello"
+	"""hello C#, 
+
+ C:\Program Files\UlsWin"""
+	"world"
+	"hello	world"
+	'\t'
+	'\007'

@@ -105,7 +105,8 @@ CONFIG_CLEAN_VPATH_FILES =
 PROGRAMS = $(noinst_PROGRAMS)
 am_logging_OBJECTS = logging-logging.$(OBJEXT)
 logging_OBJECTS = $(am_logging_OBJECTS)
-logging_DEPENDENCIES = $(top_builddir)/src/libuls.la
+logging_DEPENDENCIES = $(top_builddir)/ulscompat/libulscompat.la \
+	$(top_builddir)/src/libuls.la
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
@@ -305,19 +306,22 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 uls_ver_major = 1
 uls_ver_minor = 9
-uls_ver_debug = 0
+uls_ver_debug = 6
+uls_ver = $(uls_ver_major).$(uls_ver_minor).$(uls_ver_debug)
 so_current = 1
-so_revision = 0
+so_revision = 1
 so_age = 0
 ULS_SYSPROPS = /usr/local/etc/uls/uls.sysprops
 TMP_SYSPROPS = /tmp/uls_sysprops.txt
 ulc2class_exe = $(top_builddir)/tools/ulc2class/ulc2class
 tests_libpath = $(top_builddir)/src:$(top_builddir)/ulscpp
-ACLOCAL_AMFLAGS = -I m4
 logging_SOURCES = logging.c
 logging_CFLAGS = -Wall
-logging_CPPFLAGS = -I$(top_srcdir)/src
-logging_LDADD = $(top_builddir)/src/libuls.la
+logging_CPPFLAGS = -DULS_USE_WSTR -I$(top_srcdir)/ulscompat -I$(top_srcdir)/src
+logging_LDADD = $(top_builddir)/ulscompat/libulscompat.la $(top_builddir)/src/libuls.la
+#logging_CPPFLAGS = -I$(top_srcdir)/src
+#logging_LDADD = $(top_builddir)/src/libuls.la
+ACLOCAL_AMFLAGS = -I m4
 all: all-am
 
 .SUFFIXES:

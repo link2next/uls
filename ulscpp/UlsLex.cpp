@@ -43,10 +43,10 @@
 #include <uls/uls_lex.h>
 #include <uls/uld_conf.h>
 #include <uls/uls_fileio.h>
-#include <uls/uls_auw.h>
 
 #include "uls/uls_util_wstr.h"
 #include "uls/uls_lf_swprintf.h"
+#include "uls/uls_wprint.h"
 #include "uls/uls_wlog.h"
 
 #include "uls.h"
@@ -54,13 +54,17 @@
 using namespace std;
 using namespace uls::crux;
 
+bool UlsLex::ulscpp_inited = false;
+uls_lf_map_t *UlsLex::ulscpp_convspec_nmap;
+uls_lf_map_t *UlsLex::ulscpp_convspec_wmap;
+
 void
 #ifdef __GNUC__
 __attribute__((constructor))
 #endif
 _initialize_ulscpp(void)
 {
-	UlsLex_initialize();
+	UlsLex::initialize();
 }
 
 void
@@ -69,7 +73,7 @@ __attribute__((destructor))
 #endif
 _finalize_ulscpp(void)
 {
-	UlsLex_finalize();
+	UlsLex::finalize();
 }
 
 #ifdef ULS_WINDOWS
@@ -80,7 +84,7 @@ DllMain(HINSTANCE hInst, DWORD dwReason, LPVOID lpvReserved)
 
 	switch (dwReason) {
 	case DLL_PROCESS_ATTACH:
-		UlsLex_initialize();
+		UlsLex::initialize();
 		break;
 
 	case DLL_THREAD_ATTACH:
@@ -90,7 +94,7 @@ DllMain(HINSTANCE hInst, DWORD dwReason, LPVOID lpvReserved)
 		break;
 
 	case DLL_PROCESS_DETACH:
-		UlsLex_finalize();
+		UlsLex::finalize();
 		break;
 	}
 
@@ -240,7 +244,7 @@ uls::unlockMutex(uls::MutexType mtx)
 #endif
 
 int
-uls::create_fd_wronly(string& fpath)
+uls::create_fd_wronly(const string& fpath)
 {
 	int fd;
 	fd = uls_fd_open(fpath.c_str(), ULS_FIO_CREAT | ULS_FIO_WRITE);
@@ -248,7 +252,7 @@ uls::create_fd_wronly(string& fpath)
 }
 
 int
-uls::open_fd_rdonly(string& fpath)
+uls::open_fd_rdonly(const string& fpath)
 {
 	int fd;
 	fd = uls_fd_open(fpath.c_str(), ULS_FIO_READ);;
@@ -261,39 +265,6 @@ uls::close_fd(int fd)
 	uls_fd_close(fd);
 }
 
-void
-uls::crux::UlsLex_initialize(void)
-{
-	initialize_uls();
-
-	if (ulscpp_convspec_nmap != NULL) return;
-	ulscpp_convspec_nmap = uls_lf_create_convspec_map(0);
-
-	if (ulscpp_convspec_nmap == NULL) {
-		err_panic("fail to initialize uls");
-	}
-
-	uls_add_default_log_convspecs(ulscpp_convspec_nmap);
-
-	ulscpp_convspec_wmap = uls_lf_create_convspec_wmap(0);
-	uls_add_default_log_convspecs(ulscpp_convspec_wmap);
-}
-
-void
-uls::crux::UlsLex_finalize(void)
-{
-	if (ulscpp_convspec_nmap != NULL) {
-		uls_lf_destroy_convspec_map(ulscpp_convspec_nmap);
-		ulscpp_convspec_nmap = NULL;
-	}
-
-	if (ulscpp_convspec_wmap != NULL) {
-		uls_lf_destroy_convspec_wmap(ulscpp_convspec_wmap);
-	}
-
-	finalize_uls();
-}
-
 // <brief>
 // This procedure lists the search directories for ulc file, which is suffixed by 'ulc'.
 // uls_create() or uls_init() will search the directories for ulc file in same order as this dumpSearchPathOfUlc().
@@ -304,12 +275,12 @@ uls::crux::UlsLex_finalize(void)
 // </brief>
 // <parm name="confname">The name of lexcial configuration, as like 'sample', 'dir/sample', or 'sample.ulc'</parm>
 // <return>none</return>
-void uls::dumpSearchPathOfUlc(string& confname)
+void uls::dumpSearchPathOfUlc(const string& confname)
 {
 	ulc_list_searchpath(confname.c_str());
 }
 
-void uls::dumpSearchPathOfUlc(wstring& wconfwname)
+void uls::dumpSearchPathOfUlc(const wstring& wconfwname)
 {
 	const char *ustr;
 	csz_str_t csz;
@@ -355,7 +326,7 @@ uls::finalize_ulscpp(void)
 // </brief>
 
 bool
-uls::crux::isLexemeZero(string& lxm)
+uls::crux::isLexemeZero(const string& lxm)
 {
 	const char *ptr = lxm.c_str();
 
@@ -366,7 +337,7 @@ uls::crux::isLexemeZero(string& lxm)
 }
 
 bool
-uls::crux::isLexemeZero(wstring& lxm)
+uls::crux::isLexemeZero(const wstring& lxm)
 {
 	const wchar_t *ptr = lxm.c_str();
 
@@ -377,19 +348,19 @@ uls::crux::isLexemeZero(wstring& lxm)
 }
 
 bool
-uls::crux::isLexemeInt(string& lxm)
+uls::crux::isLexemeInt(const string& lxm)
 {
 	return uls::crux::isLexemeReal(lxm) ? false : true;
 }
 
 bool
-uls::crux::isLexemeInt(wstring& lxm)
+uls::crux::isLexemeInt(const wstring& lxm)
 {
 	return uls::crux::isLexemeReal(lxm) ? false : true;
 }
 
 bool
-uls::crux::isLexemeReal(string& lxm)
+uls::crux::isLexemeReal(const string& lxm)
 {
 	const char *ptr = lxm.c_str();
 
@@ -400,7 +371,7 @@ uls::crux::isLexemeReal(string& lxm)
 }
 
 bool
-uls::crux::isLexemeReal(wstring& lxm)
+uls::crux::isLexemeReal(const wstring& lxm)
 {
 	const wchar_t *ptr = lxm.c_str();
 
@@ -417,28 +388,70 @@ uls::crux::isLexemeReal(wstring& lxm)
 // <parm name="lxm">string</parm>
 // <return>true/false</return>
 int
-uls::crux::LexemeAsInt(string& lxm)
+uls::crux::LexemeAsInt(const string& lxm)
 {
 	const char *ptr = lxm.c_str();
 	return strtoul(ptr, NULL, 16);
 }
 
 int
-uls::crux::LexemeAsInt(wstring& lxm)
+uls::crux::LexemeAsInt(const wstring& lxm)
 {
 	const wchar_t *ptr = lxm.c_str();
 	return wcstoul(ptr, NULL, 16);
 }
 
 double
-uls::crux::LexemeAsDouble(string& lxm)
+uls::crux::LexemeAsDouble(const string& lxm)
 {
 	const char *ptr = lxm.c_str();
 	return atof(ptr);
 }
 
+//
+//
+// UlsLex
+//
+//
+void
+UlsLex::initialize()
+{
+	if (ulscpp_inited == true) return;
+
+	if (ulscpp_convspec_nmap != NULL) return;
+	ulscpp_convspec_nmap = uls_lf_create_convspec_map(0);
+
+	if (ulscpp_convspec_nmap == NULL) {
+		err_panic("fail to initialize uls");
+	}
+
+	uls_add_default_log_convspecs(ulscpp_convspec_nmap);
+
+	ulscpp_convspec_wmap = uls_lf_create_convspec_wmap(0);
+	uls_add_default_log_convspecs(ulscpp_convspec_wmap);
+
+	ulscpp_inited = true;
+}
+
+void
+UlsLex::finalize()
+{
+	if (ulscpp_inited == false) return;
+
+	if (ulscpp_convspec_nmap != NULL) {
+		uls_lf_destroy_convspec_map(ulscpp_convspec_nmap);
+		ulscpp_convspec_nmap = NULL;
+	}
+
+	if (ulscpp_convspec_wmap != NULL) {
+		uls_lf_destroy_convspec_wmap(ulscpp_convspec_wmap);
+	}
+
+	ulscpp_inited = false;
+}
+
 double
-uls::crux::LexemeAsDouble(wstring& wlxm)
+uls::crux::LexemeAsDouble(const wstring& wlxm)
 {
 	const wchar_t *ptr = wlxm.c_str();
 	double fval;
@@ -451,12 +464,6 @@ uls::crux::LexemeAsDouble(wstring& wlxm)
 
 	return fval;
 }
-
-//
-//
-// UlsLex
-//
-//
 
 // <brief>
 // In case the paramenter 'lxm' is a floating point number,
@@ -475,12 +482,6 @@ int UlsLex::get_uls_flags(UlsLex::InputOpts fl)
 		break;
 	case DoDup:
 		ret_fl = ULS_DO_DUP;
-		break;
-	case MsMbcsEncoding:
-		ret_fl = ULS_FILE_MS_MBCS;
-		break;
-	case Utf8Encoding:
-		ret_fl = ULS_FILE_UTF8;
 		break;
 	default:
 		ret_fl = -1;
@@ -525,13 +526,11 @@ UlsLex::initUlsLex_ustr(const char *ulc_file)
 	uls_lf_puts_t puts_proc_str, puts_proc_file;
 
 	if (uls_init(&lex, ulc_file) < 0) {
-		throw std::invalid_argument("Failed to create the uls object!");
-		return false;
+		string errmsg = string(ulc_file) + ": file not proper!";
+		throw invalid_argument(errmsg);
 	}
 
 	input_flags = 0;
-	lxm_nstr = new string("");
-	lxm_wstr = new wstring(L"");
 	lxm_id = uls_toknum_none(&lex);
 
 	FileNameBuf = new string("");
@@ -548,15 +547,14 @@ UlsLex::initUlsLex_ustr(const char *ulc_file)
 
 	puts_proc_str = uls_lf_puts_str;
 	puts_proc_file = uls_lf_puts_file;
-#define uls_nlf_create uls_lf_create
 
-	str_nlf = uls_nlf_create(ulscpp_convspec_nmap, NULL, puts_proc_str);
+	str_nlf = uls_lf_create(ulscpp_convspec_nmap, NULL, puts_proc_str);
 	uls_lf_change_gdat(str_nlf, &lex);
 
-	file_nlf = uls_nlf_create(ulscpp_convspec_nmap, cstdio_out, puts_proc_file);
+	file_nlf = uls_lf_create(ulscpp_convspec_nmap, cstdio_out, puts_proc_file);
 	uls_lf_change_gdat(file_nlf, &lex);
 
-	prn_nlf = uls_nlf_create(ulscpp_convspec_nmap, cstdio_out, puts_proc_file);
+	prn_nlf = uls_lf_create(ulscpp_convspec_nmap, cstdio_out, puts_proc_file);
 	uls_lf_change_gdat(prn_nlf, &lex);
 
 	str_wlf = uls_wlf_create(ulscpp_convspec_wmap, NULL, uls_lf_wputs_str);
@@ -578,7 +576,7 @@ UlsLex::initUlsLex_ustr(const char *ulc_file)
 
 	uls_log_change(&logbase, (void *) cstdio_out, puts_proc_file);
 
-	extra_tokdefs = new std::map<int,void*>();
+	extra_tokdefs = new map<int,void*>();
 
 	return true;
 }
@@ -633,8 +631,6 @@ UlsLex::UlsLex(wstring& ulc_wfile)
 // <return>none</return>
 UlsLex::~UlsLex()
 {
-	delete lxm_nstr;
-	delete lxm_wstr;
 	delete FileNameBuf;
 	delete extra_tokdefs;
 	delete auwcvt;
@@ -645,19 +641,18 @@ UlsLex::~UlsLex()
 	uls_deinit_log(&logbase);
 	uls_destroy(&lex);
 
-#define uls_nlf_destroy uls_lf_destroy
 	uls_wlf_destroy(prn_wlf);
 	uls_wlf_destroy(file_wlf);
 	uls_wlf_destroy(str_wlf);
 
-	uls_nlf_destroy(prn_nlf);
-	uls_nlf_destroy(file_nlf);
-	uls_nlf_destroy(str_nlf);
+	uls_lf_destroy(prn_nlf);
+	uls_lf_destroy(file_nlf);
+	uls_lf_destroy(str_nlf);
 }
 
-int UlsLex::prepareUldMap()
+int UlsLex::prepareUldMap(int bufsiz_uldfile)
 {
-	names_map = uld_prepare_names(&lex);
+	names_map = uld_prepare_names(&lex, bufsiz_uldfile);
 	return 0;
 }
 
@@ -676,14 +671,35 @@ bool UlsLex::finishUldMap()
 void UlsLex::changeUldNames(const char *name, const char*name2, int tokid_valid, int tokid, const char *aliases)
 {
 	uld_line_t tok_names;
+	char *buff;
 
  	tok_names.name = name;
 	tok_names.name2 = name2;
 	tok_names.tokid_changed = tokid_valid;
 	tok_names.tokid = tokid;
-	tok_names.aliases = aliases;
+
+	if (aliases == NULL) aliases = "";
+	buff = uls_strdup(aliases, -1);
+	tok_names.aliases = buff;
 
 	uld_change_names(names_map, &tok_names);
+	uls_mfree(buff);
+}
+
+void UlsLex::changeUldNames(const wchar_t *name, const wchar_t *name2, int tokid_valid, int tokid, const wchar_t *aliases)
+{
+	const char *ustr1, *ustr2, *ustr3;
+
+	_ULSCPP_WSTR2USTR(name, ustr1, 0);
+	_ULSCPP_WSTR2USTR(name2, ustr2, 1);
+
+	if (aliases != NULL) {
+		_ULSCPP_WSTR2USTR(aliases, ustr3, 2);
+	} else {
+		ustr3 = NULL;
+	}
+
+	changeUldNames(ustr1, ustr2, tokid_valid, tokid, ustr3);
 }
 
 // <brief>
@@ -696,30 +712,31 @@ void UlsLex::setTag_ustr(const char *fname)
 	const char *nstr;
 
 	uls_set_tag(&lex, fname, 1);
-	_ULSCPP_USTR2NSTR(uls_get_tag(&lex), nstr, 1);
+	nstr = uls_get_tag(&lex);
 	*FileNameBuf = string(nstr);
 }
 
-void UlsLex::setTag(string& fname)
+void UlsLex::setTag(const string& fname)
 {
 	const char *ustr;
-	_ULSCPP_NSTR2USTR(fname.c_str(), ustr, 0);
+
+	ustr = fname.c_str();
 	setTag_ustr(ustr);
 }
 
-void UlsLex::setTag(wstring& wfname)
+void UlsLex::setTag(const wstring& wfname)
 {
 	const char *ustr;
 	_ULSCPP_WSTR2USTR(wfname.c_str(), ustr, 0);
 	setTag_ustr(ustr);
 }
 
-void UlsLex::setFileName(string& fname)
+void UlsLex::setFileName(const string& fname)
 {
 	setTag(fname);
 }
 
-void UlsLex::setFileName(wstring& fname)
+void UlsLex::setFileName(const wstring& fname)
 {
 	setTag(fname);
 }
@@ -729,10 +746,10 @@ void UlsLex::getTag(string& fname)
 	fname = *FileNameBuf;
 }
 
-void UlsLex::getTag(std::wstring& wfname)
+void UlsLex::getTag(wstring& wfname)
 {
 	const wchar_t *wstr;
-	_ULSCPP_NSTR2WSTR(FileNameBuf->c_str(), wstr, 0);
+	_ULSCPP_USTR2WSTR(FileNameBuf->c_str(), wstr, 0);
 	wfname = wstr;
 }
 
@@ -741,7 +758,7 @@ void UlsLex::getFileName(string& fname)
 	getTag(fname);
 }
 
-void UlsLex::getFileName(std::wstring& fname)
+void UlsLex::getFileName(wstring& fname)
 {
 	getTag(fname);
 }
@@ -764,7 +781,7 @@ void UlsLex::setLineNum(int lineno)
 // <return>none</return>
 void UlsLex::addLineNum(int amount)
 {
-	_uls_inc_lineno(&lex, amount);
+	uls_inc_lineno(&lex, amount);
 	LineNum = uls_get_lineno(&lex);
 }
 
@@ -806,18 +823,19 @@ bool UlsLex::isLogLevelSet(int lvl)
 // </brief>
 // <parm name="pfx">The literal string analyzer of which the quote type is started with 'pfx'.</parm>
 // <return>none</return>
-void UlsLex::deleteLiteralAnalyzer(string& pfx)
+void UlsLex::deleteLiteralAnalyzer(const string& pfx)
 {
 	const char *ustr;
-	_ULSCPP_NSTR2USTR(pfx.c_str(), ustr, 0);
-	uls_xcontext_delete_litstr_analyzer(_uls_get_xcontext(&lex), ustr);
+
+	ustr = pfx.c_str();
+	uls_xcontext_delete_litstr_analyzer(uls_ptr(lex.xcontext), ustr);
 }
 
-void UlsLex::deleteLiteralAnalyzer(wstring& wpfx)
+void UlsLex::deleteLiteralAnalyzer(const wstring& wpfx)
 {
 	const char *ustr;
 	_ULSCPP_WSTR2USTR(wpfx.c_str(), ustr, 0);
-	uls_xcontext_delete_litstr_analyzer(_uls_get_xcontext(&lex), ustr);
+	uls_xcontext_delete_litstr_analyzer(uls_ptr(lex.xcontext), ustr);
 }
 
 // <brief>
@@ -826,18 +844,19 @@ void UlsLex::deleteLiteralAnalyzer(wstring& wpfx)
 // </brief>
 // <parm name="pfx">The prefix of literal string that will be processed by 'proc'</parm>
 // <return>void</return>
-void UlsLex::changeLiteralAnalyzer(string pfx, uls_litstr_analyzer_t proc, void* data)
+void UlsLex::changeLiteralAnalyzer(const string pfx, uls_litstr_analyzer_t proc, void* data)
 {
 	const char *ustr;
-	_ULSCPP_NSTR2USTR(pfx.c_str(), ustr, 0);
-	uls_xcontext_change_litstr_analyzer(_uls_get_xcontext(&lex), ustr, proc, data);
+
+	ustr = pfx.c_str();
+	uls_xcontext_change_litstr_analyzer(uls_ptr(lex.xcontext), ustr, proc, data);
 }
 
-void UlsLex::changeLiteralAnalyzer(wstring wpfx, uls_litstr_analyzer_t proc, void* data)
+void UlsLex::changeLiteralAnalyzer(const wstring wpfx, uls_litstr_analyzer_t proc, void* data)
 {
 	const char *ustr;
 	_ULSCPP_WSTR2USTR(wpfx.c_str(), ustr, 0);
-	uls_xcontext_change_litstr_analyzer(_uls_get_xcontext(&lex), ustr, proc, data);
+	uls_xcontext_change_litstr_analyzer(uls_ptr(lex.xcontext), ustr, proc, data);
 }
 
 // <brief>
@@ -935,7 +954,7 @@ void UlsLex::pushFd(int fd, int flags)
 	}
 
 	if (uls_push_fd(&lex, fd, flags) < 0) {
-		throw std::invalid_argument("the param 'fd' is invalid.");
+		throw invalid_argument("the param 'fd' is invalid.");
 	}
 
 	uls_set_tag(&lex, NULL, 1);
@@ -948,7 +967,7 @@ void UlsLex::setFd(int fd, int flags)
 	}
 
 	if (uls_set_fd(&lex, fd, flags) < 0) {
-		throw std::invalid_argument("the param 'fd' is invalid.");
+		throw invalid_argument("the param 'fd' is invalid.");
 	}
 
 	uls_set_tag(&lex, NULL, 1);
@@ -964,7 +983,7 @@ void UlsLex::setFd(int fd, int flags)
 // </parm>
 // <return>none</return>
 
-bool UlsLex::pushFile(string& filepath, int flags)
+bool UlsLex::pushFile(const string& filepath, int flags)
 {
 	const char *ustr;
 
@@ -972,7 +991,7 @@ bool UlsLex::pushFile(string& filepath, int flags)
 		flags = getInputOpts();
 	}
 
-	_ULSCPP_NSTR2USTR(filepath.c_str(), ustr, 0);
+	ustr = filepath.c_str();
 
 	if (uls_push_file(&lex, ustr, flags) < 0) {
 		return false;
@@ -981,7 +1000,7 @@ bool UlsLex::pushFile(string& filepath, int flags)
 	return true;
 }
 
-bool UlsLex::pushFile(std::wstring& wfilepath, int flags)
+bool UlsLex::pushFile(const wstring& wfilepath, int flags)
 {
 	const char *ustr;
 
@@ -998,7 +1017,7 @@ bool UlsLex::pushFile(std::wstring& wfilepath, int flags)
 	return true;
 }
 
-void UlsLex::setFile(string& filepath, int flags)
+void UlsLex::setFile(const string& filepath, int flags)
 {
 	const char *ustr;
 
@@ -1006,14 +1025,14 @@ void UlsLex::setFile(string& filepath, int flags)
 		flags = getInputOpts();
 	}
 
-	_ULSCPP_NSTR2USTR(filepath.c_str(), ustr, 0);
+	ustr = filepath.c_str();
 
 	if (uls_set_file(&lex, ustr, flags) < 0) {
-		throw std::invalid_argument("the param 'filepath' is invalid.");
+		throw invalid_argument("the param 'filepath' is invalid.");
 	}
 }
 
-void UlsLex::setFile(wstring& wfilepath, int flags)
+void UlsLex::setFile(const wstring& wfilepath, int flags)
 {
 	const char *ustr;
 
@@ -1024,7 +1043,7 @@ void UlsLex::setFile(wstring& wfilepath, int flags)
 	_ULSCPP_WSTR2USTR(wfilepath.c_str(), ustr, 0);
 
 	if (uls_set_file(&lex, ustr, flags) < 0) {
-		throw std::invalid_argument("the param 'filepath' is invalid.");
+		throw invalid_argument("the param 'filepath' is invalid.");
 	}
 }
 
@@ -1045,12 +1064,13 @@ void UlsLex::pushLine(const char* line, int len, int flags)
 		flags = getInputOpts();
 	}
 
-	len = _ULSCPP_NSTR2USTR(line, ustr, 0);
+	ustr = line;
+	len = uls_strlen(ustr);
 #ifdef ULS_WINDOWS
 	flags |= ULS_DO_DUP;
 #endif
 	if (uls_push_line(&lex, line, len, flags) < 0) {
-		throw std::invalid_argument("the param 'line' is invalid.");
+		throw invalid_argument("the param 'line' is invalid.");
 	}
 }
 
@@ -1067,7 +1087,7 @@ void UlsLex::pushLine(const wchar_t* wline, int len, int flags)
 	flags |= ULS_DO_DUP;
 #endif
 	if (uls_push_line(&lex, ustr, len, flags) < 0) {
-		throw std::invalid_argument("the param 'line' is invalid.");
+		throw invalid_argument("the param 'line' is invalid.");
 	}
 }
 
@@ -1079,13 +1099,14 @@ void UlsLex::setLine(const char* line, int len, int flags)
 		flags = getInputOpts();
 	}
 
-	len = _ULSCPP_NSTR2USTR(line, ustr, 0);
+	ustr = line;
+	len = uls_strlen(ustr);
 #ifdef ULS_WINDOWS
 	flags |= ULS_DO_DUP;
 #endif
 
 	if (uls_set_line(&lex, ustr, len, flags) < 0) {
-		throw std::invalid_argument("the param 'line' is invalid.");
+		throw invalid_argument("the param 'line' is invalid.");
 	}
 }
 
@@ -1102,7 +1123,7 @@ void UlsLex::setLine(const wchar_t* wline, int len, int flags)
 	flags |= ULS_DO_DUP;
 #endif
 	if (uls_set_line(&lex, ustr, len, flags) < 0) {
-		throw std::invalid_argument("the param 'line' is invalid.");
+		throw invalid_argument("the param 'line' is invalid.");
 	}
 }
 
@@ -1125,7 +1146,7 @@ void UlsLex::dismissAllInputs(void)
 // <return>bool</return>
 bool UlsLex::is_ch_space(uls_wch_t wch)
 {
-	return uls_is_ch_space(&lex, wch) ? true : false;
+	return uls_canbe_ch_space(lex.ch_context, wch) ? true : false;
 }
 
 // <brief>
@@ -1136,7 +1157,7 @@ bool UlsLex::is_ch_space(uls_wch_t wch)
 // <return>bool</return>
 bool UlsLex::is_ch_idfirst(uls_wch_t wch)
 {
-	return uls_is_ch_idfirst(&lex, wch) ? true : false;
+	return uls_canbe_ch_idfirst(lex.ch_context, wch) ? true : false;
 }
 
 // <brief>
@@ -1147,7 +1168,7 @@ bool UlsLex::is_ch_idfirst(uls_wch_t wch)
 // <return>bool</return>
 bool UlsLex::is_ch_id(uls_wch_t wch)
 {
-	return uls_is_ch_id(&lex, wch) ? true : false;
+	return uls_canbe_ch_id(lex.ch_context, wch) ? true : false;
 }
 
 // <brief>
@@ -1158,7 +1179,7 @@ bool UlsLex::is_ch_id(uls_wch_t wch)
 // <return>bool</return>
 bool UlsLex::is_ch_quote(uls_wch_t wch)
 {
-	return uls_is_ch_quote(&lex, wch) ? true : false;
+	return uls_canbe_ch_quote(lex.ch_context, wch) ? true : false;
 }
 
 // <brief>
@@ -1181,7 +1202,7 @@ bool UlsLex::is_ch_1ch_token(uls_wch_t wch)
 // <return>bool</re turn>
 bool UlsLex::is_ch_2ch_token(uls_wch_t wch)
 {
-	return uls_is_ch_2ch_token(&lex, wch) ? true : false;
+	return uls_canbe_ch_2ch_token(lex.ch_context, wch) ? true : false;
 }
 
 // <brief>
@@ -1192,7 +1213,7 @@ bool UlsLex::is_ch_2ch_token(uls_wch_t wch)
 // <return>bool</return>
 bool UlsLex::is_ch_comm(uls_wch_t wch)
 {
-	return uls_is_ch_comm(&lex, wch) ? true : false;
+	return uls_canbe_ch_comm(lex.ch_context, wch) ? true : false;
 }
 
 // <brief>
@@ -1273,34 +1294,34 @@ uls_wch_t UlsLex::getCh(void)
 // </brief>
 // <return>The token number</return>
 
-void UlsLex::set_token(int t, string& lxm)
+void UlsLex::set_token(int t, const string& lxm)
 {
 	const wchar_t *wstr;
 
-	_ULSCPP_NSTR2WSTR(lxm.c_str(), wstr, 0);
+	_ULSCPP_USTR2WSTR(lxm.c_str(), wstr, 0);
 
 	lxm_id = t;
-	*lxm_nstr = lxm;
-	*lxm_wstr = wstr;
+	lxm_nstr = lxm;
+	lxm_wstr = wstr;
 }
 
-void UlsLex::set_token(int t, std::wstring& wlxm)
+void UlsLex::set_token(int t, const wstring& wlxm)
 {
 	const char *nstr;
 
-	_ULSCPP_WSTR2NSTR(wlxm.c_str(), nstr, 0);
+	_ULSCPP_WSTR2USTR(wlxm.c_str(), nstr, 0);
 
 	lxm_id = t;
-	*lxm_nstr = nstr;
-	*lxm_wstr = wlxm;
+	lxm_nstr = nstr;
+	lxm_wstr = wlxm;
 }
 
-void UlsLex::setTok(int t, string& lxm)
+void UlsLex::setTok(int t, const string& lxm)
 {
 	set_token(t, lxm);
 }
 
-void UlsLex::setTok(int t, std::wstring& lxm)
+void UlsLex::setTok(int t, const wstring& lxm)
 {
 	set_token(t, lxm);
 }
@@ -1311,12 +1332,11 @@ void UlsLex::update_token_lex(void)
 	wchar_t *wstr;
 
 	lxm_id = uls_tok(&lex);
+	nstr = uls_tokstr(&lex);
+	lxm_nstr = nstr;
 
-	_ULSCPP_USTR2NSTR(uls_lexeme(&lex), nstr, 0);
-	*lxm_nstr = nstr;
-
-	_ULSCPP_NSTR2WSTR(nstr, wstr, 1);
-	*lxm_wstr = wstr;
+	_ULSCPP_USTR2WSTR(nstr, wstr, 1);
+	lxm_wstr = wstr;
 }
 
 // <brief>
@@ -1348,15 +1368,15 @@ int UlsLex::getTok(void)
 }
 
 void
-UlsLex::getTokStr(string** pp_lxm)
+UlsLex::getTokStr(string **pp_lxm)
 {
-	*pp_lxm = lxm_nstr;
+	*pp_lxm = &lxm_nstr;
 }
 
 void
-UlsLex::getTokStr(std::wstring** pp_wlxm)
+UlsLex::getTokStr(wstring **p_wlxm)
 {
-	*pp_wlxm = lxm_wstr;
+	*p_wlxm = &lxm_wstr;
 }
 
 int
@@ -1439,7 +1459,7 @@ void UlsLex::expect(int TokExpected)
 bool
 UlsLex::existTokdefInHashMap(int t)
 {
-	std::map<int,void*>::iterator it;
+	map<int,void*>::iterator it;
 	bool rval;
 
 	it = extra_tokdefs->find(t);
@@ -1514,7 +1534,7 @@ void UlsLex::ungetStr(string str)
 {
 	const char *ustr;
 
-	_ULSCPP_NSTR2USTR(str.c_str(), ustr, 0);
+	ustr = str.c_str();
 	uls_unget_str(&lex, ustr);
 
 	update_token_lex();
@@ -1531,7 +1551,7 @@ void UlsLex::ungetStr(wstring str)
 }
 
 // <brief>
-// Call ungetLexeme if you want push lexeme to the current input stream.
+// Call ungetToken if you want push lexeme to the current input stream.
 // </brief>
 // <parm name="tok_id">
 //   The corresponding token string of 'tok_id'.
@@ -1545,7 +1565,7 @@ void UlsLex::ungetLexeme(string lxm, int tok_id)
 {
 	const char *ustr;
 
-	_ULSCPP_NSTR2USTR(lxm.c_str(), ustr, 0);
+	ustr = lxm.c_str();
 	uls_unget_lexeme(&lex, ustr, tok_id);
 
 	update_token_lex();
@@ -1569,8 +1589,8 @@ void UlsLex::dumpTok(string pfx, string suff)
 {
 	const char *ustr0, *ustr1;
 
-	_ULSCPP_NSTR2USTR(pfx.c_str(), ustr0, 0);
-	_ULSCPP_NSTR2USTR(suff.c_str(), ustr1, 1);
+	ustr0 = pfx.c_str();
+	ustr1 = suff.c_str();
 
 	uls_dump_tok(&lex, ustr0, ustr1);
 }
@@ -1603,7 +1623,7 @@ UlsLex::Keyword(int t, string *ptr_keyw)
 	if ((keyw = uls_tok2keyw(&lex, t)) == NULL)
 		keyw = "<unknown>";
 
-	_ULSCPP_USTR2NSTR(keyw, nstr, 0);
+	nstr = keyw;
 	*ptr_keyw = nstr;
 }
 
@@ -1643,7 +1663,7 @@ UlsLex::Keyword(string *ptr_keyw)
 }
 
 void
-UlsLex::Keyword(std::wstring *ptr_keyw)
+UlsLex::Keyword(wstring *ptr_keyw)
 {
 	Keyword(lxm_id, ptr_keyw);
 }
@@ -1655,7 +1675,7 @@ UlsLex::getKeywordStr(string *ptr_keyw)
 }
 
 void
-UlsLex::getKeywordStr(std::wstring *ptr_keyw)
+UlsLex::getKeywordStr(wstring *ptr_keyw)
 {
 	Keyword(ptr_keyw);
 }
@@ -1713,8 +1733,6 @@ void UlsLex::log(int loglvl, const wchar_t* wfmt, ...)
 // <brief>
 // Logs formatted messages
 // No need to append '\n' to the end of line 'fmt'
-// You can use %t %w to print the current token, its location.
-// No need argument for %t, %w.
 // </brief>
 // <parm name="fmt">The template for message string</parm>
 // <return>void</return>
@@ -1775,7 +1793,7 @@ void UlsLex::openOutput_ustr(const char* out_file, uls_lf_puts_t puts_proc)
 	FILE *fp;
 
 	if ((fp = uls_fp_open(out_file, ULS_FIO_CREAT | ULS_FIO_WRITE)) == NULL) {
-		throw std::invalid_argument("fail to create an output file.");
+		throw invalid_argument("fail to create an output file.");
 	}
 
 	uls::lockMutex(&sysprn_g_mtx);
@@ -1790,17 +1808,17 @@ void UlsLex::openOutput_ustr(const char* out_file, uls_lf_puts_t puts_proc)
 	}
 }
 
-void UlsLex::openOutput(string& out_file)
+void UlsLex::openOutput(const string& out_file)
 {
 	const char *ustr;
 	uls_lf_puts_t puts_proc;
 
 	puts_proc = uls_lf_puts_file;
-	_ULSCPP_NSTR2USTR(out_file.c_str(), ustr, 0);
+	ustr = out_file.c_str();
 	openOutput_ustr(ustr, puts_proc);
 }
 
-void UlsLex::openOutput(wstring& out_wfile)
+void UlsLex::openOutput(const wstring& out_wfile)
 {
 	uls_lf_puts_t puts_proc;
 
@@ -1821,12 +1839,11 @@ void UlsLex::closeOutput(void)
 {
 	FILE  *cstdio_out = _uls_stdio_fp(1);
 	uls_lf_puts_t puts_proc;
-	FILE *fp;
 
 	puts_proc = uls_lf_puts_file;
 
 	if (sysprn_opened) {
-		fp = (FILE *) prn_nlf->x_dat;
+		FILE *fp = (FILE *) prn_nlf->x_dat;
 		uls_fp_close(fp);
 
 		prn_nlf->x_dat = (void *) cstdio_out;
@@ -1848,7 +1865,7 @@ UlsLex::changeConvSpec(const char* percent_name, uls_lf_convspec_t proc)
 {
 	const char *ustr;
 
-	_ULSCPP_NSTR2USTR(percent_name, ustr, 0);
+	ustr = percent_name;
 	uls_lf_register_convspec(ulscpp_convspec_nmap, ustr, proc);
 }
 

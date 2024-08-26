@@ -56,8 +56,10 @@ ULS_QUALIFIED_METHOD(__uls_change_stream_hdr)(uls_lex_ptr_t uls, uls_istream_ptr
 		start_lno = 1;
 	}
 
-	uls_init_line_in_input(inp, uls_get_namebuf_value(istr->firstline), istr->len_firstline, ipos);
-	uls_context_set_tag(ctx, uls_get_namebuf_value(istr->filepath), start_lno);
+	uls_init_line_in_input(inp, istr->firstline, istr->len_firstline, ipos);
+	uls_ctx_set_tag(ctx, uls_get_namebuf_value(istr->filepath), -1);
+	__uls_ctx_set_lineno(ctx, start_lno);
+
 	return 0;
 }
 
@@ -94,23 +96,11 @@ ULS_QUALIFIED_METHOD(uls_select_isrc_filler)(uls_context_ptr_t ctx, uls_istream_
 	uls_ptrtype_tool(utf_inbuf) utf_inp;
 	uls_callback_type_this(fill_isource) fill_isrc;
 	uls_callback_type_this(ungrab_isource) ungrab_proc;
-	int bufsiz0, mode, subtype = istr->header.subtype;
+	int mode, subtype = istr->header.subtype;
 	uls_voidptr_t dat;
 
 	if (istr->header.filetype == ULS_STREAM_RAW) {
-		if (subtype == UTF_INPUT_FORMAT_8) {
-			fill_isrc = uls_ref_callback_this(uls_fill_fd_source_utf8);
-		} else if (subtype == UTF_INPUT_FORMAT_16) {
-			fill_isrc = uls_ref_callback_this(uls_fill_fd_source_utf16);
-		} else if (subtype == UTF_INPUT_FORMAT_32) {
-			fill_isrc = uls_ref_callback_this(uls_fill_fd_source_utf32);
-		} else {
-			subtype = UTF_INPUT_FORMAT_8;
-			fill_isrc = uls_ref_callback_this(uls_fill_fd_source_utf8);
-		}
-
-		bufsiz0 = ULS_FDBUF_INITSIZE;
-
+		fill_isrc = uls_ref_callback_this(uls_fill_fd_isrc_utf8);
 		mode = subtype;
 		if (istr->header.reverse) mode |= UTF_INPUT_FORMAT_REVERSE;
 		utf_inp = _uls_tool_(utf_create_inbuf)(NULL, UTF_INPUT_BUFSIZ, mode);
@@ -123,16 +113,12 @@ ULS_QUALIFIED_METHOD(uls_select_isrc_filler)(uls_context_ptr_t ctx, uls_istream_
 
 	} else {
 		fill_isrc = nilptr;
-		bufsiz0 = ULS_FDBUF_INITSIZE_STREAM;
-		uls_input_set_fl(ctx->input, ULS_INP_FL_READONLY);
-
 		dat = (uls_voidptr_t) istr;
 		fill_isrc = uls_ref_callback_this(uls_fill_fd_stream);
 		ungrab_proc = uls_ref_callback_this(uls_ungrab_fd_stream);
 	}
 
-	uls_input_reset(ctx->input, bufsiz0, 0);
-	uls_input_reset_cursor(ctx->input);
+	uls_input_reset(ctx->input, ULS_INPUT_BUFSIZ, 0);
 	uls_input_change_filler(ctx->input, dat, fill_isrc, ungrab_proc);
 
 	return 0;
@@ -197,7 +183,6 @@ ULS_QUALIFIED_METHOD(uls_push_isrc_type)(uls_lex_ptr_t uls, int fd_type, int fd_
 	uls_xctx_boundary_checker_t fill_subproc2;
 	uls_gettok_t  proc;
 	uls_type_tool(outparam) parms1;
-	int start_lno;
 
 	if ((proc=find_isrc_filler(fd_type, fd_subtype, uls_ptr(parms1))) == nilptr) {
 		_uls_log(err_log)("%s: unknown fd-type %d", __func__, fd_type);
@@ -207,7 +192,7 @@ ULS_QUALIFIED_METHOD(uls_push_isrc_type)(uls_lex_ptr_t uls, int fd_type, int fd_
 	fill_isrc = (uls_xcontext_filler_t) parms1.proc;
 	fill_subproc2 = (uls_xctx_boundary_checker_t) parms1.data;
 
-	ctx = uls_push_context(uls, nilptr);
+	ctx = uls_push(uls);
 	ctx->gettok = proc;
 
 	ctx->fill_proc = fill_isrc;
@@ -219,9 +204,7 @@ ULS_QUALIFIED_METHOD(uls_push_isrc_type)(uls_lex_ptr_t uls, int fd_type, int fd_
 
 	ctx->record_boundary_checker = fill_subproc2;
 
-	start_lno = 1;
-	uls_context_set_tag(ctx, NULL, start_lno);
-
+	__uls_ctx_set_lineno(ctx, 1);
 	return 0;
 }
 
@@ -236,37 +219,45 @@ int
 ULS_QUALIFIED_METHOD(uls_push_istream)(uls_lex_ptr_t uls, uls_istream_ptr_t istr,
 	uls_tmpl_list_ptr_t tmpl_list, int flags)
 {
+	int stat = 0;
+
 	if (istr == nilptr) {
 		_uls_log(err_log)("%s: invalid parameter!", __func__);
 		return -1;
 	}
 
-	uls_bind_istream(istr, nilptr);
-
 	if (uls_push_isrc_type(uls, istr->header.filetype, istr->header.subtype) < 0) {
-		return -1;
+		return -2;
 	}
 
 	uls_set_tag(uls, uls_get_namebuf_value(istr->filepath), -1);
-	++istr->ref_cnt; // grab it!!
 
 	if (__uls_change_stream_hdr(uls, istr, flags) < 0) {
-		uls_pop(uls);
-		return -1;
+		stat = -3; goto end_1;
 	}
 
-	if (__uls_bind_istream_tmpls(istr, uls, tmpl_list) < 0) {
+	if (uls_bind_istream(istr, uls) < 0) {
+		_uls_log(err_log)("%s: not compatible uls-file.", __func__);
+		stat = -4; goto end_1;
+	}
+
+	if (uls_bind_tmpls(istr, tmpl_list) < 0) {
 		_uls_log(err_log)("can't put stream %s on the stack of %s.",
 			uls_get_namebuf_value(istr->filepath), uls_get_namebuf_value(uls->ulc_name));
-		uls_pop(uls);
-		return -1;
+		stat = -5; goto end_1;
 	}
 
-	if (uls_fillbuff_and_reset(uls) < 0) {
-		return -1;
+	if (uls_fillbuff_and_reset(uls, NULL) < 0) {
+		_uls_log(err_log)("%s: failed to fillbuff", __func__);
+		stat = -6; goto end_1;
 	}
 
+	uls_istr_grab(istr);
 	return 0;
+
+ end_1:
+ 	uls_pop(uls);
+	return stat;
 }
 
 int
@@ -278,10 +269,10 @@ ULS_QUALIFIED_METHOD(uls_set_istream)(uls_lex_ptr_t uls, uls_istream_ptr_t istr,
 	}
 
 	uls_pop(uls);
-
 	return uls_push_istream(uls, istr, tmpl_list, flags);
 }
 
+#ifndef ULS_DOTNET
 int
 ULS_QUALIFIED_METHOD(uls_push_istream_2)(uls_lex_ptr_t uls, uls_istream_ptr_t istr,
 	const char** tmpl_nams, const char** tmpl_vals, int n_tmpls, int flags)
@@ -294,47 +285,53 @@ ULS_QUALIFIED_METHOD(uls_push_istream_2)(uls_lex_ptr_t uls, uls_istream_ptr_t is
 		return -1;
 	}
 
-	uls_bind_istream(istr, nilptr);
-
 	if (uls_push_isrc_type(uls, istr->header.filetype, istr->header.subtype) < 0)
 		return -1;
 
 	if (__uls_change_stream_hdr(uls, istr, flags) < 0) {
-		uls_pop(uls);
-		return -1;
+		stat = -2; goto end_2;
 	}
 
 	uls_set_tag(uls, uls_get_namebuf_value(istr->filepath), -1);
-	++istr->ref_cnt;
 
 	if (tmpl_nams != nilptr) {
 		uls_init_tmpls(uls_ptr(tmpl_list), n_tmpls, ULS_TMPLS_DUP);
 		for (i=0; i<n_tmpls; i++) {
 			if (uls_add_tmpl(uls_ptr(tmpl_list), tmpl_nams[i], tmpl_vals[i]) < 0) {
-				uls_pop(uls);
-				stat = -1; goto end_1;
+				stat = -3; goto end_1;
 			}
 		}
 	} else {
 		uls_init_tmpls(uls_ptr(tmpl_list), 0, ULS_TMPLS_DUP);
 	}
 
-	if (__uls_bind_istream_tmpls(istr, uls, uls_ptr(tmpl_list)) < 0) {
-		_uls_log(err_log)("can't put stream %s on the stack of %s.",
-			uls_get_namebuf_value(istr->filepath), uls_get_namebuf_value(uls->ulc_name));
-		uls_deinit_tmpls(uls_ptr(tmpl_list));
-		uls_pop(uls);
-		return -1;
+	if (uls_bind_istream(istr, uls) < 0) {
+		_uls_log(err_log)("%s: not compatible uls-file.", __func__);
+		stat = -4; goto end_1;
 	}
 
-	if (uls_fillbuff_and_reset(uls) < 0) {
-		return -1;
+	if (uls_bind_tmpls(istr, uls_ptr(tmpl_list)) < 0) {
+		_uls_log(err_log)("can't put stream %s on the stack of %s.",
+			uls_get_namebuf_value(istr->filepath), uls_get_namebuf_value(uls->ulc_name));
+		stat = -5; goto end_1;
 	}
+
+	if (uls_fillbuff_and_reset(uls, NULL) < 0) {
+		stat = -6; goto end_1;
+	}
+
+	uls_deinit_tmpls(uls_ptr(tmpl_list));
+	uls_istr_grab(istr);
+
+	return 0;
 
  end_1:
 	uls_deinit_tmpls(uls_ptr(tmpl_list));
+ end_2:
+ 	uls_pop(uls);
 	return stat;
 }
+#endif
 
 int
 ULS_QUALIFIED_METHOD(uls_push_file)(uls_lex_ptr_t uls, const char* filepath, int flags)
@@ -352,12 +349,10 @@ ULS_QUALIFIED_METHOD(uls_push_file)(uls_lex_ptr_t uls, const char* filepath, int
 	}
 
 	if (uls_push_istream(uls, istr, nilptr, flags) < 0) {
-		uls_destroy_istream(istr);
 		return -1;
 	}
 
-	--istr->ref_cnt;
-
+	uls_istr_ungrab(istr);
 	return 0;
 }
 
@@ -389,12 +384,10 @@ ULS_QUALIFIED_METHOD(uls_push_fp)(uls_lex_ptr_t uls, FILE* fp, int flags)
 	}
 
 	if (uls_push_istream(uls, istr, nilptr, flags) < 0) {
-		uls_destroy_istream(istr);
 		return -1;
 	}
 
-	--istr->ref_cnt;
-
+	uls_istr_ungrab(istr);
 	return 0;
 }
 
@@ -429,7 +422,6 @@ ULS_QUALIFIED_METHOD(uls_push_fd)(uls_lex_ptr_t uls, int fd, int flags)
 	}
 
 	if (uls_push_istream(uls, istr, nilptr, flags) < 0) {
-		uls_destroy_istream(istr);
 		if (fd2 != fd) _uls_tool_(fd_close)(fd2);
 		return -1;
 	}
@@ -441,8 +433,7 @@ ULS_QUALIFIED_METHOD(uls_push_fd)(uls_lex_ptr_t uls, int fd, int flags)
 			uls_ref_callback_this(uls_fd_ungrabber), (uls_voidptr_t) parm);
 	}
 
-	--istr->ref_cnt;
-
+	uls_istr_ungrab(istr);
 	return 0;
 }
 
@@ -623,24 +614,6 @@ ULS_QUALIFIED_METHOD(ulsjava_set_file)(uls_lex_ptr_t uls, const void *filepath, 
 	uls_mfree(ustr);
 
 	return rc;
-}
-
-int
-ULS_QUALIFIED_METHOD(_uls_MBCS)(void)
-{
-	return _uls_sysinfo_(encoding);
-}
-
-int
-ULS_QUALIFIED_METHOD(_uls_const_MBCS_UTF8)(void)
-{
-	return ULS_MBCS_UTF8;
-}
-
-int
-ULS_QUALIFIED_METHOD(_uls_const_MBCS_MS_MBCS)(void)
-{
-	return ULS_MBCS_MS_MBCS;
 }
 
 void

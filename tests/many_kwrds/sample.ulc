@@ -1,11 +1,11 @@
-﻿#@ulc-2.3
+﻿#@ulc-2.4
 #
 #  ULC: Unified Lexical Configuration
 #
 DOMAIN: uls.link2next.io://season-1
 
 ID_CHARS: 0-9 a-z A-Z
-NOT_CHAR_TOK: % ~ _ a-z A-Z
+NOT_CHAR_TOK: %~_! 
 NUMBER_PREFIXES: 0x:16 0:8
 
 %%

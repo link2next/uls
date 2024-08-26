@@ -1,4 +1,4 @@
-﻿#@ulc-2.3
+﻿#@ulc-2.4
 #
 #  ULC: Unified Lexical Configuration
 #
@@ -11,12 +11,14 @@ DECIMAL_SEPARATOR: _
 NUMBER_PREFIXES: 0x:16 0X:16 0:8 0b:2
 NUMBER_SUFFIXES: UL L LU ul lu f F
 
-#  COMMENT_TYPE: /* */
-#  COMMENT_TYPE: // \n
+COMMENT_TYPE: /* */
+COMMENT_TYPE: // \n
 
-QUOTE_TYPE: token=DQUOTE " x:\x2x u:\u4x
+QUOTE_TYPE: token=DQUOTE " x:\x2 u:\u4
 QUOTE_TYPE: token=BBQUOTE options=multiline,asymmetric  [[ ]] 
 QUOTE_TYPE: token=SQUOTE ' verbatim1
+
+NOT_CHAR_TOK: multibytes=false %~_! 
 
 %%
 #
@@ -34,6 +36,11 @@ NEQ      !=
 EQEQ     ===
 SHFT_ASGN     <<=
 IMPORT     @import
+SNOWMAN   ☃$
+#SNOWMAN   \u2603$
+EUROSIGN  \u20ac
+#EUROSIGN  €
+ARROW     ->
 
 OR       or    
 
@@ -66,6 +73,8 @@ REGISTER register  180
 # Tok-id remapping of 1-char tokens.
 BEGIN    {       300
 END      }
+AT       @
+
 RETURN   return    185
 SHORT    short
 SIGNED   signed
@@ -76,3 +85,8 @@ UNSIGNED unsigned
 VOID     void
 VOLATILE volatile
 WHILE    while
+
+USERDEF1 500
+USERDEF2
+USERDEF3 500
+USERDEF4 123

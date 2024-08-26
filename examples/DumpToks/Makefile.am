@@ -1,14 +1,14 @@
 include ../cfg.mk
 
-ACLOCAL_AMFLAGS = -I m4
-
 bin_PROGRAMS = DumpToks
 DumpToks_SOURCES = DumpToks.cpp
 
+DumpToks_CXXFLAGS = -Wall -std=c++11
+#DumpToks_CPPFLAGS = -I$(uls_inc_dir) -DULS_USE_WSTR
 DumpToks_CPPFLAGS = -I$(uls_inc_dir)
-DumpToks_LDADD = -L$(uls_lib_dir) -lulscpp -lulscompat -luls
+DumpToks_LDADD = -L$(uls_lib_dir) -lulscpp -luls
 
 $(DumpToks_SOURCES): DumpToksBasis.h
 
 DumpToksBasis.h: dumptoks.ulc
-	$(ulc2class_exe) --lang=cpp -o$@ -n uls.collection.DumpToksBasis $<
+	LD_LIBRARY_PATH="$(uls_lib_dir)" $(ulc2class_exe) --lang=cpp -o$@ -n uls.collection.DumpToksBasis $<

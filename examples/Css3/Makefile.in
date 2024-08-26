@@ -112,6 +112,9 @@ AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+Css3Toks_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(Css3Toks_CXXFLAGS) \
+	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -309,10 +312,11 @@ uls_bin_dir = $(uls_inst_dir)/bin
 uls_inc_dir = $(uls_inst_dir)/include
 uls_lib_dir = $(uls_inst_dir)/lib
 ulc2class_exe = $(uls_bin_dir)/ulc2class
-ACLOCAL_AMFLAGS = -I m4
 Css3Toks_SOURCES = Css3Toks.cpp Css3Lex.cpp
+Css3Toks_CXXFLAGS = -Wall -std=c++11
+#Css3Toks_CPPFLAGS = -I$(uls_inc_dir) -DULS_USE_WSTR
 Css3Toks_CPPFLAGS = -I$(uls_inc_dir)
-Css3Toks_LDADD = -L$(uls_lib_dir) -lulscpp -lulscompat -luls
+Css3Toks_LDADD = -L$(uls_lib_dir) -lulscpp -luls
 all: all-am
 
 .SUFFIXES:
@@ -399,7 +403,7 @@ clean-binPROGRAMS:
 
 Css3Toks$(EXEEXT): $(Css3Toks_OBJECTS) $(Css3Toks_DEPENDENCIES) $(EXTRA_Css3Toks_DEPENDENCIES) 
 	@rm -f Css3Toks$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(Css3Toks_OBJECTS) $(Css3Toks_LDADD) $(LIBS)
+	$(AM_V_CXXLD)$(Css3Toks_LINK) $(Css3Toks_OBJECTS) $(Css3Toks_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -438,32 +442,32 @@ am--depfiles: $(am__depfiles_remade)
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
 
 Css3Toks-Css3Toks.o: Css3Toks.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Css3Toks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Css3Toks-Css3Toks.o -MD -MP -MF $(DEPDIR)/Css3Toks-Css3Toks.Tpo -c -o Css3Toks-Css3Toks.o `test -f 'Css3Toks.cpp' || echo '$(srcdir)/'`Css3Toks.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Css3Toks_CPPFLAGS) $(CPPFLAGS) $(Css3Toks_CXXFLAGS) $(CXXFLAGS) -MT Css3Toks-Css3Toks.o -MD -MP -MF $(DEPDIR)/Css3Toks-Css3Toks.Tpo -c -o Css3Toks-Css3Toks.o `test -f 'Css3Toks.cpp' || echo '$(srcdir)/'`Css3Toks.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Css3Toks-Css3Toks.Tpo $(DEPDIR)/Css3Toks-Css3Toks.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Css3Toks.cpp' object='Css3Toks-Css3Toks.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Css3Toks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Css3Toks-Css3Toks.o `test -f 'Css3Toks.cpp' || echo '$(srcdir)/'`Css3Toks.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Css3Toks_CPPFLAGS) $(CPPFLAGS) $(Css3Toks_CXXFLAGS) $(CXXFLAGS) -c -o Css3Toks-Css3Toks.o `test -f 'Css3Toks.cpp' || echo '$(srcdir)/'`Css3Toks.cpp
 
 Css3Toks-Css3Toks.obj: Css3Toks.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Css3Toks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Css3Toks-Css3Toks.obj -MD -MP -MF $(DEPDIR)/Css3Toks-Css3Toks.Tpo -c -o Css3Toks-Css3Toks.obj `if test -f 'Css3Toks.cpp'; then $(CYGPATH_W) 'Css3Toks.cpp'; else $(CYGPATH_W) '$(srcdir)/Css3Toks.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Css3Toks_CPPFLAGS) $(CPPFLAGS) $(Css3Toks_CXXFLAGS) $(CXXFLAGS) -MT Css3Toks-Css3Toks.obj -MD -MP -MF $(DEPDIR)/Css3Toks-Css3Toks.Tpo -c -o Css3Toks-Css3Toks.obj `if test -f 'Css3Toks.cpp'; then $(CYGPATH_W) 'Css3Toks.cpp'; else $(CYGPATH_W) '$(srcdir)/Css3Toks.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Css3Toks-Css3Toks.Tpo $(DEPDIR)/Css3Toks-Css3Toks.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Css3Toks.cpp' object='Css3Toks-Css3Toks.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Css3Toks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Css3Toks-Css3Toks.obj `if test -f 'Css3Toks.cpp'; then $(CYGPATH_W) 'Css3Toks.cpp'; else $(CYGPATH_W) '$(srcdir)/Css3Toks.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Css3Toks_CPPFLAGS) $(CPPFLAGS) $(Css3Toks_CXXFLAGS) $(CXXFLAGS) -c -o Css3Toks-Css3Toks.obj `if test -f 'Css3Toks.cpp'; then $(CYGPATH_W) 'Css3Toks.cpp'; else $(CYGPATH_W) '$(srcdir)/Css3Toks.cpp'; fi`
 
 Css3Toks-Css3Lex.o: Css3Lex.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Css3Toks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Css3Toks-Css3Lex.o -MD -MP -MF $(DEPDIR)/Css3Toks-Css3Lex.Tpo -c -o Css3Toks-Css3Lex.o `test -f 'Css3Lex.cpp' || echo '$(srcdir)/'`Css3Lex.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Css3Toks_CPPFLAGS) $(CPPFLAGS) $(Css3Toks_CXXFLAGS) $(CXXFLAGS) -MT Css3Toks-Css3Lex.o -MD -MP -MF $(DEPDIR)/Css3Toks-Css3Lex.Tpo -c -o Css3Toks-Css3Lex.o `test -f 'Css3Lex.cpp' || echo '$(srcdir)/'`Css3Lex.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Css3Toks-Css3Lex.Tpo $(DEPDIR)/Css3Toks-Css3Lex.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Css3Lex.cpp' object='Css3Toks-Css3Lex.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Css3Toks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Css3Toks-Css3Lex.o `test -f 'Css3Lex.cpp' || echo '$(srcdir)/'`Css3Lex.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Css3Toks_CPPFLAGS) $(CPPFLAGS) $(Css3Toks_CXXFLAGS) $(CXXFLAGS) -c -o Css3Toks-Css3Lex.o `test -f 'Css3Lex.cpp' || echo '$(srcdir)/'`Css3Lex.cpp
 
 Css3Toks-Css3Lex.obj: Css3Lex.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Css3Toks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Css3Toks-Css3Lex.obj -MD -MP -MF $(DEPDIR)/Css3Toks-Css3Lex.Tpo -c -o Css3Toks-Css3Lex.obj `if test -f 'Css3Lex.cpp'; then $(CYGPATH_W) 'Css3Lex.cpp'; else $(CYGPATH_W) '$(srcdir)/Css3Lex.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Css3Toks_CPPFLAGS) $(CPPFLAGS) $(Css3Toks_CXXFLAGS) $(CXXFLAGS) -MT Css3Toks-Css3Lex.obj -MD -MP -MF $(DEPDIR)/Css3Toks-Css3Lex.Tpo -c -o Css3Toks-Css3Lex.obj `if test -f 'Css3Lex.cpp'; then $(CYGPATH_W) 'Css3Lex.cpp'; else $(CYGPATH_W) '$(srcdir)/Css3Lex.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Css3Toks-Css3Lex.Tpo $(DEPDIR)/Css3Toks-Css3Lex.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Css3Lex.cpp' object='Css3Toks-Css3Lex.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Css3Toks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Css3Toks-Css3Lex.obj `if test -f 'Css3Lex.cpp'; then $(CYGPATH_W) 'Css3Lex.cpp'; else $(CYGPATH_W) '$(srcdir)/Css3Lex.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Css3Toks_CPPFLAGS) $(CPPFLAGS) $(Css3Toks_CXXFLAGS) $(CXXFLAGS) -c -o Css3Toks-Css3Lex.obj `if test -f 'Css3Lex.cpp'; then $(CYGPATH_W) 'Css3Lex.cpp'; else $(CYGPATH_W) '$(srcdir)/Css3Lex.cpp'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -687,7 +691,7 @@ uninstall-am: uninstall-binPROGRAMS
 $(Css3Toks_SOURCES): Css3LexBasis.h
 
 Css3LexBasis.h: css3.ulc
-	$(ulc2class_exe) --lang=cpp -o$@ -n uls.collection.Css3LexBasis -pCSS_ $<
+	LD_LIBRARY_PATH="$(uls_lib_dir)" $(ulc2class_exe) --lang=cpp -o$@ -n uls.collection.Css3LexBasis -pCSS_ $<
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

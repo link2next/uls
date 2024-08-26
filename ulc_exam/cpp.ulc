@@ -1,10 +1,11 @@
-﻿#@ulc-2.3:ansi_c
+﻿#@ulc-2.4:ansi_c
 #
 #  ULC for C++
 #
 DOMAIN: uls.link2next.io://season-1
 
 COMMENT_TYPE: // \n
+QUOTE_TYPE: options=asymmetric,multiline token=150,RQUOTE R" " verbatim(eos) 
 
 %%
 

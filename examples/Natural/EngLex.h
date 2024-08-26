@@ -35,18 +35,34 @@
 
 #include "EngLexBasis.h"
 
-#include <string>
-
-#include <uls/csz_stream.h>
-
 namespace uls
 {
 namespace collection
 {
-	class EngLex : public uls::collection::EngLexBasis {
-		csz_str_t tokbuf;
+	class StringBuilder {
+		uls::otstringstream m_stream;
+		tstring m_sbuff;
 
-		std::string tok_str;
+		TCHAR *mBuff;
+		int siz_mBuff;
+		bool sync;
+
+	public:
+		StringBuilder();
+		virtual ~StringBuilder();
+
+		void clear();
+		int len();
+		void append(LPCTSTR str, int len = -1);
+		void append(TCHAR ch);
+		void append(int n);
+
+		tstring& str();
+	};
+
+	class EngLex : public uls::collection::EngLexBasis {
+		StringBuilder tokbuf;
+		tstring tok_str;
 		int tok_id;
 		bool tok_ungot;
 
@@ -55,7 +71,7 @@ namespace collection
 
 	public:
 
-		EngLex(std::string& config_name);
+		EngLex(tstring& config_name);
 		~EngLex();
 
 		// <brief>
@@ -64,14 +80,10 @@ namespace collection
 		// Those we need to tokenize 'Makefile' files are just getTok(), token(), lexeme().
 		// </brief>
 		virtual int getTok(void);
-
 		virtual int getTokNum(void);
-		virtual std::string& getTokStr(void);
 
-		int set_input_file(std::string& fpath);
-
+		int set_input_file(tstring& fpath);
 		void ungetTok(void);
-		std::string getKeywordStr(int t);
 	};
 }
 }

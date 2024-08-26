@@ -57,7 +57,6 @@ TARGET_DIR=$(readlink_m "$TARGET_DIR")
 TOP_BIN_DIR=$(readlink_m "$TOP_BIN_DIR")
 TMP_SYSPROPS_FILE=$(readlink_m "$TMP_SYSPROPS_FILE")
 
-export PATH=$TOP_BIN_DIR/tools/ulc2class:$PATH
 ULC2CLASS=$TOP_BIN_DIR/tools/ulc2class/ulc2class
 if [ ! -x "$ULC2CLASS" ]; then
 	echo "$ULC2CLASS: not executable!"
@@ -127,22 +126,31 @@ while read name enum_name ClassName tok_pfx; do
 	curcol=$(($curcol+1))
 	draw_progress '_' $(($ALIGN_COL-$curcol))
 
+	out_fpath1=
 	if [ "$enum_name" != "-" ]; then
 		out_fname="${enum_name}_lex.h"
-		out_fpath="${TARGET_DIR}/$out_fname"
-		$ULC2CLASS -o "$out_fpath" -y -lc -e ${enum_name}_token $pfx_optstr $in_fname
+		out_fpath1="${TARGET_DIR}/$out_fname"
 		echo -n " $out_fname"
 	fi
 
+	out_fpath2=
 	if [ "$ClassName" != "-" ]; then
 		out_fname="${ClassName}.h"
-		out_fpath="${TARGET_DIR}/$out_fname"
-		$ULC2CLASS -o "$out_fpath" -y -n ${PACKAGE_DOMAIN}.${ClassName} $pfx_optstr $in_fname
+		out_fpath2="${TARGET_DIR}/$out_fname"
 		echo -n " $out_fname"
 	fi
 
 	echo
 
+	if [ -n "$out_fpath1" ]; then
+		$ULC2CLASS -o "$out_fpath1" -y -lc -e ${enum_name}_token $pfx_optstr $in_fname
+	fi
+
+	if [ -n "$out_fpath2" ]; then
+		$ULC2CLASS -o "$out_fpath2" -y -n ${PACKAGE_DOMAIN}.${ClassName} $pfx_optstr $in_fname
+	fi
+
+	echo
 done  < "$ULSLANGS"
 
 cd "$HOME_DIR"

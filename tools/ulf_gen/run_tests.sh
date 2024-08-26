@@ -53,8 +53,8 @@ if [ $# -ge 3 ]; then
 fi
 
 if [ ! -x $MAKE_ULF ]; then
-	echo "$MAKE_ULF : not found";
-	exit 1;
+	echo "$MAKE_ULF : not found"
+	exit 1
 fi
 
 if [ ! -e $TEST_DIR ]; then

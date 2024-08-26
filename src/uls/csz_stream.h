@@ -53,7 +53,9 @@ extern "C" {
 #define str_copy _uls_tool(str_modify)
 #define str_putc(outbuf,k,ch) \
 	_uls_tool(__str_putc)(outbuf, CSZ_STREAM_DELTA_DFL, k, ch)
-#define str_putc_nosafe(outbuf, k, ch) (outbuf->buf[k]=(ch))
+#define str_putc_nosafe(outbuf, k, ch) ((outbuf)->buf[k]=(ch))
+#define str_dataptr_k(outbuf,k) ((outbuf)->buf+(k))
+#define str_dataptr(outbuf) ((outbuf)->buf)
 
 #define csz_copy _uls_tool(csz_modify)
 #define csz_putc_nosafe(csz,ch) do { \
@@ -69,7 +71,6 @@ extern "C" {
 #define csz_length(csz) ((csz)->len)
 #define csz_size(csz) ((csz)->pool.siz)
 #define csz_data_ptr(csz) ((csz)->pool.buf)
-#define csz_eos_ptr(csz) (csz_data_ptr(csz) + csz_length(csz))
 
 #endif // ULS_DECL_GLOBAL_TYPES
 
@@ -149,6 +150,7 @@ ULS_DLL_EXTERN char* csz_append(csz_str_ptr_t csz, const char* str, int len);
 ULS_DLL_EXTERN void csz_puts(csz_str_ptr_t csz, const char* str);
 ULS_DLL_EXTERN void csz_putc(csz_str_ptr_t csz, char ch);
 
+ULS_DLL_EXTERN void csz_add_ch(csz_str_ptr_t csz, char ch);
 ULS_DLL_EXTERN void csz_add_eos(csz_str_ptr_t csz);
 ULS_DLL_EXTERN char* csz_text(csz_str_ptr_t csz);
 ULS_DLL_EXTERN wchar_t* uls_get_csz_wstr(csz_str_ptr_t csz);

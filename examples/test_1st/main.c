@@ -38,35 +38,35 @@
 #include <uls.h>
 #include <uls/simple_lex.h>
 
-const char *progname;
+LPCTSTR progname;
 int  opt_verbose;
 
-char *config_name;
-char *input_file;
+LPCTSTR config_name;
+LPCTSTR input_file;
 
 uls_lex_t *simple_lex;
 
 static void usage(void)
 {
-	err_log("usage(%s): dumping the tokens defined as in 'simple.ulc'", progname);
-	err_log("\t%s -c <config-file> <file1> ...", progname);
+	err_log(_T("usage(%s): dumping the tokens defined as in 'simple.ulc'"), progname);
+	err_log(_T("\t%s -c <config-file> <file1> ..."), progname);
 }
 
 static int
-options(int opt, char* optarg)
+options(int opt, LPTSTR optarg)
 {
 	int   stat = 0;
 
 	switch (opt) {
-	case 'v':
+	case _T('v'):
 		opt_verbose = 1;
 		break;
-	case 'h':
+	case _T('h'):
 		usage();
 		stat = 1;
 		break;
 	default:
-		err_log("undefined option -%c", opt);
+		err_log(_T("undefined option -%c"), opt);
 		usage();
 		stat = -1;
 		break;
@@ -76,17 +76,17 @@ options(int opt, char* optarg)
 }
 
 void
-test_uls(char* fpath)
+test_uls(LPCTSTR fpath)
 {
 	int fd;
 
-	if ((fd=open(fpath, O_RDONLY)) < 0) {
-		err_log(" file open error");
+	if ((fd = uls_fd_open(fpath, O_RDONLY)) < 0) {
+		err_log(_T(" file open error"));
 		return;
 	}
 
 	if (uls_set_fd(simple_lex, fd, 0) < 0) {
-		err_log("can't set the istream!");
+		err_log(_T("can't set the istream!"));
 		return;
 	}
 
@@ -94,25 +94,25 @@ test_uls(char* fpath)
 
 	for ( ; ; ) {
 		if (uls_get_tok(simple_lex) == TOK_EOI) break;
-		uls_dump_tok(simple_lex, "\t", "\n");
+		uls_dump_tok(simple_lex, _T("\t"), _T("\n"));
 	}
 
 	close(fd);
 }
 
 int
-test_uls_creating(int argc, char* argv[], int i0)
+test_uls_creating(int n_targv, LPTSTR *targv, int i0)
 {
 	int i;
 
 	if ((simple_lex = uls_create(config_name)) == NULL) {
-		err_log("%s: can't init uls-object of '%s'", __func__, config_name);
-		ulc_list_searchpath("simple");
+		err_log(_T("%hs: can't init uls-object of '%s'"), __func__, config_name);
+		ulc_list_searchpath(_T("simple"));
 		return -1;
 	}
 
-	for (i=i0; i<argc; i++) {
-		input_file = argv[i];
+	for (i=i0; i<n_targv; i++) {
+		input_file = targv[i];
 		test_uls(input_file);
 	}
 
@@ -122,22 +122,34 @@ test_uls_creating(int argc, char* argv[], int i0)
 }
 
 int
-main(int argc, char* argv[])
+_tmain(int n_targv, LPTSTR *targv)
 {
 	int i0;
-#ifdef _ULS_WANT_STATIC_LIBS
-	initialize_uls();
-#endif
-	progname = uls_filename(argv[0], NULL);
-	// opt_verbose = 1;
-	config_name = "simple";
-	input_file = "input1.txt";
 
-	if ((i0=uls_getopts(argc, argv, "vhV", options)) <= 0) {
+	progname = uls_split_filepath(targv[0], NULL);
+	// opt_verbose = 1;
+	config_name = _T("simple");
+	input_file = _T("input1.txt");
+
+	if ((i0=uls_getopts(n_targv, targv, _T("vhV"), options)) <= 0) {
 		return i0;
 	}
 
-	test_uls_creating(argc, argv, i0);
-
+	test_uls_creating(n_targv, targv, i0);
 	return 0;
 }
+
+#ifndef __WINDOWS__
+int
+main(int argc, char *argv[])
+{
+	LPTSTR *targv;
+	int stat;
+
+	ULS_GET_WARGS_LIST(argc, argv, targv);
+	stat = _tmain(argc, targv);
+	ULS_PUT_WARGS_LIST(argc, targv);
+
+	return stat;
+}
+#endif

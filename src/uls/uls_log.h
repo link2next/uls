@@ -31,7 +31,7 @@
     Stanley Hong <link2next@gmail.com>, August 2011.
   </author>
 */
-#ifndef __ULS_LOG_H__
+#if !defined(ULS_DOTNET) && !defined(__ULS_LOG_H__)
 #define __ULS_LOG_H__
 
 #ifndef ULS_EXCLUDE_HFILES
@@ -82,7 +82,7 @@ ULS_DEFINE_STRUCT(log)
 
 #endif // ULS_DEF_PUBLIC_TYPE
 
-#if defined(__ULS_LOG__) || defined(ULS_DEF_PRIVATE_DATA)
+#if (!defined(ULS_DOTNET) && defined(__ULS_LOG__)) || defined(ULS_DEF_PRIVATE_DATA)
 ULS_DECL_STATIC uls_lf_map_t lf_map_syserr;
 ULS_DECL_STATIC uls_lf_map_t lf_map_logdfl;
 ULS_DECL_STATIC uls_lf_t lf_syserr;

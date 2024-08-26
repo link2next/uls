@@ -1,9 +1,13 @@
 
-hello
- "hello\tworld!"
- 
-  "hello\n\
-\tworld"
+main()
+{
+	A = "\x09hello\uAE00\$world\$";
+	글= world;
+	str = [[ This is NOT 
+		c-string ]];
+	str2 = "How \
+  	   about \
+	   this";
 
-  'hello\n\
-\tworld'
+	keyw=4 ☃$; keyw=3 € ; 
+}

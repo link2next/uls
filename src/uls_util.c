@@ -50,6 +50,97 @@
 #endif
 #endif
 
+unsigned char
+ULS_QUALIFIED_METHOD(uls_nibble2ascii)(unsigned char ch)
+{
+	if (ch >= 0 && ch <= 9)
+		ch += '0';
+	else
+		ch += 'a' - 10;
+
+	return ch;
+}
+
+void
+ULS_QUALIFIED_METHOD(uls_putstr)(const char* str)
+{
+	uls_put_binstr(str, -1, _uls_stdio_fd(1));
+}
+
+int
+ULS_QUALIFIED_METHOD(ult_str2int)(const char *str)
+{
+	return _uls_tool_(atoi)(str);
+}
+
+int
+ULS_QUALIFIED_METHOD(ult_str_length)(const char *str)
+{
+	return _uls_tool_(strlen)(str);
+}
+
+int
+ULS_QUALIFIED_METHOD(ult_str_equal)(const char *str1, const char *str2)
+{
+	return uls_streql(str1, str2);
+}
+
+int
+ULS_QUALIFIED_METHOD(ult_str_copy)(char *bufptr, const char *str)
+{
+	return uls_strcpy(bufptr, str);
+}
+
+int
+ULS_QUALIFIED_METHOD(ult_str_compare)(const char* str1, const char* str2)
+{
+	return uls_strcmp(str1, str2);
+}
+
+char*
+ULS_QUALIFIED_METHOD(ult_skip_blanks)(const char* lptr)
+{
+	return skip_blanks(lptr);
+}
+
+char*
+ULS_QUALIFIED_METHOD(ult_splitstr)(char** p_str, int *p_len)
+{
+	uls_wrd_t wrdx;
+	char *wrd;
+
+	wrdx.lptr = *p_str;
+	wrd = _uls_splitstr(uls_ptr(wrdx));
+	*p_str = wrdx.lptr;
+
+	if (p_len != NULL) *p_len = wrdx.len;
+	return wrd;
+}
+
+char*
+ULS_QUALIFIED_METHOD(ult_split_litstr)(char *str, char qch)
+{
+	return split_litstr(str, qch);
+}
+
+void
+ULS_QUALIFIED_METHOD(ult_dump_utf8str)(const char *str)
+{
+	unsigned char ch, ch1;
+	unsigned char buff[4];
+	int i, k;
+
+	for (i = 0; (ch = str[i]) != '\0'; i++) {
+		k = 0;
+		if ((ch1 = ch >> 4) != 0)
+			buff[k++] = uls_nibble2ascii(ch1);;
+		buff[k++] = uls_nibble2ascii(ch & 0x0F);
+		buff[k] = '\0';
+
+		_uls_log_(printf)(" %s", (char *) buff);
+	}
+}
+
 void
 ULS_QUALIFIED_METHOD(uls_print_bytes)(const char* srcptr, int n_bytes)
 {
@@ -179,9 +270,12 @@ ULS_QUALIFIED_METHOD(uls_get_exeloc_dir)(const char* argv0, char *fpath_buf)
 #else
 
 	if (argv0 == NULL) {
-		if ((len = (int) readlink("/proc/self/exe", fpath_buf, ULS_FILEPATH_MAX+1)) < 0) {
-			return -1;
-		}
+#ifdef HAVE_READLINK
+		len = (int) readlink("/proc/self/exe", fpath_buf, ULS_FILEPATH_MAX+1);
+#else
+		len = -1;
+#endif
+		if (len < 0) return -1;
 		fpath_buf[len] = '\0';
 	} else {
 		if (argv0[0] == ULS_FILEPATH_DELIM) {
@@ -195,23 +289,23 @@ ULS_QUALIFIED_METHOD(uls_get_exeloc_dir)(const char* argv0, char *fpath_buf)
 		}
 	}
 
+#ifdef HAVE_REALPATH
 	if ((ptr=realpath(fpath_buf, NULL)) != NULL) {
 		len = _uls_tool_(strcpy)(fpath_buf, ptr);
 		free(ptr);
-
-		ptr = (char *) _uls_tool_(strchr_r)(fpath_buf, ULS_FILEPATH_DELIM);
-		uls_assert(ptr != NULL);
-		if (fpath_buf < ptr) {
-			*ptr = '\0';
-			len = (int) (ptr - fpath_buf);
-		} else {
-			*++ptr = '\0';
-			len = 1;
-		}
-	} else {
-		len = -1;
 	}
 #endif
+	ptr = (char *) _uls_tool_(strchr_r)(fpath_buf, ULS_FILEPATH_DELIM);
+	if (ptr == NULL) return -3;
+
+	if (fpath_buf < ptr) {
+		*ptr = '\0';
+		len = (int) (ptr - fpath_buf);
+	} else {
+		*++ptr = '\0';
+		len = 1;
+	}
+#endif // ULS_WINDOWS
 	return len;
 }
 
@@ -557,9 +651,7 @@ ULS_QUALIFIED_METHOD(uls_mkdir)(const char *filepath0)
 void
 ULS_QUALIFIED_METHOD(isp_init)(uls_isp_ptr_t isp, int init_size)
 {
-	if (init_size < 0)
-		init_size = 512;
-
+	if (init_size < 0) init_size = 256;
 	isp->buff = (char *) uls_malloc(init_size);
 	isp->siz_strpool = init_size;
 	isp->len_strpool = 0;
@@ -592,7 +684,7 @@ ULS_QUALIFIED_METHOD(isp_find)(uls_isp_ptr_t isp, const char* str, int len)
 		len = uls_strlen(str);
 	}
 
-	for (ind=0; ind < isp->len_strpool; ind += l+1) {
+	for (ind = 0; ind < isp->len_strpool; ind += l + 1) {
 		ptr = isp->buff + ind;
 
 		l = uls_strlen(ptr);
@@ -628,6 +720,14 @@ ULS_QUALIFIED_METHOD(isp_insert)(uls_isp_ptr_t isp, const char* str, int len)
 	return isp->buff + l;
 }
 
+#ifndef ULS_DOTNET
+char*
+ULS_QUALIFIED_METHOD(uls_split_filepath)(const char* filepath, int* len_fname)
+{
+
+	return uls_filename(filepath, len_fname);
+}
+
 /**
  * Parsing command line arguments.
  * e.g. i0 = uls_getopts(argc, argv, "lqf:s:o:v", options);
@@ -637,8 +737,8 @@ ULS_QUALIFIED_METHOD(isp_insert)(uls_isp_ptr_t isp, const char* str, int len)
 int
 ULS_QUALIFIED_METHOD(uls_getopts)(int n_args, char* args[], const char* optfmt, uls_optproc_t proc)
 {
-	const char  *ptr;
-	char        *optarg, *optstr;
+	const char  *cptr;
+	char *optarg, *optstr, nullbuff[4] = { '\0', };
 	int         rc, opt, i, j, k;
 
 	for (i=1; i<n_args; i=k+1) {
@@ -650,12 +750,12 @@ ULS_QUALIFIED_METHOD(uls_getopts)(int n_args, char* args[], const char* optfmt, 
 				return 0; // call usage();
 			}
 
-			if ((ptr=_uls_tool_(strchr)(optfmt, opt)) == NULL) {
+			if ((cptr=_uls_tool_(strchr)(optfmt, opt)) == NULL) {
 				_uls_log(err_log)("%s: undefined option -%c", __func__, opt);
 				return -1;
 			}
 
-			if (ptr[1] == ':') { /* the option 'opt' needs a arg-val */
+			if (cptr[1] == ':') { /* the option 'opt' needs a arg-val */
 				if (optstr[j+1]!='\0') {
 					optarg = optstr + (j+1);
 				} else if (k+1 < n_args && args[k+1][0] != '-') {
@@ -667,13 +767,13 @@ ULS_QUALIFIED_METHOD(uls_getopts)(int n_args, char* args[], const char* optfmt, 
 
 				if ((rc = proc(opt, optarg)) != 0) {
 					if (rc > 0) rc = 0;
-					else _uls_log(err_log)("error in processing the option -%c, %s.", opt, optarg);
+					else _uls_log(err_log)("An error in processing the option -%c, %s.", opt, optarg);
 					return rc;
 				}
 				break;
 
 			} else {
-				optarg = "";
+				optarg = nullbuff;
 				if ((rc = proc(opt, optarg)) != 0) {
 					if (rc > 0) rc = 0;
 					else _uls_log(err_log)("%s: error in -%c.", __func__, opt);
@@ -686,6 +786,7 @@ ULS_QUALIFIED_METHOD(uls_getopts)(int n_args, char* args[], const char* optfmt, 
 
 	return i;
 }
+#endif // ULS_DOTNET
 
 ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(get_ms_codepage)(uls_ptrtype_tool(outparam) parms)
@@ -715,7 +816,7 @@ ULS_QUALIFIED_METHOD(get_ms_codepage)(uls_ptrtype_tool(outparam) parms)
 	return n;
 }
 
-#if defined(ULS_WINDOWS)
+#if defined(ULS_WINDOWS) && !defined(ULS_DOTNET)
 char*
 ULS_QUALIFIED_METHOD(uls_win32_lookup_regval)(wchar_t* reg_dir, uls_ptrtype_tool(outparam) parms)
 {
@@ -804,7 +905,7 @@ ULS_QUALIFIED_METHOD(initialize_uls_util)(void)
 	char pathbuff[ULS_FILEPATH_MAX+1];
 	const char *fpath, *cptr;
 
-	int rc, mbs, len;
+	int rc, len;
 	uls_type_tool(outparam) parms;
 	unsigned int a;
 
@@ -822,11 +923,12 @@ ULS_QUALIFIED_METHOD(initialize_uls_util)(void)
 	initialize_primitives();
 	initialize_csz();
 
+#ifndef ULS_DOTNET
 	initialize_uls_lf();
 	uls_add_default_convspecs(uls_lf_get_default());
 	initialize_uls_sysprn();
 	initialize_uls_syserr();
-
+#endif
 	if ((fpath = getenv("ULS_SYSPROPS")) == NULL || _uls_tool_(dirent_exist)(fpath) != ST_MODE_REG) {
 		fpath = ULS_SYSPROPS_FPATH;
 		if ((rc = _uls_tool_(dirent_exist)(fpath)) <= 0 || rc != ST_MODE_REG) {
@@ -854,7 +956,7 @@ ULS_QUALIFIED_METHOD(initialize_uls_util)(void)
 	initialize_uls_fileio();
 
 	if ((_uls_sysinfo_(home_dir) = uls_get_system_property("ULS_HOME")) == NULL) {
-#if defined(ULS_WINDOWS)
+#if defined(ULS_WINDOWS) && !defined(ULS_DOTNET)
 		char *homedir;
 
 		parms.line = (char *) ULS_REG_INSTDIR_NAME;
@@ -889,22 +991,16 @@ ULS_QUALIFIED_METHOD(initialize_uls_util)(void)
 	}
 
 	if (uls_streql(cptr, "utf8")) {
-		_uls_sysinfo_(encoding) = ULS_MBCS_UTF8;
-
+		_uls_sysinfo_(codepage) = 0; // UTF-8
+		_uls_sysinfo_(multibytes) = 0;
 	} else {
 		parms.lptr = cptr;
-		rc = get_ms_codepage(uls_ptr(parms));
-		mbs = parms.n;
-
-		if (rc >= 0) {
-			_uls_sysinfo_(encoding) = ULS_MBCS_MS_MBCS;
-			_uls_sysinfo_(codepage) = rc;
-			_uls_sysinfo_(multibytes) = mbs;
-
-		} else {
+		if ((rc = get_ms_codepage(uls_ptr(parms))) <= 0) {
 			_uls_log(err_log)("%s: unknown file-encoding %s", cptr);
 			return -1;
 		}
+		_uls_sysinfo_(codepage) = rc;
+		_uls_sysinfo_(multibytes) = parms.n;
 	}
 
 	return 0;
@@ -915,11 +1011,11 @@ ULS_QUALIFIED_METHOD(finalize_uls_util)(void)
 {
 	finalize_uls_fileio();
 	finalize_sysprops();
-
+#ifndef ULS_DOTNET
 	finalize_uls_syserr();
 	finalize_uls_sysprn();
 	finalize_uls_lf();
-
+#endif
 	finalize_csz();
 	finalize_primitives();
 }

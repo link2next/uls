@@ -90,17 +90,14 @@ gen_namval_pair()
 
 gen_build_sysprops()
 {
-	local dname_lib
-	local dname_share
-
-	dname_lib=$1
-	dname_share=$2
+	local dname_lib=$1
+	local dname_share=$2
 
 	gen_namval_pair ULS_ETC     "$uls_etc_dir"
 	gen_namval_pair ULS_HOME    "$uls_inst_dir"
 	gen_namval_pair ULS_ULCS    "$uls_inst_dir/$dname_share"
 	gen_namval_pair ULS_SHARE   "$uls_inst_dir/$dname_share"
-	gen_namval_pair ULS_DLLPATH "$uls_inst_dir/$dname_lib"
+	gen_namval_pair ULS_DLLPATH "$uls_inst_dir/$dname_lib/.libs:$uls_inst_dir/ulscpp/.libs:$uls_inst_dir/ulsjni/libulsjni/.libs"
 }
 
 gen_inst_sysprops()
@@ -145,5 +142,5 @@ gen_namval_pair ULS_VERSION_DEBUG $debug_num
 if [ "$stage" = "B" ]; then
 	gen_build_sysprops src ulc_exam
 else
-	gen_inst_sysprops lib/uls share/uls
+	gen_inst_sysprops lib share/uls
 fi

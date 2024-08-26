@@ -35,10 +35,6 @@
 
 #include "MkfLexBasis.h"
 
-#include <string>
-
-#include <uls/csz_stream.h>
-
 namespace uls
 {
 namespace collection
@@ -49,17 +45,35 @@ namespace collection
 		int prepare_word;
 	};
 
-	class MkfLex : public uls::collection::MkfLexBasis {
-		csz_str_t tokbuf;
+	class StringBuilder {
+		uls::otstringstream m_stream;
+		tstring m_sbuff;
 
-		std::string tok_str;
+		TCHAR *mBuff;
+		int siz_mBuff;
+		bool sync;
+
+	public:
+		StringBuilder();
+		virtual ~StringBuilder();
+
+		void clear();
+		int len();
+		void append(LPCTSTR str, int len = -1);
+		void append(TCHAR ch);
+
+		tstring& str();
+	};
+
+	class MkfLex : public uls::collection::MkfLexBasis {
+		StringBuilder tokbuf;
+		tstring tok_str;
 		int tok_id;
 		bool tok_ungot;
 
 		static int tabblk_analyzer(uls_litstr_t *lit);
 
-		const char * tcschr(const char * tstr, char tch);
-		int expect_quotestr(char ch);
+		int expect_quotestr(TCHAR ch);
 		int expect_word(void);
 		int expect_number(void);
 		void get_token(void);
@@ -67,7 +81,7 @@ namespace collection
 	public:
 		mkf_tabblk_ctx_t tabblk_ctx;
 
-		MkfLex(std::string& config_name);
+		MkfLex(tstring& config_name);
 		~MkfLex();
 
 		// <brief>
@@ -76,19 +90,16 @@ namespace collection
 		// Those we need to tokenize 'Makefile' files are just getTok(), TokNum(), TokStr().
 		// </brief>
 		virtual int getTok(void);
-
 		virtual int getTokNum(void);
-		virtual std::string& getTokStr(void);
 
 		void ungetTok(void);
-		std::string getKeywordStr(int t);
 
 		// <brief>
 		// Sets the input file to be tokenized.
 		// </brief>
 		// <parm name="fpath">The path of file</parm>
 		// <return>none</return>
-		int include(std::string& fpath);
+		int include(tstring& fpath);
 	};
 }
 }

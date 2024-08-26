@@ -1,5 +1,7 @@
 #@simple
 
 EOI      128
-ERR      129
-ID       130 IDENT ID_ALIAS
+ERR      129  ETOK ERT
+#ID       130   IDENT ID_ALIAS 
+ID       IDENT 130  ID2 ID_ALIAS   
+#ID       IDENT ID4 ID_ALIAS   

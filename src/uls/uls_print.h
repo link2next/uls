@@ -32,7 +32,7 @@
   </author>
 */
 
-#ifndef __ULS_PRINT_H__
+#if !defined(ULS_DOTNET) && !defined(__ULS_PRINT_H__)
 #define __ULS_PRINT_H__
 
 #ifndef ULS_EXCLUDE_HFILES

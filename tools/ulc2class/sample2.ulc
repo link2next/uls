@@ -1,4 +1,4 @@
-﻿#@ulc-2.3
+﻿#@ulc-2.4
 #
 #  ULC: Unified Lexical Configuration
 #
@@ -36,7 +36,7 @@ AND       &&
 AANNDD    && 
 
 AANNDD    &+&
-AND2      &2&      93
+AND2      &*&      93
 AND_ALIAS          93
 
 # The token number of token without 'token-id' column is 
@@ -53,7 +53,7 @@ NEQ      !=
 LEQ      <=
 GEQ      >=
 
-# a reserved token to remap its id.
+# an reserved token to remap its id.
 ERR                199
 
 # the renamed reserved token by above

@@ -91,146 +91,147 @@ static const struct option longopts[] = {
 
 static void usage_synopsis(void)
 {
-	uls_printf("Usage: %s [options] [name1=value1 ...] <file|dir>\n", progname);
-	uls_printf("    %s generates token sequence file from (plain text) input files.\n", progname);
-	uls_printf("       %s <uls-file|(*.uls)>\n", progname);
-	uls_printf("       %s -L <ulc-file> [-b] [-o <output-file>] <text-file|(*.uls)>\n", progname);
-	uls_printf("       %s [-L <ulc-file>] -C <listing-of-files> <target-dir>\n", progname);
-	uls_printf("       %s [-L <ulc-file>] -C <listing-of-files> -f 'filter-path' <target-dir>\n", progname);
+	err_log("Usage: %s [options] [name1=value1 ...] <file|dir>", progname);
+	err_log("    %s generates token sequence file from (plain text) input files.", progname);
+	err_log("       %s <uls-file|(*.uls)>", progname);
+	err_log("       %s -L <ulc-file> [-b] [-o <output-file>] <text-file|(*.uls)>", progname);
+	err_log("       %s [-L <ulc-file>] -C <listing-of-files> <target-dir>", progname);
+	err_log("       %s [-L <ulc-file>] -C <listing-of-files> -f 'filter-path' <target-dir>", progname);
 }
 
 static void usage_desc(void)
 {
 #ifdef ULS_WINDOWS
-	uls_printf("  -L <ulc-spec>    Specify the lexical-configuration for your own language.\n");
-	uls_printf("  -o <filepath>    Specify the output filepath.\n");
-	uls_printf("  -b               The output file will be binary file.\n");
-	uls_printf("  -C <listfile>    This outputs a conglomerate file from the multiple input-files.\n");
-	uls_printf("  -v               verbose mode.\n");
-	uls_printf("  -V               Prints the version information.\n");
-	uls_printf("  -h               Display a short help.");
+	err_log("  -L <ulc-spec>    Specify the lexical-configuration for your own language.");
+	err_log("  -o <filepath>    Specify the output filepath.");
+	err_log("  -b               The output file will be binary file.");
+	err_log("  -C <listfile>    This outputs a conglomerate file from the multiple input-files.");
+	err_log("  -v               verbose mode.");
+	err_log("  -V               Prints the version information.");
+	err_log("  -h               Display a short help.");
 #else
-	uls_printf("  -L, --lang=<ulc-spec>         Specify lexical-configuration(*.ulc) for your own language.\n");
-	uls_printf("  -o, --output=<filepath>       specify the output filepath.\n");
-	uls_printf("  -b, --binary                  The output file will be binary file.\n");
-	uls_printf("  -C, --conglomerate=<listfile> This outputs a conglomerate file from the multiple input-files.\n");
+	err_log("  -L, --lang=<ulc-spec>         Specify lexical-configuration(*.ulc) for your own language.");
+	err_log("  -o, --output=<filepath>       specify the output filepath.");
+	err_log("  -b, --binary                  The output file will be binary file.");
+	err_log("  -C, --conglomerate=<listfile> This outputs a conglomerate file from the multiple input-files.");
 #ifdef ULS_FDF_SUPPORT
-	uls_printf("  -f, --filter=<cmdline>        Specify the filter for the input files with the -C-option.\n");
+	err_log("  -f, --filter=<cmdline>        Specify the filter for the input files with the -C-option.");
 #endif
-	uls_printf("  -v, --verbose                 verbose mode.\n");
-	uls_printf("  -V, --version                 Print the version information.\n");
-	uls_printf("  -h, --help                    Display a short help.\n");
+	err_log("  -v, --verbose                 verbose mode.");
+	err_log("  -V, --version                 Print the version information.");
+	err_log("  -h, --help                    Display a short help.");
 #endif
 }
 
 static void usage_brief(void)
 {
 	usage_synopsis();
-	uls_printf("\n");
+	err_log("");
 
 	usage_desc();
-	uls_printf("\n");
+	err_log("");
 }
 
 static void usage(void)
 {
 	usage_brief();
 
-	uls_printf("  To dump the token sequence,\n");
-	uls_printf("    %s -L <ulc-file> <source-file|(*.uls)>\n", progname);
-	uls_printf("    %s -L <ulc-file> <uls-file|(*.uls)>\n", progname);
-	uls_printf("\n");
+	err_log("  To dump the token sequence,");
+	err_log("    %s -L <ulc-file> <source-file|(*.uls)>", progname);
+	err_log("    %s -L <ulc-file> <uls-file|(*.uls)>", progname);
+	err_log("");
 
-	uls_printf("  To create the token sequence file,\n");
-	uls_printf("    %s -L <ulc-file> [-o <outfile>] <src-file|(*.uls)>\n", progname);
-	uls_printf("\n");
+	err_log("  To create the token sequence file,");
+	err_log("    %s -L <ulc-file> [-o <outfile>] <src-file|(*.uls)>", progname);
+	err_log("");
 
-	uls_printf("  To concatenate the all token sequence files in directories,\n");
-	uls_printf("    %s [-L <ulc-file>] -C <list-file> <target-dir>\n", progname);
-	uls_printf("    %s [-L <ulc-file>] -C <list-file> -f 'filter-path' <target-dir>\n", progname);
-	uls_printf("\n");
+	err_log("  To concatenate the all token sequence files in directories,");
+	err_log("    %s [-L <ulc-file>] -C <list-file> <target-dir>", progname);
+	err_log("    %s [-L <ulc-file>] -C <list-file> -f 'filter-path' <target-dir>", progname);
+	err_log("");
 
-	uls_printf("  To make a template-uls file from plain uls-file,\n");
-	uls_printf("    %s -L <ulc-file> -T <var1> [...] <uls-file>\n", progname);
-	uls_printf("\n");
+	err_log("  To make a template-uls file from plain uls-file,");
+	err_log("    %s -L <ulc-file> -T <var1> [...] <uls-file>", progname);
+	err_log("");
 
-	uls_printf("  To instantiate the template uls-file,\n");
-	uls_printf("    %s -L <ulc-file> var1=value1 [ var2=value2 ] <tmpl-uls-file>\n", progname);
-	uls_printf("\n");
+	err_log("  To instantiate the template uls-file,");
+	err_log("    %s -L <ulc-file> var1=value1 [ var2=value2 ] <tmpl-uls-file>", progname);
+	err_log("");
 }
 
 static void usage_long(void)
 {
 	usage_brief();
 
-	uls_printf("The '%s' reads source code files or lexical stream files(*.uls) as input files.\n", progname);
-	uls_printf("It displays or converts and save it again into uls-format-file.\n");
-	uls_printf("It's necessary to specify a lexical configuration from ulc-file(*.ulc) with -L-option.\n");
-	uls_printf("The created lexical analyzer from the ulc-file will read the input-files.\n");
-	uls_printf("The output file is an uls-file, which contains a token sequence file.\n");
-	uls_printf("Below is illustrated a token sequence with its lexeme.\n");
+	err_log("The '%s' reads source code files or lexical stream files(*.uls) as input files.", progname);
+	err_log("It displays or converts and save it again into uls-format-file.");
+	err_log("It's necessary to specify a lexical configuration from ulc-file(*.ulc) with -L-option.");
+	err_log("The created lexical analyzer from the ulc-file will read the input-files.");
+	err_log("The output file is an uls-file, which contains a token sequence file.");
+	err_log("Below is illustrated a token sequence with its lexeme.");
 
-	uls_printf("  [     ID]  DDD\n");
-	uls_printf("  [     <=]  <=\n");
-	uls_printf("  [     ID]  EEE\n");
-	uls_printf("  [      {]  {\n");
-	uls_printf("  [     ID]  YYY\n");
-	uls_printf("  [      =]  \n");
-	uls_printf("\n");
+	err_log("  [     ID]  DDD");
+	err_log("  [     <=]  <=");
+	err_log("  [     ID]  EEE");
+	err_log("  [      {]  {");
+	err_log("  [     ID]  YYY");
+	err_log("  [      =]  ");
+	err_log("");
 
-	uls_printf("You can use the uls-file as an input file to '%s.\n", progname);
-	uls_printf("\n");
-	uls_printf("If you specify -C-option with list of files, you can get a conglomerate all the input files into one file.\n");
-	uls_printf("The list file is just a simple list of file paths that you want to process.\n");
-	uls_printf("The each line in the file represents the filepath which starts from <target-dir>.\n");
-	uls_printf("Let a listing-file 'a.list' be as follows.\n");
-	uls_printf("  # Comment here\n");
-	uls_printf("  # A filepath per line\n");
-	uls_printf("  input1.c\n");
-	uls_printf("  src/input2.c\n");
-	uls_printf("  srclib/input3.c\n");
-	uls_printf("\n");
+	err_log("You can use the uls-file as an input file to '%s.", progname);
+	err_log("");
+	err_log("If you specify -C-option with list of files, you can get a conglomerate all the input files into one file.");
+	err_log("The list file is just a simple list of file paths that you want to process.");
+	err_log("The each line in the file represents the filepath which starts from <target-dir>.");
+	err_log("Let a listing-file 'a.list' be as follows.");
+	err_log("  # Comment here");
+	err_log("  # A filepath per line");
+	err_log("  input1.c");
+	err_log("  src/input2.c");
+	err_log("  srclib/input3.c");
+	err_log("");
 
-	uls_printf("You can use -C-option as below.\n");
-	uls_printf("  %s -C a.list /package/home/target-dir\n\n", progname);
-	uls_printf("The output file is specified with -o-option.");
-	uls_printf(" The default output-file in binary mode('-b') is the 'a.uls'.\n");
+	err_log("You can use -C-option as below.");
+	err_log("  %s -C a.list /package/home/target-dir", progname);
+	err_log("The output file is specified with -o-option.");
+	err_log(" The default output-file in binary mode('-b') is the 'a.uls'.");
 
-	uls_printf("The -f-option can be used with -C-option to filter the files before the input to be passed to lexical analyzer.\n");
-	uls_printf("The argument of -f-option should be a command line which inputs from stdin and outputs to stdout like 'gcc -E'.\n");
-	uls_printf("\n");
+	err_log("The -f-option can be used with -C-option to filter the files before the input to be passed to lexical analyzer.");
+	err_log("The argument of -f-option should be a command line which inputs from stdin and outputs to stdout like 'gcc -E'.");
+	err_log("");
 
-	uls_printf("To read ULS-file,\n");
-	uls_printf("  %s -L sample.ulc input1.txt\n", progname);
-	uls_printf("  %s -L sample.ulc input1.uls\n", progname);
-	uls_printf("  %s -L sample.ulc -o a.txt input1.uls\n", progname); uls_printf("\n");
+	err_log("To read ULS-file,");
+	err_log("  %s -L sample.ulc input1.txt", progname);
+	err_log("  %s -L sample.ulc input1.uls", progname);
+	err_log("  %s -L sample.ulc -o a.txt input1.uls", progname);
+	err_log("");
 
-	uls_printf("You can use the -t-option to specify the format of output file.\n");
-	uls_printf("  %s -L sample.ulc -t bin-be input1.uls\n", progname);
-	uls_printf("      This generates the binary file of big-endian type.\n");
-	uls_printf("  %s -L sample.ulc -t bin-le input1.uls\n", progname);
-	uls_printf("      This generates the binary file of little-endian type.\n");
-	uls_printf("  %s -L sample.ulc input1.uls\n", progname);
-	uls_printf("      This generates the binary file of host-type.\n");
-	uls_printf("  %s -L sample.ulc -t txt input1.uls\n", progname);
-	uls_printf("      This save a text formatted file from 'input1.uls'.\n");
-	uls_printf("\n");
+	err_log("You can use the -t-option to specify the format of output file.");
+	err_log("  %s -L sample.ulc -t bin-be input1.uls", progname);
+	err_log("      This generates the binary file of big-endian type.");
+	err_log("  %s -L sample.ulc -t bin-le input1.uls", progname);
+	err_log("      This generates the binary file of little-endian type.");
+	err_log("  %s -L sample.ulc input1.uls", progname);
+	err_log("      This generates the binary file of host-type.");
+	err_log("  %s -L sample.ulc -t txt input1.uls", progname);
+	err_log("      This save a text formatted file from 'input1.uls'.");
+	err_log("");
 
-	uls_printf("To get the conglomerate ULS-file,\n");
-	uls_printf("  %s -b -C ./a.list /package/home\n", progname);
+	err_log("To get the conglomerate ULS-file,");
+	err_log("  %s -b -C ./a.list /package/home", progname);
 #ifdef ULS_FDF_SUPPORT
-	uls_printf("  %s -b -C ./a.list -f 'gcc -E' ../package/home\n", progname);
+	err_log("  %s -b -C ./a.list -f 'gcc -E' ../package/home", progname);
 #endif
-	uls_printf("\n");
+	err_log("");
 
-	uls_printf("To make a template-uls file from a source file tmpl_ex.cc,\n");
-	uls_printf("  %s -L sample.ulc -b -o tmpl_ex.uls -TT1 tmpl_ex.cc\n", progname);
-	uls_printf("  This make the identifier 'T1' in 'tmpl_ex.cc' a template variable.\n");
-	uls_printf("\n");
+	err_log("To make a template-uls file from a source file tmpl_ex.cc,");
+	err_log("  %s -L sample.ulc -b -o tmpl_ex.uls -TT1 tmpl_ex.cc", progname);
+	err_log("  This make the identifier 'T1' in 'tmpl_ex.cc' a template variable.");
+	err_log("");
 
-	uls_printf("To make a uls file from the 'tmpl_ex.uls' with the template variables substituted,\n");
-	uls_printf("  %s -L sample.ulc T1='unsigned int' tmpl_ex.uls\n", progname);
-	uls_printf("\n");
+	err_log("To make a uls file from the 'tmpl_ex.uls' with the template variables substituted,");
+	err_log("  %s -L sample.ulc T1='unsigned int' tmpl_ex.uls", progname);
+	err_log("");
 }
 
 static int
@@ -460,8 +461,6 @@ main(int argc, char* argv[])
 	FILE *fp_out, *fp_list;
 	uls_outparam_t parms;
 
-	initialize_uls();
-
 	progname = THIS_PROGNAME;
 	if (argc <= 1) {
 		usage_brief();
@@ -523,10 +522,6 @@ main(int argc, char* argv[])
 		parms.line = uls_specname;
 		uls_get_spectype(ulc_config, uls_ptr(parms));
 	}
-
-	if (opt_verbose)
-		err_log("The output file depends on the lex-spec '%s'(%s)",
-			ulc_config, uls_specname);
 
 	if ((sam_lex=uls_create(ulc_config)) == uls_nil) {
 		err_log("Failed to create the uls lexical analyzer for '%s'.", ulc_config);

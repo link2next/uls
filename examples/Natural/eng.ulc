@@ -1,4 +1,4 @@
-﻿#@ulc-2.3
+﻿#@ulc-2.4
 #
 #  ULC: Unified Lexical Configuration
 #
@@ -9,7 +9,7 @@ ID_CHARS: - a-z A-Z
 
 CASE_SENSITIVE: false
 
-QUOTE_TYPE: token=DQUOTE " verbatim1
+QUOTE_TYPE: token=DQUOTE " verbatim
 
 RENAME: ID      WORD
 RENAME: NUMBER  NUM

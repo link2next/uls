@@ -39,59 +39,29 @@
 #include "uls/uls_log.h"
 #endif
 
-ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(enc_utf16_to_utf8)(uls_uint16 *codpnts, int n_codpnts, uls_outparam_ptr_t parms)
-{
-	char* utf8_buf = parms->line;
-	uls_wch_t wch;
-	int rc;
-
-	if ((rc = uls_decode_utf16(codpnts, n_codpnts, &wch)) <= 0) {
-		if (rc < 0) _uls_log(err_log)("Incorrect UTF-16 format!");
-		parms->len = 0;
-		return rc;
-	}
-
-	if ((parms->len = uls_encode_utf8(wch, utf8_buf, parms->n)) <= 0) {
-		return -1;
-	}
-
-	// rc == 1 or 2
-	return rc; // # of consumed words for codpnts[]
-}
-
 char*
 ULS_QUALIFIED_METHOD(uls_enc_utf16str_to_utf8str)(uls_uint16 *wstr1, int l_wstr1, uls_outparam_ptr_t parms)
 {
 	char *utf_chrs, *buff_chrs;
-	int i, rc, rc2, l_buff_chrs, siz_buff_chrs;
-	uls_outparam_t parms1;
+	int i, rc, l_buff_chrs, siz_buff_chrs;
+	uls_wch_t wch;
 
 	if (wstr1 == NULL || l_wstr1 <= 0) return NULL;
-	siz_buff_chrs = 4 * l_wstr1+1;
-	buff_chrs = utf_chrs = uls_malloc_buffer(siz_buff_chrs);
 
-	for (i=0; i < l_wstr1; ) {
-		parms1.line = utf_chrs;
-		parms1.n = siz_buff_chrs - (int) (utf_chrs - buff_chrs);
-		rc = enc_utf16_to_utf8(wstr1+i, l_wstr1-i, uls_ptr(parms1));
-		rc2 = parms1.len;
+	siz_buff_chrs = 4 * l_wstr1 + 1;
+	buff_chrs = utf_chrs = (char *) uls_malloc(siz_buff_chrs);
 
-		if (rc <= 0) {
+	for (i=0; i < l_wstr1; i += rc) {
+		if ((rc = uls_decode_utf16(wstr1 + i, l_wstr1 - i, &wch)) <= 0) {
 			_uls_log(err_log)("Incorrect UTF-16 format!");
 			uls_mfree(buff_chrs);
 			return NULL;
 		}
-
-		i += rc;
-		utf_chrs += rc2;
+		utf_chrs += uls_encode_utf8(wch, utf_chrs, -1);
 	}
 
 	l_buff_chrs = (int) (utf_chrs - buff_chrs);
 	buff_chrs[l_buff_chrs] = '\0';
-
-	if (l_buff_chrs+1 != siz_buff_chrs)
-		buff_chrs = (char *) uls_mrealloc(buff_chrs, l_buff_chrs+1);
 
 	if (parms != nilptr) {
 		parms->line = buff_chrs;
@@ -105,29 +75,25 @@ char*
 ULS_QUALIFIED_METHOD(uls_enc_utf32str_to_utf8str)(uls_uint32 *wstr1, int l_wstr1, uls_outparam_ptr_t parms)
 {
 	char *utf_chrs, *buff_chrs;
-	int i, j, rc2, l_buff_chrs, siz_buff_chrs;
+	int i, rc, l_buff_chrs, siz_buff_chrs;
 	uls_wch_t wch;
 
 	if (wstr1 == NULL || l_wstr1 <= 0) return NULL;
-	siz_buff_chrs = ULS_UTF8_CH_MAXLEN * l_wstr1 + 1;
-	buff_chrs = utf_chrs = uls_malloc_buffer(siz_buff_chrs);
 
-	for (i=j=0; i < l_wstr1; i++,j+=rc2) {
-		if (uls_decode_utf32(wstr1[i], &wch) < 0) {
+	siz_buff_chrs = ULS_UTF8_CH_MAXLEN * l_wstr1 + 1;
+	buff_chrs = utf_chrs = (char *) uls_malloc(siz_buff_chrs);
+
+	for (i=0; i < l_wstr1; i++) {
+		if (uls_decode_utf32(wstr1[i], &wch) <= 0) {
 			_uls_log(err_log)("Incorrect UTF-32 format!");
 			uls_mfree(buff_chrs);
 			return NULL;
 		}
-
-		rc2 = uls_encode_utf8(wch, utf_chrs, siz_buff_chrs - j);
-		utf_chrs += rc2;
+		utf_chrs += rc = uls_encode_utf8(wch, utf_chrs, -1);
 	}
 
 	l_buff_chrs = (int) (utf_chrs - buff_chrs);
 	buff_chrs[l_buff_chrs] = '\0';
-
-	if (l_buff_chrs+1 != siz_buff_chrs)
-		buff_chrs = (char *) uls_mrealloc(buff_chrs, l_buff_chrs+1);
 
 	if (parms != nilptr) {
 		parms->line = buff_chrs;
@@ -135,6 +101,232 @@ ULS_QUALIFIED_METHOD(uls_enc_utf32str_to_utf8str)(uls_uint32 *wstr1, int l_wstr1
 	}
 
 	return buff_chrs;
+}
+
+int
+ULS_QUALIFIED_METHOD(uls_fill_utf8str)(uls_wch_t *uchs, int n_uchs,
+	char* utf8buf, int siz_utf8buf, int *p_len_utf8buf)
+{
+	char *outptr = utf8buf;
+	int rc, i, len_utf8buf = 0;
+	uls_wch_t wch;
+
+	for (i = 0; i < n_uchs; i++) {
+		wch = uchs[i];
+
+		rc = uls_encode_utf8(wch, NULL, -1);
+		if (len_utf8buf + rc > siz_utf8buf) {
+			break;
+		}
+		rc = uls_encode_utf8(wch, outptr, -1);
+
+		outptr += rc;
+		len_utf8buf += rc;
+	}
+
+	if (p_len_utf8buf != NULL) {
+		*p_len_utf8buf = len_utf8buf;
+	}
+
+	return i;
+}
+
+int
+ULS_QUALIFIED_METHOD(uls_fill_utf8buf)(uls_utf_inbuf_ptr_t inp, char* utf8buf, int len0_utf8buf, int siz_utf8buf)
+{
+	int len_utf8buf = len0_utf8buf;
+	int wrdsiz = sizeof(uls_wch_t);
+	int i, rc, n_words, n_bytes, n_uchbuf;
+	uls_wch_t *uchbuf, wch;
+
+	while (1) {
+		i = uls_roundup(len_utf8buf, wrdsiz);
+		if (i + ULS_UTF8_CH_MAXLEN > siz_utf8buf) {
+			for ( ; len_utf8buf < siz_utf8buf; len_utf8buf += n_bytes) {
+				n_words = uls_utf_drain_inbuf(inp, &wch, 1);
+				if (n_words < 0) {
+					_uls_log(err_log)("Can't read input!!");
+					return -1;
+				} else if (n_words < 1) {
+					break;
+				}
+
+				if ((rc = uls_fill_utf8str(&wch, 1,
+					utf8buf + len_utf8buf, siz_utf8buf - len_utf8buf, &n_bytes)) < 0) {
+					_uls_log(err_log)("%s: An incorrect wch exists", __func__);
+					return -2;
+				} else if (rc == 0) {
+					inp->wch_buffered = wch;
+					break;
+				}
+			}
+			break;
+		}
+
+		n_uchbuf = (siz_utf8buf - i) / wrdsiz;
+		uchbuf = (uls_wch_t *) (utf8buf + i);
+
+		n_words = uls_utf_drain_inbuf(inp, uchbuf, n_uchbuf);
+		if (n_words < 0) {
+			_uls_log(err_log)("Can't read input!!");
+			return -1;
+		} else if (n_words == 0) {
+			break;
+		}
+
+		if (uls_fill_utf8str(uchbuf, n_words,
+			utf8buf + len_utf8buf, siz_utf8buf - len_utf8buf, &n_bytes) < n_words) {
+			_uls_log(err_log)("%s: An incorrect wch exists", __func__);
+			return -1;
+		}
+
+		len_utf8buf += n_bytes;
+	}
+
+	return len_utf8buf - len0_utf8buf;
+}
+
+void
+ULS_QUALIFIED_METHOD(uls_utf_init_inbuf)(uls_utf_inbuf_ptr_t inp,
+	char *buf, int bufsiz, int mode)
+{
+	if (bufsiz <= 0) {
+		_uls_log(err_panic)("%s: invalid paramerter 'bufsiz'", __func__);
+	}
+
+	uls_initial_zerofy_object(inp);
+	inp->flags = ULS_FL_STATIC;
+
+	if (buf == NULL) {
+		bufsiz = uls_roundup(bufsiz, UTF_INPUT_BUFSIZ);
+		inp->bytesbuf = (char *) uls_malloc(bufsiz);
+		inp->flags |= ULS_FL_UTF_INBUF_BUF_ALLOCED;
+	} else {
+		inp->bytesbuf = buf;
+	}
+
+	inp->bytesbuf_siz = bufsiz;
+	uls_utf_reset_inbuf(inp, mode);
+}
+
+void
+ULS_QUALIFIED_METHOD(utf_deinit_inbuf)(uls_utf_inbuf_ptr_t inp)
+{
+	if (inp->bytesbuf != NULL) {
+		if (inp->flags & ULS_FL_UTF_INBUF_BUF_ALLOCED) {
+			uls_mfree(inp->bytesbuf);
+		}
+		inp->bytesbuf = NULL;
+		inp->bytesbuf_siz = 0;
+	}
+}
+
+ULS_QUALIFIED_RETTYP(uls_utf_inbuf_ptr_t)
+ULS_QUALIFIED_METHOD(uls_utf_create_inbuf)(char *buf, int bufsiz, int mode)
+{
+	uls_utf_inbuf_ptr_t inp;
+
+	inp = uls_alloc_object(uls_utf_inbuf_t);
+	uls_utf_init_inbuf(inp, buf, bufsiz, mode);
+	inp->flags &= ~ULS_FL_STATIC;
+
+	return inp;
+}
+
+void
+ULS_QUALIFIED_METHOD(uls_utf_destroy_inbuf)(uls_utf_inbuf_ptr_t inp)
+{
+	utf_deinit_inbuf(inp);
+
+	if (inp->flags & ULS_FL_STATIC) {
+		inp->flags = ULS_FL_STATIC;
+	} else {
+		uls_dealloc_object(inp);
+	}
+}
+
+int
+ULS_QUALIFIED_METHOD(uls_utf_is_inbuf_empty)(uls_utf_inbuf_ptr_t inp)
+{
+	int stat;
+	stat = inp->is_eof < 0 ||
+		(inp->is_eof > 0 && inp->n_wrds <= 0 && inp->wch_buffered == 0);
+	return stat;
+}
+
+void
+ULS_QUALIFIED_METHOD(uls_utf_set_inbuf)(uls_utf_inbuf_ptr_t inp, int fd)
+{
+	inp->fd = fd;
+	inp->is_eof = 0;
+	inp->n_wrds = 0;
+	inp->wch_buffered = 0;
+}
+
+void
+ULS_QUALIFIED_METHOD(uls_utf_reset_inbuf)(uls_utf_inbuf_ptr_t inp, int mode)
+{
+	int enc_fmt = mode & UTF_INPUT_FORMAT_MASK;
+	int reverse = mode & UTF_INPUT_FORMAT_REVERSE ? 1 : 0;
+
+	if (enc_fmt == UTF_INPUT_FORMAT_8) {
+		inp->fill_rawbuf = uls_ref_callback_this(fill_utf8_buf);
+		inp->dec_rawbuf = uls_ref_callback_this(dec_utf8_buf);
+
+	} else if (enc_fmt == UTF_INPUT_FORMAT_16) {
+		inp->fill_rawbuf = uls_ref_callback_this(fill_utf16_buf);
+		inp->dec_rawbuf = uls_ref_callback_this(dec_utf16_buf);
+
+	} else if (enc_fmt == UTF_INPUT_FORMAT_32) {
+		inp->fill_rawbuf = uls_ref_callback_this(fill_utf32_buf);
+		inp->dec_rawbuf = uls_ref_callback_this(dec_utf32_buf);
+
+	} else {
+		inp->fill_rawbuf = nilptr;
+		inp->dec_rawbuf = nilptr;
+	}
+
+	inp->reverse = reverse;
+	inp->wrdptr = inp->bytesbuf;
+	inp->n_wrds = 0;
+
+	inp->fd = -1;
+	inp->is_eof = 0;
+}
+
+int
+ULS_QUALIFIED_METHOD(uls_utf_drain_inbuf)(uls_utf_inbuf_ptr_t inp, uls_wch_t *buf, int bufsiz)
+{
+	uls_wch_t *bufptr = buf;
+	int  rc, buflen = 0;
+
+	if (inp->is_eof < 0) return -1;
+
+	if (inp->wch_buffered != 0) {
+		*bufptr++ = inp->wch_buffered;
+		inp->wch_buffered = 0;
+		++buflen;
+	}
+
+	for ( ; buflen < bufsiz; buflen += rc, bufptr += rc) {
+		if (inp->n_wrds < 4 && inp->fill_rawbuf(inp) < 0) {
+			_uls_log(err_log)("%s: I/O error!", __func__);
+			buflen = -1;
+			break;
+		}
+
+		if (inp->n_wrds <= 0) {
+			break;
+		}
+
+		if ((rc = inp->dec_rawbuf(inp, bufptr, bufsiz - buflen)) <= 0) {
+			_uls_log(err_log)("I/O error at EOF, file truncated or encoding error!?");
+			buflen = -1;
+			break;
+		}
+	}
+
+	return buflen;
 }
 
 ULS_DECL_STATIC int
@@ -159,11 +351,11 @@ ULS_QUALIFIED_METHOD(fill_utf8_buf)(uls_utf_inbuf_ptr_t inp)
 		_uls_log(err_log)("IO error or segmented utf16-char at EOF!");
 		inp->is_eof = -1;
 		return -1;
-	} else if (rc == 0) {
-		inp->is_eof = 1;
 	}
 
+	if (rc == 0) inp->is_eof = 1;
 	inp->n_wrds += rc;
+
 	return inp->n_wrds;
 }
 
@@ -177,13 +369,14 @@ ULS_QUALIFIED_METHOD(dec_utf8_buf)(uls_utf_inbuf_ptr_t inp, uls_wch_t* out_buf, 
 
 	for (i=0; i < n_codpnts && n_uchs < out_bufsiz; i += rc) {
 		if ((rc = uls_decode_utf8(codpnts+i, n_codpnts-i, &wch)) <= 0) {
-			if (inp->is_eof != 0) {
+			if (rc < -ULS_UTF8_CH_MAXLEN) {
 				_uls_log(err_log)("Incorrect utf-8 format!");
 				inp->is_eof = -1;
 				return -1;
 			}
 			break;
 		}
+
 		*out_bufptr++ = wch;
 		++n_uchs;
 	}
@@ -243,7 +436,7 @@ ULS_QUALIFIED_METHOD(dec_utf16_buf)(uls_utf_inbuf_ptr_t inp, uls_wch_t* out_buf,
 
 	for (i=0; i < n_codpnts && n_uchs < out_bufsiz; i += rc) {
 		if ((rc = uls_decode_utf16(codpnts+i, n_codpnts-i, &wch)) <= 0) {
-			if (inp->is_eof != 0) {
+			if (rc < -ULS_UTF16_CH_MAXLEN) {
 				_uls_log(err_log)("Incorrect utf-16 format!");
 				inp->is_eof = -1;
 				return -1;
@@ -302,430 +495,16 @@ ULS_QUALIFIED_METHOD(fill_utf32_buf)(uls_utf_inbuf_ptr_t inp)
 ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(dec_utf32_buf)(uls_utf_inbuf_ptr_t inp, uls_wch_t* out_buf, int out_bufsiz)
 {
-	int  n_uchs;
+	int wrdsiz = sizeof(uls_uint32);
+	uls_uint32 *codpnts = (uls_uint32 *) inp->wrdptr;
+	int i, n_uchs = 0;
 
-	if (inp->wrdptr != (char *) out_buf) {
-		_uls_log(err_log)("%s: protocol mismatched!");
-		return -1;
+	for (i = 0; i < inp->n_wrds && n_uchs < out_bufsiz; i++) {
+		out_buf[n_uchs++] = codpnts[i];
 	}
 
-	n_uchs = inp->n_wrds;
-	inp->n_wrds = 0;
+	inp->wrdptr += i * wrdsiz;
+	inp->n_wrds -= i;
 
 	return n_uchs;
-}
-
-void
-ULS_QUALIFIED_METHOD(uls_utf_reset_inbuf)(uls_utf_inbuf_ptr_t inp, int mode)
-{
-	int enc_fmt = mode & UTF_INPUT_FORMAT_MASK;
-	int reverse = mode & UTF_INPUT_FORMAT_REVERSE ? 1 : 0;
-
-	if (enc_fmt == UTF_INPUT_FORMAT_8) {
-		inp->fill_rawbuf = uls_ref_callback_this(fill_utf8_buf);
-		inp->dec_rawbuf = uls_ref_callback_this(dec_utf8_buf);
-
-	} else if (enc_fmt == UTF_INPUT_FORMAT_16) {
-		inp->fill_rawbuf = uls_ref_callback_this(fill_utf16_buf);
-		inp->dec_rawbuf = uls_ref_callback_this(dec_utf16_buf);
-
-	} else if (enc_fmt == UTF_INPUT_FORMAT_32) {
-		inp->fill_rawbuf = uls_ref_callback_this(fill_utf32_buf);
-		inp->dec_rawbuf = uls_ref_callback_this(dec_utf32_buf);
-
-	} else {
-		inp->fill_rawbuf = nilptr;
-		inp->dec_rawbuf = nilptr;
-	}
-
-	inp->reverse = reverse;
-	inp->wrdptr = inp->bytesbuf;
-	inp->n_wrds = 0;
-
-	inp->fd = -1;
-	inp->is_eof = -2;
-}
-
-void
-ULS_QUALIFIED_METHOD(uls_utf_set_inbuf)(uls_utf_inbuf_ptr_t inp, int fd)
-{
-	inp->fd = fd;
-	inp->is_eof = 0;
-}
-
-void
-ULS_QUALIFIED_METHOD(uls_utf_init_inbuf)(uls_utf_inbuf_ptr_t inp,
-	char *buf, int bufsiz, int mode)
-{
-	if (bufsiz <= 0) {
-		_uls_log(err_panic)("%s: invalid paramerter 'bufsiz'", __func__);
-	}
-
-	uls_initial_zerofy_object(inp);
-	inp->flags = ULS_FL_STATIC;
-
-	if (buf == NULL) {
-		bufsiz = uls_roundup(bufsiz, UTF_INPUT_BUFSIZ);
-		inp->bytesbuf = uls_malloc_buffer(bufsiz);
-		inp->flags |= ULS_FL_UTF_INBUF_BUF_ALLOCED;
-	} else {
-		inp->bytesbuf = buf;
-	}
-
-	inp->bytesbuf_siz = bufsiz;
-
-	uls_utf_reset_inbuf(inp, mode);
-}
-
-void
-ULS_QUALIFIED_METHOD(utf_deinit_inbuf)(uls_utf_inbuf_ptr_t inp)
-{
-	if (inp->bytesbuf != NULL) {
-		if (inp->flags & ULS_FL_UTF_INBUF_BUF_ALLOCED) {
-			uls_mfree(inp->bytesbuf);
-		}
-		inp->bytesbuf = NULL;
-		inp->bytesbuf_siz = 0;
-	}
-}
-
-ULS_QUALIFIED_RETTYP(uls_utf_inbuf_ptr_t)
-ULS_QUALIFIED_METHOD(uls_utf_create_inbuf)(char *buf, int bufsiz, int mode)
-{
-	uls_utf_inbuf_ptr_t inp;
-
-	inp = uls_alloc_object(uls_utf_inbuf_t);
-
-	uls_utf_init_inbuf(inp, buf, bufsiz, mode);
-	inp->flags &= ~ULS_FL_STATIC;
-
-	return inp;
-}
-
-void
-ULS_QUALIFIED_METHOD(uls_utf_destroy_inbuf)(uls_utf_inbuf_ptr_t inp)
-{
-	utf_deinit_inbuf(inp);
-
-	if (inp->flags & ULS_FL_STATIC) {
-		inp->flags = ULS_FL_STATIC;
-	} else {
-		uls_dealloc_object(inp);
-	}
-}
-
-int
-ULS_QUALIFIED_METHOD(uls_utf_is_inbuf_empty)(uls_utf_inbuf_ptr_t inp)
-{
-	int stat;
-	stat = inp->is_eof < 0 || (inp->is_eof > 0 && inp->n_wrds <= 0);
-	return stat;
-}
-
-int
-ULS_QUALIFIED_METHOD(uls_utf_drain_inbuf)(uls_utf_inbuf_ptr_t inp, uls_wch_t *buf, int bufsiz)
-{
-	int  buflen, rc;
-
-	for (buflen=0; buflen < bufsiz; buflen += rc) {
-		inp->fill_rawbuf(inp);
-		if (uls_utf_is_inbuf_empty(inp)) {
-			break;
-		}
-
-		if ((rc = inp->dec_rawbuf(inp, buf + buflen, bufsiz - buflen)) < 0) {
-			_uls_log(err_log)("I/O error!");
-			return -1;
-		} else if (rc == 0) {
-			break;
-		}
-	}
-
-	return buflen;
-}
-
-int
-ULS_QUALIFIED_METHOD(uls_fill_utf8str)(uls_wch_t *uchs, int n_uchs,
-	char* utf8buf, int siz_utf8buf, int *p_len_utf8buf)
-{
-	char *outptr = utf8buf;
-	int rc, i, len_utf8buf = 0;
-	uls_wch_t wch;
-
-	for (i = 0; i < n_uchs; i++) {
-		wch = uchs[i];
-
-		rc = uls_encode_utf8(wch, outptr, siz_utf8buf - len_utf8buf);
-		if (rc < 0) {
-			_uls_log(err_log)("%s: incorrect wch!", __func__);
-			return -1;
-		} else if (rc == 0) {
-			break;
-		}
-
-		outptr += rc;
-		len_utf8buf += rc;
-	}
-
-	if (p_len_utf8buf != NULL) {
-		*p_len_utf8buf = len_utf8buf;
-	}
-
-	return i;
-}
-
-int
-ULS_QUALIFIED_METHOD(uls_fill_utf8buf)(uls_utf_inbuf_ptr_t inp, char* utf8buf, int len0_utf8buf, int siz_utf8buf)
-{
-	int len_utf8buf = len0_utf8buf;
-	int wrdsiz = sizeof(uls_uint32);
-	int i, rc, n_words, n_bytes, n_uchbuf;
-	uls_wch_t *uchbuf, wch;
-
-	while (1) {
-		i = uls_roundup(len_utf8buf, wrdsiz);
-		if (i + ULS_UTF8_CH_MAXLEN > siz_utf8buf) {
-			for ( ; len_utf8buf < siz_utf8buf; len_utf8buf += n_bytes) {
-				n_words = uls_utf_drain_inbuf(inp, &wch, 1);
-				if (n_words < 0) {
-					_uls_log(err_log)("Can't read input!!");
-					return -1;
-				} else if (n_words < 1) {
-					break;
-				}
-
-				if ((rc=uls_fill_utf8str(&wch, 1,
-					utf8buf + len_utf8buf, siz_utf8buf - len_utf8buf, &n_bytes)) < 0) {
-					_uls_log(err_log)("%s: An incorrect wch exists", __func__);
-					return -2;
-				} else if (rc == 0) {
-					break;
-				}
-			}
-			break;
-		}
-
-		n_uchbuf = (siz_utf8buf  - i) / wrdsiz;
-		uchbuf = (uls_wch_t *) (utf8buf + i);
-
-		n_words = uls_utf_drain_inbuf(inp, uchbuf, n_uchbuf);
-		if (n_words < 0) {
-			_uls_log(err_log)("Can't read input!!");
-			return -1;
-		} else if (n_words == 0) {
-			break;
-		}
-
-		if (uls_fill_utf8str(uchbuf, n_words,
-			utf8buf + len_utf8buf, siz_utf8buf - len_utf8buf, &n_bytes) < 0) {
-			_uls_log(err_log)("%s: An incorrect wch exists", __func__);
-			return -1;
-		}
-
-		len_utf8buf += n_bytes;
-	}
-
-	return len_utf8buf - len0_utf8buf;
-}
-
-int
-ULS_QUALIFIED_METHOD(uls_enc_utf16file_to_8)(int fd, int fd_out, int reverse)
-{
-	uls_wch_t *outbuf;
-	uls_utf_inbuf_t inbuff;
-	int i, rc, outbuf_len, outbuf_siz, mode, stat=0;
-	int len_utf8_buf, siz_utf8_buf;
-	char *utf8_buf;
-
-	mode = UTF_INPUT_FORMAT_16;
-	if (reverse) mode |= UTF_INPUT_FORMAT_REVERSE;
-	uls_utf_init_inbuf(uls_ptr(inbuff), NULL, UTF_INPUT_BUFSIZ, mode);
-
-	outbuf_siz = inbuff.bytesbuf_siz;
-	outbuf = (uls_wch_t *) uls_malloc_buffer(outbuf_siz * sizeof(uls_wch_t));
-
-	siz_utf8_buf = outbuf_siz * ULS_UTF8_CH_MAXLEN;
-	utf8_buf = (char *) uls_malloc_buffer(siz_utf8_buf);
-
-	uls_utf_set_inbuf(uls_ptr(inbuff), fd);
-
-	while (!uls_utf_is_inbuf_empty(uls_ptr(inbuff))) {
-		if ((outbuf_len = uls_utf_drain_inbuf(uls_ptr(inbuff), outbuf, outbuf_siz)) <= 0) {
-			stat = outbuf_len;
-			break;
-		}
-
-		for (len_utf8_buf = 0, i=0; i < outbuf_len; i++) {
-			if ((rc = uls_encode_utf8(outbuf[i], utf8_buf + len_utf8_buf, siz_utf8_buf - len_utf8_buf)) <= 0) {
-				_uls_log(err_log)("invalid wch = 0x%x!", outbuf[i]);
-				stat = -1;
-				break;
-			}
-			len_utf8_buf += rc;
-		}
-
-		if (stat < 0 || uls_writen(fd_out, utf8_buf, len_utf8_buf) < len_utf8_buf) {
-			_uls_log(err_log)("failed to write fd!");
-			stat = -2;
-			break;
-		}
-	}
-
-	uls_mfree(utf8_buf);
-	uls_mfree(outbuf);
-
-	utf_deinit_inbuf(uls_ptr(inbuff));
-
-	return stat;
-}
-
-int
-ULS_QUALIFIED_METHOD(uls_enc_utf8file_to_16)(int fd, int fd_out, int reverse)
-{
-	uls_wch_t *outbuf;
-	uls_utf_inbuf_t inbuff;
-	int i, n, rc, outbuf_len, outbuf_siz, stat=0;
-	int len_utf16_buf, siz_utf16_buf;
-	uls_uint16 *utf16_buf;
-
-	uls_utf_init_inbuf(uls_ptr(inbuff), NULL, UTF_INPUT_BUFSIZ, UTF_INPUT_FORMAT_8);
-
-	outbuf_siz = inbuff.bytesbuf_siz;
-	outbuf = (uls_wch_t *) uls_malloc_buffer(outbuf_siz * sizeof(uls_wch_t));
-
-	siz_utf16_buf = outbuf_siz * 4;
-	utf16_buf = (uls_uint16 *) uls_malloc_buffer(siz_utf16_buf);
-
-	uls_utf_set_inbuf(uls_ptr(inbuff), fd);
-
-	while (!uls_utf_is_inbuf_empty(uls_ptr(inbuff))) {
-		if ((outbuf_len = uls_utf_drain_inbuf(uls_ptr(inbuff), outbuf, outbuf_siz)) <= 0) {
-			stat = outbuf_len;
-			break;
-		}
-
-		for (len_utf16_buf = 0, i=0; i < outbuf_len; i++) {
-			if ((rc = uls_encode_utf16(outbuf[i], utf16_buf + len_utf16_buf)) <= 0) {
-				_uls_log(err_log)("invalid wch = 0x%x!", outbuf[i]);
-				stat = -1;
-				break;
-			}
-			len_utf16_buf += rc;
-		}
-
-		if (stat < 0) {
-			break;
-		}
-
-		if (reverse) {
-			for (i=0; i<len_utf16_buf; i++) {
-				uls_reverse_bytes((char *) (utf16_buf+i), sizeof(uls_uint16));
-			}
-		}
-
-		n = len_utf16_buf * sizeof(uls_uint16);
-		if (uls_writen(fd_out, utf16_buf, n) < n) {
-			_uls_log(err_log)("failed to write fd!");
-			stat = -2;
-			break;
-		}
-	}
-
-	uls_mfree(utf16_buf);
-	uls_mfree(outbuf);
-
-	utf_deinit_inbuf(uls_ptr(inbuff));
-	return stat;
-}
-
-int
-ULS_QUALIFIED_METHOD(uls_enc_utf32file_to_8)(int fd, int fd_out, int reverse)
-{
-	uls_wch_t *outbuf;
-	int i, n, rc, outbuf_len, outbuf_siz, wrdsiz=sizeof(uls_wch_t), stat=0;
-	int len_utf8_buf, siz_utf8_buf;
-	char *utf8_buf;
-
-	outbuf_siz = UTF_INPUT_BUFSIZ;
-	outbuf = (uls_wch_t *) uls_malloc_buffer(outbuf_siz * wrdsiz);
-
-	siz_utf8_buf = outbuf_siz * ULS_UTF8_CH_MAXLEN;
-	utf8_buf = (char *) uls_malloc_buffer(siz_utf8_buf);
-
-	while (1) {
-		n = outbuf_siz * sizeof(uls_wch_t);
-		if ((rc = uls_readn(fd, outbuf, n)) == 0) {
-			break;
-		} else if (rc < 0 || rc % wrdsiz != 0) {
-			_uls_log(err_log)("IO error or segmented utf32 at EOF!");
-			stat = -1;
-		}
-
-		outbuf_len = rc / wrdsiz;
-
-		if (reverse) {
-			for (i=0; i<outbuf_len; i++) {
-				uls_reverse_bytes((char *) (outbuf+i), wrdsiz);
-			}
-		}
-
-		for (len_utf8_buf = 0, i=0; i < outbuf_len; i++) {
-			if ((rc = uls_encode_utf8(outbuf[i], utf8_buf + len_utf8_buf, siz_utf8_buf - len_utf8_buf)) <= 0) {
-				_uls_log(err_log)("invalid wch = 0x%x!", outbuf[i]);
-				stat = -1;
-				break;
-			}
-			len_utf8_buf += rc;
-		}
-
-		if (stat < 0 || uls_writen(fd_out, utf8_buf, len_utf8_buf) < len_utf8_buf) {
-			_uls_log(err_log)("failed to write fd!");
-			stat = -2;
-			break;
-		}
-	}
-
-	uls_mfree(utf8_buf);
-	uls_mfree(outbuf);
-
-	return stat;
-}
-
-int
-ULS_QUALIFIED_METHOD(uls_enc_utf8file_to_32)(int fd, int fd_out, int reverse)
-{
-	uls_wch_t *outbuf;
-	uls_utf_inbuf_t inbuff;
-	int i, n, outbuf_len, outbuf_siz, wrdsiz=sizeof(uls_wch_t), stat=0;
-
-	uls_utf_init_inbuf(uls_ptr(inbuff), NULL, UTF_INPUT_BUFSIZ, UTF_INPUT_FORMAT_8);
-
-	outbuf_siz = inbuff.bytesbuf_siz;
-	outbuf = (uls_wch_t *) uls_malloc_buffer(outbuf_siz * wrdsiz);
-	uls_utf_set_inbuf(uls_ptr(inbuff), fd);
-
-	while (!uls_utf_is_inbuf_empty(uls_ptr(inbuff))) {
-		if ((outbuf_len = uls_utf_drain_inbuf(uls_ptr(inbuff), outbuf, outbuf_siz)) <= 0) {
-			stat = outbuf_len;
-			break;
-		}
-
-		if (reverse) {
-			for (i=0; i<outbuf_len; i++) {
-				uls_reverse_bytes((char *) (outbuf+i), wrdsiz);
-			}
-		}
-
-		n = outbuf_len * wrdsiz;
-		if (uls_writen(fd_out, outbuf, n) < n) {
-			_uls_log(err_log)("failed to write fd!");
-			stat = -2;
-			break;
-		}
-	}
-
-	uls_mfree(outbuf);
-	utf_deinit_inbuf(uls_ptr(inbuff));
-
-	return stat;
 }

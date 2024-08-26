@@ -36,7 +36,6 @@
 #include "uls/uls_lex.h"
 #include "uls/uls_log.h"
 #include "uls/uls_util.h"
-#include "uls/uls_init.h"
 
 #include <stdlib.h>
 #include <unistd.h>
@@ -46,48 +45,46 @@
 #include "sam1_lex.h"
 #include "sam2_lex.h"
 
-#define streql(a,b) (strcmp(a,b)==0)
-
-const char *progname;
+LPCTSTR progname;
 int  test_mode = -1;
 int  opt_verbose;
 
-uls_lex_t *sam1_lex, *sam2_lex;
+uls_lex_ptr_t sam1_lex, sam2_lex;
 
 static void usage(void)
 {
-	err_log("%s v1.0", progname);
-	err_log("  ULS can instantiate many uls lexical objects.");
-	err_log("  '%s' demonstrates this feature of ULS", progname);
-	err_log("");
-	err_log(" Usage:");
-	err_log("  %s <inputfile> ...", progname);
-	err_log("");
-	err_log("  For example,");
-	err_log("      %s input1.txt", progname);
+	err_log(_T("%s v1.0"), progname);
+	err_log(_T("  ULS can instantiate many uls lexical objects."));
+	err_log(_T("  '%s' demonstrates this feature of ULS"), progname);
+	err_log(_T(""));
+	err_log(_T(" Usage:"));
+	err_log(_T("  %s <inputfile> ..."), progname);
+	err_log(_T(""));
+	err_log(_T("  For example,"));
+	err_log(_T("      %s input1.txt"), progname);
 }
 
 static int
-options(int opt, char* optarg)
+options(int opt, LPTSTR optarg)
 {
 	int stat = 0;
 
 	switch (opt) {
-	case 'm':
-		test_mode = atoi(optarg);
+	case _T('m'):
+		test_mode = ult_str2int(optarg);
 		break;
 
-	case 'v':
+	case _T('v'):
 		opt_verbose = 1;
 		break;
 
-	case 'h':
+	case _T('h'):
 		usage();
 		stat = 1;
 		break;
 
 	default:
-		err_log("undefined option -%c", opt);
+		err_log(_T("undefined option -%c"), opt);
 		usage();
 		stat = -1;
 		break;
@@ -97,50 +94,51 @@ options(int opt, char* optarg)
 }
 
 void
-test_uls_2(char* fpath)
+test_uls_2(LPCTSTR fpath)
 {
 	int i;
 
 	if (uls_push_file(sam2_lex, fpath, 0) < 0) {
-		err_log(" file open error");
+		err_log(_T(" file open error"));
 		return;
 	}
 
 	for (i=0; ; ) {
 		if (uls_get_tok(sam2_lex) == T2_EOI) break;
 
-		uls_printf("\t\t%3d", uls_get_lineno(sam2_lex));
-		uls_dump_tok(sam2_lex, NULL, "\n");
+		uls_printf(_T("\t\t%3d"), uls_get_lineno(sam2_lex));
+		uls_dump_tok(sam2_lex, NULL, _T("\n"));
 
 		++i;
 	}
 }
 
 int
-test_uls(char* fpath)
+test_uls(LPCTSTR fpath)
 {
 	int fd;
 	int i;
 
-	if ((fd=open(fpath, O_RDONLY)) < 0) {
-		err_log(" file open error");
+	if ((fd = uls_fd_open(fpath, O_RDONLY)) < 0) {
+		err_log(_T(" file open error"));
 		return -1;
 	}
 
 	if (uls_push_fd(sam1_lex, fd, 0) < 0) {
-		err_log("can't set the istream!");
+		err_log(_T("can't set the istream!"));
 		return -1;
 	}
 
 	uls_set_tag(sam1_lex, fpath, 1);
+
 	for (i=0; ; ) {
 		if (uls_get_tok(sam1_lex) == T1_EOI) break;
 
-		uls_printf("\t%3d ", uls_get_lineno(sam1_lex));
+		uls_printf(_T("\t%3d "), uls_get_lineno(sam1_lex));
 		uls_dumpln_tok(sam1_lex);
 
-		if (uls_tok(sam1_lex) == T1_ID && streql(uls_lexeme(sam1_lex), "WWW")) {
-			test_uls_2("input2.txt");
+		if (uls_tok(sam1_lex) == T1_ID && ult_str_equal(uls_lexeme(sam1_lex), _T("WWW"))) {
+			test_uls_2(_T("input2.txt"));
 		}
 
 		++i;
@@ -151,33 +149,32 @@ test_uls(char* fpath)
 }
 
 int
-main(int argc, char* argv[])
+_tmain(int n_targv, LPTSTR *targv)
 {
-	char *conf_name1 = "sam1.ulc";
-	char *conf_name2 = "sam2.ulc";
-	char *input_file;
+	LPCTSTR conf_name1 = _T("sam1.ulc");
+	LPCTSTR conf_name2 = _T("sam2.ulc");
+	LPCTSTR input_file;
 	int  i, i0;
 
-	initialize_uls();
-	progname = uls_filename(argv[0], NULL);
+	progname = uls_split_filepath(targv[0], NULL);
 
-	if ((i0=uls_getopts(argc, argv, "m:vh", options)) <= 0) {
+	if ((i0=uls_getopts(n_targv, targv, _T("m:vh"), options)) <= 0) {
 		return i0;
 	}
 
 	if ((sam1_lex=uls_create(conf_name1)) == NULL) {
-		err_log("can't init uls-object");
+		err_log(_T("can't init uls-object"));
 		return 1;
 	}
 
 	if ((sam2_lex=uls_create(conf_name2)) == NULL) {
-		err_log("can't init uls-object");
+		err_log(_T("can't init uls-object"));
 		uls_destroy(sam1_lex);
 		return 1;
 	}
 
-	for (i=i0; i<argc; i++) {
-		input_file = argv[i];
+	for (i=i0; i<n_targv; i++) {
+		input_file = targv[i];
 		test_uls(input_file);
 	}
 
@@ -185,4 +182,17 @@ main(int argc, char* argv[])
 	uls_destroy(sam2_lex);
 
 	return 0;
+}
+
+int
+main(int argc, char *argv[])
+{
+	LPTSTR *targv;
+	int stat;
+
+	ULS_GET_WARGS_LIST(argc, argv, targv);
+	stat = _tmain(argc, targv);
+	ULS_PUT_WARGS_LIST(argc, targv);
+
+	return stat;
 }

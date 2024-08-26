@@ -49,10 +49,11 @@ echo '=== NOTICE ===============================================================
 echo "Append the following lines at the end of ~/.bashrc to run the uls utilities."
 echo "   export PATH=\$PATH:${bin_dir}"
 echo "   export LD_LIBRARY_PATH=${lib_dir}"
-echo "To compile source program that calls uls APIs,"
+echo
+echo "To compile source files that call uls APIs,"
 echo "   gcc -c -I${inc_dir} your_source_program.c"
-echo "To link the uls library with your object code,"
 echo "   gcc -L${lib_dir} your_source_program.o -luls"
+echo
 echo "For detailed information,"
 echo "   refer to the 'Makefile.am' files in 'examples' directory."
 echo '=============================================================================='

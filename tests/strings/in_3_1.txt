@@ -1,0 +1,20 @@
+ empty string: ""
+
+hello
+ "hello\tworld!"
+ 
+  "hello\n\
+\tworld"
+
+  'hello\n\
+\tworld'
+
+   "jointed"'literal'"strings"
+
+   SSS1 = "hello\n\
+\tworld";
+
+   SSS2 = 'hello\n\
+\tworld';
+}
+

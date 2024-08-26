@@ -31,7 +31,7 @@
     Stanley Hong <link2next@gmail.com>, July 2011.
   </author>
 */
-#ifndef __ULS_LF_SPRINTF_H__
+#if !defined(ULS_DOTNET) && !defined(__ULS_LF_SPRINTF_H__)
 #define __ULS_LF_SPRINTF_H__
 
 #ifndef ULS_EXCLUDE_HFILES
@@ -52,24 +52,9 @@ extern "C" {
 #endif
 
 #ifdef ULS_DECL_PUBLIC_TYPE
-
 #define ULS_LF_PERCENT_NAMESIZ 3
 #define ULS_LF_N_FILLCHS 16
 #define ULS_LF_N_FILLSTR 64
-
-#define ULS_LF_LEFT_JUSTIFIED     0x0001  /* left justified */
-#define ULS_LF_ZEROPAD            0x0002  /* pad with zero */
-#define ULS_LF_PLUS_PREFIX        0x0004  /* show plus */
-#define ULS_LF_MINUS_PREFIX       0x0008  /* show minus */
-
-#define ULS_LF_SPECIAL_CHAR       0x0010  /* 0x */
-#define ULS_LF_DYNAMIC_WIDTH      0x0020
-#define ULS_LF_DYNAMIC_PRECISION  0x0040
-
-#define ULS_LF_BIN_PREFIX         0x0100
-#define ULS_LF_HEX_PREFIX         0x0200
-#define ULS_LF_PERCENT_E          0x0400
-#define ULS_LF_PERCENT_G          0x0800
 
 #define ULS_LF_DFL_FLOAT_PRECISION 6
 
@@ -238,6 +223,9 @@ int uls_lf_fill_ch(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, char ch_fill, i
 int uls_lf_fill_numstr(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc,
 	uls_lf_convflag_ptr_t p, const char* numstr, int l_numstr);
 
+int uls_ieee754_double_isspecial(double x, char* nambuf);
+int uls_ieee754_longdouble_isspecial(long double x, char* nambuf);
+
 int fmtproc_s(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx);
 int fmtproc_c(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx);
 void __add_convspec_linear(uls_lf_convspec_table_ptr_t tbl,
@@ -298,6 +286,10 @@ ULS_DLL_EXTERN int uls_lf_puts_null(uls_voidptr_t x_dat, const char* wrdptr, int
 
 #ifdef _ULS_CPLUSPLUS
 }
+#endif
+
+#ifdef ULS_USE_WSTR
+#include "uls/uls_lf_swprintf.h"
 #endif
 
 #endif // __ULS_LF_SPRINTF_H__

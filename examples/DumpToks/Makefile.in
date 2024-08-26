@@ -111,6 +111,9 @@ AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+DumpToks_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(DumpToks_CXXFLAGS) \
+	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -307,10 +310,11 @@ uls_bin_dir = $(uls_inst_dir)/bin
 uls_inc_dir = $(uls_inst_dir)/include
 uls_lib_dir = $(uls_inst_dir)/lib
 ulc2class_exe = $(uls_bin_dir)/ulc2class
-ACLOCAL_AMFLAGS = -I m4
 DumpToks_SOURCES = DumpToks.cpp
+DumpToks_CXXFLAGS = -Wall -std=c++11
+#DumpToks_CPPFLAGS = -I$(uls_inc_dir) -DULS_USE_WSTR
 DumpToks_CPPFLAGS = -I$(uls_inc_dir)
-DumpToks_LDADD = -L$(uls_lib_dir) -lulscpp -lulscompat -luls
+DumpToks_LDADD = -L$(uls_lib_dir) -lulscpp -luls
 all: all-am
 
 .SUFFIXES:
@@ -397,7 +401,7 @@ clean-binPROGRAMS:
 
 DumpToks$(EXEEXT): $(DumpToks_OBJECTS) $(DumpToks_DEPENDENCIES) $(EXTRA_DumpToks_DEPENDENCIES) 
 	@rm -f DumpToks$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(DumpToks_OBJECTS) $(DumpToks_LDADD) $(LIBS)
+	$(AM_V_CXXLD)$(DumpToks_LINK) $(DumpToks_OBJECTS) $(DumpToks_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -435,18 +439,18 @@ am--depfiles: $(am__depfiles_remade)
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
 
 DumpToks-DumpToks.o: DumpToks.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(DumpToks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT DumpToks-DumpToks.o -MD -MP -MF $(DEPDIR)/DumpToks-DumpToks.Tpo -c -o DumpToks-DumpToks.o `test -f 'DumpToks.cpp' || echo '$(srcdir)/'`DumpToks.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(DumpToks_CPPFLAGS) $(CPPFLAGS) $(DumpToks_CXXFLAGS) $(CXXFLAGS) -MT DumpToks-DumpToks.o -MD -MP -MF $(DEPDIR)/DumpToks-DumpToks.Tpo -c -o DumpToks-DumpToks.o `test -f 'DumpToks.cpp' || echo '$(srcdir)/'`DumpToks.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/DumpToks-DumpToks.Tpo $(DEPDIR)/DumpToks-DumpToks.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='DumpToks.cpp' object='DumpToks-DumpToks.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(DumpToks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o DumpToks-DumpToks.o `test -f 'DumpToks.cpp' || echo '$(srcdir)/'`DumpToks.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(DumpToks_CPPFLAGS) $(CPPFLAGS) $(DumpToks_CXXFLAGS) $(CXXFLAGS) -c -o DumpToks-DumpToks.o `test -f 'DumpToks.cpp' || echo '$(srcdir)/'`DumpToks.cpp
 
 DumpToks-DumpToks.obj: DumpToks.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(DumpToks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT DumpToks-DumpToks.obj -MD -MP -MF $(DEPDIR)/DumpToks-DumpToks.Tpo -c -o DumpToks-DumpToks.obj `if test -f 'DumpToks.cpp'; then $(CYGPATH_W) 'DumpToks.cpp'; else $(CYGPATH_W) '$(srcdir)/DumpToks.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(DumpToks_CPPFLAGS) $(CPPFLAGS) $(DumpToks_CXXFLAGS) $(CXXFLAGS) -MT DumpToks-DumpToks.obj -MD -MP -MF $(DEPDIR)/DumpToks-DumpToks.Tpo -c -o DumpToks-DumpToks.obj `if test -f 'DumpToks.cpp'; then $(CYGPATH_W) 'DumpToks.cpp'; else $(CYGPATH_W) '$(srcdir)/DumpToks.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/DumpToks-DumpToks.Tpo $(DEPDIR)/DumpToks-DumpToks.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='DumpToks.cpp' object='DumpToks-DumpToks.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(DumpToks_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o DumpToks-DumpToks.obj `if test -f 'DumpToks.cpp'; then $(CYGPATH_W) 'DumpToks.cpp'; else $(CYGPATH_W) '$(srcdir)/DumpToks.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(DumpToks_CPPFLAGS) $(CPPFLAGS) $(DumpToks_CXXFLAGS) $(CXXFLAGS) -c -o DumpToks-DumpToks.obj `if test -f 'DumpToks.cpp'; then $(CYGPATH_W) 'DumpToks.cpp'; else $(CYGPATH_W) '$(srcdir)/DumpToks.cpp'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -668,7 +672,7 @@ uninstall-am: uninstall-binPROGRAMS
 $(DumpToks_SOURCES): DumpToksBasis.h
 
 DumpToksBasis.h: dumptoks.ulc
-	$(ulc2class_exe) --lang=cpp -o$@ -n uls.collection.DumpToksBasis $<
+	LD_LIBRARY_PATH="$(uls_lib_dir)" $(ulc2class_exe) --lang=cpp -o$@ -n uls.collection.DumpToksBasis $<
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

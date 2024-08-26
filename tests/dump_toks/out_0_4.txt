@@ -2,19 +2,45 @@
   2	[       ] (
   2	[       ] )
   3	[  BEGIN] {
-  4	[     ID] A
+  4	[     ID] AAA
   4	[       ] =
-  4	[ LITSTR] 	hello글\$world\$
+  4	[ NUMBER] 1 LU
   4	[       ] ;
-  5	[     ID] str
+  5	[     ID] XXX
   5	[       ] =
-  5	[ LITSTR]  This is NOT 
-		c-string 
+  5	[       ] -
+  5	[ NUMBER] 0.00031415926
+  5	[       ] ;
+  6	[     ID] XXX
+  6	[       ] =
+  6	[       ] -
+  6	[ NUMBER] 0.00031415926 f
   6	[       ] ;
-  7	[     ID] str2
+  7	[     ID] XXX
   7	[       ] =
-  7	[ LITSTR] How \
-  	   about \
-	   this
-  9	[       ] ;
- 10	[    END] }
+  7	[ NUMBER] 0.
+  7	[       ] ;
+  8	[     ID] YYY
+  8	[       ] =
+  8	[ NUMBER] 0.3
+  8	[       ] ;
+ 10	[     ID] ZZZ
+ 10	[       ] =
+ 10	[     ID] XXX
+ 10	[       ] *
+ 10	[     ID] AAA
+ 10	[       ] &
+ 10	[     ID] YYY
+ 10	[       ] ^
+ 10	[     ID] BBB
+ 10	[       ] ;
+ 11	[     ID] AAA
+ 11	[       ] =
+ 11	[ NUMBER] 0.
+ 11	[       ] ;
+ 12	[     ID] BBB
+ 12	[       ] =
+ 12	[       ] -
+ 12	[     ID] AAA
+ 12	[       ] ;
+ 13	[    END] }

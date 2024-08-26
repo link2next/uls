@@ -1,4 +1,4 @@
-﻿#@ulc-2.3
+﻿#@ulc-2.4
 #
 #  ULC: Unified Lexical Configuration
 #
@@ -169,7 +169,7 @@ RADIO          Radio
 TOOLBAR        toolbar
 CLOSE          close
 INNERHEIGHT    innerHeight
-NUMBER         Number
+NUM            Number
 REF            ref
 TOP            top
 CLOSED         closed

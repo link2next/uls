@@ -51,28 +51,28 @@ namespace uls {
 	// </brief>
 	// <parm name="mtx">Mutex object</parm>
 	// <return>none</return>
-	void ULSCPP_DLL_EXTERN initMutex(MutexType mtx);
+	ULSCPP_DLL_EXTERN void initMutex(MutexType mtx);
 
 	// <brief>
 	// Deinitialize the 'mtx'. After calling this, 'mtx' shouldn't be used.
 	// </brief>
 	// <parm name="mtx">The mutex object</parm>
 	// <return>none</return>
-	void ULSCPP_DLL_EXTERN deinitMutex(MutexType mtx);
+	ULSCPP_DLL_EXTERN void deinitMutex(MutexType mtx);
 
 	// <brief>
 	// The locking API to grab the lock 'mtx'.
 	// </brief>
 	// <parm name="mtx">The mutex object initialized by uls::initMutex</parm>
 	// <return>none</return>
-	void ULSCPP_DLL_EXTERN lockMutex(MutexType mtx);
+	ULSCPP_DLL_EXTERN void lockMutex(MutexType mtx);
 
 	// <brief>
 	// The unlocking API to ungrab the lock 'mtx'.
 	// </brief>
 	// <parm name="mtx">The mutex object initialized by uls::initMutex</parm>
 	// <return>none</return>
-	void ULSCPP_DLL_EXTERN unlockMutex(MutexType mtx);
+	ULSCPP_DLL_EXTERN void unlockMutex(MutexType mtx);
 
 	// <brief>
 	// Creates a file descriptor 'fd' and return it.
@@ -81,7 +81,7 @@ namespace uls {
 	// </brief>
 	// <parm name="fpath">the file path to be created</parm>
 	// <return>a file descriptor</return>
-	int ULSCPP_DLL_EXTERN create_fd_wronly(std::string& fpath);
+	ULSCPP_DLL_EXTERN int create_fd_wronly(const std::string& fpath);
 
 	// <brief>
 	// Opens file and return the file descriptor 'fd'.
@@ -89,14 +89,14 @@ namespace uls {
 	// </brief>
 	// <parm name="fpath">the file path to be read</parm>
 	// <return>a file descriptor</return>
-	int ULSCPP_DLL_EXTERN open_fd_rdonly(std::string& fpath);
+	ULSCPP_DLL_EXTERN int open_fd_rdonly(const std::string& fpath);
 
 	// <brief>
 	// Closes the 'fd' opened by open_fd_rdonly() or create_fd_wronly().
 	// </brief>
 	// <parm name="fd">file decriptor</parm>
 	// <return>none</return>
-	void ULSCPP_DLL_EXTERN close_fd(int fd);
+	ULSCPP_DLL_EXTERN void close_fd(int fd);
 
 	// <brief>
 	// This procedure lists the search directories for ulc file, which is suffixed by 'ulc'.
@@ -108,17 +108,17 @@ namespace uls {
 	// </brief>
 	// <parm name="confname">lexcial configuration</parm>
 	// <return>none</return>
-	void ULSCPP_DLL_EXTERN dumpSearchPathOfUlc(std::string& confname);
-	void ULSCPP_DLL_EXTERN dumpSearchPathOfUlc(std::wstring& confname);
+	ULSCPP_DLL_EXTERN void dumpSearchPathOfUlc(const std::string& confname);
+	ULSCPP_DLL_EXTERN void dumpSearchPathOfUlc(const std::wstring& confname);
 
 	// <brief>
 	// This will list the serach paths, preferentially the location of ulc repository.
 	// </brief>
 	// <return>none</return>
-	void ULSCPP_DLL_EXTERN listUlcSearchPaths(void);
+	ULSCPP_DLL_EXTERN void listUlcSearchPaths(void);
 
-	void ULSCPP_DLL_EXTERN initialize_ulscpp(void);
-	void ULSCPP_DLL_EXTERN finalize_ulscpp(void);
+	ULSCPP_DLL_EXTERN void initialize_ulscpp(void);
+	ULSCPP_DLL_EXTERN void finalize_ulscpp(void);
 
 	namespace crux {
 		class UlsIStream;
@@ -131,14 +131,14 @@ namespace uls {
 		// </brief>
 		// <parm name="lxm">A string</parm>
 		// <return>bool</return>
-		bool ULSCPP_DLL_EXTERN isLexemeZero(std::string& lxm);
-		bool ULSCPP_DLL_EXTERN isLexemeZero(std::wstring& lxm);
+		ULSCPP_DLL_EXTERN bool isLexemeZero(const std::string& lxm);
+		ULSCPP_DLL_EXTERN bool isLexemeZero(const std::wstring& lxm);
 
-		bool ULSCPP_DLL_EXTERN isLexemeInt(std::string& lxm);
-		bool ULSCPP_DLL_EXTERN isLexemeInt(std::wstring& lxm);
+		ULSCPP_DLL_EXTERN bool isLexemeInt(const std::string& lxm);
+		ULSCPP_DLL_EXTERN bool isLexemeInt(const std::wstring& lxm);
 
-		bool ULSCPP_DLL_EXTERN isLexemeReal(std::string& lxm);
-		bool ULSCPP_DLL_EXTERN isLexemeReal(std::wstring& lxm);
+		ULSCPP_DLL_EXTERN bool isLexemeReal(const std::string& lxm);
+		ULSCPP_DLL_EXTERN bool isLexemeReal(const std::wstring& lxm);
 
 		// <brief>
 		// These convert the string 'lxm' to the value of int or double.
@@ -146,11 +146,11 @@ namespace uls {
 		// </brief>
 		// <parm name="lxm">A string</parm>
 		// <return>the converted values from the string.</return>
-		int ULSCPP_DLL_EXTERN LexemeAsInt(std::string& lxm);
-		int ULSCPP_DLL_EXTERN LexemeAsInt(std::wstring& lxm);
+		ULSCPP_DLL_EXTERN int LexemeAsInt(const std::string& lxm);
+		ULSCPP_DLL_EXTERN int LexemeAsInt(const std::wstring& lxm);
 
-		double ULSCPP_DLL_EXTERN LexemeAsDouble(std::string& lxm);
-		double ULSCPP_DLL_EXTERN LexemeAsDouble(std::wstring& lxm);
+		ULSCPP_DLL_EXTERN double LexemeAsDouble(const std::string& lxm);
+		ULSCPP_DLL_EXTERN double LexemeAsDouble(const std::wstring& lxm);
 
 		class ULSCPP_DLL_EXTERN IPrintf {
 		public:
@@ -203,8 +203,6 @@ namespace uls {
 			// <brief>
 			// This Logs a formatted message.
 			// No need to append '\n' to the end of line 'fmt' as log() will automatically append it.
-			// You can use %t %w to print the current token information and its location.
-			// No need argument for %t and %w.
 			// </brief>
 			// <parm name="fmt">format string</parm>
 			// <return>void</return>
@@ -240,7 +238,7 @@ namespace uls {
 			// This value is only valid until the next call of getTok().
 			// </brief>
 			// <return>the alias of string stored internally</return>
-			virtual void getTokStr(std::string** pp_lxm) = 0;
+			virtual void getTokStr(std::string **pp_lxm) = 0;
 
 			// <brief>
 			// Returns the current token id in the object by getTok().
@@ -267,12 +265,6 @@ namespace uls {
 			virtual void ungetCh(uls_wch_t wch) = 0;
 		};
 
-		static uls_lf_map_t *ulscpp_convspec_nmap;
-		static uls_lf_map_t *ulscpp_convspec_wmap;
-
-		void UlsLex_initialize(void);
-		void UlsLex_finalize(void);
-
 		// <brief>
 		// This is the major class of ulscpp library.
 		// You can instantiate this class with a parameter, lexical configuration(*.ulc),
@@ -297,8 +289,8 @@ namespace uls {
 			// 'lxm_str' is the internal data for the lexeme of the current token.
 			// It's only valid until the next call of 'getTok()' or 'next()'.
 			// </brief>
-			std::string *lxm_nstr;
-			std::wstring *lxm_wstr;
+			std::string lxm_nstr;
+			std::wstring lxm_wstr;
 
 			std::map<int,void*> *extra_tokdefs;
 
@@ -320,10 +312,11 @@ namespace uls {
 
 			UlsAuw    *auwcvt;
 
-		protected:
-			static const int CVT_MBSTR_USTR = 0;
-			static const int CVT_MBSTR_ASTR = 1;
+			static bool ulscpp_inited;
+			static uls_lf_map_t *ulscpp_convspec_nmap;
+			static uls_lf_map_t *ulscpp_convspec_wmap;
 
+		protected:
 			// <brief>
 			// Emits the formatted message by the string 'fmt' with 'args'
 			// </brief>
@@ -349,25 +342,34 @@ namespace uls {
 			// <brief>
 			// A internal procedure to set the current token forcibly.
 			// </brief>
-			void set_token(int t, std::string& lxm);
-			void set_token(int t, std::wstring& lxm);
+			void set_token(int t, const std::string& lxm);
+			void set_token(int t, const std::wstring& lxm);
 
-			int prepareUldMap();
+			// <brief>
+			// changeUldNames
+			// </brief>
+			int prepareUldMap(int bufsiz_uldfile);
 			bool finishUldMap();
-			void changeUldNames(const char *name, const char*name2, int tokid_valid, int tokid, const char *aliases);
+			void changeUldNames(const char *name, const char *name2, int tokid_valid, int tokid, const char *aliases);
+			void changeUldNames(const wchar_t *name, const wchar_t *name2, int tokid_valid, int tokid, const wchar_t *aliases);
 
+			// <brief>
+			// setTag
+			// </brief>
 			void setTag_ustr(const char *fname);
 			void openOutput_ustr(const char* out_file, uls_lf_puts_t puts_proc);
 
 		public:
+			static void initialize();
+			static void finalize();
+
 			// <brief>
 			// These flags affects the input stream process and is set in calling pushInput().
 			// 1. WantEOF: At the end of file, getTok() will give you the reserved token EOF.
 			// 2. DoDup: This will copy the input source for character string or file descriptor if possible.
-			// 3. MsMbcsEncoding: The input file is interpreted with MS-MBCS encoding. It's applicable in Windows.
 			// </brief>
 			enum InputOpts {
-				WantEOF=0, DoDup, MsMbcsEncoding, Utf8Encoding
+				WantEOF=0, DoDup
 			};
 
 			// <brief>
@@ -396,6 +398,7 @@ namespace uls {
 			// <return>none</return>
 			bool initUlsLex_ustr(const char *ulc_file);
 
+			UlsLex() = delete;
 			UlsLex(const char *ulc_file);
 			UlsLex(const wchar_t *ulc_wfile);
 
@@ -447,11 +450,11 @@ namespace uls {
 			// </brief>
 			// <parm name="fname">The new string value to be updated</parm>
 			// <return>none</return>
-			void setTag(std::string& fname);
-			void setTag(std::wstring& fname);
+			void setTag(const std::string& fname);
+			void setTag(const std::wstring& fname);
 
-			void setFileName(std::string& fname);
-			void setFileName(std::wstring& wfname);
+			void setFileName(const std::string& fname);
+			void setFileName(const std::wstring& wfname);
 
 			void getTag(std::string& fname);
 			void getTag(std::wstring& fname);
@@ -481,8 +484,8 @@ namespace uls {
 			// </brief>
 			// <parm name="pfx">The literal string analyzer of which the quote type is started with 'pfx'.</parm>
 			// <return>none</return>
-			void deleteLiteralAnalyzer(std::string& pfx);
-			void deleteLiteralAnalyzer(std::wstring& pfx);
+			void deleteLiteralAnalyzer(const std::string& pfx);
+			void deleteLiteralAnalyzer(const std::wstring& pfx);
 
 			// <brief>
 			// Changes the literal-string analyzer to 'proc'.
@@ -490,8 +493,8 @@ namespace uls {
 			// </brief>
 			// <parm name="pfx">The prefix of literal string that will be processed by 'proc'</parm>
 			// <return>void</return>
-			void changeLiteralAnalyzer(std::string pfx, uls_litstr_analyzer_t proc, void *data);
-			void changeLiteralAnalyzer(std::wstring pfx, uls_litstr_analyzer_t proc, void *data);
+			void changeLiteralAnalyzer(const std::string pfx, uls_litstr_analyzer_t proc, void *data);
+			void changeLiteralAnalyzer(const std::wstring pfx, uls_litstr_analyzer_t proc, void *data);
 
 			// <brief>
 			// This method will push an input string 'istr' on the top of the internal input stack.
@@ -534,11 +537,11 @@ namespace uls {
 			// <parm name="filepath">The file path of input</parm>
 			// <return>true/false</return>
 
-			bool pushFile(std::string& filepath, int flags=-1);
-			bool pushFile(std::wstring& wfilepath, int flags=-1);
+			bool pushFile(const std::string& filepath, int flags=-1);
+			bool pushFile(const std::wstring& wfilepath, int flags=-1);
 
-			void setFile(std::string& filepath, int flags=-1);
-			void setFile(std::wstring& filepath, int flags=-1);
+			void setFile(const std::string& filepath, int flags=-1);
+			void setFile(const std::wstring& filepath, int flags=-1);
 
 			void pushLine(const char* line, int len=-1, int flags=-1);
 			void pushLine(const wchar_t* line, int len=-1, int flags=-1);
@@ -574,7 +577,7 @@ namespace uls {
 			// </brief>
 			// <parm name="isQuote"> If the next token is a literal string 'isQuote' is true.</parm>
 			// <return>The next character</return>
-			virtual uls_wch_t peekCh(bool* isQuote);
+			virtual uls_wch_t peekCh(bool* isQuote) override;
 			uls_wch_t peekCh(void);
 
 			// <brief>
@@ -586,7 +589,7 @@ namespace uls {
 			// </brief>
 			// <parm name="isQuote"> If the next token is a literal string 'isQuote' is true.</parm>
 			// <return>The next character</return>
-			virtual uls_wch_t getCh(bool* isQuote);
+			virtual uls_wch_t getCh(bool* isQuote) override;
 			uls_wch_t getCh(void);
 
 			// <brief>
@@ -594,7 +597,7 @@ namespace uls {
 			//     at the next call of peekCh() or getCh().
 			// </brief>
 			// <return>none</return>
-			virtual void ungetCh(uls_wch_t wch);
+			virtual void ungetCh(uls_wch_t wch) override;
 
 			// <brief>
 			// This is one of the main methods of the uls lexical analyzer object.
@@ -607,7 +610,7 @@ namespace uls {
 			// Use getTokNum() to get the current token number and getTokStr() to get the associated lexeme.
 			// </brief>
 			// <return>the token number</return>
-			virtual int getTok(void);
+			virtual int getTok(void) override;
 			inline int getToken(void) {
 				return getTok();
 			}
@@ -620,8 +623,8 @@ namespace uls {
 			// The value is valid until the next call of getTok().
 			// </brief>
 			// <return>the alias of string stored internally</return>
-			virtual void getTokStr(std::string** pp_lxm);
-			void getTokStr(std::wstring** pp_lxm);
+			virtual void getTokStr(std::string **pp_lxm) override;
+			void getTokStr(std::wstring **pp_lxm);
 
 			void getLexeme(std::string& lxm) {
 				std::string *p_lxm;
@@ -640,7 +643,7 @@ namespace uls {
 			// It's the same value as the return value of getTok().
 			// </brief>
 			// <return>token number</return>
-			virtual int getTokNum(void);
+			virtual int getTokNum(void) override;
 			int getTokId(void) {
 				return getTokNum();
 			}
@@ -683,8 +686,8 @@ namespace uls {
 			// Sets the current token to <t,lxm> forcibly.
 			// </brief>
 			// <return>none</return>
-			void setTok(int t, std::string& lxm);
-			void setTok(int t, std::wstring& lxm);
+			void setTok(int t, const std::string& lxm);
+			void setTok(int t, const std::wstring& lxm);
 
 			// <brief>
 			// If the current token number is not 'TokExpected', An exception will be thrown.
@@ -716,11 +719,11 @@ namespace uls {
 			// <brief>
 			// Call ungetTok() if you want to get the current token again after getTok().
 			// Call ungetStr() if you want to push a string to the front of the current input source.
-			// Call ungetLexeme() if you want to push a lexeme to the front of the current input source.
+			// Call ungetToken() if you want to push a lexeme to the front of the current input source.
 			// </brief>
 			// <parm name="lxm">The token string with which the token number 'tok_id' is paired.</parm>
 			// <return>none</return>
-			void ungetTok(void);
+			virtual void ungetTok(void) override;
 
 			void ungetStr(std::string str);
 			void ungetStr(std::wstring str);
@@ -775,8 +778,8 @@ namespace uls {
 			// </brief>
 			// <parm name="out_file">The output file path</parm>
 			// <return>none</return>
-			void openOutput(std::string& out_file);
-			void openOutput(std::wstring& out_file);
+			void openOutput(const std::string& out_file);
+			void openOutput(const std::wstring& out_file);
 
 			// <brief>
 			// This flushes the buffer of the output and closes the output file.
@@ -803,7 +806,7 @@ namespace uls {
 			// <parm name="bufsiz">The capacity of 'buf'</parm>
 			// <parm name="fmt">format string</parm>
 			// <return># of bytes filled except for '\0'</return>
-			virtual int vsnprintf(char* buf, int bufsiz, const char *fmt, va_list args);
+			virtual int vsnprintf(char* buf, int bufsiz, const char *fmt, va_list args) override;
 			int vsnprintf(wchar_t* buf, int bufsiz, const wchar_t *fmt, va_list args);
 
 			int snprintf(char* buf, int bufsiz, const char *fmt, ...);
@@ -825,7 +828,7 @@ namespace uls {
 			// <parm name="fp">The pointer of FILE, which is opened by fopen()</parm>
 			// <parm name="fmt">format string</parm>
 			// <return># of bytes written</return>
-			virtual int vfprintf(FILE* fp, const char *fmt, va_list args);
+			virtual int vfprintf(FILE* fp, const char *fmt, va_list args) override;
 			int vfprintf(FILE* fp, const wchar_t *fmt, va_list args);
 
 			int fprintf(FILE* fp, const char *fmt, ...);
@@ -847,7 +850,7 @@ namespace uls {
 			// <parm name="percent_name">The converion specification string without '%'.</parm>
 			// <parm name="proc">The user provided procedure to process '%percent_name'</parm>
 			// <return>none</return>
-			virtual void changeConvSpec(const char* percent_name, uls_lf_convspec_t proc);
+			virtual void changeConvSpec(const char* percent_name, uls_lf_convspec_t proc) override;
 			void changeConvSpec(const wchar_t* percent_name, uls_lf_convspec_t proc);
 
 			// <brief>
@@ -855,7 +858,7 @@ namespace uls {
 			// </brief>
 			// <parm name="puts_proc">A newly output interface</parm>
 			// <return>none</return>
-			virtual void changePuts(void *xdat, uls_lf_puts_t puts_proc);
+			virtual void changePuts(void *xdat, uls_lf_puts_t puts_proc) override;
 
 			// <brief>
 			// Sets the log level of the object, UlsLex.
@@ -887,28 +890,24 @@ namespace uls {
 			// </brief>
 			// <parm name="loglvl">This message will be printed if 'loglvl' is set.</parm>
 			// <return>none</return>
-			virtual void log(int loglvl, const char* fmt, ...);
+			virtual void log(int loglvl, const char* fmt, ...) override;
 			void log(int loglvl, const wchar_t* fmt, ...);
 
 			// <brief>
 			// Logs formatted messages
-			// You can use %t %w to print the current token, its location.
-			// No need to append '\n' to the end of line 'fmt'.
 			//
 			// It's capable of printing the keyword string of token and input coordinate,
 			//    as well as the default conversion specifications.
-			//   a) %t: use to print the name of the current token
-			//   b) %k: use to print the keyword string of the current token
-			//   c) %w: use to print the coordinate of the current input file or source.
+			//   a) %w: use to print the coordinate of the current input file or source.
 			//          The 'coordinate' is composed of the tag and line number.
 			//
 			// The 'log' object has already a reference of the lexical object when it's created.
 			// Notice that there's no need to give the argument for the conversion specification
-			//     to process '%t', '%k', and '%w'
+			//     to process '%w'
 			// </brief>
 			// <parm name="fmt">format string</parm>
 			// <return>void</return>
-			virtual void log(const char* fmt, ...);
+			virtual void log(const char* fmt, ...) override;
 			void log(const wchar_t* fmt, ...);
 
 			// <brief>
@@ -917,7 +916,7 @@ namespace uls {
 			// </brief>
 			// <parm name="fmt">format string</parm>
 			// <return>none</return>
-			virtual void panic(const char* fmt, ...);
+			virtual void panic(const char* fmt, ...) override;
 			void panic(const wchar_t* fmt, ...);
 		};
 	}

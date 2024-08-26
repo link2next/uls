@@ -35,60 +35,59 @@
 #include "uls/uls_lex.h"
 #include "uls/uls_log.h"
 #include "uls/uls_util.h"
-#include "uls/uls_init.h"
 
 #include <stdlib.h>
 #include <string.h>
 
 #include "sample_lex.h"
 
-const char *progname;
+LPCTSTR progname;
 int  test_mode = -1;
 int  opt_verbose;
-const char *config_name;
-char *input_file;
+LPCTSTR config_name;
+LPTSTR input_file;
 
-uls_lex_t *sample_lex;
+uls_lex_ptr_t sample_lex;
 
 static void usage(void)
 {
-	err_log("%s v1.0", progname);
-	err_log("  The token number the 1-char-token(tok=='{', '}', '!', '@' ...) is by default itself(ACSII)");
-	err_log("  '%s' demonstrates how the token numbers of those tokens can be remapped.", progname);
-	err_log("");
-	err_log(" Usage:");
-	err_log("  %s [-c <config-file>] <inputfile> ...", progname);
-	err_log("");
-	err_log("  For example,");
-	err_log("      %s input1.txt", progname);
-	err_log("  A default config-file used, %s if you don't specifiy the config-file.", config_name);
+	err_log(_T("%s v1.0"), progname);
+	err_log(_T("  The token number the 1-char-token(tok=='{', '}', '!', '@' ...) is by default itself(ACSII)"));
+	err_log(_T("  '%s' demonstrates how the token numbers of those tokens can be remapped."), progname);
+	err_log(_T(""));
+	err_log(_T(" Usage:"));
+	err_log(_T("  %s [-c <config-file>] <inputfile> ..."), progname);
+	err_log(_T(""));
+	err_log(_T("  For example,"));
+	err_log(_T("      %s input1.txt"), progname);
+	err_log(_T("  A default config-file used, %s if you don't specifiy the config-file."), config_name);
 }
 
 static int
-options(int opt, char* optarg)
+options(int opt, LPTSTR optarg)
 {
 	int stat = 0;
 
 	switch (opt) {
-	case 'c':
+	case _T('c'):
 		config_name = optarg;
 		break;
 
-	case 'm':
-		test_mode = atoi(optarg);
+	case _T('m'):
+		test_mode = ult_str2int(optarg);
 		break;
 
-	case 'v':
+	case _T('v'):
 		opt_verbose = 1;
 		break;
 
-	case 'h':
+	case _T('h'):
 		usage();
 		stat = 1;
 		break;
 
 	default:
-		err_log("undefined option -%c", opt);
+		err_log(_T("undefined option -%c"), opt);
 		usage();
 		stat = -1;
 		break;
@@ -98,12 +97,12 @@ options(int opt, char* optarg)
 }
 
 void
-test_uls(char* fpath)
+test_uls(LPCTSTR fpath)
 {
 	int t;
 
 	if (uls_set_file(sample_lex, fpath, 0) < 0) {
-		err_log(" file open error");
+		err_log(_T(" file open error"));
 		return;
 	}
 
@@ -111,45 +110,56 @@ test_uls(char* fpath)
 		if ((t=uls_get_tok(sample_lex)) == TOK_EOI) break;
 
 		if (t == TOK_BEGIN || t == TOK_END) {
-			uls_printf("\t%3d  %s\n", t, uls_lexeme(sample_lex));
+			uls_printf(_T("\t%3d  %s\n"), t, uls_lexeme(sample_lex));
 
 		} else if (t == TOK_EOL) {
-			uls_printf("\t%3d  \\n\n", TOK_EOL);
+			uls_printf(_T("\t%3d  \\n\n"), TOK_EOL);
 
 		} else if (t == TOK_TAB) {
-			uls_printf("\t%3d  \\t\n", TOK_TAB);
+			uls_printf(_T("\t%3d  \\t\n"), TOK_TAB);
 
 		} else if (t == TOK_MINUS) {
-			uls_printf("\t%3d  MINUS\n", TOK_MINUS);
+			uls_printf(_T("\t%3d  MINUS\n"), TOK_MINUS);
 		}
 	}
 }
 
 int
-main(int argc, char* argv[])
+_tmain(int n_targv, LPTSTR *targv)
 {
 	int i, i0;
 
-	initialize_uls();
-	progname = uls_filename(argv[0], NULL);
-	config_name = "sample.ulc";
-	input_file = "input1.txt";
+	progname = uls_split_filepath(targv[0], NULL);
+	config_name = _T("sample.ulc");
+	input_file = _T("input1.txt");
 
-	if ((i0=uls_getopts(argc, argv, "c:m:vh", options)) <= 0) {
+	if ((i0=uls_getopts(n_targv, targv, _T("c:m:vh"), options)) <= 0) {
 		return i0;
 	}
 
 	if ((sample_lex = uls_create(config_name)) == NULL) {
-		err_log("can't init uls-object");
+		err_log(_T("can't init uls-object"));
 		return -1;
 	}
 
-	for (i=i0; i<argc; i++) {
-		input_file = argv[i];
+	for (i=i0; i<n_targv; i++) {
+		input_file = targv[i];
 		test_uls(input_file);
 	}
 
 	uls_destroy(sample_lex);
-
 	return 0;
+}
+
+int
+main(int argc, char *argv[])
+{
+	LPTSTR *targv;
+	int stat;
+
+	ULS_GET_WARGS_LIST(argc, argv, targv);
+	stat = _tmain(argc, targv);
+	ULS_PUT_WARGS_LIST(argc, targv);
+
+	return stat;
 }

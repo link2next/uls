@@ -98,26 +98,6 @@ ULS_QUALIFIED_METHOD(uls_reorder_bytes_binbe)(char *binpkt, int len_binpkt)
 	}
 }
 
-void
-ULS_QUALIFIED_METHOD(uls_dump_tmpls)(uls_tmpl_list_ptr_t tmpl_list)
-{
-	uls_tmpl_ptr_t tmpl;
-	int i;
-
-	printf("%s:\n", __func__);
-
-	if (tmpl_list == nilptr) {
-		printf("%s: tmpl_list == NULL!\n", __func__);
-		return;
-	}
-
-	for (i=0; i<tmpl_list->tmpls.n; i++) {
-		tmpl = uls_get_array_slot_type10(uls_ptr(tmpl_list->tmpls), i);
-		printf("\t%d] %s  '%s'\n", i, tmpl->name, tmpl->sval);
-	}
-	printf("\n");
-}
-
 ULS_QUALIFIED_RETTYP(uls_tmpl_ptr_t)
 ULS_QUALIFIED_METHOD(uls_find_tmpl)(uls_tmpl_list_ptr_t tmpl_list, const char* name)
 {

@@ -43,60 +43,25 @@
 int
 ULS_QUALIFIED_METHOD(splitint)(const char* line, uls_ptrtype_tool(outparam) parms)
 {
-	int   n, i=parms->n;
-	int   minus=0, ch;
+	int  i = parms->n1;
+	char ch;
+	int rc;
 
 	for ( ; (ch=line[i])==' ' || ch=='\t'; i++)
 		/* NOTHING */;
 
-	if (line[i] == '-') {
-		minus = 1;
-		++i;
-	}
+	rc = _uls_tool(is_pure_integer)(line + i, parms);
+	if (rc < 0) rc = -rc;
+	parms->n1 = i += rc;
 
-	if (!_uls_tool_(isdigit)(ch=line[i])) {
-		return 0;
-	} else {
-		n = ch - '0';
-		++i;
-	}
-
-	for ( ; _uls_tool_(isdigit)(ch=line[i]); i++) {
-		n = n*10 + (ch - '0');
-	}
-
-	if (minus) n = -n;
-	parms->n = i;
-
-	return n;
-}
-
-int
-ULS_QUALIFIED_METHOD(canbe_tokname)(const char *str)
-{
-	int i, val;
-	char ch;
-
-	for (i=0; (ch=str[i])!='\0'; i++) {
-		if (i > 0) {
-			val = _uls_tool_(isalnum)(ch) || (ch == '_');
-		} else {
-			val = _uls_tool_(isalpha)(ch) || (ch == '_');
-		}
-		if (val == 0) return 0;
-	}
-
-	if (i > ULS_LEXSTR_MAXSIZ)
-		return 0;
-
-	return i;
+	return parms->n;
 }
 
 const char*
 ULS_QUALIFIED_METHOD(uls_skip_multiline_comment)(uls_ptrtype_tool(parm_line) parm_ln)
 {
 	const char* lptr = parm_ln->lptr, *lptr_end=parm_ln->lptr_end;
-	int  ch, prev_ch, n=0;
+	int  ch, prev_ch, n = 0;
 
 	/*
 	 * ret-val == NULL : NOT FOUND, the end of c-style comment
@@ -110,7 +75,7 @@ ULS_QUALIFIED_METHOD(uls_skip_multiline_comment)(uls_ptrtype_tool(parm_line) par
 
 		if ((ch=*lptr) == '\n') ++n;
 
-		if (prev_ch == '*' && ch=='/') {
+		if (prev_ch == '*' && ch == '/') {
 			++lptr;
 			break;
 		}
@@ -160,6 +125,7 @@ ULS_QUALIFIED_METHOD(uls_gauss_log2)(unsigned int n, uls_ptrtype_tool(outparam) 
 	return parms->x2;
 }
 
+#ifndef ULS_DOTNET
 ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(sortcmp_obj4sort)(const uls_voidptr_t a, const uls_voidptr_t b)
 {
@@ -168,6 +134,7 @@ ULS_QUALIFIED_METHOD(sortcmp_obj4sort)(const uls_voidptr_t a, const uls_voidptr_
 
 	return e1->cmpfunc(e1->vptr, e2->vptr);
 }
+#endif
 
 ULS_DECL_STATIC void
 ULS_QUALIFIED_METHOD(downheap_vptr)(uls_heaparray_ptr_t hh, unsigned int i0)
@@ -257,6 +224,7 @@ ULS_QUALIFIED_METHOD(build_heaptree_vptr)(uls_heaparray_ptr_t hh,
 	}
 }
 
+#ifndef ULS_DOTNET
 void
 ULS_QUALIFIED_METHOD(uls_quick_sort)(uls_native_vptr_t ary, int n_ary, int elmt_size, uls_sort_cmpfunc_t cmpfunc)
 {
@@ -277,11 +245,12 @@ ULS_QUALIFIED_METHOD(uls_quick_sort)(uls_native_vptr_t ary, int n_ary, int elmt_
 		obj4sort->idx = i;
 		obj4sort->cmpfunc = cmpfunc;
 	}
+	obj4_sort_ary.n = n_ary;
 
 	_uls_quicksort_vptr(slots_obj, n_ary, sortcmp_obj4sort);
 
 	siz = n_ary * elmt_size;
-	ary_bak = uls_malloc(siz);
+	ary_bak = _uls_tool_(malloc)(siz);
 	uls_memcopy(ary_bak, ary, siz);
 
 	for (i=0; i<n_ary; i++) {
@@ -325,6 +294,7 @@ ULS_QUALIFIED_METHOD(uls_bi_search)(const uls_voidptr_t keyw,
 
 	return nilptr;
 }
+#endif // ULS_DOTNET
 
 void
 ULS_QUALIFIED_METHOD(uls_quick_sort_vptr)(_uls_decl_array(ary,uls_voidptr_t),
@@ -397,6 +367,7 @@ ULS_QUALIFIED_METHOD(uls_get_simple_escape_char)(uls_ptrtype_tool(outparam) parm
 	case 'f': ch2 = '\f'; break;
 	case 'v': ch2 = '\v'; break;
 	default :
+		// '0' is excluded
 		processed = 0;
 		ch2 = (char) parms->x1;
 		break;
@@ -411,8 +382,8 @@ ULS_QUALIFIED_METHOD(uls_get_simple_escape_str)(char quote_ch, uls_ptrtype_tool(
 {
 	const char *lptr = parms->lptr;
 	char* outbuf = parms->line;
-	int rval, escape = 0, j, k=0;
 	uls_type_tool(outparam) parms1;
+	int escape = 0, j, k = 0;
 	char ch, ch2;
 
 	for ( ; ; lptr++) {
@@ -445,7 +416,7 @@ ULS_QUALIFIED_METHOD(uls_get_simple_escape_str)(char quote_ch, uls_ptrtype_tool(
 				lptr += j;
 			} else {
 				parms1.x1 = ch;
-				if ((rval = uls_get_simple_escape_char(uls_ptr(parms1))) > 0) {
+				if (uls_get_simple_escape_char(uls_ptr(parms1))) {
 					outbuf[k++] = (char) parms1.x2;
 				} else {
 					outbuf[k++] = '\\'; outbuf[k++] = ch; // copy it verbatim
@@ -470,7 +441,6 @@ ULS_QUALIFIED_METHOD(uls_get_simple_escape_str)(char quote_ch, uls_ptrtype_tool(
 
 	outbuf[k] = '\0';
 	parms->lptr = lptr;
-
 	return k;
 }
 
@@ -575,37 +545,4 @@ ULS_QUALIFIED_METHOD(uls_get_spec_fp)(const char* dirpath_list, const char* fpat
 	}
 
 	return fp_in;
-}
-
-int
-ULS_QUALIFIED_METHOD(uls_cmd_run)(uls_array_ref_slots_type00(cmdlst,cmd), int n_cmdlst, const char* keyw,
-	char *line, uls_voidptr_t data)
-{
-	int stat = -2;
-	int   low, high, mid, cond;
-	uls_cmd_ptr_t cmd;
-
-	low = 0;
-	high = n_cmdlst - 1;
-
-	while (low <= high) {
-		mid = (low + high) / 2;
-		cmd = uls_get_array_slot(cmdlst,mid);
-
-		if ((cond = _uls_tool_(strcmp)(cmd->name, keyw)) < 0) {
-			low = mid + 1;
-		} else if (cond > 0) {
-			high = mid - 1;
-		} else {
-			cmd->user_data = data;
-			if (cmd->proc(line, cmd) < 0) {
-				stat = -1;
-			} else {
-				stat = 0;
-			}
-			break;
-		}
-	}
-
-	return stat;
 }

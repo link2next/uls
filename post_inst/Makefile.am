@@ -6,7 +6,7 @@ ACLOCAL_AMFLAGS = -I m4
 all: uninst_info.txt
 
 uninst_info.txt:
-	@./gen_uninst_info.sh "$(prefix)" "$(etc_dir)" $@ 
+	@./gen_uninst_info.sh "$(prefix)" "$(etc_dir)" $@
 
 install: uninst_info.txt
 	install -m755 -d "$(bindir)" "$(datadir)" $(etc_dir)
@@ -18,8 +18,6 @@ install: uninst_info.txt
 	@if [ -f $(TMP_SYSPROPS) ]; then \
 		rm -f $(TMP_SYSPROPS); \
 	fi
-
-check:
 
 clean:
 	rm -f uninst_info.txt

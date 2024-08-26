@@ -48,28 +48,38 @@ extern "C" {
 
 #ifndef ULS_WINDOWS
 #ifdef ULS_USE_WSTR
-#define _T(a) L##a
-#define TEXT(a) L##a
 typedef wchar_t TCHAR;
-typedef wchar_t *LPTSTR;
-typedef const wchar_t *LPCTSTR;
+#else // ULS_USE_WSTR
+typedef char TCHAR;
+#endif
+typedef TCHAR *LPTSTR;
+typedef const TCHAR *LPCTSTR;
+
+#ifdef ULS_USE_WSTR
 #define uls_get_csz_tstr(csz) uls_get_csz_wstr(csz)
 #define ULS_GET_WARGS_LIST(argc,argv,targv) do { \
 	(targv) = ulscompat_get_warg_list(argv,argc); \
 	} while (0)
 #define ULS_PUT_WARGS_LIST(n_wargv,wargv) ulscompat_put_warg_list(wargv,n_wargv)
+
+#define ULSCPP_GET_WARGS_LIST(argc,argv,targv) do { \
+	(targv) = uls::getWargList(argv,argc); \
+	} while (0)
+#define ULSCPP_PUT_WARGS_LIST(n_wargv,wargv) uls::putWargList(wargv,n_wargv)
+
 #else // ULS_USE_WSTR
-#define _T(a) a
-#define TEXT(a) a
-typedef char TCHAR;
-typedef char *LPTSTR;
-typedef const char *LPCTSTR;
 #define uls_get_csz_tstr(csz) csz_text(csz)
 #define ULS_GET_WARGS_LIST(argc,argv,targv) do { \
 	(targv) = (argv); \
 	} while (0)
 #define ULS_PUT_WARGS_LIST(n_wargv,wargv)
-#endif
+
+#define ULSCPP_GET_WARGS_LIST(argc,argv,targv) do { \
+	(targv) = (argv); \
+	} while (0)
+#define ULSCPP_PUT_WARGS_LIST(n_wargv,wargv)
+#endif // ULS_USE_WSTR
+
 #endif // ULS_WINDOWS
 
 #ifdef ULS_DECL_PUBLIC_TYPE
@@ -103,12 +113,26 @@ int __uls_path_normalize_ustr(const char* fpath, char* fpath2);
 #endif
 
 #ifdef ULS_DECL_PUBLIC_PROC
+ULS_DLL_EXTERN unsigned char uls_nibble2ascii(unsigned char ch);
+ULS_DLL_EXTERN void uls_putstr(const char* str);
+
+ULS_DLL_EXTERN int ult_str2int(const char *str);
+ULS_DLL_EXTERN int ult_str_length(const char *str);
+ULS_DLL_EXTERN int ult_str_equal(const char *str1, const char *str2);
+ULS_DLL_EXTERN int ult_str_copy(char *bufptr, const char *str);
+ULS_DLL_EXTERN int ult_str_compare(const char* str1, const char* str2);
+ULS_DLL_EXTERN char* ult_skip_blanks(const char* lptr);
+ULS_DLL_EXTERN char* ult_splitstr(char** p_str, int *p_len);
+ULS_DLL_EXTERN char* ult_split_litstr(char *str, char qch);
+
+ULS_DLL_EXTERN void ult_dump_utf8str(const char *str);
 void uls_print_bytes(const char* srcptr, int n_bytes);
 int uls_get_exeloc_dir(const char* argv0, char *fpath_buf);
 const char* uls_get_dirpath(const char* fname, uls_ptrtype_tool(outparam) parms);
 
 int is_absolute_path(const char* path);
 int is_path_prefix(const char *filepath);
+
 ULS_DLL_EXTERN int uls_mkdir(const char *filepath);
 ULS_DLL_EXTERN int uls_path_normalize(const char* fpath, char* fpath2);
 
@@ -121,8 +145,10 @@ void isp_deinit(uls_isp_ptr_t isp);
 char* isp_find(uls_isp_ptr_t isp, const char* str, int len);
 char* isp_insert(uls_isp_ptr_t isp, const char* str, int len);
 
+#ifndef ULS_DOTNET
+ULS_DLL_EXTERN char* uls_split_filepath(const char *filepath, int* len_fname);
 ULS_DLL_EXTERN int uls_getopts(int n_args, char* args[], const char* optfmt, uls_optproc_t proc);
-
+#endif
 int initialize_uls_util(void);
 void finalize_uls_util(void);
 #endif // ULS_DECL_PUBLIC_PROC

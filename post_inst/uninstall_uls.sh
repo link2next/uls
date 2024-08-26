@@ -126,7 +126,7 @@ rm $tmp_sysprops_fpath
 
 if [ -z "$ULS_HOME" ]; then
 	echo "don't know where it's setup!"
-    exit 1
+	exit 1
 fi
 
 if [ "$ULS_HOME" = "/usr" -o "$ULS_HOME" = "/" ]; then
@@ -153,7 +153,7 @@ del_tree "$inc_uls_dir"
 del_file "$inc_dir"/{uls*.h,Uls*.h}
 
 del_file "$lib_dir"/libuls*
-del_file "$man_dir"/{ulc2class.1,ulf_gen.1,uls_stream.1}
+del_file "$man_dir"/{ulc2class.1.gz,ulf_gen.1.gz,uls_stream.1.gz}
 
 del_tree "$data_dir"/ulcs
 del_file "$data_dir"/uls_examples.tar

@@ -1,7 +1,34 @@
-  2	[     ID] hello
-  3	[ LITSTR] hello	world!
-  5	[ LITSTR] hello
-\
-	world
-  8	[ LITSTR] hello\n\
-\tworld
+  2	[     ID] main
+  2	[       ] (
+  2	[       ] )
+  3	[  BEGIN] {
+  4	[     ID] A
+  4	[       ] =
+  4	[ LITSTR] 	hello글\$world\$
+  4	[       ] ;
+  5	[     ID] 글
+  5	[       ] =
+  5	[     ID] world
+  5	[       ] ;
+  6	[     ID] str
+  6	[       ] =
+  6	[ LITSTR]  This is NOT 
+		c-string 
+  7	[       ] ;
+  8	[     ID] str2
+  8	[       ] =
+  8	[ LITSTR] How \
+  	   about \
+	   this
+ 10	[       ] ;
+ 12	[     ID] keyw
+ 12	[       ] =
+ 12	[ NUMBER] 4
+ 12	[SNOWMAN] ☃$
+ 12	[       ] ;
+ 12	[     ID] keyw
+ 12	[       ] =
+ 12	[ NUMBER] 3
+ 12	[EUROSIGN] €
+ 12	[       ] ;
+ 13	[    END] }

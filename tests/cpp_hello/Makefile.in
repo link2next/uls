@@ -111,6 +111,9 @@ AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+cpp_hello_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(cpp_hello_CXXFLAGS) \
+	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -304,20 +307,25 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 uls_ver_major = 1
 uls_ver_minor = 9
-uls_ver_debug = 0
+uls_ver_debug = 6
+uls_ver = $(uls_ver_major).$(uls_ver_minor).$(uls_ver_debug)
 so_current = 1
-so_revision = 0
+so_revision = 1
 so_age = 0
 ULS_SYSPROPS = /usr/local/etc/uls/uls.sysprops
 TMP_SYSPROPS = /tmp/uls_sysprops.txt
 ulc2class_exe = $(top_builddir)/tools/ulc2class/ulc2class
 tests_libpath = $(top_builddir)/src:$(top_builddir)/ulscpp
-ACLOCAL_AMFLAGS = -I m4
 CONFIG_CLEAN_FILES = out*.uls
 cpp_hello_SOURCES = cpp_hello.cpp Sample2Lex.cpp
-cpp_hello_CFLAGS = -Wall
+cpp_hello_CXXFLAGS = -Wall -std=c++11
+#cpp_hello_CPPFLAGS = -I$(top_srcdir)/ulscpp \
+#	-I$(top_srcdir)/ulscompat -I$(top_srcdir)/src -DULS_USE_WSTR
+#cpp_hello_LDADD = $(top_builddir)/ulscpp/libulscpp.la \
+#	$(top_builddir)/ulscompat/libulscompat.la $(top_builddir)/src/libuls.la
 cpp_hello_CPPFLAGS = -I$(top_srcdir)/ulscpp -I$(top_srcdir)/src
 cpp_hello_LDADD = $(top_builddir)/ulscpp/libulscpp.la $(top_builddir)/src/libuls.la
+ACLOCAL_AMFLAGS = -I m4
 all: all-am
 
 .SUFFIXES:
@@ -364,7 +372,7 @@ clean-noinstPROGRAMS:
 
 cpp_hello$(EXEEXT): $(cpp_hello_OBJECTS) $(cpp_hello_DEPENDENCIES) $(EXTRA_cpp_hello_DEPENDENCIES) 
 	@rm -f cpp_hello$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(cpp_hello_OBJECTS) $(cpp_hello_LDADD) $(LIBS)
+	$(AM_V_CXXLD)$(cpp_hello_LINK) $(cpp_hello_OBJECTS) $(cpp_hello_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -403,32 +411,32 @@ am--depfiles: $(am__depfiles_remade)
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
 
 cpp_hello-cpp_hello.o: cpp_hello.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cpp_hello_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT cpp_hello-cpp_hello.o -MD -MP -MF $(DEPDIR)/cpp_hello-cpp_hello.Tpo -c -o cpp_hello-cpp_hello.o `test -f 'cpp_hello.cpp' || echo '$(srcdir)/'`cpp_hello.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cpp_hello_CPPFLAGS) $(CPPFLAGS) $(cpp_hello_CXXFLAGS) $(CXXFLAGS) -MT cpp_hello-cpp_hello.o -MD -MP -MF $(DEPDIR)/cpp_hello-cpp_hello.Tpo -c -o cpp_hello-cpp_hello.o `test -f 'cpp_hello.cpp' || echo '$(srcdir)/'`cpp_hello.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/cpp_hello-cpp_hello.Tpo $(DEPDIR)/cpp_hello-cpp_hello.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='cpp_hello.cpp' object='cpp_hello-cpp_hello.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cpp_hello_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o cpp_hello-cpp_hello.o `test -f 'cpp_hello.cpp' || echo '$(srcdir)/'`cpp_hello.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cpp_hello_CPPFLAGS) $(CPPFLAGS) $(cpp_hello_CXXFLAGS) $(CXXFLAGS) -c -o cpp_hello-cpp_hello.o `test -f 'cpp_hello.cpp' || echo '$(srcdir)/'`cpp_hello.cpp
 
 cpp_hello-cpp_hello.obj: cpp_hello.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cpp_hello_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT cpp_hello-cpp_hello.obj -MD -MP -MF $(DEPDIR)/cpp_hello-cpp_hello.Tpo -c -o cpp_hello-cpp_hello.obj `if test -f 'cpp_hello.cpp'; then $(CYGPATH_W) 'cpp_hello.cpp'; else $(CYGPATH_W) '$(srcdir)/cpp_hello.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cpp_hello_CPPFLAGS) $(CPPFLAGS) $(cpp_hello_CXXFLAGS) $(CXXFLAGS) -MT cpp_hello-cpp_hello.obj -MD -MP -MF $(DEPDIR)/cpp_hello-cpp_hello.Tpo -c -o cpp_hello-cpp_hello.obj `if test -f 'cpp_hello.cpp'; then $(CYGPATH_W) 'cpp_hello.cpp'; else $(CYGPATH_W) '$(srcdir)/cpp_hello.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/cpp_hello-cpp_hello.Tpo $(DEPDIR)/cpp_hello-cpp_hello.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='cpp_hello.cpp' object='cpp_hello-cpp_hello.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cpp_hello_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o cpp_hello-cpp_hello.obj `if test -f 'cpp_hello.cpp'; then $(CYGPATH_W) 'cpp_hello.cpp'; else $(CYGPATH_W) '$(srcdir)/cpp_hello.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cpp_hello_CPPFLAGS) $(CPPFLAGS) $(cpp_hello_CXXFLAGS) $(CXXFLAGS) -c -o cpp_hello-cpp_hello.obj `if test -f 'cpp_hello.cpp'; then $(CYGPATH_W) 'cpp_hello.cpp'; else $(CYGPATH_W) '$(srcdir)/cpp_hello.cpp'; fi`
 
 cpp_hello-Sample2Lex.o: Sample2Lex.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cpp_hello_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT cpp_hello-Sample2Lex.o -MD -MP -MF $(DEPDIR)/cpp_hello-Sample2Lex.Tpo -c -o cpp_hello-Sample2Lex.o `test -f 'Sample2Lex.cpp' || echo '$(srcdir)/'`Sample2Lex.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cpp_hello_CPPFLAGS) $(CPPFLAGS) $(cpp_hello_CXXFLAGS) $(CXXFLAGS) -MT cpp_hello-Sample2Lex.o -MD -MP -MF $(DEPDIR)/cpp_hello-Sample2Lex.Tpo -c -o cpp_hello-Sample2Lex.o `test -f 'Sample2Lex.cpp' || echo '$(srcdir)/'`Sample2Lex.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/cpp_hello-Sample2Lex.Tpo $(DEPDIR)/cpp_hello-Sample2Lex.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Sample2Lex.cpp' object='cpp_hello-Sample2Lex.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cpp_hello_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o cpp_hello-Sample2Lex.o `test -f 'Sample2Lex.cpp' || echo '$(srcdir)/'`Sample2Lex.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cpp_hello_CPPFLAGS) $(CPPFLAGS) $(cpp_hello_CXXFLAGS) $(CXXFLAGS) -c -o cpp_hello-Sample2Lex.o `test -f 'Sample2Lex.cpp' || echo '$(srcdir)/'`Sample2Lex.cpp
 
 cpp_hello-Sample2Lex.obj: Sample2Lex.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cpp_hello_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT cpp_hello-Sample2Lex.obj -MD -MP -MF $(DEPDIR)/cpp_hello-Sample2Lex.Tpo -c -o cpp_hello-Sample2Lex.obj `if test -f 'Sample2Lex.cpp'; then $(CYGPATH_W) 'Sample2Lex.cpp'; else $(CYGPATH_W) '$(srcdir)/Sample2Lex.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cpp_hello_CPPFLAGS) $(CPPFLAGS) $(cpp_hello_CXXFLAGS) $(CXXFLAGS) -MT cpp_hello-Sample2Lex.obj -MD -MP -MF $(DEPDIR)/cpp_hello-Sample2Lex.Tpo -c -o cpp_hello-Sample2Lex.obj `if test -f 'Sample2Lex.cpp'; then $(CYGPATH_W) 'Sample2Lex.cpp'; else $(CYGPATH_W) '$(srcdir)/Sample2Lex.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/cpp_hello-Sample2Lex.Tpo $(DEPDIR)/cpp_hello-Sample2Lex.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Sample2Lex.cpp' object='cpp_hello-Sample2Lex.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cpp_hello_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o cpp_hello-Sample2Lex.obj `if test -f 'Sample2Lex.cpp'; then $(CYGPATH_W) 'Sample2Lex.cpp'; else $(CYGPATH_W) '$(srcdir)/Sample2Lex.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(cpp_hello_CPPFLAGS) $(CPPFLAGS) $(cpp_hello_CXXFLAGS) $(CXXFLAGS) -c -o cpp_hello-Sample2Lex.obj `if test -f 'Sample2Lex.cpp'; then $(CYGPATH_W) 'Sample2Lex.cpp'; else $(CYGPATH_W) '$(srcdir)/Sample2Lex.cpp'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -557,7 +565,7 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic clean-libtool clean-noinstPROGRAMS \
+clean-am: clean-generic clean-libtool clean-local clean-noinstPROGRAMS \
 	mostlyclean-am
 
 distclean: distclean-am
@@ -631,15 +639,15 @@ uninstall-am:
 .MAKE: install-am install-strip
 
 .PHONY: CTAGS GTAGS TAGS all all-am am--depfiles check check-am clean \
-	clean-generic clean-libtool clean-noinstPROGRAMS cscopelist-am \
-	ctags ctags-am distclean distclean-compile distclean-generic \
-	distclean-libtool distclean-tags distdir dvi dvi-am html \
-	html-am info info-am install install-am install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
+	clean-generic clean-libtool clean-local clean-noinstPROGRAMS \
+	cscopelist-am ctags ctags-am distclean distclean-compile \
+	distclean-generic distclean-libtool distclean-tags distdir dvi \
+	dvi-am html html-am info info-am install install-am \
+	install-data install-data-am install-dvi install-dvi-am \
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
 	tags tags-am uninstall uninstall-am
@@ -654,6 +662,9 @@ $(cpp_hello_OBJECTS) : Sample2Lex.cpp Sample2Lex.h
 
 Sample2Lex.cpp Sample2Lex.h : sample2.uld
 	ULS_SYSPROPS=$(TMP_SYSPROPS) $(ulc2class_exe) -lcpp -n AAA.BBB.Sample2Lex -f Sample2Lex $<
+
+clean-local:
+	@rm -f Sample1Lex.cpp Sample1Lex.h Sample2Lex.cpp Sample2Lex.h
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

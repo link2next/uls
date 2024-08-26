@@ -96,9 +96,7 @@ ULS_DEFINE_STRUCT_BEGIN(source)
 	uls_callback_type_this(ungrab_isource) usrc_ungrab;
 };
 
-#define ULS_INP_FL_READONLY    0x0001
 #define ULS_INP_FL_REFILL_NULL 0x0100
-
 ULS_DEFINE_STRUCT_BEGIN(input)
 {
 	uls_flags_t flags;
@@ -123,7 +121,7 @@ void uls_deinit_commtype(uls_commtype_ptr_t qmt);
 
 int input_skip_comment(uls_commtype_ptr_t cmt, uls_input_ptr_t inp, uls_ptrtype_tool(outparam) parms);
 int input_quote_proc(uls_input_ptr_t inp, uls_quotetype_ptr_t qmt, _uls_ptrtype_tool(csz_str) ss_dst, uls_ptrtype_tool(outparam) parms);
-int input_space_proc(const char* ch_ctx, uls_input_ptr_t inp, _uls_ptrtype_tool(csz_str) ss_dst, int len_surplus, uls_ptrtype_tool(outparam) parms0);
+int input_space_proc(const char* ch_ctx, uls_input_ptr_t inp, _uls_ptrtype_tool(csz_str) ss_dst, uls_ptrtype_tool(outparam) parms0);
 
 void uls_init_isource(uls_source_ptr_t isrc);
 void uls_deinit_isource(uls_source_ptr_t isrc);
@@ -143,12 +141,12 @@ void uls_input_change_filler_null(uls_input_ptr_t inp);
 void uls_input_change_filler(uls_input_ptr_t inp,
 	uls_voidptr_t isrc, uls_fill_isource_t fill_rawbuf, uls_ungrab_isource_t ungrab_proc);
 
-int uls_input_readn(uls_source_ptr_t isrc, char *buf, int buflen0, int bufsiz);
-int uls_regulate_rawbuf(uls_input_ptr_t inp);
+int uls_input_read(uls_source_ptr_t isrc, char *buf, int buflen0, int bufsiz);
+void uls_regulate_rawbuf(uls_input_ptr_t inp);
 int uls_resize_rawbuf(uls_input_ptr_t inp, int delta);
 
-int uls_input_refill_null(uls_input_ptr_t inp, int n_bytes);
-int uls_input_refill_buffer(uls_input_ptr_t inp, int n_bytes);
+int uls_input_refill_null(uls_input_ptr_t inp, int n_req_bytes);
+int uls_input_refill_buffer(uls_input_ptr_t inp, int n_req_bytes);
 
 int uls_init_line_in_input(uls_input_ptr_t inp, const char* line, int n_bytes, int ipos);
 void uls_ungrab_linecheck(uls_source_ptr_t isrc);
@@ -156,9 +154,7 @@ void uls_ungrab_linecheck(uls_source_ptr_t isrc);
 int uls_fill_null_source(uls_source_ptr_t isrc, char* buf, int buflen, int bufsiz);
 void uls_ungrab_null_source(uls_source_ptr_t isrc);
 
-int uls_fill_fd_source_utf8(uls_source_ptr_t isrc, char *buf, int buflen, int bufsiz);
-int uls_fill_fd_source_utf16(uls_source_ptr_t isrc, char *buf, int buflen, int bufsiz);
-int uls_fill_fd_source_utf32(uls_source_ptr_t isrc, char *buf, int buflen, int bufsiz);
+int uls_fill_fd_isrc_utf8(uls_source_ptr_t isrc, char *buf, int buflen, int bufsiz);
 
 #endif // ULS_DECL_PROTECTED_PROC
 

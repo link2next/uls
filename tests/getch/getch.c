@@ -35,52 +35,50 @@
 #include "uls/uls_lex.h"
 #include "uls/uls_log.h"
 #include "uls/uls_util.h"
-#include "uls/uls_init.h"
 
 #include <stdlib.h>
 #include <string.h>
 
 #include "sample_lex.h"
 
-const char *progname;
+LPCTSTR progname;
 int  test_mode = -1;
 int  opt_verbose;
-const char *config_name;
-char *input_file;
-uls_lex_t *sample_lex;
+LPCTSTR config_name;
+LPTSTR input_file;
 
 static void usage(void)
 {
-	err_log("usage: %s [-m <test-mode>] <input-file>", progname);
-	err_log("\t%s input1.txt", progname);
-	err_log("\t%s -m1 input1.txt", progname);
+	err_log(_T("usage: %s [-m <test-mode>] <input-file>"), progname);
+	err_log(_T("\t%s input1.txt"), progname);
+	err_log(_T("\t%s -m1 input1.txt"), progname);
 }
 
 static int
-options(int opt, char* optarg)
+options(int opt, LPTSTR optarg)
 {
 	int stat = 0;
 
 	switch (opt) {
-	case 'c':
+	case _T('c'):
 		config_name = optarg;
 		break;
 
-	case 'm':
-		test_mode = atoi(optarg);
+	case _T('m'):
+		test_mode = ult_str2int(optarg);
 		break;
 
-	case 'v':
+	case _T('v'):
 		opt_verbose = 1;
 		break;
 
-	case 'h':
+	case _T('h'):
 		usage();
 		stat = 1;
 		break;
 
 	default:
-		err_log("undefined option -%c", opt);
+		err_log(_T("undefined option -%c"), opt);
 		usage();
 		stat = -1;
 		break;
@@ -90,18 +88,18 @@ options(int opt, char* optarg)
 }
 
 void
-test_get_ch(void)
+test_get_ch(uls_lex_ptr_t uls)
 {
 	int tok_id, is_quote;
 	uls_nextch_detail_t detail;
 	uls_wch_t wch;
 
-	uls_set_file(sample_lex, input_file, 0);
-	// uls_set_line(sample_lex, "hello world", -1, 0);
+	uls_set_file(uls, input_file, 0);
+	// uls_set_line(uls, "hello world", -1, 0);
 
 	while (1) {
 		is_quote = 0;
-		if ((wch = uls_get_uch(sample_lex, &detail)) == ULS_UCH_NONE) {
+		if ((wch = uls_get_uch(uls, &detail)) == ULS_UCH_NONE) {
 			if (detail.tok == tokEOI || detail.tok == tokEOF) {
 				break;
 			}
@@ -111,136 +109,146 @@ test_get_ch(void)
 		}
 
 		if (is_quote) {
-			tok_id = uls_get_tok(sample_lex);
-			uls_printf(" str = '%s' (%d)\n", uls_lexeme(sample_lex), tok_id);
+			tok_id = uls_get_tok(uls);
+			uls_printf(_T(" str = '%s' (%d)\n"), uls_lexeme(uls), tok_id);
 		} else {
-			uls_printf(" ch = '%c'\n", (char) wch);
+			uls_printf(_T(" ch = '%c'\n"), (char) wch);
 		}
 	}
-	uls_dismiss_input(sample_lex);
+	uls_pop_all(uls);
 }
 
 void
-test_want_eof(void)
+test_want_eof(uls_lex_ptr_t uls)
 {
 	int tok_id;
 
-	uls_set_line(sample_lex, "hello world", -1, 0); // ULS_WANT_EOFTOK
+	uls_set_line(uls, _T("hello world"), -1, 0); // ULS_WANT_EOFTOK
 
 	while (1) {
-		tok_id = uls_get_tok(sample_lex);
+		tok_id = uls_get_tok(uls);
 		if (tok_id == tokEOI) break;
 
-		uls_dumpln_tok(sample_lex);
+		uls_dumpln_tok(uls);
 	}
 
-	uls_push_file(sample_lex, input_file, 0);
-	uls_want_eof(sample_lex);
+	uls_push_file(uls, input_file, 0);
+	uls_want_eof(uls);
 
 	while (1) {
-		tok_id = uls_get_tok(sample_lex);
+		tok_id = uls_get_tok(uls);
 		if (tok_id == tokEOI) break;
 
-		uls_dumpln_tok(sample_lex);
+		uls_dumpln_tok(uls);
 	}
 }
 
 static void
-dump_next_tok(int linefeed)
+dump_next_tok(uls_lex_ptr_t uls, int linefeed)
 {
-	const char *suff = NULL;
+	LPCTSTR suff = NULL;
 
-	if (linefeed) suff = "\n";
+	if (linefeed) suff = _T("\n");
 
-	uls_get_tok(sample_lex);
-	uls_dump_tok(sample_lex, "\t", suff);
+	uls_get_tok(uls);
+	uls_dump_tok(uls, _T("\t"), suff);
 }
 
 int
-test_unget(void)
+test_unget(uls_lex_ptr_t uls)
 {
 	void *xdef;
 	int rc;
 
-	err_log("setting tok-info of tokID:%d ...", tokID);
-	if ((rc = uls_set_extra_tokdef(sample_lex, tokID, (void *) 0x777)) < 0) {
-		err_log("can't find the tok-info of tokID:%d", tokID);
+	err_log(_T("setting tok-info of tokID:%d ..."), tokID);
+	if ((rc = uls_set_extra_tokdef(uls, tokID, (void *) 0x777)) < 0) {
+		err_log(_T("can't find the tok-info of tokID:%d"), tokID);
 		return -1;
 	}
 
-	uls_set_line(sample_lex, "hello world", -1, 0);
+	uls_set_line(uls, _T("hello world"), -1, 0);
 
-/* 1 */
-	dump_next_tok(0);
-	xdef = uls_get_current_extra_tokdef(sample_lex);
-	uls_printf(" --- xdef[tokID] = 0x%X\n", xdef);
+	/* 1 */
+	dump_next_tok(uls, 0);
+	xdef = uls_get_current_extra_tokdef(uls);
+	uls_printf(_T(" --- xdef[tokID] = 0x%X\n"), xdef);
 
-/* 2 */
-	uls_unget_tok(sample_lex);
-	dump_next_tok(0);
-	xdef = uls_get_current_extra_tokdef(sample_lex);
-	uls_printf(" --- xdef[tokID] = 0x%X\n", xdef);
+	/* 2 */
+	uls_unget_tok(uls);
+	dump_next_tok(uls, 0);
+	xdef = uls_get_current_extra_tokdef(uls);
+	uls_printf(_T(" --- xdef[tokID] = 0x%X\n"), xdef);
 
-/* 3 */
-	uls_skip_blanks(sample_lex);
-	uls_unget_str(sample_lex, "hello");
-	dump_next_tok(1);
+	/* 3 */
+	uls_skip_blanks(uls);
+	uls_unget_str(uls, _T("hello"));
+	dump_next_tok(uls, 1);
 
-/* 4 */
-	uls_unget_str(sample_lex, "hello");
-	uls_unget_ch(sample_lex, 'w');
-	dump_next_tok(1);
+	/* 4 */
+	uls_unget_str(uls, _T("hello"));
+	uls_unget_ch(uls, _T('w'));
+	dump_next_tok(uls, 1);
 
-/* 5 */
-	uls_unget_lexeme(sample_lex, ".314", tokNUM);
-	dump_next_tok(1);
+	/* 5 */
+	uls_unget_lexeme(uls, _T(".314"), tokNUM);
+	dump_next_tok(uls, 1);
 
-/* 6 */
-	uls_unget_lexeme(sample_lex, " world hello ", tokDQUOTE);
-	dump_next_tok(1);
-
-	uls_dismiss_input(sample_lex);
+	/* 6 */
+	uls_unget_lexeme(uls, _T(" world hello "), tokDQUOTE);
+	dump_next_tok(uls, 1);
 
 	return 0;
 }
 
 int
-main(int argc, char* argv[])
+_tmain(int n_targv, LPTSTR *targv)
 {
+	uls_lex_ptr_t sample_lex;
 	int i0;
 
-	initialize_uls();
-	progname = uls_filename(argv[0], NULL);
-	config_name = "sample.ulc";
+	progname = uls_split_filepath(targv[0], NULL);
+	config_name = _T("sample.ulc");
 
-	if ((i0=uls_getopts(argc, argv, "c:m:vh", options)) <= 0) {
+	if ((i0=uls_getopts(n_targv, targv, _T("c:m:vh"), options)) <= 0) {
 		return i0;
 	}
 
-	if (i0 < argc) {
-		input_file = argv[i0];
+	if (i0 < n_targv) {
+		input_file = targv[i0];
 	}
 
 	if ((sample_lex = uls_create(config_name)) == NULL) {
-		err_log("can't create uls-object");
+		err_log(_T("can't create uls-object"));
 		return -1;
 	}
 
 	switch (test_mode) {
 	case 0:
-		test_get_ch();
+		test_get_ch(sample_lex);
 		break;
 	case 1:
-		test_want_eof();
+		test_want_eof(sample_lex);
 		break;
 	case 2:
-		test_unget();
+		test_unget(sample_lex);
 		break;
 	default:
 		break;
 	}
 
 	uls_destroy(sample_lex);
-
 	return 0;
+}
+
+int
+main(int argc, char *argv[])
+{
+	LPTSTR *targv;
+	int stat;
+
+	ULS_GET_WARGS_LIST(argc, argv, targv);
+	stat = _tmain(argc, targv);
+	ULS_PUT_WARGS_LIST(argc, targv);
+
+	return stat;
 }

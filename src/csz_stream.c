@@ -44,7 +44,7 @@ ULS_DECL_STATIC char*
 ULS_QUALIFIED_METHOD(__find_in_pool)(uls_outbuf_ptr_t outbuf, int siz)
 {
 	csz_buf_line_ptr_t  e_prev, e, e_next;
-	char *line0;
+	char *line1;
 
 	if ((e=csz_global->active_list) == nilptr || siz > e->size) {
 		outbuf->buf = NULL;
@@ -55,7 +55,7 @@ ULS_QUALIFIED_METHOD(__find_in_pool)(uls_outbuf_ptr_t outbuf, int siz)
 	for (e_prev = nilptr; e != nilptr; e_prev = e, e = e_next) {
 		e_next = e->next;
 
-		if (e->size == siz || e_next == nilptr || e_next->size < siz) {
+		if (e->size == siz || e_next == nilptr || siz > e_next->size) {
 			// detach e from the list
 			if (e_prev != nilptr) {
 				e_prev->next = e_next;
@@ -66,7 +66,7 @@ ULS_QUALIFIED_METHOD(__find_in_pool)(uls_outbuf_ptr_t outbuf, int siz)
 		}
 	}
 
-	outbuf->buf = line0 = e->line;
+	outbuf->buf = line1 = e->line;
 	outbuf->siz = e->size;
 
 	e->line = NULL;
@@ -75,31 +75,31 @@ ULS_QUALIFIED_METHOD(__find_in_pool)(uls_outbuf_ptr_t outbuf, int siz)
 	e->next = csz_global->inactive_list;
 	csz_global->inactive_list = e;
 
-	return line0;
+	return line1;
 }
 
 ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(__release_in_pool)(char* ptr, int siz)
 {
-	csz_buf_line_ptr_t  e_prev, e, e0;
+	csz_buf_line_ptr_t  e_prev, e, e1;
 
 	if (siz <= 0 || csz_global->inactive_list == nilptr)
 		return 0;
 
-	e0 = csz_global->inactive_list;
-	csz_global->inactive_list = e0->next;
+	e1 = csz_global->inactive_list;
+	csz_global->inactive_list = e1->next;
 
-	e0->line = ptr;
-	e0->size = siz;
+	e1->line = ptr;
+	e1->size = siz;
 
 	for (e_prev = nilptr, e = csz_global->active_list; ; e_prev = e, e = e->next) {
 		if (e == nilptr || siz >= e->size) {
 			if (e_prev != nilptr) {
-				e0->next = e;
-				e_prev->next = e0;
+				e1->next = e;
+				e_prev->next = e1;
 			} else {
-				e0->next = csz_global->active_list;
-				csz_global->active_list = e0;
+				e1->next = csz_global->active_list;
+				csz_global->active_list = e1;
 			}
 			break;
 		}
@@ -132,7 +132,7 @@ ULS_QUALIFIED_METHOD(__reset_csz_pool)(void)
 {
 	csz_buf_line_ptr_t  e, e_next;
 
-	for (e=csz_global->active_list; e!=nilptr; e=e_next) {
+	for (e = csz_global->active_list; e != nilptr; e = e_next) {
 		e_next = e->next;
 
 		uls_mfree(e->line);
@@ -174,7 +174,7 @@ ULS_QUALIFIED_METHOD(__str_modify)(uls_outbuf_ptr_t outbuf, int n_delta, int k, 
 	}
 
 	if (str != NULL && len > 0) {
-		uls_memcopy(bufptr+k, str, len);
+		uls_memmove(bufptr+k, str, len);
 	}
 }
 
@@ -232,7 +232,7 @@ ULS_QUALIFIED_METHOD(str_init)(uls_outbuf_ptr_t outbuf, int siz)
 
 	if (outbuf->buf == NULL) {
 		if (siz < 0) siz = 128;
-		outbuf->buf = uls_malloc_buffer(siz);
+		outbuf->buf = (char *) uls_malloc(siz);
 		outbuf->siz = siz;
 	}
 
@@ -407,7 +407,7 @@ ULS_QUALIFIED_METHOD(csz_append)(csz_str_ptr_t csz, const char* str, int len)
 	__str_modify(uls_ptr(csz->pool), csz->alloc_delta, k, NULL, len+1);
 
 	if (str != NULL) {
-		uls_memcopy(csz->pool.buf + k, str, len);
+		uls_memmove(csz->pool.buf + k, str, len);
 	}
 
 	csz->len = k + len;
@@ -431,10 +431,16 @@ ULS_QUALIFIED_METHOD(csz_putc)(csz_str_ptr_t csz, char ch)
 }
 
 void
+ULS_QUALIFIED_METHOD(csz_add_ch)(csz_str_ptr_t csz, char ch)
+{
+	__str_putc(uls_ptr(csz->pool), csz->alloc_delta, csz->len, ch);
+	++csz->len;
+}
+
+void
 ULS_QUALIFIED_METHOD(csz_add_eos)(csz_str_ptr_t csz)
 {
-	__str_putc(uls_ptr(csz->pool), csz->alloc_delta, csz->len, '\0');
-	++csz->len;
+	csz_add_ch(csz, '\0');
 }
 
 char*

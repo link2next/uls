@@ -29,7 +29,7 @@
 #include "main.h"
 
 int
-print_tmpl_stream_file(uls_ostream_t *ostr, uls_lex_t* uls)
+print_tmpl_stream_file(uls_ostream_t *ostr, uls_lex_ptr_t uls)
 {
 	csz_str_t tag_buf;
 	const char *lxm;
@@ -60,7 +60,7 @@ print_tmpl_stream_file(uls_ostream_t *ostr, uls_lex_t* uls)
 
 		} else if (lno != uls_get_lineno(uls)) {
 			lno = uls_get_lineno(uls);
-			uls_print_tok_linenum(ostr, lno, NULL);
+			__uls_print_tok_linenum(ostr, lno, NULL, 0);
 		}
 
 		if (uls_is_eof(uls) || uls_is_eoi(uls)) {

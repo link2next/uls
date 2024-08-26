@@ -57,7 +57,7 @@ ULS_DEFINE_STRUCT(istream)
 #ifdef ULS_FDF_SUPPORT
 	fdf_t   *fdf; // fd ---> fdf --->
 #endif
-	uls_def_namebuf(firstline, ULS_MAGICCODE_SIZE); // for magic-code-string
+	char    *firstline;
 	int     len_firstline;
 	int     start_off;
 
@@ -70,7 +70,6 @@ ULS_DEFINE_STRUCT(istream)
 #if defined(__ULS_ISTREAM__) || defined(ULS_DECL_PRIVATE_PROC)
 ULS_DECL_STATIC void __init_istream(uls_istream_ptr_t istr);
 ULS_DECL_STATIC uls_istream_ptr_t __create_istream(int fd);
-ULS_DECL_STATIC void __destroy_istream(uls_istream_ptr_t istr);
 ULS_DECL_STATIC int make_tokpkt_seqence(uls_lex_ptr_t uls, const char* line, uls_tmpl_pool_ptr_t tmpls_pool);
 ULS_DECL_STATIC void make_eoif_lexeme_bin(uls_context_ptr_t ctx, int tok_id, const char *txt, int txtlen);
 
@@ -79,21 +78,24 @@ ULS_DECL_STATIC int parse_uls_hdr(char* line, int fd_in, uls_istream_ptr_t istr)
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC
+#define uls_istr_grab(istr) (++(istr)->ref_cnt)
+#define uls_istr_ungrab(istr) uls_destroy_istream(istr)
+
+void __destroy_istream(uls_istream_ptr_t istr);
 int check_istr_compatibility(uls_istream_ptr_t istr, uls_lex_ptr_t uls);
 int uls_check_stream_ver(uls_stream_header_ptr_t hdr, uls_lex_ptr_t uls);
-int get_rawfile_subtype(char *buff, int n_bytes, uls_ptrtype_tool(outparam) parms);
+int get_rawfile_subtype(const char *buff, int n_bytes, uls_ptrtype_tool(outparam) parms);
 
 void uls_ungrab_fd_utf(uls_source_ptr_t isrc);
 
 uls_tmpl_pool_ptr_t uls_import_tmpls(uls_tmpl_list_ptr_t tmpl_list, uls_lex_ptr_t uls);
 int uls_bind_tmpls(uls_istream_ptr_t istr, uls_tmpl_list_ptr_t tmpl_list);
-int __uls_bind_istream_tmpls(uls_istream_ptr_t istr, uls_lex_ptr_t uls, uls_tmpl_list_ptr_t tmpl_list);
 
 int uls_fill_fd_stream(uls_source_ptr_t isrc, char* buf, int buflen, int bufsiz);
 void uls_ungrab_fd_stream(uls_source_ptr_t isrc);
 
 int uls_gettok_bin(uls_lex_ptr_t uls);
-#endif // ULS_DECL_PROTECTED_PROC
+#endif
 
 #ifdef ULS_DECL_PUBLIC_PROC
 ULS_DLL_EXTERN void uls_set_istream_tag(uls_istream_ptr_t istr, const char* tag);
@@ -108,17 +110,13 @@ ULS_DLL_EXTERN uls_istream_ptr_t uls_open_istream_filter_file(fdf_t* fdf, const 
 ULS_DLL_EXTERN uls_istream_ptr_t uls_open_istream_filter_fp(fdf_t* fdf, FILE *fp);
 #endif
 
-ULS_DLL_EXTERN void uls_destroy_istream(uls_istream_ptr_t istr);
+ULS_DLL_EXTERN int uls_destroy_istream(uls_istream_ptr_t istr);
 #define uls_close_istream uls_destroy_istream
 
-ULS_DLL_EXTERN int uls_rewind_istream(uls_istream_ptr_t istr);
 ULS_DLL_EXTERN int uls_bind_istream(uls_istream_ptr_t istr, uls_lex_ptr_t uls);
-
 ULS_DLL_EXTERN int uls_read_tok(uls_istream_ptr_t istr, uls_ptrtype_tool(outparam) parms);
 
-ULS_DLL_EXTERN int _uls_get_raw_input_subtype(FILE* fp);
 ULS_DLL_EXTERN int _uls_const_TMPLS_DUP(void);
-
 ULS_DLL_EXTERN uls_istream_ptr_t ulsjava_open_istream_file(const void *filepath, int len_filepath);
 #endif // ULS_DECL_PUBLIC_PROC
 

@@ -32,53 +32,62 @@
 */
 #include "Css3Lex.h"
 #include <uls/UlsUtils.h>
+#include <iostream>
 
 using namespace std;
-using namespace uls;
 using namespace uls::collection;
+
+using tstring = uls::tstring;
+using otstringstream = uls::otstringstream;
 
 namespace
 {
-	string config_name = "css3.ulc";
-	const char * PACKAGE_NAME = "Css3Toks";
+	tstring config_name = _T("css3.ulc");
+	LPCTSTR PACKAGE_NAME = _T("Css3Toks");
 	int  opt_verbose;
 
 	void Usage(void)
 	{
-		err_log("Usage: %s <css3-file>", PACKAGE_NAME);
-		err_log("   Dumping the tokens in css3 file.");
-		err_log("%s home page: <%s>\n", PACKAGE_NAME, ULS_URL);
+		otstringstream oss;
+
+		oss << _T("Usage: ") << PACKAGE_NAME << _T(" <css3-file>") << _tendl;
+		oss << _T("   Dumping the tokens in css3 file.") << _tendl;
+		oss << _T("Home page: ") << ULS_URL << _tendl;
+
+		_tcerr << oss.str() << _tendl;
 	}
 
 	void Version(void)
 	{
-		err_log(ULS_GREETING);
-		err_log("Copyright (C) %d-%d All rights reserved.",
-			ULS_COPYRIGHT_YEAR_START, ULS_COPYRIGHT_YEAR_CURRENT);
-		err_log("Unless required by applicable law or agreed to in writing, software");
-		err_log("distributed under the License is distributed on an \"AS IS\" BASIS,");
-		err_log("WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.");
-		err_log("");
+		otstringstream oss;
+
+		oss << ULS_GREETING << _tendl;
+		oss << _T("Copyright (C) ") << ULS_COPYRIGHT_YEAR_START << _T("-") <<  ULS_COPYRIGHT_YEAR_CURRENT << _T(" All rights reserved.") << _tendl;
+		oss << _T("Unless required by applicable law or agreed to in writing, software") << _tendl;
+		oss << _T("distributed under the License is distributed on an \"AS IS\" BASIS,") << _tendl;
+		oss << _T("WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.") << _tendl;
+
+		_tcerr << oss.str() << _tendl;
 	}
 
-	int css3toks_options(int opt, char * optarg)
+	int css3toks_options(int opt, LPTSTR optarg)
 	{
 		int   stat = 0;
 
 		switch (opt) {
-		case 'v':
+		case _T('v'):
 			opt_verbose = 1;
 			break;
-		case 'h':
+		case _T('h'):
 			Usage();
 			stat = 1;
 			break;
-		case 'V':
+		case _T('V'):
 			Version();
 			stat = 1;
 			break;
 		default:
-			err_log("undefined option -%c", opt);
+			_tcerr << _T("undefined option -") << (TCHAR) opt << _tendl;
 			stat = -1;
 			break;
 		}
@@ -88,22 +97,25 @@ namespace
 
 	// <brief>
 	// This is a virtual method, inherited from 'UlsLex' class.
-	// This prints to the stdout the string representation of the current token.
+	// This prints the string representation of the current token to the stdout.
 	// </brief>
 	// <return>none</return>
 	void dumpToken(Css3Lex *css3lex)
 	{
 		int t = css3lex->getTokNum();
-		const char * tstr = css3lex->getTokStr().c_str();
+
+		tstring* lxm;
+		css3lex->getTokStr(&lxm);
+		LPCTSTR tstr = lxm->c_str();
 
 		if (t == Css3Lex::CSS_ID) {
-			uls_printf("\t[     ID] %s\n", tstr);
+			css3lex->printf(_T("\t[     ID] %s\n"), tstr);
 		}
 		else if (t == Css3Lex::CSS_NUM) {
-			uls_printf("\t[    NUM] %s\n", tstr);
+			css3lex->printf(_T("\t[    NUM] %s\n"), tstr);
 		}
 		else if (t == Css3Lex::CSS_PATH) {
-			uls_printf("\t[   PATH] '%s'\n", tstr);
+			css3lex->printf(_T("\t[   PATH] '%s'\n"), tstr);
 		}
 		else {
 			css3lex->dumpTok();
@@ -124,20 +136,20 @@ namespace
 }
 
 int
-main(int argc, char **argv)
+_tmain(int n_targv, LPTSTR *targv)
 {
 	Css3Lex *css3lex;
-	string input_file;
+	tstring input_file;
 	int   i0;
 
-	if ((i0=uls_getopts(argc, argv, "vhV", css3toks_options)) <= 0) {
+	if ((i0=uls::parseCommandOptions(n_targv, targv, _T("L:vhV"), css3toks_options)) <= 0) {
 		return i0;
 	}
 
 	css3lex = new Css3Lex(config_name);
 
-	if (i0 < argc) {
-		input_file = argv[i0];
+	if (i0 < n_targv) {
+		input_file = targv[i0];
 	} else {
 		Usage();
 		return 1;
@@ -147,6 +159,20 @@ main(int argc, char **argv)
 	dumpTokens(css3lex);
 
 	delete css3lex;
-
 	return 0;
 }
+
+#ifndef __WINDOWS__
+int
+main(int argc, char *argv[])
+{
+	LPTSTR *targv;
+	int stat;
+
+	ULSCPP_GET_WARGS_LIST(argc, argv, targv);
+	stat = _tmain(argc, targv);
+	ULSCPP_PUT_WARGS_LIST(argc, targv);
+
+	return stat;
+}
+#endif

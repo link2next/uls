@@ -33,52 +33,61 @@
 
 #include "MkfLex.h"
 #include <uls/UlsUtils.h>
+#include <iostream>
 
 using namespace std;
-using namespace uls;
 using namespace uls::collection;
+
+using tstring = uls::tstring;
+using otstringstream = uls::otstringstream;
 
 namespace
 {
-	const char * PACKAGE_NAME = "MkfToks";
-	string config_name = "mkf.ulc";
+	LPCTSTR PACKAGE_NAME = _T("MkfToks");
+	tstring config_name = _T("mkf.ulc");
 	int  opt_verbose;
 
 	void Usage(void)
 	{
-		err_log("usage(%s): dumping the tokens defined as in 'sample.ulc'", PACKAGE_NAME);
-		err_log("\t%s -c <config-file> <makefile>", PACKAGE_NAME);
+		otstringstream oss;
+
+		oss << _T("Dumping the tokens in Makefile.") << _tendl;
+		oss << _T("Usage:") << PACKAGE_NAME << _T(" <makefile>") << _tendl;
+
+		_tcerr << oss.str() << _tendl;
 	}
 
 	void Version(void)
 	{
-		err_log(ULS_GREETING);
-		err_log("Copyright (C) %d-%d All rights reserved.",
-			ULS_COPYRIGHT_YEAR_START, ULS_COPYRIGHT_YEAR_CURRENT);
-		err_log("Unless required by applicable law or agreed to in writing, software");
-		err_log("distributed under the License is distributed on an \"AS IS\" BASIS,");
-		err_log("WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.");
-		err_log("");
+		otstringstream oss;
+
+		oss << ULS_GREETING << _tendl;
+		oss << _T("Copyright (C) ") << ULS_COPYRIGHT_YEAR_START << _T("-") <<  ULS_COPYRIGHT_YEAR_CURRENT << _T(" All rights reserved.") << _tendl;
+		oss << _T("Unless required by applicable law or agreed to in writing, software") << _tendl;
+		oss << _T("distributed under the License is distributed on an \"AS IS\" BASIS,") << _tendl;
+		oss << _T("WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.") << _tendl;
+
+		_tcerr << oss.str() << _tendl;
 	}
 
-	int mkftoks_options(int opt, char * optarg)
+	int mkftoks_options(int opt, LPTSTR optarg)
 	{
 		int   stat = 0;
 
 		switch (opt) {
-		case 'v':
+		case _T('v'):
 			opt_verbose = 1;
 			break;
-		case 'h':
+		case _T('h'):
 			Usage();
 			stat = 1;
 			break;
-		case 'V':
+		case _T('V'):
 			Version();
 			stat = 1;
 			break;
 		default:
-			err_log("undefined option -%c", opt);
+			_tcerr << _T("undefined option -") << (TCHAR) opt << _tendl;
 			stat = -1;
 			break;
 		}
@@ -94,7 +103,10 @@ namespace
 	void dumpToken(MkfLex *mkflex)
 	{
 		int t = mkflex->getTokNum();
-		const char * tstr = mkflex->getTokStr().c_str();
+
+		tstring* lxm;
+		mkflex->getTokStr(&lxm);
+		LPCTSTR tstr = lxm->c_str();
 
 		switch (t) {
 		case MkfLex::TABBLK:
@@ -103,15 +115,15 @@ namespace
 			*    the mkf command block of a makefile rule,
 			* subdivide the TokStr of it and get tokens from it using by uls_push_line().
 			*/
-			uls_printf("\t[ TABBLK] %s\n", tstr);
+			mkflex->printf(_T("\t[ TABBLK] %s\n"), tstr);
 			break;
 
 		case MkfLex::WORD:
-			uls_printf("\t[   WORD] %s\n", tstr);
+			mkflex->printf(_T("\t[   WORD] %s\n"), tstr);
 			break;
 
 		case MkfLex::NUM:
-			uls_printf("\t[    NUM] %s\n", tstr);
+			mkflex->printf(_T("\t[    NUM] %s\n"), tstr);
 			break;
 
 		default:
@@ -130,7 +142,7 @@ namespace
 
 		for ( ; ; ) {
 			if ((t=mkflex->getTok()) == MkfLex::ERR) {
-				err_log("Error to the tokenizer!");
+				_tcerr << _T("Error in tokenizing!") << _tendl;
 				break;
 			}
 
@@ -144,27 +156,27 @@ namespace
 }
 
 int
-main(int argc, char **argv)
+_tmain(int n_targv, LPTSTR *targv)
 {
 	MkfLex *mkflex;
-	string input_file;
+	tstring input_file;
 	int   i0;
 
-	if ((i0=uls_getopts(argc, argv, "vhV", mkftoks_options)) <= 0) {
+	if ((i0=uls::parseCommandOptions(n_targv, targv, _T("vhV"), mkftoks_options)) <= 0) {
 		return i0;
 	}
 
 	mkflex = new MkfLex(config_name);
 
-	if (i0 < argc) {
-		input_file = argv[i0];
+	if (i0 < n_targv) {
+		input_file = targv[i0];
 	} else {
 		Usage();
 		return 1;
 	}
 
 	if (mkflex->include(input_file) < 0) {
-		err_log("can't open '%s'", input_file.c_str());
+		_tcerr << _T("Can't open ") << input_file << _tendl;
 	} else {
 		dumpTokens(mkflex);
 	}
@@ -173,3 +185,17 @@ main(int argc, char **argv)
 	return 0;
 }
 
+#ifndef __WINDOWS__
+int
+main(int argc, char *argv[])
+{
+	LPTSTR *targv;
+	int stat;
+
+	ULSCPP_GET_WARGS_LIST(argc, argv, targv);
+	stat = _tmain(argc, targv);
+	ULSCPP_PUT_WARGS_LIST(argc, targv);
+
+	return stat;
+}
+#endif

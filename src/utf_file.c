@@ -69,7 +69,7 @@ ULS_QUALIFIED_METHOD(is_utf_id)(uls_wch_t wch)
 		(uls_native_vptr_t) uls_array_slots_type01(uls_ptr(id_range_list1)), id_range_list1.n, sizeof(uls_uch_range_t), id_range_comp);
 #endif
 	if (id_range != nilptr) {
-		return 1;
+		return 1; // true
 	}
 
 	return 0;
