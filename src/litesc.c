@@ -163,9 +163,12 @@ ULS_QUALIFIED_METHOD(uls_dealloc_escmap_container)(uls_escmap_container_ptr_t wr
 void
 ULS_QUALIFIED_METHOD(uls_init_escmap_pool)(uls_escmap_pool_ptr_t escmap_pool)
 {
+	_uls_ptrtype_tool(csz_str) csz;
 	int n;
 
-	_uls_tool(csz_init)(uls_ptr(escmap_pool->strpool), 32);
+	csz = uls_ptr(escmap_pool->strpool);
+	_uls_tool(csz_init)(csz, 32);
+	_uls_tool(csz_add_eos)(csz);
 
 	n = ULS_ESCCH_MAPSIZE + 1;
 	uls_init_parray(uls_ptr(escmap_pool->escstr_containers), escmap_container, n);
@@ -265,9 +268,10 @@ ULS_QUALIFIED_METHOD(__uls_add_escstr)(uls_escmap_pool_ptr_t escmap_pool,
 	int strpos, len1, len_strpool;
 	const char *str2, *strpool;
 
-	if (len > 0) {
+	if (str != NULL) {
 		strpool = csz_data_ptr(csz);
 		len_strpool = csz_length(csz);
+
 		for (strpos = 0; ; strpos += len1 + 1) {
 			if (strpos >= len_strpool) { // not-found
 				strpos = len_strpool;
@@ -283,7 +287,7 @@ ULS_QUALIFIED_METHOD(__uls_add_escstr)(uls_escmap_pool_ptr_t escmap_pool,
 			}
 		}
 	} else {
-		strpos = 0; // N/A
+		strpos = -1;
 	}
 
 	escstr = __uls_add_escmap_pool(escmap_pool, ind, esc_ch, strpos, len);
@@ -416,7 +420,6 @@ ULS_QUALIFIED_METHOD(__uls_clone_escmap)(uls_escmap_ptr_t src_map, uls_escmap_pt
 		}
 	}
 }
-
 
 void
 ULS_QUALIFIED_METHOD(__uls_set_escmap)(uls_escmap_ptr_t dst_map, int flags)
@@ -575,7 +578,9 @@ ULS_QUALIFIED_METHOD(__parse_escmap_optgrp)(char *line)
 				else if (ch == '"') flags |= ULS_ESCMAP_LEGACY_DQ;
 				else if (ch == '?') flags |= ULS_ESCMAP_LEGACY_QUES;
 				else {
-					_uls_log(err_log)("Unknown handler for escaping char '%c'", ch);
+					_uls_log(err_log)("Unknown keyword(%s) exists for esc-chars map", wrd);
+					flags = -1;
+					break;
 				}
 			}
 		}
@@ -598,7 +603,7 @@ ULS_QUALIFIED_METHOD(parse_escmap_optgrp)(uls_escmap_ptr_t esc_map, uls_ptrtype_
 		return -1;
 	}
 
-	*lptr++ = '\0'; // overriding ')'
+	*lptr++ = '\0'; // overwriting ')'
 
 	rval_flags = __parse_escmap_optgrp(lptr1);
 	if (rval_flags < 0) {
@@ -647,13 +652,14 @@ ULS_QUALIFIED_METHOD(uls_parse_escmap_feature)(uls_ptrtype_tool(outparam) parms)
 	} else if (uls_streql(mode_str, "legacy")) {
 		esc_map = uls_ptr(uls_litesc->uls_escstr__legacy);
 		flags |= ULS_ESCMAP_MODERN_EOS | ULS_ESCMAP_MODERN_ESC;
-	} else  {
+	} else {
 		if (uls_streql(mode_str, "verbatim1")) {
 			esc_map = uls_ptr(uls_litesc->uls_escstr__verbatim1);
 			flags |= ULS_ESCMAP_MODERN_EOS | ULS_ESCMAP_MODERN_ESC;
 			parms->line = wrd + len;
 		} else {
-			esc_map = uls_ptr(uls_litesc->uls_escstr__legacy);
+			esc_map = uls_ptr(uls_litesc->uls_escstr__legacy); /* default */
+			flags |= ULS_ESCMAP_MODERN_EOS | ULS_ESCMAP_MODERN_ESC;
 			parms->line = wrd;
 		}
 		stat = 1;
@@ -742,8 +748,10 @@ ULS_QUALIFIED_METHOD(extract_escstr_mapexpr)(char *line, uls_ptrtype_tool(outpar
 		parms1.lptr = lptr;
 
 		if ((ret_flag = get_escstr_bin_opts(uls_ptr(parms1))) <= 0) {
-			if (ret_flag < 0)
+			if (ret_flag < 0) {
 				_uls_log(err_log)("incorrect format!");
+				return -4;
+			}
 			end_qch = '\0';
 		} else {
 			lptr += parms1.x1;
@@ -764,6 +772,7 @@ ULS_QUALIFIED_METHOD(extract_escstr_mapexpr)(char *line, uls_ptrtype_tool(outpar
 			for (i = 0; i < len; i++) {
 				// return an error if it contains '\0'
 				if (parms1.line[i] == '\0') {
+					_uls_log(err_log)("escstr cannot contain null-char!");
 					len = -5;
 					break;
 				}
@@ -794,8 +803,8 @@ ULS_QUALIFIED_METHOD(uls_parse_escmap_mapping)(uls_escmap_ptr_t esc_map,
 	for (lptr = line; ; ) {
 		parms1.line = escstr_buf;
 
-		if ((rval = extract_escstr_mapexpr(lptr, uls_ptr(parms1))) < 0) {
-			if (rval < -1) {
+		if ((len = extract_escstr_mapexpr(lptr, uls_ptr(parms1))) < 0) {
+			if (len < -1) {
 				_uls_log(err_log)("Failed to extract esc-str!");
 				stat = -1;
 			}
@@ -825,7 +834,7 @@ ULS_QUALIFIED_METHOD(uls_parse_escmap_mapping)(uls_escmap_ptr_t esc_map,
 				uls_del_escstr(esc_map, esc_ch);
 				rval = 0;
 			} else {
-				rval = uls_register_escstr(escmap_pool, esc_map, esc_ch, escstr_buf, rval_flags);
+				rval = uls_register_escstr(escmap_pool, esc_map, esc_ch, escstr_buf, len);
 			}
 		}
 

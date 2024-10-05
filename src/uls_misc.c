@@ -402,7 +402,8 @@ ULS_QUALIFIED_METHOD(uls_get_simple_escape_str)(char quote_ch, uls_ptrtype_tool(
 		if (escape) {
 			if (ch == 'x') {
 				for (ch2=0,j=0; j<2; j++) {
-					if (!_uls_tool_(isxdigit)(ch=lptr[j+1])) {
+					ch = lptr[j+1];
+					if (!_uls_tool_(isxdigit)(ch)) {
 						if (j == 0) {
 							_uls_log(err_log)("%s: No hexa-string format!", __func__);
 							parms->lptr = lptr;

@@ -28,7 +28,7 @@
     This file is part of ULS, Unified Lexical Scheme.
   </brief>
   <author>
-    Stanley Hong <link2next@gmail.com>, 2011.
+    Stanley Hong <link2next@gmail.com>, 2024.
   </author>
 */
 
