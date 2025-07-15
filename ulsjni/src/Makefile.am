@@ -34,7 +34,7 @@ $(LIBPROG): $(OBJS2)
 define rule_java2hfile
 $(ULSJNI_INCDIR)/$1: $2
 	@javac -h $(ULSJNI_INCDIR) $2; \
-	if [ \$? != 0 ]; then \
+	if [ ! -f $@ ]; then \
 		javah -o $(ULSJNI_INCDIR)/$1 $3; \
 	fi
 endef

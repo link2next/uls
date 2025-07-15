@@ -68,7 +68,7 @@ ULS_QUALIFIED_METHOD(uls_init_escmap)(uls_escmap_ptr_t map, uls_escmap_pool_ptr_
 {
 	int n;
 
-	map->flags = 0;
+	map->flags = ULS_FL_STATIC;
 	n = ULS_ESCCH_MAPSIZE + 1;
 	uls_init_parray(uls_ptr(map->escstr_list), escstr, n);
 	map->escstr_list.n = n;
@@ -78,7 +78,7 @@ ULS_QUALIFIED_METHOD(uls_init_escmap)(uls_escmap_ptr_t map, uls_escmap_pool_ptr_
 	map->mempool = mempool;
 }
 
-void
+ULS_DECL_STATIC void
 ULS_QUALIFIED_METHOD(__uls_deinit_escmap)(uls_escmap_ptr_t map)
 {
 	uls_deinit_parray(uls_ptr(map->escstr_list));
@@ -99,6 +99,7 @@ ULS_QUALIFIED_METHOD(uls_alloc_escmap)(uls_escmap_pool_ptr_t mempool)
 
 	map = (uls_escmap_ptr_t) uls_alloc_object(uls_escmap_t);
 	uls_init_escmap(map, mempool);
+	map->flags &= ~ULS_FL_STATIC;
 
 	return map;
 }
@@ -176,10 +177,11 @@ ULS_QUALIFIED_METHOD(uls_init_escmap_pool)(uls_escmap_pool_ptr_t escmap_pool)
 #ifndef ULS_DOTNET
 	uls_bzero(uls_parray_slots(uls_ptr(escmap_pool->escstr_containers)), n * sizeof(uls_escmap_container_ptr_t));
 #endif
+	escmap_pool->ref_cnt = 1;
 }
 
-void
-ULS_QUALIFIED_METHOD(uls_deinit_escmap_pool)(uls_escmap_pool_ptr_t escmap_pool)
+ULS_DECL_STATIC void
+ULS_QUALIFIED_METHOD(__uls_deinit_escmap_pool)(uls_escmap_pool_ptr_t escmap_pool)
 {
 	uls_decl_parray_slots_init(slots_escstr_containers, escmap_container, uls_ptr(escmap_pool->escstr_containers));
 	uls_escmap_container_ptr_t wrap, wrap_next, wrap_head;
@@ -198,6 +200,30 @@ ULS_QUALIFIED_METHOD(uls_deinit_escmap_pool)(uls_escmap_pool_ptr_t escmap_pool)
 
 	uls_deinit_parray(uls_ptr(escmap_pool->escstr_containers));
 	_uls_tool(csz_deinit)(uls_ptr(escmap_pool->strpool));
+}
+
+void
+ULS_QUALIFIED_METHOD(uls_grab_escmap_pool)(uls_escmap_pool_ptr_t escmap_pool)
+{
+	++escmap_pool->ref_cnt;
+}
+
+void
+ULS_QUALIFIED_METHOD(uls_ungrab_escmap_pool)(uls_escmap_pool_ptr_t escmap_pool)
+{
+	if (escmap_pool->ref_cnt <= 0) {
+		_uls_log(err_panic)("%s: InternalError!", __func__);
+	}
+
+	if (--escmap_pool->ref_cnt <= 0) {
+		__uls_deinit_escmap_pool(escmap_pool);
+	}
+}
+
+void
+ULS_QUALIFIED_METHOD(uls_deinit_escmap_pool)(uls_escmap_pool_ptr_t escmap_pool)
+{
+	uls_ungrab_escmap_pool(escmap_pool);
 }
 
 ULS_QUALIFIED_RETTYP(uls_escstr_ptr_t)
@@ -787,9 +813,9 @@ ULS_QUALIFIED_METHOD(extract_escstr_mapexpr)(char *line, uls_ptrtype_tool(outpar
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_parse_escmap_mapping)(uls_escmap_ptr_t esc_map,
-	uls_escmap_pool_ptr_t escmap_pool, char *line)
+ULS_QUALIFIED_METHOD(uls_parse_escmap_mapping)(uls_escmap_ptr_t esc_map, char *line)
 {
+	uls_escmap_pool_ptr_t escmap_pool = esc_map->mempool;
 	int len, rval, rval_flags, stat = 0;
 	char  esc_ch, *lptr, *escstr_buf, buff[128];
 	uls_type_tool(outparam) parms1;
@@ -896,7 +922,7 @@ ULS_QUALIFIED_METHOD(initialize_uls_litesc)()
 	/* legacy */
 	map = uls_ptr(uls_litesc->uls_escstr__legacy);
 	uls_init_escmap(map, escmap_pool);
-	map->flags |= ULS_FL_STATIC | ULS_ESCMAP_FL_BUILTIN;
+	map->flags |= ULS_ESCMAP_FL_BUILTIN;
 
 	map_flags = ULS_ESCMAP_MODERN_LF | ULS_ESCMAP_MODERN_TAB | ULS_ESCMAP_LEGACY_CR;
 	map_flags |= ULS_ESCMAP_LEGACY_BS | ULS_ESCMAP_LEGACY_BELL;
@@ -909,19 +935,19 @@ ULS_QUALIFIED_METHOD(initialize_uls_litesc)()
 	/* modern */
 	map = uls_ptr(uls_litesc->uls_escstr__modern);
 	uls_init_escmap(map, escmap_pool);
-	map->flags |= ULS_FL_STATIC | ULS_ESCMAP_FL_BUILTIN;
+	map->flags |= ULS_ESCMAP_FL_BUILTIN;
 	map_flags = ULS_ESCMAP_MODERN_LF | ULS_ESCMAP_MODERN_TAB;
 	__uls_set_escmap(map, map_flags);
 
 	/* verbatim1 */
 	map = uls_ptr(uls_litesc->uls_escstr__verbatim1);
 	uls_init_escmap(map, escmap_pool);
-	map->flags |= ULS_FL_STATIC | ULS_ESCMAP_FL_BUILTIN;
+	map->flags |= ULS_ESCMAP_FL_BUILTIN;
 
 	/* verbatim */
 	map = uls_ptr(uls_litesc->uls_escstr__verbatim);
 	uls_init_escmap(map, escmap_pool);
-	map->flags |= ULS_FL_STATIC | ULS_ESCMAP_FL_BUILTIN;
+	map->flags |= ULS_ESCMAP_FL_BUILTIN;
 
 	return 0;
 }

@@ -56,7 +56,7 @@
 #define TMP_LANGS_FNAME      "uls_langs.txt"
 #define ULS_ULCNAME_DELIM    '/'
 
-#define ULS_VERSION_STR      _T("1.9.6.1")
+#define ULS_VERSION_STR      _T("1.9.7")
 #define ULC2CLASS_PROGVER    _T("v2.7.2")
 #define ULF_GEN_PROGVER      _T("v1.7.0")
 #define ULS_STREAM_PROGVER   _T("v2.8.0")

@@ -346,6 +346,16 @@ public class UlsLex implements AutoCloseable {
 		return t;
 	}
 
+	protected void update_rsvdtoks() {
+		toknum_EOI = toknumEOI(uls);
+		toknum_EOF = toknumEOF(uls);
+		toknum_ERR = toknumERR(uls);
+		toknum_NONE = toknumNONE(uls);
+		toknum_ID = toknumID(uls);
+		toknum_NUMBER = toknumNUMBER(uls);
+		toknum_TMPL = toknumTMPL(uls);
+	}
+
 	// <brief>
 	// This is a constructor that creates an object for lexical analysis.
 	// The 'ulc_file' is a name of language specification in the ulc system repository or
@@ -367,13 +377,7 @@ public class UlsLex implements AutoCloseable {
 			System.exit(1);
 		}
 
-		toknum_EOI = toknumEOI(uls);
-		toknum_EOF = toknumEOF(uls);
-		toknum_ERR = toknumERR(uls);
-		toknum_NONE = toknumNONE(uls);
-		toknum_ID = toknumID(uls);
-		toknum_NUMBER = toknumNUMBER(uls);
-		toknum_TMPL = toknumTMPL(uls);
+		update_rsvdtoks();
 
 		Dic4ExtraTokdef = new HashMap<Integer,Object>();
 

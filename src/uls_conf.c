@@ -716,7 +716,7 @@ ULS_QUALIFIED_METHOD(parse_quotetype__options)(char *line, uls_quotetype_ptr_t q
 		} else if (uls_streql(wrd, "open")) {
 			qmt->litstr_analyzer = uls_ref_callback_this(nothing_lit_analyzer);
 			qmt->flags |= ULS_QSTR_OPEN;
-		} else if (uls_streql(wrd, "multiline") || uls_streql(wrd, "multline")) {
+		} else if (uls_streql(wrd, "multline") || uls_streql(wrd, "multiline")) {
 			qmt->flags |= ULS_QSTR_MULTILINE;
 		} else if (uls_streql(wrd, "right_exclusive")) {
 			qmt->flags |= ULS_QSTR_R_EXCLUSIVE;

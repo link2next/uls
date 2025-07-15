@@ -1,4 +1,12 @@
 
+  v1.9.7
+  -----------
+    o Fixed the critical error of the input data loss before comments
+    o Fixed the mismatch between the class constant and toknum_*
+        in the class UlsLex when using uld-files 
+    o Fixed a memory error in running HelloUlsDot.exe
+    o Fixed the compile the error in ulsjni on Linux
+
   v1.9.6
   -----------
     o Can control the escaped chars in quoted-strings, 

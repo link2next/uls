@@ -514,6 +514,18 @@ void UlsLex::resetInputOpts(void)
 	input_flags = 0;
 }
 
+void
+UlsLex::update_rsvdtoks(void)
+{
+	toknum_EOI = _uls_toknum_EOI(&lex);
+	toknum_EOF = _uls_toknum_EOF(&lex);
+	toknum_ERR = _uls_toknum_ERR(&lex);
+	toknum_NONE = _uls_toknum_NONE(&lex);
+	toknum_ID = _uls_toknum_ID(&lex);
+	toknum_NUMBER = _uls_toknum_NUMBER(&lex);
+	toknum_TMPL = _uls_toknum_TMPL(&lex);
+}
+
 // <brief>
 // The constructor that creates an object for lexical analyzing.
 // </brief>
@@ -536,14 +548,7 @@ UlsLex::initUlsLex_ustr(const char *ulc_file)
 	FileNameBuf = new string("");
 
 	auwcvt = new UlsAuw();
-
-	toknum_EOI = _uls_toknum_EOI(&lex);
-	toknum_EOF = _uls_toknum_EOF(&lex);
-	toknum_ERR = _uls_toknum_ERR(&lex);
-	toknum_NONE = _uls_toknum_NONE(&lex);
-	toknum_ID = _uls_toknum_ID(&lex);
-	toknum_NUMBER = _uls_toknum_NUMBER(&lex);
-	toknum_TMPL = _uls_toknum_TMPL(&lex);
+	update_rsvdtoks();
 
 	puts_proc_str = uls_lf_puts_str;
 	puts_proc_file = uls_lf_puts_file;

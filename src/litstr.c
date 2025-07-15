@@ -755,7 +755,7 @@ ULS_QUALIFIED_METHOD(uls_parse_escmap)(char *line, uls_quotetype_ptr_t qmt, uls_
 
 	// A trailed mapping esc-ch --> utf8-str in form of ch:str
 	if (line != NULL) {
-		if (uls_parse_escmap_mapping(esc_map, escmap_pool2, line) < 0) {
+		if (uls_parse_escmap_mapping(esc_map, line) < 0) {
 			uls_dealloc_escmap(esc_map);
 			esc_map = nilptr;
 		}

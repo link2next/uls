@@ -86,6 +86,7 @@ _ULS_DEFINE_STRUCT_BEGIN(csz_buf_line)
 #endif
 
 #if defined(ULS_DEF_PUBLIC_TYPE)
+#ifndef NO_CSZ_POOL
 _ULS_DECLARE_STRUCT(csz_global_data);
 _ULS_DEFINE_STRUCT_BEGIN(csz_global_data)
 {
@@ -93,7 +94,7 @@ _ULS_DEFINE_STRUCT_BEGIN(csz_global_data)
 	csz_buf_line_ptr_t  inactive_list;
 	csz_buf_line_ptr_t  active_list;
 };
-
+#endif
 ULS_DEFINE_STRUCT(outbuf)
 {
 	char   *buf;
@@ -110,15 +111,19 @@ _ULS_DEFINE_STRUCT(csz_str)
 #endif
 
 #if defined(__CSZ_STREAM__) || defined(ULS_DEF_PRIVATE_DATA)
+#ifndef NO_CSZ_POOL
 ULS_DECL_STATIC csz_global_data_ptr_t csz_global;
+#endif
 #endif
 
 #if defined(__CSZ_STREAM__) || defined(ULS_DECL_PRIVATE_PROC)
+#ifndef NO_CSZ_POOL
 ULS_DECL_STATIC char* __find_in_pool(uls_outbuf_ptr_t tmp_buf, int siz);
 ULS_DECL_STATIC int __release_in_pool(char* ptr, int siz);
 ULS_DECL_STATIC void __init_csz_pool(void);
 ULS_DECL_STATIC void __reset_csz_pool(void);
 ULS_DECL_STATIC void __deinit_csz_pool(void);
+#endif
 ULS_DECL_STATIC _ULS_INLINE void __str_modify(uls_outbuf_ptr_t outbuf, int n_delta, int k, const char* str, int len);
 #endif
 
