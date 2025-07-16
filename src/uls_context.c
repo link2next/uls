@@ -754,14 +754,7 @@ ULS_QUALIFIED_METHOD(xcontext_raw_filler)(uls_xcontext_ptr_t xctx)
 
 		} else if ((ch_grp & ULS_CH_QUOTE) &&
 			(qmt = uls_xcontext_find_quotetype(xctx, lptr, (int) (lptr_end - lptr))) != nilptr) {
-
-			if (qmt->len_end_mark <= 0 &&
-				!(qmt->flags & (ULS_QSTR_OPEN | ULS_QSTR_NOTHING | ULS_QSTR_USERPROC)) ) {
-				_uls_log(err_log)("%s: literal string analyzer is NOT defined.", uls_get_namebuf_value(qmt->start_mark));
-				return -1;
-			}
-
-			if ((rc = (int) (lptr-lptr1)) > 0) _uls_tool(csz_append)(ss_dst1, lptr1, rc);
+			if ((rc = (int) (lptr - lptr1)) > 0) _uls_tool(csz_append)(ss_dst1, lptr1, rc);
 			if (n_segs + 1 >= ctx->lexsegs.n) {
 				break;
 			}

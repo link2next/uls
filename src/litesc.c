@@ -268,6 +268,7 @@ ULS_QUALIFIED_METHOD(__uls_add_escstr)(uls_escmap_pool_ptr_t escmap_pool,
 	if (len > 0) {
 		strpool = csz_data_ptr(csz);
 		len_strpool = csz_length(csz);
+
 		for (strpos = 0; ; strpos += len1 + 1) {
 			if (strpos >= len_strpool) { // not-found
 				strpos = len_strpool;
@@ -416,7 +417,6 @@ ULS_QUALIFIED_METHOD(__uls_clone_escmap)(uls_escmap_ptr_t src_map, uls_escmap_pt
 		}
 	}
 }
-
 
 void
 ULS_QUALIFIED_METHOD(__uls_set_escmap)(uls_escmap_ptr_t dst_map, int flags)
@@ -598,7 +598,7 @@ ULS_QUALIFIED_METHOD(parse_escmap_optgrp)(uls_escmap_ptr_t esc_map, uls_ptrtype_
 		return -1;
 	}
 
-	*lptr++ = '\0'; // overriding ')'
+	*lptr++ = '\0'; // overwriting ')'
 
 	rval_flags = __parse_escmap_optgrp(lptr1);
 	if (rval_flags < 0) {
@@ -647,13 +647,13 @@ ULS_QUALIFIED_METHOD(uls_parse_escmap_feature)(uls_ptrtype_tool(outparam) parms)
 	} else if (uls_streql(mode_str, "legacy")) {
 		esc_map = uls_ptr(uls_litesc->uls_escstr__legacy);
 		flags |= ULS_ESCMAP_MODERN_EOS | ULS_ESCMAP_MODERN_ESC;
-	} else  {
+	} else {
 		if (uls_streql(mode_str, "verbatim1")) {
 			esc_map = uls_ptr(uls_litesc->uls_escstr__verbatim1);
 			flags |= ULS_ESCMAP_MODERN_EOS | ULS_ESCMAP_MODERN_ESC;
 			parms->line = wrd + len;
 		} else {
-			esc_map = uls_ptr(uls_litesc->uls_escstr__legacy);
+			esc_map = uls_ptr(uls_litesc->uls_escstr__legacy); /* default */
 			parms->line = wrd;
 		}
 		stat = 1;

@@ -358,6 +358,7 @@ namespace uls {
 			// </brief>
 			void setTag_ustr(const char *fname);
 			void openOutput_ustr(const char* out_file, uls_lf_puts_t puts_proc);
+			void update_rsvdtoks(void);
 
 		public:
 			static void initialize();

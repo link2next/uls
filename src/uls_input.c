@@ -168,9 +168,9 @@ ULS_QUALIFIED_METHOD(input_quote_proc)(uls_input_ptr_t inp, uls_quotetype_ptr_t 
 	lptr = inp->rawbuf_ptr;
 	lptr_end = lptr + inp->rawbuf_bytes;
 
-	for (n_bytes_req = len_emark; ; ) {
-		if (n_bytes_req < ULS_UTF8_CH_MAXLEN) n_bytes_req = ULS_UTF8_CH_MAXLEN;
-
+	if ( (n_bytes_req = len_emark) < ULS_UTF8_CH_MAXLEN)
+		n_bytes_req = ULS_UTF8_CH_MAXLEN;
+	for ( ; ; ) {
 		if (lptr_end < lptr + n_bytes_req) {
 			inp->rawbuf_ptr = lptr;
 			inp->rawbuf_bytes = (int) (lptr_end - lptr);
@@ -204,10 +204,12 @@ ULS_QUALIFIED_METHOD(input_quote_proc)(uls_input_ptr_t inp, uls_quotetype_ptr_t 
 			stat = n_bytes_req;
 			break;
 		}
+		if (n_bytes_req < ULS_UTF8_CH_MAXLEN) n_bytes_req = ULS_UTF8_CH_MAXLEN;
 	}
 
 	inp->rawbuf_ptr = lptr;
 	inp->rawbuf_bytes = (int) (lptr_end - lptr);
+
 	parms->n = n_qmt_lines + lit_ctx->n_lfs;
 	return stat;
 }
