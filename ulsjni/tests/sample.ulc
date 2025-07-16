@@ -1,0 +1,73 @@
+﻿#@ulc-2.4
+#
+#  ULC: Unified Lexical Configuration
+#
+DOMAIN: uls.link2next.io://season-1
+
+ID_FIRST_CHARS: _ a-z A-Z 
+ID_CHARS: _ 0-9 a-z A-Z
+
+NUMBER_PREFIXES: 0x:16 0:8
+
+COMMENT_TYPE: /* */
+COMMENT_TYPE: // \n
+
+QUOTE_TYPE: token=DQUOTE "
+QUOTE_TYPE: token=SQUOTE '
+
+%%
+
+# token-name  keyword  token-id
+NONE     <NONE>    -4
+LINENUM  <LNO>     -3
+ERR      <ERR>     -2
+EOF      <EOF>     -1
+EOI      <EOI>      0
+ID       <ID>       1
+NUMBER   <NUMBER>   2
+
+AND      &&        128
+OR       ||
+EQ       ==
+LEQ      <=
+GEQ      >=
+NEQ      !=
+
+OR       or    
+
+ASM      asm       150
+DEFAULT  default
+AUTO     auto
+DO       do
+DOUBLE   double
+
+ELSE     else      160
+ENUM     enum
+
+GOTO     goto      165
+IF       if
+BREAK    break
+CASE     case
+SWITCH   switch
+TYPEDEF  typedef   170
+UNION    union
+CHAR     char
+EXTERN   extern
+FLOAT    float
+FOR      for       175
+CONTINUE continue
+CONST    const
+INT      int
+LONG     long
+REGISTER register  180
+
+RETURN   return    185
+SHORT    short
+SIGNED   signed
+SIZEOF   sizeof
+STATIC   static
+STRUCT   struct    190
+UNSIGNED unsigned
+VOID     void
+VOLATILE volatile
+WHILE    while

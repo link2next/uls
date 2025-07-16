@@ -273,7 +273,6 @@ lex_input_file(LPCTSTR fpath)
 		}
 
 		if (t == TOK_EOL) {
-
 			continue;
 		}
 
