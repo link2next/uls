@@ -147,6 +147,7 @@ AC_CONFIG_FILES([Makefile
 	examples/Shell/Makefile
 	examples/Mkf/Makefile
 	examples/Natural/Makefile
+	examples/ulc2yaml/Makefile
 	post_inst/Makefile
 ])
 

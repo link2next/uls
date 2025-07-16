@@ -1,0 +1,74 @@
+﻿#@ulc-2.4
+#
+#  ULC: Unified Lexical Configuration
+#
+DOMAIN: uls.link2next.io://season-1
+
+ID_FIRST_CHARS: _ a-z A-Z
+ID_CHARS: _ 0-9 a-z A-Z
+
+NUMBER_PREFIXES: 0x:16 0:8
+
+COMMENT_TYPE: /* */
+COMMENT_TYPE: // \n
+
+QUOTE_TYPE: token=200 '
+QUOTE_TYPE: token=201,DQUOTE "
+
+RENAME: ID  IDENT
+
+%%
+
+# Tok-id remapping of 1-char tokens.
+TAB      \t    
+LF       \n     
+MINUS    -         94
+
+BEGIN    {         92
+BEG      {         92
+BEGIN    BEGIN     92
+BEG      BEGIN     92
+
+
+AND       AND      93
+ANDAND    AND
+AND       && 
+AANNDD    && 
+
+AANNDD    &+&
+AND2      &2&      93
+AND_ALIAS          93
+
+# The token number of token without 'token-id' column is 
+#     the successor from token-id of the previous row.
+# So, the token-id of OR is 101.
+OR       ||
+
+# keyword overlap
+EQ       == 
+EQEQ     ===
+
+# just twoplus keywords
+NEQ      !=
+LEQ      <=
+GEQ      >=
+
+# a reserved token to remap its id.
+ERR                199
+
+# the renamed reserved token by above
+IDENT              210
+
+# OR token has multiple keywords
+OR       or
+
+# OR2 is an alias for OR
+OR2      or
+
+IF       if        150
+ENDIF    endif     151
+
+# char token remapping
+BITWISE_AND &      152
+
+SQUOTE             200

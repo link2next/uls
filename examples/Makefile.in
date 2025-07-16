@@ -326,7 +326,8 @@ TMP_SYSPROPS = /tmp/uls_sysprops.txt
 ulc2class_exe = $(top_builddir)/tools/ulc2class/ulc2class
 tests_libpath = $(top_builddir)/src:$(top_builddir)/ulscpp
 SUBDIRS = test_1st tokseq yacc \
-	DumpToks Css3 Html5 Shell Mkf Natural
+	DumpToks Css3 Html5 Shell Mkf Natural \
+	ulc2yaml
 
 all: all-recursive
 
