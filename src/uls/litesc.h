@@ -109,6 +109,7 @@ ULS_DEFINE_STRUCT_BEGIN(escmap_pool)
 {
 	_uls_type_tool(csz_str) strpool;
 	uls_decl_parray(escstr_containers, escmap_container);
+	int ref_cnt;
 };
 
 ULS_DEFINE_STRUCT_BEGIN(escmap)
@@ -137,7 +138,8 @@ ULS_DECL_STATIC int get_escstr_bin_opts(uls_ptrtype_tool(outparam) parms);
 ULS_DECL_STATIC int extract_escstr_mapexpr(char *line, uls_ptrtype_tool(outparam) parms);
 ULS_DECL_STATIC int __parse_escmap_optgrp(char *line);
 ULS_DECL_STATIC int parse_escmap_optgrp(uls_escmap_ptr_t esc_map, uls_ptrtype_tool(outparam) parms);
-
+ULS_DECL_STATIC void __uls_deinit_escmap_pool(uls_escmap_pool_ptr_t escmap_pool);
+ULS_DECL_STATIC void __uls_deinit_escmap(uls_escmap_ptr_t map);
 #endif // ULS_DECL_PRIVATE_PROC
 
 #ifdef ULS_DECL_PROTECTED_PROC
@@ -146,7 +148,6 @@ void uls_init_escstr(uls_escstr_ptr_t escstr, char ch, int idx, int len);
 void uls_deinit_escstr(uls_escstr_ptr_t escstr);
 
 void uls_init_escmap(uls_escmap_ptr_t map, uls_escmap_pool_ptr_t mempool);
-void __uls_deinit_escmap(uls_escmap_ptr_t map);
 void uls_deinit_escmap(uls_escmap_ptr_t map);
 uls_escmap_ptr_t uls_alloc_escmap(uls_escmap_pool_ptr_t mempool);
 void uls_dealloc_escmap(uls_escmap_ptr_t map);
@@ -158,6 +159,10 @@ void uls_dealloc_escmap_container(uls_escmap_container_ptr_t wrap);
 
 void uls_init_escmap_pool(uls_escmap_pool_ptr_t escmap_pool);
 void uls_deinit_escmap_pool(uls_escmap_pool_ptr_t escmap_pool);
+
+void uls_grab_escmap_pool(uls_escmap_pool_ptr_t escmap_pool);
+void uls_ungrab_escmap_pool(uls_escmap_pool_ptr_t escmap_pool);
+
 uls_escstr_ptr_t uls_search_escmap_pool(uls_escmap_pool_ptr_t escmap_pool, char esc_ch, const char *str, int len);
 uls_escstr_ptr_t __uls_add_escmap_pool(uls_escmap_pool_ptr_t escmap_pool, int ind, char esc_ch, int idx, int len);
 
@@ -175,7 +180,7 @@ void __uls_set_escmap(uls_escmap_ptr_t dst_map, int flags);
 uls_escmap_ptr_t uls_dup_escmap(uls_escmap_ptr_t src_map, uls_escmap_pool_ptr_t escmap_pool, int flags);
 
 uls_escmap_ptr_t uls_parse_escmap_feature(uls_ptrtype_tool(outparam) parms);
-int uls_parse_escmap_mapping(uls_escmap_ptr_t esc_map, uls_escmap_pool_ptr_t escmap_pool, char *line);
+int uls_parse_escmap_mapping(uls_escmap_ptr_t esc_map, char *line);
 
 int initialize_uls_litesc();
 void finalize_uls_litesc();

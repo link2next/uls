@@ -78,7 +78,8 @@ ULS_QUALIFIED_METHOD(uls_get_escape_char_cont)(uls_litstr_ptr_t lit)
 
 	if (prefix_ch == 'x' || prefix_ch == 'u' || prefix_ch == 'U') { // hexa-decimal, unicode
 		for ( ; lptr < lptr_end; lptr++) {
-			if (!_uls_tool_(isxdigit)(ch=*lptr)) {
+			ch = *lptr;
+			if (!_uls_tool_(isxdigit)(ch)) {
 				break;
 			}
 
@@ -398,10 +399,10 @@ ULS_QUALIFIED_METHOD(dfl_lit_analyzer_escape0)(uls_litstr_ptr_t lit)
 		_uls_tool(csz_putc)(lit_ctx->ss_dst, *lptr++);
 		lit->lptr = lptr;
 
-		if (--len <= 0) {
-			rc = ULS_LITPROC_ERROR;
-		} else {
+		if (--len > 0) {
 			rc = proc_litstr_eoi(lit, len, emark, len_emark, lit_ctx->ss_dst);
+		} else {
+			rc = ULS_LITPROC_ENDOFQUOTE;
 		}
 		return rc;
 	}
@@ -417,6 +418,8 @@ ULS_QUALIFIED_METHOD(dfl_lit_analyzer_escape0)(uls_litstr_ptr_t lit)
 		for (j=0; j<len; j++) buff[j] = lptr[j];
 
 		if ((rc = _uls_tool_(decode_utf8)(buff, j, &wch)) <= 0) {
+			if (rc < -ULS_UTF8_CH_MAXLEN)
+				return ULS_LITPROC_ERROR;
 			len = ULS_UTF8_CH_MAXLEN;
 			break;
 		}
@@ -461,7 +464,7 @@ ULS_QUALIFIED_METHOD(dfl_lit_analyzer_escape1)(uls_litstr_ptr_t lit)
 	uls_escstr_ptr_t escstr;
 
 	uls_type_tool(outparam) parms1;
-	char ch, ch_esc, buff[ULS_UTF8_CH_MAXLEN];
+	char ch, buff[ULS_UTF8_CH_MAXLEN];
 	int ind, len = (int) (lptr_end - lptr), len1, j, len_buff, rc;
 	uls_wch_t wch;
 
@@ -505,11 +508,11 @@ ULS_QUALIFIED_METHOD(dfl_lit_analyzer_escape1)(uls_litstr_ptr_t lit)
 				_uls_tool(csz_putc)(lit_ctx->ss_dst, *lptr++);
 
 				lit->lptr = lptr;
-				if (--len <= 0) {
-					rc = ULS_LITPROC_ERROR;
-				} else {
+				if (--len > 0) {
 					rc = proc_litstr_eoi(lit, len,
 						uls_get_namebuf_value(qmt->end_mark), qmt->len_end_mark, lit_ctx->ss_dst);
+				} else {
+					rc = ULS_LITPROC_ENDOFQUOTE;
 				}
 			}
 
@@ -547,25 +550,28 @@ ULS_QUALIFIED_METHOD(dfl_lit_analyzer_escape1)(uls_litstr_ptr_t lit)
 		return len;
 	}
 
-	ch_esc = (char) (wch & 0xFF);
 	lit->maxlen_esc_oxudigits = 0;
 	lit->map_flags = 0;
 
-	if ((escstr = uls_find_escstr_nosafe(qmt->escmap, ind, ch_esc)) == nilptr) {
+	if ((escstr = uls_find_escstr_nosafe(qmt->escmap, ind, wch & 0xFF)) == nilptr) {
 		if (qmt->flags & ULS_QSTR_ETC) {
-			_uls_tool(csz_putc)(lit_ctx->ss_dst, ch_esc);
+			for (j=0; j < len_buff; j++) {
+				_uls_tool(csz_putc)(lit_ctx->ss_dst, buff[j]);
+			}
 		} else {
 			for (j = 0; (ch = qmt->escsym_utf8[j]) != '\0'; j++) {
 				_uls_tool(csz_putc)(lit_ctx->ss_dst, ch);
 			}
-			_uls_tool(csz_putc)(lit_ctx->ss_dst, ch_esc);
+			for (j=0; j < len_buff; j++) {
+				_uls_tool(csz_putc)(lit_ctx->ss_dst, buff[j]);
+			}
 		}
 	} else {
-		parms1.x1 = ch_esc;
+		parms1.x1 = wch;
 		if ((rc = uls_dec_escaped_char(escstr, qmt->escmap, uls_ptr(parms1), lit_ctx->ss_dst)) < 0) {
 			lit->maxlen_esc_oxudigits = len = -rc; // max#-of-bytes for 1-wchar
 			lit->map_flags = parms1.flags;
-			lit->wch = parms1.wch;
+			lit->wch = wch = parms1.wch;
 			lit_ctx->litstr_proc = uls_ref_callback_this(dfl_lit_analyzer_escape2);
 		}
 	}
@@ -749,7 +755,7 @@ ULS_QUALIFIED_METHOD(uls_parse_escmap)(char *line, uls_quotetype_ptr_t qmt, uls_
 
 	// A trailed mapping esc-ch --> utf8-str in form of ch:str
 	if (line != NULL) {
-		if (uls_parse_escmap_mapping(esc_map, escmap_pool2, line) < 0) {
+		if (uls_parse_escmap_mapping(esc_map, line) < 0) {
 			uls_dealloc_escmap(esc_map);
 			esc_map = nilptr;
 		}

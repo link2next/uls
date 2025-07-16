@@ -68,7 +68,7 @@ ULS_QUALIFIED_METHOD(uls_init_escmap)(uls_escmap_ptr_t map, uls_escmap_pool_ptr_
 {
 	int n;
 
-	map->flags = 0;
+	map->flags = ULS_FL_STATIC;
 	n = ULS_ESCCH_MAPSIZE + 1;
 	uls_init_parray(uls_ptr(map->escstr_list), escstr, n);
 	map->escstr_list.n = n;
@@ -78,7 +78,7 @@ ULS_QUALIFIED_METHOD(uls_init_escmap)(uls_escmap_ptr_t map, uls_escmap_pool_ptr_
 	map->mempool = mempool;
 }
 
-void
+ULS_DECL_STATIC void
 ULS_QUALIFIED_METHOD(__uls_deinit_escmap)(uls_escmap_ptr_t map)
 {
 	uls_deinit_parray(uls_ptr(map->escstr_list));
@@ -99,6 +99,7 @@ ULS_QUALIFIED_METHOD(uls_alloc_escmap)(uls_escmap_pool_ptr_t mempool)
 
 	map = (uls_escmap_ptr_t) uls_alloc_object(uls_escmap_t);
 	uls_init_escmap(map, mempool);
+	map->flags &= ~ULS_FL_STATIC;
 
 	return map;
 }
@@ -163,9 +164,12 @@ ULS_QUALIFIED_METHOD(uls_dealloc_escmap_container)(uls_escmap_container_ptr_t wr
 void
 ULS_QUALIFIED_METHOD(uls_init_escmap_pool)(uls_escmap_pool_ptr_t escmap_pool)
 {
+	_uls_ptrtype_tool(csz_str) csz;
 	int n;
 
-	_uls_tool(csz_init)(uls_ptr(escmap_pool->strpool), 32);
+	csz = uls_ptr(escmap_pool->strpool);
+	_uls_tool(csz_init)(csz, 32);
+	_uls_tool(csz_add_eos)(csz);
 
 	n = ULS_ESCCH_MAPSIZE + 1;
 	uls_init_parray(uls_ptr(escmap_pool->escstr_containers), escmap_container, n);
@@ -173,10 +177,11 @@ ULS_QUALIFIED_METHOD(uls_init_escmap_pool)(uls_escmap_pool_ptr_t escmap_pool)
 #ifndef ULS_DOTNET
 	uls_bzero(uls_parray_slots(uls_ptr(escmap_pool->escstr_containers)), n * sizeof(uls_escmap_container_ptr_t));
 #endif
+	escmap_pool->ref_cnt = 1;
 }
 
-void
-ULS_QUALIFIED_METHOD(uls_deinit_escmap_pool)(uls_escmap_pool_ptr_t escmap_pool)
+ULS_DECL_STATIC void
+ULS_QUALIFIED_METHOD(__uls_deinit_escmap_pool)(uls_escmap_pool_ptr_t escmap_pool)
 {
 	uls_decl_parray_slots_init(slots_escstr_containers, escmap_container, uls_ptr(escmap_pool->escstr_containers));
 	uls_escmap_container_ptr_t wrap, wrap_next, wrap_head;
@@ -195,6 +200,30 @@ ULS_QUALIFIED_METHOD(uls_deinit_escmap_pool)(uls_escmap_pool_ptr_t escmap_pool)
 
 	uls_deinit_parray(uls_ptr(escmap_pool->escstr_containers));
 	_uls_tool(csz_deinit)(uls_ptr(escmap_pool->strpool));
+}
+
+void
+ULS_QUALIFIED_METHOD(uls_grab_escmap_pool)(uls_escmap_pool_ptr_t escmap_pool)
+{
+	++escmap_pool->ref_cnt;
+}
+
+void
+ULS_QUALIFIED_METHOD(uls_ungrab_escmap_pool)(uls_escmap_pool_ptr_t escmap_pool)
+{
+	if (escmap_pool->ref_cnt <= 0) {
+		_uls_log(err_panic)("%s: InternalError!", __func__);
+	}
+
+	if (--escmap_pool->ref_cnt <= 0) {
+		__uls_deinit_escmap_pool(escmap_pool);
+	}
+}
+
+void
+ULS_QUALIFIED_METHOD(uls_deinit_escmap_pool)(uls_escmap_pool_ptr_t escmap_pool)
+{
+	uls_ungrab_escmap_pool(escmap_pool);
 }
 
 ULS_QUALIFIED_RETTYP(uls_escstr_ptr_t)
@@ -265,7 +294,7 @@ ULS_QUALIFIED_METHOD(__uls_add_escstr)(uls_escmap_pool_ptr_t escmap_pool,
 	int strpos, len1, len_strpool;
 	const char *str2, *strpool;
 
-	if (len > 0) {
+	if (str != NULL) {
 		strpool = csz_data_ptr(csz);
 		len_strpool = csz_length(csz);
 
@@ -284,7 +313,7 @@ ULS_QUALIFIED_METHOD(__uls_add_escstr)(uls_escmap_pool_ptr_t escmap_pool,
 			}
 		}
 	} else {
-		strpos = 0; // N/A
+		strpos = -1;
 	}
 
 	escstr = __uls_add_escmap_pool(escmap_pool, ind, esc_ch, strpos, len);
@@ -575,7 +604,9 @@ ULS_QUALIFIED_METHOD(__parse_escmap_optgrp)(char *line)
 				else if (ch == '"') flags |= ULS_ESCMAP_LEGACY_DQ;
 				else if (ch == '?') flags |= ULS_ESCMAP_LEGACY_QUES;
 				else {
-					_uls_log(err_log)("Unknown handler for escaping char '%c'", ch);
+					_uls_log(err_log)("Unknown keyword(%s) exists for esc-chars map", wrd);
+					flags = -1;
+					break;
 				}
 			}
 		}
@@ -654,6 +685,7 @@ ULS_QUALIFIED_METHOD(uls_parse_escmap_feature)(uls_ptrtype_tool(outparam) parms)
 			parms->line = wrd + len;
 		} else {
 			esc_map = uls_ptr(uls_litesc->uls_escstr__legacy); /* default */
+			flags |= ULS_ESCMAP_MODERN_EOS | ULS_ESCMAP_MODERN_ESC;
 			parms->line = wrd;
 		}
 		stat = 1;
@@ -742,8 +774,10 @@ ULS_QUALIFIED_METHOD(extract_escstr_mapexpr)(char *line, uls_ptrtype_tool(outpar
 		parms1.lptr = lptr;
 
 		if ((ret_flag = get_escstr_bin_opts(uls_ptr(parms1))) <= 0) {
-			if (ret_flag < 0)
+			if (ret_flag < 0) {
 				_uls_log(err_log)("incorrect format!");
+				return -4;
+			}
 			end_qch = '\0';
 		} else {
 			lptr += parms1.x1;
@@ -764,6 +798,7 @@ ULS_QUALIFIED_METHOD(extract_escstr_mapexpr)(char *line, uls_ptrtype_tool(outpar
 			for (i = 0; i < len; i++) {
 				// return an error if it contains '\0'
 				if (parms1.line[i] == '\0') {
+					_uls_log(err_log)("escstr cannot contain null-char!");
 					len = -5;
 					break;
 				}
@@ -778,9 +813,9 @@ ULS_QUALIFIED_METHOD(extract_escstr_mapexpr)(char *line, uls_ptrtype_tool(outpar
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_parse_escmap_mapping)(uls_escmap_ptr_t esc_map,
-	uls_escmap_pool_ptr_t escmap_pool, char *line)
+ULS_QUALIFIED_METHOD(uls_parse_escmap_mapping)(uls_escmap_ptr_t esc_map, char *line)
 {
+	uls_escmap_pool_ptr_t escmap_pool = esc_map->mempool;
 	int len, rval, rval_flags, stat = 0;
 	char  esc_ch, *lptr, *escstr_buf, buff[128];
 	uls_type_tool(outparam) parms1;
@@ -794,8 +829,8 @@ ULS_QUALIFIED_METHOD(uls_parse_escmap_mapping)(uls_escmap_ptr_t esc_map,
 	for (lptr = line; ; ) {
 		parms1.line = escstr_buf;
 
-		if ((rval = extract_escstr_mapexpr(lptr, uls_ptr(parms1))) < 0) {
-			if (rval < -1) {
+		if ((len = extract_escstr_mapexpr(lptr, uls_ptr(parms1))) < 0) {
+			if (len < -1) {
 				_uls_log(err_log)("Failed to extract esc-str!");
 				stat = -1;
 			}
@@ -825,7 +860,7 @@ ULS_QUALIFIED_METHOD(uls_parse_escmap_mapping)(uls_escmap_ptr_t esc_map,
 				uls_del_escstr(esc_map, esc_ch);
 				rval = 0;
 			} else {
-				rval = uls_register_escstr(escmap_pool, esc_map, esc_ch, escstr_buf, rval_flags);
+				rval = uls_register_escstr(escmap_pool, esc_map, esc_ch, escstr_buf, len);
 			}
 		}
 
@@ -887,7 +922,7 @@ ULS_QUALIFIED_METHOD(initialize_uls_litesc)()
 	/* legacy */
 	map = uls_ptr(uls_litesc->uls_escstr__legacy);
 	uls_init_escmap(map, escmap_pool);
-	map->flags |= ULS_FL_STATIC | ULS_ESCMAP_FL_BUILTIN;
+	map->flags |= ULS_ESCMAP_FL_BUILTIN;
 
 	map_flags = ULS_ESCMAP_MODERN_LF | ULS_ESCMAP_MODERN_TAB | ULS_ESCMAP_LEGACY_CR;
 	map_flags |= ULS_ESCMAP_LEGACY_BS | ULS_ESCMAP_LEGACY_BELL;
@@ -900,19 +935,19 @@ ULS_QUALIFIED_METHOD(initialize_uls_litesc)()
 	/* modern */
 	map = uls_ptr(uls_litesc->uls_escstr__modern);
 	uls_init_escmap(map, escmap_pool);
-	map->flags |= ULS_FL_STATIC | ULS_ESCMAP_FL_BUILTIN;
+	map->flags |= ULS_ESCMAP_FL_BUILTIN;
 	map_flags = ULS_ESCMAP_MODERN_LF | ULS_ESCMAP_MODERN_TAB;
 	__uls_set_escmap(map, map_flags);
 
 	/* verbatim1 */
 	map = uls_ptr(uls_litesc->uls_escstr__verbatim1);
 	uls_init_escmap(map, escmap_pool);
-	map->flags |= ULS_FL_STATIC | ULS_ESCMAP_FL_BUILTIN;
+	map->flags |= ULS_ESCMAP_FL_BUILTIN;
 
 	/* verbatim */
 	map = uls_ptr(uls_litesc->uls_escstr__verbatim);
 	uls_init_escmap(map, escmap_pool);
-	map->flags |= ULS_FL_STATIC | ULS_ESCMAP_FL_BUILTIN;
+	map->flags |= ULS_ESCMAP_FL_BUILTIN;
 
 	return 0;
 }
