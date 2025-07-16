@@ -398,7 +398,7 @@ ULS_QUALIFIED_METHOD(uls_input_read)(uls_source_ptr_t isrc, char *buf, int bufle
 		}
 
 		if ((buflen += rc) >= bufsiz) break;
-		if (rc == 0) _uls_tool_(msleep)(3);
+		if (rc == 0) break; 
 	}
 
 	return buflen - buflen0;

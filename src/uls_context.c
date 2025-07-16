@@ -732,6 +732,7 @@ ULS_QUALIFIED_METHOD(xcontext_raw_filler)(uls_xcontext_ptr_t xctx)
 
 		} else if ((ch_grp & ULS_CH_COMM) &&
 			(cmt=is_commtype_start(xctx, lptr, (int) (lptr_end - lptr))) != nilptr) {
+			if ((rc = (int) (lptr - lptr1)) > 0) _uls_tool(csz_append)(ss_dst1, lptr1, rc);
 			lptr += cmt->len_start_mark;
 
 			inp->rawbuf_ptr = lptr;
