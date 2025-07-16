@@ -766,6 +766,7 @@ ULS_QUALIFIED_METHOD(print_tokdef_cpp_source)(uls_lex_ptr_t uls,
 
 			_uls_log_(sysprn)("\n");
 			uls_sysprn_tabs(n_tabs, "finishUldMap();\n");
+			uls_sysprn_tabs(n_tabs, "update_rsvdtoks();\n");
 		}
 		--n_tabs;
 
@@ -850,6 +851,7 @@ ULS_QUALIFIED_METHOD(print_tokdef_cs)(uls_lex_ptr_t uls,
 
 			_uls_log_(sysprn)("\n");
 			uls_sysprn_tabs(n_tabs, "finishUldMap();\n");
+			uls_sysprn_tabs(n_tabs, "update_rsvdtoks();\n");
 		}
 		--n_tabs;
 		uls_sysprn_tabs(n_tabs, "}\n");
@@ -941,6 +943,7 @@ ULS_QUALIFIED_METHOD(print_tokdef_java)(uls_lex_ptr_t uls,
 
 			_uls_log_(sysprn)("\n");
 			uls_sysprn_tabs(n_tabs, "finishUldMap();\n");
+			uls_sysprn_tabs(n_tabs, "update_rsvdtoks();\n");
 		}
 		--n_tabs;
 		uls_sysprn_tabs(n_tabs, "}\n");
