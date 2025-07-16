@@ -37,6 +37,7 @@
 
 //#define _ULS_DEBUG
 //#define _ULS_BUILD_STATIC_LIBS
+#define NO_CSZ_POOL
 
 #if defined(_WIN32)
 #define ULS_WINDOWS

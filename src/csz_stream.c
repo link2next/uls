@@ -40,6 +40,7 @@
 #include <string.h>
 #endif
 
+#ifndef NO_CSZ_POOL
 ULS_DECL_STATIC char*
 ULS_QUALIFIED_METHOD(__find_in_pool)(uls_outbuf_ptr_t outbuf, int siz)
 {
@@ -159,6 +160,7 @@ ULS_QUALIFIED_METHOD(__deinit_csz_pool)(void)
 
 	csz_global->inactive_list = nilptr;
 }
+#endif // NO_CSZ_POOL
 
 ULS_DECL_STATIC _ULS_INLINE void
 ULS_QUALIFIED_METHOD(__str_modify)(uls_outbuf_ptr_t outbuf, int n_delta, int k, const char* str, int len)
@@ -181,9 +183,11 @@ ULS_QUALIFIED_METHOD(__str_modify)(uls_outbuf_ptr_t outbuf, int n_delta, int k, 
 void
 ULS_QUALIFIED_METHOD(reset_csz)(void)
 {
+#ifndef NO_CSZ_POOL
 	uls_lock_mutex(uls_ptr(csz_global->mtx));
 	__reset_csz_pool();
 	uls_unlock_mutex(uls_ptr(csz_global->mtx));
+#endif
 }
 
 void
@@ -191,7 +195,7 @@ ULS_QUALIFIED_METHOD(initialize_csz)(void)
 {
 	if (CSZ_STREAM_DELTA_DFL % 2 != 0)
 		_uls_log_primitive(err_panic)("csz: internal error");
-
+#ifndef NO_CSZ_POOL
 	csz_global = uls_alloc_object(csz_global_data_t);
 
 	uls_init_mutex(uls_ptr(csz_global->mtx));
@@ -199,25 +203,28 @@ ULS_QUALIFIED_METHOD(initialize_csz)(void)
 	csz_global->active_list = nilptr;
 
 	__init_csz_pool();
+#endif
 }
 
 void
 ULS_QUALIFIED_METHOD(finalize_csz)(void)
 {
+#ifndef NO_CSZ_POOL
 	uls_lock_mutex(uls_ptr(csz_global->mtx));
 	__deinit_csz_pool();
 	uls_unlock_mutex(uls_ptr(csz_global->mtx));
 
 	uls_deinit_mutex(uls_ptr(csz_global->mtx));
 	uls_dealloc_object(csz_global);
+#endif
 }
 
 void
 ULS_QUALIFIED_METHOD(str_init)(uls_outbuf_ptr_t outbuf, int siz)
 {
+	outbuf->buf = NULL;
+	outbuf->siz = 0;
 	if (siz == 0) {
-		outbuf->buf = NULL;
-		outbuf->siz = 0;
 		outbuf->siz_delta = CSZ_STREAM_DELTA_DFL;
 		return;
 	}
@@ -225,11 +232,11 @@ ULS_QUALIFIED_METHOD(str_init)(uls_outbuf_ptr_t outbuf, int siz)
 	if (siz > 0) {
 		siz = uls_ceil_log2(siz, 3);
 	}
-
+#ifndef NO_CSZ_POOL
 	uls_lock_mutex(uls_ptr(csz_global->mtx));
 	__find_in_pool(outbuf, siz);
 	uls_unlock_mutex(uls_ptr(csz_global->mtx));
-
+#endif
 	if (outbuf->buf == NULL) {
 		if (siz < 0) siz = 128;
 		outbuf->buf = (char *) uls_malloc(siz);
@@ -245,11 +252,13 @@ ULS_QUALIFIED_METHOD(str_free)(uls_outbuf_ptr_t outbuf)
 	char *line = outbuf->buf;
 
 	if (line != NULL) {
+#ifndef NO_CSZ_POOL
 		uls_lock_mutex(uls_ptr(csz_global->mtx));
 		if (__release_in_pool(line, outbuf->siz)) {
 			line = NULL;
 		}
 		uls_unlock_mutex(uls_ptr(csz_global->mtx));
+#endif
 		uls_mfree(line);
 	}
 
