@@ -140,8 +140,6 @@ while read name enum_name ClassName tok_pfx; do
 		echo -n " $out_fname"
 	fi
 
-	echo
-
 	if [ -n "$out_fpath1" ]; then
 		$ULC2CLASS -o "$out_fpath1" -y -lc -e ${enum_name}_token $pfx_optstr $in_fname
 	fi

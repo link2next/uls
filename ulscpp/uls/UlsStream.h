@@ -34,15 +34,14 @@
 
 #pragma once
 
-#include <uls/uls_type.h>
+#include <uls/UlsAuw.h>
 
 namespace uls {
 	namespace crux {
-		class UlsAuw;
 
 		class ULSCPP_DLL_EXTERN UlsStream {
 		protected:
-			UlsAuw *auwcvt;
+			UlsAuw auwcvt;
 
 			bool read_only;
 
@@ -53,18 +52,14 @@ namespace uls {
 
 		public:
 			// <brief>
-			// A constructor which accepts UlsLex as first parameter.
-			// 'UlsLex' is the the class for lexical analysis defined in the same namespace.
+			// The constructor of UlsStream.
 			// </brief>
-			// <parm name="ulslex">An ULS lexical analyzer</parm>
-			// <return>none</return>
 			UlsStream();
 
 			// <brief>
 			// The destuctor of UlsStream.
 			// </brief>
-			// <return>none</return>
-			virtual ~UlsStream();
+			virtual ~UlsStream() {}
 		};
 	}
 }

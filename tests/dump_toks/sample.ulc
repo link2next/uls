@@ -15,7 +15,7 @@ COMMENT_TYPE: /* */
 COMMENT_TYPE: // \n
 
 QUOTE_TYPE: token=DQUOTE " x:\x2 u:\u4
-QUOTE_TYPE: token=BBQUOTE options=multiline,asymmetric  [[ ]] 
+QUOTE_TYPE: token=BQUOTE options=multiline,asymmetric  [[ ]] 
 QUOTE_TYPE: token=SQUOTE ' verbatim1
 
 NOT_CHAR_TOK: multibytes=false %~_! 

@@ -115,12 +115,15 @@ ULS_DEFINE_STRUCT_BEGIN(litstr)
 
 	uls_litstr_context_t context;
 };
-
 #endif // ULS_DEF_PUBLIC_TYPE
 
+#if defined(__ULS_LITSTR__) || defined(ULS_DEF_PRIVATE_DATA)
+ULS_DECL_STATIC int proc_litstr_eoi(uls_litstr_ptr_t lit, int len,
+	const char *emark, int len_emark, _uls_ptrtype_tool(csz_str) outbuf);
+#endif
+
 #ifdef ULS_DECL_PROTECTED_PROC
-int proc_litstr_eoi(uls_litstr_ptr_t lit, int len, const char *emark, int len_emark, _uls_ptrtype_tool(csz_str) outbuf);
-int __dec_escaped_char_cont(char quote_ch, uls_litstr_ptr_t lit);
+int __dec_escaped_char_cont(uls_litstr_ptr_t lit);
 uls_wch_t uls_get_escape_char_initial(uls_litstr_ptr_t lit);
 uls_wch_t uls_get_escape_char_cont(uls_litstr_ptr_t lit);
 
@@ -140,8 +143,8 @@ uls_escmap_ptr_t uls_parse_escmap(char *line, uls_quotetype_ptr_t qmt, uls_escma
 #endif
 
 #ifdef ULS_DECL_PUBLIC_PROC
-int canbe_commtype_mark(char* wrd, uls_ptrtype_tool(outparam) parms);
-int canbe_quotetype_mark(char* wrd, uls_ptrtype_tool(outparam) parms);
+int canbe_commtype_mark(char *wrd, uls_ptrtype_tool(outparam) parms);
+int canbe_quotetype_mark(char *wrd, uls_ptrtype_tool(outparam) parms);
 
 uls_quotetype_ptr_t uls_create_quotetype(void);
 void uls_destroy_quotetype(uls_quotetype_ptr_t qmt);
@@ -155,7 +158,6 @@ ULS_DLL_EXTERN uls_litstr_context_ptr_t uls_get_litstr__context(uls_litstr_ptr_t
 
 ULS_DLL_EXTERN void uls_litstr_putc(uls_litstr_context_ptr_t lit_ctx, char ch);
 ULS_DLL_EXTERN void uls_litstr_puts(uls_litstr_context_ptr_t lit_ctx, const char *str, int len);
-
 #endif // ULS_DECL_PUBLIC_PROC
 
 #ifdef _ULS_CPLUSPLUS

@@ -37,11 +37,16 @@
 #include "uls/uls_sysprops.h"
 #include "uls/uls_fileio.h"
 #include "uls/uls_log.h"
-#include "uls/uls_util.h"
+
+#ifdef __ULS_WINDOWS__
+#include "uls/uls_auw.h"
+#else
+#include <unistd.h>
+#endif
 #endif
 
 int
-ULS_QUALIFIED_METHOD(splitint)(const char* line, uls_ptrtype_tool(outparam) parms)
+ULS_QUALIFIED_METHOD(splitint)(const char *line, uls_ptrtype_tool(outparam) parms)
 {
 	int  i = parms->n1;
 	char ch;
@@ -60,7 +65,7 @@ ULS_QUALIFIED_METHOD(splitint)(const char* line, uls_ptrtype_tool(outparam) parm
 const char*
 ULS_QUALIFIED_METHOD(uls_skip_multiline_comment)(uls_ptrtype_tool(parm_line) parm_ln)
 {
-	const char* lptr = parm_ln->lptr, *lptr_end=parm_ln->lptr_end;
+	const char *lptr = parm_ln->lptr, *lptr_end=parm_ln->lptr_end;
 	int  ch, prev_ch, n = 0;
 
 	/*
@@ -90,7 +95,7 @@ ULS_QUALIFIED_METHOD(uls_skip_multiline_comment)(uls_ptrtype_tool(parm_line) par
 const char*
 ULS_QUALIFIED_METHOD(uls_skip_singleline_comment)(uls_ptrtype_tool(parm_line) parm_ln)
 {
-	const char* lptr = parm_ln->lptr, *lptr_end=parm_ln->lptr_end;
+	const char *lptr = parm_ln->lptr, *lptr_end=parm_ln->lptr_end;
 	int  ch;
 
 	/*
@@ -127,7 +132,7 @@ ULS_QUALIFIED_METHOD(uls_gauss_log2)(unsigned int n, uls_ptrtype_tool(outparam) 
 
 #ifndef ULS_DOTNET
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(sortcmp_obj4sort)(const uls_voidptr_t a, const uls_voidptr_t b)
+ULS_QUALIFIED_METHOD(sortcmp_obj4sort)(uls_const_voidptr_t a, uls_const_voidptr_t b)
 {
 	const uls_obj4sort_ptr_t e1 = (const uls_obj4sort_ptr_t) a;
 	const uls_obj4sort_ptr_t e2 = (const uls_obj4sort_ptr_t) b;
@@ -270,7 +275,7 @@ ULS_QUALIFIED_METHOD(uls_quick_sort)(uls_native_vptr_t ary, int n_ary, int elmt_
 }
 
 uls_voidptr_t
-ULS_QUALIFIED_METHOD(uls_bi_search)(const uls_voidptr_t keyw,
+ULS_QUALIFIED_METHOD(uls_bi_search)(uls_const_voidptr_t keyw,
 	uls_native_vptr_t ary, int n_ary, int elmt_size, uls_bi_comp_t cmpfunc)
 {
 	int   low, high, mid, cond;
@@ -320,7 +325,7 @@ ULS_QUALIFIED_METHOD(uls_quick_sort_vptr)(_uls_decl_array(ary,uls_voidptr_t),
 }
 
 uls_voidptr_t
-ULS_QUALIFIED_METHOD(uls_bi_search_vptr)(const uls_voidptr_t keyw,
+ULS_QUALIFIED_METHOD(uls_bi_search_vptr)(uls_const_voidptr_t keyw,
 	_uls_decl_array(ary,uls_voidptr_t), int n_ary, uls_bi_comp_t cmpfunc)
 {
 	int   low, high, mid, cond;
@@ -381,7 +386,7 @@ int
 ULS_QUALIFIED_METHOD(uls_get_simple_escape_str)(char quote_ch, uls_ptrtype_tool(outparam) parms)
 {
 	const char *lptr = parms->lptr;
-	char* outbuf = parms->line;
+	char *outbuf = parms->line;
 	uls_type_tool(outparam) parms1;
 	int escape = 0, j, k = 0;
 	char ch, ch2;
@@ -473,7 +478,7 @@ ULS_QUALIFIED_METHOD(uls_get_simple_unescape_char)(int ch)
 int
 ULS_QUALIFIED_METHOD(uls_get_simple_unescape_str)(uls_ptrtype_tool(outparam) parms)
 {
-	char* outbuf = parms->line;
+	char *outbuf = parms->line;
 	const char *lptr;
 	int ch, ch2;
 	int k = 0;
@@ -492,7 +497,7 @@ ULS_QUALIFIED_METHOD(uls_get_simple_unescape_str)(uls_ptrtype_tool(outparam) par
 }
 
 FILE*
-ULS_QUALIFIED_METHOD(uls_get_spec_fp)(const char* dirpath_list, const char* fpath, uls_ptrtype_tool(outparam) parms)
+ULS_QUALIFIED_METHOD(uls_get_spec_fp)(const char *dirpath_list, const char *fpath, uls_ptrtype_tool(outparam) parms)
 {
 	char filepath_buff[ULS_FILEPATH_MAX+1];
 	const char *fptr, *lptr0, *lptr;
@@ -503,7 +508,7 @@ ULS_QUALIFIED_METHOD(uls_get_spec_fp)(const char* dirpath_list, const char* fpat
 	if (fpath == NULL) return NULL;
 
 	if (dirpath_list == NULL || _uls_tool(is_absolute_path)(fpath) > 0) {
-		fp_in = _uls_tool_(fp_open)(fpath, ULS_FIO_READ);
+		fp_in = _uls_tool_(fp_open)(fpath, ULS_FIO_READ | ULS_FIO_NO_UTF8BOM);
 
 		parms1.lptr = fpath;
 		lptr = __uls_tool_(filename)(uls_ptr(parms1));
@@ -536,7 +541,7 @@ ULS_QUALIFIED_METHOD(uls_get_spec_fp)(const char* dirpath_list, const char* fpat
 			_uls_tool_(strcpy)(filepath_buff, fpath);
 		}
 
-		if ((fp_in=_uls_tool_(fp_open)(filepath_buff, ULS_FIO_READ)) != NULL) {
+		if ((fp_in=_uls_tool_(fp_open)(filepath_buff, ULS_FIO_READ | ULS_FIO_NO_UTF8BOM)) != NULL) {
 			if (parms != nilptr) {
 				parms->lptr = fptr;
 				parms->len = len_fptr;
@@ -546,4 +551,193 @@ ULS_QUALIFIED_METHOD(uls_get_spec_fp)(const char* dirpath_list, const char* fpat
 	}
 
 	return fp_in;
+}
+
+const char*
+ULS_QUALIFIED_METHOD(uls_get_dirpath)(const char *fname, uls_ptrtype_tool(outparam) parms)
+{
+	const char *dirpath_list = parms->lptr;
+	char fpath_buff[ULS_FILEPATH_MAX+1];
+	const char *fptr, *lptr0, *lptr, *dirpath_ret=NULL;
+	int   len, len_fptr;
+
+	if (dirpath_list == NULL) {
+		return NULL;
+	}
+
+	for (lptr0=dirpath_list; lptr0 != NULL; ) {
+		if ((lptr = _uls_tool_(strchr)(lptr0, ULS_DIRLIST_DELIM)) != NULL) {
+			len_fptr = (int) (lptr - lptr0);
+			fptr = lptr0;
+			lptr0 = ++lptr;
+		} else {
+			len_fptr = _uls_tool_(strlen)(lptr0);
+			fptr = lptr0;
+			lptr0 = NULL;
+		}
+
+		if (len_fptr==0) continue;
+
+		_uls_tool_(strncpy)(fpath_buff, fptr, len_fptr);
+		len = len_fptr;
+		fpath_buff[len++] = ULS_FILEPATH_DELIM;
+		_uls_tool_(strcpy)(fpath_buff+len, fname);
+
+		if (_uls_tool_(dirent_exist)(fpath_buff) == ST_MODE_FILE) {
+			dirpath_ret = fptr;
+			parms->len = len_fptr;
+			break;
+		}
+	}
+
+	return dirpath_ret;
+}
+
+ULS_DECL_STATIC int
+ULS_QUALIFIED_METHOD(uls_get_exeloc_by_pathenv)(const char *progname, char *fpath_buf)
+{
+	const char *pathlist, *dirptr;
+	int dirlen, fpath_buflen=-1;
+	uls_type_tool(outparam) parms;
+
+	if (progname == NULL || *progname == '\0') return -1;
+
+	if ((pathlist=getenv("PATH")) != NULL) {
+		parms.lptr = pathlist;
+		dirptr = uls_get_dirpath(progname, uls_ptr(parms));
+		dirlen = parms.len;
+
+		if (dirptr != NULL) {
+			_uls_tool_(memcopy)(fpath_buf, dirptr, dirlen);
+			fpath_buflen = dirlen;
+
+			fpath_buf[fpath_buflen++] = ULS_FILEPATH_DELIM;
+			_uls_tool_(strcpy)(fpath_buf+fpath_buflen, progname);
+			fpath_buflen += _uls_tool_(strlen)(progname);
+		}
+	}
+
+	return fpath_buflen;
+}
+
+int
+ULS_QUALIFIED_METHOD(uls_get_exeloc_dir)(const char *argv0, char *fpath_buf)
+{
+	int len;
+	char *ptr;
+#ifdef __ULS_WINDOWS__
+	const char *ustr;
+	_uls_type_tool(csz_str) ustr_csz;
+#endif
+
+	if (fpath_buf == NULL) {
+		_uls_log(err_log)("%s: invalid parameter!", __func__);
+		return -1;
+	}
+
+#ifdef __ULS_WINDOWS__
+	if ((len = GetModuleFileNameA(NULL, fpath_buf, ULS_FILEPATH_MAX)) >= ULS_FILEPATH_MAX) {
+		_uls_log(err_log)("%s: internal error!", __func__);
+		return -1;
+	}
+	fpath_buf[len] = '\0';
+
+	_uls_tool(csz_init)(uls_ptr(ustr_csz), -1);
+
+	if ((ustr = _uls_tool_(astr2ustr)(fpath_buf, len, uls_ptr(ustr_csz))) == NULL ||
+		(ptr = (char *) _uls_tool_(strchr_r)(ustr, ULS_FILEPATH_DELIM)) == NULL) {
+		len = -1;
+	} else {
+		len = (int) (ptr - ustr);
+		_uls_tool_(memcopy)(fpath_buf, ustr, len);
+		fpath_buf[len] = '\0';
+	}
+
+	_uls_tool(csz_deinit)(uls_ptr(ustr_csz));
+#else
+
+	if (argv0 == NULL) {
+#ifdef HAVE_READLINK
+		len = (int) readlink("/proc/self/exe", fpath_buf, ULS_FILEPATH_MAX+1);
+#else
+		len = -1;
+#endif
+		if (len < 0) return -1;
+		fpath_buf[len] = '\0';
+	} else {
+		if (argv0[0] == ULS_FILEPATH_DELIM) {
+			len = _uls_tool_(strcpy)(fpath_buf, argv0);
+		} else if (_uls_tool_(strchr)(argv0, ULS_FILEPATH_DELIM) != NULL &&
+			(len=_uls_tool_(getcwd)(fpath_buf, ULS_FILEPATH_MAX+1)) > 0) {
+			fpath_buf[len++] = ULS_FILEPATH_DELIM;
+			len += _uls_tool_(strcpy)(fpath_buf+len, argv0);
+		} else if ((len = uls_get_exeloc_by_pathenv(argv0, fpath_buf)) < 0) {
+			return -2;
+		}
+	}
+
+#ifdef HAVE_REALPATH
+	if ((ptr = realpath(fpath_buf, NULL)) != NULL) {
+		len = _uls_tool_(strcpy)(fpath_buf, ptr);
+		free(ptr);
+	}
+#endif
+
+	ptr = (char *) _uls_tool_(strchr_r)(fpath_buf, ULS_FILEPATH_DELIM);
+	if (ptr == NULL) return -3;
+
+	if (fpath_buf < ptr) { /* aaa/progname */
+		*ptr = '\0';
+		len = (int) (ptr - fpath_buf);
+	} else { /* /progname */
+		*++ptr = '\0';
+		len = 1;
+	}
+#endif // __ULS_WINDOWS__
+	return len;
+}
+
+void
+ULS_QUALIFIED_METHOD(uls_get_current_time_yyyymmdd_hhmm)(char *buf, int buf_siz)
+{
+#ifdef __ULS_WINDOWS__
+	SYSTEMTIME tm;
+	int len;
+
+	GetLocalTime(&tm);
+
+	len = _uls_log_(snprintf)(buf, buf_siz, "%4d-", tm.wYear);
+	len += _uls_log_(snprintf)(buf+len, buf_siz-len, "%02d-%02d", tm.wMonth, tm.wDay);
+	len += _uls_log_(snprintf)(buf+len, buf_siz-len, " %02d:%02d", tm.wHour, tm.wMinute);
+#else
+	struct tm  *tm;
+	time_t  curtim;
+
+	curtim = time(NULL);
+	tm = localtime(uls_ptr(curtim));
+
+	_uls_log_(snprintf)(buf, buf_siz, "%4d-%02d-%02d %02d:%02d",
+		1900 + tm->tm_year, 1 + tm->tm_mon, tm->tm_mday, tm->tm_hour, tm->tm_min);
+#endif
+}
+
+void
+ULS_QUALIFIED_METHOD(uls_print_bytes)(const char *srcptr, int n_bytes)
+{
+	char ch;
+	int i, j;
+
+	if (n_bytes==0) return;
+
+	for (i=0; ; ) {
+		ch = srcptr[i];
+
+		for (j=0; j<8; j++) {
+			if (ch & BYTE_LEFT_MOST_1) _uls_log_(printf)("1");
+			else _uls_log_(printf)(".");
+			ch <<= 1;
+		}
+		if (++i>=n_bytes) break;
+		_uls_log_(printf)(" ");
+	}
 }

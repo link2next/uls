@@ -32,10 +32,10 @@
   </author>
 */
 
-
 #include "uls/uls_lex.h"
-#include "uls/uls_log.h"
+#include "uls/uls_auw.h"
 #include "uls/uls_util.h"
+#include "uls/uls_log.h"
 
 #include <stdlib.h>
 #include <unistd.h>
@@ -71,7 +71,7 @@ options(int opt, LPTSTR optarg)
 
 	switch (opt) {
 	case _T('m'):
-		test_mode = ult_str2int(optarg);
+		test_mode = uls_str2int(optarg);
 		break;
 
 	case _T('v'):
@@ -137,7 +137,7 @@ test_uls(LPCTSTR fpath)
 		uls_printf(_T("\t%3d "), uls_get_lineno(sam1_lex));
 		uls_dumpln_tok(sam1_lex);
 
-		if (uls_tok(sam1_lex) == T1_ID && ult_str_equal(uls_lexeme(sam1_lex), _T("WWW"))) {
+		if (uls_tok(sam1_lex) == T1_ID && uls_str_equal(uls_lexeme(sam1_lex), _T("WWW"))) {
 			test_uls_2(_T("input2.txt"));
 		}
 
@@ -156,7 +156,7 @@ _tmain(int n_targv, LPTSTR *targv)
 	LPCTSTR input_file;
 	int  i, i0;
 
-	progname = uls_split_filepath(targv[0], NULL);
+	progname = uls_filename(targv[0], NULL);
 
 	if ((i0=uls_getopts(n_targv, targv, _T("m:vh"), options)) <= 0) {
 		return i0;

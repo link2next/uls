@@ -38,7 +38,7 @@
 #ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_const.h"
 #if !defined(ULS_DOTNET) && !defined(USE_ULSNETJAVA)
-#ifdef ULS_WINDOWS
+#ifdef __ULS_WINDOWS__
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <stdint.h>
@@ -93,8 +93,9 @@ typedef System::UInt32   uls_uint32;
 typedef System::UInt64   uls_uint64;
 
 typedef System::Object ^uls_voidptr_t;
+typedef System::Object ^uls_const_voidptr_t;
 #else
-#ifdef ULS_WINDOWS
+#ifdef __ULS_WINDOWS__
 typedef int16_t       uls_int16;
 typedef int32_t       uls_int32;
 typedef int64_t       uls_int64;
@@ -109,7 +110,8 @@ typedef u_int16_t   uls_uint16;
 typedef u_int32_t   uls_uint32;
 typedef u_int64_t   uls_uint64;
 #endif
-typedef void   *uls_voidptr_t;
+typedef void        *uls_voidptr_t;
+typedef const void  *uls_const_voidptr_t;
 #endif // ULS_DOTNET
 
 typedef uls_uint32  uls_flags_t;
@@ -802,18 +804,6 @@ ULS_DECLARE_STRUCT(lex);
 #define uls_set_array_slot(ary,idx,obj) _uls_set_stdary_slot(ary,idx,obj)
 #define uls_alloc_array_slot(ary,idx,typnam) _uls_alloc_iary_slot(ary,idx,none,typnam,uls_type_this)
 #define uls_dealloc_array_slot(ary,idx,typnam) _uls_dealloc_iary_slot(ary,idx,none,typnam,uls_type_this)
-
-#ifndef ULS_DOTNET
-#ifdef _ULSCPP_IMPLDLL
-#define _ULSCPP_AUWCVT_LEN(slot_no) auwcvt->get_slot_len(slot_no)
-
-#define _ULSCPP_USTR2WSTR(ustr, wstr, slot_no) \
-	((wstr) = auwcvt->mbstr2wstr(ustr, UlsAuw::CVT_MBSTR_USTR, slot_no),_ULSCPP_AUWCVT_LEN(slot_no))
-
-#define _ULSCPP_WSTR2USTR(wstr, ustr, slot_no) \
-	((ustr) = auwcvt->wstr2mbstr(wstr, UlsAuw::CVT_MBSTR_USTR, slot_no),_ULSCPP_AUWCVT_LEN(slot_no))
-#endif // _ULSCPP_IMPLDLL
-#endif // ULS_DOTNET
 
 #define nilptr  uls_nil
 

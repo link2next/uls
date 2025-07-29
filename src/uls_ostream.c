@@ -35,7 +35,6 @@
 #include "uls/uls_misc.h"
 #include "uls/uls_sysprops.h"
 #include "uls/uls_log.h"
-#include "uls/uls_util.h"
 #endif
 
 ULS_DECL_STATIC int
@@ -45,7 +44,7 @@ ULS_QUALIFIED_METHOD(uls_make_pkt__null)(uls_wr_packet_ptr_t pkt, _uls_ptrtype_t
 }
 
 ULS_DECL_STATIC void
-ULS_QUALIFIED_METHOD(__make_pkt_to_binstr)(uls_wr_packet_ptr_t pkt, char* binstr, int reclen, int txtlen)
+ULS_QUALIFIED_METHOD(__make_pkt_to_binstr)(uls_wr_packet_ptr_t pkt, char *binstr, int reclen, int txtlen)
 {
 	uls_int32 hdrbuf[ULS_BIN_RECHDR_NUM_INT32];
 	char *outptr = binstr;
@@ -284,17 +283,16 @@ ULS_QUALIFIED_METHOD(writeline_istr_hdr)(char *buf, int bufsiz, int k, const cha
 ULS_DECL_STATIC void
 ULS_QUALIFIED_METHOD(fill_uls_redundant_lines)(char *buff, int buflen, int len1, const char *mesg2)
 {
-	int i, k, n_bytes, n_lines, n;
+	int i, k = buflen, n_bytes_remain, n_lines, n;
 	int n_bytes_per_line = 63;
 	const char *mesg1 = "DO NOT EDIT!";
 
-	k = buflen;
 	buff[k++] = '\n';
+	n_bytes_remain = len1 - k;
 
-	n_bytes = len1 - k;
 	n = n_bytes_per_line + 1;
-	n_lines = n_bytes / n;
-	n_bytes %= n;
+	n_lines = n_bytes_remain / n;
+	n_bytes_remain %= n;
 
 	n = n_bytes_per_line - 1;
 	for (i=0; i<n_lines; i++) {
@@ -309,10 +307,13 @@ ULS_QUALIFIED_METHOD(fill_uls_redundant_lines)(char *buff, int buflen, int len1,
 		buff[k++] = '\n';
 	}
 
-	if (n_bytes > 0) {
-		n = n_bytes - 1;
-		_uls_tool_(memset)(buff + k, ' ', n);
-		k += n;
+	if (n_bytes_remain > 0) {
+		if (n_bytes_remain > 1) {
+			buff[k++] = '#';
+			n = n_bytes_remain - 2;
+			_uls_tool_(memset)(buff + k, ' ', n);
+			k += n;
+		}
 		buff[k++] = '\n';
 	}
 }
@@ -356,7 +357,7 @@ ULS_QUALIFIED_METHOD(write_uld_to_ostream)(uls_xcontext_ptr_t xctx,
 ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(format_uls_hdrbuf)(char *ulshdr)
 {
-	const char* magic_code = "#34183847-D64D-C131-D754-577215664901-ULS-STREAM\n";
+	const char *magic_code = "#34183847-D64D-C131-D754-577215664901-ULS-STREAM\n";
 	int magic_code_len = _uls_tool_(strlen)(magic_code);
 
 	_uls_tool_(memcopy)(ulshdr, magic_code, magic_code_len);
@@ -455,7 +456,7 @@ ULS_QUALIFIED_METHOD(write_ostream_header)(uls_ostream_ptr_t ostr, uls_xcontext_
 		return -1;
 	}
 
-	_uls_tool_(get_current_time_yyyymmdd_hhmm)(time_buf, sizeof(time_buf));
+	uls_get_current_time_yyyymmdd_hhmm(time_buf, sizeof(time_buf));
 	len = _uls_log_(snprintf)(linebuff, sizeof(linebuff), "CREATION_TIME: %s", time_buf);
 	if ((k = writeline_istr_hdr(ulshdr, ULS_BIN_HDR_SZ, k, linebuff, len)) < 0) {
 		return -1;
@@ -504,8 +505,7 @@ ULS_QUALIFIED_METHOD(write_ostream_header)(uls_ostream_ptr_t ostr, uls_xcontext_
 }
 
 ULS_DECL_STATIC void
-ULS_QUALIFIED_METHOD(__uls_bind_ostream)
-	(uls_ostream_ptr_t ostr, const char *specname, uls_lex_ptr_t uls)
+ULS_QUALIFIED_METHOD(__uls_bind_ostream)(uls_ostream_ptr_t ostr, uls_lex_ptr_t uls)
 {
 	uls_set_namebuf_value(ostr->header.specname, uls_get_namebuf_value(uls->ulc_name));
 	uls_grab(uls);
@@ -565,7 +565,7 @@ ULS_QUALIFIED_METHOD(__uls_finalize_ostream)(uls_ostream_ptr_t ostr)
 
 ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(__uls_make_packet_linenum)
-	(uls_ostream_ptr_t ostr, int lno, const char* tag, int tag_len)
+	(uls_ostream_ptr_t ostr, int lno, const char *tag, int tag_len)
 {
 	_uls_ptrtype_tool(csz_str) outbuf = uls_ptr(ostr->out_fd_csz);
 	uls_lex_ptr_t uls = (uls_lex_ptr_t) ostr->uls;
@@ -589,7 +589,7 @@ ULS_QUALIFIED_METHOD(__uls_make_packet_linenum)
 
 ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(__uls_make_packet)
-	(uls_ostream_ptr_t ostr, int tokid, const char* tokstr, int l_tokstr)
+	(uls_ostream_ptr_t ostr, int tokid, const char *tokstr, int l_tokstr)
 {
 	_uls_ptrtype_tool(csz_str) outbuf = uls_ptr(ostr->out_fd_csz);
 	int k0 = csz_length(outbuf);
@@ -644,7 +644,7 @@ ULS_QUALIFIED_METHOD(uls_print_tok_eoi)(uls_ostream_ptr_t ostr)
 
 ULS_QUALIFIED_RETTYP(uls_ostream_ptr_t)
 ULS_QUALIFIED_METHOD(__uls_create_ostream)
-	(int fd_out, uls_lex_ptr_t uls, int stream_type, const char* subname)
+	(int fd_out, uls_lex_ptr_t uls, int stream_type, const char *subname)
 {
 	uls_ostream_ptr_t ostr;
 	int  rc;
@@ -677,7 +677,7 @@ ULS_QUALIFIED_METHOD(__uls_create_ostream)
 		uls_set_namebuf_value(ostr->header.subname, subname);
 	}
 
-	__uls_bind_ostream(ostr, nilptr, uls);
+	__uls_bind_ostream(ostr, uls);
 	if ((rc = write_ostream_header(ostr, uls_ptr(uls->xcontext))) < 0) {
 		_uls_log(err_log)("%s: can't bind!", __func__);
  		__uls_unbind_ostream(ostr);
@@ -689,7 +689,7 @@ ULS_QUALIFIED_METHOD(__uls_create_ostream)
 }
 
 ULS_QUALIFIED_RETTYP(uls_ostream_ptr_t)
-ULS_QUALIFIED_METHOD(uls_create_ostream)(int fd_out, uls_lex_ptr_t uls, const char* subname)
+ULS_QUALIFIED_METHOD(uls_create_ostream)(int fd_out, uls_lex_ptr_t uls, const char *subname)
 {
 	int stream_type;
 
@@ -703,12 +703,12 @@ ULS_QUALIFIED_METHOD(uls_create_ostream)(int fd_out, uls_lex_ptr_t uls, const ch
 }
 
 ULS_QUALIFIED_RETTYP(uls_ostream_ptr_t)
-ULS_QUALIFIED_METHOD(uls_create_ostream_file)(const char* filepath, uls_lex_ptr_t uls, const char* subname)
+ULS_QUALIFIED_METHOD(uls_create_ostream_file)(const char *filepath, uls_lex_ptr_t uls, const char *subname)
 {
 	uls_ostream_ptr_t ostr;
 	int fd;
 
-	if ((fd = _uls_tool_(fd_open)(filepath, ULS_FIO_CREAT|ULS_FIO_WRITE)) < 0) {
+	if ((fd = _uls_tool_(fd_open)(filepath, ULS_FIO_WRITE)) < 0) {
 		_uls_log(err_log)("can't create file '%s'!", filepath);
 		return nilptr;
 	}
@@ -755,7 +755,7 @@ ULS_QUALIFIED_METHOD(uls_destroy_ostream)(uls_ostream_ptr_t ostr)
 }
 
 int
-ULS_QUALIFIED_METHOD(__uls_print_tok)(uls_ostream_ptr_t ostr, int tokid, const char* tokstr, int l_tokstr)
+ULS_QUALIFIED_METHOD(__uls_print_tok)(uls_ostream_ptr_t ostr, int tokid, const char *tokstr, int l_tokstr)
 {
 	int rc;
 
@@ -771,7 +771,7 @@ ULS_QUALIFIED_METHOD(__uls_print_tok)(uls_ostream_ptr_t ostr, int tokid, const c
 }
 
 int
-ULS_QUALIFIED_METHOD(__uls_print_tok_linenum)(uls_ostream_ptr_t ostr, int lno, const char* tag, int tag_len)
+ULS_QUALIFIED_METHOD(__uls_print_tok_linenum)(uls_ostream_ptr_t ostr, int lno, const char *tag, int tag_len)
 {
 	int rc;
 
@@ -836,7 +836,7 @@ ULS_QUALIFIED_METHOD(uls_print_tok)(uls_ostream_ptr_t ostr)
 {
 	uls_lex_ptr_t uls = (uls_lex_ptr_t) ostr->uls;
 	int rc, tokid = __uls_tok(uls);
-	const char* tokstr = __uls_lexeme(uls);
+	const char *tokstr = __uls_lexeme(uls);
 	int l_tokstr =  __uls_lexeme_len(uls);
 
 	if (tokid == uls->xcontext.toknum_NUMBER) {
@@ -921,7 +921,7 @@ ULS_QUALIFIED_METHOD(_uls_const_LINE_NUMBERING)(void)
 }
 
 int
-ULS_QUALIFIED_METHOD(_uls_print_tok)(uls_ostream_ptr_t ostr, int tokid, const char* tokstr)
+ULS_QUALIFIED_METHOD(_uls_print_tok)(uls_ostream_ptr_t ostr, int tokid, const char *tokstr)
 {
 	int l_tokstr = _uls_tool_(strlen)(tokstr);
 	return __uls_print_tok(ostr, tokid, tokstr, l_tokstr);

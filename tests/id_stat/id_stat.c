@@ -33,17 +33,16 @@
 */
 
 #include "uls/uls_lex.h"
-#include "uls/uls_log.h"
-#include "uls/uls_util.h"
 #include "uls/uls_fileio.h"
+#include "uls/uls_auw.h"
+#include "uls/uls_util.h"
+#include "uls/uls_log.h"
 
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
 
 #include "sample_lex.h"
-
-#define streql(a,b) ult_str_equal(a,b)
 
 LPCTSTR progname;
 int  test_mode = -1;
@@ -87,7 +86,7 @@ options(int opt, LPTSTR optarg)
 		break;
 
 	case _T('m'):
-		test_mode = ult_str2int(optarg);
+		test_mode = uls_str2int(optarg);
 		break;
 
 	case _T('v'):
@@ -127,7 +126,7 @@ find_id_stat(LPCTSTR name)
 
 	for (i=0; i<n_id_stat_array; i++) {
 		e = id_stat_array + i;
-		if (streql(e->name, name))
+		if (uls_str_equal(e->name, name))
 			return e;
 	}
 
@@ -145,7 +144,7 @@ append_id_stat(LPCTSTR name)
 	}
 
 	id_stat = id_stat_array + n_id_stat_array++;
-	ult_str_copy(id_stat->name, name);
+	uls_str_copy(id_stat->name, name);
 	id_stat->freq = 0;
 
 	return id_stat;
@@ -222,7 +221,7 @@ proc_filelist(FILE *fin)
 		if (*lptr == _T('\0') || *lptr == _T('#')) continue;
 
 		fpath = lptr;
-		for (i = ult_str_length(fpath)-1; i>=0; i--) {
+		for (i = uls_str_length(fpath)-1; i>=0; i--) {
 			if (!uls_isspace(fpath[i])) break;
 		}
 		fpath[++i] = _T('\0');
@@ -243,7 +242,7 @@ comp_by_idname(const void *a, const void *b)
 	id_stat_t *a1 = (id_stat_t *) a;
 	id_stat_t *b1 = (id_stat_t *) b;
 
-	return ult_str_compare(a1->name, b1->name);
+	return uls_str_compare(a1->name, b1->name);
 }
 
 int
@@ -312,7 +311,7 @@ _tmain(int n_targv, LPTSTR *targv)
 {
 	int i0, i, rc;
 
-	progname = uls_split_filepath(targv[0], NULL);
+	progname = uls_filename(targv[0], NULL);
 	target_dir = NULL;
 	config_name = _T("sample.ulc");
 	input_file = _T("input1.txt");

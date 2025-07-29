@@ -36,10 +36,10 @@
 #include "uls/UlsOStream.h"
 #include "uls/UlsUtils.h"
 
+#include <uls/uls_auw.h>
+
 #include <string>
 #include <iostream>
-
-#include <uls/uls_auw.h>
 
 using namespace std;
 using namespace uls::crux;
@@ -54,15 +54,14 @@ uls::crux::UlsOStream::makeOStream_ustr(const char *filepath, UlsLex *lex, const
 		return false;
 	}
 
-	string fpath = filepath;
-	if ((fd_out = create_fd_wronly(fpath)) < 0) {
-		cerr << "can't create file for uls!" << endl;
+	if ((fd_out = uls_fd_open(filepath, ULS_FIO_WRITE)) < 0) {
+		cerr << "can't create file '" << string(filepath) << "' for uls!" << endl;
 		return false;
 	}
 
 	if ((out_hdr = uls_create_ostream(fd_out, lex->getLexCore(), subtag)) == NULL) {
 		cerr << "fail to create output stream object!" << endl;
-		close_fd(fd_out);
+		uls_fd_close(fd_out);
 		return false;
 	}
 
@@ -83,23 +82,28 @@ uls::crux::UlsOStream::makeOStream_ustr(const char *filepath, UlsLex *lex, const
 // <parm name="numbering">Specifies whether number informatioin is inserted.
 //     The information is automatically inserted whenever source code line is changed</parm>
 
-
 uls::crux::UlsOStream::UlsOStream
-	(string& filepath, UlsLex *lex, const char* subtag, bool numbering)
+	(string filepath, void *_lex, const char *subtag, bool numbering)
 {
-	const char *ustr0, *ustr1;
+	UlsLex *lex = (UlsLex *) _lex;
+	const char *austr0, *austr1;
 
-	ustr0 = filepath.c_str();
-	ustr1 = subtag;
-
-	if (makeOStream_ustr(ustr0, lex, ustr1, numbering) == false) {
+#ifdef __ULS_WINDOWS__
+	_ULSCPP_ASTR2USTR(filepath.c_str(), austr0, 0);
+	_ULSCPP_ASTR2USTR(subtag, austr1, 1);
+#else
+	austr0 = filepath.c_str();
+	austr1 = subtag;
+#endif
+	if (makeOStream_ustr(austr0, lex, austr1, numbering) == false) {
 		cerr << "can't create uls (output) stream object!" << endl;
 	}
 }
 
 uls::crux::UlsOStream::UlsOStream
-	(wstring& wfilepath, UlsLex *lex, const wchar_t *wsubtag, bool numbering)
+	(wstring wfilepath, void *_lex, const wchar_t *wsubtag, bool numbering)
 {
+	UlsLex *lex = (UlsLex *) _lex;
 	const char *ustr0, *ustr1;
 
 	_ULSCPP_WSTR2USTR(wfilepath.c_str(), ustr0, 0);
@@ -113,7 +117,6 @@ uls::crux::UlsOStream::UlsOStream
 // <brief>
 // The destuctor of UlsOStream.
 // </brief>
-// <return>none</return>
 uls::crux::UlsOStream::~UlsOStream()
 {
 	close();
@@ -123,7 +126,6 @@ uls::crux::UlsOStream::~UlsOStream()
 // This finalizes the task of streaming,
 //     flushing data buffer and closing the output-file.
 // </brief>
-// <return>none</return>
 void
 uls::crux::UlsOStream::close(void)
 {
@@ -147,15 +149,43 @@ uls::crux::UlsOStream::getCore(void)
 // </brief>
 // <parm name="tokid">token id to be printed</parm>
 // <parm name="tokstr">the lexeme associated with the 'tokid'</parm>
-// <return>none</return>
+void
+uls::crux::UlsOStream::printTok(int tokid, const char *tokstr)
+{
+	const char *austr;
+	int len, rc;
+
+	if (tokstr == NULL) tokstr = "";
+
+#ifdef __ULS_WINDOWS__
+	_ULSCPP_ASTR2USTR(tokstr, austr, 0);
+	len = _ULSCPP_AUWCVT_LEN(0);
+#else
+	austr = tokstr;
+	len = uls_strlen(austr);
+#endif
+
+	rc = __uls_print_tok(out_hdr, tokid, austr, len);
+	if (rc < 0)
+		cerr << "can't a print token!" << endl;
+}
+
 void
 uls::crux::UlsOStream::printTok(int tokid, const string& tokstr)
+{
+	printTok(tokid, tokstr.c_str());
+}
+
+void
+uls::crux::UlsOStream::printTok(int tokid, const wchar_t *wtokstr)
 {
 	const char *ustr;
 	int len, rc;
 
-	ustr = tokstr.c_str();
-	len = uls_strlen(ustr);
+	if (wtokstr == NULL) wtokstr = L"";
+
+	_ULSCPP_WSTR2USTR(wtokstr, ustr, 0);
+	len = _ULSCPP_AUWCVT_LEN(0);
 
 	rc = __uls_print_tok(out_hdr, tokid, ustr, len);
 	if (rc < 0)
@@ -165,13 +195,7 @@ uls::crux::UlsOStream::printTok(int tokid, const string& tokstr)
 void
 uls::crux::UlsOStream::printTok(int tokid, const wstring& wtokstr)
 {
-	const char *ustr;
-	int len, rc;
-
-	len = _ULSCPP_WSTR2USTR(wtokstr.c_str(), ustr, 0);
-	rc = __uls_print_tok(out_hdr, tokid, ustr, len);
-	if (rc < 0)
-		cerr << "can't a print token!" << endl;
+	printTok(tokid, wtokstr.c_str());
 }
 
 // <brief>
@@ -179,15 +203,44 @@ uls::crux::UlsOStream::printTok(int tokid, const wstring& wtokstr)
 // </brief>
 // <parm name="lno">the line number of the source file</parm>
 // <parm name="tagstr">the tag of the source file.</parm>
-// <return>none</return>
+void
+uls::crux::UlsOStream::printTokLineNum(int lno, const char *tagstr)
+{
+	const char *austr;
+	int len, rc;
+
+	if (tagstr == NULL) tagstr = "";
+
+#ifdef __ULS_WINDOWS__
+	_ULSCPP_ASTR2USTR(tagstr, austr, 0);
+	len = _ULSCPP_AUWCVT_LEN(0);
+#else
+	austr = tagstr;
+	len = uls_strlen(austr);
+#endif
+
+	rc = __uls_print_tok_linenum(out_hdr, lno, austr, len);
+	if (rc < 0)
+		cerr << "can't a print linenum-token!" << endl;
+}
+
 void
 uls::crux::UlsOStream::printTokLineNum(int lno, const string& tagstr)
+{
+	printTokLineNum(lno, tagstr.c_str());
+}
+
+void
+uls::crux::UlsOStream::printTokLineNum(int lno, const wchar_t *wtagstr)
 {
 	const char *ustr;
 	int len, rc;
 
-	ustr = tagstr.c_str();
-	len = uls_strlen(ustr);
+	if (wtagstr == NULL) wtagstr = L"";
+
+	_ULSCPP_WSTR2USTR(wtagstr, ustr, 0);
+	len = _ULSCPP_AUWCVT_LEN(0);
+
 	rc = __uls_print_tok_linenum(out_hdr, lno, ustr, len);
 	if (rc < 0)
 		cerr << "can't a print linenum-token!" << endl;
@@ -196,13 +249,7 @@ uls::crux::UlsOStream::printTokLineNum(int lno, const string& tagstr)
 void
 uls::crux::UlsOStream::printTokLineNum(int lno, const wstring& wtagstr)
 {
-	const char *ustr;
-	int len, rc;
-
-	len = _ULSCPP_WSTR2USTR(wtagstr.c_str(), ustr, 0);
-	rc = __uls_print_tok_linenum(out_hdr, lno, ustr, len);
-	if (rc < 0)
-		cerr << "can't a print linenum-token!" << endl;
+	printTokLineNum(lno, wtagstr.c_str());
 }
 
 // <brief>
@@ -220,7 +267,7 @@ uls::crux::UlsOStream::startStream(UlsIStream& ifile)
 
 	uls_lex->pushInput(ifile);
 
-	if ((rc=uls_start_stream(out_hdr, flags)) < 0) {
+	if ((rc = uls_start_stream(out_hdr, flags)) < 0) {
 		cerr << "can't do lex-streaming!" << endl;
 		return false;
 	}

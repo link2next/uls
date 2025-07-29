@@ -186,25 +186,25 @@ JNIEXPORT void JNICALL Java_uls_polaris_UlsLex_expect
 /*
  * Class:     uls_polaris_UlsLex
  * Method:    ungetStr
- * Signature: (Ljava/lang/Object;Ljava/lang/String;)V
+ * Signature: (Ljava/lang/Object;Ljava/lang/String;)Z
  */
-JNIEXPORT void JNICALL Java_uls_polaris_UlsLex_ungetStr
+JNIEXPORT jboolean JNICALL Java_uls_polaris_UlsLex_ungetStr
   (JNIEnv *, jclass, jobject, jstring);
 
 /*
  * Class:     uls_polaris_UlsLex
  * Method:    ungetTok
- * Signature: (Ljava/lang/Object;Ljava/lang/String;I)V
+ * Signature: (Ljava/lang/Object;ILjava/lang/String;)Z
  */
-JNIEXPORT void JNICALL Java_uls_polaris_UlsLex_ungetTok
-  (JNIEnv *, jclass, jobject, jstring, jint);
+JNIEXPORT jboolean JNICALL Java_uls_polaris_UlsLex_ungetTok
+  (JNIEnv *, jclass, jobject, jint, jstring);
 
 /*
  * Class:     uls_polaris_UlsLex
- * Method:    ungetCh
- * Signature: (Ljava/lang/Object;I)V
+ * Method:    ungetChar
+ * Signature: (Ljava/lang/Object;I)Z
  */
-JNIEXPORT void JNICALL Java_uls_polaris_UlsLex_ungetCh
+JNIEXPORT jboolean JNICALL Java_uls_polaris_UlsLex_ungetChar
   (JNIEnv *, jclass, jobject, jint);
 
 /*
@@ -214,14 +214,6 @@ JNIEXPORT void JNICALL Java_uls_polaris_UlsLex_ungetCh
  */
 JNIEXPORT void JNICALL Java_uls_polaris_UlsLex_dumpTok
   (JNIEnv *, jclass, jobject, jstring, jstring);
-
-/*
- * Class:     uls_polaris_UlsLex
- * Method:    tok2keyw
- * Signature: (Ljava/lang/Object;I)Ljava/lang/String;
- */
-JNIEXPORT jstring JNICALL Java_uls_polaris_UlsLex_tok2keyw
-  (JNIEnv *, jclass, jobject, jint);
 
 /*
  * Class:     uls_polaris_UlsLex
@@ -289,18 +281,18 @@ JNIEXPORT void JNICALL Java_uls_polaris_UlsLex_skipWhiteSpaces
 
 /*
  * Class:     uls_polaris_UlsLex
- * Method:    peekCh
+ * Method:    peekCharDetail
  * Signature: (Ljava/lang/Object;)Ljava/lang/Object;
  */
-JNIEXPORT jobject JNICALL Java_uls_polaris_UlsLex_peekCh
+JNIEXPORT jobject JNICALL Java_uls_polaris_UlsLex_peekCharDetail
   (JNIEnv *, jclass, jobject);
 
 /*
  * Class:     uls_polaris_UlsLex
- * Method:    getCh
+ * Method:    getCharDetail
  * Signature: (Ljava/lang/Object;)Ljava/lang/Object;
  */
-JNIEXPORT jobject JNICALL Java_uls_polaris_UlsLex_getCh
+JNIEXPORT jobject JNICALL Java_uls_polaris_UlsLex_getCharDetail
   (JNIEnv *, jclass, jobject);
 
 /*

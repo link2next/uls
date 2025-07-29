@@ -35,9 +35,8 @@
 #define __ULS_WPRINT_H__
 
 #include "uls/uls_auw.h"
-#ifdef _ULS_INTERNAL_USE_ONLY
 #include "uls/uls_print.h"
-#endif
+
 #include <stdio.h>
 
 #ifdef _ULS_CPLUSPLUS
@@ -49,19 +48,19 @@ void finalize_uls_wprint(void);
 
 ULS_DLL_EXTERN int uls_sysprn_wopen(uls_voidptr_t data, uls_lf_puts_t proc);
 ULS_DLL_EXTERN void uls_sysprn_wclose(void);
-ULS_DLL_EXTERN int uls_vwsysprn(const wchar_t* wfmt, va_list args);
-ULS_DLL_EXTERN int uls_wsysprn(const wchar_t* wfmt, ...);
+ULS_DLL_EXTERN int uls_vwsysprn(const wchar_t *wfmt, va_list args);
+ULS_DLL_EXTERN int uls_wsysprn(const wchar_t *wfmt, ...);
 
 /* string wprintf */
-ULS_DLL_EXTERN int __uls_lf_vsnwprintf(wchar_t* wbuf, int wbuf_siz, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, va_list args);
-ULS_DLL_EXTERN int uls_lf_vsnwprintf(wchar_t* wbuf, int wbuf_siz, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, va_list args);
-ULS_DLL_EXTERN int __uls_lf_snwprintf(wchar_t* wbuf, int wbuf_siz, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, ...);
-ULS_DLL_EXTERN int uls_lf_snwprintf(wchar_t* wbuf, int wbuf_siz, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, ...);
+ULS_DLL_EXTERN int __uls_lf_vsnwprintf(wchar_t *wbuf, int wbuf_siz, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, va_list args);
+ULS_DLL_EXTERN int uls_lf_vsnwprintf(wchar_t *wbuf, int wbuf_siz, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, va_list args);
+ULS_DLL_EXTERN int __uls_lf_snwprintf(wchar_t *wbuf, int wbuf_siz, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, ...);
+ULS_DLL_EXTERN int uls_lf_snwprintf(wchar_t *wbuf, int wbuf_siz, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, ...);
 
-ULS_DLL_EXTERN int __uls_vsnwprintf(wchar_t* wbuf, int wbuf_siz, const wchar_t *wfmt, va_list args);
-ULS_DLL_EXTERN int uls_vsnwprintf(wchar_t* wbuf, int wbuf_siz, const wchar_t *wfmt, va_list args);
-ULS_DLL_EXTERN int __uls_snwprintf(wchar_t* wbuf, int wbuf_siz, const wchar_t *wfmt, ...);
-ULS_DLL_EXTERN int uls_snwprintf(wchar_t* wbuf, int wbuf_siz, const wchar_t *wfmt, ...);
+ULS_DLL_EXTERN int __uls_vsnwprintf(wchar_t *wbuf, int wbuf_siz, const wchar_t *wfmt, va_list args);
+ULS_DLL_EXTERN int uls_vsnwprintf(wchar_t *wbuf, int wbuf_siz, const wchar_t *wfmt, va_list args);
+ULS_DLL_EXTERN int __uls_snwprintf(wchar_t *wbuf, int wbuf_siz, const wchar_t *wfmt, ...);
+ULS_DLL_EXTERN int uls_snwprintf(wchar_t *wbuf, int wbuf_siz, const wchar_t *wfmt, ...);
 
 /* csz wprintf */
 ULS_DLL_EXTERN int __uls_lf_vzwprintf(csz_str_ptr_t csz, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, va_list args);
@@ -75,15 +74,15 @@ ULS_DLL_EXTERN int __uls_zwprintf(csz_str_ptr_t csz, const wchar_t *wfmt, ...);
 ULS_DLL_EXTERN int uls_zwprintf(csz_str_ptr_t csz, const wchar_t *wfmt, ...);
 
 /* file wprintf */
-ULS_DLL_EXTERN int __uls_lf_vfwprintf(FILE* fp, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, va_list args);
-ULS_DLL_EXTERN int uls_lf_vfwprintf(FILE* fp, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, va_list args);
-ULS_DLL_EXTERN int __uls_lf_fwprintf(FILE* fp, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, ...);
-ULS_DLL_EXTERN int uls_lf_fwprintf(FILE* fp, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, ...);
+ULS_DLL_EXTERN int __uls_lf_vfwprintf(FILE *fp, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, va_list args);
+ULS_DLL_EXTERN int uls_lf_vfwprintf(FILE *fp, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, va_list args);
+ULS_DLL_EXTERN int __uls_lf_fwprintf(FILE *fp, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, ...);
+ULS_DLL_EXTERN int uls_lf_fwprintf(FILE *fp, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, ...);
 
-ULS_DLL_EXTERN int __uls_vfwprintf(FILE* fp, const wchar_t *wfmt, va_list args);
-ULS_DLL_EXTERN int uls_vfwprintf(FILE* fp, const wchar_t *wfmt, va_list args);
-ULS_DLL_EXTERN int __uls_fwprintf(FILE* fp, const wchar_t *wfmt, ...);
-ULS_DLL_EXTERN int uls_fwprintf(FILE* fp, const wchar_t *wfmt, ...);
+ULS_DLL_EXTERN int __uls_vfwprintf(FILE *fp, const wchar_t *wfmt, va_list args);
+ULS_DLL_EXTERN int uls_vfwprintf(FILE *fp, const wchar_t *wfmt, va_list args);
+ULS_DLL_EXTERN int __uls_fwprintf(FILE *fp, const wchar_t *wfmt, ...);
+ULS_DLL_EXTERN int uls_fwprintf(FILE *fp, const wchar_t *wfmt, ...);
 
 ULS_DLL_EXTERN int __uls_lf_vwprintf(uls_lf_ptr_t uls_lf, const wchar_t *wfmt, va_list args);
 ULS_DLL_EXTERN int uls_lf_vwprintf(uls_lf_ptr_t uls_lf, const wchar_t *wfmt, va_list args);

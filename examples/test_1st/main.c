@@ -36,6 +36,7 @@
 #include <fcntl.h>
 
 #include <uls.h>
+#include <uls/uls_auw.h>
 #include <uls/simple_lex.h>
 
 LPCTSTR progname;
@@ -126,7 +127,7 @@ _tmain(int n_targv, LPTSTR *targv)
 {
 	int i0;
 
-	progname = uls_split_filepath(targv[0], NULL);
+	progname = uls_filename(targv[0], NULL);
 	// opt_verbose = 1;
 	config_name = _T("simple");
 	input_file = _T("input1.txt");
@@ -139,7 +140,7 @@ _tmain(int n_targv, LPTSTR *targv)
 	return 0;
 }
 
-#ifndef __WINDOWS__
+#ifndef __ULS_WINDOWS__
 int
 main(int argc, char *argv[])
 {

@@ -32,8 +32,8 @@
   </author>
 */
 
-#define ULS_DECL_PROTECTED_PROC
 #include "uls.h"
+#include "uls/uls_auw.h"
 #include "uls/uls_misc.h"
 #include "uls/uls_freq.h"
 
@@ -64,8 +64,8 @@ char *filelist;
 
 char *out_file;
 char out_file_buff[ULS_FILEPATH_MAX+1];
-int  opt_verbose;
-int  opt_optimize_level;
+int opt_verbose;
+int opt_optimize_level;
 
 uls_lex_ptr_t sam_lex;
 uls_hashfunc_t ulf_hashfunc;
@@ -76,7 +76,7 @@ static int i_weight_list, j_weight_list, k_weight_list;
 
 #define NUM_WPRIMES  25
 static int weight_plist[NUM_WPRIMES] = {
-	 2,  3,  5,  7,
+	2,  3,  5,  7,
 	11, 13, 17, 19,
 	23, 29,
 	31, 37,
@@ -122,7 +122,7 @@ static void usage_synopsis(void)
 
 static void usage_desc(void)
 {
-#ifdef ULS_WINDOWS
+#ifdef __ULS_WINDOWS__
 	err_log("  -L <ulc-spec>      Specify the lexical-spec(*.ulc) of the language");
 	err_log("  -l <list-file>     Specify the list of data source files");
 	err_log("  -o <a-file>        Specify the the output filepath(*.ulf)");
@@ -184,7 +184,7 @@ static void usage_long(void)
 	err_log("");
 }
 
-static int ulfgen_options(int opt, char* optarg)
+static int ulfgen_options(int opt, char *optarg)
 {
 	int   stat = 0;
 
@@ -244,14 +244,14 @@ static int ulfgen_options(int opt, char* optarg)
 }
 
 static int
-parse_options(int argc, char* argv[])
+parse_options(int argc, char *argv[])
 {
 #ifdef HAVE_GETOPT
 	int   rc, opt, longindex;
 #endif
 	int   i0;
 
-	if (ult_getcwd(home_dir, sizeof(home_dir)) < 0)
+	if (uls_getcwd(home_dir, sizeof(home_dir)) < 0)
 		err_panic("%s: fail to getcwd()", __func__);
 
 	filelist = NULL;
@@ -308,7 +308,7 @@ reset_hash_buckets()
 }
 
 int
-incl_if_keyw(uls_keyw_stat_list_t *ks_lst, const char* keyw)
+incl_if_keyw(uls_keyw_stat_list_t *ks_lst, const char *keyw)
 {
 	uls_keyw_stat_ptr_t kwstat;
 	int stat = 0;
@@ -334,10 +334,7 @@ dump_hash_freq(stat_of_round_ptr_t p_round)
 	int i;
 
 	uls_printf("weight = { %d, %d, %d }\n",
-		hs->weight[0],
-		hs->weight[1],
-		hs->weight[2]
-	);
+		hs->weight[0], hs->weight[1], hs->weight[2]);
 
 	uls_printf("avg(%.2f), sigma2(%.2f), gamma(%.2f)\n",
 		p_round->state.avg, p_round->state.sigma2, p_round->state.gamma);
@@ -574,7 +571,7 @@ __create_file_internal(uls_keyw_stat_list_t *ks_lst, const char *tgt_dir,
 
 	// 1. stastics of keyword frequencies
 	if (fp_list != NULL) {
-		if (ult_chdir(tgt_dir) < 0) {
+		if (uls_chdir(tgt_dir) < 0) {
 			err_log("can't change to %s", tgt_dir);
 			return -1;
 		}
@@ -584,7 +581,7 @@ __create_file_internal(uls_keyw_stat_list_t *ks_lst, const char *tgt_dir,
 			return -1;
 		}
 
-		if (ult_chdir(home_dir) < 0) {
+		if (uls_chdir(home_dir) < 0) {
 			err_log("fail to chdir(%s)", home_dir);
 			return -1;
 		}
@@ -607,18 +604,14 @@ __create_file_internal(uls_keyw_stat_list_t *ks_lst, const char *tgt_dir,
 	if (opt_optimize_level >= 1) {
 		calc_good_hcode_O1(ks_lst, uls_ptr(best_round_stat));
 		uls_printf("O1: weight = { %d, %d, %d }\n",
-			hs->weight[0],
-			hs->weight[1],
-			hs->weight[2]
+			hs->weight[0], hs->weight[1], hs->weight[2]
 		);
 	}
 
 	if (opt_optimize_level >= 2) {
 		calc_good_hcode_O2(ks_lst, uls_ptr(best_round_stat));
 		uls_printf("O2: weight = { %d, %d, %d }\n",
-			hs->weight[0],
-			hs->weight[1],
-			hs->weight[2]
+			hs->weight[0], hs->weight[1], hs->weight[2]
 		);
 	}
 
@@ -638,7 +631,7 @@ main_proc(const char *tgt_dir, FILE *fp_list,
 
 	g_hash_buckets = (int *) uls_malloc(ULF_HASH_TABLE_SIZE * sizeof(int));
 
-	if ((fp_out=uls_fp_open(out_filepath, ULS_FIO_CREAT)) == NULL) {
+	if ((fp_out = uls_fp_open(out_filepath, ULS_FIO_WRITE)) == NULL) {
 		err_log("%s: fail to create '%s'", __func__, out_filepath);
 		return -1;
 	}
@@ -663,7 +656,7 @@ main_proc(const char *tgt_dir, FILE *fp_list,
 }
 
 int
-main(int argc, char* argv[])
+main_ustr(int argc, char *argv[])
 {
 	FILE *fp_list = NULL;
 	char *target_dir = NULL;
@@ -671,7 +664,7 @@ main(int argc, char* argv[])
 	int i0, i, conf_fname_len, stat = 0;
 	int cse_insen;
 
-	srand(time(NULL));
+	srand((unsigned)time(NULL));
 	progname = THIS_PROGNAME;
 	if (argc <= 1) {
 		usage_brief();
@@ -740,6 +733,57 @@ main(int argc, char* argv[])
 	uls_mfree(filelist);
 	uls_mfree(out_file);
 	uls_mfree(target_dir);
+
+	return stat;
+}
+
+int
+main(int argc, char *argv[])
+{
+	int i, stat = 0;
+	char **uargs;
+#ifdef __ULS_WINDOWS__
+	auw_outparam_t *arglst;
+	const char *ustr;
+#endif
+
+	uargs = (char **) uls_malloc(argc *sizeof(char *));
+
+#ifdef __ULS_WINDOWS__
+	arglst = (auw_outparam_t *) uls_malloc(argc *sizeof(auw_outparam_t));
+	for (i = 0; i < argc; i++) {
+		auw_init_outparam(arglst + i);
+	}
+
+	for (i = 0; i < argc; i++) {
+		if ((ustr = uls_astr2ustr_ptr(argv[i], -1, arglst + i)) == NULL) {
+			stat = -1;
+			uargs[i] = NULL;
+		} else {
+			uargs[i] = uls_strdup(ustr, -1);
+		}
+	}
+#else
+	for (i = 0; i < argc; i++) {
+		uargs[i] = uls_strdup(argv[i], -1);
+	}
+#endif
+
+	if (stat == 0) {
+		stat = main_ustr(argc, uargs);
+	}
+
+	for (i = 0; i < argc; i++) {
+		uls_mfree(uargs[i]);
+	}
+	uls_mfree(uargs);
+
+#ifdef __ULS_WINDOWS__
+	for (i = 0; i < argc; i++) {
+		auw_deinit_outparam(arglst + i);
+	}
+	uls_mfree(arglst);
+#endif
 
 	return stat;
 }

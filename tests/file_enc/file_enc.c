@@ -34,9 +34,10 @@
 
 
 #include "uls/uls_lex.h"
-#include "uls/uls_log.h"
-#include "uls/uls_util.h"
 #include "uls/uls_fileio.h"
+#include "uls/uls_auw.h"
+#include "uls/uls_util.h"
+#include "uls/uls_log.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -75,7 +76,7 @@ options(int opt, LPTSTR optarg)
 		break;
 
 	case _T('m'):
-		test_mode = ult_str2int(optarg);
+		test_mode = uls_str2int(optarg);
 		break;
 
 	case _T('v'):
@@ -106,7 +107,7 @@ test_escchar_map(uls_lex_ptr_t uls, LPCTSTR fpath)
 	unsigned char ch;
 	int i, len;
 
-	if ((fp = uls_fp_open(fpath, ULS_FIO_READ)) == NULL) {
+	if ((fp = uls_fp_open(fpath, ULS_FIO_READ | ULS_FIO_NO_UTF8BOM)) == NULL) {
 		err_log(_T("can't open the file '%s'"), fpath);
 		return;
 	}
@@ -153,7 +154,7 @@ test_dump_1(uls_lex_ptr_t uls, LPTSTR fpath)
 	FILE   *fp;
 	int t;
 
-	if ((fp = uls_fp_open(fpath, ULS_FIO_READ)) == NULL) {
+	if ((fp = uls_fp_open(fpath, ULS_FIO_READ | ULS_FIO_NO_UTF8BOM)) == NULL) {
 		err_log(_T(" file open error"));
 		return;
 	}
@@ -190,7 +191,7 @@ test_uls_strings_2(uls_lex_ptr_t uls, LPTSTR fpath)
 	int tok;
 	FILE *fp;
 
-	if ((fp = uls_fp_open(fpath, ULS_FIO_READ)) == NULL) {
+	if ((fp = uls_fp_open(fpath, ULS_FIO_READ | ULS_FIO_NO_UTF8BOM)) == NULL) {
 		err_log(_T("can't open the file '%s'"), fpath);
 		return;
 	}
@@ -222,7 +223,7 @@ _tmain(int n_targv, LPTSTR *targv)
 	uls_lex_ptr_t sample_lex;
 	int i0;
 
-	progname = uls_split_filepath(targv[0], NULL);
+	progname = uls_filename(targv[0], NULL);
 	config_name = _T("sample.ulc");
 
 	if ((i0=uls_getopts(n_targv, targv, _T("c:m:vh"), options)) <= 0) {

@@ -35,9 +35,7 @@
 #define __ULS_WLOG_H__
 
 #include "uls/uls_auw.h"
-#ifdef _ULS_INTERNAL_USE_ONLY
 #include "uls/uls_log.h"
-#endif
 
 #ifdef _ULS_CPLUSPLUS
 extern "C" {
@@ -57,15 +55,15 @@ ULS_DLL_EXTERN void uls_deinit_wlog(uls_log_ptr_t log);
 ULS_DLL_EXTERN uls_log_ptr_t uls_create_wlog(uls_lf_map_ptr_t lf_map, uls_lex_ptr_t uls);
 ULS_DLL_EXTERN void uls_destroy_wlog(uls_log_ptr_t log);
 
-ULS_DLL_EXTERN void err_vwlog(const wchar_t* wfmt, va_list args);
-ULS_DLL_EXTERN void err_wlog(const wchar_t* wfmt, ...);
-ULS_DLL_EXTERN void err_vwpanic(const wchar_t* wfmt, va_list args);
-ULS_DLL_EXTERN void err_wpanic(const wchar_t* wfmt, ...);
+ULS_DLL_EXTERN void err_vwlog(const wchar_t *wfmt, va_list args);
+ULS_DLL_EXTERN void err_wlog(const wchar_t *wfmt, ...);
+ULS_DLL_EXTERN void err_vwpanic(const wchar_t *wfmt, va_list args);
+ULS_DLL_EXTERN void err_wpanic(const wchar_t *wfmt, ...);
 
-ULS_DLL_EXTERN void uls_vwlog(uls_log_ptr_t log, const wchar_t* wfmt, va_list args);
-ULS_DLL_EXTERN void uls_wlog(uls_log_ptr_t log, const wchar_t* wfmt, ...);
-ULS_DLL_EXTERN void uls_vwpanic(uls_log_ptr_t log, const wchar_t* wfmt, va_list args);
-ULS_DLL_EXTERN void uls_wpanic(uls_log_ptr_t log, const wchar_t* wfmt, ...);
+ULS_DLL_EXTERN void uls_vwlog(uls_log_ptr_t log, const wchar_t *wfmt, va_list args);
+ULS_DLL_EXTERN void uls_wlog(uls_log_ptr_t log, const wchar_t *wfmt, ...);
+ULS_DLL_EXTERN void uls_vwpanic(uls_log_ptr_t log, const wchar_t *wfmt, va_list args);
+ULS_DLL_EXTERN void uls_wpanic(uls_log_ptr_t log, const wchar_t *wfmt, ...);
 
 #ifdef _ULS_CPLUSPLUS
 }

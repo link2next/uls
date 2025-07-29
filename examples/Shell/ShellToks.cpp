@@ -100,13 +100,13 @@ namespace
 	// This prints to the stdout the string representation of the current token.
 	// </brief>
 	// <return>none</return>
-	void dumpToken(ShellLex *shlex)
+	void dump_token(ShellLex *shlex)
 	{
 		int t = shlex->getTokNum();
+		tstring lxm;
 
-		tstring* lxm;
-		shlex->getTokStr(&lxm);
-		LPCTSTR tstr = lxm->c_str();
+		shlex->getTokStr(lxm);
+		LPCTSTR tstr = lxm.c_str();
 
 		switch (t) {
 		case ShellLex::WORD:
@@ -139,14 +139,14 @@ namespace
 	// This Executes tokenizing and dump the output to stdout.
 	// </brief>
 	// <return>none</return>
-	void dumpTokens(ShellLex *shlex)
+	void dump_tokens(ShellLex *shlex)
 	{
 		for ( ; ; ) {
-			if (shlex->getToken() == ShellLex::EOI) {
+			if (shlex->next() == ShellLex::EOI) {
 				break;
 			}
 
-			dumpToken(shlex);
+			dump_token(shlex);
 		}
 	}
 }
@@ -174,23 +174,24 @@ _tmain(int n_targv, LPTSTR *targv)
 	if (shelllex->source(input_file) < 0) {
 		_tcerr << _T(": Can't open ") << input_file << _tendl;
 	} else {
-		dumpTokens(shelllex);
+		dump_tokens(shelllex);
 	}
 
 	delete shelllex;
 	return 0;
 }
 
-#ifndef __WINDOWS__
+#ifndef __ULS_WINDOWS__
 int
 main(int argc, char *argv[])
 {
+	uls::ArgListT targlst;
 	LPTSTR *targv;
 	int stat;
 
-	ULSCPP_GET_WARGS_LIST(argc, argv, targv);
+	ULSCPP_GET_WARGS_LIST(targlst, argc, argv, targv);
 	stat = _tmain(argc, targv);
-	ULSCPP_PUT_WARGS_LIST(argc, targv);
+	ULSCPP_PUT_WARGS_LIST(targlst);
 
 	return stat;
 }

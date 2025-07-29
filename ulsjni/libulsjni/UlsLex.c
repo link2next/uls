@@ -149,28 +149,38 @@ JNIEXPORT void JNICALL Java_uls_polaris_UlsLex_expect(JNIEnv *env, jobject obj, 
 	uls_expect(uls, tokExpected);
 }
 
-JNIEXPORT void JNICALL Java_uls_polaris_UlsLex_ungetStr(JNIEnv *env, jobject obj, jobject juls, jstring jstr)
+JNIEXPORT jboolean JNICALL Java_uls_polaris_UlsLex_ungetStr(JNIEnv *env, jobject obj, jobject juls, jstring jstr)
 {
 	uls_lex_ptr_t uls = (uls_lex_ptr_t) (*env)->GetDirectBufferAddress(env, juls);
 	const char *str = (*env)->GetStringUTFChars(env, jstr, 0);
+	int rval;
 
-	ulsjava_unget_str(uls, (void *) str, -1);
+	rval = ulsjava_unget_str(uls, (void *) str, -1);
 	(*env)->ReleaseStringUTFChars(env, jstr, str);
+
+	return (rval > 0) ? JNI_TRUE : JNI_FALSE;
 }
 
-JNIEXPORT void JNICALL Java_uls_polaris_UlsLex_ungetTok(JNIEnv *env, jobject obj, jobject juls, jstring jlxm, jint jtokid)
+JNIEXPORT jboolean JNICALL Java_uls_polaris_UlsLex_ungetTok(JNIEnv *env, jobject obj, jobject juls, jint jtokid, jstring jlxm)
 {
 	uls_lex_ptr_t uls = (uls_lex_ptr_t) (*env)->GetDirectBufferAddress(env, juls);
 	const char *lxm = (*env)->GetStringUTFChars(env, jlxm, 0);
+	int rval;
 
-	ulsjava_unget_lexeme(uls, (void *) lxm, -1, jtokid);
+	rval = ulsjava_unget_lexeme(uls, jtokid, (void *) lxm, -1);
 	(*env)->ReleaseStringUTFChars(env, jlxm, lxm);
+
+	return (rval > 0) ? JNI_TRUE : JNI_FALSE;
 }
 
-JNIEXPORT void JNICALL Java_uls_polaris_UlsLex_ungetCh(JNIEnv *env, jobject obj, jobject juls, jint jch)
+JNIEXPORT jboolean JNICALL Java_uls_polaris_UlsLex_ungetChar(JNIEnv *env, jobject obj, jobject juls, jint jch)
 {
+	int rval;
+
 	uls_lex_ptr_t uls = (uls_lex_ptr_t) (*env)->GetDirectBufferAddress(env, juls);
-	uls_unget_ch(uls, jch);
+	rval = uls_unget_ch(uls, jch);
+
+	return (rval < 0) ? JNI_FALSE : JNI_TRUE;
 }
 
 JNIEXPORT void JNICALL Java_uls_polaris_UlsLex_dumpTok(JNIEnv *env, jobject obj, jobject juls, jstring jpfx, jstring jsuff)
@@ -185,13 +195,6 @@ JNIEXPORT void JNICALL Java_uls_polaris_UlsLex_dumpTok(JNIEnv *env, jobject obj,
 
 	(*env)->ReleaseStringUTFChars(env, jpfx, pfx);
 	(*env)->ReleaseStringUTFChars(env, jsuff, suff);
-}
-
-JNIEXPORT jstring JNICALL Java_uls_polaris_UlsLex_tok2keyw(JNIEnv *env, jobject obj, jobject juls, jint jtokid)
-{
-	uls_lex_ptr_t uls = (uls_lex_ptr_t) (*env)->GetDirectBufferAddress(env, juls);
-	const char *keyw = uls_tok2keyw(uls, jtokid);
-	return (*env)->NewStringUTF(env, keyw);
 }
 
 JNIEXPORT jstring JNICALL Java_uls_polaris_UlsLex_tok2name(JNIEnv *env, jobject obj, jobject juls, jint jtokid)
@@ -243,7 +246,7 @@ JNIEXPORT void JNICALL Java_uls_polaris_UlsLex_skipWhiteSpaces(JNIEnv *env, jobj
 	uls_skip_white_spaces(uls);
 }
 
-JNIEXPORT jobject JNICALL Java_uls_polaris_UlsLex_peekCh(JNIEnv *env, jobject obj, jobject juls)
+JNIEXPORT jobject JNICALL Java_uls_polaris_UlsLex_peekCharDetail(JNIEnv *env, jobject obj, jobject juls)
 {
 	uls_lex_ptr_t uls = (uls_lex_ptr_t) (*env)->GetDirectBufferAddress(env, juls);
 	uls_nextch_detail_ptr_t ch_detail;
@@ -255,7 +258,7 @@ JNIEXPORT jobject JNICALL Java_uls_polaris_UlsLex_peekCh(JNIEnv *env, jobject ob
 	return jch_detail;
 }
 
-JNIEXPORT jobject JNICALL Java_uls_polaris_UlsLex_getCh(JNIEnv *env, jobject obj, jobject juls)
+JNIEXPORT jobject JNICALL Java_uls_polaris_UlsLex_getCharDetail(JNIEnv *env, jobject obj, jobject juls)
 {
 	uls_lex_ptr_t uls = (uls_lex_ptr_t) (*env)->GetDirectBufferAddress(env, juls);
 	uls_nextch_detail_ptr_t ch_detail;
@@ -271,7 +274,7 @@ JNIEXPORT jint JNICALL Java_uls_polaris_UlsLex_uchFromNextchInfo(JNIEnv *env, jo
 {
 	uls_nextch_detail_ptr_t ch_detail = (uls_nextch_detail_ptr_t) (*env)->GetDirectBufferAddress(env, jch_detail);
 	int wch;
-	wch =  ulsjava_get_uch_from_nextch(ch_detail);
+	wch =  ulsjava_get_ch_from_nextch(ch_detail);
 	return wch;
 }
 

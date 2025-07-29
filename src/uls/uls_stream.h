@@ -144,7 +144,7 @@ void uls_reorder_bytes_null(char *binpkt, int len_binpkt);
 void uls_reorder_bytes_binle(char *binpkt, int len_binpkt);
 void uls_reorder_bytes_binbe(char *binpkt, int len_binpkt);
 
-uls_tmplvar_ptr_t uls_search_tmpls(uls_ref_array_type10(tmpls, tmplvar), const char* name);
+uls_tmplvar_ptr_t uls_search_tmpls(uls_ref_array_type10(tmpls, tmplvar), const char *name);
 
 void uls_init_tmpl_pool(uls_tmpl_pool_ptr_t tmpls_pool, int n_tmpls, int n_alloc);
 void uls_deinit_tmpl_pool(uls_tmpl_pool_ptr_t tmpls_pool);
@@ -153,9 +153,9 @@ void uls_destroy_tmpl_pool(uls_tmpl_pool_ptr_t tmpls_pool);
 
 void uls_init_rd_packet(uls_rd_packet_ptr_t pkt);
 void uls_deinit_rd_packet(uls_rd_packet_ptr_t pkt);
-void uls_set_rd_packet(uls_rd_packet_ptr_t pkt, int tok_id, int txtlen, const char* txtptr);
+void uls_set_rd_packet(uls_rd_packet_ptr_t pkt, int tok_id, int txtlen, const char *txtptr);
 
-void add_rd_packet_to_tmpls_pool(int tok_id, int txtlen, const char* txtptr, uls_tmpl_pool_ptr_t tmpls_pool);
+void add_rd_packet_to_tmpls_pool(int tok_id, int txtlen, const char *txtptr, uls_tmpl_pool_ptr_t tmpls_pool);
 
 void uls_init_tmplvar(uls_tmplvar_ptr_t tvar);
 void uls_deinit_tmplvar(uls_tmplvar_ptr_t tvar);
@@ -163,7 +163,7 @@ void uls_deinit_tmplvar(uls_tmplvar_ptr_t tvar);
 
 #ifdef ULS_DECL_PUBLIC_PROC
 
-ULS_DLL_EXTERN uls_tmpl_ptr_t uls_find_tmpl(uls_tmpl_list_ptr_t tmpl_list, const char* name);
+ULS_DLL_EXTERN uls_tmpl_ptr_t uls_find_tmpl(uls_tmpl_list_ptr_t tmpl_list, const char *name);
 
 ULS_DLL_EXTERN int _uls_const_STREAM_BIN_LE(void);
 ULS_DLL_EXTERN int _uls_const_STREAM_BIN_BE(void);
@@ -175,8 +175,8 @@ ULS_DLL_EXTERN void uls_reset_tmpls(uls_tmpl_list_ptr_t tmpl_list, int n_alloc);
 ULS_DLL_EXTERN uls_tmpl_list_ptr_t uls_create_tmpls(int n_alloc, int flags);
 ULS_DLL_EXTERN int uls_destroy_tmpls(uls_tmpl_list_ptr_t tmpl_list);
 
-ULS_DLL_EXTERN const char* uls_get_tmpl_value(uls_tmpl_list_ptr_t tmpl_list, const char* name);
-ULS_DLL_EXTERN int uls_set_tmpl_value(uls_tmpl_list_ptr_t tmpl_list, const char* name, const char *val);
+ULS_DLL_EXTERN const char *uls_get_tmpl_value(uls_tmpl_list_ptr_t tmpl_list, const char *name);
+ULS_DLL_EXTERN int uls_set_tmpl_value(uls_tmpl_list_ptr_t tmpl_list, const char *name, const char *val);
 ULS_DLL_EXTERN int uls_add_tmpl(uls_tmpl_list_ptr_t tmpl_list, const char *name, const char *val);
 
 ULS_DLL_EXTERN int ulsjava_add_tmpl(uls_tmpl_list_ptr_t tmpl_list,

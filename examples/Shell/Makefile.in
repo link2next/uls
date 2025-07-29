@@ -319,8 +319,8 @@ uls_lib_dir = $(uls_inst_dir)/lib
 ulc2class_exe = $(uls_bin_dir)/ulc2class
 ShellToks_SOURCES = ShellToks.cpp ShellLex.cpp
 ShellToks_CXXFLAGS = -Wall -std=c++11
-#ShellToks_CPPFLAGS = -I$(uls_inc_dir) -DULS_USE_WSTR
-ShellToks_CPPFLAGS = -I$(uls_inc_dir)
+ShellToks_CPPFLAGS = -I$(uls_inc_dir) -DULS_USE_WSTR
+#ShellToks_CPPFLAGS = -I$(uls_inc_dir)
 ShellToks_LDADD = -L$(uls_lib_dir) -lulscpp -luls
 all: all-am
 

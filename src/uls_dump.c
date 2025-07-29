@@ -31,7 +31,6 @@
 #define __ULS_DUMP__
 #include "uls/uls_dump.h"
 #include "uls/uls_lex.h"
-#include "uls/uls_util.h"
 #include "uls/uls_log.h"
 #include <ctype.h>
 #endif
@@ -93,7 +92,7 @@ ULS_QUALIFIED_METHOD(dump_char_context)(uls_lex_ptr_t uls, int offset)
 			else
 				_uls_log_(printf)("  < > ");
 
-			_uls_tool_(print_bytes)(ch_ctx + ch, 1);
+			uls_print_bytes(ch_ctx + ch, 1);
 		}
 		_uls_log_(printf)("\n");
 	}
@@ -178,7 +177,7 @@ ULS_QUALIFIED_METHOD(uls_dump_2char)(uls_lex_ptr_t uls)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_dump_utf8firstbyte)(uls_lex_ptr_t uls)
+ULS_QUALIFIED_METHOD(uls_dump_utf8firstbyte)(void)
 {
 	int i, j;
 	int ch, ch0;
@@ -226,7 +225,7 @@ ULS_QUALIFIED_METHOD(uls_dump_tokdef_vx_char)(uls_wch_t wch, uls_tokdef_vx_ptr_t
 
 	if (_uls_tool_(isgraph)(wch)) {
 		_uls_log_(printf)("'%c' (%3u)", wch, wch);
-		if (wch != tokid) {
+		if ((int) wch != tokid) {
 			_uls_log_(printf)(" --> %d\n", tokid);
 		} else {
 			_uls_log_(printf)("\n");
@@ -389,7 +388,7 @@ ULS_QUALIFIED_METHOD(uls_dump_kwtable)(uls_lex_ptr_t uls)
 }
 
 void
-ULS_QUALIFIED_METHOD(dump_tokdef__yaml_commtype)(int ind, uls_lex_ptr_t uls, uls_commtype_ptr_t cmt)
+ULS_QUALIFIED_METHOD(dump_tokdef__yaml_commtype)(int ind, uls_commtype_ptr_t cmt)
 {
 	uls_type_tool(outparam) parms1;
 	char outbuf_keyw[128];
@@ -424,7 +423,7 @@ ULS_QUALIFIED_METHOD(dump_tokdef__yaml_commtype)(int ind, uls_lex_ptr_t uls, uls
 }
 
 void
-ULS_QUALIFIED_METHOD(dump_tokdef__yaml_quotetype)(int ind, uls_lex_ptr_t uls, uls_quotetype_ptr_t qmt)
+ULS_QUALIFIED_METHOD(dump_tokdef__yaml_quotetype)(int ind, uls_quotetype_ptr_t qmt)
 {
 	int tok_id;
 	uls_type_tool(outparam) parms1;
@@ -648,7 +647,7 @@ ULS_QUALIFIED_METHOD(dump_tokdef__yaml)(uls_lex_ptr_t uls)
 
 		for (i=0; i<uls->n_commtypes; i++) {
 			cmt = uls_get_array_slot_type01(uls_ptr(uls->commtypes), i);
-			dump_tokdef__yaml_commtype(i + 1, uls, cmt);
+			dump_tokdef__yaml_commtype(i + 1, cmt);
 		}
 		uls_sysprn_tabs(0, "\n");
 	}
@@ -659,7 +658,7 @@ ULS_QUALIFIED_METHOD(dump_tokdef__yaml)(uls_lex_ptr_t uls)
 		for (i=0; i<uls->quotetypes.n; i++) {
 			qmt = slots_qmt[i];
 
-			dump_tokdef__yaml_quotetype(i + 1, uls, qmt);
+			dump_tokdef__yaml_quotetype(i + 1, qmt);
 		}
 		uls_sysprn_tabs(0, "\n");
 	}

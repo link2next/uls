@@ -39,13 +39,9 @@
 #include "uls/uls_sysprops.h"
 #include "uls/uls_langs.h"
 #include "uls/utf_file.h"
-#include "uls/uls_misc.h"
-#include "uls/uls_util.h"
 #include "uls/litesc.h"
+#include "uls/uls_util.h"
 #include "uls/uls_log.h"
-#ifndef ULS_WINDOWS
-#include <locale.h>
-#endif
 #endif
 
 ULS_DECL_STATIC void
@@ -82,9 +78,11 @@ ULS_QUALIFIED_METHOD(__initialize_uls)(void)
 	}
 
 	if (uls_langs != nilptr) uls_destroy_lang_list(uls_langs);
-	_uls_log_(snprintf)(pathbuff, ULS_FILEPATH_MAX, "%s/%s", _uls_sysinfo_(etc_dir), ULS_LANGS_FNAME);
+	_uls_log_(snprintf)(pathbuff, ULS_FILEPATH_MAX, "%s%c%s", _uls_sysinfo_(etc_dir), ULS_FILEPATH_DELIM, ULS_LANGS_FNAME);
+
 	if ((uls_langs = uls_load_langdb(pathbuff)) == nilptr) {
-		_uls_log_(snprintf)(pathbuff, ULS_FILEPATH_MAX, "%s/%s", _uls_sysinfo_(etc_dir), TMP_LANGS_FNAME);
+		_uls_log_(snprintf)(pathbuff, ULS_FILEPATH_MAX, "%s%c%s", _uls_sysinfo_(etc_dir), ULS_FILEPATH_DELIM, TMP_LANGS_FNAME);
+
 		if ((uls_langs = uls_load_langdb(pathbuff)) == nilptr) {
 			_uls_log(err_log)("can't load lang-db '%s'!", ULS_LANGS_FNAME);
 			_uls_log(err_log)("  etc_dir = '%s'", _uls_sysinfo_(etc_dir));
@@ -97,45 +95,6 @@ ULS_QUALIFIED_METHOD(__initialize_uls)(void)
 	_uls_sysinfo_(initialized) = 1;
 	return 0;
 }
-
-#ifndef ULS_WINDOWS
-ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(set_uls_locale)(void)
-{
-	const char *cptr0, *cptr;
-	char lang_entry[16], lang_buff[16];
-	char *locale_list[] = { "C", "en_US" };
-	char *encoding_suffs[] = { "utf8", "UTF-8" };
-	int i, j, len, stat=0;
-
-	if ((cptr0=getenv("LANG")) != NULL) {
-		if ((cptr = _uls_tool_(strchr)(cptr0, '.')) != NULL && (len=(int)(cptr-cptr0)) > 0 && len < 8) {
-			for (j=0; j<len; j++) lang_entry[j] = cptr0[j];
-			lang_entry[len] = '\0';
-			locale_list[0] = lang_entry;
-		}
-	}
-
-	for (i=0; i<uls_dim(locale_list); i++) {
-		cptr0 = locale_list[i];
-		len = _uls_tool_(strlen)(cptr0);
-
-		_uls_tool_(strcpy)(lang_buff, cptr0);
-
-		for (j=0; j<uls_dim(encoding_suffs); j++) {
-			lang_buff[len] = '.';
-			_uls_tool_(strcpy)(lang_buff+len+1, encoding_suffs[j]);
-			if (setlocale(LC_ALL, lang_buff) != NULL) {
-				stat = 1;
-				break;
-			}
-		}
-		if (stat > 0) break;
-	}
-
-	return stat;
-}
-#endif
 
 void
 #ifdef __GNUC__
@@ -150,12 +109,6 @@ ULS_QUALIFIED_METHOD(_initialize_uls)(void)
 	if (__initialize_uls() < 0) {
 		_uls_tool_(appl_exit)(1);
 	}
-
-#ifndef ULS_WINDOWS
-	if (!set_uls_locale()) {
-		_uls_log(err_log)("Fail to set locale utf8!");
-	}
-#endif
 }
 
 void

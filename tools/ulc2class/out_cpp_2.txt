@@ -27,8 +27,7 @@
 #pragma once
 
 #include <uls/UlsLex.h>
-#include <uls/ulscpp_misc.h>
-
+#include <uls/uls_auw.h>
 class Sample2 : public uls::crux::UlsLex {
   public:
 	static const int             NONE = -7;

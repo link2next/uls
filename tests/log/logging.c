@@ -34,8 +34,8 @@
 
 #define ULS_DECL_PROTECTED_PROC
 #include "uls/uls_lex.h"
-#include "uls/uls_log.h"
 #include "uls/uls_util.h"
+#include "uls/uls_log.h"
 
 #include <stdlib.h>
 #include <string.h>

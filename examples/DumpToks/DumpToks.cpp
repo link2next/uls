@@ -164,7 +164,7 @@ namespace
 		LPCTSTR line = _T("C++ *hello/ &world^\n\t\n");
 		lex->pushLine(line);
 
-		while ((t=lex->getToken()) != lex->toknum_EOI) {
+		while ((t = lex->next()) != lex->toknum_EOI) {
 			lex->dumpTok(_T("\t"), _T(""));
 
 			xdef = (sample_xdef *) lex->getExtraTokdef();
@@ -179,7 +179,7 @@ namespace
 	bool test_streaming(UlsLex *lex, tstring out_dir)
 	{
 		tstring uls_file;
-		tstring *lxm;
+		tstring lxm;
 		int t;
 
 		uls_file = out_dir;
@@ -198,12 +198,13 @@ namespace
 		ifile = new UlsIStream(uls_file, NULL);
 
 		lex->pushInput(*ifile);
-		lex->getTokStr(&lxm);
 
 		while (1) {
-			t = lex->getTok();
+			t = lex->next();
 			if (t == lex->toknum_EOI) break;
-			lex->printf(_T("\t[%7t]  %s\n"), lxm->c_str());
+
+			lex->getTokStr(lxm);
+			lex->printf(_T("\t[%7t]  %s\n"), lxm.c_str());
 		}
 
 		delete ifile;
@@ -215,7 +216,7 @@ namespace
 	{
 		UlsTmplList  tmpl_list;
 		tstring uls_file;
-		tstring *lxm;
+		tstring lxm;
 		int t;
 
 		uls_file = out_dir;
@@ -228,10 +229,9 @@ namespace
 		// Write a output-stream
 		UlsOStream *ofile = new UlsOStream(uls_file, lex, _T("<<tag>>"));
 		lex->pushFile(input_file);
-		lex->getTokStr(&lxm);
 
 		while (1) {
-			t = lex->getTok();
+			t = lex->next();
 
 			if (t == lex->toknum_ERR) {
 				return false;
@@ -241,11 +241,12 @@ namespace
 				break;
 			}
 
-			if (t == lex->toknum_ID && tmpl_list.exist(*lxm) == true) {
+			lex->getTokStr(lxm);
+			if (t == lex->toknum_ID && tmpl_list.exist(lxm) == true) {
 				t = lex->toknum_TMPL;
 			}
 
-			ofile->printTok(t, *lxm);
+			ofile->printTok(t, lxm);
 		}
 
 		delete ofile;
@@ -254,12 +255,13 @@ namespace
 		UlsIStream *ifile = new UlsIStream(uls_file, &tmpl_list);
 
 		lex->pushInput(*ifile);
-		lex->getTokStr(&lxm);
 
 		while (1) {
-			t = lex->getTok();
+			t = lex->next();
 			if (t == lex->toknum_EOI) break;
-			lex->printf(_T("\t[%7t] %s\n"), lxm->c_str());
+
+			lex->getTokStr(lxm);
+			lex->printf(_T("\t[%7t] %s\n"), lxm.c_str());
 		}
 
 		delete ifile;
@@ -319,16 +321,17 @@ _tmain(int n_targv, LPTSTR *targv)
 	return 0;
 }
 
-#ifndef __WINDOWS__
+#ifndef __ULS_WINDOWS__
 int
 main(int argc, char *argv[])
 {
+	uls::ArgListT targlst;
 	LPTSTR *targv;
 	int stat;
 
-	ULSCPP_GET_WARGS_LIST(argc, argv, targv);
+	ULSCPP_GET_WARGS_LIST(targlst, argc, argv, targv);
 	stat = _tmain(argc, targv);
-	ULSCPP_PUT_WARGS_LIST(argc, targv);
+	ULSCPP_PUT_WARGS_LIST(targlst);
 
 	return stat;
 }

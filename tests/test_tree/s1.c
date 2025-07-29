@@ -3,7 +3,7 @@
 #include "main.h"
 
 static int
-start_stream_filepath_bin(ostream_t *ostr, lex_t* uls, const char* fpath)
+start_stream_filepath_bin(ostream_t *ostr, lex_t* uls, const char *fpath)
 {
 	istream_t *istr;
 	int stat = 0;

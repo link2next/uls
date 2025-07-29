@@ -35,7 +35,7 @@
 #define __ULS_LF_SWPRINTF_H__
 
 #include "uls/uls_auw.h"
-#ifdef _ULS_INTERNAL_USE_ONLY
+#ifdef _ULSCOMPAT_INTERNALLY_USES
 #include "uls/uls_lf_sprintf.h"
 #endif
 
@@ -43,18 +43,10 @@
 extern "C" {
 #endif
 
-ULS_DEFINE_STRUCT(buf4wstr)
-{
-  unsigned int flags;
-  wchar_t *wbuf, *wbufptr;
-  int wbuflen;
-};
-
 ULS_DEFINE_STRUCT(wlf_shell)
 {
   uls_lf_ptr_t uls_lf;
   csz_str_t fmtstr;
-
 };
 
 void initialize_uls_wlf(void);
@@ -68,20 +60,15 @@ ULS_DLL_EXTERN void uls_lf_deinit_convspec_wmap(uls_lf_map_ptr_t lf_map);
 ULS_DLL_EXTERN uls_lf_map_ptr_t uls_lf_create_convspec_wmap(int flags);
 ULS_DLL_EXTERN void uls_lf_destroy_convspec_wmap(uls_lf_map_ptr_t lf_map);
 
-ULS_DLL_EXTERN int uls_wlf_init(uls_lf_ptr_t uls_lf, uls_lf_map_ptr_t map, uls_voidptr_t x_dat, uls_lf_puts_t puts_proc);
+ULS_DLL_EXTERN int uls_wlf_init(uls_lf_ptr_t uls_lf, uls_lf_map_ptr_t map, uls_lf_puts_t puts_proc);
 ULS_DLL_EXTERN void uls_wlf_deinit(uls_lf_ptr_t uls_lf);
-ULS_DLL_EXTERN uls_lf_ptr_t uls_wlf_create(uls_lf_map_ptr_t map, uls_voidptr_t x_dat, uls_lf_puts_t puts_proc);
+ULS_DLL_EXTERN uls_lf_ptr_t uls_wlf_create(uls_lf_map_ptr_t map, uls_lf_puts_t puts_proc);
 ULS_DLL_EXTERN void uls_wlf_destroy(uls_lf_ptr_t uls_lf);
 
-ULS_DLL_EXTERN int __uls_lf_vxwprintf(uls_lf_ptr_t uls_lf, const wchar_t *wfmt, va_list args);
-ULS_DLL_EXTERN int uls_lf_vxwprintf(uls_lf_ptr_t uls_lf, const wchar_t* wfmt, va_list args);
-ULS_DLL_EXTERN int __uls_lf_xwprintf(uls_lf_ptr_t uls_lf, const wchar_t* wfmt, ...);
-ULS_DLL_EXTERN int uls_lf_xwprintf(uls_lf_ptr_t uls_lf, const wchar_t* wfmt, ...);
-
-ULS_DLL_EXTERN int __uls_lf_vxwprintf_generic(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const wchar_t* wfmt, va_list args);
-ULS_DLL_EXTERN int uls_lf_vxwprintf_generic(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const wchar_t* wfmt, va_list args);
-ULS_DLL_EXTERN int __uls_lf_xwprintf_generic(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const wchar_t* wfmt, ...);
-ULS_DLL_EXTERN int uls_lf_xwprintf_generic(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const wchar_t* wfmt, ...);
+ULS_DLL_EXTERN int __uls_lf_vxwprintf(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, va_list args);
+ULS_DLL_EXTERN int uls_lf_vxwprintf(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, va_list args);
+ULS_DLL_EXTERN int __uls_lf_xwprintf(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, ...);
+ULS_DLL_EXTERN int uls_lf_xwprintf(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, ...);
 
 #ifdef _ULS_CPLUSPLUS
 }
@@ -101,11 +88,6 @@ ULS_DLL_EXTERN int uls_lf_xwprintf_generic(uls_voidptr_t x_dat, uls_lf_ptr_t uls
 #define uls_lf_vxprintf uls_lf_vxwprintf
 #define __uls_lf_xprintf __uls_lf_xwprintf
 #define uls_lf_xprintf uls_lf_xwprintf
-
-#define __uls_lf_vxprintf_generic __uls_lf_vxwprintf_generic
-#define uls_lf_vxprintf_generic uls_lf_vxwprintf_generic
-#define __uls_lf_xprintf_generic __uls_lf_xwprintf_generic
-#define uls_lf_xprintf_generic uls_lf_xwprintf_generic
 #endif
 #endif // _ULS_USE_ULSCOMPAT
 

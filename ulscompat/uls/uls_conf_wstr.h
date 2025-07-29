@@ -35,7 +35,7 @@
 #define __ULS_CONF_WSTR_H__
 
 #include "uls/uls_auw.h"
-#ifdef _ULS_INTERNAL_USE_ONLY
+#ifdef _ULSCOMPAT_INTERNALLY_USES
 #include "uls/uls_conf.h"
 #endif
 
@@ -43,10 +43,10 @@
 extern "C" {
 #endif
 
-ULS_DLL_EXTERN int uls_is_valid_specpath_wstr(const wchar_t* wconfname);
+ULS_DLL_EXTERN int uls_is_valid_specpath_wstr(const wchar_t *wconfname);
 ULS_DLL_EXTERN int uls_get_spectype_wstr(const wchar_t *wfpath, uls_outparam_ptr_t parms);
 
-ULS_DLL_EXTERN void ulc_list_searchpath_wstr(const wchar_t* confname);
+ULS_DLL_EXTERN void ulc_list_searchpath_wstr(const wchar_t *confname);
 ULS_DLL_EXTERN void ulc_set_searchpath_wstr(const wchar_t *pathlist);
 ULS_DLL_EXTERN int ulc_add_searchpath_wstr(const wchar_t *pathlist, int front);
 

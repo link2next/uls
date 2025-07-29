@@ -36,9 +36,10 @@
 #define __ULS_ISTREAM_WSTR_H__
 
 #include "uls/uls_auw.h"
-#ifdef _ULS_INTERNAL_USE_ONLY
+#ifdef _ULSCOMPAT_INTERNALLY_USES
 #include "uls/uls_istream.h"
 #endif
+
 #ifdef ULS_FDF_SUPPORT
 #include "uls/fdfilter.h"
 #endif
@@ -74,14 +75,14 @@ ULS_DLL_EXTERN void uls_reset_tmpls_wstr(uls_tmpl_list_ptr_t tmpl_list, int n_al
 ULS_DLL_EXTERN int uls_destroy_tmpls_wstr(uls_tmpl_list_ptr_t tmpl_list);
 
 ULS_DLL_EXTERN uls_tmpl_t* uls_find_tmpl_wstr(uls_tmpl_list_ptr_t tmpl_list, const wchar_t *name);
-ULS_DLL_EXTERN const wchar_t* uls_get_tmpl_value_wstr(uls_tmpl_list_ptr_t tmpl_list, const wchar_t* name);
-ULS_DLL_EXTERN int uls_set_tmpl_value_wstr(uls_tmpl_list_ptr_t tmpl_list, const wchar_t* name, const wchar_t *val);
+ULS_DLL_EXTERN const wchar_t *uls_get_tmpl_value_wstr(uls_tmpl_list_ptr_t tmpl_list, const wchar_t *name);
+ULS_DLL_EXTERN int uls_set_tmpl_value_wstr(uls_tmpl_list_ptr_t tmpl_list, const wchar_t *name, const wchar_t *val);
 ULS_DLL_EXTERN int uls_add_tmpl_wstr(uls_tmpl_list_ptr_t tmpl_list, const wchar_t *name, const wchar_t *val);
 
-ULS_DLL_EXTERN void uls_set_istream_wtag(uls_istream_ptr_t istr, const wchar_t* wtag);
-ULS_DLL_EXTERN uls_istream_ptr_t uls_open_istream_file_wstr(const wchar_t* fpath);
+ULS_DLL_EXTERN void uls_set_istream_wtag(uls_istream_ptr_t istr, const wchar_t *wtag);
+ULS_DLL_EXTERN uls_istream_ptr_t uls_open_istream_file_wstr(const wchar_t *fpath);
 #ifdef ULS_FDF_SUPPORT
-ULS_DLL_EXTERN uls_istream_ptr_t uls_open_istream_filter_file_wstr(fdf_t* fdf, const wchar_t* wfilepath);
+ULS_DLL_EXTERN uls_istream_ptr_t uls_open_istream_filter_file_wstr(fdf_t* fdf, const wchar_t *wfilepath);
 #endif
 
 #ifdef _ULS_CPLUSPLUS
@@ -105,7 +106,6 @@ ULS_DLL_EXTERN uls_istream_ptr_t uls_open_istream_filter_file_wstr(fdf_t* fdf, c
 #ifdef ULS_FDF_SUPPORT
 #define uls_open_istream_filter_file uls_open_istream_filter_file_wstr
 #endif
-
 #endif // ULS_USE_WSTR
 #endif // _ULS_USE_ULSCOMPAT
 

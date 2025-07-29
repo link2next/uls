@@ -106,11 +106,11 @@ void uls_utf_reset_inbuf(uls_utf_inbuf_ptr_t inp, int mode);
 
 #ifdef ULS_DECL_PUBLIC_PROC
 int uls_fill_utf8str(uls_wch_t *uchs, int n_uchs,
-	char* utf8buf, int siz_utf8buf, int *p_len_utf8buf);
-int uls_fill_utf8buf(uls_utf_inbuf_ptr_t inp, char* utf8buf, int len_utf8buf, int siz_utf8buf);
+	char *utf8buf, int siz_utf8buf, int *p_len_utf8buf);
+int uls_fill_utf8buf(uls_utf_inbuf_ptr_t inp, char *utf8buf, int len_utf8buf, int siz_utf8buf);
 
-char* uls_enc_utf16str_to_utf8str(uls_uint16 *wstr1, int l_wstr1, uls_outparam_ptr_t parms);
-char* uls_enc_utf32str_to_utf8str(uls_uint32 *wstr1, int l_wstr1, uls_outparam_ptr_t parms);
+char *uls_enc_utf16str_to_utf8str(uls_uint16 *wstr1, int l_wstr1, uls_outparam_ptr_t parms);
+char *uls_enc_utf32str_to_utf8str(uls_uint32 *wstr1, int l_wstr1, uls_outparam_ptr_t parms);
 
 int uls_utf_is_inbuf_empty(uls_utf_inbuf_ptr_t inp);
 void uls_utf_set_inbuf(uls_utf_inbuf_ptr_t inp, int fd);

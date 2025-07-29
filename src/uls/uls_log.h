@@ -86,6 +86,7 @@ ULS_DEFINE_STRUCT(log)
 ULS_DECL_STATIC uls_lf_map_t lf_map_syserr;
 ULS_DECL_STATIC uls_lf_map_t lf_map_logdfl;
 ULS_DECL_STATIC uls_lf_t lf_syserr;
+ULS_DECL_STATIC FILE *fp_lf_syserr;
 #endif
 
 #ifdef ULS_DECL_PRIVATE_PROC
@@ -111,12 +112,12 @@ int uls_log_fmtproc_keyword(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf
 ULS_DLL_EXTERN void err_syslog_lock(void);
 ULS_DLL_EXTERN void err_syslog_unlock(void);
 
-ULS_DLL_EXTERN void err_vlog(const char* fmt, va_list args);
-ULS_DLL_EXTERN void err_log(const char* fmt, ...);
-ULS_DLL_EXTERN void err_vpanic(const char* fmt, va_list args);
-ULS_DLL_EXTERN void err_panic(const char* fmt, ...);
+ULS_DLL_EXTERN void err_vlog(const char *fmt, va_list args);
+ULS_DLL_EXTERN void err_log(const char *fmt, ...);
+ULS_DLL_EXTERN void err_vpanic(const char *fmt, va_list args);
+ULS_DLL_EXTERN void err_panic(const char *fmt, ...);
 
-ULS_DLL_EXTERN void err_change_port(uls_voidptr_t data, uls_lf_puts_t proc);
+ULS_DLL_EXTERN void err_change_port(FILE *fp, uls_lf_puts_t proc);
 ULS_DLL_EXTERN int uls_init_log(uls_log_ptr_t log, uls_lf_map_ptr_t lf_map, uls_lex_ptr_t uls);
 ULS_DLL_EXTERN void uls_deinit_log(uls_log_ptr_t log);
 
@@ -129,11 +130,11 @@ ULS_DLL_EXTERN void uls_set_loglevel(uls_log_ptr_t log, int lvl);
 ULS_DLL_EXTERN int uls_loglevel_isset(uls_log_ptr_t log, int lvl);
 ULS_DLL_EXTERN void uls_clear_loglevel(uls_log_ptr_t log, int lvl);
 
-ULS_DLL_EXTERN void uls_vlog(uls_log_ptr_t log, const char* fmt, va_list args);
-ULS_DLL_EXTERN void uls_log(uls_log_ptr_t log, const char* fmt, ...);
+ULS_DLL_EXTERN void uls_vlog(uls_log_ptr_t log, const char *fmt, va_list args);
+ULS_DLL_EXTERN void uls_log(uls_log_ptr_t log, const char *fmt, ...);
 
-ULS_DLL_EXTERN void uls_vpanic(uls_log_ptr_t log, const char* fmt, va_list args);
-ULS_DLL_EXTERN void uls_panic(uls_log_ptr_t log, const char* fmt, ...);
+ULS_DLL_EXTERN void uls_vpanic(uls_log_ptr_t log, const char *fmt, va_list args);
+ULS_DLL_EXTERN void uls_panic(uls_log_ptr_t log, const char *fmt, ...);
 
 ULS_DLL_EXTERN void uls_add_default_log_convspecs(uls_lf_map_ptr_t lf_map);
 ULS_DLL_EXTERN void uls_add_default_convspecs(uls_lf_map_ptr_t lf_map);
@@ -143,8 +144,12 @@ ULS_DLL_EXTERN void uls_add_default_convspecs(uls_lf_map_ptr_t lf_map);
 }
 #endif
 
-#ifdef ULS_USE_WSTR
+#ifdef _ULS_USE_ULSCOMPAT
+#if defined(ULS_USE_WSTR)
 #include "uls/uls_wlog.h"
+#elif defined(ULS_USE_ASTR)
+#include "uls/uls_alog.h"
+#endif
 #endif
 
 #endif // __ULS_LOG_H__

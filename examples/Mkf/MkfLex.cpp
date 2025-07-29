@@ -35,6 +35,7 @@
 #include <uls/UlsUtils.h>
 
 using namespace std;
+using namespace uls::crux;
 using namespace uls::collection;
 using tstring = uls::tstring;
 
@@ -167,7 +168,6 @@ int
 MkfLex::tabblk_analyzer(uls_litstr_t *lit)
 {
 	uls_litstr_context_ptr_t lit_ctx = uls_get_litstr__context(lit);
-//	uls_quotetype_t *qmt = uls_get_litstr__quoteinfo(lit);
 	mkf_tabblk_ctx_t  *mkf_ctx = (mkf_tabblk_ctx_t *) uls_get_litstr__user_data(lit);
 	const char *lptr = lit->lptr, *lptr_end = lit->lptr_end;
 	char ch;
@@ -229,16 +229,16 @@ MkfLex::tabblk_analyzer(uls_litstr_t *lit)
 int
 MkfLex::expect_quotestr(TCHAR ch)
 {
-	tstring *lxm;
+	tstring lxm;
 	int len;
 	LPCTSTR  ptr;
 	TCHAR tch;
 
-	MkfLexBasis::getTok();
-	UlsLex::getTokStr(&lxm);
+	MkfLexBasis::next();
+	UlsLex::getTokStr(lxm);
 
-	ptr = (LPCTSTR) lxm->c_str();
-	len = (int) lxm->length();
+	ptr = (LPCTSTR) lxm.c_str();
+	len = (int) lxm.length();
 
 	tch = (TCHAR) ch;
 	tokbuf.append(tch);
@@ -260,16 +260,15 @@ int
 MkfLex::expect_word(void)
 {
 	int escape = 0;
-	bool is_quote;
 	uls_wch_t wch;
 	TCHAR tch;
 
 	while (1) {
-		if ((wch=MkfLexBasis::peekCh(&is_quote)) == ULS_UCH_NONE) {
-			if (is_quote == false) break;
+		if ((wch = peekChar()) >= ULS_CH_QSTR) {
+			break;
 		}
 
-		if (is_quote == true) {
+		if (wch == ULS_CH_QSTR) {
 			if (wch == _T('\n')) {
 				break;
 			}
@@ -278,7 +277,7 @@ MkfLex::expect_word(void)
 		}
 
 		if (escape) {
-			if ((wch=MkfLexBasis::getCh(NULL)) != _T('\n')) {
+			if ((wch = getChar()) != _T('\n')) {
 				tch = _T('\\');
 				tokbuf.append(tch);
 
@@ -293,10 +292,10 @@ MkfLex::expect_word(void)
 			break;
 		}
 
-		if ((wch = MkfLexBasis::getCh(&is_quote)) == _T('\\')) {
+		if ((wch = getChar()) == _T('\\')) {
 			escape = 1;
 
-		} else if (is_quote) {
+		} else if (wch == ULS_CH_QSTR) {
 			expect_quotestr(wch);
 
 		} else {
@@ -319,18 +318,18 @@ MkfLex::expect_word(void)
 int
 MkfLex::expect_number(void)
 {
-	tstring *lxm;
+	tstring lxm;
 	LPCTSTR ptr;
 	int len;
 	TCHAR  tch;
 
-	MkfLexBasis::getTok();
+	MkfLexBasis::next();
 	expect(NUM);
 
-	UlsLex::getTokStr(&lxm);
+	UlsLex::getTokStr(lxm);
 
-	ptr = (LPCTSTR) lxm->c_str();
-	len = (int) lxm->length();
+	ptr = (LPCTSTR) lxm.c_str();
+	len = (int) lxm.length();
 
 	tch = _T('0');
 	tokbuf.append(tch);
@@ -351,9 +350,8 @@ MkfLex::expect_number(void)
 void
 MkfLex::get_token(void)
 {
-	tstring *lxm;
+	tstring lxm;
 	int tok, len;
-	bool is_quote;
 	uls_wch_t wch;
 	LPCTSTR ptr;
 	TCHAR tch;
@@ -373,18 +371,21 @@ MkfLex::get_token(void)
 
 	skipBlanks();
 
-	if ((wch = MkfLexBasis::peekCh(&is_quote))  == '-') {
-		MkfLexBasis::getCh(NULL);
+	if ((wch = peekChar()) >= ULS_CH_QSTR) {
+		tok = NONE;
+
+	} else if (wch == '-') {
+		getChar();
 
 		tch = _T('-');
 		tokbuf.append(tch);
 
-		wch = MkfLexBasis::peekCh(&is_quote);
+		wch = peekChar();
 		if (isdigit(wch)) {
 			expect_number();
 			// The number-TokNum in 'Makefile' can contain the minus sign.
 			tok = NUM;
-			wch = MkfLexBasis::peekCh(&is_quote);
+			wch = peekChar();
 		} else {
 			tok = WORD;
 		}
@@ -392,31 +393,31 @@ MkfLex::get_token(void)
 	} else if (isdigit(wch)) {
 		expect_number();
 		tok = NUM;
-		wch = MkfLexBasis::peekCh(&is_quote);
+		wch = peekChar();
 
 	} else if (isalpha(wch) || wch == _T('_')) {
 		// keyword?
-		tok = MkfLexBasis::getTok();
-		UlsLex::getTokStr(&lxm);
+		tok = MkfLexBasis::next();
+		UlsLex::getTokStr(lxm);
 
-		ptr = (LPCTSTR) lxm->c_str();
-	 	len = (int) lxm->length();
+		ptr = (LPCTSTR) lxm.c_str();
+	 	len = (int) lxm.length();
 	 	tokbuf.append(ptr, len);
 
-		wch = MkfLexBasis::peekCh(&is_quote);
+		wch = peekChar();
 
 	} else {
 		tok = NONE;
 	}
 
-	if (wch == ULS_UCH_NONE) {
-		MkfLexBasis::getTok();
-		UlsLex::getTokStr(&lxm);
+	if (wch >= ULS_CH_QSTR) {
+		MkfLexBasis::next();
+		UlsLex::getTokStr(lxm);
 
 		if (tok == NONE) tok = MkfLexBasis::getTokNum();
 
-		ptr = (LPCTSTR) lxm->c_str();
-		len = (int) lxm->length();
+		ptr = (LPCTSTR) lxm.c_str();
+		len = (int) lxm.length();
 
 		tokbuf.clear();
 		tokbuf.append(ptr, len);
@@ -439,32 +440,31 @@ MkfLex::get_token(void)
 				expect_number();
 
 			} else if (isalpha(wch)) {
-				MkfLexBasis::getTok();
-				UlsLex::getTokStr(&lxm);
+				MkfLexBasis::next();
+				UlsLex::getTokStr(lxm);
 
-				ptr = (LPCTSTR) lxm->c_str();
-			 	len = (int) lxm->length();
+				ptr = (LPCTSTR) lxm.c_str();
+			 	len = (int) lxm.length();
 			 	tokbuf.append(ptr, len);
 
 	 		} else {
 	 			if (uls::strFindIndex(_T("./-%" "@#(){}"), (TCHAR) wch) < 0) break;
 
-				wch = MkfLexBasis::getCh(NULL);
-
+				wch = getChar();
 				tch = (TCHAR) wch;
 				tokbuf.append(tch);
 			}
-	 	} while ((wch=MkfLexBasis::peekCh(&is_quote)) != ULS_UCH_NONE);
+	 	} while ((wch = peekChar()) < ULS_CH_QSTR);
 
 		tok = WORD;
 	}
 
 	if (tok == NONE) {
-		tok = MkfLexBasis::getTok();
-		UlsLex::getTokStr(&lxm);
+		tok = MkfLexBasis::next();
+		UlsLex::getTokStr(lxm);
 
-		ptr = (LPCTSTR) lxm->c_str();
-	 	len = (int) lxm->length();
+		ptr = (LPCTSTR) lxm.c_str();
+	 	len = (int) lxm.length();
 	 	tokbuf.append(ptr, len);
 	}
 
@@ -490,7 +490,7 @@ MkfLex::get_token(void)
 }
 
 int
-MkfLex::getTok(void)
+MkfLex::next(void)
 {
 	get_token();
 	setTok(tok_id, tok_str);
@@ -504,7 +504,7 @@ MkfLex::getTokNum(void)
 }
 
 void
-MkfLex::ungetTok(void)
+MkfLex::ungetCurrentToken(void)
 {
 	tok_ungot = true;
 }

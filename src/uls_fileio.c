@@ -42,7 +42,7 @@
 #include <string.h>
 #include <fcntl.h>
 #include <errno.h>
-#ifndef ULS_WINDOWS
+#ifndef __ULS_WINDOWS__
 #include <unistd.h>
 #endif
 
@@ -52,16 +52,16 @@
 #endif
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__uls_fd_create_check)(const char* fpath, uls_outparam_ptr_t parms)
+ULS_QUALIFIED_METHOD(__uls_fd_create_check)(const char *fpath, uls_outparam_ptr_t parms)
 {
 	int mode = parms->n1;
 	int ftype, mode2, perm2;
 
-	if ((mode & ULS_FIO_RDWR) == 0) {
+	if (!(mode & (ULS_FIO_READ|ULS_FIO_WRITE))) {
 		mode |= ULS_FIO_WRITE;
 	}
 
-	if ((ftype=uls_dirent_exist(fpath)) < 0) {
+	if ((ftype = uls_dirent_exist(fpath)) < 0) {
 		return -1;
 	}
 
@@ -75,7 +75,7 @@ ULS_QUALIFIED_METHOD(__uls_fd_create_check)(const char* fpath, uls_outparam_ptr_
 		}
 	}
 
-#ifdef ULS_WINDOWS
+#ifdef __ULS_WINDOWS__
 	mode2 = _O_CREAT | _O_BINARY | _O_TRUNC | _O_NOINHERIT;
 	if (mode & ULS_FIO_READ) {
 		mode2 |= _O_RDWR;
@@ -85,7 +85,7 @@ ULS_QUALIFIED_METHOD(__uls_fd_create_check)(const char* fpath, uls_outparam_ptr_
 		perm2 = _S_IWRITE;
 	}
 #else
-	mode2 = O_CREAT | O_TRUNC;
+	mode2 = O_CREAT | O_BINARY | O_TRUNC;
 	if (mode & ULS_FIO_READ) {
 		mode2 |= O_RDWR;
 	} else {
@@ -106,11 +106,11 @@ ULS_QUALIFIED_METHOD(__uls_fd_open_check)(uls_outparam_ptr_t parms)
 {
 	int mode = parms->n1, mode2;
 
-	if ((mode & ULS_FIO_RDWR) == 0) {
+	if (!(mode & (ULS_FIO_READ|ULS_FIO_WRITE))) {
 		mode |= ULS_FIO_READ;
 	}
 
-#ifdef ULS_WINDOWS
+#ifdef __ULS_WINDOWS__
 	mode2 = _O_BINARY;
 	if (mode & ULS_FIO_WRITE) {
 		mode2 |=  _O_RDWR;
@@ -118,7 +118,7 @@ ULS_QUALIFIED_METHOD(__uls_fd_open_check)(uls_outparam_ptr_t parms)
 		mode2 |= _O_RDONLY;
 	}
 #else
-	mode2 = 0;
+	mode2 = O_BINARY;
 	if (mode & ULS_FIO_WRITE) {
 		mode2 |=  O_RDWR;
 	} else {
@@ -132,9 +132,9 @@ ULS_QUALIFIED_METHOD(__uls_fd_open_check)(uls_outparam_ptr_t parms)
 	return 0;
 }
 
-#ifdef ULS_WINDOWS
+#ifdef __ULS_WINDOWS__
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__uls_fd_create)(const char* fpath, int mode)
+ULS_QUALIFIED_METHOD(__uls_fd_create)(const char *fpath, int mode)
 {
 	const char *astr;
 	int fd, mode2, perm2;
@@ -158,12 +158,11 @@ ULS_QUALIFIED_METHOD(__uls_fd_create)(const char* fpath, int mode)
 	}
 
 	auw_deinit_outparam(uls_ptr(buf_csz));
-
 	return fd;
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__uls_fd_open)(const char* fpath, int mode)
+ULS_QUALIFIED_METHOD(__uls_fd_open)(const char *fpath, int mode)
 {
 	const char *astr;
 	int fd, mode2;
@@ -187,12 +186,19 @@ ULS_QUALIFIED_METHOD(__uls_fd_open)(const char* fpath, int mode)
 	return fd;
 }
 
+void
+ULS_QUALIFIED_METHOD(uls_fd_close)(int fd)
+{
+	if (fd >= 0) {
+		_close(fd);
+	}
+}
 #else
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__uls_fd_create)(const char* fpath, int mode)
+ULS_QUALIFIED_METHOD(__uls_fd_create)(const char *fpath, int mode)
 {
-	int fd, mode2, perm2=0644;
+	int fd, mode2, perm2 = 0644;
 	uls_outparam_t parms;
 
 	parms.n1 = mode;
@@ -208,7 +214,7 @@ ULS_QUALIFIED_METHOD(__uls_fd_create)(const char* fpath, int mode)
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__uls_fd_open)(const char* fpath, int mode)
+ULS_QUALIFIED_METHOD(__uls_fd_open)(const char *fpath, int mode)
 {
 	int fd, mode2;
 	uls_outparam_t parms;
@@ -226,7 +232,30 @@ ULS_QUALIFIED_METHOD(__uls_fd_open)(const char* fpath, int mode)
 	return fd;
 }
 
+void
+ULS_QUALIFIED_METHOD(uls_fd_close)(int fd)
+{
+	if (fd >= 0) {
+		close(fd);
+	}
+}
 #endif
+
+int
+ULS_QUALIFIED_METHOD(uls_fd_open)(const char *fpath, int mode)
+{
+	int fd;
+
+	if (fpath == NULL) return -1;
+
+	if (mode & ULS_FIO_WRITE) {
+		fd = __uls_fd_create(fpath, mode);
+	} else {
+		fd = __uls_fd_open(fpath, mode);
+	}
+
+	return fd;
+}
 
 ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(__open_tempfile)(uls_tempfile_ptr_t tmpfile)
@@ -234,10 +263,10 @@ ULS_QUALIFIED_METHOD(__open_tempfile)(uls_tempfile_ptr_t tmpfile)
 	int fd_out, len, i=0;
 	const char *basedir;
 	char filepath_buf[ULS_TEMP_FILEPATH_MAXSIZ + 1];
-#ifdef ULS_WINDOWS
+#ifdef __ULS_WINDOWS__
 	auw_outparam_t buf_csz;
 
-	if ((basedir=getenv("TEMP")) == NULL || uls_dirent_exist_astr(basedir) != ST_MODE_DIR) {
+	if ((basedir = getenv("TEMP")) == NULL) {
 		if (uls_dirent_exist(ULS_OS_TEMP_DIR) != ST_MODE_DIR)
 			_uls_log(err_panic)("ULS: can't make temporary directory, '%s'!", ULS_OS_TEMP_DIR);
 		basedir = ULS_OS_TEMP_DIR;
@@ -259,8 +288,7 @@ ULS_QUALIFIED_METHOD(__open_tempfile)(uls_tempfile_ptr_t tmpfile)
 
 		uls_set_namebuf_value_this(tmpfile->filepath, filepath_buf);
 
-		if ((fd_out = uls_fd_open(uls_get_namebuf_value_this(tmpfile->filepath),
-			ULS_FIO_CREAT|ULS_FIO_RDWR|ULS_FIO_EXCL)) >= 0) {
+		if ((fd_out = uls_fd_open(filepath_buf, ULS_FIO_WRITE | ULS_FIO_READ | ULS_FIO_EXCL)) >= 0) {
 			tmpfile->len_filepath = len;
 			tmpfile->fd = fd_out;
 			break;
@@ -273,7 +301,7 @@ ULS_QUALIFIED_METHOD(__open_tempfile)(uls_tempfile_ptr_t tmpfile)
 	}
 
 	tmpfile->fp = NULL;
-#ifdef ULS_WINDOWS
+#ifdef __ULS_WINDOWS__
 	auw_deinit_outparam(uls_ptr(buf_csz));
 #endif
 	return fd_out;
@@ -344,7 +372,7 @@ ULS_QUALIFIED_METHOD(uls_writen)(int fd, uls_native_vptr_t vptr, int n)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_readline)(int fd, char* ptr, int n)
+ULS_QUALIFIED_METHOD(uls_readline)(int fd, char *ptr, int n)
 {
 	int  i, rc;
 
@@ -380,14 +408,42 @@ ULS_QUALIFIED_METHOD(uls_readline)(int fd, char* ptr, int n)
 	return i;
 }
 
-#ifdef ULS_WINDOWS
+#ifdef __ULS_WINDOWS__
+int
+ULS_QUALIFIED_METHOD(uls_dirent_exist)(const char *path)
+{
+	int rval;
+	const char *astr;
+	auw_outparam_t buf_csz;
+
+	if (path == NULL || *path == '\0')
+		return -1;
+
+	auw_init_outparam(uls_ptr(buf_csz));
+
+	if ((astr = uls_ustr2astr_ptr(path, -1, uls_ptr(buf_csz))) == NULL) {
+		rval = -2;
+	} else {
+		DWORD dwAttrib;
+
+		if ((dwAttrib = GetFileAttributesA(astr)) == INVALID_FILE_ATTRIBUTES) {
+			return ST_MODE_NOENT;
+		}
+
+		if (dwAttrib & FILE_ATTRIBUTE_DIRECTORY) rval = ST_MODE_DIR;
+		else rval = ST_MODE_FILE;
+	}
+
+	auw_deinit_outparam(uls_ptr(buf_csz));
+	return rval;
+}
 
 int
-ULS_QUALIFIED_METHOD(uls_chdir)(const char* path)
+ULS_QUALIFIED_METHOD(uls_chdir)(const char *path)
 {
+	auw_outparam_t buf_csz;
 	const char *astr;
 	int rval;
-	auw_outparam_t buf_csz;
 
 	if (path == NULL) return -1;
 
@@ -405,12 +461,12 @@ ULS_QUALIFIED_METHOD(uls_chdir)(const char* path)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_getcwd)(char* buf, int buf_siz)
+ULS_QUALIFIED_METHOD(uls_getcwd)(char *buf, int buf_siz)
 {
+	auw_outparam_t buf_csz;
 	char  *ptr;
 	const char *ustr;
 	int ulen;
-	auw_outparam_t buf_csz;
 
 	if ((ptr = _getcwd(buf, buf_siz)) == NULL) {
 		return -1;
@@ -433,9 +489,9 @@ ULS_QUALIFIED_METHOD(uls_getcwd)(char* buf, int buf_siz)
 int
 ULS_QUALIFIED_METHOD(uls_unlink)(const char *filepath)
 {
+	auw_outparam_t buf_csz;
 	const char *astr;
 	int rval;
-	auw_outparam_t buf_csz;
 
 	if (filepath == NULL) return -1;
 
@@ -452,17 +508,45 @@ ULS_QUALIFIED_METHOD(uls_unlink)(const char *filepath)
 	return rval;
 }
 
-#else // ~ULS_WINDOWS
+#else // ~__ULS_WINDOWS__
 
 int
-ULS_QUALIFIED_METHOD(uls_chdir)(const char* path)
+ULS_QUALIFIED_METHOD(uls_dirent_exist)(const char *path)
+{
+	struct stat statbuff;
+	int rval;
+
+	if (path == NULL || *path == '\0')
+		return -1;
+
+	while (stat(path, uls_ptr(statbuff)) < 0) {
+		if (errno == EINTR) continue;
+		if (errno == ENOENT) return ST_MODE_NOENT;
+		/* ~ENOENT */
+		return -1;
+	}
+
+	if (S_ISREG(statbuff.st_mode)) rval = ST_MODE_REG;
+	else if (S_ISDIR(statbuff.st_mode)) rval = ST_MODE_DIR;
+	else if (S_ISLNK(statbuff.st_mode)) rval = ST_MODE_SYMLNK;
+	else if (S_ISCHR(statbuff.st_mode)) rval = ST_MODE_CHR;
+	else if (S_ISBLK(statbuff.st_mode)) rval = ST_MODE_BLK;
+	else if (S_ISFIFO(statbuff.st_mode)) rval = ST_MODE_FIFO;
+	else if (S_ISSOCK(statbuff.st_mode)) rval = ST_MODE_SOCK;
+	else rval = ST_MODE_SPECIAL;
+
+	return rval;
+}
+
+int
+ULS_QUALIFIED_METHOD(uls_chdir)(const char *path)
 {
 	if (path == NULL) return -1;
 	return chdir(path);
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_getcwd)(char* buf, int buf_siz)
+ULS_QUALIFIED_METHOD(uls_getcwd)(char *buf, int buf_siz)
 {
 	const char *ptr;
 
@@ -478,7 +562,7 @@ ULS_QUALIFIED_METHOD(uls_unlink)(const char *filepath)
 	return unlink(filepath);
 }
 
-#endif // ULS_WINDOWS
+#endif // __ULS_WINDOWS__
 
 int
 ULS_QUALIFIED_METHOD(uls_copyfile_fd)(int fd_in, int fd_out)
@@ -506,16 +590,16 @@ ULS_QUALIFIED_METHOD(uls_copyfile_fd)(int fd_in, int fd_out)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_copyfile)(const char* filepath1, const char* filepath2)
+ULS_QUALIFIED_METHOD(uls_copyfile)(const char *filepath1, const char *filepath2)
 {
 	int  fd_in, fd_out;
 	int  rc;
 
-	if ((fd_in=uls_fd_open(filepath1, 0)) < 0) {
+	if ((fd_in = uls_fd_open(filepath1, 0)) < 0) {
 		return -1;
 	}
 
-	if ((fd_out = uls_fd_open(filepath2, ULS_FIO_CREAT)) < 0) {
+	if ((fd_out = uls_fd_open(filepath2, ULS_FIO_WRITE)) < 0) {
 		uls_fd_close(fd_in);
 		return -1;
 	}
@@ -528,62 +612,63 @@ ULS_QUALIFIED_METHOD(uls_copyfile)(const char* filepath1, const char* filepath2)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_movefile)(const char* fpath1, const char* fpath2)
+ULS_QUALIFIED_METHOD(uls_movefile)(const char *filepath1, const char *filepath2)
 {
-	if (fpath1 == NULL || *fpath1 == '\0') return -1;
-	if (fpath2 == NULL || *fpath2 == '\0') return -1;
+	if (filepath1 == NULL || *filepath1 == '\0') return -1;
+	if (filepath2 == NULL || *filepath2 == '\0') return -1;
 
-	if (fpath1 == fpath2 || uls_streql(fpath1, fpath2)) {
+	if (filepath1 == filepath2 || uls_streql(filepath1, filepath2)) {
 		return 0;
 	}
 
-	if (uls_copyfile(fpath1, fpath2) < 0) {
+	if (uls_copyfile(filepath1, filepath2) < 0) {
 		_uls_log(err_log)("%s:(copy-file) error", __func__);
 		return -1;
 	}
 
-	if (uls_unlink(fpath1) < 0) {
+	if (uls_unlink(filepath1) < 0) {
 		_uls_log(err_log)("%s:(unlink) error", __func__);
 		return -1;
 	}
+
 	return 0;
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__uls_close_tempfile)(uls_tempfile_ptr_t tmpfile, const char* filepath)
+ULS_QUALIFIED_METHOD(__uls_close_tempfile)(uls_tempfile_ptr_t tmpfile, const char *filepath)
 {
+	const char *filepath0 = uls_get_namebuf_value_this(tmpfile->filepath);
 	int stat = 1;
 
-	if (uls_get_namebuf_value_this(tmpfile->filepath) == filepath) {
+	if (filepath0 == filepath) {
 		_uls_log(err_log)("%s: invalid filepath!", __func__);
 		return -4;
 	}
 
 	if (tmpfile->fp != NULL) {
 		uls_fp_close(tmpfile->fp);
+		tmpfile->fp = NULL;
 	} else if (tmpfile->fd >= 0) {
 		uls_fd_close(tmpfile->fd);
+		tmpfile->fd = -1;
 	}
 
-	if (uls_dirent_exist(uls_get_namebuf_value_this(tmpfile->filepath)) != ST_MODE_FILE) {
-		_uls_log(err_log)("%s: can' find the tempfile %s!", __func__, uls_get_namebuf_value_this(tmpfile->filepath));
-		stat = -3;
+	if (uls_dirent_exist(filepath0) != ST_MODE_FILE) {
+		_uls_log(err_log)("%s: can' find the tempfile %s!", __func__, filepath0);
+		return -3;
+	}
 
-	} else if (filepath == NULL) {
-		if (uls_unlink(uls_get_namebuf_value_this(tmpfile->filepath)) < 0) {
+	if (filepath == NULL) {
+		if (uls_unlink(filepath0) < 0) {
 			_uls_log(err_log)("%s: unlink error!", __func__);
 			stat = -2;
 		} else {
 			stat = 2;
 		}
-
-	} else if (uls_movefile(uls_get_namebuf_value_this(tmpfile->filepath), filepath) < 0) {
-		_uls_log(err_log)("can't move the temp-file '%s' to '%s'.", uls_get_namebuf_value_this(tmpfile->filepath), filepath);
+	} else if (uls_movefile(filepath0, filepath) < 0) {
+		_uls_log(err_log)("can't move the temp-file '%s' to '%s'.", filepath0, filepath);
 		stat = -1;
 	}
-
-	tmpfile->fp = NULL;
-	tmpfile->fd = -1;
 
 	return stat;
 }
@@ -657,115 +742,8 @@ ULS_QUALIFIED_METHOD(_uls_stdio_fp_box)(int fp_num)
 	return fpwrap;
 }
 
-#ifdef ULS_WINDOWS
-
-int
-ULS_QUALIFIED_METHOD(uls_dirent_exist_astr)(const char* afpath)
-{
-	DWORD dwAttrib;
-	int rval;
-
-	if ((dwAttrib = GetFileAttributesA(afpath)) == INVALID_FILE_ATTRIBUTES) {
-		return ST_MODE_NOENT;
-	}
-
-	if (dwAttrib & FILE_ATTRIBUTE_DIRECTORY) rval = ST_MODE_DIR;
-	else rval = ST_MODE_FILE;
-
-	return rval;
-}
-
-int
-ULS_QUALIFIED_METHOD(uls_dirent_exist)(const char* path)
-{
-	int rval;
-	const char *astr;
-	auw_outparam_t buf_csz;
-
-	if (path == NULL || *path == '\0')
-		return -1;
-
-	auw_init_outparam(uls_ptr(buf_csz));
-
-	if ((astr = uls_ustr2astr_ptr(path, -1, uls_ptr(buf_csz))) == NULL) {
-		rval = -2;
-	} else {
-		rval = uls_dirent_exist_astr(astr);
-	}
-
-	auw_deinit_outparam(uls_ptr(buf_csz));
-	return rval;
-}
-
-#else
-
-int
-ULS_QUALIFIED_METHOD(uls_dirent_exist)(const char* path)
-{
-	struct stat statbuff;
-	int rval;
-
-	if (path == NULL || *path == '\0')
-		return -1;
-
-	while (stat(path, uls_ptr(statbuff)) < 0) {
-		if (errno == EINTR) continue;
-		if (errno == ENOENT) return ST_MODE_NOENT;
-		/* ~ENOENT */
-		return -1;
-	}
-
-	if (S_ISREG(statbuff.st_mode)) rval = ST_MODE_REG;
-	else if (S_ISDIR(statbuff.st_mode)) rval = ST_MODE_DIR;
-	else if (S_ISLNK(statbuff.st_mode)) rval = ST_MODE_SYMLNK;
-	else if (S_ISCHR(statbuff.st_mode)) rval = ST_MODE_CHR;
-	else if (S_ISBLK(statbuff.st_mode)) rval = ST_MODE_BLK;
-	else if (S_ISFIFO(statbuff.st_mode)) rval = ST_MODE_FIFO;
-	else if (S_ISSOCK(statbuff.st_mode)) rval = ST_MODE_SOCK;
-	else rval = ST_MODE_SPECIAL;
-
-	return rval;
-}
-
-#endif
-
-#ifdef ULS_WINDOWS
 void
-ULS_QUALIFIED_METHOD(uls_fd_close)(int fd)
-{
-	if (fd >= 0) {
-		_close(fd);
-	}
-}
-
-#else
-void
-ULS_QUALIFIED_METHOD(uls_fd_close)(int fd)
-{
-	if (fd >= 0) {
-		close(fd);
-	}
-}
-#endif
-
-int
-ULS_QUALIFIED_METHOD(uls_fd_open)(const char* fpath, int mode)
-{
-	int fd;
-
-	if (fpath == NULL) return -1;
-
-	if (mode & ULS_FIO_CREAT) {
-		fd = __uls_fd_create(fpath, mode);
-	} else {
-		fd = __uls_fd_open(fpath, mode);
-	}
-
-	return fd;
-}
-
-void
-ULS_QUALIFIED_METHOD(uls_put_binstr)(const char* str, int len, int fd)
+ULS_QUALIFIED_METHOD(uls_put_binstr)(const char *str, int len, int fd)
 {
 	if (len < 0) len = uls_strlen(str);
 
@@ -884,7 +862,7 @@ ULS_QUALIFIED_METHOD(uls_destroy_fio)(uls_fio_ptr_t fio)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_fio_gets)(uls_fio_ptr_t fio, char* buf, int buf_siz)
+ULS_QUALIFIED_METHOD(uls_fio_gets)(uls_fio_ptr_t fio, char *buf, int buf_siz)
 {
 	char *bufptr, *buf_end;
 	int len, rc, esc=0;
@@ -1004,7 +982,7 @@ ULS_QUALIFIED_METHOD(uls_close_filp)(uls_file_ptr_t filp)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_filp_gets)(uls_file_ptr_t filp, char* buf, int buf_siz)
+ULS_QUALIFIED_METHOD(uls_filp_gets)(uls_file_ptr_t filp, char *buf, int buf_siz)
 {
 	uls_stdio_box_ptr_t p_fpwrap = uls_ptr(filp->fpwrap);
 	FILE *fp = p_fpwrap->fp;
@@ -1026,8 +1004,8 @@ ULS_QUALIFIED_METHOD(uls_fp_open)(const char *filepath, int mode)
 {
 	FILE* fp;
 	char modestr[8];
-	int j, rc;
-#ifdef ULS_WINDOWS
+	int j, rc, bOverwrite = 0;
+#ifdef __ULS_WINDOWS__
 	const char *astr;
 	auw_outparam_t buf_csz;
 #endif
@@ -1035,10 +1013,16 @@ ULS_QUALIFIED_METHOD(uls_fp_open)(const char *filepath, int mode)
 
 	if (filepath == NULL) return NULL;
 
+	if ((mode & (ULS_FIO_READ|ULS_FIO_WRITE)) == (ULS_FIO_READ|ULS_FIO_WRITE)) {
+		_uls_log(err_log)("%s: RD, WR exclusive!", __func__);
+		return NULL;
+	}
+
 	parms.n1 = mode;
-	if (mode & ULS_FIO_CREAT) {
+	if (mode & ULS_FIO_WRITE) {
+		bOverwrite = 1;
 		rc = __uls_fd_create_check(filepath, uls_ptr(parms));
-	} else {
+	} else { // ULS_FIO_READ
 		rc = __uls_fd_open_check(uls_ptr(parms));
 	}
 	mode = parms.n1;
@@ -1049,26 +1033,16 @@ ULS_QUALIFIED_METHOD(uls_fp_open)(const char *filepath, int mode)
 	}
 
 	j = 0;
-	if (mode & ULS_FIO_CREAT) {
+	if (mode & ULS_FIO_WRITE) {
 		modestr[j++] = 'w';
-#ifdef ULS_WINDOWS
 		modestr[j++] = 'b';
-#endif
-		if (mode & ULS_FIO_READ) {
-			modestr[j++] = '+';
-		}
-	} else {
+	} else { // ULS_FIO_READ
 		modestr[j++] = 'r';
-#ifdef ULS_WINDOWS
 		modestr[j++] = 'b';
-#endif
-		if (mode & ULS_FIO_WRITE) {
-			modestr[j++] = '+';
-		}
 	}
 	modestr[j] = '\0';
 
-#ifdef ULS_WINDOWS
+#ifdef __ULS_WINDOWS__
 	auw_init_outparam(uls_ptr(buf_csz));
 
 	if ((astr = uls_ustr2astr_ptr(filepath, -1,  uls_ptr(buf_csz))) == NULL) {
@@ -1083,27 +1057,28 @@ ULS_QUALIFIED_METHOD(uls_fp_open)(const char *filepath, int mode)
 	fp = fopen(filepath, modestr);
 #endif
 
+	if (fp == NULL || (mode & ULS_FIO_NO_UTF8BOM)) return fp;
+
+	if (bOverwrite) {
+		_uls_tool_(fp_putc)(fp, (char) 0xEF);
+		_uls_tool_(fp_putc)(fp, (char) 0xBB);
+		_uls_tool_(fp_putc)(fp, (char) 0xBF);
+
+	} else if (mode & ULS_FIO_READ) {
+		const char utf8_bom[3] = { 0xEF, 0xBB, 0xBF };
+		char firstbytes[4];
+
+		rc = (int) fread(firstbytes, sizeof(char), 3, fp);
+		if (rc < 3 || uls_memcmp(firstbytes, utf8_bom, 3) != 0) {
+			if (fseek(fp, 0, SEEK_SET) != 0) {
+				_uls_log(err_log)("%s: fp-rewind error!", __func__);
+				fclose(fp);
+				fp = NULL;
+			}
+		}
+	}
+
 	return fp;
-}
-
-int
-ULS_QUALIFIED_METHOD(uls_fp_gets)(FILE *fp, char* buf, int buf_siz, int flags)
-{
-	uls_fio_t fio;
-	uls_stdio_box_t fpwrap;
-	int rc;
-
-	uls_init_fio(uls_ptr(fio), flags | ULS_FIO_DEL_CR);
-
-	fpwrap.fp_num = -1;
-	fpwrap.fp = fp;
-	uls_reset_fio(uls_ptr(fio), uls_ptr(fpwrap), nilptr);
-
-	rc = uls_fio_gets(uls_ptr(fio), buf, buf_siz);
-
-	uls_deinit_fio(uls_ptr(fio));
-
-	return rc;
 }
 
 void
@@ -1114,18 +1089,6 @@ ULS_QUALIFIED_METHOD(uls_fp_close)(FILE *fp)
 			fclose(fp);
 		}
 	}
-}
-
-int
-ULS_QUALIFIED_METHOD(uls_fp_getc)(FILE *fp)
-{
-	return getc(fp);
-}
-
-void
-ULS_QUALIFIED_METHOD(uls_fp_putc)(FILE *fp, char ch)
-{
-	putc(ch, fp);
 }
 
 int
@@ -1145,6 +1108,38 @@ ULS_QUALIFIED_METHOD(uls_fp_filesize)(FILE *fin)
 	}
 
 	return filesize;
+}
+
+int
+ULS_QUALIFIED_METHOD(uls_fp_gets)(FILE *fp, char *buf, int buf_siz, int flags)
+{
+	uls_fio_t fio;
+	uls_stdio_box_t fpwrap;
+	int rc;
+
+	uls_init_fio(uls_ptr(fio), flags | ULS_FIO_DEL_CR);
+
+	fpwrap.fp_num = -1;
+	fpwrap.fp = fp;
+	uls_reset_fio(uls_ptr(fio), uls_ptr(fpwrap), nilptr);
+
+	rc = uls_fio_gets(uls_ptr(fio), buf, buf_siz);
+
+	uls_deinit_fio(uls_ptr(fio));
+
+	return rc;
+}
+
+int
+ULS_QUALIFIED_METHOD(uls_fp_getc)(FILE *fp)
+{
+	return getc(fp);
+}
+
+void
+ULS_QUALIFIED_METHOD(uls_fp_putc)(FILE *fp, char ch)
+{
+	putc(ch, fp);
 }
 
 void
@@ -1198,7 +1193,7 @@ ULS_QUALIFIED_METHOD(uls_fopen_tempfile)(uls_tempfile_ptr_t tmpfile)
 {
 	int fd_out;
 	FILE *fp_out;
-#ifdef ULS_WINDOWS
+#ifdef __ULS_WINDOWS__
 	const char *modstr = "wb+";
 #else
 	const char *modstr = "w+";
@@ -1225,7 +1220,7 @@ ULS_QUALIFIED_METHOD(uls_fopen_tempfile)(uls_tempfile_ptr_t tmpfile)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_close_tempfile)(uls_tempfile_ptr_t tmpfile, const char* filepath)
+ULS_QUALIFIED_METHOD(uls_close_tempfile)(uls_tempfile_ptr_t tmpfile, const char *filepath)
 {
 	int stat = 0;
 	uls_sys_lock();
@@ -1256,4 +1251,14 @@ ULS_QUALIFIED_METHOD(uls_destroy_tempfile)(uls_tempfile_ptr_t tmpfile)
 	if (!(tmpfile->flags & ULS_FL_STATIC)) {
 		uls_dealloc_object(tmpfile);
 	}
+}
+
+void
+ULS_QUALIFIED_METHOD(fp_ungrabber_wstr)(uls_voidptr_t data)
+{
+	uls_cast_ptrtype_tool(outparam, parms, data);
+	FILE* fp = (FILE*) parms->native_data;
+
+	uls_dealloc_object(parms);
+	uls_fp_close(fp);
 }

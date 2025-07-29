@@ -31,7 +31,7 @@
 #define __ULS_DUMP_H__
 
 #ifndef ULS_EXCLUDE_HFILES
-#include "uls_lex.h"
+#include "uls/uls_lex.h"
 #endif
 
 #ifdef _ULS_CPLUSPLUS
@@ -50,7 +50,7 @@ ULS_DLL_EXTERN void uls_dump_char_context(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN void uls_dump_quote(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN void uls_dump_1char(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN void uls_dump_2char(uls_lex_ptr_t uls);
-ULS_DLL_EXTERN void uls_dump_utf8firstbyte(uls_lex_ptr_t uls);
+ULS_DLL_EXTERN void uls_dump_utf8firstbyte(void);
 ULS_DLL_EXTERN void uls_dump_idfirst(uls_lex_ptr_t uls);
 
 ULS_DLL_EXTERN void uls_dump_tokdef_vx_char(uls_wch_t wch, uls_tokdef_vx_ptr_t e_vx);
@@ -63,8 +63,8 @@ ULS_DLL_EXTERN void uls_dump_tokdef_names(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN void dump_fd_tower(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN void uls_dump_kwtable(uls_lex_ptr_t uls);
 
-ULS_DLL_EXTERN void dump_tokdef__yaml_commtype(int ind, uls_lex_ptr_t uls, uls_commtype_ptr_t cmt);
-ULS_DLL_EXTERN void dump_tokdef__yaml_quotetype(int ind, uls_lex_ptr_t uls, uls_quotetype_ptr_t qmt);
+ULS_DLL_EXTERN void dump_tokdef__yaml_commtype(int ind, uls_commtype_ptr_t cmt);
+ULS_DLL_EXTERN void dump_tokdef__yaml_quotetype(int ind, uls_quotetype_ptr_t qmt);
 ULS_DLL_EXTERN void dump_tokdef__yaml_rename(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN void dump_tokdef__yaml(uls_lex_ptr_t uls);
 

@@ -33,17 +33,39 @@
 */
 
 #include "uls.h"
+#include "uls/uls_init.h"
 #define __ULSCOMPAT__
 #include "uls/ulscompat.h"
 
-#include "uls/uls_util_wstr.h"
 #include "uls/uls_lf_swprintf.h"
 #include "uls/uls_wprint.h"
 #include "uls/uls_wlog.h"
 
+#ifdef __ULS_WINDOWS__
+#include "uls/uls_lf_saprintf.h"
+#include "uls/uls_aprint.h"
+#include "uls/uls_alog.h"
+#endif
+
 #include <stdlib.h>
 
 ULS_DECL_STATIC int ulscompat_inited;
+
+ULS_DECL_STATIC void
+__finalize_ulscompat(void)
+{
+	finalize_uls_wlog();
+	finalize_uls_wprint();
+	finalize_uls_wlf();
+
+#ifdef __ULS_WINDOWS__
+	finalize_uls_alog();
+	finalize_uls_aprint();
+	finalize_uls_alf();
+#endif
+
+	ulscompat_inited = 0;
+}
 
 void
 #ifdef __GNUC__
@@ -52,9 +74,17 @@ __attribute__((constructor))
 _initialize_ulscompat(void)
 {
 	if (ulscompat_inited) return;
+
+#ifdef __ULS_WINDOWS__
+	initialize_uls_alf();
+	initialize_uls_aprint();
+	initialize_uls_alog();
+#endif
+
 	initialize_uls_wlf();
 	initialize_uls_wprint();
 	initialize_uls_wlog();
+
 	ulscompat_inited = 1;
 }
 
@@ -65,10 +95,7 @@ __attribute__((destructor))
 _finalize_ulscompat(void)
 {
 	if (!ulscompat_inited) return;
-	finalize_uls_wlog();
-	finalize_uls_wprint();
-	finalize_uls_wlf();
-	ulscompat_inited = 0;
+	__finalize_ulscompat();
 }
 
 void
@@ -85,7 +112,7 @@ finalize_ulscompat(void)
 	finalize_uls();
 }
 
-#if defined(ULS_WINDOWS)
+#if defined(__ULS_WINDOWS__)
 BOOL WINAPI
 DllMain(HINSTANCE hInst, DWORD dwReason, LPVOID lpvReserved)
 {

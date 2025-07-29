@@ -126,7 +126,7 @@ Css3Lex::Css3Lex(tstring& config_name)
 // <parm name="fpath">The path of file</parm>
 // <return>none</return>
 void
-Css3Lex::setFile(tstring fpath)
+Css3Lex::setInputFile(tstring fpath)
 {
 	pushFile(fpath);
 }
@@ -142,14 +142,14 @@ Css3Lex::setFile(tstring fpath)
 int
 Css3Lex::concat_lexeme(LPCTSTR str, int len, int tok)
 {
-	tstring *lxm;
+	tstring lxm;
 
-	Css3LexBasis::getTok();
-	UlsLex::getTokStr(&lxm);
+	Css3LexBasis::next();
+	UlsLex::getTokStr(lxm);
 
 	tokbuf.clear();
 	tokbuf.append(str, len);
-	tokbuf.append(lxm->c_str());
+	tokbuf.append(lxm.c_str());
 
 	return tokbuf.len();
 }
@@ -163,8 +163,7 @@ Css3Lex::get_token(void)
 {
 	uls_wch_t wch;
 	int tok, paren_lvl;
-	bool is_quote;
-	tstring *lxm;
+	tstring lxm;
 	TCHAR tch;
 
 	if (tok_ungot == true) {
@@ -173,11 +172,11 @@ Css3Lex::get_token(void)
 	}
 
 	if (prepare_url_tok == 2) {
-		if ((wch=Css3LexBasis::peekCh(&is_quote)) == ULS_UCH_NONE) {
-			if (is_quote) {
-				tok = Css3LexBasis::getTok();
-				UlsLex::getTokStr(&lxm);
-				tok_str = *lxm;
+		if ((wch = peekChar()) >= ULS_CH_QSTR) {
+			if (wch == ULS_CH_QSTR) {
+				tok = Css3LexBasis::next();
+				UlsLex::getTokStr(lxm);
+				tok_str = lxm;
 				tok_id = CSS_PATH;
 				prepare_url_tok = 0;
 			} else {
@@ -190,9 +189,9 @@ Css3Lex::get_token(void)
 		// url(../../image/a.png)
 		paren_lvl = 0;
 		tokbuf.clear();
-		while ((wch=Css3LexBasis::peekCh(&is_quote)) != ')' || paren_lvl > 0) {
-			Css3LexBasis::getCh(&is_quote);
-			if (wch == ULS_UCH_NONE) {
+		while ((wch = peekChar()) != ')' || paren_lvl > 0) {
+			getChar();
+			if (wch >= ULS_CH_QSTR) {
 				break;
 			}
 
@@ -210,7 +209,7 @@ Css3Lex::get_token(void)
 		return;
 	}
 
-	tok = Css3LexBasis::getTok();
+	tok = Css3LexBasis::next();
 
 	if (prepare_url_tok == 1) {
 		expect(_T('('));
@@ -220,7 +219,7 @@ Css3Lex::get_token(void)
 		prepare_url_tok = 1;
 
 	} else if (Css3LexBasis::getTokNum() == _T('-')) {
-		if ((wch = Css3LexBasis::peekCh(&is_quote)) == _T('.') || isdigit(wch)) {
+		if ((wch = peekChar()) == _T('.') || isdigit(wch)) {
 			tok = CSS_NUM;
 			concat_lexeme(_T("-"), 1, tok);
 			tok_str = tokbuf.str();
@@ -236,16 +235,16 @@ Css3Lex::get_token(void)
 		}
 	}
 
-	UlsLex::getTokStr(&lxm);
-	tok_str = *lxm;
+	UlsLex::getTokStr(lxm);
+	tok_str = lxm;
 	tok_id = Css3LexBasis::getTokNum();
 }
 
 int
-Css3Lex::getTok(void)
+Css3Lex::next(void)
 {
 	get_token();
-	Css3LexBasis::setTok(tok_id, tok_str);
+	Css3LexBasis::setTok(tok_id, tok_str.c_str());
 	return tok_id;
 }
 
@@ -256,7 +255,13 @@ Css3Lex::getTokNum(void)
 }
 
 void
-Css3Lex::ungetTok(void)
+Css3Lex::getTokStr(tstring& lxm)
+{
+	lxm = tok_str;
+}
+
+void
+Css3Lex::ungetCurrentToken(void)
 {
 	tok_ungot = true;
 }

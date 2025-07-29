@@ -93,9 +93,9 @@ ULS_DECL_STATIC unsigned int ulc_alias_hashfunc(const char *str, int n);
 ULS_DECL_STATIC int strdup_cnst(uls_lang_list_ptr_t tbl, const char *str);
 
 ULS_DECL_STATIC uls_lang_ptr_t uls_append_lang(uls_lang_list_ptr_t tbl, uls_ptrtype_tool(outparam) parms);
-ULS_DECL_STATIC int langs_proc_line(uls_lang_list_ptr_t tbl, char* line);
+ULS_DECL_STATIC int langs_proc_line(uls_lang_list_ptr_t tbl, char *line);
 ULS_DECL_STATIC void construct_ulc_lang_db(uls_lang_list_ptr_t tbl);
-ULS_DECL_STATIC _ULS_INLINE int __is_langs_needed_quote(const char* name);
+ULS_DECL_STATIC _ULS_INLINE int __is_langs_needed_quote(const char *name);
 ULS_DECL_STATIC void uls_dump_lang(uls_lang_ptr_t lang);
 #endif // ULS_DECL_PRIVATE_PROC
 
@@ -115,9 +115,9 @@ void uls_destroy_lang_list(uls_lang_list_ptr_t tbl);
 #endif
 
 #ifdef ULS_DECL_PUBLIC_PROC
-ULS_DLL_EXTERN uls_lang_ptr_t uls_find_lang(uls_lang_list_ptr_t tbl, const char* alias);
-ULS_DLL_EXTERN const char* uls_find_lang_name(const char* alias);
-ULS_DLL_EXTERN int uls_list_names_of_lang(const char* alias);
+ULS_DLL_EXTERN uls_lang_ptr_t uls_find_lang(uls_lang_list_ptr_t tbl, const char *alias);
+ULS_DLL_EXTERN const char *uls_find_lang_name(const char *alias);
+ULS_DLL_EXTERN int uls_list_names_of_lang(const char *alias);
 ULS_DLL_EXTERN void uls_list_langs(void);
 #endif
 

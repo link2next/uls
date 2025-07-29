@@ -36,7 +36,7 @@
 #endif
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(ulf_read_config_var)(int lno, char* lptr, ulf_header_ptr_t hdr)
+ULS_QUALIFIED_METHOD(ulf_read_config_var)(int lno, char *lptr, ulf_header_ptr_t hdr)
 {
 	uls_type_tool(outparam) parms;
 	uls_type_tool(wrd) wrdx;
@@ -131,7 +131,7 @@ ULS_QUALIFIED_METHOD(ulf_read_header)(FILE* fin, ulf_header_ptr_t hdr)
 }
 
 ULS_QUALIFIED_RETTYP(uls_keyw_stat_list_ptr_t)
-ULS_QUALIFIED_METHOD(make_keyw_stat_for_load)(uls_tokdef_ptr_t tok_info_lst, int n_tok_info_lst, ulf_header_ptr_t hdr)
+ULS_QUALIFIED_METHOD(make_keyw_stat_for_load)(uls_tokdef_ptr_t tok_info_lst, int n_tok_info_lst)
 {
 	uls_keyw_stat_list_ptr_t kwslst;
 	uls_ref_parray(lst, keyw_stat);
@@ -188,7 +188,7 @@ ULS_QUALIFIED_METHOD(ulf_deinit_header)(ulf_header_ptr_t hdr)
 }
 
 ULS_QUALIFIED_RETTYP(uls_keyw_stat_ptr_t)
-ULS_QUALIFIED_METHOD(ulf_search_kwstat_list)(uls_keyw_stat_list_ptr_t kwslst, const char* str)
+ULS_QUALIFIED_METHOD(ulf_search_kwstat_list)(uls_keyw_stat_list_ptr_t kwslst, const char *str)
 {
 	uls_ref_parray_init(lst, keyw_stat, uls_ptr(kwslst->lst));
 	uls_decl_parray_slots_init(slots_lst, keyw_stat, lst);
@@ -262,7 +262,7 @@ ULS_QUALIFIED_METHOD(ulf_load)(uls_tokdef_ptr_t tok_info_lst, int n_tok_info_lst
 	_uls_tool_(version_make)(uls_ptr(hdr->filever),
 		ULF_VERSION_MAJOR, ULF_VERSION_MINOR, ULF_VERSION_DEBUG);
 
-	if ((kwslst = make_keyw_stat_for_load(tok_info_lst, n_tok_info_lst, hdr)) == nilptr) {
+	if ((kwslst = make_keyw_stat_for_load(tok_info_lst, n_tok_info_lst)) == nilptr) {
 		if (n_tok_info_lst > 0) {
 			_uls_log(err_log)("%s: fail to make keyw_stats", __func__);
 			return nilptr;
@@ -305,7 +305,7 @@ ULS_QUALIFIED_METHOD(ulf_load)(uls_tokdef_ptr_t tok_info_lst, int n_tok_info_lst
 }
 
 int
-ULS_QUALIFIED_METHOD(keyw_stat_comp_by_freq)(const uls_voidptr_t a, const uls_voidptr_t b)
+ULS_QUALIFIED_METHOD(keyw_stat_comp_by_freq)(uls_const_voidptr_t a, uls_const_voidptr_t b)
 {
 	const uls_keyw_stat_ptr_t a1 = (const uls_keyw_stat_ptr_t ) a;
 	const uls_keyw_stat_ptr_t b1 = (const uls_keyw_stat_ptr_t ) b;
@@ -314,13 +314,9 @@ ULS_QUALIFIED_METHOD(keyw_stat_comp_by_freq)(const uls_voidptr_t a, const uls_vo
 }
 
 ULS_DECL_STATIC void
-ULS_QUALIFIED_METHOD(ulf_create_file_header)(uls_hash_stat_ptr_t hs, FILE* fout)
+ULS_QUALIFIED_METHOD(ulf_create_file_header)(uls_hash_stat_ptr_t hs)
 {
 	uls_ref_intarray(weights, hs->weight);
-
-	_uls_tool_(fp_putc)(fout, (char) 0xEF);
-	_uls_tool_(fp_putc)(fout, (char) 0xBB);
-	_uls_tool_(fp_putc)(fout, (char) 0xBF);
 
 	_uls_log_(sysprn)("#@ulf-%d.%d", ULF_VERSION_MAJOR, ULF_VERSION_MINOR);
 	_uls_log_(sysprn)(".%d\n\n", ULF_VERSION_DEBUG);
@@ -348,7 +344,7 @@ ULS_QUALIFIED_METHOD(ulf_create_file)(uls_hash_stat_ptr_t hs, uls_keyw_stat_list
 		return -1;
 	}
 
-	ulf_create_file_header(hs, fout);
+	ulf_create_file_header(hs);
 
 	slots_lst = uls_parray_slots(lst);
 	for (i=0; i<kwslst->lst.n; i++) {

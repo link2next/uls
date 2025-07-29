@@ -103,7 +103,7 @@ extern ulc_file_t ulc_file;
 extern ulc_wordlist_t* new_wordlist_element(char *text);
 extern void release_wordlist(ulc_wordlist_t* wrdlst);
 
-extern ulc_token_def_t* new_tokdef(char *name, char* keyw, int tok_id);
+extern ulc_token_def_t* new_tokdef(char *name, char *keyw, int tok_id);
 extern void release_tokdef(ulc_token_def_t *e);
 
 extern void release_tokdef_list(void);

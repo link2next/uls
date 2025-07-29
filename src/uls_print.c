@@ -39,17 +39,19 @@
 void
 ULS_QUALIFIED_METHOD(initialize_uls_sysprn)(void)
 {
-	dfl_str_lf = uls_lf_create(nilptr, nilptr, uls_lf_puts_str);
-	dfl_file_lf = uls_lf_create(nilptr, _uls_stdio_fp(1), uls_lf_puts_file);
-	dfl_csz_lf = uls_lf_create(nilptr, nilptr, uls_lf_puts_csz);
+	dfl_str_lf = uls_lf_create(nilptr, uls_lf_puts_str);
+	dfl_file_lf = uls_lf_create(nilptr, uls_lf_puts_file);
+	dfl_csz_lf = uls_lf_create(nilptr, uls_lf_puts_csz);
 
-	dfl_sysprn_lf = uls_lf_create(nilptr, nilptr, uls_lf_puts_null);
+	dfl_sysprn_lf = uls_lf_create(nilptr, uls_lf_puts_null);
+	dfl_sysprn_xdat = nilptr;
 	sysprn_opened = 0;
 }
 
 void
 ULS_QUALIFIED_METHOD(finalize_uls_sysprn)(void)
 {
+	dfl_sysprn_xdat = nilptr;
 	uls_lf_destroy(dfl_sysprn_lf);
 
 	uls_lf_destroy(dfl_str_lf);
@@ -80,10 +82,10 @@ ULS_QUALIFIED_METHOD(uls_sysprn_open)(uls_voidptr_t data, uls_lf_puts_t proc)
 		return -1;
 	}
 
-	delegate.xdat = data;
 	delegate.puts = proc;
 
 	uls_lf_lock(dfl_sysprn_lf);
+	dfl_sysprn_xdat = data;
 	__uls_lf_change_puts(dfl_sysprn_lf, uls_ptr(delegate));
 
 	sysprn_opened = 1;
@@ -126,10 +128,10 @@ ULS_QUALIFIED_METHOD(uls_sysprn_close)(void)
 	uls_lf_delegate_t delegate;
 
 	if (sysprn_opened) {
-		delegate.xdat = nilptr;
+		dfl_sysprn_xdat = nilptr;
 		delegate.puts = uls_lf_puts_null;
-
 		__uls_lf_change_puts(dfl_sysprn_lf, uls_ptr(delegate));
+
 		sysprn_opened = 0;
 		uls_lf_unlock(dfl_sysprn_lf);
   	}
@@ -142,13 +144,13 @@ ULS_QUALIFIED_METHOD(uls_sysprn_close)(void)
 // <parm name="fmt">The template for message string</parm>
 // <return># of chars printed</return>
 int
-ULS_QUALIFIED_METHOD(uls_vsysprn)(const char* fmt, va_list args)
+ULS_QUALIFIED_METHOD(uls_vsysprn)(const char *fmt, va_list args)
 {
-	return __uls_lf_vxprintf(dfl_sysprn_lf, fmt, args);
+	return __uls_lf_vxprintf(dfl_sysprn_xdat, dfl_sysprn_lf, fmt, args);
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_sysprn)(const char* fmt, ...)
+ULS_QUALIFIED_METHOD(uls_sysprn)(const char *fmt, ...)
 {
 	va_list	args;
 	int len;
@@ -163,13 +165,13 @@ ULS_QUALIFIED_METHOD(uls_sysprn)(const char* fmt, ...)
 void
 ULS_QUALIFIED_METHOD(uls_sysprn_puttabs)(int n)
 {
-	uls_voidptr_t sysprn = dfl_sysprn_lf->x_dat;
+	uls_voidptr_t sysprn = dfl_sysprn_xdat;
 	uls_lf_puts_t sysprn_puts = dfl_sysprn_lf->uls_lf_puts;
 	int i, buf_len = sysprn_tabbuf_len;
 
 	if (n <= 0) return;
 
-	for (i=0; i < n / sysprn_ntabs; i++) {
+	for (i = 0; i < n / sysprn_ntabs; i++) {
 		sysprn_puts(sysprn, sysprn_tabbuf, buf_len);
 	}
 
@@ -200,12 +202,12 @@ ULS_QUALIFIED_METHOD(uls_sysprn_tabs)(int n_tabs, char *fmt, ...)
 // <return># of chars filled except for '\0'</return>
 
 int
-ULS_QUALIFIED_METHOD(__uls_lf_vsnprintf)(char* buf, int bufsiz, uls_lf_ptr_t uls_lf, const char *fmt, va_list args)
+ULS_QUALIFIED_METHOD(__uls_lf_vsnprintf)(char *buf, int bufsiz, uls_lf_ptr_t uls_lf, const char *fmt, va_list args)
 {
 	uls_buf4str_t stdbuf;
-
-	uls_lf_delegate_t delegate;
 	int len;
+
+	if (uls_lf == nilptr) uls_lf = dfl_str_lf;
 
 	if (bufsiz <= 1) {
 		if (bufsiz==1) {
@@ -218,19 +220,12 @@ ULS_QUALIFIED_METHOD(__uls_lf_vsnprintf)(char* buf, int bufsiz, uls_lf_ptr_t uls
 	stdbuf.bufptr = stdbuf.buf = buf;
 	stdbuf.bufsiz = bufsiz - 1;
 
-	if (uls_lf == nilptr) uls_lf = dfl_str_lf;
-
-	delegate.xdat = uls_ptr(stdbuf);
-	delegate.puts = uls_lf_puts_str;
-	__uls_lf_change_puts(uls_lf, uls_ptr(delegate));
-	len = __uls_lf_vxprintf(uls_lf, fmt, args);
-	__uls_lf_change_puts(uls_lf, uls_ptr(delegate));
-
+	len = __uls_lf_vxprintf(uls_ptr(stdbuf), uls_lf, fmt, args);
 	return len;
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_lf_vsnprintf)(char* buf, int bufsiz, uls_lf_ptr_t uls_lf, const char *fmt, va_list args)
+ULS_QUALIFIED_METHOD(uls_lf_vsnprintf)(char *buf, int bufsiz, uls_lf_ptr_t uls_lf, const char *fmt, va_list args)
 {
 	int len;
 
@@ -242,7 +237,7 @@ ULS_QUALIFIED_METHOD(uls_lf_vsnprintf)(char* buf, int bufsiz, uls_lf_ptr_t uls_l
 }
 
 int
-ULS_QUALIFIED_METHOD(__uls_lf_snprintf)(char* buf, int bufsiz, uls_lf_ptr_t uls_lf, const char *fmt, ...)
+ULS_QUALIFIED_METHOD(__uls_lf_snprintf)(char *buf, int bufsiz, uls_lf_ptr_t uls_lf, const char *fmt, ...)
 {
 	va_list args;
 	int len;
@@ -255,7 +250,7 @@ ULS_QUALIFIED_METHOD(__uls_lf_snprintf)(char* buf, int bufsiz, uls_lf_ptr_t uls_
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_lf_snprintf)(char* buf, int bufsiz, uls_lf_ptr_t uls_lf, const char *fmt, ...)
+ULS_QUALIFIED_METHOD(uls_lf_snprintf)(char *buf, int bufsiz, uls_lf_ptr_t uls_lf, const char *fmt, ...)
 {
 	va_list args;
 	int len;
@@ -276,13 +271,13 @@ ULS_QUALIFIED_METHOD(uls_lf_snprintf)(char* buf, int bufsiz, uls_lf_ptr_t uls_lf
 // <return># of chars filled except for '\0'</return>
 
 int
-ULS_QUALIFIED_METHOD(__uls_vsnprintf)(char* buf, int bufsiz, const char *fmt, va_list args)
+ULS_QUALIFIED_METHOD(__uls_vsnprintf)(char *buf, int bufsiz, const char *fmt, va_list args)
 {
 	return __uls_lf_vsnprintf(buf, bufsiz, dfl_str_lf, fmt, args);
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_vsnprintf)(char* buf, int bufsiz, const char *fmt, va_list args)
+ULS_QUALIFIED_METHOD(uls_vsnprintf)(char *buf, int bufsiz, const char *fmt, va_list args)
 {
 	int len;
 
@@ -294,7 +289,7 @@ ULS_QUALIFIED_METHOD(uls_vsnprintf)(char* buf, int bufsiz, const char *fmt, va_l
 }
 
 int
-ULS_QUALIFIED_METHOD(__uls_snprintf)(char* buf, int bufsiz, const char *fmt, ...)
+ULS_QUALIFIED_METHOD(__uls_snprintf)(char *buf, int bufsiz, const char *fmt, ...)
 {
 	va_list args;
 	int len;
@@ -307,7 +302,7 @@ ULS_QUALIFIED_METHOD(__uls_snprintf)(char* buf, int bufsiz, const char *fmt, ...
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_snprintf)(char* buf, int bufsiz, const char *fmt, ...)
+ULS_QUALIFIED_METHOD(uls_snprintf)(char *buf, int bufsiz, const char *fmt, ...)
 {
 	va_list args;
 	int len;
@@ -328,15 +323,8 @@ ULS_QUALIFIED_METHOD(uls_snprintf)(char* buf, int bufsiz, const char *fmt, ...)
 int
 ULS_QUALIFIED_METHOD(__uls_lf_vzprintf)(_uls_ptrtype_tool(csz_str) csz, uls_lf_ptr_t uls_lf, const char *fmt, va_list args)
 {
-	uls_lf_delegate_t delegate;
 	int len;
-
-	delegate.xdat = csz;
-	delegate.puts = uls_lf_puts_csz;
-	__uls_lf_change_puts(uls_lf, uls_ptr(delegate));
-	len = __uls_lf_vxprintf(uls_lf, fmt, args);
-	__uls_lf_change_puts(uls_lf, uls_ptr(delegate));
-
+	len = __uls_lf_vxprintf(csz, uls_lf, fmt, args);
 	return len;
 }
 
@@ -431,15 +419,8 @@ ULS_QUALIFIED_METHOD(uls_zprintf)(_uls_ptrtype_tool(csz_str) csz, const char *fm
 int
 ULS_QUALIFIED_METHOD(__uls_lf_vfprintf)(FILE* fp, uls_lf_ptr_t uls_lf, const char *fmt, va_list args)
 {
-	uls_lf_delegate_t delegate;
 	int len;
-
-	delegate.xdat = fp;
-	delegate.puts = uls_lf_puts_file;
-	__uls_lf_change_puts(uls_lf, uls_ptr(delegate));
-	len = __uls_lf_vxprintf(uls_lf, fmt, args);
-	__uls_lf_change_puts(uls_lf, uls_ptr(delegate));
-
+	len = __uls_lf_vxprintf(fp, uls_lf, fmt, args);
 	return len;
 }
 
@@ -484,7 +465,7 @@ ULS_QUALIFIED_METHOD(uls_lf_fprintf)(FILE* fp, uls_lf_ptr_t uls_lf, const char *
 int
 ULS_QUALIFIED_METHOD(__uls_vfprintf)(FILE* fp, const char *fmt, va_list args)
 {
-	return uls_lf_vxprintf_generic(fp, dfl_file_lf, fmt, args);
+	return uls_lf_vxprintf(fp, dfl_file_lf, fmt, args);
 }
 
 int
@@ -582,7 +563,17 @@ ULS_QUALIFIED_METHOD(uls_lf_printf)(uls_lf_ptr_t uls_lf, const char *fmt, ...)
 int
 ULS_QUALIFIED_METHOD(__uls_vprintf)(const char *fmt, va_list args)
 {
-	return __uls_vfprintf(_uls_stdio_fp(1), fmt, args);
+	FILE *fp_cons = _uls_stdio_fp(1);
+	uls_lf_delegate_t delegate;
+	int rc;
+
+	delegate.puts = uls_lf_puts_cons;
+
+	__uls_lf_change_puts(dfl_file_lf, uls_ptr(delegate));
+	rc = uls_lf_vxprintf(fp_cons, dfl_file_lf, fmt, args);
+	__uls_lf_change_puts(dfl_file_lf, uls_ptr(delegate));
+
+	return rc;
 }
 
 int

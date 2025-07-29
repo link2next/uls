@@ -99,13 +99,13 @@ namespace
 	// This prints to the stdout the string representation of the current token.
 	// </brief>
 	// <return>none</return>
-	void dumpToken(EngLex *englex)
+	void dump_token(EngLex *englex)
 	{
 		int t = englex->getTokNum();
 
-		tstring* lxm;
-		englex->getTokStr(&lxm);
-		LPCTSTR tstr = lxm->c_str();
+		tstring lxm;
+		englex->getTokStr(lxm);
+		LPCTSTR tstr = lxm.c_str();
 
 		switch (t) {
 		case EngLex::WORD:
@@ -126,14 +126,14 @@ namespace
 	// This Executes tokenizing and dump the output to stdout.
 	// </brief>
 	// <return>none</return>
-	void dumpTokens(EngLex *englex)
+	void dump_tokens(EngLex *englex)
 	{
 		for ( ; ; ) {
-			if (englex->getToken() == EngLex::EOI) {
+			if (englex->next() == EngLex::EOI) {
 				break;
 			}
 
-			dumpToken(englex);
+			dump_token(englex);
 		}
 	}
 }
@@ -161,23 +161,24 @@ _tmain(int n_targv, LPTSTR *targv)
 	if (englex->set_input_file(input_file) < 0) {
 		_tcerr << _T(": Can't open ") << input_file << _tendl;
 	} else {
-		dumpTokens(englex);
+		dump_tokens(englex);
 	}
 
 	delete englex;
 	return 0;
 }
 
-#ifndef __WINDOWS__
+#ifndef __ULS_WINDOWS__
 int
 main(int argc, char *argv[])
 {
+	uls::ArgListT targlst;
 	LPTSTR *targv;
 	int stat;
 
-	ULSCPP_GET_WARGS_LIST(argc, argv, targv);
+	ULSCPP_GET_WARGS_LIST(targlst, argc, argv, targv);
 	stat = _tmain(argc, targv);
-	ULSCPP_PUT_WARGS_LIST(argc, targv);
+	ULSCPP_PUT_WARGS_LIST(targlst);
 
 	return stat;
 }

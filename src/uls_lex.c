@@ -331,10 +331,36 @@ ULS_QUALIFIED_METHOD(uls_push_istream_2)(uls_lex_ptr_t uls, uls_istream_ptr_t is
  	uls_pop(uls);
 	return stat;
 }
+
+const char*
+ULS_QUALIFIED_METHOD(uls_lexeme_utf8)(uls_lex_ptr_t uls, int *ptr_ulen)
+{
+	const char *lxm;
+
+	lxm = uls_lexeme(uls);
+	if (ptr_ulen != NULL) {
+		*ptr_ulen = uls_tokstr_len(uls);
+	}
+
+	return lxm;
+}
+
+const char*
+ULS_QUALIFIED_METHOD(uls_tokstr_utf8)(uls_lex_ptr_t uls, int *ptr_ulen)
+{
+	const char *lxm;
+
+	lxm = uls_tokstr(uls);
+	if (ptr_ulen != NULL) {
+		*ptr_ulen = uls_tokstr_len(uls);
+	}
+
+	return lxm;
+}
 #endif
 
 int
-ULS_QUALIFIED_METHOD(uls_push_file)(uls_lex_ptr_t uls, const char* filepath, int flags)
+ULS_QUALIFIED_METHOD(uls_push_file)(uls_lex_ptr_t uls, const char *filepath, int flags)
 {
 	uls_istream_ptr_t istr;
 
@@ -357,7 +383,7 @@ ULS_QUALIFIED_METHOD(uls_push_file)(uls_lex_ptr_t uls, const char* filepath, int
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_set_file)(uls_lex_ptr_t uls, const char* filepath, int flags)
+ULS_QUALIFIED_METHOD(uls_set_file)(uls_lex_ptr_t uls, const char *filepath, int flags)
 {
 	if (filepath == NULL) {
 		_uls_log(err_log)("%s: invalid parameter!", __func__);
@@ -576,6 +602,13 @@ ULS_QUALIFIED_METHOD(uls_set_utf32_line)(uls_lex_ptr_t uls, uls_uint32* wline, i
 	uls_set_line(uls, line, len, ULS_MEMFREE_LINE);
 }
 
+void
+ULS_QUALIFIED_METHOD(uls_skip_white_spaces)(uls_lex_ptr_t uls)
+{
+	skip_white_spaces(uls);
+}
+
+#ifndef ULS_DOTNET
 int
 ULS_QUALIFIED_METHOD(ulsjava_push_line)(uls_lex_ptr_t uls, const void *line, int len_line, int flags)
 {
@@ -615,9 +648,4 @@ ULS_QUALIFIED_METHOD(ulsjava_set_file)(uls_lex_ptr_t uls, const void *filepath, 
 
 	return rc;
 }
-
-void
-ULS_QUALIFIED_METHOD(uls_skip_white_spaces)(uls_lex_ptr_t uls)
-{
-	skip_white_spaces(uls);
-}
+#endif // ~ULS_DOTNET

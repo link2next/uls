@@ -44,7 +44,7 @@
 #include <sys/wait.h>
 
 void
-fdf_init(fdf_t *fdf, uls_fdf_iprovider_t i_provider, const char* cmdline)
+fdf_init(fdf_t *fdf, uls_fdf_iprovider_t i_provider, const char *cmdline)
 {
 	int i;
 
@@ -62,7 +62,7 @@ fdf_init(fdf_t *fdf, uls_fdf_iprovider_t i_provider, const char* cmdline)
 }
 
 void
-fdf_reset(fdf_t *fdf, uls_fdf_iprovider_t i_provider, const char* cmdline)
+fdf_reset(fdf_t *fdf, uls_fdf_iprovider_t i_provider, const char *cmdline)
 {
 	if (i_provider == nilptr)
 		i_provider = fdf_iprovider_simple;
@@ -111,7 +111,7 @@ fdf_open_0(int *pipe1, int *pipe2, fdf_t *fdf, int fd)
 int
 fdf_open(fdf_t *fdf, int fd)
 {
-	const char* cmdline = fdf->filter;
+	const char *cmdline = fdf->filter;
 	int  pipe1[2], pipe2[2];
 	int  r_pipe, w_pipe, rc;
 	int  fd_stdin = _uls_stdio_fd(0);
@@ -283,7 +283,7 @@ fdf_iprovider_filelist(int fd_list, int writefd)
 }
 
 char**
-uls_pars_cmdline(const char* cmdline, char** p_line, int* p_args)
+uls_pars_cmdline(const char *cmdline, char** p_line, int* p_args)
 {
 	int n_alloc_args, k;
 	char *lptr, *wrd, **args;
@@ -323,7 +323,7 @@ uls_pars_cmdline(const char* cmdline, char** p_line, int* p_args)
 }
 
 int
-uls_execv_cmdline(const char* cmdline)
+uls_execv_cmdline(const char *cmdline)
 {
 	char *progpath, **args, *argsbuff;
 	const char *ptr;

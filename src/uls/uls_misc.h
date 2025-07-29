@@ -64,10 +64,10 @@ extern "C" {
 #define _uls_bisearch_vptr(keyw,ary,n,cmpfunc) \
 	uls_bi_search_vptr(keyw,(_uls_type_array(uls_voidptr_t))ary,n,uls_ref_callback_this(cmpfunc))
 
-ULS_DEFINE_DELEGATE_BEGIN(sort_cmpfunc,int)(const uls_voidptr_t a, const uls_voidptr_t b);
+ULS_DEFINE_DELEGATE_BEGIN(sort_cmpfunc,int)(uls_const_voidptr_t a, uls_const_voidptr_t b);
 ULS_DEFINE_DELEGATE_END(sort_cmpfunc);
 
-ULS_DEFINE_DELEGATE_BEGIN(bi_comp,int)(const uls_voidptr_t a, const uls_voidptr_t keyw);
+ULS_DEFINE_DELEGATE_BEGIN(bi_comp,int)(uls_const_voidptr_t a, uls_const_voidptr_t keyw);
 ULS_DEFINE_DELEGATE_END(bi_comp);
 #endif
 
@@ -93,20 +93,21 @@ ULS_DECL_STATIC unsigned int uls_gauss_log2(unsigned int n, uls_ptrtype_tool(out
 ULS_DECL_STATIC void downheap_vptr(uls_heaparray_ptr_t hh, unsigned int i0);
 ULS_DECL_STATIC void extract_top_vptr(uls_heaparray_ptr_t hh);
 #ifndef ULS_DOTNET
-ULS_DECL_STATIC int sortcmp_obj4sort(const uls_voidptr_t a, const uls_voidptr_t b);
+ULS_DECL_STATIC int sortcmp_obj4sort(uls_const_voidptr_t a, uls_const_voidptr_t b);
 #endif
+ULS_DECL_STATIC int uls_get_exeloc_by_pathenv(const char *progname, char *fpath_buf);
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC
-int splitint(const char* line, uls_ptrtype_tool(outparam) parms);
+int splitint(const char *line, uls_ptrtype_tool(outparam) parms);
 
-const char* uls_skip_multiline_comment(uls_ptrtype_tool(parm_line) parm_ln);
-const char* uls_skip_singleline_comment(uls_ptrtype_tool(parm_line) parm_ln);
+const char *uls_skip_multiline_comment(uls_ptrtype_tool(parm_line) parm_ln);
+const char *uls_skip_singleline_comment(uls_ptrtype_tool(parm_line) parm_ln);
 
 void build_heaptree_vptr(uls_heaparray_ptr_t hh,
 	_uls_decl_array(ary,uls_voidptr_t), unsigned int n, uls_sort_cmpfunc_t cmpfunc);
 ULS_DLL_EXTERN void uls_quick_sort_vptr(_uls_decl_array(ary,uls_voidptr_t), int n_ary, uls_sort_cmpfunc_t cmpfunc);
-ULS_DLL_EXTERN uls_voidptr_t uls_bi_search_vptr(const uls_voidptr_t keyw, _uls_decl_array(ary,uls_voidptr_t), int n_ary, uls_bi_comp_t cmpfunc);
+ULS_DLL_EXTERN uls_voidptr_t uls_bi_search_vptr(uls_const_voidptr_t keyw, _uls_decl_array(ary,uls_voidptr_t), int n_ary, uls_bi_comp_t cmpfunc);
 
 int uls_get_simple_escape_char(uls_ptrtype_tool(outparam) parms);
 int uls_get_simple_escape_str(char quote_ch, uls_ptrtype_tool(outparam) parms);
@@ -114,15 +115,20 @@ int uls_get_simple_escape_str(char quote_ch, uls_ptrtype_tool(outparam) parms);
 int uls_get_simple_unescape_char(int ch);
 int uls_get_simple_unescape_str(uls_ptrtype_tool(outparam) parms);
 
-FILE* uls_get_spec_fp(const char* dirpath_list, const char* fpath, uls_ptrtype_tool(outparam) parms);
+FILE* uls_get_spec_fp(const char *dirpath_list, const char *fpath, uls_ptrtype_tool(outparam) parms);
 
 #ifndef ULS_DOTNET
 ULS_DLL_EXTERN void uls_quick_sort(uls_native_vptr_t ary, int n_ary, int elmt_size, uls_sort_cmpfunc_t cmpfunc);
-ULS_DLL_EXTERN uls_voidptr_t uls_bi_search(const uls_voidptr_t keyw, uls_native_vptr_t ary, int n_ary, int elmt_size, uls_bi_comp_t cmpfunc);
-#ifdef ULS_WINDOWS
-ULS_DLL_EXTERN char* uls_win32_lookup_regval(wchar_t* reg_dir, uls_outparam_ptr_t parms);
+ULS_DLL_EXTERN uls_voidptr_t uls_bi_search(uls_const_voidptr_t keyw, uls_native_vptr_t ary, int n_ary, int elmt_size, uls_bi_comp_t cmpfunc);
+#ifdef __ULS_WINDOWS__
+ULS_DLL_EXTERN char *uls_win32_lookup_regval(wchar_t *reg_dir, uls_outparam_ptr_t parms);
 #endif
 #endif
+
+const char *uls_get_dirpath(const char *fname, uls_ptrtype_tool(outparam) parms);
+int uls_get_exeloc_dir(const char *argv0, char *fpath_buf);
+ULS_DLL_EXTERN void uls_get_current_time_yyyymmdd_hhmm(char *buf, int buf_siz);
+void uls_print_bytes(const char *srcptr, int n_bytes);
 
 #endif // ULS_DECL_PROTECTED_PROC
 

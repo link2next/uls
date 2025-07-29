@@ -8,11 +8,11 @@
 #ifdef ULS_FDF_SUPPORT
 #include "fdfilter.h"
 #endif
-#ifndef ULS_WINDOWS
+#ifndef __ULS_WINDOWS__
 #include <locale.h>
 #endif
 
-#ifdef ULS_WINDOWS
+#ifdef __ULS_WINDOWS__
 #define THIS_PROGNAME "UlsStream"
 #else
 #define THIS_PROGNAME "stream"
@@ -201,7 +201,7 @@ static void usage_long(void)
 }
 
 static int _ULS_STDCALL
-ulsstream_options(int opt, char* optarg)
+ulsstream_options(int opt, char *optarg)
 {
 	int stat = 0;
 #ifdef ULS_FDF_SUPPORT
@@ -315,7 +315,7 @@ ulsstream_options(int opt, char* optarg)
 }
 
 static int
-parse_options(int* ptr_argc, char* argv[])
+parse_options(int* ptr_argc, char *argv[])
 {
 	int argc = *ptr_argc;
 	int i, i0, i1;
@@ -380,7 +380,7 @@ parse_options(int* ptr_argc, char* argv[])
 }
 
 int
-main(int argc, char* argv[])
+main(int argc, char *argv[])
 {
 	lex_t *uls;
 	int i0, stat = 0;

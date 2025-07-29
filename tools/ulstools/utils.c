@@ -32,48 +32,18 @@
 #include <sys/stat.h>
 
 char*
-ult_strdup(const char* str)
+ult_strdup(const char *str)
 {
 	return uls_strdup(str, -1);
 }
 
 int
-ult_chdir(const char* path)
-{
-	int rval;
-
-#ifdef ULS_WINDOWS
-	rval = _chdir(path);
-#else
-	rval = chdir(path);
-#endif
-	if (rval != 0) rval = -1;
-
-	return rval;
-}
-
-int
-ult_getcwd(char* buf, int buf_siz)
-{
-	const char *ptr;
-
-	if (buf == NULL) return -1;
-#ifdef ULS_WINDOWS
-	ptr = _getcwd(buf, buf_siz);
-#else
-	ptr = getcwd(buf, buf_siz);
-#endif
-
-	return ptr == NULL ? -1: (int) strlen(buf);
-}
-
-int
-ult_is_absolute_path(const char* path)
+ult_is_absolute_path(const char *path)
 {
 	int stat;
 
 	if (*path == ULS_FILEPATH_DELIM) stat = 1;
-#ifdef ULS_WINDOWS
+#ifdef __ULS_WINDOWS__
 	else if (isalpha(path[0]) && path[1] == ':') stat = 1;
 #endif
 	else stat = 0;
@@ -84,7 +54,7 @@ ult_is_absolute_path(const char* path)
 int
 ult_guess_specname_from_istream(uls_istream_ptr_t istr, uls_outparam_ptr_t parms)
 {
-	char* specname = parms->line;
+	char *specname = parms->line;
 
 	int ftype, len;
 
@@ -102,7 +72,7 @@ ult_guess_specname_from_istream(uls_istream_ptr_t istr, uls_outparam_ptr_t parms
 }
 
 int
-ult_guess_specname(const char* fpath, uls_outparam_ptr_t parms)
+ult_guess_specname(const char *fpath, uls_outparam_ptr_t parms)
 {
 	uls_istream_ptr_t istr;
 	int ftype;
@@ -124,7 +94,7 @@ ult_guess_specname(const char* fpath, uls_outparam_ptr_t parms)
 }
 
 int
-ult_guess_specname_from_inputfiles(char* specname, FILE *fp_list, int only_first)
+ult_guess_specname_from_inputfiles(char *specname, FILE *fp_list, int only_first)
 {
 	char  linebuff[ULS_FILEPATH_MAX+1], *lptr, *fpath;
 	int  len, rval, stat = ULS_STREAM_RAW;
@@ -165,7 +135,7 @@ ult_guess_specname_from_inputfiles(char* specname, FILE *fp_list, int only_first
 }
 
 int
-ult_guess_specname_from_argvlist(char* specname, int n_args, const char** args, int only_first)
+ult_guess_specname_from_argvlist(char *specname, int n_args, const char** args, int only_first)
 {
 	const char *fpath;
 	int i, rval, stat = ULS_STREAM_RAW;
@@ -253,13 +223,13 @@ ult_guess_host_byteorder(void)
 }
 
 int
-ult_fd_create_wronly(const char* fpath)
+ult_fd_create_wronly(const char *fpath)
 {
-	return uls_fd_open(fpath, ULS_FIO_CREAT|ULS_FIO_WRITE);
+	return uls_fd_open(fpath, ULS_FIO_WRITE);
 }
 
 int
-ult_fd_open_rdonly(const char* fpath)
+ult_fd_open_rdonly(const char *fpath)
 {
 	return uls_fd_open(fpath, ULS_FIO_READ);
 }

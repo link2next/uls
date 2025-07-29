@@ -32,11 +32,11 @@
   </author>
 */
 
-
 #include "uls/uls_lex.h"
-#include "uls/uls_log.h"
-#include "uls/uls_util.h"
 #include "uls/uls_fileio.h"
+#include "uls/uls_auw.h"
+#include "uls/uls_util.h"
+#include "uls/uls_log.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -75,7 +75,7 @@ options(int opt, LPTSTR optarg)
 		break;
 
 	case _T('m'):
-		test_mode = ult_str2int(optarg);
+		test_mode = uls_str2int(optarg);
 		break;
 
 	case _T('v'):
@@ -97,27 +97,32 @@ options(int opt, LPTSTR optarg)
 	return stat;
 }
 
-void
+int
 test_escchar_map(uls_lex_ptr_t uls, LPCTSTR fpath)
 {
-	int tok;
-	FILE *fp;
+	int i, rc, len, tok, stat = 0;
 	LPCTSTR qstr_type;
-	unsigned char ch, *lxm;
-	int i, rc, len;
+	const unsigned char *lxm;
+	unsigned char ch;
+	FILE *fp;
 
-	if ((fp = uls_fp_open(fpath, ULS_FIO_READ)) == NULL) {
+	if ((fp = uls_fp_open(fpath, ULS_FIO_READ | ULS_FIO_NO_UTF8BOM)) == NULL) {
 		err_log(_T("can't open the file '%s'"), fpath);
-		return;
+		return -1;
 	}
 
 	if (uls_push_fp(uls, fp, 0) < 0) {
 		err_log(_T("can't set the input '%s' to uls"), fpath);
-		return;
+		return -1;
 	}
 
 	for ( ; (tok = uls_get_tok(uls)) != TOK_EOI; ) {
-		lxm = (unsigned char *) uls_lexeme(uls);
+		lxm = (const unsigned char *) uls_lexeme(uls);
+		if (tok == TOK_ERR) {
+			err_log(_T("%s: error-token detected in %s"), lxm, fpath);
+			stat = -1;
+			break;
+		}
 
 		if (tok == TOK_CS_QUOTE) {
 			qstr_type = _T("RAW");
@@ -136,6 +141,7 @@ test_escchar_map(uls_lex_ptr_t uls, LPCTSTR fpath)
 		if (qstr_type != NULL) {
 			len = uls_lexeme_len(uls);
 			uls_printf(_T("#%-2d: %3s(%2d)"), uls_get_lineno(uls), qstr_type, len);
+
 			for (i = 0; i < len; i += rc) {
 				ch = lxm[i];
 
@@ -159,28 +165,36 @@ test_escchar_map(uls_lex_ptr_t uls, LPCTSTR fpath)
 	}
 
 	uls_fp_close(fp);
+	return stat;
 }
 
-void
+int
 test_escaped_eol_1(uls_lex_ptr_t uls, LPCTSTR fpath)
 {
-	unsigned char ch, *lxm;
-	int i, len, tok;
+	int i, len, tok, stat = 0;
+	const unsigned char *lxm;
+	unsigned char ch;
 	FILE *fp;
 
-	if ((fp = uls_fp_open(fpath, ULS_FIO_READ)) == NULL) {
+	if ((fp = uls_fp_open(fpath, ULS_FIO_READ | ULS_FIO_NO_UTF8BOM)) == NULL) {
 		err_log(_T("can't open the file '%s'"), fpath);
-		return;
+		return -1;
 	}
 
 	if (uls_push_fp(uls, fp, 0) < 0) {
 		err_log(_T("can't set the input '%s' to uls"), fpath);
-		return;
+		return -1;
 	}
 
 	for ( ; (tok = uls_get_tok(uls)) != TOK_EOI; ) {
-		lxm = (unsigned char *) uls_lexeme(uls);
+		lxm = (const unsigned char *) uls_lexeme(uls);
 		len = uls_lexeme_len(uls);
+
+		if (tok == TOK_ERR) {
+			err_log(_T("ErrorToken: %s"), lxm);
+			stat = -1;
+			break;
+		}
 
 		if (tok == TOK_NQUOTE) {
 			uls_printf(_T(" #%-02d(NQ) : \""), uls_get_lineno(uls));
@@ -197,29 +211,33 @@ test_escaped_eol_1(uls_lex_ptr_t uls, LPCTSTR fpath)
 	}
 
 	uls_fp_close(fp);
+	return stat;
 }
 
-void
+int
 test_uls_2(uls_lex_ptr_t uls, LPTSTR fpath)
 {
-	int tok;
-	unsigned char *lxm;
+	int tok, stat = 0;
+	const char *lxm;
 	FILE *fp;
 
-	if ((fp = uls_fp_open(fpath, ULS_FIO_READ)) == NULL) {
+	if ((fp = uls_fp_open(fpath, ULS_FIO_READ | ULS_FIO_NO_UTF8BOM)) == NULL) {
 		err_log(_T("can't open the file '%s'"), fpath);
-		return;
+		return -1;
 	}
 
 	if (uls_push_fp(uls, fp, 0) < 0) {
 		err_log(_T("can't set the input '%s' to uls"), fpath);
-		return;
+		return -1;
 	}
 
-	for ( ; ; ) {
-		tok = uls_get_tok(uls);
-		if (tok == TOK_ERR || tok == TOK_EOI) break;
-		lxm = (unsigned char *) uls_lexeme(uls);
+	for ( ; (tok = uls_get_tok(uls)) != TOK_EOI; ) {
+		lxm = uls_lexeme(uls);
+		if (tok == TOK_ERR) {
+			err_log(_T("ErrorToken: %s"), lxm);
+			stat = -1;
+			break;
+		}
 
 		if (tok == TOK_SQUOTE) {
 			uls_printf(_T("\t'%s'\n"), lxm);
@@ -231,12 +249,14 @@ test_uls_2(uls_lex_ptr_t uls, LPTSTR fpath)
 	}
 
 	uls_fp_close(fp);
+	return stat;
 }
 
 int
 test_uls_3(uls_lex_ptr_t uls, LPCTSTR fpath)
 {
-	int fd, t;
+	int fd, tok, stat = 0;
+	const char *lxm;
 
 	if ((fd = uls_fd_open(fpath, ULS_FIO_READ)) < 0) {
 		err_log(_T("%s: file open error"), fpath);
@@ -250,11 +270,11 @@ test_uls_3(uls_lex_ptr_t uls, LPCTSTR fpath)
 
 	uls_set_tag(uls, fpath, 1);
 
-	for ( ; ; ) {
-		if ((t=uls_get_tok(uls)) == TOK_ERR) {
-			err_log(_T("TOK_ERR!"));
-			break;
-		} else if (t == TOK_EOI) {
+	for ( ; (tok = uls_get_tok(uls)) != TOK_EOI; ) {
+		lxm = uls_lexeme(uls);
+		if (tok == TOK_ERR) {
+			err_log(_T("ErrorToken: %s"), lxm);
+			stat = -1;
 			break;
 		}
 
@@ -263,7 +283,7 @@ test_uls_3(uls_lex_ptr_t uls, LPCTSTR fpath)
 	}
 
 	close(fd);
-	return 0;
+	return stat;
 }
 
 int
@@ -272,7 +292,7 @@ _tmain(int n_targv, LPTSTR *targv)
 	uls_lex_ptr_t sample_lex;
 	int i0;
 
-	progname = uls_split_filepath(targv[0], NULL);
+	progname = uls_filename(targv[0], NULL);
 	config_name = _T("sample.ulc");
 
 	if ((i0=uls_getopts(n_targv, targv, _T("c:m:vh"), options)) <= 0) {

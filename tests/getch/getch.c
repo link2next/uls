@@ -33,8 +33,9 @@
 */
 
 #include "uls/uls_lex.h"
-#include "uls/uls_log.h"
+#include "uls/uls_auw.h"
 #include "uls/uls_util.h"
+#include "uls/uls_log.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -65,7 +66,7 @@ options(int opt, LPTSTR optarg)
 		break;
 
 	case _T('m'):
-		test_mode = ult_str2int(optarg);
+		test_mode = uls_str2int(optarg);
 		break;
 
 	case _T('v'):
@@ -99,7 +100,7 @@ test_get_ch(uls_lex_ptr_t uls)
 
 	while (1) {
 		is_quote = 0;
-		if ((wch = uls_get_uch(uls, &detail)) == ULS_UCH_NONE) {
+		if ((wch = uls_get_ch(uls, &detail)) == ULS_WCH_NONE) {
 			if (detail.tok == tokEOI || detail.tok == tokEOF) {
 				break;
 			}
@@ -174,7 +175,7 @@ test_unget(uls_lex_ptr_t uls)
 	uls_printf(_T(" --- xdef[tokID] = 0x%X\n"), xdef);
 
 	/* 2 */
-	uls_unget_tok(uls);
+	uls_unget_current(uls);
 	dump_next_tok(uls, 0);
 	xdef = uls_get_current_extra_tokdef(uls);
 	uls_printf(_T(" --- xdef[tokID] = 0x%X\n"), xdef);
@@ -190,11 +191,11 @@ test_unget(uls_lex_ptr_t uls)
 	dump_next_tok(uls, 1);
 
 	/* 5 */
-	uls_unget_lexeme(uls, _T(".314"), tokNUM);
+	uls_unget_tok(uls, tokNUM, _T(".314"));
 	dump_next_tok(uls, 1);
 
 	/* 6 */
-	uls_unget_lexeme(uls, _T(" world hello "), tokDQUOTE);
+	uls_unget_tok(uls, tokDQUOTE, _T(" world hello "));
 	dump_next_tok(uls, 1);
 
 	return 0;
@@ -206,7 +207,7 @@ _tmain(int n_targv, LPTSTR *targv)
 	uls_lex_ptr_t sample_lex;
 	int i0;
 
-	progname = uls_split_filepath(targv[0], NULL);
+	progname = uls_filename(targv[0], NULL);
 	config_name = _T("sample.ulc");
 
 	if ((i0=uls_getopts(n_targv, targv, _T("c:m:vh"), options)) <= 0) {

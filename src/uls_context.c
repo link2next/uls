@@ -61,7 +61,7 @@ ULS_QUALIFIED_METHOD(__xcontext_binfd_filler)(uls_xcontext_ptr_t xctx)
 }
 
 ULS_DECL_STATIC void
-ULS_QUALIFIED_METHOD(add_bin_packet_to_zbuf)(int tok_id, int txtlen, const char* txtptr, _uls_ptrtype_tool(csz_str) ss_dst)
+ULS_QUALIFIED_METHOD(add_bin_packet_to_zbuf)(int tok_id, int txtlen, const char *txtptr, _uls_ptrtype_tool(csz_str) ss_dst)
 {
 	uls_int32 hdrbuf[2];
 	char *pktptr;
@@ -265,7 +265,7 @@ again_1:
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__check_rec_boundary_host_order)(uls_xcontext_ptr_t xctx, char* buf, int n)
+ULS_QUALIFIED_METHOD(__check_rec_boundary_host_order)(uls_xcontext_ptr_t xctx, char *buf, int n)
 {
 	uls_context_ptr_t ctx = xctx->context;
 	_uls_ptrtype_tool(csz_str)  ss_dst = uls_ptr(ctx->zbuf1);
@@ -306,7 +306,7 @@ ULS_QUALIFIED_METHOD(__check_rec_boundary_host_order)(uls_xcontext_ptr_t xctx, c
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__check_rec_boundary_reverse_order)(uls_xcontext_ptr_t xctx, char* buf, int n)
+ULS_QUALIFIED_METHOD(__check_rec_boundary_reverse_order)(uls_xcontext_ptr_t xctx, char *buf, int n)
 {
 	uls_context_ptr_t ctx = xctx->context;
 	_uls_ptrtype_tool(csz_str)  ss_dst = uls_ptr(ctx->zbuf1);
@@ -670,7 +670,7 @@ ULS_QUALIFIED_METHOD(xcontext_raw_filler)(uls_xcontext_ptr_t xctx)
 	_uls_ptrtype_tool(csz_str) ss_dst2 = uls_ptr(ctx->zbuf2);
 	uls_lexseg_ptr_t  lexseg;
 	const char  *lptr1, *lptr, *lptr_end;
-	int   n_segs=0, k2, offset1, rc;
+	int   n_segs = 0, k2, offset1, rc;
 	char  ch, ch_grp;
 
 	uls_commtype_ptr_t cmt;
@@ -731,7 +731,7 @@ ULS_QUALIFIED_METHOD(xcontext_raw_filler)(uls_xcontext_ptr_t xctx)
 			if (rc == 0) break;
 
 		} else if ((ch_grp & ULS_CH_COMM) &&
-			(cmt=is_commtype_start(xctx, lptr, (int) (lptr_end - lptr))) != nilptr) {
+			(cmt = is_commtype_start(xctx, lptr, (int) (lptr_end - lptr))) != nilptr) {
 			if ((rc = (int) (lptr - lptr1)) > 0) _uls_tool(csz_append)(ss_dst1, lptr1, rc);
 			lptr += cmt->len_start_mark;
 
@@ -756,6 +756,7 @@ ULS_QUALIFIED_METHOD(xcontext_raw_filler)(uls_xcontext_ptr_t xctx)
 		} else if ((ch_grp & ULS_CH_QUOTE) &&
 			(qmt = uls_xcontext_find_quotetype(xctx, lptr, (int) (lptr_end - lptr))) != nilptr) {
 			if ((rc = (int) (lptr - lptr1)) > 0) _uls_tool(csz_append)(ss_dst1, lptr1, rc);
+
 			if (n_segs + 1 >= ctx->lexsegs.n) {
 				break;
 			}
@@ -774,6 +775,7 @@ ULS_QUALIFIED_METHOD(xcontext_raw_filler)(uls_xcontext_ptr_t xctx)
 
 			inp->rawbuf_ptr = lptr;
 			inp->rawbuf_bytes = (int) (lptr_end - lptr);
+
 			rc = input_quote_proc(inp, qmt, ss_dst2, uls_ptr(parms1));
 			n_lfs = parms1.n;
 
@@ -860,7 +862,7 @@ ULS_QUALIFIED_METHOD(xcontext_txtfd_filler)(uls_xcontext_ptr_t xctx)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_ctx_set_tag)(uls_context_ptr_t ctx, const char* tagstr, int lno)
+ULS_QUALIFIED_METHOD(uls_ctx_set_tag)(uls_context_ptr_t ctx, const char *tagstr, int lno)
 {
 	if (tagstr != NULL) {
 		_uls_tool(csz_reset)(uls_ptr(ctx->tag));
@@ -883,7 +885,7 @@ ULS_QUALIFIED_METHOD(uls_ctx_inc_lineno)(uls_context_ptr_t ctx, int delta)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_xcontext_delete_litstr_analyzer)(uls_xcontext_ptr_t xctx, const char* prefix)
+ULS_QUALIFIED_METHOD(uls_xcontext_delete_litstr_analyzer)(uls_xcontext_ptr_t xctx, const char *prefix)
 {
 	uls_decl_parray_slots_init(slots_qmt, quotetype, xctx->quotetypes);
 	uls_quotetype_ptr_t qmt;
@@ -916,7 +918,7 @@ ULS_QUALIFIED_METHOD(uls_xcontext_delete_litstr_analyzer)(uls_xcontext_ptr_t xct
 
 int
 ULS_QUALIFIED_METHOD(uls_xcontext_change_litstr_analyzer)(uls_xcontext_ptr_t xctx,
-	const char* prefix, uls_litstr_analyzer_t lit_analyzer, uls_voidptr_t dat)
+	const char *prefix, uls_litstr_analyzer_t lit_analyzer, uls_voidptr_t dat)
 {
 	uls_decl_parray_slots_init(slots_qmt, quotetype, xctx->quotetypes);
 	uls_quotetype_ptr_t qmt;
@@ -947,7 +949,7 @@ ULS_QUALIFIED_METHOD(uls_xcontext_change_litstr_analyzer)(uls_xcontext_ptr_t xct
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_context_set_line)(uls_context_ptr_t ctx, const char* line, int len)
+ULS_QUALIFIED_METHOD(uls_context_set_line)(uls_context_ptr_t ctx, const char *line, int len)
 {
 	if (line == NULL) {
 		line = "";

@@ -118,7 +118,7 @@ StringBuilder::append(TCHAR ch)
 // <parm name="fpath">The path of file</parm>
 // <return>0 if it succeeds, otherwise -1</return>
 int
-Html5Lex::setFile(tstring fpath)
+Html5Lex::setInputFile(tstring fpath)
 {
 	FILE *fp;
 
@@ -143,7 +143,7 @@ Html5Lex::setFile(tstring fpath)
 Html5Lex::Html5Lex(tstring& config_name)
 	: Html5LexBasis(config_name)
 {
-	setFile(_T(""));
+	setInputFile(_T(""));
 	tok_ungot = false;
 }
 
@@ -303,14 +303,14 @@ Html5Lex::run_to_tagend(FILE* fp)
 int
 Html5Lex::concat_lexeme(LPCTSTR str, int len)
 {
-	Html5LexBasis::getTok();
-	tstring *lxm;
+	Html5LexBasis::next();
+	tstring lxm;
 
-	UlsLex::getTokStr(&lxm);
+	UlsLex::getTokStr(lxm);
 
 	tokbuf.clear();
 	tokbuf.append(str, len);
-	tokbuf.append(lxm->c_str());
+	tokbuf.append(lxm.c_str());
 
 	return tokbuf.len();
 }
@@ -324,7 +324,7 @@ Html5Lex::get_token(void)
 {
 	int ich;
 	int tok, is_trivial;
-	tstring *lxm;
+	tstring lxm;
 	uls_wch_t wch;
 	TCHAR tch;
 
@@ -382,24 +382,24 @@ again_1:
 		tstring str1 = txtbuf.str();
 		pushLine(str1.c_str(), str1.length());
 
-		if ((tok = Html5LexBasis::getTok()) != _T('<')) {
+		if ((tok = Html5LexBasis::next()) != _T('<')) {
 			goto again_1;
 		}
 
-		tok = Html5LexBasis::getTok();
+		tok = Html5LexBasis::next();
 
 		if (tok == _T('/')) { // The end mark of HTML-Element '/>' detected.
 			tok_id = TAGEND;
-			tok = Html5LexBasis::getTok();
-			UlsLex::getTokStr(&lxm);
-			tok_str = *lxm;
+			tok = Html5LexBasis::next();
+			UlsLex::getTokStr(lxm);
+			tok_str = lxm;
 
 		} else {
 			tok_id = TAGBEGIN;
 			if (tok == _T('!')) { // '<!'
-				if ((wch = Html5LexBasis::peekCh(NULL)) == _T('-')) {
-					wch = Html5LexBasis::getCh(NULL);
-					if ((wch = Html5LexBasis::peekCh(NULL)) == _T('-')) {
+				if ((wch = peekChar()) == _T('-')) {
+					wch = getChar();
+					if ((wch = peekChar()) == _T('-')) {
 						// '<--'
 						// skip html comment
 						goto again_1;
@@ -414,8 +414,8 @@ again_1:
 					tok_str = tokbuf.str();
 				}
 			} else {
-				UlsLex::getTokStr(&lxm);
-				tok_str = *lxm;
+				UlsLex::getTokStr(lxm);
+				tok_str = lxm;
 			}
 		}
 
@@ -429,19 +429,19 @@ again_1:
 		return;
 	}
 
-	tok = Html5LexBasis::getTok();
-	UlsLex::getTokStr(&lxm);
-	tok_str = *lxm;
+	tok = Html5LexBasis::next();
+	UlsLex::getTokStr(lxm);
+	tok_str = lxm;
 
 	if (tok == _T('-')) {
-		if ((wch=Html5LexBasis::peekCh(NULL)) == _T('.') || isdigit(wch)) {
+		if ((wch = peekChar()) == _T('.') || isdigit(wch)) {
 			tok = NUM;
 			concat_lexeme(_T("-"), 1);
 			tok_id = tok;
 			tok_str = txtbuf.str();
 			return;
 		}
-	} else if (tok == _T('/') && Html5LexBasis::peekCh(NULL) == _T('>')) {
+	} else if (tok == _T('/') && peekChar() == _T('>')) {
 		tok = TAGEND;
 		tok_str = _T("");
 	} else if (tok == _T('>')) {
@@ -452,7 +452,7 @@ again_1:
 }
 
 int
-Html5Lex::getTok(void)
+Html5Lex::next(void)
 {
 	get_token();
 	Html5LexBasis::setTok(tok_id, tok_str);
@@ -466,7 +466,7 @@ Html5Lex::getTokNum(void)
 }
 
 void
-Html5Lex::ungetTok(void)
+Html5Lex::ungetCurrentToken(void)
 {
 	tok_ungot = true;
 }

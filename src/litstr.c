@@ -28,6 +28,7 @@
  *  This file is part of ULS, Unified Lexical Scheme.
  */
 #ifndef ULS_EXCLUDE_HFILES
+#define __ULS_LITSTR__
 #include "uls/litstr.h"
 #include "uls/uls_misc.h"
 #include "uls/uls_log.h"
@@ -53,8 +54,11 @@ ULS_QUALIFIED_METHOD(uls_get_escape_char_initial)(uls_litstr_ptr_t lit)
 
 	} else {
 		parms1.x1 = prefix_ch;
-		uls_get_simple_escape_char(uls_ptr(parms1));
-		wch = parms1.x2;
+		if (uls_get_simple_escape_char(uls_ptr(parms1))) {
+			wch = parms1.x2;
+		} else {
+			wch = prefix_ch;
+		}
 		n = 0;
 	}
 
@@ -180,7 +184,7 @@ ULS_QUALIFIED_METHOD(uls_get_escape_str)(char quote_ch, uls_ptrtype_tool(wrd) wr
 }
 
 int
-ULS_QUALIFIED_METHOD(canbe_commtype_mark)(char* wrd, uls_ptrtype_tool(outparam) parms)
+ULS_QUALIFIED_METHOD(canbe_commtype_mark)(char *wrd, uls_ptrtype_tool(outparam) parms)
 {
 	char *buff = parms->line;
 	const char *lptr;
@@ -208,7 +212,7 @@ ULS_QUALIFIED_METHOD(canbe_commtype_mark)(char* wrd, uls_ptrtype_tool(outparam) 
 }
 
 int
-ULS_QUALIFIED_METHOD(canbe_quotetype_mark)(char* wrd, uls_ptrtype_tool(outparam) parms)
+ULS_QUALIFIED_METHOD(canbe_quotetype_mark)(char *wrd, uls_ptrtype_tool(outparam) parms)
 {
 	char *buff = parms->line;
 	const char *lptr;
@@ -345,7 +349,7 @@ ULS_QUALIFIED_METHOD(nothing_lit_analyzer)(uls_litstr_ptr_t lit)
 	return ULS_LITPROC_ENDOFQUOTE;
 }
 
-int
+ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(proc_litstr_eoi)(uls_litstr_ptr_t lit, int len, const char *emark, int len_emark, _uls_ptrtype_tool(csz_str) outbuf)
 {
 	const char *line = lit->lptr;
@@ -417,7 +421,7 @@ ULS_QUALIFIED_METHOD(dfl_lit_analyzer_escape0)(uls_litstr_ptr_t lit)
 		if (len > ULS_UTF8_CH_MAXLEN) len = ULS_UTF8_CH_MAXLEN;
 		for (j=0; j<len; j++) buff[j] = lptr[j];
 
-		if ((rc = _uls_tool_(decode_utf8)(buff, j, &wch)) <= 0) {
+		if ((rc = _uls_tool_(decode_utf8)(buff, len, &wch)) <= 0) {
 			if (rc < -ULS_UTF8_CH_MAXLEN)
 				return ULS_LITPROC_ERROR;
 			len = ULS_UTF8_CH_MAXLEN;
@@ -464,9 +468,11 @@ ULS_QUALIFIED_METHOD(dfl_lit_analyzer_escape1)(uls_litstr_ptr_t lit)
 	uls_escstr_ptr_t escstr;
 
 	uls_type_tool(outparam) parms1;
-	char ch, buff[ULS_UTF8_CH_MAXLEN];
-	int ind, len = (int) (lptr_end - lptr), len1, j, len_buff, rc;
+	char ch, buff[ULS_UTF8_CH_MAXLEN + 1];
+	int ind, len, len1, j, len_buff, rc;
 	uls_wch_t wch;
+
+	len = (int) (lptr_end - lptr);
 
 	if ((ch = *lptr) == '\n') {
 		buff[0] = '\n';
@@ -502,15 +508,12 @@ ULS_QUALIFIED_METHOD(dfl_lit_analyzer_escape1)(uls_litstr_ptr_t lit)
 			if (len1 < -ULS_UTF8_CH_MAXLEN) {
 				rc =  ULS_LITPROC_ERROR;
 			} else {
-				for (j = 0; (ch = qmt->escsym_utf8[j]) != '\0'; j++) {
-					_uls_tool(csz_putc)(lit_ctx->ss_dst, ch);
-				}
+				_uls_tool(csz_puts)(lit_ctx->ss_dst, qmt->escsym_utf8);
 				_uls_tool(csz_putc)(lit_ctx->ss_dst, *lptr++);
 
 				lit->lptr = lptr;
 				if (--len > 0) {
-					rc = proc_litstr_eoi(lit, len,
-						uls_get_namebuf_value(qmt->end_mark), qmt->len_end_mark, lit_ctx->ss_dst);
+					rc = proc_litstr_eoi(lit, len, uls_get_namebuf_value(qmt->end_mark), qmt->len_end_mark, lit_ctx->ss_dst);
 				} else {
 					rc = ULS_LITPROC_ENDOFQUOTE;
 				}
@@ -523,49 +526,31 @@ ULS_QUALIFIED_METHOD(dfl_lit_analyzer_escape1)(uls_litstr_ptr_t lit)
 		len_buff = len1;
 	}
 
+	buff[len_buff] = '\0';
+
 	lit->ch_escape = wch;
 	lit->lptr = lptr += len1;
 	lit_ctx->litstr_proc = uls_ref_callback_this(dfl_lit_analyzer_escape0);
-	len = qmt->len_end_mark; // # of required bytes at the next stage.
-
-	if (wch != '\0' && wch == qmt->eos_wch && (qmt->flags & ULS_QSTR_EOS)) {
-		for (j = 0; (ch = qmt->eos_utf8[j]) != '\0'; j++) {
-			_uls_tool(csz_putc)(lit_ctx->ss_dst, ch);
-		}
-		return len;
-	}
-
-	if (wch == qmt->escsym_wch && (qmt->flags & ULS_QSTR_ESC)) {
-		for (j = 0; (ch = qmt->escsym_utf8[j]) != '\0'; j++) {
-			_uls_tool(csz_putc)(lit_ctx->ss_dst, ch);
-		}
-		return len;
-	}
-
-	if ((ind = uls_escmap_canbe_escch(wch)) < 0) {
-		_uls_tool(csz_puts)(lit_ctx->ss_dst, qmt->escsym_utf8);
-		for (j=0; j < len_buff; j++) {
-			_uls_tool(csz_putc)(lit_ctx->ss_dst, buff[j]);
-		}
-		return len;
-	}
-
 	lit->maxlen_esc_oxudigits = 0;
 	lit->map_flags = 0;
 
-	if ((escstr = uls_find_escstr_nosafe(qmt->escmap, ind, wch & 0xFF)) == nilptr) {
+	len = qmt->len_end_mark;
+
+	if (wch == qmt->eos_wch && (qmt->flags & ULS_QSTR_EOS)) {
+		_uls_tool(csz_puts)(lit_ctx->ss_dst, qmt->eos_utf8);
+
+	} else if (wch == qmt->escsym_wch && (qmt->flags & ULS_QSTR_ESC)) {
+		_uls_tool(csz_puts)(lit_ctx->ss_dst, qmt->escsym_utf8);
+
+	} else if ((ind = uls_escmap_canbe_escch(wch)) < 0 ||
+		(escstr = uls_find_escstr_nosafe(qmt->escmap, ind)) == nilptr) {
 		if (qmt->flags & ULS_QSTR_ETC) {
-			for (j=0; j < len_buff; j++) {
-				_uls_tool(csz_putc)(lit_ctx->ss_dst, buff[j]);
-			}
+			_uls_tool(csz_puts)(lit_ctx->ss_dst, buff);
 		} else {
-			for (j = 0; (ch = qmt->escsym_utf8[j]) != '\0'; j++) {
-				_uls_tool(csz_putc)(lit_ctx->ss_dst, ch);
-			}
-			for (j=0; j < len_buff; j++) {
-				_uls_tool(csz_putc)(lit_ctx->ss_dst, buff[j]);
-			}
+			_uls_tool(csz_puts)(lit_ctx->ss_dst, qmt->escsym_utf8);
+			_uls_tool(csz_puts)(lit_ctx->ss_dst, buff);
 		}
+
 	} else {
 		parms1.x1 = wch;
 		if ((rc = uls_dec_escaped_char(escstr, qmt->escmap, uls_ptr(parms1), lit_ctx->ss_dst)) < 0) {
@@ -580,7 +565,7 @@ ULS_QUALIFIED_METHOD(dfl_lit_analyzer_escape1)(uls_litstr_ptr_t lit)
 }
 
 int
-ULS_QUALIFIED_METHOD(__dec_escaped_char_cont)(char quote_ch, uls_litstr_ptr_t lit)
+ULS_QUALIFIED_METHOD(__dec_escaped_char_cont)(uls_litstr_ptr_t lit)
 {
 	const char *lptr = lit->lptr, *lptr_end;
 	int cs_mask, map_flags = lit->map_flags;
@@ -591,19 +576,19 @@ ULS_QUALIFIED_METHOD(__dec_escaped_char_cont)(char quote_ch, uls_litstr_ptr_t li
 		lptr_end = lit->lptr_end;
 	}
 
-	if (map_flags & ULS_FL_ESCSTR_OCTAL) {
+	if (map_flags & ULS_ESCSTR_FL_OCTAL) {
 		for ( ; lptr < lptr_end; lptr++) {
 			if ((ch=*lptr) < '0' || ch >= '8') {
 				break;
 			}
-			wch = (wch<<3) + (ch-'0');
+			wch = (wch << 3) + (ch - '0');
 		}
 
 	} else { // hexa-decimal
-		cs_mask = map_flags & (ULS_FL_ESCSTR_HEXA_AF|ULS_FL_ESCSTR_HEXA_af);
+		cs_mask = map_flags & (ULS_ESCSTR_FL_HEXA_AF | ULS_ESCSTR_FL_HEXA_af);
 
 		if (cs_mask) {
-			if (cs_mask == (ULS_FL_ESCSTR_HEXA_AF|ULS_FL_ESCSTR_HEXA_af)) {
+			if (cs_mask == (ULS_ESCSTR_FL_HEXA_AF | ULS_ESCSTR_FL_HEXA_af)) {
 				// case-insensitive but uniform: it depends on the 1st alphabet char
 				start_hdigit = end_hdigit = 0;
 				for ( ; lptr < lptr_end; lptr++) {
@@ -633,10 +618,10 @@ ULS_QUALIFIED_METHOD(__dec_escaped_char_cont)(char quote_ch, uls_litstr_ptr_t li
 					wch = (wch << 4) + ch;
 				}
 			} else {
-				if (map_flags & ULS_FL_ESCSTR_HEXA_AF) {
+				if (map_flags & ULS_ESCSTR_FL_HEXA_AF) {
 					start_hdigit = 'A';
 					end_hdigit = 'F';
-				} else if (map_flags & ULS_FL_ESCSTR_HEXA_af) {
+				} else if (map_flags & ULS_ESCSTR_FL_HEXA_af) {
 					start_hdigit = 'a';
 					end_hdigit = 'f';
 				} else {
@@ -656,11 +641,11 @@ ULS_QUALIFIED_METHOD(__dec_escaped_char_cont)(char quote_ch, uls_litstr_ptr_t li
 					wch = (wch << 4) + ch;
 				}
 			}
+
 		} else {
 			// case-insensitive
 			for ( ; lptr < lptr_end; lptr++) {
 				ch = *lptr;
-
 				if (!_uls_tool_(isxdigit)(ch)) {
 					break;
 				}
@@ -676,7 +661,7 @@ ULS_QUALIFIED_METHOD(__dec_escaped_char_cont)(char quote_ch, uls_litstr_ptr_t li
 	}
 
 	if ((n = (int) (lptr - lit->lptr)) != lit->maxlen_esc_oxudigits) {
-		if (map_flags & ULS_FL_ESCSTR_FIXED_NDIGITS) {
+		if (map_flags & ULS_ESCSTR_FL_FIXED_NDIGITS) {
 			_uls_log(err_log)("esc-digits %d < %d in esc-str!", n , lit->maxlen_esc_oxudigits);
 			stat = -1;
 		}
@@ -695,11 +680,11 @@ ULS_QUALIFIED_METHOD(dfl_lit_analyzer_escape2)(uls_litstr_ptr_t lit)
 	char buff[ULS_UTF8_CH_MAXLEN];
 	int i, rc, map_flags = lit->map_flags;
 
-	if (__dec_escaped_char_cont('\0', lit) < 0) {
+	if (__dec_escaped_char_cont(lit) < 0) {
 		return ULS_LITPROC_ERROR;
 	}
 
-	if (map_flags & ULS_FL_ESCSTR_UNICODE) {
+	if (map_flags & ULS_ESCSTR_FL_UNICODE) {
 		if ((rc = _uls_tool_(encode_utf8)(lit->wch, buff, ULS_UTF8_CH_MAXLEN)) <= 0) {
 			_uls_log(err_log)("Unknown unicode 0x%08x in the literal string!", lit->wch);
 			return ULS_LITPROC_ERROR;
@@ -751,9 +736,11 @@ ULS_QUALIFIED_METHOD(uls_parse_escmap)(char *line, uls_quotetype_ptr_t qmt, uls_
 
 	if (do_dup) {
 		esc_map = uls_dup_escmap(esc_map, escmap_pool2, parms1.flags);
+	} else {
+		uls_grab_escmap(esc_map);
 	}
 
-	// A trailed mapping esc-ch --> utf8-str in form of ch:str
+	// A trailed mapping(esc-ch --> utf8-str) in form of ch:str
 	if (line != NULL) {
 		if (uls_parse_escmap_mapping(esc_map, line) < 0) {
 			uls_dealloc_escmap(esc_map);

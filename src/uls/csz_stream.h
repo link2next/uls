@@ -118,13 +118,13 @@ ULS_DECL_STATIC csz_global_data_ptr_t csz_global;
 
 #if defined(__CSZ_STREAM__) || defined(ULS_DECL_PRIVATE_PROC)
 #ifndef NO_CSZ_POOL
-ULS_DECL_STATIC char* __find_in_pool(uls_outbuf_ptr_t tmp_buf, int siz);
-ULS_DECL_STATIC int __release_in_pool(char* ptr, int siz);
+ULS_DECL_STATIC char *__find_in_pool(uls_outbuf_ptr_t tmp_buf, int siz);
+ULS_DECL_STATIC int __release_in_pool(char *ptr, int siz);
 ULS_DECL_STATIC void __init_csz_pool(void);
 ULS_DECL_STATIC void __reset_csz_pool(void);
 ULS_DECL_STATIC void __deinit_csz_pool(void);
 #endif
-ULS_DECL_STATIC _ULS_INLINE void __str_modify(uls_outbuf_ptr_t outbuf, int n_delta, int k, const char* str, int len);
+ULS_DECL_STATIC _ULS_INLINE void __str_modify(uls_outbuf_ptr_t outbuf, int n_delta, int k, const char *str, int len);
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC
@@ -138,9 +138,9 @@ void finalize_csz(void);
 ULS_DLL_EXTERN void str_init(uls_outbuf_ptr_t outbuf, int siz);
 ULS_DLL_EXTERN void str_free(uls_outbuf_ptr_t outbuf);
 
-ULS_DLL_EXTERN void str_modify(uls_outbuf_ptr_t outbuf, int k, const char* str, int len);
-ULS_DLL_EXTERN int str_append(uls_outbuf_ptr_t outbuf, int k, const char* str, int len);
-ULS_DLL_EXTERN int  str_puts(uls_outbuf_ptr_t outbuf, int k, const char* str);
+ULS_DLL_EXTERN void str_modify(uls_outbuf_ptr_t outbuf, int k, const char *str, int len);
+ULS_DLL_EXTERN int str_append(uls_outbuf_ptr_t outbuf, int k, const char *str, int len);
+ULS_DLL_EXTERN int  str_puts(uls_outbuf_ptr_t outbuf, int k, const char *str);
 ULS_DLL_EXTERN void __str_putc(uls_outbuf_ptr_t outbuf, int n_delta, int k, char ch);
 
 ULS_DLL_EXTERN void csz_init(csz_str_ptr_t csz, int n_delta);
@@ -150,16 +150,16 @@ ULS_DLL_EXTERN void csz_destroy(csz_str_ptr_t csz);
 
 ULS_DLL_EXTERN void csz_reset(csz_str_ptr_t csz);
 
-ULS_DLL_EXTERN char* csz_modify(csz_str_ptr_t csz, int k, const char* str, int len);
-ULS_DLL_EXTERN char* csz_append(csz_str_ptr_t csz, const char* str, int len);
-ULS_DLL_EXTERN void csz_puts(csz_str_ptr_t csz, const char* str);
+ULS_DLL_EXTERN char *csz_modify(csz_str_ptr_t csz, int k, const char *str, int len);
+ULS_DLL_EXTERN char *csz_append(csz_str_ptr_t csz, const char *str, int len);
+ULS_DLL_EXTERN void csz_puts(csz_str_ptr_t csz, const char *str);
 ULS_DLL_EXTERN void csz_putc(csz_str_ptr_t csz, char ch);
 
 ULS_DLL_EXTERN void csz_add_ch(csz_str_ptr_t csz, char ch);
 ULS_DLL_EXTERN void csz_add_eos(csz_str_ptr_t csz);
-ULS_DLL_EXTERN char* csz_text(csz_str_ptr_t csz);
-ULS_DLL_EXTERN wchar_t* uls_get_csz_wstr(csz_str_ptr_t csz);
-ULS_DLL_EXTERN char* csz_export(csz_str_ptr_t csz);
+ULS_DLL_EXTERN char *csz_text(csz_str_ptr_t csz);
+ULS_DLL_EXTERN wchar_t *uls_get_csz_wstr(csz_str_ptr_t csz);
+ULS_DLL_EXTERN char *csz_export(csz_str_ptr_t csz);
 
 #endif
 

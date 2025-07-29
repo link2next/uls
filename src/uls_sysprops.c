@@ -34,6 +34,7 @@
 #ifndef ULS_EXCLUDE_HFILES
 #define __ULS_SYSPROPS__
 #include "uls/uls_sysprops.h"
+#include "uls/uls_fileio.h"
 #endif
 
 ULS_DECL_STATIC int
@@ -81,7 +82,7 @@ ULS_QUALIFIED_METHOD(__init_system_info)(uls_sysinfo_ptr_t sysinfo, int poolsiz)
 }
 
 ULS_DECL_STATIC ULS_QUALIFIED_RETTYP(uls_sysprop_ptr_t)
-ULS_QUALIFIED_METHOD(__get_system_property)(uls_sysinfo_ptr_t sysinfo, const char* name)
+ULS_QUALIFIED_METHOD(__get_system_property)(uls_sysinfo_ptr_t sysinfo, const char *name)
 {
 	uls_sysprop_ptr_t sys_prop;
 	int i;
@@ -190,7 +191,6 @@ ULS_QUALIFIED_METHOD(uls_destroy_sysinfo)(uls_sysinfo_ptr_t sysinfo)
 int
 ULS_QUALIFIED_METHOD(uls_load_system_properties)(const char *fpath, uls_sysinfo_ptr_t sysinfo)
 {
-	const char utf8_bom[3] = { 0xEF, 0xBB, 0xBF };
 	FILE *fp;
 	char linebuff[ULS_LINEBUFF_SIZ+1];
 	char *line, *name;
@@ -201,18 +201,12 @@ ULS_QUALIFIED_METHOD(uls_load_system_properties)(const char *fpath, uls_sysinfo_
 		return -1;
 	}
 
-	if ((fp = fopen(fpath, "r")) == NULL) {
+	if ((fp = uls_fp_open(fpath, ULS_FIO_READ)) == NULL) {
 		return -1;
 	}
 
-	len = 3;
-	if ((int) fread(linebuff, sizeof(char), len, fp) < len ||
-		uls_memcmp(linebuff, utf8_bom, len) != 0) {
-		return -2;
-	}
-
 	while (1) {
-		if ((len=uls_fp_getline(fp, linebuff, sizeof(linebuff))) < 0) {
+		if ((len = uls_fp_getline(fp, linebuff, sizeof(linebuff))) < 0) {
 			if (len < -1) {
 				stat = -2;
 			}
@@ -233,13 +227,12 @@ ULS_QUALIFIED_METHOD(uls_load_system_properties)(const char *fpath, uls_sysinfo_
 		}
 	}
 
-	fclose(fp);
-
+	uls_fp_close(fp);
 	return stat;
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_arch2be_array)(char* ary, int n)
+ULS_QUALIFIED_METHOD(uls_arch2be_array)(char *ary, int n)
 {
 	if (_uls_sysinfo_(ULS_BYTE_ORDER) == ULS_LITTLE_ENDIAN) {
 		uls_reverse_bytes(ary, n);
@@ -247,7 +240,7 @@ ULS_QUALIFIED_METHOD(uls_arch2be_array)(char* ary, int n)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_be2arch_array)(char* ary, int n)
+ULS_QUALIFIED_METHOD(uls_be2arch_array)(char *ary, int n)
 {
 	if (_uls_sysinfo_(ULS_BYTE_ORDER) == ULS_LITTLE_ENDIAN) {
 		uls_reverse_bytes(ary, n);
@@ -255,7 +248,7 @@ ULS_QUALIFIED_METHOD(uls_be2arch_array)(char* ary, int n)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_arch2le_array)(char* ary, int n)
+ULS_QUALIFIED_METHOD(uls_arch2le_array)(char *ary, int n)
 {
 	if (_uls_sysinfo_(ULS_BYTE_ORDER) == ULS_BIG_ENDIAN) {
 		uls_reverse_bytes(ary, n);
@@ -263,7 +256,7 @@ ULS_QUALIFIED_METHOD(uls_arch2le_array)(char* ary, int n)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_le2arch_array)(char* ary, int n)
+ULS_QUALIFIED_METHOD(uls_le2arch_array)(char *ary, int n)
 {
 	if (_uls_sysinfo_(ULS_BYTE_ORDER) == ULS_BIG_ENDIAN) {
 		uls_reverse_bytes(ary, n);
@@ -271,7 +264,7 @@ ULS_QUALIFIED_METHOD(uls_le2arch_array)(char* ary, int n)
 }
 
 const char*
-ULS_QUALIFIED_METHOD(uls_add_system_property)(const char* name, const char* val)
+ULS_QUALIFIED_METHOD(uls_add_system_property)(const char *name, const char *val)
 {
 	uls_sysinfo_ptr_t sysinfo = uls_sysinfo;
 	uls_sysprop_ptr_t sys_prop;
@@ -304,11 +297,11 @@ ULS_QUALIFIED_METHOD(uls_add_system_property)(const char* name, const char* val)
 }
 
 const char*
-ULS_QUALIFIED_METHOD(uls_get_system_property)(const char* name)
+ULS_QUALIFIED_METHOD(uls_get_system_property)(const char *name)
 {
 	uls_sysinfo_ptr_t sysinfo = uls_sysinfo;
 	uls_sysprop_ptr_t sys_prop;
-	const char* val;
+	const char *val;
 
 	if ((sys_prop = __get_system_property(sysinfo, name)) != nilptr) {
 		val = sysinfo->strpool + sys_prop->stridx;

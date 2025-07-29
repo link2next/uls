@@ -58,10 +58,10 @@ ULS_DECL_STATIC int cvt_radix_simple_num(int radix1, const char *numbuf1, int nu
 ULS_DECL_STATIC int get_hexanum_from_octal(uls_outparam_ptr_t parms, int a_bits);
 ULS_DECL_STATIC int __skip_radix_numstr(uls_outparam_ptr_t parms, int radix,
 	uls_outbuf_ptr_t numbuf, int k);
-ULS_DECL_STATIC int binstr2hexval(const char* bi_str, int m);
+ULS_DECL_STATIC int binstr2hexval(const char *bi_str, int m);
 ULS_DECL_STATIC int skip_prefixed_zeros(uls_outparam_ptr_t parms);
 ULS_DECL_STATIC int check_expo(uls_outparam_ptr_t parms);
-ULS_DECL_STATIC char* decstr2hexbin(uls_outparam_ptr_t parms);
+ULS_DECL_STATIC char *decstr2hexbin(uls_outparam_ptr_t parms);
 ULS_DECL_STATIC int append_expo(int num, uls_outbuf_ptr_t numbuf, int k);
 ULS_DECL_STATIC int __cvt_radix2hexa_str_generic(int radix, const char *numbuf, int n_digits,
 	uls_outbuf_ptr_t outbuf, int k);
@@ -80,19 +80,19 @@ ULS_DECL_STATIC int __make_radixint_str_gexpr(const char *radstr, int l_radstr, 
  * For more details, refer to the tests/dump_toks
  */
 
-int add_decstr_by_xx(const char* numstr, int n_digits, int nn, char* outbuf);
-int mul_decstr_by_xx(const char* numstr, int n_digits, int multiplier, char* outbuf);
-int div_decstr_by_16(char* wrd, uls_outparam_ptr_t parms);
+int add_decstr_by_xx(const char *numstr, int n_digits, int nn, char *outbuf);
+int mul_decstr_by_xx(const char *numstr, int n_digits, int multiplier, char *outbuf);
+int div_decstr_by_16(char *wrd, uls_outparam_ptr_t parms);
 
 int skip_radix_numstr(uls_outparam_ptr_t parms, int radix, uls_outbuf_ptr_t numbuf, int k);
 int uls_num2stdfmt(uls_outparam_ptr_t parms, uls_outbuf_ptr_t numbuf, int k);
 #endif // ULS_DECL_PROTECTED_PROC
 
 #ifdef ULS_DECL_PUBLIC_PROC
-int uls_oct2hex_str(const char *numbuf, int n_digits, char* outbuf);
-int uls_bin2hex_str(const char* numstr, int n_digits, char* outbuf);
-int uls_quat2hex_str(const char* numstr, int n_digits, char* outbuf);
-int uls_dec2hex_str(char* numstr, int n_digits, char* outptr);
+int uls_oct2hex_str(const char *numbuf, int n_digits, char *outbuf);
+int uls_bin2hex_str(const char *numstr, int n_digits, char *outbuf);
+int uls_quat2hex_str(const char *numstr, int n_digits, char *outbuf);
+int uls_dec2hex_str(char *numstr, int n_digits, char *outptr);
 
 int uls_cvt_radix2dec_str(int radix, const char *numbuf, int n1_digits, uls_outbuf_ptr_t outbuf);
 int uls_cvt_radix2hexa_str_generic(int radix, const char *numbuf, int n_digits, uls_outbuf_ptr_t outbuf, int k);

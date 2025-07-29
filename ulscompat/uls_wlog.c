@@ -36,12 +36,40 @@
 #include "uls/uls_wlex.h"
 #include "uls/uls_lf_swprintf.h"
 #include "uls/uls_wlog.h"
+#ifdef __ULS_WINDOWS__
+#include "uls/uls_util_astr.h"
+#endif
 
 ULS_DECL_STATIC uls_lf_map_t logdfl_convspec_wmap;
 ULS_DECL_STATIC uls_lf_map_t log_convspec_wmap;
 ULS_DECL_STATIC uls_lf_ptr_t dfl_syslog_wlf;
+
+ULS_DECL_STATIC FILE *dfl_syslog_wlf_xdat;
 ULS_DECL_STATIC csz_str_t wbuff_csz;
 
+ULS_DECL_STATIC void
+ulslog_vwprintf(csz_str_ptr_t csz, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, va_list args)
+{
+	uls_lf_delegate_t delegate;
+
+	delegate.puts = uls_lf_puts_csz;
+
+	uls_lf_lock(uls_lf);
+	__uls_lf_change_puts(uls_lf, uls_ptr(delegate));
+	__uls_lf_vxwprintf(csz, uls_lf, wfmt, args);
+	__uls_lf_change_puts(uls_lf, uls_ptr(delegate));
+	uls_lf_unlock(uls_lf);
+}
+
+ULS_DECL_STATIC void
+ulslog_wprintf(csz_str_ptr_t csz, uls_lf_ptr_t uls_lf, const wchar_t *wfmt, ...)
+{
+	va_list args;
+
+	va_start(args, wfmt);
+	ulslog_vwprintf(csz, uls_lf, wfmt, args);
+	va_end(args);
+}
 
 ULS_DECL_STATIC void
 __ulslog_wflush(csz_str_ptr_t csz, uls_voidptr_t data, uls_lf_puts_t lf_puts)
@@ -59,39 +87,7 @@ __ulslog_wflush(csz_str_ptr_t csz, uls_voidptr_t data, uls_lf_puts_t lf_puts)
 	csz_reset(csz);
 }
 
-int
-ulslog_vwprintf(csz_str_ptr_t csz, uls_lf_ptr_t uls_wlf, const wchar_t *wfmt, va_list args)
-{
-	uls_lf_delegate_t delegate;
-	int wlen;
-
-	uls_lf_lock(uls_wlf);
-
-	delegate.xdat = csz;
-	delegate.puts = uls_lf_puts_csz;
-	__uls_lf_change_puts(uls_wlf, uls_ptr(delegate));
-	wlen = __uls_lf_vxwprintf(uls_wlf, wfmt, args);
-	__uls_lf_change_puts(uls_wlf, uls_ptr(delegate));
-
-	uls_lf_unlock(uls_wlf);
-
-	return wlen;
-}
-
-int
-ulslog_wprintf(csz_str_ptr_t csz, uls_lf_ptr_t uls_wlf, const wchar_t *wfmt, ...)
-{
-	va_list args;
-	int wlen;
-
-	va_start(args, wfmt);
-	wlen = ulslog_vwprintf(csz, uls_wlf, wfmt, args);
-	va_end(args);
-
-	return wlen;
-}
-
-void
+ULS_DECL_STATIC void
 ulslog_wflush(csz_str_ptr_t csz, uls_voidptr_t data, uls_lf_puts_t lf_puts)
 {
 	err_syslog_lock();
@@ -102,16 +98,14 @@ ulslog_wflush(csz_str_ptr_t csz, uls_voidptr_t data, uls_lf_puts_t lf_puts)
 void
 initialize_uls_wlog(void)
 {
-	uls_lf_puts_t proc_log;
-
 	uls_lf_init_convspec_wmap(uls_ptr(logdfl_convspec_wmap), 0);
 	uls_add_default_convspecs(uls_ptr(logdfl_convspec_wmap));
 
 	uls_lf_init_convspec_wmap(uls_ptr(log_convspec_wmap), 0);
 	uls_add_default_log_convspecs(uls_ptr(log_convspec_wmap));
 
-	proc_log = uls_lf_puts_file;
-	dfl_syslog_wlf = uls_wlf_create(uls_ptr(logdfl_convspec_wmap), _uls_stdio_fp(2), proc_log);
+	dfl_syslog_wlf = uls_wlf_create(uls_ptr(logdfl_convspec_wmap), uls_lf_puts_cons);
+	dfl_syslog_wlf_xdat = _uls_stdio_fp(2);
 
 	csz_init(uls_ptr(wbuff_csz), 128 * sizeof(wchar_t));
 }
@@ -119,21 +113,24 @@ initialize_uls_wlog(void)
 void
 finalize_uls_wlog(void)
 {
+	dfl_syslog_wlf->uls_lf_puts(dfl_syslog_wlf_xdat, NULL, 0);
+	dfl_syslog_wlf_xdat = _uls_stdio_fp(2);
 	csz_deinit(uls_ptr(wbuff_csz));
+
 	uls_wlf_destroy(dfl_syslog_wlf);
 	uls_lf_deinit_convspec_wmap(uls_ptr(log_convspec_wmap));
 	uls_lf_deinit_convspec_wmap(uls_ptr(logdfl_convspec_wmap));
 }
 
 void
-err_vwlog(const wchar_t* wfmt, va_list args)
+err_vwlog(const wchar_t *wfmt, va_list args)
 {
 	ulslog_vwprintf(uls_ptr(wbuff_csz), dfl_syslog_wlf, wfmt, args);
-	ulslog_wflush(uls_ptr(wbuff_csz), dfl_syslog_wlf->x_dat, dfl_syslog_wlf->uls_lf_puts);
+	ulslog_wflush(uls_ptr(wbuff_csz), dfl_syslog_wlf_xdat, dfl_syslog_wlf->uls_lf_puts);
 }
 
 void
-err_wlog(const wchar_t* wfmt, ...)
+err_wlog(const wchar_t *wfmt, ...)
 {
 	va_list	args;
 
@@ -143,14 +140,14 @@ err_wlog(const wchar_t* wfmt, ...)
 }
 
 void
-err_vwpanic(const wchar_t* wfmt, va_list args)
+err_vwpanic(const wchar_t *wfmt, va_list args)
 {
 	err_vwlog(wfmt, args);
 	err_panic("");
 }
 
 void
-err_wpanic(const wchar_t* wfmt, ...)
+err_wpanic(const wchar_t *wfmt, ...)
 {
 	va_list	args;
 
@@ -168,11 +165,10 @@ err_wpanic(const wchar_t* wfmt, ...)
 // <parm name="args">The list of args</parm>
 // <return>none</return>
 void
-uls_vwlog(uls_log_ptr_t log, const wchar_t* wfmt, va_list args)
+uls_vwlog(uls_log_ptr_t log, const wchar_t *wfmt, va_list args)
 {
 	uls_wlog_shell_ptr_t wlog_shell = (uls_wlog_shell_ptr_t) log->shell;
 	uls_voidptr_t old_gdat;
-	int len;
 
 	if (log == nilptr || log->uls == nilptr) {
 		err_vwlog(wfmt, args);
@@ -182,9 +178,9 @@ uls_vwlog(uls_log_ptr_t log, const wchar_t* wfmt, va_list args)
 	uls_log_lock(log);
 	old_gdat = uls_lf_change_gdat(log->lf, log->uls);
 
-	len = ulslog_wprintf(uls_ptr(wlog_shell->wstr_buff), log->lf, L"[ULS] [%s:%d] ",
+	ulslog_wprintf(uls_ptr(wlog_shell->wstr_buff), log->lf, L"[ULS] [%s:%d] ",
 		uls_get_tag2_wstr(log->uls, NULL), uls_get_lineno(log->uls));
-	len += ulslog_vwprintf(uls_ptr(wlog_shell->wstr_buff), log->lf, wfmt, args);
+	ulslog_vwprintf(uls_ptr(wlog_shell->wstr_buff), log->lf, wfmt, args);
 
 	ulslog_wflush(uls_ptr(wlog_shell->wstr_buff), log->log_port, log->log_puts);
 
@@ -199,7 +195,7 @@ uls_vwlog(uls_log_ptr_t log, const wchar_t* wfmt, va_list args)
 // <parm name="...">varargs</parm>
 // <return>none</return>
 void
-uls_wlog(uls_log_ptr_t log, const wchar_t* wfmt, ...)
+uls_wlog(uls_log_ptr_t log, const wchar_t *wfmt, ...)
 {
 	va_list	args;
 
@@ -209,7 +205,7 @@ uls_wlog(uls_log_ptr_t log, const wchar_t* wfmt, ...)
 }
 
 void
-uls_vwpanic(uls_log_ptr_t log, const wchar_t* wfmt, va_list args)
+uls_vwpanic(uls_log_ptr_t log, const wchar_t *wfmt, va_list args)
 {
 	uls_vwlog(log, wfmt, args);
 	err_panic("");
@@ -222,7 +218,7 @@ uls_vwpanic(uls_log_ptr_t log, const wchar_t* wfmt, va_list args)
 // <parm name="...">varargs</parm>
 // <return>none</return>
 void
-uls_wpanic(uls_log_ptr_t log, const wchar_t* wfmt, ...)
+uls_wpanic(uls_log_ptr_t log, const wchar_t *wfmt, ...)
 {
 	va_list	args;
 
@@ -255,8 +251,8 @@ uls_init_wlog(uls_log_ptr_t log, uls_lf_map_ptr_t lf_map, uls_lex_ptr_t uls)
 void
 uls_deinit_wlog(uls_log_ptr_t log)
 {
-	uls_lf_ptr_t uls_wlf = log->lf;
-	uls_wlf_shell_ptr_t wlf_shell = (uls_wlf_shell_ptr_t) uls_wlf->shell;
+	uls_lf_ptr_t uls_lf = log->lf;
+	uls_wlf_shell_ptr_t wlf_shell = (uls_wlf_shell_ptr_t) uls_lf->shell;
 	uls_wlog_shell_ptr_t wlog_shell = (uls_wlog_shell_ptr_t) log->shell;
 
 	csz_deinit(uls_ptr(wlog_shell->wstr_buff));
@@ -265,7 +261,7 @@ uls_deinit_wlog(uls_log_ptr_t log)
 
 	wlf_shell_deinit(wlf_shell);
 	uls_dealloc_object(wlf_shell);
-	uls_wlf->shell = nilptr;
+	uls_lf->shell = nilptr;
 
 	uls_deinit_log(log);
 }

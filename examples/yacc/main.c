@@ -68,7 +68,7 @@ globals_init(int argc, char** argv)
 }
 
 static int
-options(int opt, char* optarg)
+options(int opt, char *optarg)
 {
 	int stat = 0;
 
@@ -101,7 +101,7 @@ options(int opt, char* optarg)
 }
 
 static int
-parse_options(int argc, char* argv[])
+parse_options(int argc, char *argv[])
 {
 	int   i0;
 
@@ -113,7 +113,7 @@ parse_options(int argc, char* argv[])
 
 	if (outfile_xml == NULL) {
 		fout_xml = stdout;
-	} else if ((fout_xml=uls_fp_open(outfile_xml, ULS_FIO_CREAT)) == NULL) {
+	} else if ((fout_xml=uls_fp_open(outfile_xml, ULS_FIO_WRITE | ULS_FIO_NO_UTF8BOM)) == NULL) {
 		err_log("can't open output file '%s' for writing", outfile_xml);
 		return -1;
 	}
@@ -142,7 +142,7 @@ ulc2xml_peek_ch(int *ptr_is_quote)
 	uls_nextch_detail_t detail;
 	int is_quote = 0;
 
-	if ((wch = uls_peek_uch(ulc_lex, &detail)) == ULS_UCH_NONE && detail.qmt != NULL) {
+	if ((wch = uls_peek_ch(ulc_lex, &detail)) == ULS_WCH_NONE && detail.qmt != NULL) {
 		is_quote = 1;
 	}
 
@@ -160,7 +160,7 @@ ulc2xml_get_ch(int *ptr_is_quote)
 	uls_nextch_detail_t detail;
 	int is_quote = 0;
 
-	if ((wch = uls_get_uch(ulc_lex, &detail)) == ULS_UCH_NONE && detail.qmt != NULL) {
+	if ((wch = uls_get_ch(ulc_lex, &detail)) == ULS_WCH_NONE && detail.qmt != NULL) {
 		is_quote = 1;
 	}
 
@@ -198,7 +198,7 @@ int yylex(void)
 	} else if (tok < 128) {
 		yy_lexeme_str[0] = tok;
 		for (i=1; i<ULC2XML_ID_MAXLEN; ) {
-			if ((wch = ulc2xml_peek_ch(&is_quote)) == ULS_UCH_NONE || is_quote ||
+			if ((wch = ulc2xml_peek_ch(&is_quote)) == ULS_WCH_NONE || is_quote ||
 				wch == ' ' || wch == '\n') {
 				break;
 			}
@@ -231,12 +231,12 @@ int parse_ulc_file(char *file, ulc_file_t *ulc_file)
 }
 
 int
-main(int argc, char* argv[])
+main(int argc, char *argv[])
 {
 	char *input_file;
 	int i0;
 
-	if ((i0=parse_options(argc, argv)) <= 0) {
+	if ((i0 = parse_options(argc, argv)) <= 0) {
 		return i0;
 	}
 

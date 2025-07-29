@@ -40,8 +40,7 @@
 #define NO_CSZ_POOL
 
 #if defined(_WIN32)
-#define ULS_WINDOWS
-#define __WINDOWS__
+#define __ULS_WINDOWS__
 #define ULS_CLASSIFY_SOURCE
 
 #ifdef _WIN64
@@ -102,7 +101,11 @@
 
 #else // ULS_DOTNET
 
-#if defined(ULS_WINDOWS)
+#if defined(__cplusplus)
+#define _ULS_CPLUSPLUS
+#endif
+
+#if defined(__ULS_WINDOWS__)
 #ifdef _ULS_IMPLDLL
 #define ULS_DLL_EXTERN __declspec(dllexport)
 #else
@@ -116,25 +119,33 @@
 #define _ULS_INLINE __inline
 #define ULS_DECL_STATIC static
 #define ULS_DECL_EXTERN_STATIC
-#else // !ULS_WINDOWS
+
+#else // !__ULS_WINDOWS__
 #define ULS_DLL_EXTERN
 #define ULSCPP_DLL_EXTERN
 #define ULS_DECL_STATIC static
 #define _ULS_INLINE inline
 #define ULS_DECL_EXTERN_STATIC
-#endif // ULS_WINDOWS
+
+#endif // __ULS_WINDOWS__
 
 #if defined(_ULS_IMPLDLL) || defined(_ULSCPP_IMPLDLL)
-#define _ULS_INTERNAL_USE_ONLY
+#define _ULSCOMPAT_INTERNALLY_USES
 #else
 #define _ULS_USEDLL
+#ifndef _ULS_CPLUSPLUS
 #define _ULS_USE_ULSCOMPAT
+#endif
 #endif
 
 #ifdef _ULS_USEDLL
-#ifdef _UNICODE
+#if defined(_UNICODE)
 #define ULS_USE_WSTR
+#elif defined(_MBCS)
+#ifndef ULS_USE_USTR
+#define ULS_USE_ASTR
 #endif
+#endif // _UNICODE
 #endif
 
 #define ULS_DECL_BASIC_TYPES
@@ -153,16 +164,12 @@
 //#define ULS_DEF_PUBLIC_DATA
 
 //#define ULS_DECL_PRIVATE_PROC
-#ifdef _ULS_INTERNAL_USE_ONLY
+#ifdef _ULSCOMPAT_INTERNALLY_USES
 #define ULS_DECL_PROTECTED_PROC
 #endif
 #define ULS_DECL_PUBLIC_PROC
 
-#if defined(__cplusplus)
-#define _ULS_CPLUSPLUS
-#endif
-
-#endif // ULS_DOTNET
+#endif // ~ULS_DOTNET
 
 #ifdef _ULS_DEBUG
 #define ULS_DO_ASSERT

@@ -62,8 +62,6 @@ if [ ! -e $TEST_DIR ]; then
 fi
 
 cmdline="$MAKE_ULF -o  $OUTPUT_FILE_DFL -L $ULC_FILE -l $TEST_FILE_1 $TARGET_DIR_1"
-echo $cmdline
-
 if [ "$opt_verbose" = "yes" ]; then
 	echo "$cmdline"
 fi

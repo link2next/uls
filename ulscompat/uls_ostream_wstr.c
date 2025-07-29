@@ -36,7 +36,7 @@
 #include "uls/uls_wlog.h"
 
 uls_ostream_ptr_t
-__uls_create_ostream_wstr(int fd_out, uls_lex_ptr_t uls, int stream_type, const wchar_t* subname)
+__uls_create_ostream_wstr(int fd_out, uls_lex_ptr_t uls, int stream_type, const wchar_t *subname)
 {
 	char *ustr;
 	csz_str_t csz;
@@ -56,7 +56,7 @@ __uls_create_ostream_wstr(int fd_out, uls_lex_ptr_t uls, int stream_type, const 
 }
 
 uls_ostream_ptr_t
-uls_create_ostream_wstr(int fd_out, uls_lex_ptr_t uls, const wchar_t* subname)
+uls_create_ostream_wstr(int fd_out, uls_lex_ptr_t uls, const wchar_t *subname)
 {
 	char *ustr;
 	csz_str_t csz;
@@ -76,7 +76,7 @@ uls_create_ostream_wstr(int fd_out, uls_lex_ptr_t uls, const wchar_t* subname)
 }
 
 uls_ostream_ptr_t
-uls_create_ostream_file_wstr(const wchar_t* filepath, uls_lex_ptr_t uls, const wchar_t* subname)
+uls_create_ostream_file_wstr(const wchar_t *filepath, uls_lex_ptr_t uls, const wchar_t *subname)
 {
 	uls_ostream_ptr_t ostr=nilptr;
 	const wchar_t *wrdlst[2] = { filepath, subname };
@@ -92,7 +92,6 @@ uls_create_ostream_file_wstr(const wchar_t* filepath, uls_lex_ptr_t uls, const w
 
 		if (wrdlst[i] == NULL) {
 			ustr[i] = NULL;
-
 		} else {
 			csz_init(csz + i, -1);
 
@@ -114,7 +113,7 @@ uls_create_ostream_file_wstr(const wchar_t* filepath, uls_lex_ptr_t uls, const w
 }
 
 int
-__uls_print_tok_wstr(uls_ostream_ptr_t ostr, int tokid, const wchar_t* wtokstr, int l_wtokstr)
+__uls_print_tok_wstr(uls_ostream_ptr_t ostr, int tokid, const wchar_t *wtokstr, int l_wtokstr)
 {
 	char *ustr;
 	int  ulen, rc;
@@ -134,3 +133,23 @@ __uls_print_tok_wstr(uls_ostream_ptr_t ostr, int tokid, const wchar_t* wtokstr, 
 	return rc;
 }
 
+int
+__uls_print_tok_linenum_wstr(uls_ostream_ptr_t ostr, int lno, const wchar_t *wtag, int wtag_len)
+{
+	char *ustr;
+	int  ulen, rc;
+	csz_str_t csz;
+
+	csz_init(uls_ptr(csz), -1);
+
+	if ((ustr = uls_wstr2ustr(wtag, wtag_len, uls_ptr(csz))) == NULL) {
+		err_wlog(L"encoding error!");
+		rc = -1;
+	} else {
+		ulen = csz_length(uls_ptr(csz));
+		rc = __uls_print_tok_linenum(ostr, lno, ustr, ulen);
+	}
+
+	csz_deinit(uls_ptr(csz));
+	return rc;
+}

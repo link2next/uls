@@ -37,6 +37,7 @@
 #include "read_uls.h"
 #include "write_uls.h"
 #include "filelist.h"
+#include "uls/uls_auw.h"
 
 #ifdef ULS_FDF_SUPPORT
 #include "uls/fdfilter.h"
@@ -101,7 +102,7 @@ static void usage_synopsis(void)
 
 static void usage_desc(void)
 {
-#ifdef ULS_WINDOWS
+#ifdef __ULS_WINDOWS__
 	err_log("  -L <ulc-spec>    Specify the lexical-configuration for your own language.");
 	err_log("  -o <filepath>    Specify the output filepath.");
 	err_log("  -b               The output file will be binary file.");
@@ -235,7 +236,7 @@ static void usage_long(void)
 }
 
 static int
-ulsstream_options(int opt, char* optarg)
+ulsstream_options(int opt, char *optarg)
 {
 	int stat = 0;
 #ifdef ULS_FDF_SUPPORT
@@ -279,7 +280,7 @@ ulsstream_options(int opt, char* optarg)
 		uls_path_normalize(argv0, argv0);
 
 		if (!ult_is_absolute_path(argv0) && uls_dirent_exist(argv0) == ST_MODE_REG) {
-			if (ult_getcwd(fpath_buff, ULS_FILEPATH_MAX) < 0) {
+			if (uls_getcwd(fpath_buff, ULS_FILEPATH_MAX) < 0) {
 				err_panic("%s: fail to getcwd()", __func__);
 			}
 			uls_snprintf(cmdline_filter, siz, "%s/%s", fpath_buff, cmdl);
@@ -364,7 +365,7 @@ ulsstream_options(int opt, char* optarg)
 }
 
 static int
-parse_options(int argc, char* argv[])
+parse_options(int argc, char *argv[])
 {
 	int i0;
 	char *ptr, *name;
@@ -373,7 +374,7 @@ parse_options(int argc, char* argv[])
 #endif
 
 	uls_endian = ult_guess_host_byteorder();
-	if (ult_getcwd(home_dir, ULS_FILEPATH_MAX) < 0) {
+	if (uls_getcwd(home_dir, ULS_FILEPATH_MAX) < 0) {
 		err_panic("%s: fail to getcwd()", __func__);
 	}
 
@@ -440,7 +441,7 @@ parse_options(int argc, char* argv[])
 }
 
 int
-exist_name_val_ent(const char* name)
+exist_name_val_ent(const char *name)
 {
 	return uls_get_tmpl_value(uls_ptr(tmpl_list), name) != NULL ? 1 : 0;
 }
@@ -455,7 +456,7 @@ add_name_val_ent(const char *name, const char *val)
 }
 
 int
-main(int argc, char* argv[])
+main_ustr(int argc, char *argv[])
 {
 	int i0, ftype, stat = 0;
 	FILE *fp_out, *fp_list;
@@ -486,7 +487,7 @@ main(int argc, char* argv[])
 				return -1;
 			}
 
-			if (ult_chdir(target_dir) < 0) {
+			if (uls_chdir(target_dir) < 0) {
 				err_log("%s: fail to chdir %s", __func__, target_dir);
 				uls_fp_close(fp_list);
 				return -1;
@@ -495,16 +496,16 @@ main(int argc, char* argv[])
 			ftype = ult_guess_specname_from_inputfiles(config_pathbuff, fp_list, 1);
 
 			uls_fp_close(fp_list);
-			ult_chdir(home_dir);
+			uls_chdir(home_dir);
 
 		} else {
-			if (ult_chdir(target_dir) < 0) {
+			if (uls_chdir(target_dir) < 0) {
 				err_log("%s: fail to chdir %s", __func__, target_dir);
 				return -1;
 			}
 
 			ftype = ult_guess_specname_from_argvlist(config_pathbuff, argc-i0, (const char **) argv+i0, 1);
-			ult_chdir(home_dir);
+			uls_chdir(home_dir);
 		}
 
 		if (ftype == ULS_STREAM_RAW) {
@@ -537,7 +538,8 @@ main(int argc, char* argv[])
 		} else {
 			fp_out = _uls_stdio_fp(1);
 
-			if (output_file != NULL && (fp_out=uls_fp_open(output_file, ULS_FIO_CREAT)) == NULL) {
+			if (output_file != NULL && (fp_out = uls_fp_open(output_file,
+				ULS_FIO_WRITE | ULS_FIO_NO_UTF8BOM)) == NULL) {
 				err_log("can't create %s", output_file);
 				stat = -1;
 			} else {
@@ -558,6 +560,57 @@ end_1:
 	uls_mfree(target_dir);
 	uls_mfree(output_file);
 	uls_deinit_tmpls(uls_ptr(tmpl_list));
+
+	return stat;
+}
+
+int
+main(int argc, char *argv[])
+{
+	int i, stat = 0;
+	char **uargs;
+#ifdef __ULS_WINDOWS__
+	auw_outparam_t *arglst;
+	const char *ustr;
+#endif
+
+	uargs = (char **) uls_malloc(argc *sizeof(char *));
+
+#ifdef __ULS_WINDOWS__
+	arglst = (auw_outparam_t *) uls_malloc(argc *sizeof(auw_outparam_t));
+	for (i = 0; i < argc; i++) {
+		auw_init_outparam(arglst + i);
+	}
+
+	for (i = 0; i < argc; i++) {
+		if ((ustr = uls_astr2ustr_ptr(argv[i], -1, arglst + i)) == NULL) {
+			stat = -1;
+			uargs[i] = NULL;
+		} else {
+			uargs[i] = uls_strdup(ustr, -1);
+		}
+	}
+#else
+	for (i = 0; i < argc; i++) {
+		uargs[i] = uls_strdup(argv[i], -1);
+	}
+#endif
+
+	if (stat == 0) {
+		stat = main_ustr(argc, uargs);
+	}
+
+	for (i = 0; i < argc; i++) {
+		uls_mfree(uargs[i]);
+	}
+	uls_mfree(uargs);
+
+#ifdef __ULS_WINDOWS__
+	for (i = 0; i < argc; i++) {
+		auw_deinit_outparam(arglst + i);
+	}
+	uls_mfree(arglst);
+#endif
 
 	return stat;
 }

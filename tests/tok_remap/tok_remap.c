@@ -33,8 +33,9 @@
 */
 
 #include "uls/uls_lex.h"
-#include "uls/uls_log.h"
+#include "uls/uls_auw.h"
 #include "uls/uls_util.h"
+#include "uls/uls_log.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -74,7 +75,7 @@ options(int opt, LPTSTR optarg)
 		break;
 
 	case _T('m'):
-		test_mode = ult_str2int(optarg);
+		test_mode = uls_str2int(optarg);
 		break;
 
 	case _T('v'):
@@ -129,7 +130,7 @@ _tmain(int n_targv, LPTSTR *targv)
 {
 	int i, i0;
 
-	progname = uls_split_filepath(targv[0], NULL);
+	progname = uls_filename(targv[0], NULL);
 	config_name = _T("sample.ulc");
 	input_file = _T("input1.txt");
 

@@ -99,7 +99,7 @@ ULS_QUALIFIED_METHOD(uls_reorder_bytes_binbe)(char *binpkt, int len_binpkt)
 }
 
 ULS_QUALIFIED_RETTYP(uls_tmpl_ptr_t)
-ULS_QUALIFIED_METHOD(uls_find_tmpl)(uls_tmpl_list_ptr_t tmpl_list, const char* name)
+ULS_QUALIFIED_METHOD(uls_find_tmpl)(uls_tmpl_list_ptr_t tmpl_list, const char *name)
 {
 	uls_tmpl_ptr_t tmpl;
 	int i;
@@ -117,7 +117,7 @@ ULS_QUALIFIED_METHOD(uls_find_tmpl)(uls_tmpl_list_ptr_t tmpl_list, const char* n
 }
 
 ULS_QUALIFIED_RETTYP(uls_tmplvar_ptr_t)
-ULS_QUALIFIED_METHOD(uls_search_tmpls)(uls_ref_array_type10(tmpls,tmplvar), const char* name)
+ULS_QUALIFIED_METHOD(uls_search_tmpls)(uls_ref_array_type10(tmpls,tmplvar), const char *name)
 {
 	uls_tmplvar_ptr_t tmpl;
 	int i;
@@ -195,7 +195,7 @@ ULS_QUALIFIED_METHOD(uls_deinit_rd_packet)(uls_rd_packet_ptr_t pkt)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_set_rd_packet)(uls_rd_packet_ptr_t pkt, int tok_id, int txtlen, const char* txtptr)
+ULS_QUALIFIED_METHOD(uls_set_rd_packet)(uls_rd_packet_ptr_t pkt, int tok_id, int txtlen, const char *txtptr)
 {
 	pkt->tok_id = tok_id;
 	pkt->len_tokstr = txtlen;
@@ -203,7 +203,7 @@ ULS_QUALIFIED_METHOD(uls_set_rd_packet)(uls_rd_packet_ptr_t pkt, int tok_id, int
 }
 
 void
-ULS_QUALIFIED_METHOD(add_rd_packet_to_tmpls_pool)(int tok_id, int txtlen, const char* txtptr, uls_tmpl_pool_ptr_t tmpls_pool)
+ULS_QUALIFIED_METHOD(add_rd_packet_to_tmpls_pool)(int tok_id, int txtlen, const char *txtptr, uls_tmpl_pool_ptr_t tmpls_pool)
 {
 	uls_rd_packet_ptr_t pkt;
 	int siz;
@@ -310,7 +310,7 @@ ULS_QUALIFIED_METHOD(uls_destroy_tmpls)(uls_tmpl_list_ptr_t tmpl_list)
 }
 
 const char*
-ULS_QUALIFIED_METHOD(uls_get_tmpl_value)(uls_tmpl_list_ptr_t tmpl_list, const char* name)
+ULS_QUALIFIED_METHOD(uls_get_tmpl_value)(uls_tmpl_list_ptr_t tmpl_list, const char *name)
 {
 	uls_tmpl_ptr_t tmpl;
 
@@ -322,7 +322,7 @@ ULS_QUALIFIED_METHOD(uls_get_tmpl_value)(uls_tmpl_list_ptr_t tmpl_list, const ch
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_set_tmpl_value)(uls_tmpl_list_ptr_t tmpl_list, const char* name, const char *val)
+ULS_QUALIFIED_METHOD(uls_set_tmpl_value)(uls_tmpl_list_ptr_t tmpl_list, const char *name, const char *val)
 {
 	uls_tmpl_ptr_t tmpl;
 

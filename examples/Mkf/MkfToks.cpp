@@ -100,13 +100,13 @@ namespace
 	// This prints to the stdout the string representation of the current TokNum.
 	// </brief>
 	// <return>none</return>
-	void dumpToken(MkfLex *mkflex)
+	void dump_token(MkfLex *mkflex)
 	{
 		int t = mkflex->getTokNum();
 
-		tstring* lxm;
-		mkflex->getTokStr(&lxm);
-		LPCTSTR tstr = lxm->c_str();
+		tstring lxm;
+		mkflex->getTokStr(lxm);
+		LPCTSTR tstr = lxm.c_str();
 
 		switch (t) {
 		case MkfLex::TABBLK:
@@ -136,12 +136,12 @@ namespace
 	// This Executes tokenizing and dump the output to stdout.
 	// </brief>
 	// <return>none</return>
-	void dumpTokens(MkfLex *mkflex)
+	void dump_tokens(MkfLex *mkflex)
 	{
 		int t;
 
 		for ( ; ; ) {
-			if ((t=mkflex->getTok()) == MkfLex::ERR) {
+			if ((t=mkflex->next()) == MkfLex::ERR) {
 				_tcerr << _T("Error in tokenizing!") << _tendl;
 				break;
 			}
@@ -150,7 +150,7 @@ namespace
 				break;
 			}
 
-			dumpToken(mkflex);
+			dump_token(mkflex);
 		}
 	}
 }
@@ -178,23 +178,24 @@ _tmain(int n_targv, LPTSTR *targv)
 	if (mkflex->include(input_file) < 0) {
 		_tcerr << _T("Can't open ") << input_file << _tendl;
 	} else {
-		dumpTokens(mkflex);
+		dump_tokens(mkflex);
 	}
 
 	delete mkflex;
 	return 0;
 }
 
-#ifndef __WINDOWS__
+#ifndef __ULS_WINDOWS__
 int
 main(int argc, char *argv[])
 {
+	uls::ArgListT targlst;
 	LPTSTR *targv;
 	int stat;
 
-	ULSCPP_GET_WARGS_LIST(argc, argv, targv);
+	ULSCPP_GET_WARGS_LIST(targlst, argc, argv, targv);
 	stat = _tmain(argc, targv);
-	ULSCPP_PUT_WARGS_LIST(argc, targv);
+	ULSCPP_PUT_WARGS_LIST(targlst);
 
 	return stat;
 }

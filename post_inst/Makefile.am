@@ -10,6 +10,7 @@ uninst_info.txt:
 
 install: uninst_info.txt
 	install -m755 -d "$(bindir)" "$(datadir)" $(ax_etc_dir)
+	@./strip_libs.sh "$(libdir)" 
 	@./make_uls_examples_tar.sh ./uls_examples.tar $(top_srcdir)/examples ./list_uls_examples.txt "$(datadir)/uls/"
 	install -m755 uninstall_uls.sh $(bindir)/uninstall_uls
 	install -m755 uninst_info.txt $(bindir)/uls_uninst_info.sh

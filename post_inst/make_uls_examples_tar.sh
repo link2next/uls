@@ -45,7 +45,13 @@ src_dir=$(readlink_m "$2")
 list_file=$(readlink_m "$3")
 out_dir=$(readlink_m "$4")
 
-if [ ! -f "$tmpl_tar" -o ! -f "$list_file" ]; then
+if [ ! -f "$tmpl_tar" ]; then
+	filename=$(basename "$tmpl_tar")
+	echo "$filename: not found, skipping..."
+	exit 0
+fi
+
+if [ ! -f "$list_file" ]; then
 	usage
 fi
 

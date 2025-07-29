@@ -57,7 +57,7 @@ ULS_DECLARE_STRUCT(tokdef);
 #endif
 
 #ifdef ULS_DECL_PUBLIC_TYPE
-ULS_DEFINE_DELEGATE_BEGIN(strcmp_proc,int)(const char* wrd1, const char* wrd2, int len);
+ULS_DEFINE_DELEGATE_BEGIN(strcmp_proc,int)(const char *wrd1, const char *wrd2, int len);
 ULS_DEFINE_DELEGATE_END(strcmp_proc);
 #endif
 
@@ -107,7 +107,7 @@ ULS_DECL_STATIC void insert_tokdef_name_to_group(uls_tokdef_vx_ptr_t e_vx, uls_t
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC
-void uls_init_tokdef_vx(uls_tokdef_vx_ptr_t e_vx, int tok_id, const char* name, uls_tokdef_ptr_t e);
+void uls_init_tokdef_vx(uls_tokdef_vx_ptr_t e_vx, int tok_id, const char *name, uls_tokdef_ptr_t e);
 void uls_deinit_tokdef_vx(uls_tokdef_vx_ptr_t e_vx);
 #endif
 
@@ -117,16 +117,16 @@ uls_tokdef_ptr_t uls_create_tokdef(void);
 void uls_destroy_tokdef(uls_tokdef_ptr_t e);
 
 void __init_tokdef_vx(uls_tokdef_vx_ptr_t e_vx);
-uls_tokdef_vx_ptr_t uls_create_tokdef_vx(int tok_id, const char* name, uls_tokdef_ptr_t e);
+uls_tokdef_vx_ptr_t uls_create_tokdef_vx(int tok_id, const char *name, uls_tokdef_ptr_t e);
 void uls_destroy_tokdef_vx(uls_tokdef_vx_ptr_t e_vx);
 
 int canbe_tokname(const char *str);
 uls_tokdef_name_ptr_t alloc_tokdef_name(const char *name);
 void dealloc_tokdef_name(uls_tokdef_name_ptr_t e_nam);
-uls_tokdef_name_ptr_t find_tokdef_alias(uls_tokdef_vx_ptr_t e_vx, const char* name);
-int uls_add_tokdef_vx_name(uls_tokdef_vx_ptr_t e_vx, const char* name);
-int uls_change_tokdef_vx_name(uls_tokdef_vx_ptr_t e_vx, const char* name, const char* name2);
-uls_tokdef_ptr_t find_tokdef_by_keyw(uls_tokdef_vx_ptr_t e_vx, const char* keyw);
+uls_tokdef_name_ptr_t find_tokdef_alias(uls_tokdef_vx_ptr_t e_vx, const char *name);
+int uls_add_tokdef_vx_name(uls_tokdef_vx_ptr_t e_vx, const char *name);
+int uls_change_tokdef_vx_name(uls_tokdef_vx_ptr_t e_vx, const char *name, const char *name2);
+uls_tokdef_ptr_t find_tokdef_by_keyw(uls_tokdef_vx_ptr_t e_vx, const char *keyw);
 void append_tokdef_to_group(uls_tokdef_vx_ptr_t e_vx, uls_tokdef_ptr_t e_target);
 #endif
 
@@ -134,8 +134,12 @@ void append_tokdef_to_group(uls_tokdef_vx_ptr_t e_vx, uls_tokdef_ptr_t e_target)
 }
 #endif
 
-#ifdef ULS_USE_WSTR
+#ifdef _ULS_USE_ULSCOMPAT
+#if defined(ULS_USE_WSTR)
 #include "uls/uls_tokdef_wstr.h"
+#elif defined(ULS_USE_ASTR)
+#include "uls/uls_tokdef_astr.h"
+#endif
 #endif
 
 #endif // __ULS_TOKDEF_H__

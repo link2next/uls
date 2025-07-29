@@ -105,7 +105,7 @@ ULS_QUALIFIED_METHOD(uls_enc_utf32str_to_utf8str)(uls_uint32 *wstr1, int l_wstr1
 
 int
 ULS_QUALIFIED_METHOD(uls_fill_utf8str)(uls_wch_t *uchs, int n_uchs,
-	char* utf8buf, int siz_utf8buf, int *p_len_utf8buf)
+	char *utf8buf, int siz_utf8buf, int *p_len_utf8buf)
 {
 	char *outptr = utf8buf;
 	int rc, i, len_utf8buf = 0;
@@ -132,7 +132,7 @@ ULS_QUALIFIED_METHOD(uls_fill_utf8str)(uls_wch_t *uchs, int n_uchs,
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_fill_utf8buf)(uls_utf_inbuf_ptr_t inp, char* utf8buf, int len0_utf8buf, int siz_utf8buf)
+ULS_QUALIFIED_METHOD(uls_fill_utf8buf)(uls_utf_inbuf_ptr_t inp, char *utf8buf, int len0_utf8buf, int siz_utf8buf)
 {
 	int len_utf8buf = len0_utf8buf;
 	int wrdsiz = sizeof(uls_wch_t);
@@ -144,6 +144,7 @@ ULS_QUALIFIED_METHOD(uls_fill_utf8buf)(uls_utf_inbuf_ptr_t inp, char* utf8buf, i
 		if (i + ULS_UTF8_CH_MAXLEN > siz_utf8buf) {
 			for ( ; len_utf8buf < siz_utf8buf; len_utf8buf += n_bytes) {
 				n_words = uls_utf_drain_inbuf(inp, &wch, 1);
+
 				if (n_words < 0) {
 					_uls_log(err_log)("Can't read input!!");
 					return -1;
@@ -160,6 +161,7 @@ ULS_QUALIFIED_METHOD(uls_fill_utf8buf)(uls_utf_inbuf_ptr_t inp, char* utf8buf, i
 					break;
 				}
 			}
+
 			break;
 		}
 

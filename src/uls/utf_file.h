@@ -48,7 +48,7 @@ ULS_DECL_STATIC uls_decl_array_tool_type01(id_range_list1, uch_range);
 #endif
 
 #if defined(__ULS_UTF_FILE__) || defined(ULS_DECL_PROTECTED_PROC)
-int id_range_comp(const uls_voidptr_t e, const uls_voidptr_t b);
+int id_range_comp(uls_const_voidptr_t e, uls_const_voidptr_t b);
 int load_uch_ranges_list(void);
 void unload_uch_ranges_list(void);
 int is_utf_id(uls_wch_t wch);

@@ -37,7 +37,7 @@
 #endif
 
 int
-ULS_QUALIFIED_METHOD(id_range_comp)(const uls_voidptr_t e, const uls_voidptr_t b)
+ULS_QUALIFIED_METHOD(id_range_comp)(uls_const_voidptr_t e, uls_const_voidptr_t b)
 {
 	const uls_ptrtype_tool(uch_range) id_range = (const uls_ptrtype_tool(uch_range)) e;
 	const uls_ptrtype_tool(outparam) parms = (const uls_ptrtype_tool(outparam)) b;

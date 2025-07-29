@@ -67,15 +67,15 @@ extern "C" {
 #endif
 
 #if defined(__ULS_LF_PERCENT_F__) || defined(ULS_DECL_PRIVATE_PROC)
-ULS_DECL_STATIC void reverse_char_array(char* ary, int n);
+ULS_DECL_STATIC void reverse_char_array(char *ary, int n);
 ULS_DECL_STATIC int unsigned2str(unsigned int n, csz_str_ptr_t ss);
 ULS_DECL_STATIC void __pad_zeros(int n_prec, unsigned int flags, csz_str_ptr_t ss);
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC
-int  uls_lf_digits_to_percent_f(char* numstr, int minus, int n_expo, int n_prec, unsigned int flags, csz_str_ptr_t ss);
-void uls_lf_digits_to_percent_e(char* numstr, int minus, int n_expo, int n_prec, csz_str_ptr_t ss);
-void uls_lf_digits_to_percent_g(char* numstr, int minus, int n_expo, int n_prec, unsigned int flags, csz_str_ptr_t ss);
+int  uls_lf_digits_to_percent_f(char *numstr, int minus, int n_expo, int n_prec, unsigned int flags, csz_str_ptr_t ss);
+void uls_lf_digits_to_percent_e(char *numstr, int minus, int n_expo, int n_prec, csz_str_ptr_t ss);
+void uls_lf_digits_to_percent_g(char *numstr, int minus, int n_expo, int n_prec, unsigned int flags, csz_str_ptr_t ss);
 #endif
 
 #ifdef ULS_DECL_PUBLIC_PROC

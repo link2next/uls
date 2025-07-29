@@ -139,9 +139,9 @@ am_libuls_la_OBJECTS = libuls_la-uls_prim.lo libuls_la-uls_misc.lo \
 	libuls_la-utf8_enc.lo libuls_la-utf_file.lo \
 	libuls_la-uls_log.lo libuls_la-csz_stream.lo \
 	libuls_la-fdfilter.lo libuls_la-uls_lf_percent_f.lo \
-	libuls_la-uls_lf_sprintf.lo libuls_la-uls_print.lo \
-	libuls_la-uls_tokdef.lo libuls_la-onechar.lo \
-	libuls_la-twoplus.lo libuls_la-idkeyw.lo \
+	libuls_la-uls_lf_xputs.lo libuls_la-uls_lf_sprintf.lo \
+	libuls_la-uls_print.lo libuls_la-uls_tokdef.lo \
+	libuls_la-onechar.lo libuls_la-twoplus.lo libuls_la-idkeyw.lo \
 	libuls_la-uls_context.lo libuls_la-uls_sysprops.lo \
 	libuls_la-uls_langs.lo libuls_la-uls_freq.lo \
 	libuls_la-uls_conf.lo libuls_la-uld_conf.lo \
@@ -197,6 +197,7 @@ am__depfiles_remade = ./$(DEPDIR)/libuls_la-csz_stream.Plo \
 	./$(DEPDIR)/libuls_la-uls_lex.Plo \
 	./$(DEPDIR)/libuls_la-uls_lf_percent_f.Plo \
 	./$(DEPDIR)/libuls_la-uls_lf_sprintf.Plo \
+	./$(DEPDIR)/libuls_la-uls_lf_xputs.Plo \
 	./$(DEPDIR)/libuls_la-uls_log.Plo \
 	./$(DEPDIR)/libuls_la-uls_misc.Plo \
 	./$(DEPDIR)/libuls_la-uls_num.Plo \
@@ -392,8 +393,8 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 uls_ver_major = 1
-uls_ver_minor = 9
-uls_ver_debug = 7
+uls_ver_minor = 10
+uls_ver_debug = 0
 uls_ver = $(uls_ver_major).$(uls_ver_minor).$(uls_ver_debug)
 so_current = 1
 so_revision = 1
@@ -406,7 +407,7 @@ lib_LTLIBRARIES = libuls.la
 libuls_la_SOURCES = \
 	uls_prim.c uls_misc.c uls_util.c uls_version.c uls_auw.c uls_fileio.c \
 	utf8_enc.c utf_file.c uls_log.c csz_stream.c fdfilter.c \
-	uls_lf_percent_f.c uls_lf_sprintf.c uls_print.c \
+	uls_lf_percent_f.c uls_lf_xputs.c uls_lf_sprintf.c uls_print.c \
 	uls_tokdef.c onechar.c twoplus.c idkeyw.c uls_context.c \
 	uls_sysprops.c uls_langs.c uls_freq.c uls_conf.c uld_conf.c \
 	uls_core.c uls_num.c litesc.c litstr.c uls_input.c uls_lex.c \
@@ -528,6 +529,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libuls_la-uls_lex.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libuls_la-uls_lf_percent_f.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libuls_la-uls_lf_sprintf.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libuls_la-uls_lf_xputs.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libuls_la-uls_log.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libuls_la-uls_misc.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libuls_la-uls_num.Plo@am__quote@ # am--include-marker
@@ -653,6 +655,13 @@ libuls_la-uls_lf_percent_f.lo: uls_lf_percent_f.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='uls_lf_percent_f.c' object='libuls_la-uls_lf_percent_f.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -c -o libuls_la-uls_lf_percent_f.lo `test -f 'uls_lf_percent_f.c' || echo '$(srcdir)/'`uls_lf_percent_f.c
+
+libuls_la-uls_lf_xputs.lo: uls_lf_xputs.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -MT libuls_la-uls_lf_xputs.lo -MD -MP -MF $(DEPDIR)/libuls_la-uls_lf_xputs.Tpo -c -o libuls_la-uls_lf_xputs.lo `test -f 'uls_lf_xputs.c' || echo '$(srcdir)/'`uls_lf_xputs.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libuls_la-uls_lf_xputs.Tpo $(DEPDIR)/libuls_la-uls_lf_xputs.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='uls_lf_xputs.c' object='libuls_la-uls_lf_xputs.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -c -o libuls_la-uls_lf_xputs.lo `test -f 'uls_lf_xputs.c' || echo '$(srcdir)/'`uls_lf_xputs.c
 
 libuls_la-uls_lf_sprintf.lo: uls_lf_sprintf.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libuls_la_CPPFLAGS) $(CPPFLAGS) $(libuls_la_CFLAGS) $(CFLAGS) -MT libuls_la-uls_lf_sprintf.lo -MD -MP -MF $(DEPDIR)/libuls_la-uls_lf_sprintf.Tpo -c -o libuls_la-uls_lf_sprintf.lo `test -f 'uls_lf_sprintf.c' || echo '$(srcdir)/'`uls_lf_sprintf.c
@@ -1006,6 +1015,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/libuls_la-uls_lex.Plo
 	-rm -f ./$(DEPDIR)/libuls_la-uls_lf_percent_f.Plo
 	-rm -f ./$(DEPDIR)/libuls_la-uls_lf_sprintf.Plo
+	-rm -f ./$(DEPDIR)/libuls_la-uls_lf_xputs.Plo
 	-rm -f ./$(DEPDIR)/libuls_la-uls_log.Plo
 	-rm -f ./$(DEPDIR)/libuls_la-uls_misc.Plo
 	-rm -f ./$(DEPDIR)/libuls_la-uls_num.Plo
@@ -1088,6 +1098,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/libuls_la-uls_lex.Plo
 	-rm -f ./$(DEPDIR)/libuls_la-uls_lf_percent_f.Plo
 	-rm -f ./$(DEPDIR)/libuls_la-uls_lf_sprintf.Plo
+	-rm -f ./$(DEPDIR)/libuls_la-uls_lf_xputs.Plo
 	-rm -f ./$(DEPDIR)/libuls_la-uls_log.Plo
 	-rm -f ./$(DEPDIR)/libuls_la-uls_misc.Plo
 	-rm -f ./$(DEPDIR)/libuls_la-uls_num.Plo

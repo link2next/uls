@@ -32,7 +32,7 @@ public class UlsTestStream {
 	public void dump_input_file(Sample1Lex sam_lex, String infile) {
 		sam_lex.pushFile(infile);
 
-		while ((tok_id=sam_lex.getToken()) != sam_lex.EOI) {
+		while ((tok_id=sam_lex.getTok()) != sam_lex.EOI) {
 			sam_lex.dumpTok("\t", "\n");
 		}
 	}
@@ -49,7 +49,7 @@ public class UlsTestStream {
 
 		try {
 			sam_lex.pushInput(in_hdr);
-			while ((tok_id=sam_lex.getToken()) != sam_lex.EOI) {
+			while ((tok_id=sam_lex.getTok()) != sam_lex.EOI) {
 				sam_lex.dumpTok("\t", "\n");
 			}
 		} finally {

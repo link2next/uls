@@ -48,10 +48,8 @@ using namespace uls::crux;
 // A template variable is composed of a name and its (string) value.
 // It can be passed to the argument of UlsIStream().
 // </brief>
-// <parm name="size">Maximum number of arguments</parm>
-uls::crux::UlsTmplList::UlsTmplList(int size)
+uls::crux::UlsTmplList::UlsTmplList()
 {
-	auwcvt = new UlsAuw();
 	hashtbl = new map<string,string>();
 	whashtbl = new map<wstring,wstring>();
 }
@@ -60,13 +58,11 @@ uls::crux::UlsTmplList::~UlsTmplList()
 {
 	delete hashtbl;
 	delete whashtbl;
-	delete auwcvt;
 }
 
 // <brief>
 // This clears the internal list of (template) variables.
 // </brief>
-// <return>none</return>
 void
 uls::crux::UlsTmplList::clear(void)
 {
@@ -79,12 +75,14 @@ uls::crux::UlsTmplList::clear(void)
 // </brief>
 // <return>true/false</return>
 bool
-uls::crux::UlsTmplList::exist(const string& tnam) const
+uls::crux::UlsTmplList::exist(const char *tnam) const
 {
 	map<string,string>::iterator it;
 	bool stat;
 
-	it = hashtbl->find(tnam);
+	if (tnam == NULL) return false;
+
+	it = hashtbl->find(string(tnam));
 	if (it != hashtbl->end()) {
 		stat = true;
 	} else {
@@ -95,12 +93,18 @@ uls::crux::UlsTmplList::exist(const string& tnam) const
 }
 
 bool
-uls::crux::UlsTmplList::exist(const wstring& wtnam)  const
+uls::crux::UlsTmplList::exist(const string& tnam) const
+{
+	return exist(tnam.c_str());
+}
+
+bool
+uls::crux::UlsTmplList::exist(const wchar_t *wtnam) const
 {
 	map<wstring,wstring>::iterator it;
 	bool stat;
 
-	it = whashtbl->find(wtnam);
+	it = whashtbl->find(wstring(wtnam));
 	if (it != whashtbl->end()) {
 		stat = true;
 	} else {
@@ -108,6 +112,12 @@ uls::crux::UlsTmplList::exist(const wstring& wtnam)  const
 	}
 
 	return stat;
+}
+
+bool
+uls::crux::UlsTmplList::exist(const wstring& wtnam) const
+{
+	return exist(wtnam.c_str());
 }
 
 // <brief>
@@ -127,17 +137,18 @@ uls::crux::UlsTmplList::length(void) const
 // </brief>
 // <parm name="tnam">the name of template variable</parm>
 // <parm name="tval">the value of the 'tnam'</parm>
-// <return>none</return>
 void
 uls::crux::UlsTmplList::insert(const char *tnam, const char *tval)
 {
-	(*hashtbl)[string(tnam)] = tval;
+	if (tnam == NULL || tval == NULL) return;
+	(*hashtbl)[string(tnam)] = string(tval);
 }
 
 void
 uls::crux::UlsTmplList::insert(const wchar_t *wtnam, const wchar_t *wtval)
 {
-	(*whashtbl)[wstring(wtnam)] = wtval;
+	if (wtnam == NULL || wtval == NULL) return;
+	(*whashtbl)[wstring(wtnam)] = wstring(wtval);
 }
 
 // <brief>
@@ -149,10 +160,12 @@ uls::crux::UlsTmplList::insert(const wchar_t *wtnam, const wchar_t *wtval)
 // <parm name="tval">the value of the 'tnam', output parameter</parm>
 // <return>tval</return>
 const char*
-uls::crux::UlsTmplList::getValue(const char*tnam)  const
+uls::crux::UlsTmplList::getValue(const char *tnam) const
 {
 	map<string,string>::iterator it;
 	const char *tval = NULL;
+
+	if (tnam == NULL) return NULL;
 
 	it = hashtbl->find(string(tnam));
 	if (it != hashtbl->end()) {
@@ -212,15 +225,16 @@ uls::crux::UlsTmplList::getValue(const wstring& wtnam, wstring& wtval) const
 	return stat;
 
 }
+
 // <brief>
 // Modify the pair <tnam,tval> in the internal list.
 // </brief>
 // <parm name="tnam">the name of template variable</parm>
 // <parm name="tval">the value of the 'tnam'</parm>
-// <return>none</return>
 bool
 uls::crux::UlsTmplList::setValue(const char *tnam, const char *tval)
 {
+	if (tnam == NULL || tval == NULL) return false;
 	insert(tnam, tval);
 	return true;
 }
@@ -234,12 +248,13 @@ uls::crux::UlsTmplList::setValue(const string& tnam, const string& tval)
 bool
 uls::crux::UlsTmplList::setValue(const wchar_t *wtnam, const wchar_t *wtval)
 {
+	const char *nstr0, *nstr1;
+
+	if (wtnam == NULL || wtval == NULL) return false;
 	insert(wtnam, wtval);
 
-	const char *nstr0, *nstr1;
 	_ULSCPP_WSTR2USTR(wtnam, nstr0, 0);
 	_ULSCPP_WSTR2USTR(wtval, nstr1, 1);
-
 	insert(nstr0, nstr1);
 
 	return true;
@@ -250,6 +265,7 @@ uls::crux::UlsTmplList::setValue(const wstring& wtnam, const wstring& wtval)
 {
 	return setValue(wtnam.c_str(), wtval.c_str());
 }
+
 // <brief>
 // Uses the structure 'uls_tmpl_list_t' to export the intenal list.
 // </brief>
@@ -297,7 +313,6 @@ uls::crux::UlsTmplList::exportTmpls(UlsTmplList& tmpl_list_exp)
 // <brief>
 // Dumps the internal list of pairs <tnam,tval> to stdout.
 // </brief>
-// <return>none</return>
 void
 uls::crux::UlsTmplList::dump(void)
 {
@@ -315,7 +330,7 @@ uls::crux::UlsTmplList::dump(void)
 // </brief>
 // <parm name="filepath">inputs of UlsLex</parm>
 void
-uls::crux::UlsIStream::initUlsIStream_ustr(const char* filepath, UlsTmplList *uls_tmpls)
+uls::crux::UlsIStream::initUlsIStream_ustr(const char *filepath, UlsTmplList *uls_tmpls)
 {
 	read_only = true;
 
@@ -330,17 +345,19 @@ uls::crux::UlsIStream::initUlsIStream_ustr(const char* filepath, UlsTmplList *ul
 }
 
 uls::crux::UlsIStream::UlsIStream(string filepath, UlsTmplList *uls_tmpls)
-	: tmpl_vars(8)
 {
-	const char *ustr;
+	const char *austr;
 
-	ustr = filepath.c_str();
-	initUlsIStream_ustr(ustr, uls_tmpls);
+#ifdef __ULS_WINDOWS__
+	_ULSCPP_ASTR2USTR(filepath.c_str(), austr, 0);
+#else
+	austr = filepath.c_str();
+#endif
+	initUlsIStream_ustr(austr, uls_tmpls);
 }
 
 
 uls::crux::UlsIStream::UlsIStream(wstring wfilepath, UlsTmplList *uls_tmpls)
-	: tmpl_vars(8)
 {
 	const char *ustr;
 
@@ -351,7 +368,6 @@ uls::crux::UlsIStream::UlsIStream(wstring wfilepath, UlsTmplList *uls_tmpls)
 // <brief>
 // The destuctor of UlsIStream.
 // </brief>
-// <return>none</return>
 uls::crux::UlsIStream::~UlsIStream()
 {
 	close();
@@ -360,7 +376,6 @@ uls::crux::UlsIStream::~UlsIStream()
 // <brief>
 // This finalizes the task of streaming and closes the output-file.
 // </brief>
-// <return>none</return>
 void
 uls::crux::UlsIStream::close(void)
 {
@@ -384,7 +399,6 @@ uls::crux::UlsIStream::getCore(void)
 // <brief>
 // Clears the list of template variables.
 // </brief>
-// <return>none</return>
 void
 uls::crux::UlsIStream::clearTmpls(void)
 {

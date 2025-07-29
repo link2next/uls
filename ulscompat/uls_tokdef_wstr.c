@@ -38,9 +38,9 @@
 #include "uls/uls_misc.h"
 
 ULS_DECL_STATIC int
-id2wstr_pair_finder(const uls_voidptr_t e, const uls_voidptr_t ptr_t)
+id2wstr_pair_finder(uls_const_voidptr_t e, uls_const_voidptr_t ptr_t)
 {
-	uls_id2wstr_pair_ptr_t pair = (uls_id2wstr_pair_ptr_t ) e;
+	uls_id2wstr_pair_ptr_t pair = (uls_id2wstr_pair_ptr_t) e;
 	int  val = *((int *) ptr_t), stat;
 
 	if (pair->tok_id < val) {
@@ -60,7 +60,7 @@ __find_widename_in_list(
 {
 	uls_id2wstr_pair_ptr_t pair;
 
-	pair = (uls_id2wstr_pair_ptr_t ) uls_bi_search((const uls_voidptr_t) uls_ptr(t),
+	pair = (uls_id2wstr_pair_ptr_t ) uls_bi_search(uls_ptr(t),
 		pair_list, pair_list_len, sizeof(uls_id2wstr_pair_t), id2wstr_pair_finder);
 
 	return pair;
@@ -86,7 +86,7 @@ __add_widename_in_list(
 
 	pair = pair_list + pair_list_len;
 	pair->tok_id = t;
-	pair->n_chars = ustr_num_wchars(sval, n_bytes, NULL);
+	pair->n_wchars = ustr_num_wchars(sval, n_bytes, NULL);
 
 	csz_init(uls_ptr(csz_wstr), -1);
 
@@ -100,6 +100,5 @@ __add_widename_in_list(
 	}
 
 	csz_deinit(uls_ptr(csz_wstr));
-
 	return pair_list;
 }

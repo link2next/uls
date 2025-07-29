@@ -50,7 +50,6 @@ __set_tmpl_value_wstr(uls_tmpl_wstr_ptr_t tmpl_ext, const wchar_t *name, const w
 	for (i=0; i<2; i++) {
 		if (wstr_list[i] == NULL) {
 			csz_reset(csz_ary[i]);
-
 		} else {
 			if ((ustr = uls_wstr2ustr(wstr_list[i], -1, csz_ary[i])) == NULL) {
 				err_wlog(L"%hs: incorrect encoding!", __func__);
@@ -217,7 +216,7 @@ uls_get_tmpl_value_wstr(uls_tmpl_list_ptr_t tmpl_list, const wchar_t *name)
 }
 
 int
-uls_set_tmpl_value_wstr(uls_tmpl_list_ptr_t tmpl_list, const wchar_t* name, const wchar_t *val)
+uls_set_tmpl_value_wstr(uls_tmpl_list_ptr_t tmpl_list, const wchar_t *name, const wchar_t *val)
 {
 	uls_tmpl_list_wstr_ptr_t ext = (uls_tmpl_list_wstr_ptr_t) tmpl_list->shell;
 	uls_tmpl_wstr_ptr_t tmpl_ext;
@@ -268,7 +267,7 @@ uls_add_tmpl_wstr(uls_tmpl_list_ptr_t tmpl_list, const wchar_t *name, const wcha
 }
 
 void
-uls_set_istream_wtag(uls_istream_ptr_t istr, const wchar_t* wtag)
+uls_set_istream_wtag(uls_istream_ptr_t istr, const wchar_t *wtag)
 {
 	char *ustr;
 	csz_str_t csz;
@@ -287,7 +286,7 @@ uls_set_istream_wtag(uls_istream_ptr_t istr, const wchar_t* wtag)
 }
 
 uls_istream_ptr_t
-uls_open_istream_file_wstr(const wchar_t* filepath)
+uls_open_istream_file_wstr(const wchar_t *filepath)
 {
 	char *ustr;
 	csz_str_t csz;
@@ -308,11 +307,11 @@ uls_open_istream_file_wstr(const wchar_t* filepath)
 
 #ifdef ULS_FDF_SUPPORT
 uls_istream_ptr_t
-uls_open_istream_filter_file_wstr(fdf_t* fdf, const wchar_t* wfilepath)
+uls_open_istream_filter_file_wstr(fdf_t* fdf, const wchar_t *wfilepath)
 {
-	char *ustr;
 	uls_istream_ptr_t hdr;
 	csz_str_t csz;
+	char *ustr;
 
 	csz_init(uls_ptr(csz), -1);
 

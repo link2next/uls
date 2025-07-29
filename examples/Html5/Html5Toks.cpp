@@ -99,13 +99,13 @@ namespace
 	// This prints to the stdout the string representation of the current token.
 	// </brief>
 	// <return>none</return>
-	void dumpToken(Html5Lex *html5lex)
+	void dump_token(Html5Lex *html5lex)
 	{
 		int t = html5lex->getTokNum();
 
-		tstring* lxm;
-		html5lex->getTokStr(&lxm);
-		LPCTSTR tstr = lxm->c_str();
+		tstring lxm;
+		html5lex->getTokStr(lxm);
+		LPCTSTR tstr = lxm.c_str();
 
 		switch (t) {
 		case Html5Lex::ID:
@@ -133,11 +133,11 @@ namespace
 	// This Executes tokenizing and dump the output to stdout.
 	// </brief>
 	// <return>none</return>
-	void dumpTokens(Html5Lex *html5lex)
+	void dump_tokens(Html5Lex *html5lex)
 	{
 		for ( ; ; ) {
-			if (html5lex->getTok() == Html5Lex::EOI) break;
-			dumpToken(html5lex);
+			if (html5lex->next() == Html5Lex::EOI) break;
+			dump_token(html5lex);
 		}
 	}
 }
@@ -162,26 +162,27 @@ _tmain(int n_targv, LPTSTR *targv)
 		return 1;
 	}
 
-	if (html5lex->setFile(input_file) < 0) {
+	if (html5lex->setInputFile(input_file) < 0) {
 		_tcerr << _T(": Can't open ") << input_file << _tendl;
 	} else {
-		dumpTokens(html5lex);
+		dump_tokens(html5lex);
 	}
 
 	delete html5lex;
 	return 0;
 }
 
-#ifndef __WINDOWS__
+#ifndef __ULS_WINDOWS__
 int
 main(int argc, char *argv[])
 {
+	uls::ArgListT targlst;
 	LPTSTR *targv;
 	int stat;
 
-	ULSCPP_GET_WARGS_LIST(argc, argv, targv);
+	ULSCPP_GET_WARGS_LIST(targlst, argc, argv, targv);
 	stat = _tmain(argc, targv);
-	ULSCPP_PUT_WARGS_LIST(argc, targv);
+	ULSCPP_PUT_WARGS_LIST(targlst);
 
 	return stat;
 }

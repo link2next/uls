@@ -103,7 +103,7 @@ ULS_QUALIFIED_METHOD(check_istr_compatibility)(uls_istream_ptr_t istr, uls_lex_p
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(make_tokpkt_seqence)(uls_lex_ptr_t uls, const char* line, uls_tmpl_pool_ptr_t tmpls_pool)
+ULS_QUALIFIED_METHOD(make_tokpkt_seqence)(uls_lex_ptr_t uls, const char *line, uls_tmpl_pool_ptr_t tmpls_pool)
 {
 	_uls_ptrtype_tool(csz_str) str_pool = uls_ptr(tmpls_pool->str_pool);
 	const char *lxm;
@@ -245,7 +245,7 @@ ULS_QUALIFIED_METHOD(uls_import_tmpls)(uls_tmpl_list_ptr_t tmpl_list, uls_lex_pt
 
 	char *str_ary;
 	int i, m, k;
-	const char* line;
+	const char *line;
 
 	if (tmpl_list == nilptr) {
 		tmpls1 = nilptr;
@@ -358,7 +358,7 @@ ULS_QUALIFIED_METHOD(uls_bind_tmpls)(uls_istream_ptr_t istr, uls_tmpl_list_ptr_t
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_fill_fd_stream)(uls_source_ptr_t isrc, char* buf, int buflen, int bufsiz)
+ULS_QUALIFIED_METHOD(uls_fill_fd_stream)(uls_source_ptr_t isrc, char *buf, int buflen, int bufsiz)
 {
 	uls_istream_ptr_t istr = (uls_istream_ptr_t) isrc->usrc;
 	int rc;
@@ -463,28 +463,28 @@ ULS_QUALIFIED_METHOD(uls_gettok_bin)(uls_lex_ptr_t uls)
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(uls_readline_buffer)(char* buf, int bufsiz)
+ULS_QUALIFIED_METHOD(uls_readline_buffer)(char *buf, int bufsiz)
 {
 	int  i;
 
-	for (i=0; i < bufsiz; i++) {
+	for (i = 0; i < bufsiz; i++) {
 		if (buf[i] == '\n') {
-			break;
+			return i;
 		}
 	}
 
-	return i;
+	return -1;
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(parse_uls_hdr)(char* line, int fd_in, uls_istream_ptr_t istr)
+ULS_QUALIFIED_METHOD(parse_uls_hdr)(char *line, int fd_in, uls_istream_ptr_t istr)
 {
 	uls_type_tool(wrd) wrdx;
 	char *wrd, filepath_buf[ULS_TEMP_FILEPATH_MAXSIZ + 5];
 
 	int fsubtype, fpos, uld_n_lines, i_lines, len2;
 	char *remap_buff, *bufptr2;
-	int remap_size, remap_n_blocks = 0;
+	int remap_size, remap_n_blocks = 0, bufsiz2;
 	FILE *fp_out;
 
 	wrdx.lptr = line;
@@ -559,14 +559,20 @@ ULS_QUALIFIED_METHOD(parse_uls_hdr)(char* line, int fd_in, uls_istream_ptr_t ist
 
 		_uls_log_(fprintf)(fp_out, "#@%s\n", uls_get_namebuf_value(istr->header.specname));
 		bufptr2 = remap_buff;
+		bufsiz2 = remap_size;
 		for (i_lines=0; i_lines < uld_n_lines; i_lines++) {
-			len2 = uls_readline_buffer(bufptr2, remap_size);
+			len2 = uls_readline_buffer(bufptr2, bufsiz2);
+			if (len2 < 0) {
+				_uls_log(err_log)("istr-hdr: No header boundary found!");
+				return -1;
+			}
 			if (len2 == 2 && bufptr2[0] == '%' && bufptr2[1] == '%') {
 				break;
 			}
 			bufptr2[len2] = '\0';
 			_uls_log_(fprintf)(fp_out, "%s\n", bufptr2);
-			 bufptr2 += len2 + 1;
+			bufptr2 += len2 + 1;
+			bufsiz2 -= len2 + 1;
 		}
 
 		uls_mfree(remap_buff);
@@ -595,7 +601,7 @@ ULS_QUALIFIED_METHOD(parse_uls_hdr)(char* line, int fd_in, uls_istream_ptr_t ist
 ULS_QUALIFIED_RETTYP(uls_istream_ptr_t)
 ULS_QUALIFIED_METHOD(uls_open_istream)(int fd)
 {
-	char linebuff[ULS_LINEBUFF_SIZ__ULS+1], *lptr;
+	char linebuff[ULS_LINEBUFF_SIZ__ULS+1], *line;
 	const char *magic_code = "#34183847-D64D-C131-D754-577215664901-ULS-STREAM\n";
 	const char *spec_name;
 	int  magic_code_len = _uls_tool_(strlen)(magic_code);
@@ -628,7 +634,6 @@ ULS_QUALIFIED_METHOD(uls_open_istream)(int fd)
 		istr->firstline[len] = '\0';
 		istr->len_firstline = len;
 
-		// in order to compare it with the UTF-BOM
 		fpos = get_rawfile_subtype(istr->firstline, istr->len_firstline, uls_ptr(parms));
 		istr->header.subtype = parms.n1;
 		istr->header.reverse = parms.n2;
@@ -659,23 +664,33 @@ ULS_QUALIFIED_METHOD(uls_open_istream)(int fd)
 
 	for ( ; ; bufptr += len + 1, bufsiz -= len + 1) {
 		len = uls_readline_buffer(bufptr, bufsiz);
-		if (len == 2 && bufptr[0] == '%' && bufptr[1] == '%') {
-			break;
+		if (len < 0) {
+			_uls_log(err_log)("istr-hdr: No header boundary found!");
+			__destroy_istream(istr);
+			return nilptr;
 		}
-		bufptr[len] = '\0';
 
-		if ((len > 0 && bufptr[0] == '#') || *(lptr = _uls_tool(skip_blanks)(bufptr)) == '\0') {
+		if (len == 0 || bufptr[0] == '#') {
 			continue;
 		}
 
-		if (parse_uls_hdr(lptr, fd, istr) < 0) {
+		if (len == 2 && bufptr[0] == '%' && bufptr[1] == '%') {
+			break;
+		}
+
+		bufptr[len] = '\0';
+		if (*(line = _uls_tool(skip_blanks)(bufptr)) == '\0') {
+			continue;
+		}
+
+		if (parse_uls_hdr(line, fd, istr) < 0) {
 			__destroy_istream(istr);
 			istr = nilptr;
 			break;
 		}
 	}
 
-	if (istr->uls == nilptr) {
+	if (istr != nilptr && istr->uls == nilptr) {
 		spec_name = uls_get_namebuf_value(istr->header.specname);
 //		err_log("Searching for '%s'...", spec_name);
 		istr->uls = uls_create(spec_name);
@@ -685,7 +700,7 @@ ULS_QUALIFIED_METHOD(uls_open_istream)(int fd)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_set_istream_tag)(uls_istream_ptr_t istr, const char* tag)
+ULS_QUALIFIED_METHOD(uls_set_istream_tag)(uls_istream_ptr_t istr, const char *tag)
 {
 	if (tag != NULL) {
 		uls_set_namebuf_value(istr->filepath, tag);
@@ -693,7 +708,7 @@ ULS_QUALIFIED_METHOD(uls_set_istream_tag)(uls_istream_ptr_t istr, const char* ta
 }
 
 ULS_QUALIFIED_RETTYP(uls_istream_ptr_t)
-ULS_QUALIFIED_METHOD(uls_open_istream_file)(const char* fpath)
+ULS_QUALIFIED_METHOD(uls_open_istream_file)(const char *fpath)
 {
 	uls_istream_ptr_t istr;
 	int fd;
@@ -762,7 +777,7 @@ ULS_QUALIFIED_METHOD(uls_open_istream_filter)(fdf_t* fdf, int fd)
 }
 
 ULS_QUALIFIED_RETTYP(uls_istream_ptr_t)
-ULS_QUALIFIED_METHOD(uls_open_istream_filter_file)(fdf_t* fdf, const char* fpath)
+ULS_QUALIFIED_METHOD(uls_open_istream_filter_file)(fdf_t* fdf, const char *fpath)
 {
 	uls_istream_ptr_t istr;
 	int  fd;
@@ -880,6 +895,22 @@ ULS_QUALIFIED_METHOD(uls_read_tok)(uls_istream_ptr_t istr, uls_ptrtype_tool(outp
 	}
 
 	return __uls_lexeme_len(uls);
+}
+
+int
+ULS_QUALIFIED_METHOD(_uls_get_raw_input_subtype)(FILE* fp)
+{
+	char linebuff[8];
+	uls_type_tool(outparam) parms;
+	int rc, fpos;
+
+	rc = (int) fread(linebuff, sizeof(char), sizeof(linebuff)-1, fp);
+	linebuff[rc] = '\0';
+
+	fpos = get_rawfile_subtype(linebuff, rc, uls_ptr(parms));
+	rewind(fp);
+
+	return fpos;
 }
 
 int

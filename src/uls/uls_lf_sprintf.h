@@ -35,7 +35,7 @@
 #define __ULS_LF_SPRINTF_H__
 
 #ifndef ULS_EXCLUDE_HFILES
-#include "uls/csz_stream.h"
+#include "uls/uls_lf_xputs.h"
 #include <stdarg.h>
 #endif
 
@@ -57,61 +57,13 @@ extern "C" {
 #define ULS_LF_N_FILLSTR 64
 
 #define ULS_LF_DFL_FLOAT_PRECISION 6
-
-#define ULS_LF_PERCPROC_object  0
-
-#define ULS_LF_PERCPROC_s       1
-#define ULS_LF_PERCPROC_c       2
-
-#define ULS_LF_PERCPROC_d       3
-#define ULS_LF_PERCPROC_u       4
-#define ULS_LF_PERCPROC_f       5
-
-#define ULS_LF_PERCPROC_ld      6
-#define ULS_LF_PERCPROC_lu      7
-#define ULS_LF_PERCPROC_lf      8
-
-#define ULS_LF_PERCPROC_lld     9
-#define ULS_LF_PERCPROC_llu     10
-#define ULS_LF_PERCPROC_llf     11
-
-#define ULS_LF_PERCPROC_Ld      12
-#define ULS_LF_PERCPROC_Lu      13
-#define ULS_LF_PERCPROC_Lf      14
-
-#define ULS_LF_PERCPROC_p       15
-
-#define ULS_LF_PERCPROC_unknown 128
-
 #define uls_get_percproc_table_ind(len) (len-1)
 
 #define ULS_LF_NO_DEFAULT 0x01
 
-ULS_DECLARE_STRUCT(lf_context);
-
-ULS_DEFINE_DELEGATE_BEGIN(lf_puts, int)(uls_voidptr_t dat, const char* str, int len);
-ULS_DEFINE_DELEGATE_END(lf_puts);
-
-ULS_DEFINE_DELEGATE_BEGIN(lf_convspec, int)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx);
-ULS_DEFINE_DELEGATE_END(lf_convspec);
 #endif // ULS_DECL_PUBLIC_TYPE
 
 #ifdef ULS_DEF_PROTECTED_TYPE
-
-#ifdef _ULS_IMPLDLL
-ULS_DEFINE_STRUCT(buf4str)
-{
-	unsigned int flags;
-	char *buf, *bufptr;
-	int bufsiz;
-};
-#endif
-
-ULS_DEFINE_STRUCT(lf_convflag)
-{
-	uls_flags_t  flags;
-	int    width, precision;
-};
 
 ULS_DEFINE_STRUCT(lf_name2proc)
 {
@@ -140,7 +92,6 @@ ULS_DEFINE_STRUCT(lf_map)
 #ifdef ULS_DEF_PUBLIC_TYPE
 ULS_DEFINE_STRUCT(lf)
 {
-	void           *x_dat;
 	uls_lf_puts_t  uls_lf_puts;
 
 	uls_mutex_struct_t mtx;
@@ -153,18 +104,9 @@ ULS_DEFINE_STRUCT(lf)
 	uls_voidptr_t shell;
 };
 
-ULS_DEFINE_STRUCT_BEGIN(lf_context)
-{
-	void           *g_dat;
-	uls_lf_convflag_t perfmt;
-	csz_str_ptr_t   numbuf1, numbuf2;
-	void           *u_dat;
-	va_list        args;
-};
-
 ULS_DEFINE_STRUCT(lf_delegate)
 {
-	uls_voidptr_t xdat;
+	int unused;
 	uls_lf_puts_t puts;
 };
 
@@ -175,8 +117,7 @@ ULS_DECL_STATIC uls_lf_map_t dfl_convspec_map;
 #endif
 
 #if defined(__ULS_LF_SPRINTF__) || defined(ULS_DECL_PRIVATE_PROC)
-ULS_DECL_STATIC void __uls_lf_sysputs(const char* msg);
-ULS_DECL_STATIC int __puts_proc_str(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, const char* str, int len);
+ULS_DECL_STATIC int __puts_proc_str(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, const char *str, int len);
 
 ULS_DECL_STATIC int fmtproc_d(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx);
 ULS_DECL_STATIC int fmtproc_u(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx);
@@ -206,30 +147,30 @@ ULS_DECL_STATIC int fmtproc_le(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls
 ULS_DECL_STATIC int fmtproc_lg(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx);
 ULS_DECL_STATIC int fmtproc_null(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx);
 
-ULS_DECL_STATIC uls_lf_name2proc_ptr_t uls_lf_bi_search(const char* keyw, int len, uls_lf_name2proc_ptr_t ary, int n_ary);
+ULS_DECL_STATIC uls_lf_name2proc_ptr_t uls_lf_bi_search(const char *keyw, int len, uls_lf_name2proc_ptr_t ary, int n_ary);
 ULS_DECL_STATIC uls_lf_convspec_t __find_convspec(const char** p_fmtptr, uls_lf_map_ptr_t map, uls_lf_context_ptr_t lf_ctx);
 ULS_DECL_STATIC uls_lf_name2proc_ptr_t __realloc_convspec_table(uls_lf_convspec_table_ptr_t tbl, int n);
 ULS_DECL_STATIC int __add_convspec_sorted(uls_lf_convspec_table_ptr_t tbl,
-	const char* percent_name, uls_lf_convspec_t proc, uls_voidptr_t user_data);
+	const char *percent_name, uls_lf_convspec_t proc, uls_voidptr_t user_data);
 ULS_DECL_STATIC int __replace_convspec_linear(uls_lf_convspec_table_ptr_t tbl,
-	const char* percent_name, uls_lf_convspec_t proc, uls_voidptr_t user_data);
+	const char *percent_name, uls_lf_convspec_t proc, uls_voidptr_t user_data);
 ULS_DECL_STATIC void load_default_convspec_map(uls_lf_map_ptr_t lf_map);
 ULS_DECL_STATIC int __uls_lf_skip_atou(const char ** p_ptr);
 #endif // ULS_DECL_PRIVATE_PROC
 
 #ifdef ULS_DECL_PROTECTED_PROC
-int uls_lf_puts_prefix(char* str, int flags);
+int uls_lf_puts_prefix(char *str, int flags);
 int uls_lf_fill_ch(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, char ch_fill, int n);
 int uls_lf_fill_numstr(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc,
-	uls_lf_convflag_ptr_t p, const char* numstr, int l_numstr);
+	uls_lf_convflag_ptr_t p, const char *numstr, int l_numstr);
 
-int uls_ieee754_double_isspecial(double x, char* nambuf);
-int uls_ieee754_longdouble_isspecial(long double x, char* nambuf);
+int uls_ieee754_double_isspecial(double x, char *nambuf);
+int uls_ieee754_longdouble_isspecial(long double x, char *nambuf);
 
 int fmtproc_s(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx);
 int fmtproc_c(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx);
 void __add_convspec_linear(uls_lf_convspec_table_ptr_t tbl,
-	char* percent_name, uls_lf_convspec_t proc, int tbl_ind);
+	char *percent_name, uls_lf_convspec_t proc, int tbl_ind);
 
 void initialize_uls_lf(void);
 void finalize_uls_lf(void);
@@ -237,7 +178,7 @@ void finalize_uls_lf(void);
 
 #ifdef ULS_DECL_PUBLIC_PROC
 ULS_DLL_EXTERN int uls_lf_fill_mbstr(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc,
-	uls_lf_convflag_ptr_t p, const char* numstr, int l_numstr, int lw_numstr);
+	uls_lf_convflag_ptr_t p, const char *numstr, int l_numstr, int lw_numstr);
 
 ULS_DLL_EXTERN int fmtproc_ws(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lf_context_ptr_t lf_ctx);
 
@@ -252,44 +193,35 @@ ULS_DLL_EXTERN void uls_lf_grab_convspec_map(uls_lf_map_ptr_t lf_map);
 ULS_DLL_EXTERN void uls_lf_ungrab_convspec_map(uls_lf_map_ptr_t lf_map);
 
 ULS_DLL_EXTERN int uls_lf_register_convspec(uls_lf_map_ptr_t lf_map,
-	const char* percent_name, uls_lf_convspec_t proc);
+	const char *percent_name, uls_lf_convspec_t proc);
 
-ULS_DLL_EXTERN int uls_lf_init(uls_lf_ptr_t uls_lf, uls_lf_map_ptr_t dst_map, uls_voidptr_t x_dat, uls_lf_puts_t puts_proc);
+ULS_DLL_EXTERN int uls_lf_init(uls_lf_ptr_t uls_lf, uls_lf_map_ptr_t dst_map, uls_lf_puts_t puts_proc);
 ULS_DLL_EXTERN void uls_lf_deinit(uls_lf_ptr_t uls_lf);
-ULS_DLL_EXTERN uls_lf_ptr_t uls_lf_create(uls_lf_map_ptr_t dst_map, uls_voidptr_t x_dat, uls_lf_puts_t puts_proc);
+ULS_DLL_EXTERN uls_lf_ptr_t uls_lf_create(uls_lf_map_ptr_t dst_map, uls_lf_puts_t puts_proc);
 ULS_DLL_EXTERN void uls_lf_destroy(uls_lf_ptr_t uls_lf);
 
 ULS_DLL_EXTERN uls_voidptr_t __uls_lf_change_gdat(uls_lf_ptr_t uls_lf, uls_voidptr_t gdat);
 ULS_DLL_EXTERN uls_voidptr_t uls_lf_change_gdat(uls_lf_ptr_t uls_lf, uls_voidptr_t gdat);
 
-ULS_DLL_EXTERN uls_voidptr_t __uls_lf_change_xdat(uls_lf_ptr_t uls_lf, uls_voidptr_t xdat);
-ULS_DLL_EXTERN uls_voidptr_t uls_lf_change_xdat(uls_lf_ptr_t uls_lf, uls_voidptr_t xdat);
-
 ULS_DLL_EXTERN void __uls_lf_change_puts(uls_lf_ptr_t uls_lf, uls_lf_delegate_ptr_t delegate);
 ULS_DLL_EXTERN void uls_lf_change_puts(uls_lf_ptr_t uls_lf, uls_lf_delegate_ptr_t delegate);
 
-ULS_DLL_EXTERN int __uls_lf_vxprintf(uls_lf_ptr_t uls_lf, const char* fmt, va_list args);
-ULS_DLL_EXTERN int uls_lf_vxprintf(uls_lf_ptr_t uls_lf, const char* fmt, va_list args);
-ULS_DLL_EXTERN int __uls_lf_xprintf(uls_lf_ptr_t uls_lf, const char* fmt, ...);
-ULS_DLL_EXTERN int uls_lf_xprintf(uls_lf_ptr_t uls_lf, const char* fmt, ...);
-
-ULS_DLL_EXTERN int __uls_lf_vxprintf_generic(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const char* fmt, va_list args);
-ULS_DLL_EXTERN int uls_lf_vxprintf_generic(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const char* fmt, va_list args);
-ULS_DLL_EXTERN int __uls_lf_xprintf_generic(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const char* fmt, ...);
-ULS_DLL_EXTERN int uls_lf_xprintf_generic(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const char* fmt, ...);
-
-ULS_DLL_EXTERN int uls_lf_puts_csz(uls_voidptr_t x_dat, const char* wrdptr, int wrdlen);
-ULS_DLL_EXTERN int uls_lf_puts_str(uls_voidptr_t x_dat, const char* wrdptr, int wrdlen);
-ULS_DLL_EXTERN int uls_lf_puts_file(uls_voidptr_t x_dat, const char* wrdptr, int wrdlen);
-ULS_DLL_EXTERN int uls_lf_puts_null(uls_voidptr_t x_dat, const char* wrdptr, int wrdlen);
+ULS_DLL_EXTERN int __uls_lf_vxprintf(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const char *fmt, va_list args);
+ULS_DLL_EXTERN int uls_lf_vxprintf(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const char *fmt, va_list args);
+ULS_DLL_EXTERN int __uls_lf_xprintf(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const char *fmt, ...);
+ULS_DLL_EXTERN int uls_lf_xprintf(uls_voidptr_t x_dat, uls_lf_ptr_t uls_lf, const char *fmt, ...);
 #endif // ULS_DECL_PUBLIC_PROC
 
 #ifdef _ULS_CPLUSPLUS
 }
 #endif
 
-#ifdef ULS_USE_WSTR
+#ifdef _ULS_USE_ULSCOMPAT
+#if defined(ULS_USE_WSTR)
 #include "uls/uls_lf_swprintf.h"
+#elif defined(ULS_USE_ASTR)
+#include "uls/uls_lf_saprintf.h"
+#endif
 #endif
 
 #endif // __ULS_LF_SPRINTF_H__

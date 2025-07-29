@@ -31,7 +31,7 @@
 
 #ifdef ULS_FDF_SUPPORT
 static int
-conglomerate_uls_files_via_filter(int fd_list, const char* cmd_flt, uls_ostream_ptr_t ostr)
+conglomerate_uls_files_via_filter(int fd_list, const char *cmd_flt, uls_ostream_ptr_t ostr)
 {
 	uls_lex_ptr_t uls = ostr->uls;
 	uls_istream_ptr_t istr;
@@ -136,7 +136,7 @@ conglomerate_files(FILE *fp_list, uls_ostream_t* ostr)
 }
 
 int
-proc_filelist(const char* tgt_dir)
+proc_filelist(const char *tgt_dir)
 {
 	int   fd_out, rc, stat=0;
 	uls_ostream_ptr_t ostr=uls_nil;
@@ -179,7 +179,7 @@ proc_filelist(const char* tgt_dir)
 			err_log("%s: not found!", filelist);
 			stat = -3;
 		} else {
-			if (ult_chdir(tgt_dir) < 0) {
+			if (uls_chdir(tgt_dir) < 0) {
 				err_log("can't change to %s", tgt_dir);
 				stat = -4;
 			} else if ((rc = conglomerate_uls_files_via_filter(fd_list, cmdline, ostr)) < 0) {
@@ -196,7 +196,7 @@ proc_filelist(const char* tgt_dir)
 			err_log("%s: not found!", filelist);
 			stat = -3;
 		} else {
-			if (ult_chdir(tgt_dir) < 0) {
+			if (uls_chdir(tgt_dir) < 0) {
 				err_log("can't change to %s", tgt_dir);
 				stat = -4;
 			} else if ((rc = conglomerate_files(fp_list, ostr)) < 0) {
@@ -210,7 +210,7 @@ proc_filelist(const char* tgt_dir)
 	uls_destroy_ostream(ostr);
 	ostr = NULL;
 
-	if (ult_chdir(home_dir) < 0) {
+	if (uls_chdir(home_dir) < 0) {
 		err_log("can't return to home-dir");
 		stat = -6;
 	}

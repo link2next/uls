@@ -34,7 +34,7 @@ ULS_QUALIFIED_METHOD(uls_version_make)(uls_version_ptr_t a, char v1, char v2, ch
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_version_encode)(const uls_version_ptr_t a, char* codstr)
+ULS_QUALIFIED_METHOD(uls_version_encode)(const uls_version_ptr_t a, char *codstr)
 {
 	codstr[0] = a->major;
 	codstr[1] = a->minor;
@@ -42,7 +42,7 @@ ULS_QUALIFIED_METHOD(uls_version_encode)(const uls_version_ptr_t a, char* codstr
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_version_decode)(char* codstr, uls_version_ptr_t a)
+ULS_QUALIFIED_METHOD(uls_version_decode)(char *codstr, uls_version_ptr_t a)
 {
 	a->major = codstr[0];
 	a->minor = codstr[1];
@@ -58,7 +58,7 @@ ULS_QUALIFIED_METHOD(uls_version_copy)(uls_version_ptr_t dst, const uls_version_
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_version_make_string)(const uls_version_ptr_t a, char* ver_str)
+ULS_QUALIFIED_METHOD(uls_version_make_string)(const uls_version_ptr_t a, char *ver_str)
 {
 	char codstr[ULS_VERSION_CODE_LEN];
 	int i, k=0, n=0;

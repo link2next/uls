@@ -35,8 +35,8 @@
 #endif
 
 ULS_DECL_STATIC ULS_QUALIFIED_RETTYP(uls_tokdef_ptr_t)
-ULS_QUALIFIED_METHOD(__twoplus_bi_search)(uls_kwtable_twoplus_ptr_t tbl,
-	const char* line_keyw, uls_ref_parray(ary,tokdef), int n_ary)
+ULS_QUALIFIED_METHOD(__twoplus_bi_search)(const char *line_keyw,
+	uls_ref_parray(ary,tokdef), int n_ary)
 {
 	uls_decl_parray_slots_init(slots_ary, tokdef, ary);
 	int   low, high, mid, cmp;
@@ -75,7 +75,7 @@ ULS_QUALIFIED_METHOD(__twoplus_bi_search)(uls_kwtable_twoplus_ptr_t tbl,
 }
 
 int
-ULS_QUALIFIED_METHOD(cmp_twoplus_by_length)(const uls_voidptr_t a, const uls_voidptr_t b)
+ULS_QUALIFIED_METHOD(cmp_twoplus_by_length)(uls_const_voidptr_t a, uls_const_voidptr_t b)
 {
 	const uls_tokdef_ptr_t e1 = (const uls_tokdef_ptr_t) a;
 	const uls_tokdef_ptr_t e2 = (const uls_tokdef_ptr_t) b;
@@ -89,7 +89,7 @@ ULS_QUALIFIED_METHOD(cmp_twoplus_by_length)(const uls_voidptr_t a, const uls_voi
 }
 
 int
-ULS_QUALIFIED_METHOD(cmp_twoplus_vx_by_keyword)(const uls_voidptr_t a, const uls_voidptr_t b)
+ULS_QUALIFIED_METHOD(cmp_twoplus_vx_by_keyword)(uls_const_voidptr_t a, uls_const_voidptr_t b)
 {
 	const uls_tokdef_ptr_t e1 = (const uls_tokdef_ptr_t) a;
 	const uls_tokdef_ptr_t e2 = (const uls_tokdef_ptr_t) b;
@@ -193,7 +193,7 @@ ULS_QUALIFIED_METHOD(is_keyword_twoplus)(uls_kwtable_twoplus_ptr_t tbl, const ch
 	}
 
 	for (e_vx_ret = nilptr; tree != nilptr; tree = tree->prev) {
-		e = __twoplus_bi_search(tbl, line, uls_ptr(tree->twoplus_sorted), tree->twoplus_sorted.n);
+		e = __twoplus_bi_search(line, uls_ptr(tree->twoplus_sorted), tree->twoplus_sorted.n);
 		if (e != nilptr) {
 			e_vx_ret = e->view;
 			break;

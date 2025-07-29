@@ -34,14 +34,14 @@
      $ sudo make install // install it using admin privilege.
 
   1) Install openjdk-15.0.1 
-  2) Replace <PREFIX> with the file path on which ULS is installed.
-    Unless it's specified, <PREFIX> will be '/usr/local'.
+  2) Replace <INST_DIR> with the file path on which ULS is installed.
+    Unless it's specified, <INST_DIR> will be '/usr/local'.
 
   3) If you want not to install the java-api of uls, specify the option '--disable-java'
        $ ./configure --disable-java
 
   4) After installation, There'll be directories named 'bin', 'lib', include', and 'share'
-       below the directory <PREFIX>.
+       below the directory <INST_DIR>.
     The 'bin' contains uls a few of utilities doing the following function.
        o ulc2class  : converts ulc-file into header file,
                    The generated file can be used in c, c++, java, or c#.

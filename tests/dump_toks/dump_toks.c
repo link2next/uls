@@ -33,9 +33,10 @@
 */
 
 #include "uls/uls_lex.h"
-#include "uls/uls_log.h"
 #include "uls/uls_fileio.h"
+#include "uls/uls_auw.h"
 #include "uls/uls_util.h"
+#include "uls/uls_log.h"
 
 #include <stdlib.h>
 #include <unistd.h>
@@ -78,7 +79,7 @@ options(int opt, LPTSTR optarg)
 		break;
 
 	case _T('m'):
-		test_mode = ult_str2int(optarg);
+		test_mode = uls_str2int(optarg);
 		break;
 
 	case _T('v'):
@@ -266,7 +267,7 @@ test_uls_xdef(LPCTSTR fpath)
 }
 
 int
-uls_fill_FILE_source(uls_source_t* isrc, char* buf, int buflen, int bufsiz)
+uls_fill_FILE_source(uls_source_t* isrc, char *buf, int buflen, int bufsiz)
 {
 	static unsigned char utf8buf[ULS_UTF8_CH_MAXLEN];
 	static int len_utf8buf;
@@ -335,20 +336,16 @@ test_uls_isrc(LPCTSTR fpath)
 
 	uls_set_tag(uls, fpath, 1);
 
-	for ( ; ; ) {
-		if ((t = uls_get_tok(uls)) == TOK_EOI || t == TOK_ERR) {
-			if (t == TOK_ERR) {
-				tokstr = uls_tokstr(uls);
-				err_log(_T("ErrorToken: %s"), tokstr);
-			}
+	for ( ; (t = uls_get_tok(uls)) != TOK_EOI; ) {
+		tokstr = uls_tokstr(uls);
+		if (t == TOK_ERR) {
+			err_log(_T("ErrorToken: %s"), tokstr);
 			stat = -1;
 			break;
 		}
 
 		uls_printf(_T("#%d(%6d) :"), uls_get_lineno(uls), t);
-		tokstr = uls_tokstr(uls);
-
-		ult_dump_utf8str(tokstr);
+		uls_dump_utf8str(tokstr);
 		uls_printf(_T("\n"));
 	}
 

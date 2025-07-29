@@ -126,7 +126,7 @@ static void usage_long(void)
 }
 
 static int
-ulc2yaml_options(int opt, char* optarg)
+ulc2yaml_options(int opt, char *optarg)
 {
 	int   stat = 0;
 
@@ -169,7 +169,7 @@ ulc2yaml_options(int opt, char* optarg)
 }
 
 static int
-parse_options(int argc, char* argv[])
+parse_options(int argc, char *argv[])
 {
 	int  i0;
 #ifdef HAVE_GETOPT
@@ -205,7 +205,7 @@ parse_options(int argc, char* argv[])
 }
 
 int
-main(int argc, char* argv[])
+main(int argc, char *argv[])
 {
 	int i0, stat=0;
 	FILE *fout;

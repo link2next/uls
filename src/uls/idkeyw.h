@@ -75,9 +75,9 @@ ULS_DEFINE_STRUCT(keyw_stat_list)
 #endif // ULS_DEF_PUBLIC_TYPE
 
 #if defined(__ULS_IDKEYW__) || defined(ULS_DECL_PRIVATE_PROC)
-ULS_DECL_STATIC int __keyw_strncmp_case_sensitive(const char* str1, const char* str2, int len);
+ULS_DECL_STATIC int __keyw_strncmp_case_sensitive(const char *str1, const char *str2, int len);
 ULS_DECL_STATIC int __keyw_hashfunc_case_sensitive(uls_hash_stat_ptr_t hs, const char *name);
-ULS_DECL_STATIC int __keyw_strncmp_case_insensitive(const char* wrd, const char* keyw, int len);
+ULS_DECL_STATIC int __keyw_strncmp_case_insensitive(const char *wrd, const char *keyw, int len);
 ULS_DECL_STATIC int __keyw_hashfunc_case_insensitive(uls_hash_stat_ptr_t hs, const char *name);
 ULS_DECL_STATIC void __init_kwtable_buckets(uls_kwtable_ptr_t tbl);
 ULS_DECL_STATIC int __export_kwtable(uls_kwtable_ptr_t tbl, uls_ref_parray(lst,keyw_stat), int n_lst);
@@ -92,18 +92,18 @@ uls_tokdef_ptr_t uls_find_kw(uls_kwtable_ptr_t tbl, uls_ptrtype_tool(outparam) p
 int uls_add_kw(uls_kwtable_ptr_t tbl, uls_tokdef_ptr_t e);
 
 int sizeof_kwtable(uls_kwtable_ptr_t tbl);
-uls_tokdef_ptr_t is_keyword_idstr(uls_kwtable_ptr_t tbl, const char* keyw, int l_keyw);
+uls_tokdef_ptr_t is_keyword_idstr(uls_kwtable_ptr_t tbl, const char *keyw, int l_keyw);
 #endif
 
 #ifdef ULS_DECL_PUBLIC_PROC
-int keyw_stat_comp_by_keyw(const uls_voidptr_t a, const uls_voidptr_t b);
+int keyw_stat_comp_by_keyw(uls_const_voidptr_t a, uls_const_voidptr_t b);
 
 ULS_DLL_EXTERN void uls_init_hash_stat(uls_hash_stat_ptr_t hs);
 ULS_DLL_EXTERN void uls_deinit_hash_stat(uls_hash_stat_ptr_t hs);
 ULS_DLL_EXTERN void uls_copy_hash_stat(uls_hash_stat_ptr_t hs_src,
 	uls_hash_stat_ptr_t hs_dst);
 
-ULS_DLL_EXTERN uls_hashfunc_t uls_get_hashfunc(const char* hashname, int case_insensitive);
+ULS_DLL_EXTERN uls_hashfunc_t uls_get_hashfunc(const char *hashname, int case_insensitive);
 ULS_DLL_EXTERN uls_keyw_stat_list_ptr_t ulc_export_kwtable(uls_kwtable_ptr_t tbl);
 ULS_DLL_EXTERN void ulc_free_kwstat_list(uls_keyw_stat_list_ptr_t kwslst);
 #endif

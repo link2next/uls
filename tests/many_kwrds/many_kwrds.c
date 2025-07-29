@@ -33,9 +33,10 @@
 */
 
 #include "uls/uls_lex.h"
-#include "uls/uls_log.h"
-#include "uls/uls_util.h"
 #include "uls/uls_fileio.h"
+#include "uls/uls_auw.h"
+#include "uls/uls_util.h"
+#include "uls/uls_log.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -76,7 +77,7 @@ options(int opt, LPTSTR optarg)
 		break;
 
 	case _T('m'):
-		test_mode = ult_str2int(optarg);
+		test_mode = uls_str2int(optarg);
 		break;
 
 	case _T('v'):
@@ -120,7 +121,7 @@ proc_file(LPCTSTR fpath)
 			break;
 		}
 
-		uls_set_line(sample_lex, filebuff, ult_str_length(filebuff), 0);
+		uls_set_line(sample_lex, filebuff, uls_str_length(filebuff), 0);
 		uls_set_lineno(sample_lex, ++lno);
 
 		if (uls_get_tok(sample_lex) != TOK_EOI) {
@@ -138,7 +139,7 @@ _tmain(int n_targv, LPTSTR *targv)
 {
 	int i, i0;
 
-	progname = uls_split_filepath(targv[0], NULL);
+	progname = uls_filename(targv[0], NULL);
 	config_name = _T("sample.ulc");
 	input_file = _T("input1.txt");
 

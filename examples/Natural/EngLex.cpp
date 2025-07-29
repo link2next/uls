@@ -159,7 +159,7 @@ EngLex::expect_number(void)
 	tstring lxm;
 
 	expect(NUM);
-	EngLexBasis::getLexeme(lxm);
+	EngLexBasis::getTokStr(lxm);
 	num = LexemeAsInt(lxm);
 
 	tokbuf.append(num);
@@ -173,8 +173,7 @@ void
 EngLex::get_token(void)
 {
 	int tok, len;
-	bool is_quote;
-	tstring *lxm;
+	tstring lxm;
 	LPCTSTR ptr;
 	uls_wch_t wch;
 
@@ -185,32 +184,32 @@ EngLex::get_token(void)
 
 	tokbuf.clear();
 
-	tok = EngLexBasis::getTok();
-	UlsLex::getTokStr(&lxm);
+	tok = EngLexBasis::next();
+	UlsLex::getTokStr(lxm);
 
 	if (tok != NUM) {
 		tok_id = tok;
-		tok_str = *lxm;
+		tok_str = lxm;
 		return;
 	}
 
 	expect_number();
 
-	wch = EngLexBasis::peekCh(&is_quote);
+	wch = peekChar();
 	if (isalpha(wch)) {
-		tok = EngLexBasis::getTok();
+		tok = EngLexBasis::next();
 
-		ptr = (LPCTSTR) lxm->c_str();
-	 	len = (int) lxm->length();
+		ptr = (LPCTSTR) lxm.c_str();
+	 	len = (int) lxm.length();
 
 	 	tok = WORD;
 	 	tokbuf.append(ptr, len);
 	}
 
 	if (tok == NONE) {
-		tok = EngLexBasis::getTok();
-		ptr = (LPCTSTR) lxm->c_str();
-	 	len = (int) lxm->length();
+		tok = EngLexBasis::next();
+		ptr = (LPCTSTR) lxm.c_str();
+	 	len = (int) lxm.length();
 	 	tokbuf.append(ptr, len);
 	}
 
@@ -219,7 +218,7 @@ EngLex::get_token(void)
 }
 
 int
-EngLex::getTok(void)
+EngLex::next(void)
 {
 	get_token();
 	EngLexBasis::setTok(tok_id, tok_str);
@@ -233,7 +232,7 @@ EngLex::getTokNum(void)
 }
 
 void
-EngLex::ungetTok(void)
+EngLex::ungetCurrentToken(void)
 {
 	tok_ungot = true;
 }

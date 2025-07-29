@@ -112,7 +112,7 @@ ULS_DEFINE_STRUCT_BEGIN(input)
 #endif // ULS_DEF_PUBLIC_TYPE
 
 #ifdef ULS_DECL_PRIVATE_PROC
-ULS_DECL_STATIC _ULS_INLINE int __input_space_proc(const char* ch_ctx, _uls_ptrtype_tool(csz_str) ss_dst, uls_ptrtype_tool(outparam) parms);
+ULS_DECL_STATIC _ULS_INLINE int __input_space_proc(const char *ch_ctx, _uls_ptrtype_tool(csz_str) ss_dst, uls_ptrtype_tool(outparam) parms);
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC
@@ -121,7 +121,7 @@ void uls_deinit_commtype(uls_commtype_ptr_t qmt);
 
 int input_skip_comment(uls_commtype_ptr_t cmt, uls_input_ptr_t inp, uls_ptrtype_tool(outparam) parms);
 int input_quote_proc(uls_input_ptr_t inp, uls_quotetype_ptr_t qmt, _uls_ptrtype_tool(csz_str) ss_dst, uls_ptrtype_tool(outparam) parms);
-int input_space_proc(const char* ch_ctx, uls_input_ptr_t inp, _uls_ptrtype_tool(csz_str) ss_dst, uls_ptrtype_tool(outparam) parms0);
+int input_space_proc(const char *ch_ctx, uls_input_ptr_t inp, _uls_ptrtype_tool(csz_str) ss_dst, uls_ptrtype_tool(outparam) parms0);
 
 void uls_init_isource(uls_source_ptr_t isrc);
 void uls_deinit_isource(uls_source_ptr_t isrc);
@@ -148,10 +148,10 @@ int uls_resize_rawbuf(uls_input_ptr_t inp, int delta);
 int uls_input_refill_null(uls_input_ptr_t inp, int n_req_bytes);
 int uls_input_refill_buffer(uls_input_ptr_t inp, int n_req_bytes);
 
-int uls_init_line_in_input(uls_input_ptr_t inp, const char* line, int n_bytes, int ipos);
+int uls_init_line_in_input(uls_input_ptr_t inp, const char *line, int n_bytes, int ipos);
 void uls_ungrab_linecheck(uls_source_ptr_t isrc);
 
-int uls_fill_null_source(uls_source_ptr_t isrc, char* buf, int buflen, int bufsiz);
+int uls_fill_null_source(uls_source_ptr_t isrc, char *buf, int buflen, int bufsiz);
 void uls_ungrab_null_source(uls_source_ptr_t isrc);
 
 int uls_fill_fd_isrc_utf8(uls_source_ptr_t isrc, char *buf, int buflen, int bufsiz);

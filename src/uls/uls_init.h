@@ -36,7 +36,7 @@
 #define __ULS_INIT_H__
 
 #ifndef ULS_EXCLUDE_HFILES
-#include "uls_type.h"
+#include "uls/uls_type.h"
 #endif
 
 #ifdef _ULS_CPLUSPLUS
@@ -46,9 +46,6 @@ extern "C" {
 #if defined(__ULS_INIT__) || defined(ULS_DECL_PRIVATE_PROC)
 ULS_DECL_STATIC int __initialize_uls(void);
 ULS_DECL_STATIC void __finalize_uls(void);
-#ifndef ULS_WINDOWS
-ULS_DECL_STATIC int set_uls_locale(void);
-#endif
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC

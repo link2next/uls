@@ -47,7 +47,7 @@ ULS_QUALIFIED_METHOD(uld_calc_filebuff_size)(int filesize)
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(comp_vx_by_toknam)(const uls_voidptr_t a, const uls_voidptr_t b)
+ULS_QUALIFIED_METHOD(comp_vx_by_toknam)(uls_const_voidptr_t a, uls_const_voidptr_t b)
 {
 	const uls_tokdef_vx_ptr_t e1 = (const uls_tokdef_vx_ptr_t) a;
 	const uls_tokdef_vx_ptr_t e2 = (const uls_tokdef_vx_ptr_t) b;
@@ -56,7 +56,7 @@ ULS_QUALIFIED_METHOD(comp_vx_by_toknam)(const uls_voidptr_t a, const uls_voidptr
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(srch_vx_by_toknam)(const uls_voidptr_t a, const uls_voidptr_t b)
+ULS_QUALIFIED_METHOD(srch_vx_by_toknam)(uls_const_voidptr_t a, uls_const_voidptr_t b)
 {
 	const uls_ptrtype_tool(outparam) parms = (const uls_ptrtype_tool(outparam)) b;
 	const char *name = parms->lptr;
@@ -147,7 +147,7 @@ ULS_QUALIFIED_METHOD(uld_pars_line)(uls_ptrtype_tool(wrd) wrdx, uld_line_ptr_t t
 }
 
 int
-ULS_QUALIFIED_METHOD(uld_proc_line)(char* lptr, uls_lex_ptr_t uls, int n2_vx_namelist)
+ULS_QUALIFIED_METHOD(uld_proc_line)(char *lptr, uls_lex_ptr_t uls, int n2_vx_namelist)
 {
 	int stat = 0;
 	uls_tokdef_vx_ptr_t e_vx;
@@ -185,7 +185,7 @@ ULS_QUALIFIED_METHOD(uld_proc_line)(char* lptr, uls_lex_ptr_t uls, int n2_vx_nam
 }
 
 ULS_QUALIFIED_RETTYP(uls_tokdef_vx_ptr_t)
-ULS_QUALIFIED_METHOD(uld_find_tokdef_vx)(uls_lex_ptr_t uls, int n_slots_vx, const char* name)
+ULS_QUALIFIED_METHOD(uld_find_tokdef_vx)(uls_lex_ptr_t uls, int n_slots_vx, const char *name)
 {
 	uls_decl_parray_slots_init(slots_vx, tokdef_vx, uls_ptr(uls->tokdef_vx_array));
 	uls_tokdef_vx_ptr_t e_vx;
@@ -440,7 +440,7 @@ ULS_QUALIFIED_METHOD(uld_change_tok_id)(uls_tokdef_vx_ptr_t e_vx, int tok_id)
 }
 
 int
-ULS_QUALIFIED_METHOD(uld_change_tok_names)(uls_tokdef_vx_ptr_t e_vx, const char* name2, const char *line_aliases)
+ULS_QUALIFIED_METHOD(uld_change_tok_names)(uls_tokdef_vx_ptr_t e_vx, const char *name2, const char *line_aliases)
 {
 	if (name2 != NULL && uls_change_tokdef_vx_name(e_vx, NULL, name2) < 0) {
 		return -1;

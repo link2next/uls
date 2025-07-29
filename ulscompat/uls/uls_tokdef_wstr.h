@@ -35,7 +35,7 @@
 #define __ULS_TOKDEF_WSTR_H__
 
 #include "uls/uls_auw.h"
-#ifdef _ULS_INTERNAL_USE_ONLY
+#ifdef _ULSCOMPAT_INTERNALLY_USES
 #include "uls/uls_tokdef.h"
 #endif
 
@@ -45,10 +45,10 @@ extern "C" {
 
 ULS_DEFINE_STRUCT(id2wstr_pair)
 {
-  int     tok_id;
-  int     n_chars;
-  wchar_t *wstr;
-  int     wlen;
+	int     tok_id;
+	int     n_wchars;
+	wchar_t *wstr;
+	int     wlen;
 };
 
 uls_id2wstr_pair_ptr_t __find_widename_in_list(uls_id2wstr_pair_ptr_t pair_list, int pair_list_len, int t);

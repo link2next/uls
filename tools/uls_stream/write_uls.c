@@ -86,7 +86,7 @@ print_tmpl_stream_file(uls_ostream_t *ostr, uls_lex_ptr_t uls)
 }
 
 static int
-uls_start_stream_filepath(uls_ostream_t *ostr, const char* fpath, const char* filter)
+uls_start_stream_filepath(uls_ostream_t *ostr, const char *fpath, const char *filter)
 {
 	uls_lex_ptr_t uls;
 	uls_istream_ptr_t istr;

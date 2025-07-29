@@ -57,7 +57,6 @@ uls_init_parms_emit_wstr(uls_parms_emit_ptr_t emit_parm,
 	for (i=0; i < N_PARMS_EMIT_WSTR; i++) {
 		if (wext->wrdlst[i] == NULL) {
 			wext->ustr[i] = NULL;
-
 		} else {
 			csz_init(wext->csz_wrd_ary + i, -1);
 			if ((wext->ustr[i] = uls_wstr2ustr(wext->wrdlst[i], -1, wext->csz_wrd_ary + i)) == NULL) {

@@ -30,7 +30,7 @@ public class UlsDump {
 	public void test_basic(Sample1Lex sam_lex) {
 		sam_lex.pushInput("Hello Java 1.8 world\n\t\n");
 
-		while (sam_lex.getToken() != sam_lex.EOI) {
+		while (sam_lex.getTok() != sam_lex.EOI) {
 			sam_lex.dumpTok("\t", "\n");
 		}
 	}
@@ -40,7 +40,7 @@ public class UlsDump {
 
 		sam_lex.pushFile(filename);
 
-		while ((tok_id=sam_lex.getToken()) != sam_lex.EOI) {
+		while ((tok_id=sam_lex.getTok()) != sam_lex.EOI) {
 			if (tok_id == sam_lex.NUMBER) {
 
 				if (sam_lex.isLexemeReal()) {

@@ -31,7 +31,8 @@
 */
 
 #include "uls/UlsUtils.h"
-#include <uls/uls_auw.h>
+#include "uls/UlsAuw.h"
+
 #include <uls/uls_fileio.h>
 #include <uls/uls_log.h>
 
@@ -40,175 +41,6 @@
 #include <memory.h>
 
 using namespace std;
-using namespace uls::crux;
-//
-//
-// UlsAuw
-//
-//
-UlsAuw::UlsAuw(int size)
-{
-	if (size < 0) {
-		size = ULSCPP_NUM_CSZ_BUFFS;
-	}
-
-	auwstr_buf = (csz_str_t *) malloc(size * sizeof(csz_str_t));
-	siz_auwstr_buf = size;
-
-	for (int i = 0; i < siz_auwstr_buf; i++) {
-		csz_init(auwstr_buf + i, ULSCPP_DFL_CSZ_BUFFSIZE);
-	}
-}
-
-// <brief>
-// The destructor of UlsLex.
-// </brief>
-// <return>none</return>
-UlsAuw::~UlsAuw()
-{
-	int i;
-
-	for (i = 0; i < siz_auwstr_buf; i++) {
-		csz_deinit(auwstr_buf + i);
-	}
-
-	free(auwstr_buf);
-}
-
-char *
-UlsAuw::wstr2mbstr(const wchar_t *wstr, int mode, int slot_no)
-{
-	char *mbstr2;
-
-	if (slot_no >= siz_auwstr_buf) {
-		err_panic("Internal error slot_no = %d/%d", slot_no, siz_auwstr_buf);
-	}
-
-	if (mode == CVT_MBSTR_USTR) {
-		mbstr2 = uls_wstr2ustr(wstr, -1, auwstr_buf + slot_no);
-	} else {
-		mbstr2 = NULL;
-	}
-
-	return mbstr2;
-}
-
-wchar_t *
-UlsAuw::mbstr2wstr(const char *mbstr, int mode, int slot_no)
-{
-	wchar_t *wstr2;
-
-	if (slot_no >= siz_auwstr_buf) {
-		err_panic("Internal error slot_no = %d/%d", slot_no, siz_auwstr_buf);
-	}
-
-	if (mode == CVT_MBSTR_USTR) {
-		wstr2 = uls_ustr2wstr(mbstr, -1, auwstr_buf + slot_no);
-	} else {
-		wstr2 = NULL;
-	}
-
-	return wstr2;
-}
-
-int
-UlsAuw::get_slot_len(int slot_no)
-{
-	if (slot_no >= siz_auwstr_buf) {
-		err_panic("Internal error slot_no = %d/%d", slot_no, siz_auwstr_buf);
-	}
-
-	return auwstr_buf[slot_no].len;
-}
-
-// <brief>
-// This is a constructor of ArgListW
-// </brief>
-ArgListW::ArgListW()
-{
-	wargs = NULL;
-	n_wargs = 0;
-}
-
-// <brief>
-// The destructor of ArgListW
-// </brief>
-ArgListW::~ArgListW()
-{
-	reset();
-}
-
-// <brief>
-// convert the list of string to wide strings.
-// </brief>
-// <parm name="args">list of string</parm>
-// <parm name="n_args"># of strings in the list</parm>
-// <return>list of wide-char string</return>
-bool
-ArgListW::setWArgList(char **args, int n_args)
-{
-	reset();
-
-	wchar_t *wstr;
-	int wlen;
-
-	if (n_args <= 0) {
-		return false;
-	}
-
-	UlsAuw *auw_converter = new UlsAuw(n_args);
-
-	n_wargs = n_args;
-	wargs = (wchar_t **) uls_malloc(n_args * sizeof(wchar_t *));
-
-	for (int i=0; i < n_args; i++) {
-		wstr = auw_converter->mbstr2wstr(args[i], UlsAuw::CVT_MBSTR_USTR, i);
-		wlen = auw_converter->get_slot_len(i) / sizeof(wchar_t);
-		wargs[i] = (wchar_t *) uls_malloc((wlen + 1) * sizeof(wchar_t));
-		uls_memcopy(wargs[i], wstr, wlen * sizeof(wchar_t));
-		wargs[i][wlen] = L'\0';
-	}
-
-	delete auw_converter;
-	return true;
-}
-
-wchar_t*
-ArgListW::getWArg(int i)
-{
-	if (i >= n_wargs) {
-		return NULL;
-	}
-
-	return wargs[i];
-}
-
-wchar_t **
-ArgListW::exportWArgs(int *ptr_n_args)
-{
-	wchar_t **wlist = wargs;
-
-	if (ptr_n_args != NULL) {
-		*ptr_n_args = n_wargs;
-	}
-
-	wargs = NULL;
-	n_wargs = 0;
-
-	return wlist;
-}
-
-void
-ArgListW::reset()
-{
-	int i;
-
-	for (i=0; i < n_wargs; i++) {
-		uls_mfree(wargs[i]);
-	}
-
-	uls_mfree(wargs);
-}
 
 void
 uls::memcopy(void *dst, const void *src, int n)
@@ -254,7 +86,7 @@ uls::strFindIndex(const char *line, char ch0)
 }
 
 int
-uls::strFindIndex(const wchar_t* wline, wchar_t wch0)
+uls::strFindIndex(const wchar_t *wline, wchar_t wch0)
 {
 	wchar_t wch;
 	int i;
@@ -268,83 +100,244 @@ uls::strFindIndex(const wchar_t* wline, wchar_t wch0)
 }
 
 int
+uls::strToInt(const char *str)
+{
+	int i, minus, n = 0;
+	char ch;
+
+	if (str[0] == '-') {
+		minus = 1;
+		i = 1;
+	} else {
+		minus = 0;
+		i = 0;
+	}
+
+	for ( ; ; i++) {
+		if ((ch=str[i]) > '9' || ch < '0')
+			break;
+		n = ch - '0' + n * 10;
+	}
+
+	if (minus) n = -n;
+	return n;
+}
+
+int
+uls::strToInt(const wchar_t *wstr)
+{
+	int i, minus, n = 0;
+	wchar_t wch;
+
+	if (wstr[0] == L'-') {
+		minus = 1;
+		i = 1;
+	} else {
+		minus = 0;
+		i = 0;
+	}
+
+	for ( ; ; i++) {
+		if ((wch=wstr[i]) > L'9' || wch < L'0')
+			break;
+		n = wch - L'0' + n * 10;
+	}
+
+	if (minus) n = -n;
+	return n;
+}
+
+int
 uls::direntExist(const char *fpath)
 {
-	return uls_dirent_exist(fpath);
+	int stat = 0;
+	csz_str_t csz;
+	const char *austr;
+
+	if (fpath == NULL) return -1;
+
+	csz_init(uls_ptr(csz), -1);
+
+#ifdef __ULS_WINDOWS__
+	austr = uls_astr2ustr(fpath, -1, uls_ptr(csz));
+#else
+	austr = fpath;
+#endif
+	if (austr == NULL) {
+		stat = -1;
+	} else {
+		stat = uls_dirent_exist(austr);
+	}
+
+	csz_deinit(uls_ptr(csz));
+	return stat;
 }
 
 int
 uls::direntExist(const wchar_t *wfpath)
 {
+	int  stat = 0;
 	csz_str_t csz;
 	char *ustr;
-	int  rval;
+
+	if (wfpath == NULL) return -1;
 
 	csz_init(uls_ptr(csz), -1);
 
 	if ((ustr = uls_wstr2ustr(wfpath, -1, uls_ptr(csz))) == NULL) {
-		rval = -1;
+		stat = -1;
 	} else {
-		rval = uls_dirent_exist(ustr);
+		stat = uls_dirent_exist(ustr);
 	}
 
 	csz_deinit(uls_ptr(csz));
-	return rval;
+	return stat;
 }
 
 FILE*
 uls::fileOpenReadolnly(const char *fpath)
 {
-	return fopen(fpath, "r");
+	FILE *fp;
+
+	if (fpath == NULL) {
+		fp = NULL;
+	} else {
+		fp = fopen(fpath, "rb");
+	}
+
+	return fp;
 }
 
 FILE*
 uls::fileOpenReadolnly(const wchar_t *wfpath)
 {
 	csz_str_t csz;
-	char *ustr;
+	char *austr;
 	FILE *fp;
 
-	csz_init(uls_ptr(csz), -1);
+	if (wfpath == NULL) return NULL;
 
-	if ((ustr = uls_wstr2ustr(wfpath, -1, uls_ptr(csz))) == NULL) {
+	csz_init(uls_ptr(csz), -1);
+#ifdef __ULS_WINDOWS__
+	austr = uls_wstr2astr(wfpath, -1, uls_ptr(csz));
+#else
+	austr = uls_wstr2ustr(wfpath, -1, uls_ptr(csz));
+#endif
+	if (austr == NULL) {
 		fp = NULL;
 	} else {
-		fp = fileOpenReadolnly(ustr);
+		fp = fileOpenReadolnly(austr);
 	}
 
 	csz_deinit(uls_ptr(csz));
 	return fp;
 }
 
-
-wchar_t**
-uls::getWargList(char **argv, int n_argv)
+FILE*
+uls::fileOpenWriteolnly(const char *fpath)
 {
-	wchar_t **wargv;
+	FILE *fp;
 
-	uls_warg_list_t wlist;
-
-	uls_init_warg_list(&wlist);
-	uls_set_warg_list(&wlist, argv, n_argv);
-
-	wargv = uls_export_warg_list(&wlist, NULL);
-	uls_deinit_warg_list(&wlist);
-
-	return wargv;
-
-}
-
-void
-uls::putWargList(wchar_t **wargv, int n_wargv)
-{
-	int i;
-
-	for (i=0; i < n_wargv; i++) {
-		uls_mfree(wargv[i]);
+	if (fpath == NULL) {
+		fp = NULL;
+	} else {
+		fp = fopen(fpath, "wb");
 	}
 
-	uls_mfree(wargv);
+	return fp;
+}
+
+FILE*
+uls::fileOpenWriteolnly(const wchar_t *wfpath)
+{
+	csz_str_t csz;
+	char *austr;
+	FILE *fp;
+
+	if (wfpath == NULL) return NULL;
+
+	csz_init(uls_ptr(csz), -1);
+#ifdef __ULS_WINDOWS__
+	austr = uls_wstr2astr(wfpath, -1, uls_ptr(csz));
+#else
+	austr = uls_wstr2ustr(wfpath, -1, uls_ptr(csz));
+#endif
+	if (austr == NULL) {
+		fp = NULL;
+	} else {
+		fp = fileOpenWriteolnly(austr);
+	}
+
+	csz_deinit(uls_ptr(csz));
+	return fp;
+}
+
+char*
+uls::getFilename(const char *filepath, int* len_fname)
+{
+	const char *ptr, *ptr0;
+	const char *filename;
+	int  len_filename, len, i;
+	char  ch;
+
+	if (filepath == NULL) return NULL;
+	for (ptr0 = NULL, ptr = filepath; (ch=*ptr) != '\0'; ptr++) {
+		if (ch == ULS_FILEPATH_DELIM) ptr0 = ptr;
+	}
+
+	if (ptr0 != NULL) {
+		filename = ptr0 + 1;
+	} else {
+		filename = filepath;
+	}
+
+	len_filename = len = strlen(filename);
+	for (i = len_filename - 1; i >= 0; i--) {
+		if (filename[i] == '.') {
+			len = i;
+			break;
+		}
+	}
+
+	if (len_fname != NULL) {
+		*len_fname = len;
+	}
+
+	return (char *) filename;
+}
+
+wchar_t*
+uls::getFilename(const wchar_t *wfilepath, int* len_fname)
+{
+	const wchar_t *ptr, *ptr0;
+	const wchar_t *wfilename;
+	int  len_wfilename, len, i;
+	wchar_t  wch;
+
+	if (wfilepath == NULL) return NULL;
+	for (ptr0 = NULL, ptr = wfilepath; (wch=*ptr) != L'\0'; ptr++) {
+		if (wch == ULS_FILEPATH_DELIM) ptr0 = ptr;
+	}
+
+	if (ptr0 != NULL) {
+		wfilename = ptr0 + 1;
+	} else {
+		wfilename = wfilepath;
+	}
+
+	len_wfilename = len = strLength(wfilename);
+	for (i = len_wfilename - 1; i >= 0; i--) {
+		if (wfilename[i] == '.') {
+			len = i;
+			break;
+		}
+	}
+
+	if (len_fname != NULL) {
+		*len_fname = len;
+	}
+
+	return (wchar_t *) wfilename;
 }
 
 int
@@ -363,8 +356,8 @@ uls::parseCommandOptions(int n_args, char *args[], const char *optfmt, uls::optp
 				return 0; // call usage();
 			}
 
-			if ((rc = strFindIndex(optfmt, opt)) < 0) {
-				_uls_log(err_log)("parseCommandOptions: undefined option -%c", opt);
+			if ((rc = strFindIndex(optfmt, (char) opt)) < 0) {
+				err_log("parseCommandOptions: undefined option -%c", opt);
 				return -1;
 			}
 
@@ -375,13 +368,13 @@ uls::parseCommandOptions(int n_args, char *args[], const char *optfmt, uls::optp
 				} else if (k+1 < n_args && args[k+1][0] != '-') {
 					optarg = args[++k];
 				} else {
-					_uls_log(err_log)("parseCommandOptions: option -%c requires an arg.", opt);
+					err_log("parseCommandOptions: option -%c requires an arg.", opt);
 					return -1;
 				}
 
 				if ((rc = proc(opt, optarg)) != 0) {
 					if (rc > 0) rc = 0;
-					else _uls_log(err_log)("An error in processing the option -%c, %s.", opt, optarg);
+					else err_log("An error in processing the option -%c, %s.", opt, optarg);
 					return rc;
 				}
 				break;
@@ -390,7 +383,7 @@ uls::parseCommandOptions(int n_args, char *args[], const char *optfmt, uls::optp
 				optarg = nullbuff;
 				if ((rc = proc(opt, optarg)) != 0) {
 					if (rc > 0) rc = 0;
-					else _uls_log(err_log)("parseCommandOptions: error in -%c.", opt);
+					else err_log("parseCommandOptions: error in -%c.", opt);
 					return rc;
 				}
 				j++;
@@ -417,8 +410,8 @@ uls::parseCommandOptions(int n_args, wchar_t *args[], const wchar_t *optfmt, wop
 				return 0; // call usage();
 			}
 
-			if ((rc = strFindIndex(optfmt, opt)) < 0) {
-				_uls_log(err_log)("parseCommandOptions: undefined option -%c", opt);
+			if ((rc = strFindIndex(optfmt, (wchar_t) opt)) < 0) {
+				err_log("parseCommandOptions: undefined option -%c", opt);
 				return -1;
 			}
 
@@ -429,13 +422,13 @@ uls::parseCommandOptions(int n_args, wchar_t *args[], const wchar_t *optfmt, wop
 				} else if (k+1 < n_args && args[k+1][0] != '-') {
 					optarg = args[++k];
 				} else {
-					_uls_log(err_log)("parseCommandOptions: option -%c requires an arg.", opt);
+					err_log("parseCommandOptions: option -%c requires an arg.", opt);
 					return -1;
 				}
 
 				if ((rc = wproc(opt, optarg)) != 0) {
 					if (rc > 0) rc = 0;
-					else _uls_log(err_log)("Error in processing the option -%c, %s.", opt, optarg);
+					else err_log("Error in processing the option -%c, %s.", opt, optarg);
 					return rc;
 				}
 				break;
@@ -444,7 +437,7 @@ uls::parseCommandOptions(int n_args, wchar_t *args[], const wchar_t *optfmt, wop
 				optarg = nullbuff;
 				if ((rc = wproc(opt, optarg)) != 0) {
 					if (rc > 0) rc = 0;
-					else _uls_log(err_log)("parseCommandOptions: error in -%c.", opt);
+					else err_log("parseCommandOptions: error in -%c.", opt);
 					return rc;
 				}
 				j++;

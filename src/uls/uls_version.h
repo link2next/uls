@@ -54,10 +54,10 @@ ULS_DLL_EXTERN void uls_deinit_version(uls_version_ptr_t a);
 
 ULS_DLL_EXTERN void uls_version_make(uls_version_ptr_t a,
 	char v1, char v2, char v3);
-ULS_DLL_EXTERN void uls_version_encode(const uls_version_ptr_t a, char* codstr);
-ULS_DLL_EXTERN void uls_version_decode(char* codstr, uls_version_ptr_t a);
+ULS_DLL_EXTERN void uls_version_encode(const uls_version_ptr_t a, char *codstr);
+ULS_DLL_EXTERN void uls_version_decode(char *codstr, uls_version_ptr_t a);
 ULS_DLL_EXTERN void uls_version_copy(uls_version_ptr_t dst, const uls_version_ptr_t src);
-ULS_DLL_EXTERN int uls_version_make_string(const uls_version_ptr_t a, char* ver_str);
+ULS_DLL_EXTERN int uls_version_make_string(const uls_version_ptr_t a, char *ver_str);
 ULS_DLL_EXTERN int uls_version_cmp_code(const uls_version_ptr_t a, const uls_version_ptr_t b);
 ULS_DLL_EXTERN int uls_version_pars_str(const char *lptr, uls_version_ptr_t a);
 #endif

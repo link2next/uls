@@ -1,3 +1,17 @@
+﻿
+  v1.10
+  -----------
+    o The support for ANSI/WCHAR strings for the C++ classes.
+        Furthermore, the support is restored for C API as well.
+        The MS-MBCS or Unicode can be choosen in the project property of VisualStduio
+            in common way.
+    o The api of ulscpp is amended.
+        The version of ulscpp is NOT compatible with the previous one.
+            Refer to the user-guide(v0.10) for more information.
+    o Reinforced the encoding of strings:
+        a) The programs in tools(ulc2class...) accept ANSI-encoded strings as arguments in the command line.
+        b) The input files should be ANSI-encoded by default on Windows.
+        c) The output files by uls are ANSI-encoded on Windows.
 
   v1.9.7
   -----------
@@ -5,7 +19,7 @@
     o Fixed the mismatch between the class constant and toknum_*
         in the class UlsLex when using uld-files 
     o Fixed a memory error in running HelloUlsDot.exe
-    o Fixed the compile the error in ulsjni on Linux
+    o Fixed the compile the error in ulsjni 
 
   v1.9.6
   -----------

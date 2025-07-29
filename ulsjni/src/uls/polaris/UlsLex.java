@@ -66,12 +66,11 @@ public class UlsLex implements AutoCloseable {
 	private static native String numberSuffix(Object juls);
 	private static native void expect(Object juls, int tokExpected);
 
-	private static native void ungetStr(Object juls, String str);
-	private static native void ungetTok(Object juls, String lxm, int tokid);
-	private static native void ungetCh(Object juls, int ch);
+	private static native boolean ungetStr(Object juls, String str);
+	private static native boolean ungetTok(Object juls, int tokid, String lxm);
+	private static native boolean ungetChar(Object juls, int ch);
 
 	private static native void dumpTok(Object juls, String pfx, String suff);
-	private static native String tok2keyw(Object juls, int tokid);
 	private static native String tok2name(Object juls, int tokid);
 
 	private static native boolean isCharSpace(Object juls, int ch);
@@ -82,8 +81,8 @@ public class UlsLex implements AutoCloseable {
 	private static native boolean isCharTokCh2(Object juls, int ch);
 
 	private static native void skipWhiteSpaces(Object juls);
-	private static native Object peekCh(Object juls);
-	private static native Object getCh(Object juls);
+	private static native Object peekCharDetail(Object juls);
+	private static native Object getCharDetail(Object juls);
 	private static native int uchFromNextchInfo(Object jch_detail);
 	private static native int tokFromNextchInfo(Object jch_detail);
 	private static native void putNextchInfo(Object jch_detail);
@@ -195,8 +194,8 @@ public class UlsLex implements AutoCloseable {
 	public static int STREAM_BIN_LE, STREAM_BIN_BE;
 
 	// <brief>
-	// The constant is used to examine the return-value of getCh(), peekCh().
-	// The method getCh, peekCh returns NEXTCH_NONE if they comes across a literal-string or EOF, EOI.
+	// The constant is used to examine the return-value of getChar(), peekChar().
+	// The method getChar, peekChar returns NEXTCH_NONE if they comes across a literal-string or EOF, EOI.
 	// </brief>
 	public static int NEXTCH_NONE;
 
@@ -397,21 +396,21 @@ public class UlsLex implements AutoCloseable {
 	// <return>the character to which the cursor is pointing.</return>
 	public int skipBlanks() {
 		skipWhiteSpaces(uls);
-		return peekCh();
+		return peekChar();
 	}
 
 	// <brief>
 	// return the character to which the cursor of input is pointing.
-	// This getCh() will advance the cursor to the next character.
+	// This getChar() will advance the cursor to the next character.
 	// If the cursor is pointing to a part of literal string,
 	//    it'll just return NEXTCH_NONE without advancing the cursor.
 	// </brief>
 	// <return>the character to which the cursor is pointing.</return>
-	public int peekCh() {
+	public int peekChar() {
 		Object jch_detail;
 		int ch;
 
-		jch_detail = peekCh(uls);
+		jch_detail = peekCharDetail(uls);
 		ch = uchFromNextchInfo(jch_detail);
 		putNextchInfo(jch_detail);
 
@@ -420,16 +419,16 @@ public class UlsLex implements AutoCloseable {
 
 	// <brief>
 	// return the character to which the cursor of input is pointing.
-	// This getCh() will advance the cursor to the next character.
+	// This getChar() will advance the cursor to the next character.
 	// If the cursor is pointing to a part of literal string,
 	//    it'll just return NEXTCH_NONE without advancing the cursor.
 	// </brief>
 	// <return>the character to which the cursor is pointing.</return>
-	public int getCh() {
+	public int getChar() {
 		Object jch_detail;
 		int ch;
 
-		jch_detail = getCh(uls);
+		jch_detail = getCharDetail(uls);
 		ch = uchFromNextchInfo(jch_detail);
 		putNextchInfo(jch_detail);
 
@@ -443,18 +442,6 @@ public class UlsLex implements AutoCloseable {
 	// <return>true if the 'tok_id' belongs to the gourp of literal-string tokens.</return>
 	public Boolean isQuoteTok(int tok_id) {
 		return isQuoteTok(uls, tok_id);
-	}
-
-	// <brief>
-	// push back the 'ch' into the input-buffer
-	//     so that the next call of getCh, getTok will consider it.
-	// </brief>
-	// <parm name="ch">The character to push back</parm>
-	public void ungetCh(char ch) {
-		if (ch != NEXTCH_NONE) {
-			ungetCh(uls, ch);
-			update_token_lex();
-		}
 	}
 
 	// <brief>
@@ -529,14 +516,6 @@ public class UlsLex implements AutoCloseable {
 	// </brief>
 	// <return>the token number</return>
 	public int getTok() {
-		return update_token_lex();
-	}
-
-	// <brief>
-	// An alias of update_token_lex().
-	// </brief>
-	// <return>token id</return>
-	public int getToken() {
 		return update_token_lex();
 	}
 
@@ -654,9 +633,21 @@ public class UlsLex implements AutoCloseable {
 	// </brief>
 	// <parm name="lxm">The lexeme to push back</parm>
 	// <parm name="tok_id">The token number to push back</parm>
-	public void ungetTok(String lxm, int tok_id) {
-		ungetTok(uls, lxm, tok_id);
+	public void ungetTok(int tok_id, String lxm) {
+		ungetTok(uls, tok_id, lxm);
 		update_token_lex();
+	}
+
+	// <brief>
+	// push back the 'ch' into the input-buffer
+	//     so that the next call of getChar, getTok will consider it.
+	// </brief>
+	// <parm name="ch">The character to push back</parm>
+	public void ungetChar(char ch) {
+		if (ch != NEXTCH_NONE) {
+			ungetChar(uls, ch);
+			update_token_lex();
+		}
 	}
 
 	// <brief>
@@ -679,26 +670,6 @@ public class UlsLex implements AutoCloseable {
 	// </brief>
 	public void dumpTok() {
 		dumpTok("\t", "\n");
-	}
-
-	// <brief>
-	// Returns the keyword string corresponding to the token number 't'
-	// </brief>
-	// <parm name="t">A token number</parm>
-	// <return>keyword string</return>
-	public String keyword(int t) {
-		String keyw = tok2keyw(uls, t);
-
-		if (keyw == null) keyw = "<none>";
-		return keyw;
-	}
-
-	// <brief>
-	// Returns the keyword string corresponding to the current token number.
-	// </brief>
-	// <return>keyword string</return>
-	public String keyword() {
-		return keyword(TokNum);
 	}
 
 	// <brief>

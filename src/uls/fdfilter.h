@@ -39,7 +39,7 @@
 
 #ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_type.h"
-#ifndef ULS_WINDOWS
+#ifndef __ULS_WINDOWS__
 #include <unistd.h>
 #endif
 #endif
@@ -50,7 +50,7 @@ extern "C" {
 
 #ifdef ULS_DECL_PROTECTED_TYPE
 #define FDF_N_PROCS_POPEN  2
-#ifdef ULS_WINDOWS
+#ifdef __ULS_WINDOWS__
 typedef uls_int32 uls_pid_t;
 #else
 typedef pid_t uls_pid_t;
@@ -74,14 +74,14 @@ _ULS_DEFINE_STRUCT(fdf)
 #endif // ULS_DEF_PROTECTED_TYPE
 
 #ifdef ULS_DECL_PROTECTED_PROC
-char** uls_pars_cmdline(const char* cmdline, char** p_line, int* ptr_n_args);
-int uls_execv_cmdline(const char* cmdline);
+char** uls_pars_cmdline(const char *cmdline, char** p_line, int* ptr_n_args);
+int uls_execv_cmdline(const char *cmdline);
 int uls_proc_join(uls_pid_t *child_pid, int n_child_pid);
 #endif
 
 #ifdef ULS_DECL_PUBLIC_PROC
-void fdf_init(fdf_t *fdflt, uls_fdf_iprovider_t i_provider, const char* cmdline);
-void fdf_reset(fdf_t *fdflt, uls_fdf_iprovider_t i_provider, const char* cmdline);
+void fdf_init(fdf_t *fdflt, uls_fdf_iprovider_t i_provider, const char *cmdline);
+void fdf_reset(fdf_t *fdflt, uls_fdf_iprovider_t i_provider, const char *cmdline);
 void fdf_deinit(fdf_t *fdflt);
 int fdf_open(fdf_t *fdflt, int fd);
 int fdf_close(fdf_t* fd_flt);

@@ -49,6 +49,7 @@ ULS_DECL_STATIC uls_lf_ptr_t dfl_str_lf;
 ULS_DECL_STATIC uls_lf_ptr_t dfl_file_lf;
 ULS_DECL_STATIC uls_lf_ptr_t dfl_csz_lf;
 ULS_DECL_STATIC uls_lf_ptr_t dfl_sysprn_lf;
+ULS_DECL_STATIC uls_voidptr_t dfl_sysprn_xdat;
 ULS_DECL_STATIC int sysprn_opened;
 #define ULS_SYSPRN_TABBUF_SIZE  64
 ULS_DECL_STATIC char sysprn_tabbuf[ULS_SYSPRN_TABBUF_SIZE];
@@ -64,21 +65,21 @@ void finalize_uls_sysprn(void);
 ULS_DLL_EXTERN int uls_sysprn_open(uls_voidptr_t data, uls_lf_puts_t proc);
 ULS_DLL_EXTERN void uls_sysprn_set_tabsiz(int tabsiz);
 ULS_DLL_EXTERN void uls_sysprn_close(void);
-ULS_DLL_EXTERN int uls_vsysprn(const char* fmt, va_list args);
-ULS_DLL_EXTERN int uls_sysprn(const char* fmt, ...);
+ULS_DLL_EXTERN int uls_vsysprn(const char *fmt, va_list args);
+ULS_DLL_EXTERN int uls_sysprn(const char *fmt, ...);
 
 ULS_DLL_EXTERN void uls_sysprn_puttabs(int n);
 ULS_DLL_EXTERN void uls_sysprn_tabs(int n_tabs, char *fmt, ...);
 
 /* string printf */
-ULS_DLL_EXTERN int __uls_lf_vsnprintf(char* buf, int bufsiz, uls_lf_ptr_t uls_lf, const char *fmt, va_list args);
-ULS_DLL_EXTERN int uls_lf_vsnprintf(char* buf, int bufsiz, uls_lf_ptr_t uls_lf, const char *fmt, va_list args);
+ULS_DLL_EXTERN int __uls_lf_vsnprintf(char *buf, int bufsiz, uls_lf_ptr_t uls_lf, const char *fmt, va_list args);
+ULS_DLL_EXTERN int uls_lf_vsnprintf(char *buf, int bufsiz, uls_lf_ptr_t uls_lf, const char *fmt, va_list args);
 ULS_DLL_EXTERN int __uls_lf_snprintf(char *buf, int bufsiz, uls_lf_ptr_t uls_lf, const char *fmt, ...);
-ULS_DLL_EXTERN int uls_lf_snprintf(char* buf, int bufsiz, uls_lf_ptr_t uls_lf, const char *fmt, ...);
+ULS_DLL_EXTERN int uls_lf_snprintf(char *buf, int bufsiz, uls_lf_ptr_t uls_lf, const char *fmt, ...);
 
-ULS_DLL_EXTERN int __uls_vsnprintf(char* buf, int bufsiz, const char *fmt, va_list args);
-ULS_DLL_EXTERN int uls_vsnprintf(char* buf, int bufsiz, const char *fmt, va_list args);
-ULS_DLL_EXTERN int __uls_snprintf(char* buf, int bufsiz, const char *fmt, ...);
+ULS_DLL_EXTERN int __uls_vsnprintf(char *buf, int bufsiz, const char *fmt, va_list args);
+ULS_DLL_EXTERN int uls_vsnprintf(char *buf, int bufsiz, const char *fmt, va_list args);
+ULS_DLL_EXTERN int __uls_snprintf(char *buf, int bufsiz, const char *fmt, ...);
 ULS_DLL_EXTERN int uls_snprintf(char *buf, int bufsiz, const char *fmt, ...);
 
 /* csz printf */
@@ -118,8 +119,12 @@ ULS_DLL_EXTERN int uls_printf(const char *fmt, ...);
 }
 #endif
 
-#ifdef ULS_USE_WSTR
+#ifdef _ULS_USE_ULSCOMPAT
+#if defined(ULS_USE_WSTR)
 #include "uls/uls_wprint.h"
+#elif defined(ULS_USE_ASTR)
+#include "uls/uls_aprint.h"
+#endif
 #endif
 
 #endif // __ULS_PRINT_H__

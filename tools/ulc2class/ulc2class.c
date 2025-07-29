@@ -34,6 +34,7 @@
 
 #include "uls.h"
 #include "uls/uls_util.h"
+#include "uls/uls_auw.h"
 
 #include "uls/uls_sysprops.h"
 #include "uls/uls_langs.h"
@@ -58,7 +59,7 @@ const char *opt_dump;
 int typ_fpath;
 char specname[ULS_LEXSTR_MAXSIZ+1];
 
-uls_flags_t prn_flags;
+uls_flags_t g_prn_flags;
 int opt_uld_gen, opt_query;
 char *ulc_config;
 uls_lex_ptr_t sam_lex;
@@ -108,7 +109,7 @@ static void usage_synopsis()
 
 static void usage_desc()
 {
-#ifdef ULS_WINDOWS
+#ifdef __ULS_WINDOWS__
 	err_log("  -d <dirpath>      specify the directory for output files.");
 	err_log("  -e <enum-name>    specify the enum-name if you want token-name list with enum style.");
 	err_log("  -f <filename>     specify the output file name without suffix.");
@@ -239,27 +240,27 @@ static void usage_long(void)
 }
 
 static int
-set_lang_generated(const char* lang_name)
+set_lang_generated(const char *lang_name)
 {
 	int stat = 0;
 
-	prn_flags &= ~ULS_FL_LANG_GEN_MASK;
+	g_prn_flags &= ~ULS_FL_LANG_GEN_MASK;
 
 	if (ult_streql(lang_name, "c")) {
-		prn_flags |= ULS_FL_C_GEN;
+		g_prn_flags |= ULS_FL_C_GEN;
 
 	} else if (ult_streql(lang_name, "cpp") || ult_streql(lang_name, "c++")) {
-		prn_flags |= ULS_FL_CPP_GEN; // default value in Linux
+		g_prn_flags |= ULS_FL_CPP_GEN; // default value in Linux
 
 	} else if (ult_streql(lang_name, "cppcli") || ult_streql(lang_name, "cpp/cli") ||
 		ult_streql(lang_name, "c++.net")) {
-		prn_flags |= ULS_FL_CPPCLI_GEN; // default value in Windows
+		g_prn_flags |= ULS_FL_CPPCLI_GEN; // default value in Windows
 
 	} else if (ult_streql(lang_name, "cs")) {
-		prn_flags |= ULS_FL_CS_GEN;
+		g_prn_flags |= ULS_FL_CS_GEN;
 
 	} else if (ult_streql(lang_name, "java")) {
-		prn_flags |= ULS_FL_JAVA_GEN;
+		g_prn_flags |= ULS_FL_JAVA_GEN;
 
 	} else {
 		stat = -1;
@@ -273,9 +274,9 @@ get_standard_suffix(void)
 {
 	const char *cptr;
 
-	if (prn_flags & ULS_FL_CS_GEN) {
+	if (g_prn_flags & ULS_FL_CS_GEN) {
 		cptr = ".cs";
-	} else if (prn_flags & ULS_FL_JAVA_GEN) {
+	} else if (g_prn_flags & ULS_FL_JAVA_GEN) {
 		cptr = ".java";
 	} else {
 		cptr = ".h";
@@ -285,9 +286,9 @@ get_standard_suffix(void)
 }
 
 static int
-ulc2class_options(int opt, char* optarg)
+ulc2class_options(int opt, char *optarg)
 {
-	int   stat = 0;
+	int stat = 0;
 
 	switch (opt) {
 	case 'e':
@@ -303,11 +304,11 @@ ulc2class_options(int opt, char* optarg)
 
 	case 'g':
 		if (ult_streql(optarg, "regular")) {
-			prn_flags |= ULS_FL_WANT_REGULAR_TOKS;
+			g_prn_flags |= ULS_FL_WANT_REGULAR_TOKS;
 		} else if (ult_streql(optarg, "reserved")) {
-			prn_flags |= ULS_FL_WANT_RESERVED_TOKS;
+			g_prn_flags |= ULS_FL_WANT_RESERVED_TOKS;
 		} else if (ult_streql(optarg, "quote")) {
-			prn_flags |= ULS_FL_WANT_QUOTE_TOKS;
+			g_prn_flags |= ULS_FL_WANT_QUOTE_TOKS;
 		} else {
 			err_log("unknown group type '%s'", optarg);
 			stat = -1;
@@ -340,7 +341,7 @@ ulc2class_options(int opt, char* optarg)
 			err_log("%s: collided with -o-option!", progname);
 			stat = -1; break;
 		}
-		prn_flags |= ULS_FL_WANT_WRAPPER;
+		g_prn_flags |= ULS_FL_WANT_WRAPPER;
 		out_filename = ult_strdup(optarg);
 		uls_path_normalize(out_filename, out_filename);
 		break;
@@ -370,7 +371,8 @@ ulc2class_options(int opt, char* optarg)
 		break;
 
 	case 'y':
-		prn_flags &= ~ULS_FL_VERBOSE;
+		g_prn_flags &= ~ULS_FL_VERBOSE;
+		g_prn_flags |= ULS_FL_SILENT;
 		break;
 
 	case 'H':
@@ -384,7 +386,7 @@ ulc2class_options(int opt, char* optarg)
 		break;
 
 	case 'v':
-		prn_flags |= ULS_FL_VERBOSE;
+		g_prn_flags |= ULS_FL_VERBOSE;
 		break;
 
 	case 'V':
@@ -407,16 +409,17 @@ ulc2class_options(int opt, char* optarg)
 }
 
 static int
-parse_options(int argc, char* argv[])
+parse_options(int argc, char *argv[])
 {
 #ifdef HAVE_GETOPT
 	int  opt, longindex;
 #endif
 	int  rc, len, i0, mask, len_fname, len_filepath, len_dirpath2;
 	char the_rootdir[2] = { ULS_FILEPATH_DELIM, '\0' };
-	char *fname, *tmp_buf;
+	const char *fname;
+	char *ptr;
 
-	if (ult_getcwd(home_dir, ULS_FILEPATH_MAX) < 0) {
+	if (uls_getcwd(home_dir, ULS_FILEPATH_MAX) < 0) {
 		err_panic("%s: fail to getcwd()", __func__);
 	}
 
@@ -509,31 +512,31 @@ parse_options(int argc, char* argv[])
 			}
 		}
 
-		tmp_buf = out_filename;
+		ptr = out_filename;
 		out_filename = uls_strdup(fname, -1);
-		uls_mfree(tmp_buf);
+		uls_mfree(ptr);
 
 	} else {
-		prn_flags |= ULS_FL_WANT_WRAPPER;
+		g_prn_flags |= ULS_FL_WANT_WRAPPER;
 	}
 
 	if (out_dirpath != NULL) {
-		if ((rc=ult_chdir(out_dirpath)) < 0 || ult_chdir(home_dir) < 0) {
+		if ((rc=uls_chdir(out_dirpath)) < 0 || uls_chdir(home_dir) < 0) {
 			err_log("%s: invalid dirpath'%s'", progname, out_dirpath);
 			return -1;
 		}
 	}
 
 	mask = ULS_FL_WANT_REGULAR_TOKS | ULS_FL_WANT_QUOTE_TOKS | ULS_FL_WANT_RESERVED_TOKS;
-	if (!(prn_flags & mask)) prn_flags |= mask;
+	if (!(g_prn_flags & mask)) g_prn_flags |= mask;
 
-	if ((prn_flags & ULS_FL_LANG_GEN_MASK) == 0) {
-		prn_flags |= ULS_FL_CPP_GEN;
+	if ((g_prn_flags & ULS_FL_LANG_GEN_MASK) == 0) {
+		g_prn_flags |= ULS_FL_CPP_GEN;
 	}
 
-	if (prn_flags & (ULS_FL_C_GEN | ULS_FL_CPP_GEN | ULS_FL_CPPCLI_GEN)) {
+	if (g_prn_flags & (ULS_FL_C_GEN | ULS_FL_CPP_GEN | ULS_FL_CPPCLI_GEN)) {
 	} else {
-		prn_flags &= ~ULS_FL_WANT_WRAPPER;
+		g_prn_flags &= ~ULS_FL_WANT_WRAPPER;
 	}
 
 	return i0;
@@ -579,7 +582,7 @@ ulc_generate_files(uls_parms_emit_t *emit_parm)
 	uls_strcpy(tmp_buf + rc, cptr_suff);
 
 	if (out_dirpath != NULL) {
-		ult_chdir(out_dirpath);
+		uls_chdir(out_dirpath);
 	}
 
 	if (rename(tmp_buf, out_filename0) < 0) {
@@ -588,7 +591,7 @@ ulc_generate_files(uls_parms_emit_t *emit_parm)
 	}
 
 	uls_mfree(tmp_buf);
-	ult_chdir(home_dir);
+	uls_chdir(home_dir);
 
 	return stat;
 }
@@ -613,12 +616,12 @@ dump_tok_info(uls_lex_ptr_t uls)
 	} else if (ult_streql(opt_dump, "2char")) {
 		uls_dump_2char(uls);
 	} else if (ult_streql(opt_dump, "utf")) {
-		uls_dump_utf8firstbyte(uls);
+		uls_dump_utf8firstbyte();
 	}
 }
 
 int
-main(int argc, char* argv[])
+main_ustr(int argc, char *argv[])
 {
 	const char *conf_filepath;
 	int i0, rc, stat=0;
@@ -630,7 +633,7 @@ main(int argc, char* argv[])
 		return 1;
 	}
 
-	if ((i0=parse_options(argc, argv)) <= 0) {
+	if ((i0 = parse_options(argc, argv)) <= 0) {
 		if (i0 < 0) err_log("%s: Incorrect use of command options.", progname);
 		return i0;
 	}
@@ -661,14 +664,14 @@ main(int argc, char* argv[])
 		uls_path_normalize(ulc_config, ulc_config);
 		conf_filepath = ulc_config;
 	} else if (typ_fpath == ULS_NAME_FILEPATH_ULD) {
-		prn_flags |= ULS_FL_ULD_FILE;
+		g_prn_flags |= ULS_FL_ULD_FILE;
 		uls_path_normalize(ulc_config, ulc_config);
 		conf_filepath = ulc_config;
 	} else { // ULS_NAME_SPECNAME
 		conf_filepath = NULL;
 	}
 
-	if (prn_flags & ULS_FL_VERBOSE) {
+	if (g_prn_flags & ULS_FL_VERBOSE) {
 		if (typ_fpath != ULS_NAME_FILEPATH_ULD) {
 			ulc_list_searchpath(ulc_config);
 		}
@@ -689,7 +692,7 @@ main(int argc, char* argv[])
 			conf_filepath, specname,
 			opt_class_name, opt_enum_name,
 			opt_prefix, ulc_filepath,
-			prn_flags | ULS_FL_WANT_RESERVED_TOKS);
+			g_prn_flags | ULS_FL_WANT_RESERVED_TOKS);
 		if (rc < 0) {
 			err_log("%s: fail to create source files for %s", progname, ulc_config);
 			stat = -1;
@@ -707,6 +710,58 @@ main(int argc, char* argv[])
 	uls_mfree(out_filename0);
 	uls_mfree(out_filename);
 	uls_mfree(ulc_filepath);
+
+	return stat;
+}
+
+int
+main(int argc, char *argv[])
+{
+	int i, stat = 0;
+	char **uargs;
+#ifdef __ULS_WINDOWS__
+	auw_outparam_t *arglst;
+	const char *ustr;
+#endif
+
+	uargs = (char **) uls_malloc(argc *sizeof(char *));
+
+#ifdef __ULS_WINDOWS__
+	arglst = (auw_outparam_t *) uls_malloc(argc *sizeof(auw_outparam_t));
+	for (i = 0; i < argc; i++) {
+		auw_init_outparam(arglst + i);
+	}
+
+	for (i = 0; i < argc; i++) {
+		if ((ustr = uls_astr2ustr_ptr(argv[i], -1, arglst + i)) == NULL) {
+			stat = -1;
+			uargs[i] = NULL;
+		} else {
+			uargs[i] = uls_strdup(ustr, -1);
+		}
+	}
+
+#else
+	for (i = 0; i < argc; i++) {
+		uargs[i] = uls_strdup(argv[i], -1);
+	}
+#endif
+
+	if (stat == 0) {
+		stat = main_ustr(argc, uargs);
+	}
+
+	for (i = 0; i < argc; i++) {
+		uls_mfree(uargs[i]);
+	}
+	uls_mfree(uargs);
+
+#ifdef __ULS_WINDOWS__
+	for (i = 0; i < argc; i++) {
+		auw_deinit_outparam(arglst + i);
+	}
+	uls_mfree(arglst);
+#endif
 
 	return stat;
 }

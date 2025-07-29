@@ -33,8 +33,9 @@
 */
 
 #include "uls/uls_lex.h"
-#include "uls/uls_log.h"
+#include "uls/uls_auw.h"
 #include "uls/uls_util.h"
+#include "uls/uls_log.h"
 
 #include <stdlib.h>
 #include <unistd.h>
@@ -55,7 +56,7 @@ static void usage(void)
 {
 	err_log(_T("%s v1.0"), progname);
 	err_log(_T("  Tokenizes the input that includes another file."));
-	err_log(_T("  Tests if uls_unget_tok() is properly operating."));
+	err_log(_T("  Tests if uls_unget_current() is properly operating."));
 	err_log(_T(""));
 	err_log(_T(" Usage:"));
 	err_log(_T("  %s [-c <config-file>] <inputfile> ..."), progname);
@@ -76,7 +77,7 @@ options(int opt, LPTSTR optarg)
 		break;
 
 	case _T('m'):
-		test_mode = ult_str2int(optarg);
+		test_mode = uls_str2int(optarg);
 		break;
 
 	case _T('v'):
@@ -123,7 +124,7 @@ test_uls(LPCTSTR fpath)
 		if ((tok=uls_get_tok(sample_lex)) == TOK_EOI) break;
 
 		if (n_pushes > 0) {
-			uls_unget_tok(sample_lex);
+			uls_unget_current(sample_lex);
 			--n_pushes;
 			continue;
 		}
@@ -140,19 +141,19 @@ test_uls(LPCTSTR fpath)
 		uls_dump_tok(sample_lex, _T("\t"), _T("\n"));
 
 		if (tok == TOK_ID) {
-			if (ult_str_equal( uls_lexeme(sample_lex), _T("WWW"))) {
+			if (uls_str_equal( uls_lexeme(sample_lex), _T("WWW"))) {
 				uls_push_file(sample_lex, _T("./input1_0.txt"), ULS_WANT_EOFTOK);
 				uls_push_file(sample_lex, _T("./input1_1.txt"), ULS_WANT_EOFTOK);
 				tabs += 2;
 
-			} else if (ult_str_equal(uls_lexeme(sample_lex), _T("VVV"))) {
+			} else if (uls_str_equal(uls_lexeme(sample_lex), _T("VVV"))) {
 				for (i=2; i>=0; i--) {
 					uls_snprintf(buff, sizeof(buff)/sizeof(TCHAR), _T("VVV%d"), i);
 					uls_unget_ch(sample_lex, _T(' '));
 					uls_unget_str(sample_lex, buff);
 				}
 
-			} else if (ult_str_equal(uls_lexeme(sample_lex), _T("UUU"))) {
+			} else if (uls_str_equal(uls_lexeme(sample_lex), _T("UUU"))) {
 				n_pushes = 3;
 			}
 		}
@@ -166,7 +167,7 @@ _tmain(int n_targv, LPTSTR *targv)
 {
 	int i, i0;
 
-	progname = uls_split_filepath(targv[0], NULL);
+	progname = uls_filename(targv[0], NULL);
 	config_name = _T("sample.ulc");
 
 	if ((i0=uls_getopts(n_targv, targv, _T("c:m:vh"), options)) <= 0) {

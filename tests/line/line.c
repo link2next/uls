@@ -33,9 +33,10 @@
 */
 
 #include "uls/uls_lex.h"
-#include "uls/uls_log.h"
-#include "uls/uls_util.h"
 #include "uls/uls_fileio.h"
+#include "uls/uls_auw.h"
+#include "uls/uls_util.h"
+#include "uls/uls_log.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -74,7 +75,7 @@ proc_file(LPCTSTR filepath)
 		}
 		filebuff[len++] = '\n'; filebuff[len] = '\0';
 
-		uls_push_line(sample_lex, filebuff, ult_str_length(filebuff), ULS_DO_DUP);
+		uls_push_line(sample_lex, filebuff, uls_str_length(filebuff), ULS_DO_DUP);
 		uls_set_lineno(sample_lex, ++lno);
 
 		while (uls_get_tok(sample_lex) != tokEOI) {
@@ -101,8 +102,8 @@ test_stage_1(void)
 	TCHAR linebuff[81];
 	int  len, i;
 
-	ult_str_copy(linebuff, _T("hello ULS world"));
-	len = ult_str_length(linebuff);
+	uls_str_copy(linebuff, _T("hello ULS world"));
+	len = uls_str_length(linebuff);
 
 	for (i=0; i<len; i+=3) {
 		uls_printf(_T("***** session-%d:\n"), i);
@@ -121,7 +122,7 @@ test_stage_3(void)
 {
 	TCHAR linebuff[81];
 
-	ult_str_copy(linebuff, _T("hello ULS-world"));
+	uls_str_copy(linebuff, _T("hello ULS-world"));
 
 	uls_set_line(sample_lex, linebuff, -1, 0);
 
@@ -143,16 +144,16 @@ test_stage_4(void)
 	TCHAR linebuff[81];
 	uls_wch_t wch;
 
-	ult_str_copy(linebuff, _T("7094ULS-world"));
+	uls_str_copy(linebuff, _T("7094ULS-world"));
 
 	uls_set_line(sample_lex, linebuff, -1, 0);
 
 	uls_get_tok(sample_lex);
 	uls_dump_tok(sample_lex, _T(" 1stToken:\n\t"), _T("\n"));
 
-	uls_unget_tok(sample_lex);
+	uls_unget_current(sample_lex);
 
-	wch = uls_getch(sample_lex, NULL);
+	wch = uls_get_ch(sample_lex, NULL);
 	uls_printf(_T(" getch: '%c'\n"), (char) wch);
 
 	uls_get_tok(sample_lex);
@@ -167,14 +168,14 @@ test_stage_5(void)
 {
 	TCHAR linebuff[81];
 
-	ult_str_copy(linebuff, _T("hello ULS-world"));
+	uls_str_copy(linebuff, _T("hello ULS-world"));
 	uls_set_line(sample_lex, linebuff, -1, 0);
 
 	uls_get_tok(sample_lex);
 	uls_dump_tok(sample_lex, _T(" 1stToken:\n\t"), _T("\n"));
 
-	uls_unget_lexeme(sample_lex, _T("ga"), tokNONE);
-	uls_unget_lexeme(sample_lex, _T("gb gc"), tokID);
+	uls_unget_tok(sample_lex, tokNONE, _T("ga"));
+	uls_unget_tok(sample_lex, tokID, _T("gb gc"));
 
 	uls_get_tok(sample_lex);
 	uls_dump_tok(sample_lex, _T(" 2ndToken:\n\t"), _T("\n"));
@@ -210,7 +211,7 @@ test_uls_line(uls_lex_ptr_t uls)
 
 	/* 3 */
 	linebuff = (LPTSTR) malloc(128 * sizeof(TCHAR));
-	ult_str_copy(linebuff, _T("hello world"));
+	uls_str_copy(linebuff, _T("hello world"));
 	uls_push_line(uls, linebuff, -1, ULS_MEMFREE_LINE);
 
 	for ( ; ; ) {
@@ -247,7 +248,7 @@ options(int opt, LPTSTR optarg)
 		break;
 
 	case _T('m'):
-		test_mode = ult_str2int(optarg);
+		test_mode = uls_str2int(optarg);
 		break;
 
 	case _T('v'):
@@ -274,7 +275,7 @@ _tmain(int n_targv, LPTSTR *targv)
 {
 	int i, i0;
 
-	progname = uls_split_filepath(targv[0], NULL);
+	progname = uls_filename(targv[0], NULL);
 	config_name = _T("sample.ulc");
 
 	if ((i0=uls_getopts(n_targv, targv, _T("c:m:vh"), options)) <= 0) {

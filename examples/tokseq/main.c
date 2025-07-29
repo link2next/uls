@@ -32,6 +32,7 @@
 */
 
 #include <uls.h>
+#include <uls/uls_auw.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -129,7 +130,7 @@ run_test_scenario(LPCTSTR out_dir)
 	TCHAR uls_fname[128];
 	LPCTSTR tptr, tname;
 	uls_ostream_t *ostr;
-	int stat=0;
+	int stat = 0;
 
 	uls_snprintf(uls_fname, sizeof(uls_fname)/sizeof(TCHAR), _T("%s%c%s"), out_dir, ULS_FILEPATH_DELIM, _T("a1.uls"));
 
@@ -186,6 +187,52 @@ options(int opt, LPTSTR opttarg)
 	return stat;
 }
 
+void
+__test_wstr_fprintf(FILE *fp)
+{
+	double x;
+	int i, len;
+
+	i = 2025;
+	len = uls_fprintf(fp, _T("hello 0x%08X world\n"), i);
+	uls_fprintf(fp, _T("len = %d\n"), len);
+
+	i = 7;
+	len = uls_fprintf(fp, _T("%+5d\n"), i);
+
+	i = -9;
+	len = uls_fprintf(fp, _T("%5d<hello>\n"), i);
+
+
+	x = 0.0;
+	len = uls_fprintf(fp, _T("%f -- %.3f -- %0.3f -- %#.3f\n"), x, x, x, x);
+
+	x = 0.31;
+	len = uls_fprintf(fp, _T("%f -- %.3f -- %0.3f -- %#.3f\n"), x, x, x, x);
+
+	x = 31.158;
+	len = uls_fprintf(fp, _T("%f -- %.2f -- %0.2f -- %#.2f\n"), x, x, x, x);
+
+}
+
+int
+test_wstr_fprintf()
+{
+	int stat = 0;
+	LPCTSTR out_file = _T("C:\\Temp\\wstr_prn_12.txt");
+	FILE* fp;
+
+	fp = uls_fp_open(out_file, ULS_FIO_WRITE);
+	if (fp == NULL) {
+		stat = -1;
+	} else {
+		__test_wstr_fprintf(fp);
+		fclose(fp);
+	}
+	
+	return stat;
+}
+
 int
 _tmain(int n_targv, LPTSTR *targv)
 {
@@ -236,7 +283,7 @@ _tmain(int n_targv, LPTSTR *targv)
 	return 0;
 }
 
-#ifndef __WINDOWS__
+#ifndef __ULS_WINDOWS__
 int
 main(int argc, char *argv[])
 {

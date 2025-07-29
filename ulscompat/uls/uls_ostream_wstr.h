@@ -36,7 +36,7 @@
 #define __ULS_OSTREAM_WSTR_H__
 
 #include "uls/uls_auw.h"
-#ifdef _ULS_INTERNAL_USE_ONLY
+#ifdef _ULSCOMPAT_INTERNALLY_USES
 #include "uls/uls_ostream.h"
 #endif
 
@@ -44,10 +44,12 @@
 extern "C" {
 #endif
 
-ULS_DLL_EXTERN uls_ostream_ptr_t __uls_create_ostream_wstr(int fd_out, uls_lex_ptr_t uls, int stream_type, const wchar_t* subname);
-ULS_DLL_EXTERN uls_ostream_ptr_t uls_create_ostream_wstr(int fd_out, uls_lex_ptr_t uls, const wchar_t* subname);
-ULS_DLL_EXTERN uls_ostream_ptr_t uls_create_ostream_file_wstr(const wchar_t* filepath, uls_lex_ptr_t uls, const wchar_t* subname);
-ULS_DLL_EXTERN int __uls_print_tok_wstr(uls_ostream_ptr_t ostr, int tokid, const wchar_t* wtokstr, int l_wtokstr);
+ULS_DLL_EXTERN uls_ostream_ptr_t __uls_create_ostream_wstr(int fd_out, uls_lex_ptr_t uls, int stream_type, const wchar_t *subname);
+ULS_DLL_EXTERN uls_ostream_ptr_t uls_create_ostream_wstr(int fd_out, uls_lex_ptr_t uls, const wchar_t *subname);
+ULS_DLL_EXTERN uls_ostream_ptr_t uls_create_ostream_file_wstr(const wchar_t *filepath, uls_lex_ptr_t uls, const wchar_t *subname);
+ULS_DLL_EXTERN int __uls_print_tok_linenum_wstr(uls_ostream_ptr_t ostr, int lno, const wchar_t *tag, int wtag_len);
+ULS_DLL_EXTERN int __uls_print_tok_wstr(uls_ostream_ptr_t ostr, int tokid, const wchar_t *wtokstr, int l_wtokstr);
+
 #ifdef _ULS_CPLUSPLUS
 }
 #endif
@@ -57,6 +59,7 @@ ULS_DLL_EXTERN int __uls_print_tok_wstr(uls_ostream_ptr_t ostr, int tokid, const
 #define __uls_create_ostream __uls_create_ostream_wstr
 #define uls_create_ostream uls_create_ostream_wstr
 #define uls_create_ostream_file uls_create_ostream_file_wstr
+#define __uls_print_tok_linenum __uls_print_tok_linenum_wstr
 #define __uls_print_tok __uls_print_tok_wstr
 #endif
 #endif // _ULS_USE_ULSCOMPAT

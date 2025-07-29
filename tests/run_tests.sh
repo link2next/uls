@@ -157,4 +157,3 @@ while [ $m -lt $MAX_N_MODES ]; do
 	m=$(($m+1))
 done
 
-

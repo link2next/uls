@@ -35,7 +35,7 @@
 #define __ULS_WLEX_H__
 
 #include "uls/uls_auw.h"
-#ifdef _ULS_INTERNAL_USE_ONLY
+#ifdef _ULSCOMPAT_INTERNALLY_USES
 #include "uls/uls_lex.h"
 #endif
 
@@ -67,56 +67,59 @@ ULS_DEFINE_STRUCT(wlex_shell)
 
 void uls_init_wstr_2(uls_wlex_shell_ptr_t wuls, uls_lex_ptr_t uls);
 
-ULS_DLL_EXTERN const wchar_t* uls_tok2keyw_wstr(uls_lex_ptr_t uls, int t);
-ULS_DLL_EXTERN const wchar_t* uls_tok2name_wstr(uls_lex_ptr_t uls, int t);
-ULS_DLL_EXTERN const wchar_t* uls_tok2keyw_2_wstr(uls_lex_ptr_t uls, int t, uls_outparam_ptr_t parms);
-ULS_DLL_EXTERN const wchar_t* uls_tok2name_2_wstr(uls_lex_ptr_t uls, int t, uls_outparam_ptr_t parms);
+ULS_DLL_EXTERN const wchar_t *uls_tok2keyw_wstr(uls_lex_ptr_t uls, int t);
+ULS_DLL_EXTERN const wchar_t *uls_tok2name_wstr(uls_lex_ptr_t uls, int t);
+ULS_DLL_EXTERN const wchar_t *uls_tok2keyw_2_wstr(uls_lex_ptr_t uls, int t, uls_outparam_ptr_t parms);
+ULS_DLL_EXTERN const wchar_t *uls_tok2name_2_wstr(uls_lex_ptr_t uls, int t, uls_outparam_ptr_t parms);
 
-ULS_DLL_EXTERN int uls_init_wstr(uls_lex_ptr_t uls, const wchar_t* confname);
-ULS_DLL_EXTERN uls_lex_ptr_t uls_create_wstr(const wchar_t* confname);
-ULS_DLL_EXTERN uls_lex_ptr_t uls_create_cr2lf_wstr(const wchar_t* confname);
+ULS_DLL_EXTERN int uls_init_wstr(uls_lex_ptr_t uls, const wchar_t *confname);
+ULS_DLL_EXTERN uls_lex_ptr_t uls_create_wstr(const wchar_t *confname);
+ULS_DLL_EXTERN uls_lex_ptr_t uls_create_cr2lf_wstr(const wchar_t *confname);
 ULS_DLL_EXTERN int uls_destroy_wstr(uls_lex_ptr_t uls);
 
 ULS_DLL_EXTERN int uls_push_fd_wstr(uls_lex_ptr_t uls, int fd, int flags);
 ULS_DLL_EXTERN int uls_set_fd_wstr(uls_lex_ptr_t uls, int fd, int flags);
+
 ULS_DLL_EXTERN int uls_push_fp_wstr(uls_lex_ptr_t uls, FILE *fp, int flags);
 ULS_DLL_EXTERN int uls_set_fp_wstr(uls_lex_ptr_t uls, FILE *fp, int flags);
 
-ULS_DLL_EXTERN int uls_push_file_wstr(uls_lex_ptr_t uls, const wchar_t* wfilepath, int flags);
-ULS_DLL_EXTERN int uls_set_file_wstr(uls_lex_ptr_t uls, const wchar_t* wfilepath, int flags);
+ULS_DLL_EXTERN int uls_push_file_wstr(uls_lex_ptr_t uls, const wchar_t *wfilepath, int flags);
+ULS_DLL_EXTERN int uls_set_file_wstr(uls_lex_ptr_t uls, const wchar_t *wfilepath, int flags);
 
-ULS_DLL_EXTERN int uls_set_line_wstr(uls_lex_ptr_t uls, const wchar_t* wline, int wlen, int flags);
-ULS_DLL_EXTERN int uls_push_line_wstr(uls_lex_ptr_t uls, const wchar_t* wline, int wlen, int flags);
+ULS_DLL_EXTERN int uls_set_line_wstr(uls_lex_ptr_t uls, const wchar_t *wline, int wlen, int flags);
+ULS_DLL_EXTERN int uls_push_line_wstr(uls_lex_ptr_t uls, const wchar_t *wline, int wlen, int flags);
 
-ULS_DLL_EXTERN const wchar_t* uls_get_tag_wstr(uls_lex_ptr_t uls);
+ULS_DLL_EXTERN const wchar_t *uls_get_tag_wstr(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN int uls_get_taglen_wstr(uls_lex_ptr_t uls);
-ULS_DLL_EXTERN const wchar_t* _uls_get_tag2_wstr(uls_lex_ptr_t uls, uls_outparam_ptr_t parms);
-ULS_DLL_EXTERN void uls_set_tag_wstr(uls_lex_ptr_t uls, const wchar_t* wtag, int lno);
+ULS_DLL_EXTERN const wchar_t *_uls_get_tag2_wstr(uls_lex_ptr_t uls, uls_outparam_ptr_t parms);
+ULS_DLL_EXTERN void uls_set_tag_wstr(uls_lex_ptr_t uls, const wchar_t *wtag, int lno);
 
 ULS_DLL_EXTERN int uls_get_wtok(uls_lex_ptr_t uls);
-ULS_DLL_EXTERN void uls_set_wtok(uls_lex_ptr_t uls, int tokid, const wchar_t* wlexeme, int l_wlexeme);
+ULS_DLL_EXTERN void uls_set_wtok(uls_lex_ptr_t uls, int tokid, const wchar_t *wlexeme, int l_wlexeme);
 
 ULS_DLL_EXTERN int uls_tokid_wstr(uls_lex_ptr_t uls);
-ULS_DLL_EXTERN const wchar_t* uls_lexeme_wstr(uls_lex_ptr_t uls);
+ULS_DLL_EXTERN const wchar_t *uls_lexeme_wstr(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN int uls_lexeme_len_wstr(uls_lex_ptr_t uls);
-ULS_DLL_EXTERN const wchar_t* uls_tokstr_wstr(uls_lex_ptr_t uls);
+ULS_DLL_EXTERN const wchar_t *uls_tokstr_wstr(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN int uls_tokstr_len_wstr(uls_lex_ptr_t uls);
 
-ULS_DLL_EXTERN wchar_t uls_peek_wch(uls_lex_ptr_t uls, uls_nextch_detail_ptr_t parms);
-ULS_DLL_EXTERN wchar_t uls_get_wch(uls_lex_ptr_t uls, uls_nextch_detail_ptr_t parms);
+ULS_DLL_EXTERN uls_wch_t uls_peek_wch(uls_lex_ptr_t uls, uls_nextch_detail_ptr_t detail_ch);
+ULS_DLL_EXTERN uls_wch_t uls_get_wch(uls_lex_ptr_t uls, uls_nextch_detail_ptr_t detail_ch);
 
-ULS_DLL_EXTERN void uls_unget_lexeme_wstr(uls_lex_ptr_t uls, const wchar_t *lxm, int tok_id);
-ULS_DLL_EXTERN void uls_unget_wstr(uls_lex_ptr_t uls, const wchar_t* wstr);
-ULS_DLL_EXTERN void uls_unget_wch(uls_lex_ptr_t uls, wchar_t wch);
+ULS_DLL_EXTERN int uls_unget_tok_wstr(uls_lex_ptr_t uls, int tok_id, const wchar_t *lxm);
+ULS_DLL_EXTERN int uls_unget_wstr(uls_lex_ptr_t uls, const wchar_t *wstr);
+ULS_DLL_EXTERN int uls_unget_wch(uls_lex_ptr_t uls, uls_wch_t wch);
 
 ULS_DLL_EXTERN void uls_dump_tok_wstr(uls_lex_ptr_t uls, const wchar_t *wpfx, const wchar_t *wsuff);
-ULS_DLL_EXTERN void _uls_dump_tok_2_wstr(uls_lex_ptr_t uls, const wchar_t* wpfx,
+ULS_DLL_EXTERN void _uls_dump_tok_2_wstr(const wchar_t *wpfx,
 	const wchar_t *id_wstr, const wchar_t *tok_wstr, const wchar_t *wsuff);
-ULS_DLL_EXTERN const wchar_t* uls_get_eoftag_wstr(uls_lex_ptr_t uls, int *ptr_len_tag);
+ULS_DLL_EXTERN const wchar_t *uls_get_eoftag_wstr(uls_lex_ptr_t uls, int *ptr_len_tag);
 
+#ifndef ULS_DOTNET
 ULS_DLL_EXTERN int uls_push_istream_2_wstr(uls_lex_ptr_t uls, uls_istream_ptr_t istr,
-	const wchar_t** tmpl_wnams, const wchar_t** tmpl_wvals, int n_tmpls, int flags);
-ULS_DLL_EXTERN const wchar_t* uls_get_tag2_wstr(uls_lex_ptr_t uls, int *ptr_len_wtag);
+	const wchar_t **tmpl_wnams, const wchar_t **tmpl_wvals, int n_tmpls, int flags);
+ULS_DLL_EXTERN const wchar_t *uls_get_tag2_wstr(uls_lex_ptr_t uls, int *ptr_len_wtag);
+#endif
 
 #ifdef _ULS_CPLUSPLUS
 }
@@ -160,16 +163,16 @@ ULS_DLL_EXTERN const wchar_t* uls_get_tag2_wstr(uls_lex_ptr_t uls, int *ptr_len_
 #undef uls_lexeme
 #define uls_lexeme uls_lexeme_wstr
 
-#undef uls_tokstr
-#define uls_tokstr uls_tokstr_wstr
-
 #undef uls_lexeme_len
 #define uls_lexeme_len uls_lexeme_len_wstr
+
+#undef uls_tokstr
+#define uls_tokstr uls_tokstr_wstr
 
 #undef uls_tokstr_len
 #define uls_tokstr_len uls_tokstr_len_wstr
 
-#define uls_unget_lexeme uls_unget_lexeme_wstr
+#define uls_unget_tok uls_unget_tok_wstr
 #define uls_unget_str uls_unget_wstr
 #define uls_unget_ch uls_unget_wch
 

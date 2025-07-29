@@ -95,7 +95,7 @@ ULS_QUALIFIED_METHOD(uls_append_lang)(uls_lang_list_ptr_t tbl, uls_ptrtype_tool(
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(langs_proc_line)(uls_lang_list_ptr_t tbl, char* line)
+ULS_QUALIFIED_METHOD(langs_proc_line)(uls_lang_list_ptr_t tbl, char *line)
 {
 	uls_lang_ptr_t lang;
 	char *lptr=line, *wrd0, *wrd;
@@ -176,7 +176,7 @@ ULS_QUALIFIED_METHOD(construct_ulc_lang_db)(uls_lang_list_ptr_t tbl)
 }
 
 ULS_DECL_STATIC _ULS_INLINE int
-ULS_QUALIFIED_METHOD(__is_langs_needed_quote)(const char* name)
+ULS_QUALIFIED_METHOD(__is_langs_needed_quote)(const char *name)
 {
 	int stat=0;
 	const char *cptr;
@@ -305,7 +305,8 @@ ULS_QUALIFIED_METHOD(uls_load_langdb)(const char *fpath)
 	tbl = uls_alloc_object(uls_lang_list_t);
 	uls_init_lang_list(tbl);
 
-	if ((filp = _uls_tool_(open_filp)(fpath, ULS_FIO_READ|ULS_FIO_MULTLINE)) == nilptr) {
+	if ((filp = _uls_tool_(open_filp)(fpath, 
+		ULS_FIO_NO_UTF8BOM | ULS_FIO_READ | ULS_FIO_MULTLINE)) == nilptr) {
 		uls_deinit_lang_list(tbl);
 		uls_dealloc_object(tbl);
 		return nilptr;
@@ -346,7 +347,7 @@ ULS_QUALIFIED_METHOD(uls_destroy_lang_list)(uls_lang_list_ptr_t tbl)
 }
 
 ULS_QUALIFIED_RETTYP(uls_lang_ptr_t)
-ULS_QUALIFIED_METHOD(uls_find_lang)(uls_lang_list_ptr_t tbl, const char* alias)
+ULS_QUALIFIED_METHOD(uls_find_lang)(uls_lang_list_ptr_t tbl, const char *alias)
 {
 	uls_decl_parray_slots(slots_ht, alias);
 	unsigned int hval;
@@ -371,7 +372,7 @@ ULS_QUALIFIED_METHOD(uls_find_lang)(uls_lang_list_ptr_t tbl, const char* alias)
 }
 
 const char*
-ULS_QUALIFIED_METHOD(uls_find_lang_name)(const char* alias)
+ULS_QUALIFIED_METHOD(uls_find_lang_name)(const char *alias)
 {
 	uls_alias_ptr_t e0;
 	uls_lang_ptr_t lang;
@@ -385,7 +386,7 @@ ULS_QUALIFIED_METHOD(uls_find_lang_name)(const char* alias)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_list_names_of_lang)(const char* alias)
+ULS_QUALIFIED_METHOD(uls_list_names_of_lang)(const char *alias)
 {
 	uls_lang_ptr_t lang;
 

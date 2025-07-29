@@ -77,13 +77,13 @@ namespace collection
 		// <brief>
 		// These are virtual methods inherited from 'UlsLex' class and
 		//    declared here to implement.
-		// Those we need to tokenize 'Makefile' files are just getTok(), token(), lexeme().
+		// Those we need to tokenize 'Makefile' files are just next(), getTokStr(), getTokNum().
 		// </brief>
-		virtual int getTok(void);
-		virtual int getTokNum(void);
+		virtual int next(void) override;
+		virtual int getTokNum(void) override;
 
 		int set_input_file(tstring& fpath);
-		void ungetTok(void);
+		void ungetCurrentToken(void);
 	};
 }
 }

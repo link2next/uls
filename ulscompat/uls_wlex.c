@@ -38,6 +38,9 @@
 #include "uls/uls_wprint.h"
 #include "uls/uls_wlog.h"
 
+#include "uls/uls_fileio.h"
+#include "uls/ms_mbcs_file.h"
+
 ULS_DECL_STATIC void
 init_id2wstr_pairs(uls_lex_ptr_t uls)
 {
@@ -78,7 +81,8 @@ init_id2wstr_pairs(uls_lex_ptr_t uls)
 	}
 }
 
-void uls_init_wstr_2(uls_wlex_shell_ptr_t wuls, uls_lex_ptr_t uls)
+void
+uls_init_wstr_2(uls_wlex_shell_ptr_t wuls, uls_lex_ptr_t uls)
 {
 	wuls->flags = 0;
 	wuls->uls = uls;
@@ -115,7 +119,7 @@ uls_tok2keyw_2_wstr(uls_lex_ptr_t uls, int t, uls_outparam_ptr_t parms)
 
 	if (parms != nilptr) {
 		parms->lptr = (char *) pair->wstr;
-		parms->len = pair->n_chars;
+		parms->len = pair->n_wchars;
 	}
 
 	return pair->wstr;
@@ -133,7 +137,7 @@ uls_tok2name_2_wstr(uls_lex_ptr_t uls, int t, uls_outparam_ptr_t parms)
 
 	if (parms != nilptr) {
 		parms->lptr = (char *) pair->wstr;
-		parms->len = pair->n_chars;
+		parms->len = pair->n_wchars;
 	}
 
 	return pair->wstr;
@@ -152,7 +156,7 @@ uls_tok2name_wstr(uls_lex_ptr_t uls, int t)
 }
 
 int
-uls_init_wstr(uls_lex_ptr_t uls, const wchar_t* confname)
+uls_init_wstr(uls_lex_ptr_t uls, const wchar_t *confname)
 {
 	uls_wlex_shell_ptr_t wuls;
 	int stat = 0;
@@ -182,7 +186,7 @@ uls_init_wstr(uls_lex_ptr_t uls, const wchar_t* confname)
 }
 
 uls_lex_ptr_t
-uls_create_wstr(const wchar_t* confname)
+uls_create_wstr(const wchar_t *confname)
 {
 	uls_lex_ptr_t uls;
 
@@ -266,12 +270,39 @@ uls_set_fd_wstr(uls_lex_ptr_t uls, int fd, int flags)
 int
 uls_push_fp_wstr(uls_lex_ptr_t uls, FILE *fp, int flags)
 {
+	int stat = 0;
+#ifdef __ULS_WINDOWS__
+	uls_tempfile_ptr_t tmpfile_utf8;
+	FILE *fp2;
+#endif
+
 	if (fp == NULL) {
 		err_wlog(L"%hs: invalid parameter fp", __func__);
 		return -1;
 	}
 
-	return uls_push_fp(uls, fp, flags);
+#ifdef __ULS_WINDOWS__
+	tmpfile_utf8 = uls_create_tempfile();
+
+	if ((fp2 = cvt_ms_mbcs_fp(fp, tmpfile_utf8, flags)) == NULL) {
+		err_wlog(L"%hs: encoding error!", __func__);
+		uls_destroy_tempfile(tmpfile_utf8);
+		return -1;
+	}
+
+	if ((stat = uls_push_fp(uls, fp2, flags)) < 0) {
+		err_wlog(L"%hs: can't prepare input!", __func__);
+		uls_destroy_tempfile(tmpfile_utf8);
+	} else {
+		uls_register_ungrabber(uls, 0, ms_mbcs_tmpf_ungrabber, tmpfile_utf8);
+	}
+#else
+	if ((stat = uls_push_fp(uls, fp, flags)) < 0) {
+		err_wlog(L"%hs: can't prepare input!", __func__);
+	}
+#endif
+
+	return stat;
 }
 
 int
@@ -286,18 +317,8 @@ uls_set_fp_wstr(uls_lex_ptr_t uls, FILE *fp, int flags)
 	return uls_push_fp_wstr(uls, fp, flags);
 }
 
-ULS_DECL_STATIC void
-fp_ungrabber_wstr(uls_voidptr_t data)
-{
-	uls_outparam_ptr_t parm = (uls_outparam_ptr_t) data;
-	FILE *fp = (FILE *) parm->native_data;
-
-	uls_dealloc_object(parm);
-	uls_fp_close(fp);
-}
-
 int
-uls_push_file_wstr(uls_lex_ptr_t uls, const wchar_t* wfilepath, int flags)
+uls_push_file_wstr(uls_lex_ptr_t uls, const wchar_t *wfilepath, int flags)
 {
 	uls_outparam_ptr_t parm;
 	FILE *fp;
@@ -322,14 +343,13 @@ uls_push_file_wstr(uls_lex_ptr_t uls, const wchar_t* wfilepath, int flags)
 
 	parm = uls_alloc_object(uls_outparam_t);
 	parm->native_data = fp;
-
 	uls_register_ungrabber(uls, 1, fp_ungrabber_wstr, parm);
 
 	return 0;
 }
 
 int
-uls_set_file_wstr(uls_lex_ptr_t uls, const wchar_t* wfilepath, int flags)
+uls_set_file_wstr(uls_lex_ptr_t uls, const wchar_t *wfilepath, int flags)
 {
 	if (wfilepath == NULL) {
 		err_wlog(L"%hs: Invalid parameter, filepath=%s", __func__, wfilepath);
@@ -341,13 +361,13 @@ uls_set_file_wstr(uls_lex_ptr_t uls, const wchar_t* wfilepath, int flags)
 }
 
 int
-uls_push_line_wstr(uls_lex_ptr_t uls, const wchar_t* wline, int wlen, int flags)
+uls_push_line_wstr(uls_lex_ptr_t uls, const wchar_t *wline, int wlen, int flags)
 {
 	uls_uint16   *wbuff;
 	int i;
 
 	if (wline == NULL) {
-		err_wlog(L"%hs: fail to set wide string", __func__);
+		err_wlog(L"%hs: invalid parameter!", __func__);
 		return -1;
 	}
 
@@ -370,13 +390,13 @@ uls_push_line_wstr(uls_lex_ptr_t uls, const wchar_t* wline, int wlen, int flags)
 }
 
 int
-uls_set_line_wstr(uls_lex_ptr_t uls, const wchar_t* wline, int wlen, int flags)
+uls_set_line_wstr(uls_lex_ptr_t uls, const wchar_t *wline, int wlen, int flags)
 {
 	uls_uint16   *wbuff;
 	int i;
 
 	if (wline == NULL) {
-		err_wlog(L"%hs fail to set wide string", __func__);
+		err_wlog(L"%hs: fail to set wide string", __func__);
 		return -1;
 	}
 
@@ -399,7 +419,7 @@ uls_set_line_wstr(uls_lex_ptr_t uls, const wchar_t* wline, int wlen, int flags)
 }
 
 void
-uls_set_tag_wstr(uls_lex_ptr_t uls, const wchar_t* wtag, int lno)
+uls_set_tag_wstr(uls_lex_ptr_t uls, const wchar_t *wtag, int lno)
 {
 	uls_wlex_shell_ptr_t wuls = (uls_wlex_shell_ptr_t) uls->shell;
 	char *ustr;
@@ -490,23 +510,20 @@ uls_get_wtok(uls_lex_ptr_t uls)
 }
 
 void
-uls_set_wtok(uls_lex_ptr_t uls, int tokid, const wchar_t* wlexeme, int l_wlexeme)
+uls_set_wtok(uls_lex_ptr_t uls, int tokid, const wchar_t *wlexeme, int l_wlexeme)
 {
 	uls_wlex_shell_ptr_t wuls = (uls_wlex_shell_ptr_t) uls->shell;
 	char *ustr;
-	int  ulen, wlen;
+	int  ulen;
 	csz_str_t csz;
 
 	if (l_wlexeme < 0) {
-		l_wlexeme = -1;
-		wlen = uls_wcslen(wlexeme);
-	} else {
-		wlen = l_wlexeme;
+		l_wlexeme = uls_wcslen(wlexeme);
 	}
 
 	csz_init(uls_ptr(csz), -1);
 
-	if ((ustr = uls_wstr2ustr(wlexeme, wlen, uls_ptr(csz))) == NULL) {
+	if ((ustr = uls_wstr2ustr(wlexeme, l_wlexeme, uls_ptr(csz))) == NULL) {
 		err_wlog(L"encoding error!");
 	} else {
 		ulen = csz_length(uls_ptr(csz));
@@ -536,7 +553,8 @@ uls_lexeme_wstr(uls_lex_ptr_t uls)
 		l_lxm = uls_lexeme_len(uls);
 
 		wlxm = uls_ustr2wstr(lxm, -l_lxm, uls_ptr(wuls->wtokbuf));
-		if (wlxm == NULL) err_wpanic(L"incorrect encoding!");
+		if (wlxm == NULL)
+			err_wpanic(L"incorrect encoding!");
 
 		wuls->wtokbuf_len = auw_csz_wlen(uls_ptr(wuls->wtokbuf));
 
@@ -552,9 +570,8 @@ uls_lexeme_len_wstr(uls_lex_ptr_t uls)
 {
 	uls_wlex_shell_ptr_t wuls = (uls_wlex_shell_ptr_t) uls->shell;
 
-	if (wuls->wtokbuf_len < 0) {
+	if (wuls->wtokbuf_len < 0)
 		uls_lexeme_wstr(uls);
-	}
 
 	return wuls->wtokbuf_len;
 }
@@ -592,25 +609,26 @@ uls_tokstr_len_wstr(uls_lex_ptr_t uls)
 	return wuls->wtokbuf2_len;
 }
 
-wchar_t
-uls_peek_wch(uls_lex_ptr_t uls, uls_nextch_detail_ptr_t parms)
+uls_wch_t
+uls_peek_wch(uls_lex_ptr_t uls, uls_nextch_detail_ptr_t detail_ch)
 {
 	uls_wch_t wch;
-	wch = uls_peek_uch(uls, parms);
-	return (wchar_t) wch;
+	wch = uls_peek_ch(uls, detail_ch);
+	return wch;
 }
 
-wchar_t
-uls_get_wch(uls_lex_ptr_t uls, uls_nextch_detail_ptr_t parms)
+uls_wch_t
+uls_get_wch(uls_lex_ptr_t uls, uls_nextch_detail_ptr_t detail_ch)
 {
 	uls_wch_t wch;
-	wch = uls_get_uch(uls, parms);
-	return (wchar_t) wch;
+	wch = uls_get_ch(uls, detail_ch);
+	return wch;
 }
 
-void
-uls_unget_lexeme_wstr(uls_lex_ptr_t uls, const wchar_t *lxm, int tok_id)
+int
+uls_unget_tok_wstr(uls_lex_ptr_t uls, int tok_id, const wchar_t *lxm)
 {
+	int stat = 0;
 	uls_wlex_shell_ptr_t wuls = (uls_wlex_shell_ptr_t) uls->shell;
 	char *ustr;
 	csz_str_t csz;
@@ -619,17 +637,20 @@ uls_unget_lexeme_wstr(uls_lex_ptr_t uls, const wchar_t *lxm, int tok_id)
 
 	if ((ustr = uls_wstr2ustr(lxm, -1, uls_ptr(csz))) == NULL) {
 		err_wlog(L"encoding error!");
+		stat = -1;
 	} else {
-		uls_unget_lexeme(uls, ustr, tok_id);
+		stat = uls_unget_tok(uls, tok_id, ustr);
 		wuls->wtokbuf_len = wuls->wtokbuf2_len = -1;
 	}
 
 	csz_deinit(uls_ptr(csz));
+	return stat;
 }
 
-void
-uls_unget_wstr(uls_lex_ptr_t uls, const wchar_t* wstr)
+int
+uls_unget_wstr(uls_lex_ptr_t uls, const wchar_t *wstr)
 {
+	int stat = 0;
 	uls_wlex_shell_ptr_t wuls = (uls_wlex_shell_ptr_t) uls->shell;
 	char *ustr;
 	csz_str_t csz;
@@ -638,40 +659,45 @@ uls_unget_wstr(uls_lex_ptr_t uls, const wchar_t* wstr)
 
 	if ((ustr = uls_wstr2ustr(wstr, -1, uls_ptr(csz))) == NULL) {
 		err_wlog(L"encoding error!");
+		stat = 0;
 	} else {
-		uls_unget_str(uls, ustr);
+		stat = uls_unget_str(uls, ustr);
 		wuls->wtokbuf_len = wuls->wtokbuf2_len = -1;
 	}
 
 	csz_deinit(uls_ptr(csz));
+	return stat;
 }
 
-void
-uls_unget_wch(uls_lex_ptr_t uls, wchar_t wch)
+int
+uls_unget_wch(uls_lex_ptr_t uls, uls_wch_t wch)
 {
+	int stat = 0;
 	uls_wlex_shell_ptr_t wuls = (uls_wlex_shell_ptr_t) uls->shell;
 	char *ustr;
 	csz_str_t csz;
 	wchar_t wbuff[2];
 
-	wbuff[0] = wch;
+	wbuff[0] = (wchar_t) wch;
 	wbuff[1] = L'\0';
 
 	csz_init(uls_ptr(csz), -1);
 
 	if ((ustr = uls_wstr2ustr(wbuff, 1, uls_ptr(csz))) == NULL) {
 		err_wlog(L"encoding error!");
+		stat = -1;
 	} else {
-		uls_unget_str(uls, ustr);
+		stat = uls_unget_str(uls, ustr);
 		wuls->wtokbuf_len = wuls->wtokbuf2_len = -1;
 	}
 
 	csz_deinit(uls_ptr(csz));
+	return stat;
 }
 
 int
 uls_push_istream_2_wstr(uls_lex_ptr_t uls, uls_istream_ptr_t istr,
-	const wchar_t** tmpl_wnams, const wchar_t** tmpl_wvals, int n_tmpls, int flags)
+	const wchar_t **tmpl_wnams, const wchar_t **tmpl_wvals, int n_tmpls, int flags)
 {
 	int i, stat=0;
 	char **ustr_nams=NULL, **ustr_vals=NULL;
@@ -687,7 +713,7 @@ uls_push_istream_2_wstr(uls_lex_ptr_t uls, uls_istream_ptr_t istr,
 
 	for (i=0; i<n_tmpls; i++) {
 		if (tmpl_wnams[i] == NULL || tmpl_wvals[i] == NULL) {
-			return -2;
+			return -1;
 		}
 	}
 
@@ -744,66 +770,43 @@ void
 uls_dump_tok_wstr(uls_lex_ptr_t uls, const wchar_t *wpfx, const wchar_t *wsuff)
 {
 	int tok_id = uls_tok(uls), has_lxm;
-	const wchar_t *tok_wstr = uls_tokstr_wstr(uls);
+	const wchar_t *tok_wstr = uls_lexeme_wstr(uls);
 	char toknam_buff[ULS_CARDINAL_TOKNAM_SIZ+1];
 	char lxmpfx[ULS_CARDINAL_LXMPFX_MAXSIZ+1];
 
-	csz_str_t csz, csz1, csz2, csz3;
-	wchar_t *wstr1, *wstr2, *wstr3;
-	const char *numsuff, *tok_str;
+	csz_str_t csz1;
+	wchar_t *wstr1;
+	const char *numsuff;
 	uls_outparam_t parms;
 
 	if (wpfx == NULL) wpfx = L"";
 	if (wsuff == NULL) wsuff = L"";
 
-	csz_init(uls_ptr(csz), -1);
 	csz_init(uls_ptr(csz1), -1);
-	csz_init(uls_ptr(csz2), -1);
-	csz_init(uls_ptr(csz3), -1);
 
-	if ((tok_str = uls_wstr2ustr(tok_wstr, -1, uls_ptr(csz))) == NULL) {
-		csz_deinit(uls_ptr(csz));
-		err_wpanic(L"encoding error!");
-	}
-
-	parms.lptr = tok_str;
+	parms.lptr = uls_tokstr(uls);
 	has_lxm = uls_cardinal_toknam_deco_lxmpfx(toknam_buff, lxmpfx, uls, tok_id, uls_ptr(parms));
-	tok_str = parms.lptr;
 
-	if ((wstr1 = uls_ustr2wstr(toknam_buff, -1, uls_ptr(csz1))) == NULL) {
-		err_wpanic(L"encoding error!");
-	}
-
-	if ((wstr2 = uls_ustr2wstr(lxmpfx, -1, uls_ptr(csz2))) == NULL) {
-		err_wpanic(L"encoding error!");
-	}
-
-	if ((wstr3 = uls_ustr2wstr(tok_str, -1, uls_ptr(csz3))) == NULL) {
-		err_wpanic(L"encoding error!");
-	}
-
-	uls_wprintf(L"%s%s", wpfx, wstr1);
+	uls_wprintf(L"%s%hs", wpfx, toknam_buff);
 	if (has_lxm) {
 		if (tok_id == uls->xcontext.toknum_NUMBER && *(numsuff = uls_number_suffix(uls)) != '\0') {
 			if ((wstr1 = uls_ustr2wstr(numsuff, -1, uls_ptr(csz1))) == NULL) {
-				err_wpanic(L"encoding error!");
+				err_wlog(L"encoding error!");
+				return;
 			}
-			uls_wprintf(L" %s%s %s", wstr2, wstr3, wstr1);
+			uls_wprintf(L" %hs%s %s", lxmpfx, tok_wstr, wstr1);
 		} else {
-			uls_wprintf(L" %s%s", wstr2, wstr3);
+			uls_wprintf(L" %hs%s", lxmpfx, tok_wstr);
 		}
 	}
 
 	uls_wprintf(L"%s", wsuff);
 
-	csz_deinit(uls_ptr(csz));
 	csz_deinit(uls_ptr(csz1));
-	csz_deinit(uls_ptr(csz2));
-	csz_deinit(uls_ptr(csz3));
 }
 
 void
-_uls_dump_tok_2_wstr(uls_lex_ptr_t uls, const wchar_t* wpfx,
+_uls_dump_tok_2_wstr(const wchar_t *wpfx,
 	const wchar_t *id_wstr, const wchar_t *tok_wstr, const wchar_t *wsuff)
 {
 	char toknam_buff[ULS_CARDINAL_TOKNAM_SIZ+1];
@@ -839,16 +842,16 @@ uls_get_eoftag_wstr(uls_lex_ptr_t uls, int *ptr_len_tag)
 {
 	uls_wlex_shell_ptr_t wuls = (uls_wlex_shell_ptr_t) uls->shell;
 	const char *ustr;
-	wchar_t *wstr;
+	wchar_t *wtag;
 
 	ustr = uls_get_eoftag(uls, NULL);
-	wstr = uls_ustr2wstr(ustr, -1, uls_ptr(wuls->wtageof));
-	if (wstr == NULL) return NULL;
+	wtag = uls_ustr2wstr(ustr, -1, uls_ptr(wuls->wtageof));
+	if (wtag == NULL) return NULL;
 
 	wuls->wtageof_len = auw_csz_wlen(uls_ptr(wuls->wtageof));
 	if (ptr_len_tag != NULL) {
 		*ptr_len_tag = wuls->wtageof_len;
 	}
 
-	return wstr;
+	return wtag;
 }

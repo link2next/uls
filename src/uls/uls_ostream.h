@@ -66,7 +66,7 @@ ULS_DEFINE_STRUCT(ostream)
 
 #if defined(__ULS_OSTREAM__) || defined(ULS_DECL_PRIVATE_PROC)
 ULS_DECL_STATIC int uls_make_pkt__null(uls_wr_packet_ptr_t pkt, _uls_ptrtype_tool(csz_str) outbuf);
-ULS_DECL_STATIC void __make_pkt_to_binstr(uls_wr_packet_ptr_t pkt, char* binstr, int reclen, int txtlen);
+ULS_DECL_STATIC void __make_pkt_to_binstr(uls_wr_packet_ptr_t pkt, char *binstr, int reclen, int txtlen);
 
 ULS_DECL_STATIC int uls_make_pkt__bin(uls_wr_packet_ptr_t pkt, _uls_ptrtype_tool(csz_str) ss_dst);
 ULS_DECL_STATIC int uls_make_pkt__bin_lno(uls_wr_packet_ptr_t pkt, _uls_ptrtype_tool(csz_str) ss_dst);
@@ -82,12 +82,12 @@ ULS_DECL_STATIC void __bind_ostream_callbacks(uls_ostream_ptr_t ostr, int stream
 ULS_DECL_STATIC int write_uld_to_ostream(uls_xcontext_ptr_t xctx,
 	uls_ptrtype_tool(outparam) parms, int fd_out);
 ULS_DECL_STATIC int write_ostream_header(uls_ostream_ptr_t ostr, uls_xcontext_ptr_t xctx);
-ULS_DECL_STATIC void __uls_bind_ostream(uls_ostream_ptr_t ostr, const char *specname, uls_lex_ptr_t uls);
+ULS_DECL_STATIC void __uls_bind_ostream(uls_ostream_ptr_t ostr, uls_lex_ptr_t uls);
 ULS_DECL_STATIC void __uls_unbind_ostream(uls_ostream_ptr_t ostr);
 ULS_DECL_STATIC int __flush_uls_stream_buffer(_uls_ptrtype_tool(csz_str) outbuf, int fd, int force);
 ULS_DECL_STATIC int __uls_finalize_ostream(uls_ostream_ptr_t ostr);
-ULS_DECL_STATIC int __uls_make_packet_linenum(uls_ostream_ptr_t ostr, int lno, const char* tag, int tag_len);
-ULS_DECL_STATIC int __uls_make_packet(uls_ostream_ptr_t ostr, int tokid, const char* tokstr, int l_tokstr);
+ULS_DECL_STATIC int __uls_make_packet_linenum(uls_ostream_ptr_t ostr, int lno, const char *tag, int tag_len);
+ULS_DECL_STATIC int __uls_make_packet(uls_ostream_ptr_t ostr, int tokid, const char *tokstr, int l_tokstr);
 
 ULS_DECL_STATIC void fill_uls_redundant_lines(char *buff, int buflen, int len1, const char *mesg2);
 ULS_DECL_STATIC int writeline_istr_hdr(char *buf, int bufsiz, int k, const char *line, int linelen);
@@ -110,15 +110,15 @@ int save_istr_hdrbuf(char *ulshdr, int buflen, int fd);
 #endif
 
 #ifdef ULS_DECL_PUBLIC_PROC
-ULS_DLL_EXTERN uls_ostream_ptr_t __uls_create_ostream(int fd_out, uls_lex_ptr_t uls, int stream_type, const char* subname);
-ULS_DLL_EXTERN uls_ostream_ptr_t uls_create_ostream(int fd_out, uls_lex_ptr_t uls, const char* subname);
-ULS_DLL_EXTERN uls_ostream_ptr_t uls_create_ostream_file(const char* filepath, uls_lex_ptr_t uls, const char* subname);
+ULS_DLL_EXTERN uls_ostream_ptr_t __uls_create_ostream(int fd_out, uls_lex_ptr_t uls, int stream_type, const char *subname);
+ULS_DLL_EXTERN uls_ostream_ptr_t uls_create_ostream(int fd_out, uls_lex_ptr_t uls, const char *subname);
+ULS_DLL_EXTERN uls_ostream_ptr_t uls_create_ostream_file(const char *filepath, uls_lex_ptr_t uls, const char *subname);
 ULS_DLL_EXTERN int uls_destroy_ostream(uls_ostream_ptr_t ostr);
 #define uls_close_ostream uls_destroy_ostream
 
-ULS_DLL_EXTERN int __uls_print_tok(uls_ostream_ptr_t ostr, int tokid, const char* tokstr, int l_tokstr);
-ULS_DLL_EXTERN int _uls_print_tok(uls_ostream_ptr_t ostr, int tokid, const char* tokstr);
-ULS_DLL_EXTERN int __uls_print_tok_linenum(uls_ostream_ptr_t ostr, int lno, const char* tag, int tag_len);
+ULS_DLL_EXTERN int __uls_print_tok(uls_ostream_ptr_t ostr, int tokid, const char *tokstr, int l_tokstr);
+ULS_DLL_EXTERN int _uls_print_tok(uls_ostream_ptr_t ostr, int tokid, const char *tokstr);
+ULS_DLL_EXTERN int __uls_print_tok_linenum(uls_ostream_ptr_t ostr, int lno, const char *tag, int tag_len);
 ULS_DLL_EXTERN int uls_print_tok(uls_ostream_ptr_t ostr);
 
 ULS_DLL_EXTERN int uls_start_stream(uls_ostream_ptr_t ostr, int flags);
@@ -134,8 +134,12 @@ ULS_DLL_EXTERN int ulsjava_print_tok_linenum(uls_ostream_ptr_t ostr, int lno, co
 }
 #endif
 
-#ifdef ULS_USE_WSTR
+#ifdef _ULS_USE_ULSCOMPAT
+#if defined(ULS_USE_WSTR)
 #include "uls/uls_ostream_wstr.h"
+#elif defined(ULS_USE_ASTR)
+#include "uls/uls_ostream_astr.h"
+#endif
 #endif
 
 #endif // __ULS_OSTREAM_H__

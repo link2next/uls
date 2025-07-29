@@ -37,7 +37,7 @@
 #endif
 
 ULS_DECL_STATIC _ULS_INLINE int
-ULS_QUALIFIED_METHOD(__input_space_proc)(const char* ch_ctx, _uls_ptrtype_tool(csz_str) ss_dst, uls_ptrtype_tool(outparam) parms)
+ULS_QUALIFIED_METHOD(__input_space_proc)(const char *ch_ctx, _uls_ptrtype_tool(csz_str) ss_dst, uls_ptrtype_tool(outparam) parms)
 {
 	const char  *lptr = parms->lptr, *lptr_end = parms->lptr_end;
 	int   stat=0, n_spaces, n_spaces_accum, n_lfs_total;
@@ -156,7 +156,7 @@ ULS_QUALIFIED_METHOD(input_quote_proc)(uls_input_ptr_t inp, uls_quotetype_ptr_t 
 	uls_litstr_t lit;
 	uls_litstr_context_ptr_t lit_ctx = uls_ptr(lit.context);
 
-	int   len_emark = qmt->len_end_mark, n_qmt_lines = qmt->n_lfs;
+	int len_emark = qmt->len_end_mark, n_qmt_lines = qmt->n_lfs;
 	const char *lptr, *lptr_end;
 	int   stat, n_bytes_req;
 
@@ -186,7 +186,7 @@ ULS_QUALIFIED_METHOD(input_quote_proc)(uls_input_ptr_t inp, uls_quotetype_ptr_t 
 			// In case of EOF, lptr == lptr_end
 		}
 
-		if ((int) (lptr_end - lptr) < len_emark) {
+		if (lptr_end < lptr + len_emark) {
 			stat = ULS_LITPROC_ERROR;
 			break;
 		}
@@ -198,7 +198,7 @@ ULS_QUALIFIED_METHOD(input_quote_proc)(uls_input_ptr_t inp, uls_quotetype_ptr_t 
 
 		if (n_bytes_req <= 0) {
 			if (n_bytes_req == ULS_LITPROC_ENDOFQUOTE && (qmt->flags & ULS_QSTR_R_EXCLUSIVE)) {
-				lptr -= qmt->len_end_mark;
+				lptr -= len_emark;
 				n_qmt_lines = qmt->n_left_lfs;
 			}
 			stat = n_bytes_req;
@@ -215,7 +215,7 @@ ULS_QUALIFIED_METHOD(input_quote_proc)(uls_input_ptr_t inp, uls_quotetype_ptr_t 
 }
 
 int
-ULS_QUALIFIED_METHOD(input_space_proc)(const char* ch_ctx, uls_input_ptr_t inp,
+ULS_QUALIFIED_METHOD(input_space_proc)(const char *ch_ctx, uls_input_ptr_t inp,
 	_uls_ptrtype_tool(csz_str) ss_dst, uls_ptrtype_tool(outparam) parms0)
 {
 	int  n_lfs, stat = 0;
@@ -268,7 +268,7 @@ ULS_QUALIFIED_METHOD(uls_input_change_filler_null)(uls_input_ptr_t inp)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_init_line_in_input)(uls_input_ptr_t inp, const char* line, int n_bytes, int ipos)
+ULS_QUALIFIED_METHOD(uls_init_line_in_input)(uls_input_ptr_t inp, const char *line, int n_bytes, int ipos)
 {
 	int ipos2;
 
@@ -398,7 +398,7 @@ ULS_QUALIFIED_METHOD(uls_input_read)(uls_source_ptr_t isrc, char *buf, int bufle
 		}
 
 		if ((buflen += rc) >= bufsiz) break;
-		if (rc == 0) break; 
+		if (rc == 0) break;
 	}
 
 	return buflen - buflen0;
@@ -434,6 +434,7 @@ ULS_QUALIFIED_METHOD(uls_input_refill_buffer)(uls_input_ptr_t inp, int n_req_byt
 		if (rc == 0 || (inp->rawbuf_bytes += rc) >= n_req_bytes) {
 			break;
 		}
+
 		_uls_tool_(msleep)(15);
 	}
 
@@ -487,7 +488,7 @@ ULS_QUALIFIED_METHOD(uls_ungrab_linecheck)(uls_source_ptr_t isrc)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_fill_null_source)(uls_source_ptr_t isrc, char* buf, int buflen, int bufsiz)
+ULS_QUALIFIED_METHOD(uls_fill_null_source)(uls_source_ptr_t isrc, char *buf, int buflen, int bufsiz)
 {
 	isrc->flags |= ULS_ISRC_FL_EOF;
 	return 0;
@@ -499,7 +500,7 @@ ULS_QUALIFIED_METHOD(uls_ungrab_null_source)(uls_source_ptr_t isrc)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_fill_fd_isrc_utf8)(uls_source_ptr_t isrc, char* buf, int buflen, int bufsiz)
+ULS_QUALIFIED_METHOD(uls_fill_fd_isrc_utf8)(uls_source_ptr_t isrc, char *buf, int buflen, int bufsiz)
 {
 	const uls_ptrtype_tool(utf_inbuf) inp = (const uls_ptrtype_tool(utf_inbuf)) isrc->usrc;
 	int rc;

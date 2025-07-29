@@ -36,11 +36,11 @@
 #include "uls/uls_wlog.h"
 
 int
-uls_is_valid_specpath_wstr(const wchar_t* wconfname)
+uls_is_valid_specpath_wstr(const wchar_t *wconfname)
 {
+	csz_str_t csz;
 	char *ustr;
 	int rval;
-	csz_str_t csz;
 
 	csz_init(uls_ptr(csz), -1);
 
@@ -59,7 +59,7 @@ uls_is_valid_specpath_wstr(const wchar_t* wconfname)
 int
 uls_get_spectype_wstr(const wchar_t *wfpath, uls_outparam_ptr_t parms)
 {
-	wchar_t* specwname = (wchar_t *) parms->line;
+	wchar_t *specwname = (wchar_t *) parms->line;
 	char *ufpath;
 	wchar_t *wstr;
 	int wlen, stat, len_dpath_ustr, l_specname_ustr;
@@ -68,7 +68,6 @@ uls_get_spectype_wstr(const wchar_t *wfpath, uls_outparam_ptr_t parms)
 	uls_outparam_t parms1;
 
 	csz_init(uls_ptr(csz1), -1);
-
 	if ((ufpath = uls_wstr2ustr(wfpath, -1, uls_ptr(csz1))) == NULL) {
 		err_wlog(L"encoding error!");
 		csz_deinit(uls_ptr(csz1));
@@ -83,7 +82,8 @@ uls_get_spectype_wstr(const wchar_t *wfpath, uls_outparam_ptr_t parms)
 	csz_init(uls_ptr(csz2), -1);
 	if ((wstr = uls_ustr2wstr(specname_ustr, -l_specname_ustr, uls_ptr(csz2))) == NULL) {
 		err_wlog(L"encoding error!");
-		csz_deinit(uls_ptr(csz1)); csz_deinit(uls_ptr(csz2));
+		csz_deinit(uls_ptr(csz1));
+		csz_deinit(uls_ptr(csz2));
 		return -1;
 	}
 
@@ -99,12 +99,13 @@ uls_get_spectype_wstr(const wchar_t *wfpath, uls_outparam_ptr_t parms)
 		parms->n = wlen = auw_csz_wlen(uls_ptr(csz2));
 	}
 
-	csz_deinit(uls_ptr(csz1)); csz_deinit(uls_ptr(csz2));
+	csz_deinit(uls_ptr(csz1));
+	csz_deinit(uls_ptr(csz2));
 	return stat;
 }
 
 void
-ulc_list_searchpath_wstr(const wchar_t* confname)
+ulc_list_searchpath_wstr(const wchar_t *confname)
 {
 	char *ustr;
 	csz_str_t csz;

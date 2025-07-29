@@ -83,19 +83,19 @@ namespace collection
 		// <brief>
 		// These are virtual methods inherited from 'UlsLex' class and
 		//    declared here to implement.
-		// Those we need to tokenize HTML5 files are just getTok(), TokNum(), TokStr().
+		// Those we need to tokenize HTML5 files are just next(), getTokNum(), getTokStr().
 		// </brief>
-		virtual int getTok(void);
-		virtual int getTokNum(void);
+		virtual int next(void) override;
+		virtual int getTokNum(void) override;
 
-		void ungetTok(void);
+		void ungetCurrentToken(void);
 
 		// <brief>
 		// Sets the input file to be tokenized.
 		// </brief>
 		// <parm name="fpath">The path of file</parm>
 		// <return>none</return>
-		int setFile(tstring fpath);
+		int setInputFile(tstring fpath);
 	};
 }
 }

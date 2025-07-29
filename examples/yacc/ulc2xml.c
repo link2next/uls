@@ -38,7 +38,7 @@
 ulc_file_t ulc_file;
 
 static int
-print(const char* fmt, ...)
+print(const char *fmt, ...)
 {
 	va_list	args;
 	int len;
@@ -78,7 +78,7 @@ release_wordlist(ulc_wordlist_t* wrdlst)
 }
 
 ulc_token_def_t*
-new_tokdef(char *name, char* keyw, int tok_id)
+new_tokdef(char *name, char *keyw, int tok_id)
 {
 	ulc_token_def_t*  e;
 

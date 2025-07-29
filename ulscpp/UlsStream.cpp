@@ -33,11 +33,10 @@
 */
 
 #include "uls/UlsStream.h"
-#include "uls/UlsUtils.h"
+#include "uls/UlsAuw.h"
 
 #include <uls/uls_lex.h>
 #include <uls/uls_ostream.h>
-#include <uls/uls_auw.h>
 
 #include <string>
 
@@ -48,23 +47,11 @@ using namespace std;
 // 'UlsLex' is the the class for lexical analysis defined in the same namespace 'ULS'.
 // </brief>
 // <parm name="ulslex">An ULS lexical analyzer</parm>
-// <return>none</return>
 uls::crux::UlsStream::UlsStream()
 {
-	auwcvt = new UlsAuw();
-
 	WANT_EOFTOK = _uls_const_WANT_EOFTOK();
 	LINE_NUMBERING = _uls_const_LINE_NUMBERING();
 	STREAM_BIN_LE = _uls_const_STREAM_BIN_LE();
 	STREAM_BIN_BE = _uls_const_STREAM_BIN_BE();
 	read_only = true;
-}
-
-// <brief>
-// The destuctor of UlsStream.
-// </brief>
-// <return>none</return>
-uls::crux::UlsStream::~UlsStream()
-{
-	delete auwcvt;
 }

@@ -1,0 +1,18 @@
+
+main()
+{
+	AAA = 1UL;
+	AAA = 2L;
+
+	if (AAA && BBB || EEE) {
+		AAA = 0;
+		EEE = 0x00fffe;
+	}
+
+	XXX = 3.14;
+	BBB =  -7094;
+	AAA =  0644;
+	XXX =  0.;
+	YYY =  .3;
+}
+

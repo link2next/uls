@@ -133,12 +133,11 @@ extern "C" {
 
 #define uls_lexeme_float(uls) ((float)uls_lexeme_double(uls))
 
-#define ULS_UCH_NONE '\0'
-#define ULS_CH_NONE ULS_UCH_NONE
-#define uls_peek_ch uls_peek_uch
-#define uls_get_ch uls_get_uch
-#define uls_peekch uls_peek_uch
-#define uls_getch uls_get_uch
+#define ULS_WCH_NONE '\0'
+
+#define ULS_UCH_NONE ULS_WCH_NONE
+#define uls_peek_uch uls_peek_ch
+#define uls_get_uch uls_get_ch
 
 #define uls_current_extra_tokdef(uls) uls_get_current_extra_tokdef(uls)
 #define uls_extra_tokdef(uls,tok_id) uls_get_extra_tokdef(uls,tok_id)
@@ -238,7 +237,7 @@ ULS_DECL_STATIC void make_eof_lexeme(uls_lex_ptr_t uls);
 ULS_DECL_STATIC uls_context_ptr_t make_eoi_lexeme(uls_lex_ptr_t uls);
 
 ULS_DECL_STATIC void __uls_onechar_lexeme_vx(uls_lex_ptr_t uls, uls_tokdef_vx_ptr_t e_vx,
-	uls_wch_t wch, const char *lptr, int len);
+	const char *lptr, int len);
 ULS_DECL_STATIC uls_tokdef_vx_ptr_t __uls_onechar_lexeme(uls_lex_ptr_t uls,
 	uls_wch_t wch, const char *lptr, int len);
 
@@ -246,29 +245,29 @@ ULS_DECL_STATIC _ULS_INLINE int __uls_is_real(const char *ptr);
 ULS_DECL_STATIC _ULS_INLINE double __uls_lexeme_unsigned_double(const char *ptr);
 ULS_DECL_STATIC uls_uint32 __uls_lexeme_uint32(const char *ptr);
 ULS_DECL_STATIC uls_uint64 __uls_lexeme_uint64(const char *ptr);
-ULS_DECL_STATIC void __uls_change_line(uls_lex_ptr_t uls, const char* line, int len, int flags);
+ULS_DECL_STATIC void __uls_change_line(uls_lex_ptr_t uls, const char *line, int len, int flags);
 ULS_DECL_STATIC void __uls_init_fp(uls_lex_ptr_t uls);
 ULS_DECL_STATIC uls_tokdef_ptr_t get_idtok_list(uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) parms);
 ULS_DECL_STATIC void __filter_1char_toks(uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) parms);
-ULS_DECL_STATIC int __load_ulc_from_config_files(ulc_header_ptr_t hdr, const char* confname);
+ULS_DECL_STATIC int __load_ulc_from_config_files(ulc_header_ptr_t hdr, const char *confname);
 ULS_DECL_STATIC void __rearrange_1char_toks(uls_lex_ptr_t uls, const char *char_tokens);
 ULS_DECL_STATIC int __uls_change_isrc(uls_lex_ptr_t uls, uls_voidptr_t usrc,
   uls_fill_isource_t fill_rawbuf, uls_ungrab_isource_t ungrab_proc);
 #endif // ULS_DECL_PRIVATE_PROC
 
 #ifdef ULS_DECL_PROTECTED_PROC
-const char* skip_white_spaces(uls_lex_ptr_t uls);
+const char *skip_white_spaces(uls_lex_ptr_t uls);
 
 void realloc_tokdef_array(uls_lex_ptr_t uls, int n1, int n2);
 void free_tokdef_array(uls_lex_ptr_t uls);
 int ulc_load(ulc_header_ptr_t uls_config, FILE *fin_ulc, FILE *fin_uld, int siz_uld_filebuff, FILE *fin_ulf);
 
 void uls_dealloc_lex(uls_lex_ptr_t uls);
-int uls_spec_compatible(uls_lex_ptr_t uls, const char* specname, uls_ptrtype_tool(version) filever);
+int uls_spec_compatible(uls_lex_ptr_t uls, const char *specname, uls_ptrtype_tool(version) filever);
 
-uls_tokdef_vx_ptr_t set_err_tok(uls_lex_ptr_t uls, const char* errmsg);
+uls_tokdef_vx_ptr_t set_err_tok(uls_lex_ptr_t uls, const char *errmsg);
 
-const char* __uls_eof_tag(const char *ptr, uls_ptrtype_tool(outparam) parms);
+const char *__uls_eof_tag(const char *ptr, uls_ptrtype_tool(outparam) parms);
 int __uls_make_eoftok_lexeme(uls_ptrtype_tool(outbuf) outbuf, int lno, const char *tagstr);
 
 int uls_fillbuff(uls_lex_ptr_t uls);
@@ -282,31 +281,31 @@ int uls_get_1char_charset(char *buff);
 #endif // ULS_DECL_PROTECTED_PROC
 
 #ifdef ULS_DECL_PUBLIC_PROC
-ULS_DLL_EXTERN const char* uls_tokstr(uls_lex_ptr_t uls);
+ULS_DLL_EXTERN const char *uls_tokstr(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN int uls_tokstr_len(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN int uls_tokstr_wlen(uls_lex_ptr_t uls);
 
-ULS_DLL_EXTERN const char* uls_tok2keyw(uls_lex_ptr_t uls, int t);
-ULS_DLL_EXTERN const char* uls_tok2name(uls_lex_ptr_t uls, int t);
+ULS_DLL_EXTERN const char *uls_tok2keyw(uls_lex_ptr_t uls, int t);
+ULS_DLL_EXTERN const char *uls_tok2name(uls_lex_ptr_t uls, int t);
 
-ULS_DLL_EXTERN const char* uls_tok2keyw_2(uls_lex_ptr_t uls, int t, uls_ptrtype_tool(outparam) parms);
-ULS_DLL_EXTERN const char* uls_tok2name_2(uls_lex_ptr_t uls, int t, uls_ptrtype_tool(outparam) parms);
+ULS_DLL_EXTERN const char *uls_tok2keyw_2(uls_lex_ptr_t uls, int t, uls_ptrtype_tool(outparam) parms);
+ULS_DLL_EXTERN const char *uls_tok2name_2(uls_lex_ptr_t uls, int t, uls_ptrtype_tool(outparam) parms);
 
 ULS_DLL_EXTERN int _uls_get_tokid_list(uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) parms);
-ULS_DLL_EXTERN void _uls_put_tokid_list(uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) parms);
+ULS_DLL_EXTERN void _uls_put_tokid_list(uls_ptrtype_tool(outparam) parms);
 
 ULS_DLL_EXTERN uls_tokid_simple_list_ptr_t _uls_get_tokid_list_2(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN void _uls_put_tokid_list_2(uls_tokid_simple_list_ptr_t lst);
 
-ULS_DLL_EXTERN uls_lex_ptr_t uls_create(const char* confname);
-ULS_DLL_EXTERN int uls_init(uls_lex_ptr_t uls, const char* confname);
+ULS_DLL_EXTERN uls_lex_ptr_t uls_create(const char *confname);
+ULS_DLL_EXTERN int uls_init(uls_lex_ptr_t uls, const char *confname);
 ULS_DLL_EXTERN void uls_reset(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN int uls_destroy(uls_lex_ptr_t uls);
 
 ULS_DLL_EXTERN int uls_skip_blanks(uls_lex_ptr_t uls);
 
 ULS_DLL_EXTERN int uls_get_tok(uls_lex_ptr_t uls);
-ULS_DLL_EXTERN void uls_set_tok(uls_lex_ptr_t uls, int tokid, const char* lexeme, int l_lexeme);
+ULS_DLL_EXTERN void uls_set_tok(uls_lex_ptr_t uls, int tokid, const char *lexeme, int l_lexeme);
 ULS_DLL_EXTERN void uls_expect(uls_lex_ptr_t uls, int value);
 
 ULS_DLL_EXTERN uls_context_ptr_t uls_pop(uls_lex_ptr_t uls);
@@ -317,10 +316,10 @@ ULS_DLL_EXTERN int uls_push_isrc(uls_lex_ptr_t uls,
 ULS_DLL_EXTERN int uls_set_isrc(uls_lex_ptr_t uls,
   uls_voidptr_t isrc, uls_fill_isource_t fill_rawbuf, uls_ungrab_isource_t ungrab_proc);
 
-ULS_DLL_EXTERN int uls_push_line(uls_lex_ptr_t uls, const char* line, int len, int flags);
-ULS_DLL_EXTERN int uls_set_line(uls_lex_ptr_t uls, const char* line, int len, int flags);
+ULS_DLL_EXTERN int uls_push_line(uls_lex_ptr_t uls, const char *line, int len, int flags);
+ULS_DLL_EXTERN int uls_set_line(uls_lex_ptr_t uls, const char *line, int len, int flags);
 
-ULS_DLL_EXTERN int uls_cardinal_toknam(char* toknam, uls_lex_ptr_t uls, int tok_id, const char *tokstr);
+ULS_DLL_EXTERN int uls_cardinal_toknam(char *toknam, uls_lex_ptr_t uls, int tok_id, const char *tokstr);
 ULS_DLL_EXTERN int uls_cardinal_toknam_deco(char *toknam_buff, const char *toknam);
 ULS_DLL_EXTERN int uls_cardinal_toknam_deco_lxmpfx(char *toknam_buff, char *lxmpfx, uls_lex_ptr_t uls,
 	int tok_id, uls_ptrtype_tool(outparam) parms);
@@ -332,8 +331,8 @@ ULS_DLL_EXTERN int uls_is_int(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN int uls_is_real(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN int uls_is_zero(uls_lex_ptr_t uls);
 
-ULS_DLL_EXTERN const char* uls_number_suffix(uls_lex_ptr_t uls);
-ULS_DLL_EXTERN const char* uls_eof_tag(uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) parms);
+ULS_DLL_EXTERN const char *uls_number_suffix(uls_lex_ptr_t uls);
+ULS_DLL_EXTERN const char *uls_eof_tag(uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) parms);
 
 ULS_DLL_EXTERN uls_uint32 uls_lexeme_uint32(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN uls_int32 uls_lexeme_int32(uls_lex_ptr_t uls);
@@ -384,19 +383,19 @@ ULS_DLL_EXTERN int _uls_is_wch_1ch_token(uls_lex_ptr_t uls, uls_wch_t wch);
 ULS_DLL_EXTERN int _uls_is_wch_2ch_token(uls_lex_ptr_t uls, uls_wch_t wch);
 
 ULS_DLL_EXTERN int _uls_tok_id(uls_lex_ptr_t uls);
-ULS_DLL_EXTERN const char* _uls_lexeme(uls_lex_ptr_t uls);
+ULS_DLL_EXTERN const char *_uls_lexeme(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN int _uls_lexeme_len(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN int _uls_lexeme_wlen(uls_lex_ptr_t uls);
 
-ULS_DLL_EXTERN const char* _uls_get_tag(uls_lex_ptr_t uls);
+ULS_DLL_EXTERN const char *_uls_get_tag(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN int _uls_get_taglen(uls_lex_ptr_t uls);
-ULS_DLL_EXTERN const char* _uls_get_tag2(uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) parms);
-ULS_DLL_EXTERN void uls_set_tag(uls_lex_ptr_t uls, const char* tag, int lno);
+ULS_DLL_EXTERN const char *_uls_get_tag2(uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) parms);
+ULS_DLL_EXTERN void uls_set_tag(uls_lex_ptr_t uls, const char *tag, int lno);
 
-ULS_DLL_EXTERN void _uls_dump_tok_2(uls_lex_ptr_t uls, const char* pfx,
+ULS_DLL_EXTERN void _uls_dump_tok_2(const char *pfx,
 	const char *id_str, const char *tok_str, const char *suff);
 
-ULS_DLL_EXTERN const char* _uls_number_suffix(uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) parms);
+ULS_DLL_EXTERN const char *_uls_number_suffix(uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) parms);
 
 ULS_DLL_EXTERN uls_lex_ptr_t ulsjava_create(uls_native_vptr_t confname, int len_confname);
 
@@ -404,8 +403,8 @@ ULS_DLL_EXTERN void ulsjava_dump_tok(uls_lex_ptr_t uls, const void *pfx, int len
 ULS_DLL_EXTERN void ulsjava_set_tag(uls_lex_ptr_t uls, const void *tag, int len_tag, int lineno);
 
 #ifndef ULS_DOTNET
-ULS_DLL_EXTERN const char* uls_get_tag2(uls_lex_ptr_t uls, int* ptr_n_bytes);
-ULS_DLL_EXTERN const char* uls_get_eoftag(uls_lex_ptr_t uls, int *ptr_len_tag);
+ULS_DLL_EXTERN const char *uls_get_tag2(uls_lex_ptr_t uls, int* ptr_n_bytes);
+ULS_DLL_EXTERN const char *uls_get_eoftag(uls_lex_ptr_t uls, int *ptr_len_tag);
 ULS_DLL_EXTERN int ulsjava_get_tokid_list(uls_lex_ptr_t uls, int **ptr_outbuf);
 ULS_DLL_EXTERN void ulsjava_put_tokid_list(uls_lex_ptr_t uls, int **ptr_outbuf);
 #endif

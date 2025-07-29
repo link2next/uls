@@ -35,17 +35,15 @@
 #ifndef ULS_EXCLUDE_HFILES
 #define __ULS_AUW__
 #include "uls/uls_auw.h"
-#include "uls/uls_prim.h"
 #include "uls/uls_sysprops.h"
 #include "uls/uls_log.h"
-
 #include <stdlib.h>
 #include <string.h>
 #endif
 
-#ifdef ULS_WINDOWS
+#ifdef __ULS_WINDOWS__
 ULS_DECL_STATIC char*
-ULS_QUALIFIED_METHOD(wstr2mbs)(const wchar_t* wstr, int wlen, int is_utf8, csz_str_ptr_t csz)
+ULS_QUALIFIED_METHOD(wstr2mbs)(const wchar_t *wstr, int wlen, int is_utf8, csz_str_ptr_t csz)
 {
 	UINT codepage = is_utf8 ? CP_UTF8 : CP_ACP;
 	DWORD  errnum;
@@ -83,7 +81,7 @@ ULS_QUALIFIED_METHOD(wstr2mbs)(const wchar_t* wstr, int wlen, int is_utf8, csz_s
 }
 
 ULS_DECL_STATIC wchar_t*
-ULS_QUALIFIED_METHOD(mbs2wstr)(const char* astr, int alen, int is_utf8, csz_str_ptr_t csz)
+ULS_QUALIFIED_METHOD(mbs2wstr)(const char *astr, int alen, int is_utf8, csz_str_ptr_t csz)
 {
 	UINT codepage = is_utf8 ? CP_UTF8 : CP_ACP;
 	DWORD  errnum;
@@ -129,7 +127,7 @@ ULS_QUALIFIED_METHOD(__uls_astr2ustr_ptr)(uls_outparam_ptr_t parms)
 {
 	const char *astr = parms->lptr;
 	int alen = parms->len;
-	int n_chars, stat;
+	int n_wchars, stat;
 	uls_outparam_t parms1;
 
 	if (alen >= 0) {
@@ -137,14 +135,14 @@ ULS_QUALIFIED_METHOD(__uls_astr2ustr_ptr)(uls_outparam_ptr_t parms)
 	}
 
 	if (alen == -1) {
-		n_chars = astr_num_chars(astr, -1, uls_ptr(parms1));
+		n_wchars = astr_num_wchars(astr, -1, uls_ptr(parms1));
 		alen = parms1.len;
 	} else {
 		alen = -alen;
-		n_chars = astr_num_chars(astr, alen, nilptr);
+		n_wchars = astr_num_wchars(astr, alen, nilptr);
 	}
 
-	if (n_chars == alen) {
+	if (n_wchars == alen) {
 		stat = 0;
 	} else {
 		stat = -1;
@@ -159,7 +157,7 @@ ULS_QUALIFIED_METHOD(__uls_ustr2astr_ptr)(uls_outparam_ptr_t parms)
 {
 	const char *ustr = parms->lptr;
 	int ulen = parms->len;
-	int n_chars, stat;
+	int n_wchars, stat;
 	uls_outparam_t parms1;
 
 	if (ulen >= 0) {
@@ -167,14 +165,14 @@ ULS_QUALIFIED_METHOD(__uls_ustr2astr_ptr)(uls_outparam_ptr_t parms)
 	}
 
 	if (ulen == -1) {
-		n_chars = ustr_num_wchars(ustr, -1, uls_ptr(parms1));
+		n_wchars = ustr_num_wchars(ustr, -1, uls_ptr(parms1));
 		ulen = parms1.len;
 	} else {
 		ulen = -ulen;
-		n_chars = ustr_num_wchars(ustr, ulen, nilptr);
+		n_wchars = ustr_num_wchars(ustr, ulen, nilptr);
 	}
 
-	if (n_chars == ulen) {
+	if (n_wchars == ulen) {
 		stat = 0;
 	} else {
 		stat = -1;
@@ -183,7 +181,7 @@ ULS_QUALIFIED_METHOD(__uls_ustr2astr_ptr)(uls_outparam_ptr_t parms)
 	parms->len =  ulen;
 	return stat;
 }
-#endif // ULS_WINDOWS
+#endif // __ULS_WINDOWS__
 
 void
 ULS_QUALIFIED_METHOD(auw_init_outparam)(auw_outparam_ptr_t auw)
@@ -200,7 +198,7 @@ ULS_QUALIFIED_METHOD(auw_deinit_outparam)(auw_outparam_ptr_t auw)
 }
 
 int
-ULS_QUALIFIED_METHOD(astr_lengthof_char)(const char* str)
+ULS_QUALIFIED_METHOD(astr_lengthof_char)(const char *str)
 {
 	char ch;
 	int n;
@@ -217,7 +215,7 @@ ULS_QUALIFIED_METHOD(astr_lengthof_char)(const char* str)
 }
 
 int
-ULS_QUALIFIED_METHOD(astr_num_chars)(const char* str, int len, uls_outparam_ptr_t parms)
+ULS_QUALIFIED_METHOD(astr_num_wchars)(const char *str, int len, uls_outparam_ptr_t parms)
 {
 	const char *ptr;
 	int n=0, i, rc;
@@ -248,7 +246,7 @@ ULS_QUALIFIED_METHOD(astr_num_chars)(const char* str, int len, uls_outparam_ptr_
 	return n;
 }
 
-#ifdef ULS_WINDOWS
+#ifdef __ULS_WINDOWS__
 wchar_t*
 ULS_QUALIFIED_METHOD(uls_astr2wstr)(const char *astr, int alen, csz_str_ptr_t csz_wstr)
 {
@@ -261,7 +259,7 @@ ULS_QUALIFIED_METHOD(uls_astr2wstr)(const char *astr, int alen, csz_str_ptr_t cs
 
 	if (alen < 0) {
 		if (alen == -1) {
-			astr_num_chars(astr, -1, uls_ptr(parms1));
+			astr_num_wchars(astr, -1, uls_ptr(parms1));
 			alen = parms1.len;
 		} else {
 			alen = -alen;
@@ -273,7 +271,7 @@ ULS_QUALIFIED_METHOD(uls_astr2wstr)(const char *astr, int alen, csz_str_ptr_t cs
 }
 
 char*
-ULS_QUALIFIED_METHOD(uls_wstr2astr)(const wchar_t* wstr, int wlen, csz_str_ptr_t csz)
+ULS_QUALIFIED_METHOD(uls_wstr2astr)(const wchar_t *wstr, int wlen, csz_str_ptr_t csz)
 {
 	char *astr;
 
@@ -317,7 +315,7 @@ ULS_QUALIFIED_METHOD(uls_ustr2wstr)(const char *ustr, int ulen, csz_str_ptr_t cs
 }
 
 char*
-ULS_QUALIFIED_METHOD(uls_wstr2ustr)(const wchar_t* wstr, int wlen, csz_str_ptr_t csz)
+ULS_QUALIFIED_METHOD(uls_wstr2ustr)(const wchar_t *wstr, int wlen, csz_str_ptr_t csz)
 {
 	char *ustr;
 
@@ -461,7 +459,7 @@ ULS_QUALIFIED_METHOD(uls_astr2ustr_ptr)(const char *astr, int alen, auw_outparam
 	return ustr;
 }
 
-#else // ~ULS_WINDOWS
+#else // ~__ULS_WINDOWS__
 
 wchar_t*
 ULS_QUALIFIED_METHOD(uls_astr2wstr)(const char *astr, int alen, csz_str_ptr_t csz_wstr)

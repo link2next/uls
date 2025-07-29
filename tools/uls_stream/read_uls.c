@@ -129,7 +129,7 @@ dump_stream_file(uls_lex_ptr_t uls, FILE* fp_out, int wcoord)
 }
 
 int
-dump_uls_file(const char* fpath, FILE *fp_out)
+dump_uls_file(const char *fpath, FILE *fp_out)
 {
 	int stat=0;
 	uls_lex_ptr_t uls;

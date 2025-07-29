@@ -56,8 +56,8 @@ ULS_DEFINE_STRUCT(kwtable_twoplus)
 #endif // ULS_DEF_PUBLIC_TYPE
 
 #if defined(__ULS_TWOPLUS__) || defined(ULS_DECL_PRIVATE_PROC)
-ULS_DECL_STATIC uls_tokdef_ptr_t __twoplus_bi_search(uls_kwtable_twoplus_ptr_t tbl,
-	const char* line_keyw, uls_ref_parray(ary,tokdef), int n_ary);
+ULS_DECL_STATIC uls_tokdef_ptr_t __twoplus_bi_search(const char *line_keyw,
+	uls_ref_parray(ary,tokdef), int n_ary);
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC
@@ -69,8 +69,8 @@ void uls_deinit_2char_table(uls_kwtable_twoplus_ptr_t tbl);
 uls_twoplus_tree_ptr_t uls_get_ind_twoplus_tree(uls_kwtable_twoplus_ptr_t tbl,
 	int wlen_keyw, uls_ptrtype_tool(outparam) parms);
 
-int cmp_twoplus_by_length(const uls_voidptr_t a, const uls_voidptr_t b);
-int cmp_twoplus_vx_by_keyword(const uls_voidptr_t a, const uls_voidptr_t b);
+int cmp_twoplus_by_length(uls_const_voidptr_t a, uls_const_voidptr_t b);
+int cmp_twoplus_vx_by_keyword(uls_const_voidptr_t a, uls_const_voidptr_t b);
 
 void distribute_twoplus_toks(uls_kwtable_twoplus_ptr_t tbl, char *ch_ctx);
 uls_tokdef_vx_ptr_t is_keyword_twoplus(uls_kwtable_twoplus_ptr_t tbl, const char *ch_ctx, const char *line);

@@ -80,7 +80,7 @@ ULS_QUALIFIED_METHOD(__find_in_pool)(uls_outbuf_ptr_t outbuf, int siz)
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__release_in_pool)(char* ptr, int siz)
+ULS_QUALIFIED_METHOD(__release_in_pool)(char *ptr, int siz)
 {
 	csz_buf_line_ptr_t  e_prev, e, e1;
 
@@ -163,7 +163,7 @@ ULS_QUALIFIED_METHOD(__deinit_csz_pool)(void)
 #endif // NO_CSZ_POOL
 
 ULS_DECL_STATIC _ULS_INLINE void
-ULS_QUALIFIED_METHOD(__str_modify)(uls_outbuf_ptr_t outbuf, int n_delta, int k, const char* str, int len)
+ULS_QUALIFIED_METHOD(__str_modify)(uls_outbuf_ptr_t outbuf, int n_delta, int k, const char *str, int len)
 {
 	char *bufptr = outbuf->buf;
 	int  n;
@@ -290,7 +290,7 @@ ULS_QUALIFIED_METHOD(__str_putc)(uls_outbuf_ptr_t outbuf, int n_delta, int k, ch
 }
 
 void
-ULS_QUALIFIED_METHOD(str_modify)(uls_outbuf_ptr_t outbuf, int k, const char* str, int len)
+ULS_QUALIFIED_METHOD(str_modify)(uls_outbuf_ptr_t outbuf, int k, const char *str, int len)
 {
 	if (str != NULL) {
 		if (len < 0) len = uls_strlen(str);
@@ -302,7 +302,7 @@ ULS_QUALIFIED_METHOD(str_modify)(uls_outbuf_ptr_t outbuf, int k, const char* str
 }
 
 int
-ULS_QUALIFIED_METHOD(str_append)(uls_outbuf_ptr_t outbuf, int k, const char* str, int len)
+ULS_QUALIFIED_METHOD(str_append)(uls_outbuf_ptr_t outbuf, int k, const char *str, int len)
 {
 	int k2;
 
@@ -322,7 +322,7 @@ ULS_QUALIFIED_METHOD(str_append)(uls_outbuf_ptr_t outbuf, int k, const char* str
 }
 
 int
-ULS_QUALIFIED_METHOD(str_puts)(uls_outbuf_ptr_t outbuf, int k, const char* str)
+ULS_QUALIFIED_METHOD(str_puts)(uls_outbuf_ptr_t outbuf, int k, const char *str)
 {
 	int l_str;
 
@@ -385,7 +385,7 @@ ULS_QUALIFIED_METHOD(csz_reset)(csz_str_ptr_t csz)
 }
 
 char*
-ULS_QUALIFIED_METHOD(csz_modify)(csz_str_ptr_t csz, int k, const char* str, int len)
+ULS_QUALIFIED_METHOD(csz_modify)(csz_str_ptr_t csz, int k, const char *str, int len)
 {
 	int k2;
 
@@ -402,7 +402,7 @@ ULS_QUALIFIED_METHOD(csz_modify)(csz_str_ptr_t csz, int k, const char* str, int 
 }
 
 char*
-ULS_QUALIFIED_METHOD(csz_append)(csz_str_ptr_t csz, const char* str, int len)
+ULS_QUALIFIED_METHOD(csz_append)(csz_str_ptr_t csz, const char *str, int len)
 {
 	int k;
 
@@ -426,7 +426,7 @@ ULS_QUALIFIED_METHOD(csz_append)(csz_str_ptr_t csz, const char* str, int len)
 }
 
 void
-ULS_QUALIFIED_METHOD(csz_puts)(csz_str_ptr_t csz, const char* str)
+ULS_QUALIFIED_METHOD(csz_puts)(csz_str_ptr_t csz, const char *str)
 {
 	int l_str = uls_strlen(str);
 	csz->len = str_append(uls_ptr(csz->pool), csz->len, str, l_str);

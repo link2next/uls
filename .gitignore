@@ -2,6 +2,7 @@
 *.~*
 *.so.*
 *.so
+*.1.gz
 *.dylib
 /config.sub
 /config.log
@@ -42,7 +43,8 @@ Makefile.in
 /tests/gcc_toks/gcc_toks
 /tests/getch/getch
 /tests/id_stat/id_stat
-/tests/line/line_by_line
+/tests/line/line
+/tests/file_enc/file_enc
 /tests/log/logging
 /tests/many_kwrds/many_kwrds
 /tests/nest/nest

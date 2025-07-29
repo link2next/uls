@@ -87,8 +87,8 @@ EXTERNAL uls_sysinfo_ptr_t uls_sysinfo;
 
 #if defined(__ULS_SYSPROPS__) || defined(ULS_DECL_PRIVATE_PROC)
 ULS_DECL_STATIC int __init_system_info(uls_sysinfo_ptr_t sysinfo, int poolsiz);
-ULS_DECL_STATIC uls_sysprop_ptr_t __get_system_property(uls_sysinfo_ptr_t sysinfo, const char* name);
-ULS_DECL_STATIC char* get_nameval_pair(uls_parm_line_ptr_t parm_ln);
+ULS_DECL_STATIC uls_sysprop_ptr_t __get_system_property(uls_sysinfo_ptr_t sysinfo, const char *name);
+ULS_DECL_STATIC char *get_nameval_pair(uls_parm_line_ptr_t parm_ln);
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC
@@ -105,16 +105,16 @@ void finalize_sysprops(void);
 
 int uls_load_system_properties(const char *fpath, uls_sysinfo_ptr_t sysinfo);
 
-void uls_arch2be_array(char* ary, int n);
-void uls_be2arch_array(char* ary, int n);
+void uls_arch2be_array(char *ary, int n);
+void uls_be2arch_array(char *ary, int n);
 
-void uls_arch2le_array(char* ary, int n);
-void uls_le2arch_array(char* ary, int n);
+void uls_arch2le_array(char *ary, int n);
+void uls_le2arch_array(char *ary, int n);
 #endif
 
 #ifdef ULS_DECL_PUBLIC_PROC
-ULS_DLL_EXTERN const char* uls_add_system_property(const char* name, const char* val);
-ULS_DLL_EXTERN const char* uls_get_system_property(const char* name);
+ULS_DLL_EXTERN const char *uls_add_system_property(const char *name, const char *val);
+ULS_DLL_EXTERN const char *uls_get_system_property(const char *name);
 #endif
 
 #ifndef ULS_DOTNET

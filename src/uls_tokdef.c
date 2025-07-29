@@ -77,7 +77,7 @@ ULS_QUALIFIED_METHOD(__init_tokdef_vx)(uls_tokdef_vx_ptr_t e_vx)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_init_tokdef_vx)(uls_tokdef_vx_ptr_t e_vx, int tok_id, const char* name, uls_tokdef_ptr_t e)
+ULS_QUALIFIED_METHOD(uls_init_tokdef_vx)(uls_tokdef_vx_ptr_t e_vx, int tok_id, const char *name, uls_tokdef_ptr_t e)
 {
 	__init_tokdef_vx(e_vx);
 
@@ -105,7 +105,7 @@ ULS_QUALIFIED_METHOD(uls_deinit_tokdef_vx)(uls_tokdef_vx_ptr_t e_vx)
 }
 
 ULS_QUALIFIED_RETTYP(uls_tokdef_vx_ptr_t)
-ULS_QUALIFIED_METHOD(uls_create_tokdef_vx)(int tok_id, const char* name, uls_tokdef_ptr_t e)
+ULS_QUALIFIED_METHOD(uls_create_tokdef_vx)(int tok_id, const char *name, uls_tokdef_ptr_t e)
 {
 	uls_tokdef_vx_ptr_t e_vx;
 
@@ -167,7 +167,7 @@ ULS_QUALIFIED_METHOD(canbe_tokname)(const char *str)
 }
 
 ULS_QUALIFIED_RETTYP(uls_tokdef_name_ptr_t)
-ULS_QUALIFIED_METHOD(find_tokdef_alias)(uls_tokdef_vx_ptr_t e_vx, const char* name)
+ULS_QUALIFIED_METHOD(find_tokdef_alias)(uls_tokdef_vx_ptr_t e_vx, const char *name)
 {
 	uls_tokdef_name_ptr_t e_nam;
 
@@ -181,7 +181,7 @@ ULS_QUALIFIED_METHOD(find_tokdef_alias)(uls_tokdef_vx_ptr_t e_vx, const char* na
 }
 
 ULS_QUALIFIED_RETTYP(uls_tokdef_ptr_t)
-ULS_QUALIFIED_METHOD(find_tokdef_by_keyw)(uls_tokdef_vx_ptr_t e_vx, const char* keyw)
+ULS_QUALIFIED_METHOD(find_tokdef_by_keyw)(uls_tokdef_vx_ptr_t e_vx, const char *keyw)
 {
 	uls_tokdef_ptr_t e;
 
@@ -203,7 +203,7 @@ ULS_QUALIFIED_METHOD(insert_tokdef_name_to_group)(uls_tokdef_vx_ptr_t e_vx, uls_
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_change_tokdef_vx_name)(uls_tokdef_vx_ptr_t e_vx, const char* name, const char* name2)
+ULS_QUALIFIED_METHOD(uls_change_tokdef_vx_name)(uls_tokdef_vx_ptr_t e_vx, const char *name, const char *name2)
 {
 	int stat = 0;
 	uls_tokdef_name_ptr_t e_nam;
@@ -230,7 +230,7 @@ ULS_QUALIFIED_METHOD(uls_change_tokdef_vx_name)(uls_tokdef_vx_ptr_t e_vx, const 
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_add_tokdef_vx_name)(uls_tokdef_vx_ptr_t e_vx, const char* name)
+ULS_QUALIFIED_METHOD(uls_add_tokdef_vx_name)(uls_tokdef_vx_ptr_t e_vx, const char *name)
 {
 	int stat = 0;
 	uls_tokdef_name_ptr_t e_nam;

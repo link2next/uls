@@ -26,7 +26,7 @@
 
 #include "ult_utils.h"
 
-#ifndef  ULS_WINDOWS
+#ifndef  __ULS_WINDOWS__
 #include <sys/types.h>
 #include <sys/wait.h>
 #endif
@@ -46,7 +46,7 @@ extern char *cmdline_filter;
 extern int  out_ftype;
 
 extern uls_tmpl_list_t tmpl_list;
-extern int exist_name_val_ent(const char* name);
+extern int exist_name_val_ent(const char *name);
 extern int add_name_val_ent(const char *name, const char *val);
 
 extern uls_lex_ptr_t sam_lex;

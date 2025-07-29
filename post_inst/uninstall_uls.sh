@@ -168,7 +168,16 @@ del_file "$etc_dir"/{uls.langs,uls.id_ranges}
 del_file "$sysprops_fpath"
 del_tree "$etc_dir"
 
-if [ "$ULS_HOME" != "/usr/local" -a "$ULS_HOME" != "/usr" -a "$ULS_HOME" != "/" ]; then
+sysdir_installed=no
+if [ "$ULS_HOME" = "/usr/local" -o "$ULS_HOME" = "/usr" -o "$ULS_HOME" = "/" ]; then
+	sysdir_installed=yes
+fi
+
+if [ "$ULS_HOME" = "$HOME/.local" -o "$ULS_HOME" = "$HOME/local" ]; then
+	sysdir_installed=yes
+fi
+
+if [ "$sysdir_installed" = "no" ]; then
 	del_tree $ULS_HOME
 fi
 

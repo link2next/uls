@@ -100,13 +100,13 @@ namespace
 	// This prints the string representation of the current token to the stdout.
 	// </brief>
 	// <return>none</return>
-	void dumpToken(Css3Lex *css3lex)
+	void dump_token(Css3Lex *css3lex)
 	{
 		int t = css3lex->getTokNum();
 
-		tstring* lxm;
-		css3lex->getTokStr(&lxm);
-		LPCTSTR tstr = lxm->c_str();
+		tstring lxm;
+		css3lex->getTokStr(lxm);
+		LPCTSTR tstr = lxm.c_str();
 
 		if (t == Css3Lex::CSS_ID) {
 			css3lex->printf(_T("\t[     ID] %s\n"), tstr);
@@ -126,11 +126,11 @@ namespace
 	// This Executes tokenizing and dump the output to stdout.
 	// </brief>
 	// <return>none</return>
-	void dumpTokens(Css3Lex *css3lex)
+	void dump_tokens(Css3Lex *css3lex)
 	{
 		for ( ; ; ) {
-			if (css3lex->getTok() == Css3Lex::CSS_EOI) break;
-			dumpToken(css3lex);
+			if (css3lex->next() == Css3Lex::CSS_EOI) break;
+			dump_token(css3lex);
 		}
 	}
 }
@@ -155,23 +155,24 @@ _tmain(int n_targv, LPTSTR *targv)
 		return 1;
 	}
 
-	css3lex->setFile(input_file);
-	dumpTokens(css3lex);
+	css3lex->setInputFile(input_file);
+	dump_tokens(css3lex);
 
 	delete css3lex;
 	return 0;
 }
 
-#ifndef __WINDOWS__
+#ifndef __ULS_WINDOWS__
 int
 main(int argc, char *argv[])
 {
+	uls::ArgListT targlst;
 	LPTSTR *targv;
 	int stat;
 
-	ULSCPP_GET_WARGS_LIST(argc, argv, targv);
+	ULSCPP_GET_WARGS_LIST(targlst, argc, argv, targv);
 	stat = _tmain(argc, targv);
-	ULSCPP_PUT_WARGS_LIST(argc, targv);
+	ULSCPP_PUT_WARGS_LIST(targlst);
 
 	return stat;
 }

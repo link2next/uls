@@ -82,7 +82,7 @@ rm -f $tmp_sysprops_fpath
 
 examples_tar=$ULS_SHARE/$pkg_fname.tar
 if [ ! -f "$examples_tar" ]; then
-	echo "Can't find the uls-examples in your system."
+	echo "Can't find the uls-examples in install-dir."
 	echo "$examples_tar: not found!"
 	exit 1
 fi

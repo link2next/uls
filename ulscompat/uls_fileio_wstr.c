@@ -22,7 +22,7 @@
  */
 
 /*
-  <file> uls_util_wstr.c </file>
+  <file> uls_fileio_wstr.c </file>
   <brief>
     The utility routines in ULS.
     This file is part of ULS, Unified Lexical Scheme.
@@ -38,6 +38,18 @@
 int
 uls_dirent_exist_wstr(const wchar_t *wfpath)
 {
+#ifdef __ULS_WINDOWS__
+	DWORD dwAttrib;
+	int rval;
+
+	if ((dwAttrib = GetFileAttributesW(wfpath)) == INVALID_FILE_ATTRIBUTES) {
+		return ST_MODE_NOENT;
+	}
+
+	if (dwAttrib & FILE_ATTRIBUTE_DIRECTORY) rval = ST_MODE_DIR;
+	else rval = ST_MODE_FILE;
+
+#else
 	char *ustr;
 	int  rval;
 	csz_str_t csz;
@@ -51,11 +63,12 @@ uls_dirent_exist_wstr(const wchar_t *wfpath)
 	}
 
 	csz_deinit(uls_ptr(csz));
+#endif
 	return rval;
 }
 
 FILE*
-uls_fp_wopen(const wchar_t* wfpath, int mode)
+uls_fp_wopen(const wchar_t *wfpath, int mode)
 {
 	char *ustr;
 	csz_str_t csz;
@@ -83,7 +96,7 @@ uls_fp_gets_wstr(FILE *fp, wchar_t *wbuf, int wbuf_siz, int flags)
 	int wlen;
 	csz_str_t csz_wstr;
 
-	usiz = (1 + wbuf_siz) * 4;
+	usiz = (1 + wbuf_siz) * sizeof(wchar_t);
 	ubuf = uls_malloc(usiz);
 	csz_init(uls_ptr(csz_wstr), usiz);
 
@@ -116,7 +129,7 @@ uls_fp_gets_wstr(FILE *fp, wchar_t *wbuf, int wbuf_siz, int flags)
 }
 
 int
-uls_close_tempfile_wstr(uls_tempfile_ptr_t tmpfile, const wchar_t* wfilepath)
+uls_close_tempfile_wstr(uls_tempfile_ptr_t tmpfile, const wchar_t *wfilepath)
 {
 	char *ustr;
 	int  rval;
@@ -140,7 +153,7 @@ uls_close_tempfile_wstr(uls_tempfile_ptr_t tmpfile, const wchar_t* wfilepath)
 }
 
 int
-uls_fd_open_wstr(const wchar_t* wfpath, int mode)
+uls_fd_open_wstr(const wchar_t *wfpath, int mode)
 {
 	char *ustr;
 	int  rval;
@@ -153,57 +166,6 @@ uls_fd_open_wstr(const wchar_t* wfpath, int mode)
 		rval = -1;
 	} else {
 		rval = uls_fd_open(ustr, mode);
-	}
-
-	csz_deinit(uls_ptr(csz));
-	return rval;
-}
-
-int
-uls_getcwd_wstr(wchar_t* wbuf, int wbuf_siz)
-{
-	char *ubuf;
-	int usiz, ulen;
-
-	wchar_t *wstr;
-	int wlen = -1;
-	csz_str_t csz_wstr;
-
-	usiz = (1 + wbuf_siz) * 4;
-	ubuf = uls_malloc(usiz);
-	csz_init(uls_ptr(csz_wstr), usiz);
-
-	if ((ulen = uls_getcwd(ubuf, usiz)) >= 0) {
-		if ((wstr = uls_ustr2wstr(ubuf, ulen, uls_ptr(csz_wstr))) == NULL ||
-			(wlen = auw_csz_wlen(uls_ptr(csz_wstr))) >= wbuf_siz) {
-			err_wlog(L"getcwd: buffer overflow!");
-			wlen = -1;
-		} else {
-			uls_memcopy(wbuf, wstr, wlen * sizeof(wchar_t));
-			wbuf[wlen] = L'\0';
-		}
-	}
-
-	csz_deinit(uls_ptr(csz_wstr));
-	uls_mfree(ubuf);
-
-	return wlen;
-}
-
-int
-uls_chdir_wstr(const wchar_t* wpath)
-{
-	csz_str_t csz;
-	char *ustr;
-	int  rval;
-
-	csz_init(uls_ptr(csz), -1);
-
-	if ((ustr = uls_wstr2ustr(wpath, -1, uls_ptr(csz))) == NULL) {
-		err_wlog(L"invalid param!");
-		rval = -1;
-	} else {
-		rval = uls_chdir(ustr);
 	}
 
 	csz_deinit(uls_ptr(csz));

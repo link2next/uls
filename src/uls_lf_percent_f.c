@@ -38,7 +38,7 @@
 #endif
 
 ULS_DECL_STATIC void
-ULS_QUALIFIED_METHOD(reverse_char_array)(char* ary, int n)
+ULS_QUALIFIED_METHOD(reverse_char_array)(char *ary, int n)
 {
 	int i, j;
 	char ch;
@@ -98,8 +98,8 @@ ULS_QUALIFIED_METHOD(__pad_zeros)(int n_zeros, unsigned int flags, csz_str_ptr_t
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_lf_digits_to_percent_f)
-	(char* numstr, int minus, int n_expo, int n_prec, unsigned int flags, csz_str_ptr_t ss)
+ULS_QUALIFIED_METHOD(uls_lf_digits_to_percent_f)(char *numstr, int minus, int n_expo, int n_prec,
+	unsigned int flags, csz_str_ptr_t ss)
 {
 	char *ptr, ch;
 	int j, n;
@@ -146,7 +146,7 @@ ULS_QUALIFIED_METHOD(uls_lf_digits_to_percent_f)
 
 void
 ULS_QUALIFIED_METHOD(uls_lf_digits_to_percent_e)
-	(char* numstr, int minus, int n_expo, int n_prec, csz_str_ptr_t ss)
+	(char *numstr, int minus, int n_expo, int n_prec, csz_str_ptr_t ss)
 {
 	char *ptr;
 	int j = 0;
@@ -186,8 +186,8 @@ ULS_QUALIFIED_METHOD(uls_lf_digits_to_percent_e)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_lf_digits_to_percent_g)
-	(char* numstr, int minus, int n_expo, int n_prec, unsigned int flags, csz_str_ptr_t ss)
+ULS_QUALIFIED_METHOD(uls_lf_digits_to_percent_g)(char *numstr, int minus, int n_expo, int n_prec,
+	unsigned int flags, csz_str_ptr_t ss)
 {
 	int len;
 
@@ -221,7 +221,6 @@ ULS_QUALIFIED_METHOD(uls_lf_double2digits)(double x, int n_precision, csz_str_pt
 	}
 
 	frac = modf(x, uls_ptr(x_int));
-
 	j = 0; // for the 'n_precision'
 
 	if (frac == 0.) {

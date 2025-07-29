@@ -39,7 +39,7 @@
 #include "uls/uls_config.h"
 #endif
 
-#ifdef ULS_WINDOWS
+#ifdef __ULS_WINDOWS__
 #ifdef ULS_DOTNET
 #define _T(a) a
 #endif
@@ -49,15 +49,15 @@
 #else // ULS_USE_WSTR
 #define _T(a) a
 #endif
-#endif // ULS_WINDOWS
+#endif // __ULS_WINDOWS__
 
 #define TMP_SYSPROPS_FNAME   "uls_sysprops.txt"
 #define TMP_ID_RANGES_FNAME  "uls_id_ranges.txt"
 #define TMP_LANGS_FNAME      "uls_langs.txt"
 #define ULS_ULCNAME_DELIM    '/'
 
-#define ULS_VERSION_STR      _T("1.9.7")
-#define ULC2CLASS_PROGVER    _T("v2.7.2")
+#define ULS_VERSION_STR      _T("1.10.0")
+#define ULC2CLASS_PROGVER    _T("v2.8.0")
 #define ULF_GEN_PROGVER      _T("v1.7.0")
 #define ULS_STREAM_PROGVER   _T("v2.8.0")
 #define ULC2YAML_PROGVER     _T("v1.0.0")
@@ -68,9 +68,9 @@
 #define ULS_URL              _T("https://sourceforge.net/projects/uls")
 #define ULS_LICENSE_NAME     _T("The MIT License (MIT)")
 #define ULS_COPYRIGHT_YEAR_START    2011
-#define ULS_COPYRIGHT_YEAR_CURRENT  2024
+#define ULS_COPYRIGHT_YEAR_CURRENT  2025
 
-#ifdef ULS_WINDOWS
+#ifdef __ULS_WINDOWS__
 #define ULS_REG_HOME         L"HKLM:SOFTWARE\\UlsWin"
 #define ULS_REG_INSTDIR_NAME L"UlsHome"
 #define ULS_SYSPROPS_FNAME   TMP_SYSPROPS_FNAME
@@ -117,7 +117,6 @@
 
 #define ULS_FL_STATIC  0x80000000
 #define ULS_FL_NOCLEAR 0x40000000
-#define ULS_FL_VERBOSE 0x20000000
 
 #define EOI_TOK_IDX       0
 #define EOF_TOK_IDX       1
@@ -257,7 +256,7 @@
 #define ULS_N_BOXLST 3
 #define ULS_N_SYSPROPS  16
 
-#ifndef ULS_WINDOWS
+#ifndef __ULS_WINDOWS__
 #include "uls_const_linux.h"
 #endif
 

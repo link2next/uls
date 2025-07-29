@@ -40,7 +40,7 @@ ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(__uls_fmtproc_coord)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lex_ptr_t uls, uls_lf_context_ptr_t ctx)
 {
 	char buf[81];
-	int len, n_chars;
+	int len, n_wchars;
 
 	if (uls == nilptr) {
 		len = uls_strcpy(buf, "<fault>");
@@ -48,15 +48,15 @@ ULS_QUALIFIED_METHOD(__uls_fmtproc_coord)(uls_voidptr_t x_dat, uls_lf_puts_t put
 		len = __uls_lf_snprintf(buf, sizeof(buf), nilptr, "%s:%04d", __uls_get_tag(uls), __uls_get_lineno(uls));
 	}
 
-	n_chars = ustr_num_wchars(buf, len, nilptr);
-	return uls_lf_fill_mbstr(x_dat, puts_proc, uls_ptr(ctx->perfmt), buf, len, n_chars);
+	n_wchars = ustr_num_wchars(buf, len, nilptr);
+	return uls_lf_fill_mbstr(x_dat, puts_proc, uls_ptr(ctx->perfmt), buf, len, n_wchars);
 }
 
 ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(__uls_fmtproc_tokname)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lex_ptr_t uls, uls_lf_context_ptr_t ctx)
 {
 	const char *wrdptr;
-	int len, n_chars, t;
+	int len, n_wchars, t;
 	uls_outparam_t parms1;
 
 	if (uls == nilptr) {
@@ -65,17 +65,17 @@ ULS_QUALIFIED_METHOD(__uls_fmtproc_tokname)(uls_voidptr_t x_dat, uls_lf_puts_t p
 		wrdptr = "";
 	}
 
-	n_chars = ustr_num_wchars(wrdptr, -1, uls_ptr(parms1));
+	n_wchars = ustr_num_wchars(wrdptr, -1, uls_ptr(parms1));
 	len = parms1.len;
 
-	return uls_lf_fill_mbstr(x_dat, puts_proc, uls_ptr(ctx->perfmt),  wrdptr, len, n_chars);
+	return uls_lf_fill_mbstr(x_dat, puts_proc, uls_ptr(ctx->perfmt),  wrdptr, len, n_wchars);
 }
 
 ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(__uls_fmtproc_keyword)(uls_voidptr_t x_dat, uls_lf_puts_t puts_proc, uls_lex_ptr_t uls, uls_lf_context_ptr_t ctx)
 {
 	const char *wrdptr;
-	int len, n_chars;
+	int len, n_wchars;
 	uls_outparam_t parms1;
 
 	if (uls == nilptr) {
@@ -84,32 +84,32 @@ ULS_QUALIFIED_METHOD(__uls_fmtproc_keyword)(uls_voidptr_t x_dat, uls_lf_puts_t p
 		wrdptr = __uls_lexeme(uls);
 	}
 
-	n_chars = ustr_num_wchars(wrdptr, -1, uls_ptr(parms1));
+	n_wchars = ustr_num_wchars(wrdptr, -1, uls_ptr(parms1));
 	len = parms1.len;
 
-	return uls_lf_fill_mbstr(x_dat, puts_proc, uls_ptr(ctx->perfmt),  wrdptr, len, n_chars);
+	return uls_lf_fill_mbstr(x_dat, puts_proc, uls_ptr(ctx->perfmt),  wrdptr, len, n_wchars);
 }
 
 void
 ULS_QUALIFIED_METHOD(initialize_uls_syserr)(void)
 {
-	uls_voidptr_t syslog;
-	uls_lf_puts_t syslog_puts;
-
 	uls_lf_init_convspec_map(uls_ptr(lf_map_syserr), 0);
 	uls_add_default_convspecs(uls_ptr(lf_map_syserr));
 
 	uls_lf_init_convspec_map(uls_ptr(lf_map_logdfl), 0);
 	uls_add_default_log_convspecs(uls_ptr(lf_map_logdfl));
 
-	syslog = _uls_stdio_fp(2);
-	syslog_puts = uls_lf_puts_file;
-	uls_lf_init(uls_ptr(lf_syserr), uls_ptr(lf_map_syserr), syslog, syslog_puts);
+	uls_lf_init(uls_ptr(lf_syserr), uls_ptr(lf_map_syserr), uls_lf_puts_cons);
+	fp_lf_syserr = _uls_stdio_fp(2);
 }
 
 void
 ULS_QUALIFIED_METHOD(finalize_uls_syserr)(void)
 {
+	if (fp_lf_syserr != _uls_stdio_fp(2) && fp_lf_syserr != _uls_stdio_fp(1)) {
+		fclose(fp_lf_syserr);
+		fp_lf_syserr = _uls_stdio_fp(2);
+	}
 	uls_lf_deinit(uls_ptr(lf_syserr));
 
 	uls_lf_deinit_convspec_map(uls_ptr(lf_map_logdfl));
@@ -177,14 +177,14 @@ ULS_QUALIFIED_METHOD(err_syslog_unlock)(void)
 }
 
 void
-ULS_QUALIFIED_METHOD(err_vlog)(const char* fmt, va_list args)
+ULS_QUALIFIED_METHOD(err_vlog)(const char *fmt, va_list args)
 {
-	uls_voidptr_t syslog = lf_syserr.x_dat;
+	uls_voidptr_t syslog = fp_lf_syserr;
 	uls_lf_puts_t syslog_puts = lf_syserr.uls_lf_puts;
 
 	uls_lf_lock(uls_ptr(lf_syserr));
 
-	__uls_lf_vxprintf(uls_ptr(lf_syserr), fmt, args);
+	__uls_lf_vxprintf(syslog, uls_ptr(lf_syserr), fmt, args);
 	syslog_puts(syslog, "\n", 1);
 	syslog_puts(syslog, nilptr, 0);
 
@@ -192,7 +192,7 @@ ULS_QUALIFIED_METHOD(err_vlog)(const char* fmt, va_list args)
 }
 
 void
-ULS_QUALIFIED_METHOD(err_log)(const char* fmt, ...)
+ULS_QUALIFIED_METHOD(err_log)(const char *fmt, ...)
 {
 	va_list	args;
 
@@ -202,14 +202,14 @@ ULS_QUALIFIED_METHOD(err_log)(const char* fmt, ...)
 }
 
 void
-ULS_QUALIFIED_METHOD(err_vpanic)(const char* fmt, va_list args)
+ULS_QUALIFIED_METHOD(err_vpanic)(const char *fmt, va_list args)
 {
 	err_vlog(fmt, args);
 	uls_appl_exit(1);
 }
 
 void
-ULS_QUALIFIED_METHOD(err_panic)(const char* fmt, ...)
+ULS_QUALIFIED_METHOD(err_panic)(const char *fmt, ...)
 {
 	va_list	args;
 
@@ -221,19 +221,20 @@ ULS_QUALIFIED_METHOD(err_panic)(const char* fmt, ...)
 }
 
 void
-ULS_QUALIFIED_METHOD(err_change_port)(uls_voidptr_t data, uls_lf_puts_t proc)
+ULS_QUALIFIED_METHOD(err_change_port)(FILE *fp, uls_lf_puts_t proc)
 {
 	uls_lf_delegate_t delegate;
 
 	if (proc == nilptr) {
-		if (data == nilptr) {
+		if (fp == nilptr) {
 			proc = uls_lf_puts_null;
 		} else {
-			proc = uls_lf_puts_file;
+			proc = uls_lf_puts_cons;
 		}
 	}
 
-	delegate.xdat = data;
+	fp_lf_syserr = fp;
+
 	delegate.puts = proc;
 	uls_lf_change_puts(uls_ptr(lf_syserr), uls_ptr(delegate));
 }
@@ -251,15 +252,19 @@ ULS_QUALIFIED_METHOD(uls_init_log)(uls_log_ptr_t log, uls_lf_map_ptr_t lf_map, u
 	uls_grab(uls);
 	log->uls = uls;
 
-	log->log_port = lf_syserr.x_dat;
+	log->log_port = fp_lf_syserr;
 	log->log_puts = lf_syserr.uls_lf_puts;
 	log->log_mask = 0;
 
 	uls_set_loglevel(log, ULS_LOG_WARN);
+	uls_set_loglevel(log, ULS_LOG_ERROR);
+	uls_set_loglevel(log, ULS_LOG_CRIT);
+	uls_set_loglevel(log, ULS_LOG_ALERT);
+	uls_set_loglevel(log, ULS_LOG_EMERG);
 
 	if (lf_map == nilptr) lf_map = uls_ptr(lf_map_logdfl);
 
-	if ((log->lf = uls_lf_create(lf_map, log->log_port, log->log_puts)) == nilptr) {
+	if ((log->lf = uls_lf_create(lf_map, log->log_puts)) == nilptr) {
 		uls_lf_destroy_convspec_map(lf_map);
 		return -1;
 	}
@@ -303,7 +308,6 @@ ULS_QUALIFIED_METHOD(uls_create_log)(uls_lf_map_ptr_t lf_map, uls_lex_ptr_t uls)
 	}
 
 	log->flags &= ~ULS_FL_STATIC;
-
 	return log;
 }
 
@@ -326,7 +330,7 @@ ULS_QUALIFIED_METHOD(uls_log_change)(uls_log_ptr_t log, uls_voidptr_t data, uls_
 		if (data == nilptr) {
 			proc = uls_lf_puts_null;
 		} else {
-			proc = uls_lf_puts_file;
+			proc = uls_lf_puts_cons;
 		}
 	}
 
@@ -335,7 +339,6 @@ ULS_QUALIFIED_METHOD(uls_log_change)(uls_log_ptr_t log, uls_voidptr_t data, uls_
 	log->log_puts = proc;
 	uls_log_unlock(log);
 
-	delegate.xdat = data;
 	delegate.puts = proc;
 	uls_lf_change_puts(log->lf, uls_ptr(delegate));
 }
@@ -347,7 +350,7 @@ ULS_QUALIFIED_METHOD(uls_log_change)(uls_log_ptr_t log, uls_voidptr_t data, uls_
 // <parm name="args">The list of args</parm>
 // <return>none</return>
 void
-ULS_QUALIFIED_METHOD(uls_vlog)(uls_log_ptr_t log, const char* fmt, va_list args)
+ULS_QUALIFIED_METHOD(uls_vlog)(uls_log_ptr_t log, const char *fmt, va_list args)
 {
 	char numbuf[N_LOGBUF_CHARS];
 	uls_voidptr_t old_gdat;
@@ -365,7 +368,7 @@ ULS_QUALIFIED_METHOD(uls_vlog)(uls_log_ptr_t log, const char* fmt, va_list args)
 		__uls_get_tag(log->uls), __uls_get_lineno(log->uls));
 	log->log_puts(log->log_port, numbuf, len);
 
-	uls_lf_vxprintf(log->lf, fmt, args);
+	uls_lf_vxprintf(log->log_port, log->lf, fmt, args);
 
 	log->log_puts(log->log_port, "\n", 1);
 	log->log_puts(log->log_port, nilptr, 0);
@@ -381,7 +384,7 @@ ULS_QUALIFIED_METHOD(uls_vlog)(uls_log_ptr_t log, const char* fmt, va_list args)
 // <parm name="fmt">The template for message string</parm>
 // <return>void</return>
 void
-ULS_QUALIFIED_METHOD(uls_log)(uls_log_ptr_t log, const char* fmt, ...)
+ULS_QUALIFIED_METHOD(uls_log)(uls_log_ptr_t log, const char *fmt, ...)
 {
 	va_list	args;
 
@@ -391,7 +394,7 @@ ULS_QUALIFIED_METHOD(uls_log)(uls_log_ptr_t log, const char* fmt, ...)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_vpanic)(uls_log_ptr_t log, const char* fmt, va_list args)
+ULS_QUALIFIED_METHOD(uls_vpanic)(uls_log_ptr_t log, const char *fmt, va_list args)
 {
 	uls_vlog(log, fmt, args);
 	uls_appl_exit(1);
@@ -404,7 +407,7 @@ ULS_QUALIFIED_METHOD(uls_vpanic)(uls_log_ptr_t log, const char* fmt, va_list arg
 // <parm name="fmt">The template for message string</parm>
 // <return>none</return>
 void
-ULS_QUALIFIED_METHOD(uls_panic)(uls_log_ptr_t log, const char* fmt, ...)
+ULS_QUALIFIED_METHOD(uls_panic)(uls_log_ptr_t log, const char *fmt, ...)
 {
 	va_list	args;
 
@@ -423,14 +426,7 @@ ULS_QUALIFIED_METHOD(uls_set_loglevel)(uls_log_ptr_t log, int lvl)
 		return;
 	}
 
-	if (lvl < ULS_LOG_N_SYSTEMS) {
-		if (lvl >= ULS_LOG_ERROR) {
-			log->log_mask &= ~((1<<ULS_LOG_N_SYSTEMS)-1);
-			log->log_mask |= (1 << (lvl+1)) - 1;
-		}
-	} else {
-		log->log_mask |= (1 << lvl);
-	}
+	log->log_mask |= ULS_LOGLEVEL_FLAG(lvl);
 }
 
 int
@@ -454,13 +450,7 @@ ULS_QUALIFIED_METHOD(uls_clear_loglevel)(uls_log_ptr_t log, int lvl)
 	if (!uls_loglevel_isset(log, lvl))
 		return;
 
-	if (lvl < ULS_LOG_N_SYSTEMS) {
-		if (--lvl >= ULS_LOG_ERROR) {
-			uls_set_loglevel(log, lvl);
-		}
-	} else {
-		log->log_mask &= ~ULS_LOGLEVEL_FLAG(lvl);
-	}
+	log->log_mask &= ~ULS_LOGLEVEL_FLAG(lvl);
 }
 
 void

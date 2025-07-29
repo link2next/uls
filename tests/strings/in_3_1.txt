@@ -1,4 +1,7 @@
- empty string: ""
+empty string: ""
+
+str1 = ".\".\\.!";
+str2 = "LF:\nTAB:\t...";
 
 hello
  "hello\tworld!"

@@ -31,7 +31,7 @@
 #define __ULS_LITESC_H__
 
 #ifndef ULS_EXCLUDE_HFILES
-#include "uls/uls_util.h"
+#include "uls/uls_type.h"
 #include "uls/csz_stream.h"
 #endif
 
@@ -41,45 +41,42 @@ extern "C" {
 
 #ifdef ULS_DECL_PROTECTED_TYPE
 
-#define ULS_ESCCH_START    0x21
-#define ULS_ESCCH_END      0x7E
+#define ULS_ESCCH_START             0x21
+#define ULS_ESCCH_END               0x7E
 #define ULS_ESCCH_MAPSIZE (ULS_ESCCH_END - ULS_ESCCH_START + 1)
 
-#define ULS_ESCMAP_MODERN_EOS        0x0001
-#define ULS_ESCMAP_MODERN_ESC        0x0002
-#define ULS_ESCMAP_MODERN_EOL        0x0004
-#define ULS_ESCMAP_MODERN_ETC        0x0008
+#define ULS_ESCMAP_MODERN_EOS       0x0001
+#define ULS_ESCMAP_MODERN_ESC       0x0002
+#define ULS_ESCMAP_MODERN_EOL       0x0004
+#define ULS_ESCMAP_MODERN_ETC       0x0008
 
-#define ULS_ESCMAP_MODERN_LF         0x0010
-#define ULS_ESCMAP_MODERN_TAB        0x0020
-#define ULS_ESCMAP_MODERN_U4         0x0040
-#define ULS_ESCMAP_MODERN_U8         0x0080
+#define ULS_ESCMAP_MODERN_LF        0x0010
+#define ULS_ESCMAP_MODERN_TAB       0x0020
+#define ULS_ESCMAP_MODERN_U4        0x0040
+#define ULS_ESCMAP_MODERN_U8        0x0080
 
-#define ULS_ESCMAP_LEGACY_SQ         0x0100
-#define ULS_ESCMAP_LEGACY_DQ         0x0200
-#define ULS_ESCMAP_LEGACY_HEX        0x0400
-#define ULS_ESCMAP_LEGACY_OCT        0x0800
+#define ULS_ESCMAP_LEGACY_SQ        0x0100
+#define ULS_ESCMAP_LEGACY_DQ        0x0200
+#define ULS_ESCMAP_LEGACY_HEX       0x0400
+#define ULS_ESCMAP_LEGACY_OCT       0x0800
 
-#define ULS_ESCMAP_LEGACY_CR         0x1000
-#define ULS_ESCMAP_LEGACY_BS         0x2000
-#define ULS_ESCMAP_LEGACY_FF         0x4000
-#define ULS_ESCMAP_LEGACY_VF         0x8000
+#define ULS_ESCMAP_LEGACY_CR        0x1000
+#define ULS_ESCMAP_LEGACY_BS        0x2000
+#define ULS_ESCMAP_LEGACY_FF        0x4000
+#define ULS_ESCMAP_LEGACY_VF        0x8000
 
 #define ULS_ESCMAP_LEGACY_BELL      0x10000
 #define ULS_ESCMAP_LEGACY_QUES      0x20000
 
 // escstr
-#define ULS_FL_ESCSTR_MASK          0x000F
-#define ULS_FL_ESCSTR_HEXA          0x0010
-#define ULS_FL_ESCSTR_OCTAL         0x0020
-#define ULS_FL_ESCSTR_UNICODE       0x0040
-#define ULS_FL_ESCSTR_DEL           0x0080
-#define ULS_FL_ESCSTR_HEXA_AF       0x0100
-#define ULS_FL_ESCSTR_HEXA_af       0x0200
-#define ULS_FL_ESCSTR_FIXED_NDIGITS 0x0400
-
-// escmap
-#define ULS_ESCMAP_FL_BUILTIN       0x01
+#define ULS_ESCSTR_FL_MASK          0x000F
+#define ULS_ESCSTR_FL_HEXA          0x0010
+#define ULS_ESCSTR_FL_OCTAL         0x0020
+#define ULS_ESCSTR_FL_UNICODE       0x0040
+#define ULS_ESCSTR_FL_DEL           0x0080
+#define ULS_ESCSTR_FL_HEXA_AF       0x0100
+#define ULS_ESCSTR_FL_HEXA_af       0x0200
+#define ULS_ESCSTR_FL_FIXED_NDIGITS 0x0400
 
 ULS_DECLARE_STRUCT(escstr);
 ULS_DECLARE_STRUCT(escmap);
@@ -107,7 +104,7 @@ ULS_DEF_PARRAY(escmap_container);
 
 ULS_DEFINE_STRUCT_BEGIN(escmap_pool)
 {
-	_uls_type_tool(csz_str) strpool;
+	uls_type_tool(isp) strpool;
 	uls_decl_parray(escstr_containers, escmap_container);
 	int ref_cnt;
 };
@@ -117,6 +114,7 @@ ULS_DEFINE_STRUCT_BEGIN(escmap)
 	int flags;
 	uls_decl_parray(escstr_list, escstr);
 	uls_escmap_pool_ptr_t mempool;
+	int ref_cnt;
 };
 
 ULS_DEFINE_STRUCT_BEGIN(litesc_sysinfo)
@@ -137,7 +135,7 @@ ULS_DECL_STATIC uls_litesc_sysinfo_ptr_t uls_litesc;
 ULS_DECL_STATIC int get_escstr_bin_opts(uls_ptrtype_tool(outparam) parms);
 ULS_DECL_STATIC int extract_escstr_mapexpr(char *line, uls_ptrtype_tool(outparam) parms);
 ULS_DECL_STATIC int __parse_escmap_optgrp(char *line);
-ULS_DECL_STATIC int parse_escmap_optgrp(uls_escmap_ptr_t esc_map, uls_ptrtype_tool(outparam) parms);
+ULS_DECL_STATIC int parse_escmap_optgrp(uls_ptrtype_tool(outparam) parms);
 ULS_DECL_STATIC void __uls_deinit_escmap_pool(uls_escmap_pool_ptr_t escmap_pool);
 ULS_DECL_STATIC void __uls_deinit_escmap(uls_escmap_ptr_t map);
 #endif // ULS_DECL_PRIVATE_PROC
@@ -149,9 +147,14 @@ void uls_deinit_escstr(uls_escstr_ptr_t escstr);
 
 void uls_init_escmap(uls_escmap_ptr_t map, uls_escmap_pool_ptr_t mempool);
 void uls_deinit_escmap(uls_escmap_ptr_t map);
+
+void uls_grab_escmap(uls_escmap_ptr_t map);
+int uls_ungrab_escmap(uls_escmap_ptr_t map);
+
 uls_escmap_ptr_t uls_alloc_escmap(uls_escmap_pool_ptr_t mempool);
 void uls_dealloc_escmap(uls_escmap_ptr_t map);
-uls_escstr_ptr_t uls_find_escstr_nosafe(uls_escmap_ptr_t map, int ind, char ch);
+
+uls_escstr_ptr_t uls_find_escstr_nosafe(uls_escmap_ptr_t map, int ind);
 uls_escstr_ptr_t uls_find_escstr(uls_escmap_ptr_t map, char ch);
 
 uls_escmap_container_ptr_t uls_alloc_escmap_container(char esc_ch, int idx, int len);
@@ -166,14 +169,16 @@ void uls_ungrab_escmap_pool(uls_escmap_pool_ptr_t escmap_pool);
 uls_escstr_ptr_t uls_search_escmap_pool(uls_escmap_pool_ptr_t escmap_pool, char esc_ch, const char *str, int len);
 uls_escstr_ptr_t __uls_add_escmap_pool(uls_escmap_pool_ptr_t escmap_pool, int ind, char esc_ch, int idx, int len);
 
-int uls_add_escstr(uls_escmap_pool_ptr_t escmap_pool, uls_escmap_ptr_t map, char esc_ch, const char *str, int len);
-void __uls_add_escstr(uls_escmap_pool_ptr_t escmap_pool, uls_escmap_ptr_t map, int ind, char esc_ch, const char *str, int len);
-int uls_del_escstr(uls_escmap_ptr_t map, char esc_ch);
-void __uls_register_escstr(uls_escmap_pool_ptr_t escmap_pool,
+void __uls_add_escstr(uls_escmap_pool_ptr_t escmap_pool,
 	uls_escmap_ptr_t map, int ind, char esc_ch, const char *str, int len);
+int uls_del_escstr(uls_escmap_ptr_t map, char esc_ch);
+
+void __uls_register_escstr(uls_escmap_pool_ptr_t escmap_pool, uls_escmap_ptr_t map,
+	int ind, char esc_ch, const char *str, int len);
 void uls_register_escstr_nosafe(uls_escmap_pool_ptr_t escmap_pool,
 	uls_escmap_ptr_t map, char esc_ch, const char *str, int len);
-int uls_register_escstr(uls_escmap_pool_ptr_t escmap_pool, uls_escmap_ptr_t map, char esc_ch, const char *str, int len);
+int uls_add_escstr(uls_escmap_pool_ptr_t escmap_pool, uls_escmap_ptr_t map,
+	char esc_ch, const char *str, int len);
 
 void __uls_clone_escmap(uls_escmap_ptr_t src_map, uls_escmap_ptr_t dst_map, uls_escmap_pool_ptr_t dst_escmap_pool);
 void __uls_set_escmap(uls_escmap_ptr_t dst_map, int flags);

@@ -70,11 +70,11 @@ ULS_DEFINE_STRUCT(istream)
 #if defined(__ULS_ISTREAM__) || defined(ULS_DECL_PRIVATE_PROC)
 ULS_DECL_STATIC void __init_istream(uls_istream_ptr_t istr);
 ULS_DECL_STATIC uls_istream_ptr_t __create_istream(int fd);
-ULS_DECL_STATIC int make_tokpkt_seqence(uls_lex_ptr_t uls, const char* line, uls_tmpl_pool_ptr_t tmpls_pool);
+ULS_DECL_STATIC int make_tokpkt_seqence(uls_lex_ptr_t uls, const char *line, uls_tmpl_pool_ptr_t tmpls_pool);
 ULS_DECL_STATIC void make_eoif_lexeme_bin(uls_context_ptr_t ctx, int tok_id, const char *txt, int txtlen);
 
-ULS_DECL_STATIC int uls_readline_buffer(char* buf, int bufsiz);
-ULS_DECL_STATIC int parse_uls_hdr(char* line, int fd_in, uls_istream_ptr_t istr);
+ULS_DECL_STATIC int uls_readline_buffer(char *buf, int bufsiz);
+ULS_DECL_STATIC int parse_uls_hdr(char *line, int fd_in, uls_istream_ptr_t istr);
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC
@@ -91,22 +91,22 @@ void uls_ungrab_fd_utf(uls_source_ptr_t isrc);
 uls_tmpl_pool_ptr_t uls_import_tmpls(uls_tmpl_list_ptr_t tmpl_list, uls_lex_ptr_t uls);
 int uls_bind_tmpls(uls_istream_ptr_t istr, uls_tmpl_list_ptr_t tmpl_list);
 
-int uls_fill_fd_stream(uls_source_ptr_t isrc, char* buf, int buflen, int bufsiz);
+int uls_fill_fd_stream(uls_source_ptr_t isrc, char *buf, int buflen, int bufsiz);
 void uls_ungrab_fd_stream(uls_source_ptr_t isrc);
 
 int uls_gettok_bin(uls_lex_ptr_t uls);
 #endif
 
 #ifdef ULS_DECL_PUBLIC_PROC
-ULS_DLL_EXTERN void uls_set_istream_tag(uls_istream_ptr_t istr, const char* tag);
+ULS_DLL_EXTERN void uls_set_istream_tag(uls_istream_ptr_t istr, const char *tag);
 
 ULS_DLL_EXTERN uls_istream_ptr_t uls_open_istream(int fd);
-ULS_DLL_EXTERN uls_istream_ptr_t uls_open_istream_file(const char* fpath);
+ULS_DLL_EXTERN uls_istream_ptr_t uls_open_istream_file(const char *fpath);
 ULS_DLL_EXTERN uls_istream_ptr_t uls_open_istream_fp(FILE *fp);
 
 #ifdef ULS_FDF_SUPPORT
 ULS_DLL_EXTERN uls_istream_ptr_t uls_open_istream_filter(fdf_t* fdf, int fd);
-ULS_DLL_EXTERN uls_istream_ptr_t uls_open_istream_filter_file(fdf_t* fdf, const char* fpath);
+ULS_DLL_EXTERN uls_istream_ptr_t uls_open_istream_filter_file(fdf_t* fdf, const char *fpath);
 ULS_DLL_EXTERN uls_istream_ptr_t uls_open_istream_filter_fp(fdf_t* fdf, FILE *fp);
 #endif
 
@@ -116,6 +116,7 @@ ULS_DLL_EXTERN int uls_destroy_istream(uls_istream_ptr_t istr);
 ULS_DLL_EXTERN int uls_bind_istream(uls_istream_ptr_t istr, uls_lex_ptr_t uls);
 ULS_DLL_EXTERN int uls_read_tok(uls_istream_ptr_t istr, uls_ptrtype_tool(outparam) parms);
 
+ULS_DLL_EXTERN int _uls_get_raw_input_subtype(FILE* fp);
 ULS_DLL_EXTERN int _uls_const_TMPLS_DUP(void);
 ULS_DLL_EXTERN uls_istream_ptr_t ulsjava_open_istream_file(const void *filepath, int len_filepath);
 #endif // ULS_DECL_PUBLIC_PROC
@@ -124,8 +125,12 @@ ULS_DLL_EXTERN uls_istream_ptr_t ulsjava_open_istream_file(const void *filepath,
 }
 #endif
 
-#ifdef ULS_USE_WSTR
+#ifdef _ULS_USE_ULSCOMPAT
+#if defined(ULS_USE_WSTR)
 #include "uls/uls_istream_wstr.h"
+#elif defined(ULS_USE_ASTR)
+#include "uls/uls_istream_astr.h"
+#endif
 #endif
 
 #endif // __ULS_ISTREAM_H__

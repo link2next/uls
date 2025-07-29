@@ -37,7 +37,9 @@
 
 #include <stdlib.h>
 #include <string.h>
-#ifndef ULS_WINDOWS
+#ifdef __ULS_WINDOWS__
+#include <stdnoreturn.h>
+#else
 #include <unistd.h>
 #endif
 #endif
@@ -157,30 +159,37 @@ ULS_QUALIFIED_METHOD(uls_lf_number_Lu)(char *numstr, unsigned long long num, int
 }
 
 #ifndef ULS_DOTNET
-
 void
-ULS_QUALIFIED_METHOD(err_log_puts)(const char* mesg, int len)
+ULS_QUALIFIED_METHOD(err_log_puts)(const char *mesg)
 {
-	int rc,  fd = STDERR_FILENO;
+	int fd = STDERR_FILENO;
+	int rc = 0, len;
 
-	if (len < 0) {
-		len = uls_strlen(mesg);
-	}
-
-	if (len > 0) {
-#ifdef ULS_WINDOWS
+	if (mesg != NULL && (len = uls_strlen(mesg)) > 0) {
+#ifdef __ULS_WINDOWS__
 		rc = _write(fd, mesg, len);
 #else
 		rc = write(fd, mesg, len);
 #endif
-		if (rc < 0) {
-			exit(1);
-		}
+	}
+
+	if (rc < 0) {
+		err_panic_puts(NULL);
 	}
 }
 
+#if defined(__ULS_WINDOWS__) && !defined(ULS_DOTNET)
+_Noreturn
+#endif
+void
+ULS_QUALIFIED_METHOD(err_panic_puts)(const char *mesg)
+{
+	err_log_puts(mesg);
+	exit(1);
+}
+
 int
-ULS_QUALIFIED_METHOD(uls_vsnprintf_primitive)(char *buf,  int bufsiz, const char* fmt, va_list args)
+ULS_QUALIFIED_METHOD(uls_vsnprintf_primitive)(char *buf,  int bufsiz, const char *fmt, va_list args)
 {
 	int   j, len, ival, minus, buflen, bufsiz1;
 	const char  *fmtptr, *wrdptr;
@@ -259,9 +268,8 @@ ULS_QUALIFIED_METHOD(uls_vsnprintf_primitive)(char *buf,  int bufsiz, const char
 			break;
 
 		default:
-			err_log_puts("unknown conversion specifier in ...", -1);
-			err_log_puts(fmtptr, -1);
-			exit(1);
+			err_log_puts("unknown conversion specifier in ...");
+			err_panic_puts(fmtptr);
 			break;
 		}
 
@@ -279,7 +287,7 @@ ULS_QUALIFIED_METHOD(uls_vsnprintf_primitive)(char *buf,  int bufsiz, const char
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_snprintf_primitive)(char *buf,  int bufsiz, const char* fmt, ...)
+ULS_QUALIFIED_METHOD(uls_snprintf_primitive)(char *buf,  int bufsiz, const char *fmt, ...)
 {
 	int len;
 	va_list args;
@@ -292,23 +300,23 @@ ULS_QUALIFIED_METHOD(uls_snprintf_primitive)(char *buf,  int bufsiz, const char*
 }
 
 int
-ULS_QUALIFIED_METHOD(err_vlog_primitive)(const char* fmt, va_list args)
+ULS_QUALIFIED_METHOD(err_vlog_primitive)(const char *fmt, va_list args)
 {
 	char buf[256];
 	int len;
 
 	len = uls_vsnprintf_primitive(buf, sizeof(buf), fmt, args);
-	if (len < sizeof(buf)) {
+	if (len + 1 < sizeof(buf)) {
 		buf[len++] = '\n';
+		buf[len] = '\0';
 	}
 
-	err_log_puts(buf, len);
-
+	err_log_puts(buf);
 	return len;
 }
 
 void
-err_log_primitive(const char* fmt, ...)
+err_log_primitive(const char *fmt, ...)
 {
 	va_list args;
 
@@ -318,7 +326,7 @@ err_log_primitive(const char* fmt, ...)
 }
 
 void
-err_panic_primitive(const char* fmt, ...)
+err_panic_primitive(const char *fmt, ...)
 {
 	va_list args;
 
@@ -326,7 +334,7 @@ err_panic_primitive(const char* fmt, ...)
 	err_vlog_primitive(fmt, args);
 	va_end(args);
 
-	exit(1);
+	err_panic_puts(NULL);
 }
 
 #endif // ULS_DOTNET
@@ -394,13 +402,13 @@ ULS_QUALIFIED_METHOD(uls_isxdigit)(int c)
 char
 ULS_QUALIFIED_METHOD(uls_toupper)(int c)
 {
-	return _IS_CH_LOWER(c) ? 'A'+(c-'a') : c;
+	return _IS_CH_LOWER(c) ? 'A' + (c-'a') : c;
 }
 
 char
 ULS_QUALIFIED_METHOD(uls_tolower)(int c)
 {
-	return _IS_CH_UPPER(c) ? 'a'+(c-'A') : c;
+	return _IS_CH_UPPER(c) ? 'a' + (c-'A') : c;
 }
 
 int
@@ -459,7 +467,7 @@ ULS_QUALIFIED_METHOD(num2char_radix)(int val)
 }
 
 char
-ULS_QUALIFIED_METHOD(read_hexa_char)(char* ptr)
+ULS_QUALIFIED_METHOD(read_hexa_char)(char *ptr)
 {
 	unsigned n, ch_val = 0;
 	char ch;
@@ -549,10 +557,10 @@ ULS_QUALIFIED_METHOD(uls_find_standard_prefix_radix)(const char *line, int *ptr_
 }
 
 int
-ULS_QUALIFIED_METHOD(is_pure_integer)(const char* lptr, uls_outparam_ptr_t parms)
+ULS_QUALIFIED_METHOD(is_pure_integer)(const char *lptr, uls_outparam_ptr_t parms)
 {
 	int minus = 0, pure = 1, num = 0, n_bytes;
-	const char* lptr1;
+	const char *lptr1;
 	char ch;
 
 	if (*lptr == '-') {
@@ -586,10 +594,10 @@ ULS_QUALIFIED_METHOD(is_pure_integer)(const char* lptr, uls_outparam_ptr_t parms
 }
 
 int
-ULS_QUALIFIED_METHOD(is_pure_word)(const char* lptr, int must_id)
+ULS_QUALIFIED_METHOD(is_pure_word)(const char *lptr, int must_id)
 {
 	int len, stat=0;
-	const char* lptr0 = lptr;
+	const char *lptr0 = lptr;
 	char ch;
 
 	for ( ; (ch=*lptr) !='\0'; lptr++) {
@@ -636,7 +644,7 @@ ULS_QUALIFIED_METHOD(uls_atoi)(const char *str)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_get_xrange)(const char* wrd, uls_uint32* ptr_x1, uls_uint32* ptr_x2)
+ULS_QUALIFIED_METHOD(uls_get_xrange)(const char *wrd, uls_uint32* ptr_x1, uls_uint32* ptr_x2)
 {
 	uls_uint32 val1, val2;
 	uls_outparam_t parms;
@@ -740,7 +748,7 @@ ULS_QUALIFIED_METHOD(uls_range_of_bits)(uls_uint32 n)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_clear_bits)(char* srcptr, uls_uint32 start_bit, uls_uint32 end_bit)
+ULS_QUALIFIED_METHOD(uls_clear_bits)(char *srcptr, uls_uint32 start_bit, uls_uint32 end_bit)
 {
 	uls_uint32  i1, j1, i2, j2, j;
 	char  *dstptr;
@@ -797,7 +805,7 @@ ULS_QUALIFIED_METHOD(uls_clear_bits)(char* srcptr, uls_uint32 start_bit, uls_uin
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_find_first_1bit)(char* srcptr,
+ULS_QUALIFIED_METHOD(uls_find_first_1bit)(char *srcptr,
 	uls_uint32 start_bit, uls_uint32 end_bit, uls_uint32* found_bit)
 {
 	char  *dstptr;
@@ -881,7 +889,7 @@ ULS_QUALIFIED_METHOD(uls_host_byteorder)(void)
 }
 
 void
-ULS_QUALIFIED_METHOD(uls_reverse_bytes)(char* ary, int n)
+ULS_QUALIFIED_METHOD(uls_reverse_bytes)(char *ary, int n)
 {
 	char ch;
 	int i, j;
@@ -938,7 +946,7 @@ ULS_QUALIFIED_METHOD(uls_check_longdouble_fmt)(int endian)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_strcmp)(const char* str1, const char* str2)
+ULS_QUALIFIED_METHOD(uls_strcmp)(const char *str1, const char *str2)
 {
 	const char *ptr1=str1, *ptr2=str2;
 	char ch1, ch2;
@@ -960,7 +968,7 @@ ULS_QUALIFIED_METHOD(uls_strcmp)(const char* str1, const char* str2)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_strncmp)(const char* str1, const char* str2, int n)
+ULS_QUALIFIED_METHOD(uls_strncmp)(const char *str1, const char *str2, int n)
 {
 	const char *ptr1=str1, *ptr2=str2;
 	char ch1, ch2;
@@ -982,7 +990,7 @@ ULS_QUALIFIED_METHOD(uls_strncmp)(const char* str1, const char* str2, int n)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_strcasecmp)(const char* str1, const char* str2)
+ULS_QUALIFIED_METHOD(uls_strcasecmp)(const char *str1, const char *str2)
 {
 	char  ch1, ch2;
 	int  i, stat = 0;
@@ -1006,7 +1014,7 @@ ULS_QUALIFIED_METHOD(uls_strcasecmp)(const char* str1, const char* str2)
 }
 
 char*
-ULS_QUALIFIED_METHOD(uls_strchr)(const char* lptr, char ch0)
+ULS_QUALIFIED_METHOD(uls_strchr)(const char *lptr, char ch0)
 {
 	char ch;
 	int i;
@@ -1025,7 +1033,7 @@ ULS_QUALIFIED_METHOD(uls_strchr)(const char* lptr, char ch0)
 }
 
 char*
-ULS_QUALIFIED_METHOD(uls_strchr_r)(const char* lptr, char ch)
+ULS_QUALIFIED_METHOD(uls_strchr_r)(const char *lptr, char ch)
 {
 	int i, len = uls_strlen(lptr);
 
@@ -1041,7 +1049,7 @@ ULS_QUALIFIED_METHOD(uls_strchr_r)(const char* lptr, char ch)
 }
 
 const char*
-ULS_QUALIFIED_METHOD(uls_strstr)(const char *str, const char* substr)
+ULS_QUALIFIED_METHOD(uls_strstr)(const char *str, const char *substr)
 {
 	int i, l_str, l_substr;
 	char ch0;
@@ -1064,7 +1072,7 @@ ULS_QUALIFIED_METHOD(uls_strstr)(const char *str, const char* substr)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_str_tolower)(const char* src, char *dst, int len)
+ULS_QUALIFIED_METHOD(uls_str_tolower)(const char *src, char *dst, int len)
 {
 	int i;
 	char ch;
@@ -1082,7 +1090,7 @@ ULS_QUALIFIED_METHOD(uls_str_tolower)(const char* src, char *dst, int len)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_str_toupper)(const char* src, char *dst, int len)
+ULS_QUALIFIED_METHOD(uls_str_toupper)(const char *src, char *dst, int len)
 {
 	int i;
 	char ch;
@@ -1189,7 +1197,7 @@ ULS_QUALIFIED_METHOD(split_litstr)(char *str, char qch)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_fp_getline)(FILE* fp, char* buf, int buf_siz)
+ULS_QUALIFIED_METHOD(uls_fp_getline)(FILE* fp, char *buf, int buf_siz)
 {
 	int len;
 	char ch;
@@ -1218,6 +1226,9 @@ ULS_QUALIFIED_METHOD(uls_fp_getline)(FILE* fp, char* buf, int buf_siz)
 	return len;
 }
 
+#if defined(__ULS_WINDOWS__) && !defined(ULS_DOTNET)
+_Noreturn
+#endif
 void
 ULS_QUALIFIED_METHOD(uls_appl_exit)(int exit_code)
 {
@@ -1364,7 +1375,7 @@ ULS_QUALIFIED_METHOD(__uls_mfree)(void *ptr)
 }
 
 char*
-ULS_QUALIFIED_METHOD(uls_strdup)(const char* str, int len)
+ULS_QUALIFIED_METHOD(uls_strdup)(const char *str, int len)
 {
 	char *ptr;
 
@@ -1409,9 +1420,9 @@ ULS_QUALIFIED_METHOD(uls_memmove)(void *dst, const void* src, int n)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_strlen)(const char* str)
+ULS_QUALIFIED_METHOD(uls_strlen)(const char *str)
 {
-	const char* ptr;
+	const char *ptr;
 
 	for (ptr=str; *ptr != '\0'; ptr++)
 		/* NOTHING */;
@@ -1420,7 +1431,7 @@ ULS_QUALIFIED_METHOD(uls_strlen)(const char* str)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_strcpy)(char* bufptr, const char* str)
+ULS_QUALIFIED_METHOD(uls_strcpy)(char *bufptr, const char *str)
 {
 	const char *ptr;
 	char ch;
@@ -1442,7 +1453,7 @@ ULS_QUALIFIED_METHOD(uls_strcpy)(char* bufptr, const char* str)
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_strncpy)(char* bufptr, const char* str, int n)
+ULS_QUALIFIED_METHOD(uls_strncpy)(char *bufptr, const char *str, int n)
 {
 	const char *ptr;
 	char ch;
@@ -1467,7 +1478,7 @@ ULS_QUALIFIED_METHOD(uls_strncpy)(char* bufptr, const char* str, int n)
 }
 
 char*
-ULS_QUALIFIED_METHOD(skip_blanks)(const char* lptr)
+ULS_QUALIFIED_METHOD(skip_blanks)(const char *lptr)
 {
 	register int ch;
 
@@ -1477,7 +1488,7 @@ ULS_QUALIFIED_METHOD(skip_blanks)(const char* lptr)
 }
 
 int
-ULS_QUALIFIED_METHOD(str_trim_end)(char* str, int len)
+ULS_QUALIFIED_METHOD(str_trim_end)(char *str, int len)
 {
 	register int   i;
 
@@ -1810,7 +1821,7 @@ ULS_QUALIFIED_METHOD(uls_explode_str)(char **ptr_line, char delim_ch, char** arg
 	return n_wrd;
 }
 
-char*
+const char*
 ULS_QUALIFIED_METHOD(uls_filename)(const char *filepath, int* len_fname)
 {
 	uls_outparam_t parms;
@@ -1829,7 +1840,7 @@ ULS_QUALIFIED_METHOD(uls_filename)(const char *filepath, int* len_fname)
 #endif // ULS_DOTNET
 
 int
-ULS_QUALIFIED_METHOD(uls_encode_utf8)(uls_wch_t wch, char* utf8buf, int siz_utf8buf)
+ULS_QUALIFIED_METHOD(uls_encode_utf8)(uls_wch_t wch, char *utf8buf, int siz_utf8buf)
 {
 	char tmpbuf[ULS_UTF8_CH_MAXLEN];
 	int i, rc;
@@ -1895,10 +1906,10 @@ ULS_QUALIFIED_METHOD(uls_decode_utf8)(const char *utf8buf, int len_utf8buf, uls_
 	ch = *bufptr;
 	if ((ch & 0xC0) != 0xC0) {
 		if (p_wch != NULL) *p_wch = ch;
-		return 1; // including ctrl-ch and '\0'
+		return 1;
 	}
 
-	for (n=0; ; n++) {
+	for (n = 0; ; n++) {
 		if (n >= 3) return -(ULS_UTF8_CH_MAXLEN + 2);
 		if ((ch_ary[n] & ch) == 0) {
 			++n;
@@ -2064,6 +2075,135 @@ ULS_QUALIFIED_METHOD(ustr_num_wchars)(const char *ustr, int len, uls_outparam_pt
 	return wlen; // # of wchars
 }
 
+int
+ULS_QUALIFIED_METHOD(is_filepath_delim)(char ch)
+{
+	int rc = 0;
+#ifdef __ULS_WINDOWS__
+	if (ch == ULS_FILEPATH_DELIM || ch == '/') rc = 1;
+#else
+	if (ch == ULS_FILEPATH_DELIM) rc = 1;
+#endif
+	return rc;
+}
+
+int
+ULS_QUALIFIED_METHOD(is_absolute_path)(const char *path)
+{
+	int stat;
+
+	if (*path == ULS_FILEPATH_DELIM) stat = 1;
+#ifdef __ULS_WINDOWS__
+	else if (uls_isalpha(path[0]) && path[1] == ':') stat = 1;
+#endif
+	else stat = 0;
+
+	return stat;
+}
+
+int
+ULS_QUALIFIED_METHOD(is_path_prefix)(const char *filepath)
+{
+	int i, stat = 0;
+	char ch;
+
+	if (filepath == NULL || *filepath == '\0') {
+		return -1;
+	}
+
+	if (is_absolute_path(filepath))
+		return 1;
+
+	for (i = 0; ; i++) { // check if the prefix of 'filepath' is '.' or '..'
+		if ((ch = filepath[i]) == '\0' || ch == ULS_FILEPATH_DELIM) {
+			if (i == 1 || (i == 2 && filepath[1] == '.')) {
+				if (filepath[0] == '.') stat = 1;
+			}
+			break;
+		}
+	}
+
+	return stat;
+}
+
+void
+ULS_QUALIFIED_METHOD(isp_init)(uls_isp_ptr_t isp, int init_size)
+{
+	if (init_size < 1) init_size = 256;
+
+	isp->buff = (char *) uls_malloc(init_size);
+	isp->siz_strpool = init_size;
+
+	isp->buff[0] = '\0'; // nil-string
+	isp->len_strpool = 1;
+}
+
+void
+ULS_QUALIFIED_METHOD(isp_reset)(uls_isp_ptr_t isp)
+{
+	isp->len_strpool = 1;
+}
+
+void
+ULS_QUALIFIED_METHOD(isp_deinit)(uls_isp_ptr_t isp)
+{
+	isp->len_strpool = 0;
+
+	if (isp->siz_strpool > 0) {
+		uls_mfree(isp->buff);
+		isp->buff = NULL;
+	}
+}
+
+int
+ULS_QUALIFIED_METHOD(isp_find)(uls_isp_ptr_t isp, const char *str, int len)
+{
+	char *ptr;
+	int i, l;
+
+	if (len < 0) len = uls_strlen(str);
+	if (len <= 0) return 0;
+
+	for (i = 1; i < isp->len_strpool; i += l + 1) {
+		ptr = isp->buff + i;
+		if ((l = uls_strlen(ptr)) == len && _uls_tool_(strncmp)(ptr, str, len) == 0) {
+			return i;
+		}
+	}
+
+	return -1;
+}
+
+int
+ULS_QUALIFIED_METHOD(isp_insert)(uls_isp_ptr_t isp, const char *str, int len)
+{
+	char *ptr;
+	int i, k;
+
+	if (len < 0) len = uls_strlen(str);
+
+	k = isp->siz_strpool - isp->len_strpool;
+	if (len + 1 > k) {
+		k = uls_ceil_log2(isp->len_strpool + len + 1, 6);
+		isp->buff = (char *) uls_mrealloc(isp->buff, k);
+		isp->siz_strpool = k;
+	}
+
+	k = isp->len_strpool;
+	ptr = isp->buff + k;
+	for (i = 0; i < len; i++) *ptr++ = str[i];
+	*ptr = '\0';
+
+	isp->len_strpool += len + 1;
+	return k;
+}
+
+const char*
+ULS_QUALIFIED_METHOD(isp_get_str)(uls_isp_ptr_t isp, int idx)
+{
+	return isp->buff + idx;
+}
+
 #if defined(HAVE_PTHREAD)
 void
 ULS_QUALIFIED_METHOD(uls_init_mutex)(uls_mutex_t mtx)
@@ -2116,7 +2256,7 @@ ULS_QUALIFIED_METHOD(uls_unlock_mutex)(uls_mutex_t mtx)
 	}
 }
 
-#elif defined(ULS_WINDOWS)
+#elif defined(__ULS_WINDOWS__)
 void
 ULS_QUALIFIED_METHOD(uls_init_mutex)(uls_mutex_t mtx)
 {
@@ -2206,7 +2346,7 @@ ULS_QUALIFIED_METHOD(finalize_primitives)(void)
 void
 ULS_QUALIFIED_METHOD(uls_msleep)(int msecs)
 {
-#ifdef ULS_WINDOWS
+#ifdef __ULS_WINDOWS__
 	Sleep(msecs);
 #else
 	usleep(msecs * 1000);
