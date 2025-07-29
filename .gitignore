@@ -2,7 +2,6 @@
 *.~*
 *.so.*
 *.so
-*.1.gz
 *.dylib
 /config.sub
 /config.log
@@ -26,6 +25,7 @@ Makefile.in
 *.list
 /autom4te.cache
 /doc/man/*.1
+/doc/man/*.1.gz
 /tests/**/a?.uls
 /examples/**/a?.uls
 /post_inst/uninst_info.txt
