@@ -241,6 +241,10 @@ _uls_explode_astr(uls_wrd_ptr_t uw, char delim_ch, uls_arglst_ptr_t arglst)
 	uls_argstr_ptr_t arg;
 	int   rc, k, alen;
 
+	if ((rc = astr_lengthof_char(lptr)) < 0) { // checking _uls_sysinfo_(multibytes)
+		return -1;
+	}
+
 	for (k = 0; k < arglst->args.n_alloc; ) {
 		if (delim_ch == ' ') {
 			for ( ; (rc=astr_lengthof_char(lptr)) == 1; lptr+=rc) {

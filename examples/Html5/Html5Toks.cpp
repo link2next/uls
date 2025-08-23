@@ -102,10 +102,11 @@ namespace
 	void dump_token(Html5Lex *html5lex)
 	{
 		int t = html5lex->getTokNum();
-
+		LPCTSTR tstr;
 		tstring lxm;
+
 		html5lex->getTokStr(lxm);
-		LPCTSTR tstr = lxm.c_str();
+		tstr = lxm.c_str();
 
 		switch (t) {
 		case Html5Lex::ID:

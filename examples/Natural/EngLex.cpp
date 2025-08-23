@@ -208,8 +208,10 @@ EngLex::get_token(void)
 
 	if (tok == NONE) {
 		tok = EngLexBasis::next();
+
 		ptr = (LPCTSTR) lxm.c_str();
 	 	len = (int) lxm.length();
+
 	 	tokbuf.append(ptr, len);
 	}
 

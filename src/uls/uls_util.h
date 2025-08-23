@@ -69,7 +69,6 @@ ULS_DEFINE_DELEGATE_END(optproc);
 #if defined(__ULS_UTIL__) || defined(ULS_DECL_PRIVATE_PROC)
 ULS_DECL_STATIC int __os_mkdir_ustr(const char *filepath);
 ULS_DECL_STATIC int __uls_mkdir_ustr(const char *filepath0);
-ULS_DECL_STATIC int get_ms_codepage(uls_ptrtype_tool(outparam) parms);
 #endif
 
 #ifdef ULS_DECL_PROTECTED_PROC

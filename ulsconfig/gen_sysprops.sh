@@ -133,7 +133,7 @@ gen_namval_pair OS $arch_os
 arch_bits=$($ARCH_INFO_SH)
 gen_namval_pair ULS_ARCH_BITS $arch_bits
 
-gen_namval_pair ULS_MBCS utf8
+gen_namval_pair ULS_MBCS utf-8
 
 gen_namval_pair ULS_VERSION_MAJOR $major_num
 gen_namval_pair ULS_VERSION_MINOR $minor_num

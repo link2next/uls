@@ -153,7 +153,7 @@ ShellLex::expect_number(void)
 	expect(NUM);
 
 	UlsLex::getTokStr(lxm);
-	ptr = lxm.c_str();
+	ptr = (LPCTSTR) lxm.c_str();
 	len = (int) lxm.length();
 
 	tokbuf.append(ptr, len);
@@ -235,7 +235,7 @@ ShellLex::get_token(void)
 		UlsLex::getTokStr(lxm);
 
 		ptr = (LPCTSTR) lxm.c_str();
-	 	len = (int) lxm.length();
+		len = (int) lxm.length();
 	 	tokbuf.append(ptr, len);
 
 		wch = peekChar();

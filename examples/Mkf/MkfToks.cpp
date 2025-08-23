@@ -103,10 +103,11 @@ namespace
 	void dump_token(MkfLex *mkflex)
 	{
 		int t = mkflex->getTokNum();
-
+		LPCTSTR tstr;
 		tstring lxm;
+
 		mkflex->getTokStr(lxm);
-		LPCTSTR tstr = lxm.c_str();
+		tstr = lxm.c_str();
 
 		switch (t) {
 		case MkfLex::TABBLK:

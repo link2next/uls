@@ -35,11 +35,53 @@
 #ifndef ULS_EXCLUDE_HFILES
 #define __ULS_AUW__
 #include "uls/uls_auw.h"
-#include "uls/uls_sysprops.h"
 #include "uls/uls_log.h"
 #include <stdlib.h>
 #include <string.h>
 #endif
+
+static int __auw_ansi_multibytes = 1;
+
+int
+ULS_QUALIFIED_METHOD(guess_ansi_multibytes_max)(int codepage)
+{
+	int i, cp, mbs;
+	static const int multibytes_codepages[] = {
+		932, 936, 949, 950,
+		10001, 10002, 10003, 10008,
+		20000, 20001, 20002, 20003, 20004, 20005,
+		20932, 20936, 20949,
+		50220, 50221, 50222, 50225, 50227,
+		51932, 51936, 51949, 51950,
+		52536, 54936,
+		0
+	};
+
+	if (codepage == 1200 || codepage == 1201) { // utf-16
+		mbs = 2;
+	} else if (codepage == 12000 || codepage == 12000) { // utf-32
+		mbs = 4;
+	} else {
+		mbs = 1;
+		for (i = 0; (cp = multibytes_codepages[i]) > 0; i++) {
+			if (cp == codepage) {
+				mbs = 2;
+				break;
+			}
+		}
+	}
+
+	return mbs;
+}
+
+void
+ULS_QUALIFIED_METHOD(set_ms_mbcs_codepage)(int codepage)
+{
+	int mbs;
+
+	mbs = guess_ansi_multibytes_max(codepage);
+	__auw_ansi_multibytes = mbs;
+}
 
 #ifdef __ULS_WINDOWS__
 ULS_DECL_STATIC char*
@@ -123,64 +165,38 @@ ULS_QUALIFIED_METHOD(mbs2wstr)(const char *astr, int alen, int is_utf8, csz_str_
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__uls_astr2ustr_ptr)(uls_outparam_ptr_t parms)
+ULS_QUALIFIED_METHOD(is_string_ascii)(const char *austr, int aulen)
 {
-	const char *astr = parms->lptr;
-	int alen = parms->len;
-	int n_wchars, stat;
-	uls_outparam_t parms1;
+	int i, aulen2 = aulen;
+	char ch;
 
-	if (alen >= 0) {
-		return -1;
-	}
-
-	if (alen == -1) {
-		n_wchars = astr_num_wchars(astr, -1, uls_ptr(parms1));
-		alen = parms1.len;
+	if (aulen < 0) {
+		for (i = 0; ; i++) {
+			if ((ch = austr[i]) == '\0') {
+				aulen2 = i;
+				break;
+			}
+			if (ch & 0x80) {
+				aulen2 = -1;
+				break;
+			}
+		}
 	} else {
-		alen = -alen;
-		n_wchars = astr_num_wchars(astr, alen, nilptr);
+		for (i = 0; ; i++) {
+			if (i >= aulen) {
+				break;
+			}
+			ch = austr[i];
+			if (ch & 0x80) {
+				aulen2 = -1;
+				break;
+			}
+		}
 	}
 
-	if (n_wchars == alen) {
-		stat = 0;
-	} else {
-		stat = -1;
-	}
-
-	parms->len = alen;
-	return stat;
+	return aulen2;
 }
 
-ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(__uls_ustr2astr_ptr)(uls_outparam_ptr_t parms)
-{
-	const char *ustr = parms->lptr;
-	int ulen = parms->len;
-	int n_wchars, stat;
-	uls_outparam_t parms1;
-
-	if (ulen >= 0) {
-		return -1;
-	}
-
-	if (ulen == -1) {
-		n_wchars = ustr_num_wchars(ustr, -1, uls_ptr(parms1));
-		ulen = parms1.len;
-	} else {
-		ulen = -ulen;
-		n_wchars = ustr_num_wchars(ustr, ulen, nilptr);
-	}
-
-	if (n_wchars == ulen) {
-		stat = 0;
-	} else {
-		stat = -1;
-	}
-
-	parms->len =  ulen;
-	return stat;
-}
 #endif // __ULS_WINDOWS__
 
 void
@@ -204,7 +220,8 @@ ULS_QUALIFIED_METHOD(astr_lengthof_char)(const char *str)
 	int n;
 
 	if ((ch=*str) >= ULS_ASCII_TABLE_SIZE) {
-		n = _uls_sysinfo_(multibytes);
+		n = __auw_ansi_multibytes;
+		if (n <= 0) n = -1;
 	} else if (ch=='\0') {
 		n = 0;
 	} else {
@@ -219,6 +236,10 @@ ULS_QUALIFIED_METHOD(astr_num_wchars)(const char *str, int len, uls_outparam_ptr
 {
 	const char *ptr;
 	int n=0, i, rc;
+
+	if (__auw_ansi_multibytes <= 0) {
+		return -1;
+	}
 
 	if (len < 0) {
 		for (ptr=str; (rc=astr_lengthof_char(ptr)) > 0; ptr+=rc) {
@@ -400,26 +421,20 @@ ULS_QUALIFIED_METHOD(uls_ustr2astr_ptr)(const char *ustr, int ulen, auw_outparam
 {
 	csz_str_ptr_t csz = uls_ptr(auw->csz);
 	const char *astr;
-	int alen, rval;
-	uls_outparam_t parms;
+	int ulen2, alen;
 
 	if (ustr == NULL) {
 		return NULL;
 	}
 
-	parms.lptr = ustr;
-	parms.len = ulen;
-	rval = __uls_ustr2astr_ptr(uls_ptr(parms));
-	ulen = parms.len;
-
-	if (rval < 0) {
+	if ((ulen2 = is_string_ascii(ustr, ulen)) < 0) {
 		if ((astr = uls_ustr2astr(ustr, ulen, csz)) == NULL) {
 			alen = 0;
 		} else {
 			alen = csz_length(csz);
 		}
 	} else {
-		alen = ulen;
+		alen = ulen2;
 		astr = ustr;
 	}
 
@@ -432,26 +447,20 @@ ULS_QUALIFIED_METHOD(uls_astr2ustr_ptr)(const char *astr, int alen, auw_outparam
 {
 	csz_str_ptr_t csz = uls_ptr(auw->csz);
 	const char *ustr;
-	int ulen, rval;
-	uls_outparam_t parms;
+	int  alen2, ulen;
 
 	if (astr == NULL) {
 		return NULL;
 	}
 
-	parms.lptr = astr;
-	parms.len = alen;
-	rval = __uls_astr2ustr_ptr(uls_ptr(parms));
-	alen = parms.len;
-
-	if (rval < 0) {
+	if ((alen2 = is_string_ascii(astr, alen)) < 0) {
 		if ((ustr = uls_astr2ustr(astr, alen, csz)) == NULL) {
 			ulen = 0;
 		} else {
 			ulen = csz_length(csz);
 		}
 	} else {
-		ulen = alen;
+		ulen = alen2;
 		ustr = astr;
 	}
 

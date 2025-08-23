@@ -101,7 +101,7 @@ ULS_DECL_STATIC char*
 ULS_QUALIFIED_METHOD(get_nameval_pair)(uls_parm_line_ptr_t parm_ln)
 {
 	char *line0, *line, *lptr, ch;
-	int  i;
+	int  i, len;
 
 	line0 = lptr = parm_ln->line;
 
@@ -112,9 +112,14 @@ ULS_QUALIFIED_METHOD(get_nameval_pair)(uls_parm_line_ptr_t parm_ln)
 	*lptr++ = '\0';
 	line = lptr;
 
-	for (i=(int)uls_strlen(line)-1; i>=0; i--) {
+	if ((len = (int) uls_strlen(line)) <= 0) {
+		parm_ln->line = line;
+		return line0;
+	}
+
+	for (i = len - 1; i>=0; i--) {
 		ch = line[i];
-		if (!(ch==' ' || ch=='\t' || ch=='\n' || ch=='\r')) {
+		if (!(ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r')) {
 			break;
 		}
 	}
@@ -123,7 +128,7 @@ ULS_QUALIFIED_METHOD(get_nameval_pair)(uls_parm_line_ptr_t parm_ln)
 		if (line[i] != '\'') {
 			return NULL;
 		}
-		line[i--] = '\0';
+		line[i] = '\0';
 		++line; --i;
 	} else {
 		line[++i] = '\0';

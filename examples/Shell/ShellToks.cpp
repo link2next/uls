@@ -103,10 +103,11 @@ namespace
 	void dump_token(ShellLex *shlex)
 	{
 		int t = shlex->getTokNum();
+		LPCTSTR tstr;
 		tstring lxm;
 
 		shlex->getTokStr(lxm);
-		LPCTSTR tstr = lxm.c_str();
+		tstr = lxm.c_str();
 
 		switch (t) {
 		case ShellLex::WORD:

@@ -263,24 +263,22 @@ ULS_QUALIFIED_METHOD(__open_tempfile)(uls_tempfile_ptr_t tmpfile)
 	int fd_out, len, i=0;
 	const char *basedir;
 	char filepath_buf[ULS_TEMP_FILEPATH_MAXSIZ + 1];
+
 #ifdef __ULS_WINDOWS__
-	auw_outparam_t buf_csz;
-
-	if ((basedir = getenv("TEMP")) == NULL) {
-		if (uls_dirent_exist(ULS_OS_TEMP_DIR) != ST_MODE_DIR)
-			_uls_log(err_panic)("ULS: can't make temporary directory, '%s'!", ULS_OS_TEMP_DIR);
+	char pathbuff[ULS_FILEPATH_MAX + 1];
+	if (uls_getenv("TEMP", pathbuff, ULS_FILEPATH_MAX + 1) <= 0) {
 		basedir = ULS_OS_TEMP_DIR;
+	} else {
+		basedir = pathbuff;
 	}
 
-	auw_init_outparam(uls_ptr(buf_csz));
-
-	if ((basedir = uls_astr2ustr_ptr(basedir, -1, uls_ptr(buf_csz))) == NULL) {
-		auw_deinit_outparam(uls_ptr(buf_csz));
-		return -1;
-	}
 #else
 	basedir = ULS_OS_TEMP_DIR;
 #endif
+	if (uls_dirent_exist(basedir) != ST_MODE_DIR) {
+		_uls_log(err_log)("ULS: can't make temporary directory, '%s'!", basedir);
+		return -1;
+	}
 
 	while (1) {
 		len = _uls_log_(snprintf)(filepath_buf, ULS_TEMP_FILEPATH_MAXSIZ,
@@ -301,9 +299,6 @@ ULS_QUALIFIED_METHOD(__open_tempfile)(uls_tempfile_ptr_t tmpfile)
 	}
 
 	tmpfile->fp = NULL;
-#ifdef __ULS_WINDOWS__
-	auw_deinit_outparam(uls_ptr(buf_csz));
-#endif
 	return fd_out;
 }
 
@@ -793,21 +788,21 @@ ULS_QUALIFIED_METHOD(consume_ms_mbcs_onechar)(uls_voidptr_t dat, char *buf, int 
 	FILE *fp = fpwrap->fp;
 	int n, i, rc;
 
-	if ((rc=__consume_ms_mbcs_char_getbyte(fp, buf)) <= 0) {
+	if ((rc = __consume_ms_mbcs_char_getbyte(fp, buf)) <= 0) {
 		return rc;
 	}
 
-	if ((n = astr_lengthof_char(buf)) >= buf_siz) {
+	if ((n = astr_lengthof_char(buf)) < 0 || n >= buf_siz) {
 		return -1;
 	}
 
-	for (i=1; i<n; i++) {
-		if (__consume_ms_mbcs_char_getbyte(fp, buf+i) <= 0) {
+	for (i = 1; i < n; i++) {
+		if (__consume_ms_mbcs_char_getbyte(fp, buf + i) <= 0) {
 			return -1;
 		}
 	}
 
-	return i; // not n but i
+	return i;
 }
 
 void

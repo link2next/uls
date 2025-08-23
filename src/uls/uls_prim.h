@@ -379,6 +379,8 @@ int isp_find(uls_isp_ptr_t isp, const char *str, int len);
 int isp_insert(uls_isp_ptr_t isp, const char *str, int len);
 const char *isp_get_str(uls_isp_ptr_t isp, int idx);
 
+ULS_DLL_EXTERN int uls_getenv(const char *name, char *buf, int buf_siz);
+
 ULS_DLL_EXTERN ULS_DECL_EXTERN_STATIC void uls_init_mutex(uls_mutex_t mtx);
 ULS_DLL_EXTERN ULS_DECL_EXTERN_STATIC void uls_deinit_mutex(uls_mutex_t mtx);
 ULS_DLL_EXTERN ULS_DECL_EXTERN_STATIC void uls_lock_mutex(uls_mutex_t mtx);

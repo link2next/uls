@@ -320,8 +320,8 @@ MkfLex::expect_number(void)
 {
 	tstring lxm;
 	LPCTSTR ptr;
-	int len;
 	TCHAR  tch;
+	int len;
 
 	MkfLexBasis::next();
 	expect(NUM);

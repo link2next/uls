@@ -102,10 +102,11 @@ namespace
 	void dump_token(EngLex *englex)
 	{
 		int t = englex->getTokNum();
-
+		LPCTSTR tstr;
 		tstring lxm;
+
 		englex->getTokStr(lxm);
-		LPCTSTR tstr = lxm.c_str();
+		tstr = lxm.c_str();
 
 		switch (t) {
 		case EngLex::WORD:

@@ -451,40 +451,11 @@ ULS_QUALIFIED_METHOD(uls_getopts)(int n_args, char *args[], const char *optfmt, 
 }
 #endif // ~ULS_DOTNET
 
-ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(get_ms_codepage)(uls_ptrtype_tool(outparam) parms)
-{
-	const char *name = parms->lptr;
-	uls_type_tool(outparam) parms1;
-	const char *cptr;
-	int n, mbs;
-
-	if (name[0] != 'c' || name[1] != 'p' || !_uls_tool_(isdigit)(name[2]))
-		return -1;
-
-	parms1.lptr = name + 2;
-	n = (int)_uls_tool_(skip_atou)(uls_ptr(parms1));
-	cptr = parms1.lptr;
-	if (*cptr != '\0') return -1;
-
-	if (n == 932 || n == 936 || n == 949 || n == 950 ||
-		n == 20932 || n == 20936 || n == 20949 ||
-		n == 51932 || n == 51936 || n == 51949 || n == 51950) {
-		mbs = 2;
-	} else {
-		mbs = 1;
-	}
-
-	parms->n = mbs;
-	return n;
-}
-
 #if defined(__ULS_WINDOWS__) && !defined(ULS_DOTNET)
 char*
 ULS_QUALIFIED_METHOD(uls_win32_lookup_regval)(wchar_t *reg_dir, uls_ptrtype_tool(outparam) parms)
 {
 	wchar_t *reg_name = (wchar_t*) parms->line;
-	int	n_wchars;
 	HKEY   hKeyRoot, hRegKey;
 	DWORD  value_type, bufsize;
 	wchar_t  *lpKeyStr, keyRootBuff[8];
@@ -492,6 +463,7 @@ ULS_QUALIFIED_METHOD(uls_win32_lookup_regval)(wchar_t *reg_dir, uls_ptrtype_tool
 
 	csz_str_t csz;
 	char *ustr;
+	int n_wchars;
 
 	if (reg_dir == NULL) return NULL;
 
@@ -566,10 +538,9 @@ int
 ULS_QUALIFIED_METHOD(initialize_uls_util)(void)
 {
 	char pathbuff[ULS_FILEPATH_MAX+1];
-	const char *fpath, *cptr;
+	const char *fpath;
 
 	int rc, len;
-	uls_type_tool(outparam) parms;
 	unsigned int a;
 
 #ifdef __ULS_WINDOWS__
@@ -592,7 +563,10 @@ ULS_QUALIFIED_METHOD(initialize_uls_util)(void)
 	initialize_uls_sysprn();
 	initialize_uls_syserr();
 #endif
-	if ((fpath = getenv("ULS_SYSPROPS")) == NULL || _uls_tool_(dirent_exist)(fpath) != ST_MODE_REG) {
+
+	fpath = pathbuff;
+	if (_uls_tool_(getenv)("ULS_SYSPROPS", pathbuff, ULS_FILEPATH_MAX + 1) <= 0 ||
+		_uls_tool_(dirent_exist)(pathbuff) != ST_MODE_REG) {
 		fpath = ULS_SYSPROPS_FPATH;
 		if ((rc = _uls_tool_(dirent_exist)(fpath)) <= 0 || rc != ST_MODE_REG) {
 #ifdef __ULS_WINDOWS__
@@ -620,6 +594,7 @@ ULS_QUALIFIED_METHOD(initialize_uls_util)(void)
 
 	if ((_uls_sysinfo_(home_dir) = uls_get_system_property("ULS_HOME")) == NULL) {
 #if defined(__ULS_WINDOWS__) && !defined(ULS_DOTNET)
+		uls_type_tool(outparam) parms;
 		char *homedir;
 
 		parms.line = (char *) ULS_REG_INSTDIR_NAME;
@@ -648,23 +623,13 @@ ULS_QUALIFIED_METHOD(initialize_uls_util)(void)
 		_uls_sysinfo_(ulcs_dir) = ULS_SHARE_DFLDIR;
 	}
 
-	if ((cptr = uls_get_system_property("ULS_MBCS")) == NULL) {
-		_uls_log(err_log)("ULS: can't find the encoding of the system!");
-		return -1;
-	}
-
-	if (uls_streql(cptr, "utf8")) {
-		_uls_sysinfo_(codepage) = 0; // UTF-8
-		_uls_sysinfo_(multibytes) = 0;
-	} else {
-		parms.lptr = cptr;
-		if ((rc = get_ms_codepage(uls_ptr(parms))) <= 0) {
-			_uls_log(err_log)("%s: unknown file-encoding %s", cptr);
-			return -1;
-		}
-		_uls_sysinfo_(codepage) = rc;
-		_uls_sysinfo_(multibytes) = parms.n;
-	}
+#ifdef __ULS_WINDOWS__
+	rc = (int) GetACP(); // codepage
+#else
+	rc = 65001; // utf-8
+#endif
+	_uls_sysinfo_(codepage) = rc;
+	_uls_sysinfo_(multibytes) = guess_ansi_multibytes_max(rc);
 
 	return 0;
 }

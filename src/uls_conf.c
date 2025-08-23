@@ -1981,25 +1981,6 @@ ULS_QUALIFIED_METHOD(uls_get_ulc_path)(int typ_fpath, const char *fpath, int len
 }
 
 int
-ULS_QUALIFIED_METHOD(ulc_prepend_searchpath_exeloc)(const char *argv0)
-{
-	char fpath_buf[ULS_FILEPATH_MAX+1];
-	int fpath_len;
-
-	if ((fpath_len = uls_get_exeloc_dir(argv0, fpath_buf)) < 0) {
-		_uls_log(err_log)("can't find the location of program file");
-		return -1;
-	}
-
-	if (ulc_add_searchpath(fpath_buf, 1) < 0) {
-		_uls_log(err_log)("can't update the system value for ulc-search-path");
-		return -1;
-	}
-
-	return 0;
-}
-
-int
 ULS_QUALIFIED_METHOD(ulc_get_searchpath_by_specname)(
 	uls_ptrtype_tool(arglst) nameof_searchpath, uls_ptrtype_tool(arglst) searchpath_list)
 {
@@ -2008,13 +1989,13 @@ ULS_QUALIFIED_METHOD(ulc_get_searchpath_by_specname)(
 	uls_ptrtype_tool(argstr) arg;
 
 	const char *title[N_ULC_SEARCH_PATHS];
-	const char *cptr;
+	char pathbuff[ULS_FILEPATH_MAX + 1];
 	int  n = 0, i;
 
 	title[n] = "ULS_SPEC_PATH";
-	if ((cptr=getenv(title[n])) != NULL) {
+	if (_uls_tool_(getenv)(title[n], pathbuff, ULS_FILEPATH_MAX + 1) > 0) {
 		al_searchpath[n] = arg = _uls_tool_(create_argstr)();
-		_uls_tool_(copy_argstr)(arg, cptr, -1);
+		_uls_tool_(copy_argstr)(arg, pathbuff, -1);
 		++n;
 	}
 
@@ -2050,8 +2031,8 @@ ULS_QUALIFIED_METHOD(ulc_get_searchpath_by_specpath)(int is_abspath,
 	uls_decl_parray_slots_tool(al_args, argstr);
 	uls_ptrtype_tool(argstr) arg;
 
-	const char *cptr, *title[N_ULC_SEARCH_PATHS];
-	char *exeloc;
+	const char *title[N_ULC_SEARCH_PATHS];
+	char *exeloc, pathbuff[ULS_FILEPATH_MAX + 1];
 	int  n = 0, i;
 
 	// ULS_NAME_FILEPATH_ULC | ULS_NAME_FILEPATH_ULD
@@ -2062,9 +2043,9 @@ ULS_QUALIFIED_METHOD(ulc_get_searchpath_by_specpath)(int is_abspath,
 
 	} else {
 		title[n] = "ULC_PATH";
-		if ((cptr=getenv(title[n])) != NULL) {
+		if (_uls_tool_(getenv)(title[n], pathbuff, ULS_FILEPATH_MAX + 1) > 0) {
 			al_searchpath[n] = arg = _uls_tool_(create_argstr)();
-			_uls_tool_(copy_argstr)(arg, cptr, -1);
+			_uls_tool_(copy_argstr)(arg, pathbuff, -1);
 			++n;
 		}
 

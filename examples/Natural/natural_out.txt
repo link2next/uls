@@ -44,7 +44,7 @@
 	[     LF]
 	[     TO] To
 	[   WORD] cool
-	[     IN] in
+	[   WORD] in
 	[    THE] the
 	[   WORD] peppermint
 	[   WORD] wind

@@ -196,8 +196,6 @@ int ulc_get_searchpath_by_specname(uls_ptrtype_tool(arglst) nameof_searchpath, u
 int ulc_get_searchpath_by_specpath(int is_abspath, uls_ptrtype_tool(arglst) nameof_searchpath, uls_ptrtype_tool(arglst) searchpath_list);
 
 char *is_cnst_suffix_contained(char *cstr_pool, const char *str, int l_str, uls_ptrtype_tool(outparam) parms);
-
-int ulc_prepend_searchpath_exeloc(const char *argv0);
 int check_ulc_fileformat_magic(char *linebuff, int linelen, int ftype);
 
 ulc_fpitem_ptr_t ulc_find_fp_list(ulc_fpitem_ptr_t fp_stack_top, const char *ulc_name);

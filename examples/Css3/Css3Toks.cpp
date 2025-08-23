@@ -103,10 +103,11 @@ namespace
 	void dump_token(Css3Lex *css3lex)
 	{
 		int t = css3lex->getTokNum();
-
+		LPCTSTR tstr;
 		tstring lxm;
+
 		css3lex->getTokStr(lxm);
-		LPCTSTR tstr = lxm.c_str();
+		tstr = lxm.c_str();
 
 		if (t == Css3Lex::CSS_ID) {
 			css3lex->printf(_T("\t[     ID] %s\n"), tstr);

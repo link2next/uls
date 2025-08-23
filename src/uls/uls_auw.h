@@ -71,9 +71,13 @@ _ULS_DEFINE_STRUCT(auw_outparam)
 #ifdef __ULS_WINDOWS__
 ULS_DECL_STATIC char *wstr2mbs(const wchar_t *wstr, int wlen, int is_utf8, csz_str_ptr_t csz);
 ULS_DECL_STATIC wchar_t *mbs2wstr(const char *astr, int alen, int is_utf8, csz_str_ptr_t csz_wstr);
-ULS_DECL_STATIC int __uls_astr2ustr_ptr(uls_outparam_ptr_t parms);
-ULS_DECL_STATIC int __uls_ustr2astr_ptr(uls_outparam_ptr_t parms);
+ULS_DECL_STATIC int is_string_ascii(const char *austr, int aulen);
 #endif
+#endif
+
+#ifdef ULS_DECL_PROTECTED_PROC
+int guess_ansi_multibytes_max(int codepage);
+void set_ms_mbcs_codepage(int codepage);
 #endif
 
 #ifdef ULS_DECL_PUBLIC_PROC

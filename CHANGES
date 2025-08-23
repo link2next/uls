@@ -1,4 +1,12 @@
 ﻿
+  v1.10.2
+  -----------
+    o Getting the correct value of ULS_MBCS in the configuration file
+         * The value of ULS_MBCS the string that informs of MS codepage. 
+         * It's releated to encoding/decoding ANSI strings. 
+         * It failed to set the value when it's installed from the Windows-installer.
+    o Resolved a encoding problem on Windows when getenv() is used.
+
   v1.10
   -----------
     o The support for ANSI/WCHAR strings for the C++ classes.

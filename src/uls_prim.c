@@ -34,6 +34,7 @@
 #ifndef ULS_EXCLUDE_HFILES
 #define __ULS_PRIM__
 #include "uls/uls_prim.h"
+#include "uls/uls_auw.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -2333,7 +2334,16 @@ ULS_QUALIFIED_METHOD(uls_sys_unlock)(void)
 int
 ULS_QUALIFIED_METHOD(initialize_primitives)(void)
 {
+	int codepage;
+
+#ifdef __ULS_WINDOWS__
+	codepage = (int) GetACP();
+#else
+	codepage = 65001; // utf-8
+#endif
+	set_ms_mbcs_codepage(codepage);
 	uls_init_mutex(uls_ptr(uls_global_mtx));
+
 	return 0;
 }
 
@@ -2352,3 +2362,53 @@ ULS_QUALIFIED_METHOD(uls_msleep)(int msecs)
 	usleep(msecs * 1000);
 #endif
 }
+
+#ifdef __ULS_WINDOWS__
+int
+ULS_QUALIFIED_METHOD(uls_getenv)(const char *name, char *buf, int buf_siz)
+{
+	auw_outparam_t buf_csz;
+	const char *cptr, *ustr;
+	int ulen;
+
+	if ((cptr = getenv(name)) == NULL) {
+		return -1;
+	}
+
+	auw_init_outparam(uls_ptr(buf_csz));
+
+	if ((ustr = uls_astr2ustr_ptr(cptr, -1, uls_ptr(buf_csz))) == NULL) {
+		ulen = -1;
+	} else {
+		ulen = buf_csz.outlen;
+		if (buf == NULL || (buf_siz >= 0 && ulen >= buf_siz)) {
+			ulen = -ulen;
+		} else {
+			uls_strcpy(buf, ustr);
+		}
+	}
+
+	auw_deinit_outparam(uls_ptr(buf_csz));
+	return ulen;
+}
+#else
+int
+ULS_QUALIFIED_METHOD(uls_getenv)(const char *name, char *buf, int buf_siz)
+{
+	const char *ustr;
+	int ulen;
+
+	if ((ustr = getenv(name)) == NULL) {
+		return -1;
+	}
+
+	ulen = uls_strlen(ustr);
+	if (buf == NULL || (buf_siz >= 0 && ulen >= buf_siz)) {
+		ulen = -ulen;
+	} else {
+		uls_strcpy(buf, ustr);
+	}
+
+	return ulen;
+}
+#endif

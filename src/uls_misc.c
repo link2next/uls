@@ -596,14 +596,15 @@ ULS_QUALIFIED_METHOD(uls_get_dirpath)(const char *fname, uls_ptrtype_tool(outpar
 ULS_DECL_STATIC int
 ULS_QUALIFIED_METHOD(uls_get_exeloc_by_pathenv)(const char *progname, char *fpath_buf)
 {
-	const char *pathlist, *dirptr;
+	const char *dirptr;
 	int dirlen, fpath_buflen=-1;
 	uls_type_tool(outparam) parms;
+	char pathbuff[4096];
 
 	if (progname == NULL || *progname == '\0') return -1;
 
-	if ((pathlist=getenv("PATH")) != NULL) {
-		parms.lptr = pathlist;
+	if (_uls_tool_(getenv)("PATH", pathbuff, sizeof(pathbuff)) > 0) {
+		parms.lptr = pathbuff;
 		dirptr = uls_get_dirpath(progname, uls_ptr(parms));
 		dirlen = parms.len;
 
