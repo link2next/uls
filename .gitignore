@@ -23,7 +23,6 @@ Makefile
 Makefile.in
 *.class
 *.list
-/autom4te.cache
 /doc/man/*.1
 /doc/man/*.1.gz
 /tests/**/a?.uls
