@@ -272,19 +272,13 @@ wchar_t*
 ULS_QUALIFIED_METHOD(uls_astr2wstr)(const char *astr, int alen, csz_str_ptr_t csz_wstr)
 {
 	wchar_t *wstr;
-	uls_outparam_t parms1;
 
 	if (astr == NULL) {
 		return NULL;
 	}
 
 	if (alen < 0) {
-		if (alen == -1) {
-			astr_num_wchars(astr, -1, uls_ptr(parms1));
-			alen = parms1.len;
-		} else {
-			alen = -alen;
-		}
+		alen = strlen(astr);
 	}
 
 	wstr = mbs2wstr(astr, alen, 0, csz_wstr);
@@ -301,11 +295,7 @@ ULS_QUALIFIED_METHOD(uls_wstr2astr)(const wchar_t *wstr, int wlen, csz_str_ptr_t
 	}
 
 	if (wlen < 0) {
-		if (wlen == -1) {
-			wlen = uls_wcslen(wstr);
-		} else {
-			wlen = -wlen;
-		}
+		wlen = uls_wcslen(wstr);
 	}
 
 	astr = wstr2mbs(wstr, wlen, 0, csz);
@@ -316,19 +306,13 @@ wchar_t*
 ULS_QUALIFIED_METHOD(uls_ustr2wstr)(const char *ustr, int ulen, csz_str_ptr_t csz_wstr)
 {
 	wchar_t *wstr;
-	uls_outparam_t parms1;
 
 	if (ustr == NULL) {
 		return NULL;
 	}
 
 	if (ulen < 0) {
-		if (ulen == -1) {
-			ustr_num_wchars(ustr, -1, uls_ptr(parms1));
-			ulen = parms1.len;
-		} else {
-			ulen = -ulen;
-		}
+		ulen = uls_strlen(ustr);
 	}
 
 	wstr = mbs2wstr(ustr, ulen, 1, csz_wstr);
@@ -345,11 +329,7 @@ ULS_QUALIFIED_METHOD(uls_wstr2ustr)(const wchar_t *wstr, int wlen, csz_str_ptr_t
 	}
 
 	if (wlen < 0) {
-		if (wlen == -1) {
-			wlen = uls_wcslen(wstr);
-		} else {
-			wlen = -wlen;
-		}
+		wlen = uls_wcslen(wstr);
 	}
 
 	ustr = wstr2mbs(wstr, wlen, 1, csz);
@@ -368,6 +348,10 @@ ULS_QUALIFIED_METHOD(uls_ustr2astr)(const char *ustr, int ulen, csz_str_ptr_t cs
 		return NULL;
 	}
 
+	if (ulen < 0) {
+		ulen = uls_strlen(ustr);
+	}
+
 	if (ulen == 0) {
 		csz_reset(csz);
 		return csz_text(csz);
@@ -379,7 +363,7 @@ ULS_QUALIFIED_METHOD(uls_ustr2astr)(const char *ustr, int ulen, csz_str_ptr_t cs
 		astr = NULL;
 	} else {
 		wlen = auw_csz_wlen(uls_ptr(csz_wstr));
-		astr = uls_wstr2astr(wstr, -wlen, csz);
+		astr = uls_wstr2astr(wstr, wlen, csz);
 	}
 
 	csz_deinit(uls_ptr(csz_wstr));
@@ -398,6 +382,10 @@ ULS_QUALIFIED_METHOD(uls_astr2ustr)(const char *astr, int alen, csz_str_ptr_t cs
 		return NULL;
 	}
 
+	if (alen < 0) {
+		alen = strlen(astr);
+	}
+
 	if (alen == 0) {
 		csz_reset(csz);
 		return csz_text(csz);
@@ -409,7 +397,7 @@ ULS_QUALIFIED_METHOD(uls_astr2ustr)(const char *astr, int alen, csz_str_ptr_t cs
 		ustr = NULL;
 	} else {
 		wlen = auw_csz_wlen(uls_ptr(csz_wstr));
-		ustr = uls_wstr2ustr(wstr, -wlen, csz);
+		ustr = uls_wstr2ustr(wstr, wlen, csz);
 	}
 
 	csz_deinit(uls_ptr(csz_wstr));
@@ -425,6 +413,10 @@ ULS_QUALIFIED_METHOD(uls_ustr2astr_ptr)(const char *ustr, int ulen, auw_outparam
 
 	if (ustr == NULL) {
 		return NULL;
+	}
+
+	if (ulen < 0) {
+		ulen = uls_strlen(ustr);
 	}
 
 	if ((astr = uls_ustr2astr(ustr, ulen, csz)) == NULL) {
@@ -446,6 +438,10 @@ ULS_QUALIFIED_METHOD(uls_astr2ustr_ptr)(const char *astr, int alen, auw_outparam
 
 	if (astr == NULL) {
 		return NULL;
+	}
+
+	if (alen < 0) {
+		alen = strlen(astr);
 	}
 
 	if ((ustr = uls_astr2ustr(astr, alen, csz)) == NULL) {
@@ -482,7 +478,6 @@ ULS_QUALIFIED_METHOD(uls_ustr2wstr)(const char *ustr, int ulen, csz_str_ptr_t cs
 	size_t siz, siz2;
 	char *ustr1_buff = NULL;
 	const char *ustr1;
-	uls_outparam_t parms1;
 
 	if (ustr == NULL) {
 		return NULL;
@@ -490,12 +485,7 @@ ULS_QUALIFIED_METHOD(uls_ustr2wstr)(const char *ustr, int ulen, csz_str_ptr_t cs
 
 	if (ulen < 0) {
 		has_nil = 1;
-		if (ulen == -1) {
-			ustr_num_wchars(ustr, -1, uls_ptr(parms1));
-			ulen = parms1.len;
-		} else {
-			ulen = -ulen;
-		}
+		ulen = uls_strlen(ustr);
 	}
 
 	if (ulen == 0) {
@@ -551,11 +541,7 @@ ULS_QUALIFIED_METHOD(uls_wstr2ustr)(const wchar_t *wstr, int wlen, csz_str_ptr_t
 
 	if (wlen < 0) {
 		has_nil = 1;
-		if (wlen == -1) {
-			wlen = uls_wcslen(wstr);
-		} else {
-			wlen = -wlen;
-		}
+		wlen = uls_wcslen(wstr);
 	}
 
 	if (wlen == 0) {

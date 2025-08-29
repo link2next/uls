@@ -90,7 +90,7 @@ __add_ms_mbcs_name_in_list(
 
 	csz_init(uls_ptr(csz_astr), -1);
 
-	if ((astr = uls_ustr2astr(sval, -n_bytes, uls_ptr(csz_astr))) == NULL) {
+	if ((astr = uls_ustr2astr(sval, n_bytes, uls_ptr(csz_astr))) == NULL) {
 		err_alog("encoding error!");
 	} else {
 		pair->alen = alen = csz_length(uls_ptr(csz_astr));

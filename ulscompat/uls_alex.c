@@ -436,7 +436,7 @@ _uls_get_tag2_astr(uls_lex_ptr_t uls, uls_outparam_ptr_t parms)
 			k = 0;
 		}
 
-		atag = uls_ustr2astr(tagstr, -k, uls_ptr(auls->atag));
+		atag = uls_ustr2astr(tagstr, k, uls_ptr(auls->atag));
 		if (atag == NULL) err_apanic("incorrect encoding!");
 		auls->atag_len = csz_length(uls_ptr(auls->atag));
 
@@ -534,7 +534,7 @@ uls_lexeme_astr(uls_lex_ptr_t uls)
 		lxm = uls_lexeme(uls);
 		l_lxm = uls_lexeme_len(uls);
 
-		alxm = uls_ustr2astr(lxm, -l_lxm, uls_ptr(auls->atokbuf));
+		alxm = uls_ustr2astr(lxm, l_lxm, uls_ptr(auls->atokbuf));
 		if (alxm == NULL)
 			err_apanic("incorrect encoding!");
 
@@ -570,7 +570,7 @@ uls_tokstr_astr(uls_lex_ptr_t uls)
 	if (auls->atokbuf2_len < 0) {
 		lxm = uls_tokstr(uls);
 		l_lxm = uls_tokstr_len(uls);
-		alxm = uls_ustr2astr(lxm, -l_lxm, uls_ptr(auls->atokbuf2));
+		alxm = uls_ustr2astr(lxm, l_lxm, uls_ptr(auls->atokbuf2));
 		if (alxm == NULL) err_apanic("incorrect encoding!");
 		auls->atokbuf2_len = csz_length(uls_ptr(auls->atokbuf2));
 	} else {

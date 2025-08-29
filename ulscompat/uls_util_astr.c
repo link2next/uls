@@ -164,7 +164,7 @@ uls_path_normalize_astr(const char *fpath, char *fpath2)
 
 	csz_init(uls_ptr(csz_astr2), -1);
 
-	abuf2 = uls_ustr2astr(ustr, -ulen, uls_ptr(csz_astr2));
+	abuf2 = uls_ustr2astr(ustr, ulen, uls_ptr(csz_astr2));
 	csz_deinit(uls_ptr(csz));
 
 	if (abuf2 == NULL) {

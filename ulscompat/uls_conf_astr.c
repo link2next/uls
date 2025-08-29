@@ -79,7 +79,7 @@ uls_get_spectype_astr(const char *fpath, uls_outparam_ptr_t parms)
 	l_specname_ustr = parms1.len;
 
 	auw_init_outparam(uls_ptr(abuf_csz));
-	if ((astr = uls_ustr2astr_ptr(specname_ustr, -l_specname_ustr, uls_ptr(abuf_csz))) == NULL) {
+	if ((astr = uls_ustr2astr_ptr(specname_ustr, l_specname_ustr, uls_ptr(abuf_csz))) == NULL) {
 		err_alog("encoding error!");
 		auw_deinit_outparam(uls_ptr(ufpath_csz));
 		auw_deinit_outparam(uls_ptr(abuf_csz));

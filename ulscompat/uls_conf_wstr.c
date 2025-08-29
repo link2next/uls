@@ -80,7 +80,7 @@ uls_get_spectype_wstr(const wchar_t *wfpath, uls_outparam_ptr_t parms)
 	l_specname_ustr = parms1.len;
 
 	csz_init(uls_ptr(csz2), -1);
-	if ((wstr = uls_ustr2wstr(specname_ustr, -l_specname_ustr, uls_ptr(csz2))) == NULL) {
+	if ((wstr = uls_ustr2wstr(specname_ustr, l_specname_ustr, uls_ptr(csz2))) == NULL) {
 		err_wlog(L"encoding error!");
 		csz_deinit(uls_ptr(csz1));
 		csz_deinit(uls_ptr(csz2));

@@ -182,7 +182,7 @@ uls_path_normalize_wstr(const wchar_t *wfpath, wchar_t *wfpath2)
 
 	csz_init(uls_ptr(csz_wstr2), -1);
 
-	wbuf2 = uls_ustr2wstr(ustr, -ulen, uls_ptr(csz_wstr2));
+	wbuf2 = uls_ustr2wstr(ustr, ulen, uls_ptr(csz_wstr2));
 	csz_deinit(uls_ptr(csz));
 
 	if (wbuf2 == NULL) {

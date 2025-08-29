@@ -90,7 +90,7 @@ __add_widename_in_list(
 
 	csz_init(uls_ptr(csz_wstr), -1);
 
-	if ((wstr = uls_ustr2wstr(sval, -n_bytes, uls_ptr(csz_wstr))) == NULL) {
+	if ((wstr = uls_ustr2wstr(sval, n_bytes, uls_ptr(csz_wstr))) == NULL) {
 		err_wlog(L"encoding error!");
 	} else {
 		wlen = auw_csz_wlen(uls_ptr(csz_wstr));
