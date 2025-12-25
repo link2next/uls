@@ -60,7 +60,7 @@ uls_init_parms_emit_wstr(uls_parms_emit_ptr_t emit_parm,
 		} else {
 			csz_init(wext->csz_wrd_ary + i, -1);
 			if ((wext->ustr[i] = uls_wstr2ustr(wext->wrdlst[i], -1, wext->csz_wrd_ary + i)) == NULL) {
-				err_wlog(L"encoding error!");
+				err_wlog(L"%hs: encoding error!", __func__);
 				stat = -1;
 				break;
 			}

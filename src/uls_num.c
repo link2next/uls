@@ -299,6 +299,7 @@ ULS_QUALIFIED_METHOD(uls_bin2hex_str)(const char *numstr, int n_digits, char *ou
 		outbuf[k++] = '0';
 	}
 
+	outbuf[k] = '\0';
 	return k;
 }
 
@@ -330,6 +331,7 @@ ULS_QUALIFIED_METHOD(uls_quat2hex_str)(const char *numstr, int n_digits, char *o
 		outbuf[k++] = '0';
 	}
 
+	outbuf[k] = '\0';
 	return k;
 }
 
@@ -379,12 +381,14 @@ ULS_QUALIFIED_METHOD(uls_oct2hex_str)(const char *numstr, int n_digits, char *ou
 
 	n_octals = (int) (lptr_end - lptr); // #-of-octals
 	if (n_octals <= 0) {
-		*outbuf = '0';
+		outbuf[0] = '0';
+		outbuf[1] = '\0';
 		return 1;
 	}
 
 	if (n_octals == 1) {
-		*outbuf = *lptr;
+		outbuf[0] = *lptr;
+		outbuf[1] = '\0';
 		return 1;
 	}
 
@@ -440,7 +444,8 @@ ULS_QUALIFIED_METHOD(uls_oct2hex_str)(const char *numstr, int n_digits, char *ou
 		}
 	}
 
-	// return pure # of hexa digits not considering the length of '0x'
+	// return pure # of hexa digits
+	*outptr = '\0';
 	return (int) (outptr - outbuf);
 }
 
@@ -615,19 +620,16 @@ ULS_QUALIFIED_METHOD(uls_cvt_radix_to_hexadecimal_str)(int radix, const char *nu
 	if (radix == 2) {
 		outptr = str_dataptr_k(outbuf, k);
 		n2_digits = uls_bin2hex_str(numbuf1, n1_digits, outptr);
-		outptr[n2_digits] = '\0';
 		k += n2_digits;
 
 	} else if (radix == 4) {
 		outptr = str_dataptr_k(outbuf, k);
 		n2_digits = uls_quat2hex_str(numbuf1, n1_digits, outptr);
-		outptr[n2_digits] = '\0';
 		k += n2_digits;
 
 	} else if (radix == 8) {
 		outptr = str_dataptr_k(outbuf, k);
 		n2_digits = uls_oct2hex_str(numbuf1, n1_digits, outptr);
-		outptr[n2_digits] = '\0';
 		k += n2_digits;
 
 	} else if (radix == 16) {
@@ -1046,7 +1048,7 @@ ULS_QUALIFIED_METHOD(uls_extract_number)(uls_outparam_ptr_t parms, uls_outbuf_pt
 
 	parms->n = 0;
 
-	if (len_prefix  > 0) {
+	if (len_prefix > 0) {
 		srp = parms->lptr_end;
 
 		k = str_append(tokbuf, k, srp, -1);

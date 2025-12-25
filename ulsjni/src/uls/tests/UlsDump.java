@@ -120,7 +120,7 @@ public class UlsDump {
 	}
 
 	static void test_sample1_lex(String data_dir, String input_file) {
-		String ulc_filename = "sample.ulc";
+		String ulc_filename = "../sample.ulc";
 
 		System.out.println(" ulc_path = " + ulc_filename);
 		System.out.println(" input_file = " + input_file);
@@ -148,7 +148,7 @@ public class UlsDump {
 	}
 
 	static void test_sample2_lex(String data_dir, String input_file) {
-		String uld_filename = "sample2.uld";
+		String uld_filename = "../sample2.uld";
 
 		System.out.println(" ulc_path = " + uld_filename);
 		String ulc_path = data_dir + "/" + uld_filename;

@@ -50,8 +50,6 @@ int  opt_verbose;
 LPCTSTR config_name;
 LPCTSTR input_file;
 
-LPCTSTR target_dir;
-TCHAR home_dir[1024];
 FILE *fp_list;
 LPCTSTR filelist;
 
@@ -252,30 +250,13 @@ get_id_stats(int argc, LPTSTR argv[], int i0)
 	int i;
 
 	if (filelist != NULL ) {
-		if (i0 < argc) {
-			target_dir = argv[i0++];
-		}
-
 		if ((fp_list=uls_fp_open(filelist, ULS_FIO_READ)) == NULL) {
 			err_log(_T("%hs: fail to read '%s'"), __func__, filelist);
 			return -1;
 		}
 
-		if (uls_getcwd(home_dir, sizeof(home_dir)) < 0) {
-			err_panic(_T("can't get the pwd!"));
-		}
-
-		if (target_dir != NULL) {
-			if (uls_chdir(target_dir) < 0) {
-				err_log(_T("can't change to %s"), target_dir);
-				uls_fp_close(fp_list);
-				return -1;
-			}
-		}
-
 		proc_filelist(fp_list);
 		uls_fp_close(fp_list);
-		uls_chdir(home_dir);
 
 	} else {
 		for (i=i0; i<argc; i++) {
@@ -312,7 +293,6 @@ _tmain(int n_targv, LPTSTR *targv)
 	int i0, i, rc;
 
 	progname = uls_filename(targv[0], NULL);
-	target_dir = NULL;
 	config_name = _T("sample.ulc");
 	input_file = _T("input1.txt");
 

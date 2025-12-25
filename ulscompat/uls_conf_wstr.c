@@ -45,7 +45,7 @@ uls_is_valid_specpath_wstr(const wchar_t *wconfname)
 	csz_init(uls_ptr(csz), -1);
 
 	if ((ustr = uls_wstr2ustr(wconfname, -1, uls_ptr(csz))) == NULL) {
-		err_wlog(L"encoding error!");
+		err_wlog(L"%hs: encoding error!", __func__);
 		rval = -1;
 	} else {
 		rval = uls_is_valid_specpath(ustr);
@@ -69,7 +69,7 @@ uls_get_spectype_wstr(const wchar_t *wfpath, uls_outparam_ptr_t parms)
 
 	csz_init(uls_ptr(csz1), -1);
 	if ((ufpath = uls_wstr2ustr(wfpath, -1, uls_ptr(csz1))) == NULL) {
-		err_wlog(L"encoding error!");
+		err_wlog(L"%hs: encoding error!", __func__);
 		csz_deinit(uls_ptr(csz1));
 		return -1;
 	}
@@ -81,7 +81,7 @@ uls_get_spectype_wstr(const wchar_t *wfpath, uls_outparam_ptr_t parms)
 
 	csz_init(uls_ptr(csz2), -1);
 	if ((wstr = uls_ustr2wstr(specname_ustr, l_specname_ustr, uls_ptr(csz2))) == NULL) {
-		err_wlog(L"encoding error!");
+		err_wlog(L"%hs: encoding error!", __func__);
 		csz_deinit(uls_ptr(csz1));
 		csz_deinit(uls_ptr(csz2));
 		return -1;
@@ -93,7 +93,7 @@ uls_get_spectype_wstr(const wchar_t *wfpath, uls_outparam_ptr_t parms)
 	parms->len = wlen;
 
 	if ((wstr = uls_ustr2wstr(ufpath, len_dpath_ustr, uls_ptr(csz2))) == NULL) {
-		err_wlog(L"encoding error!");
+		err_wlog(L"%hs: encoding error!", __func__);
 		stat = -1;
 	} else {
 		parms->n = wlen = auw_csz_wlen(uls_ptr(csz2));
@@ -113,7 +113,7 @@ ulc_list_searchpath_wstr(const wchar_t *confname)
 	csz_init(uls_ptr(csz), -1);
 
 	if ((ustr = uls_wstr2ustr(confname, -1, uls_ptr(csz))) == NULL) {
-		err_wlog(L"encoding error!");
+		err_wlog(L"%hs: encoding error!", __func__);
 	} else {
 		ulc_list_searchpath(ustr);
 	}
@@ -130,7 +130,7 @@ ulc_set_searchpath_wstr(const wchar_t *pathlist)
 	csz_init(uls_ptr(csz), -1);
 
 	if ((ustr = uls_wstr2ustr(pathlist, -1, uls_ptr(csz))) == NULL) {
-		err_wlog(L"encoding error!");
+		err_wlog(L"%hs: encoding error!", __func__);
 	} else {
 		ulc_set_searchpath(ustr);
 	}
@@ -148,7 +148,7 @@ ulc_add_searchpath_wstr(const wchar_t *pathlist, int front)
 	csz_init(uls_ptr(csz), -1);
 
 	if ((ustr = uls_wstr2ustr(pathlist, -1, uls_ptr(csz))) == NULL) {
-		err_wlog(L"encoding error!");
+		err_wlog(L"%hs: encoding error!", __func__);
 		rval = -1;
 	} else {
 		rval = ulc_add_searchpath(ustr, front);

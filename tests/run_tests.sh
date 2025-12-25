@@ -28,8 +28,17 @@
 #   This file is part of ULS, Unified Lexical Scheme.
 #
 
-progname=`basename $0`
+command_list_used="diff basename dirname"
+for cmd in $command_list_used; do
+	filepath=$(which $cmd)
+	if [ -z "$filepath" ]; then
+		echo "$cmd: not found!"
+		exit 1
+	fi
+done
+
 home_dir="$PWD"
+progname=$(basename $0)
 test_dname=$(basename "$home_dir")
 
 MAX_N_CASES=16

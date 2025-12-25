@@ -89,10 +89,10 @@ int uls_num2stdfmt(uls_outparam_ptr_t parms, uls_outbuf_ptr_t numbuf, int k);
 #endif // ULS_DECL_PROTECTED_PROC
 
 #ifdef ULS_DECL_PUBLIC_PROC
-int uls_oct2hex_str(const char *numbuf, int n_digits, char *outbuf);
-int uls_bin2hex_str(const char *numstr, int n_digits, char *outbuf);
+ULS_DLL_EXTERN int uls_oct2hex_str(const char *numbuf, int n_digits, char *outbuf);
+ULS_DLL_EXTERN int uls_bin2hex_str(const char *numstr, int n_digits, char *outbuf);
 int uls_quat2hex_str(const char *numstr, int n_digits, char *outbuf);
-int uls_dec2hex_str(char *numstr, int n_digits, char *outptr);
+ULS_DLL_EXTERN int uls_dec2hex_str(char *numstr, int n_digits, char *outptr);
 
 int uls_cvt_radix2dec_str(int radix, const char *numbuf, int n1_digits, uls_outbuf_ptr_t outbuf);
 int uls_cvt_radix2hexa_str_generic(int radix, const char *numbuf, int n_digits, uls_outbuf_ptr_t outbuf, int k);

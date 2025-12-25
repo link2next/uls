@@ -585,7 +585,7 @@ UlsLexUStr::~UlsLexUStr()
 
 int UlsLexUStr::prepareUldMap(int bufsiz_uldfile)
 {
-	names_map = uld_prepare_names(&lex, bufsiz_uldfile);
+	names_map = uld_prepare_names(&lex);
 	return 0;
 }
 
@@ -944,84 +944,6 @@ bool UlsLexUStr::setLine(const char *line, int len, int flags)
 bool UlsLexUStr::setLine(const string& line, int flags)
 {
 	return setLine(line.c_str(), (int) line.length(), flags);
-}
-
-// <brief>
-//   Identifies the char-group of 'ch'.
-//   Checks if 'ch' can be a blank character.
-// </brief>
-// <parm name="ch">The char to be tested.</parm>
-// <return>bool</return>
-bool UlsLexUStr::is_ch_space(uls_wch_t wch)
-{
-	return uls_canbe_ch_space(lex.ch_context, wch) ? true : false;
-}
-
-// <brief>
-//   Identifies the char-group of 'ch'.
-//   Checks if 'ch' can be a first char of identifier.
-// </brief>
-// <parm name="ch">The char to be tested.</parm>
-// <return>bool</return>
-bool UlsLexUStr::is_ch_idfirst(uls_wch_t wch)
-{
-	return uls_canbe_ch_idfirst(lex.ch_context, wch) ? true : false;
-}
-
-// <brief>
-//   Identifies the char-group of 'ch'.
-//   Checks if 'ch' can be a char of identifier.
-// </brief>
-// <parm name="ch">The char to be tested.</parm>
-// <return>bool</return>
-bool UlsLexUStr::is_ch_id(uls_wch_t wch)
-{
-	return uls_canbe_ch_id(lex.ch_context, wch) ? true : false;
-}
-
-// <brief>
-//   Identifies the char-group of 'ch'.
-//   Checks if 'ch' can be a first char of literal string.
-// </brief>
-// <parm name="ch">The char to be tested.</parm>
-// <return>bool</return>
-bool UlsLexUStr::is_ch_quote(uls_wch_t wch)
-{
-	return uls_canbe_ch_quote(lex.ch_context, wch) ? true : false;
-}
-
-// <brief>
-//   Identifies the char-group of 'ch'.
-//   Checks if 'ch' can be char of one-char token.
-// </brief>
-// <parm name="ch">The char to be tested.</parm>
-// <return>bool</return>
-bool UlsLexUStr::is_ch_1ch_token(uls_wch_t wch)
-{
-	return uls_is_ch_1ch_token(&lex, wch) ? true : false;
-}
-
-// <brief>
-//   Identifies the char-group of 'ch'.
-//   Checks if 'ch' can be a first character of the token
-//     which is the keyword of more than one non-alphanumeric char.
-// </brief>
-// <parm name="ch">The char to be tested.</parm>
-// <return>bool</return>
-bool UlsLexUStr::is_ch_2ch_token(uls_wch_t wch)
-{
-	return uls_canbe_ch_2ch_token(lex.ch_context, wch) ? true : false;
-}
-
-// <brief>
-//   Identifies the char-group of 'ch'.
-//   Checks if 'ch' can be a first character of comment.
-// </brief>
-// <parm name="ch">The char to be tested.</parm>
-// <return>bool</return>
-bool UlsLexUStr::is_ch_comm(uls_wch_t wch)
-{
-	return uls_canbe_ch_comm(lex.ch_context, wch) ? true : false;
 }
 
 // <brief>
@@ -2209,7 +2131,7 @@ UlsLexAWStr::push_fp_wstr(uls_lex_ptr_t uls, FILE *fp, int flags)
 	tmpfile_utf8 = uls_create_tempfile();
 
 	if ((fp2 = cvt_ms_mbcs_fp(fp, tmpfile_utf8, flags)) == NULL) {
-//		err_wlog("%s: encoding error!", __func__);
+//		err_wlog("%hs: encoding error!", __func__);
 		uls_destroy_tempfile(tmpfile_utf8);
 		return -1;
 	}

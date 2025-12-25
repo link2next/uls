@@ -10,6 +10,7 @@ simple       simple         SimpleLex        TOK_
 
 ansi_c      ansi_c         AnsiCLex          -
 cpp         cpp            CppLex            -
+gcc         gcc            GccCLex           -
 csharp      csharp         CsharpLex         -
 tcl         tcl            TclLex            -
 lua         lua            LuaLex            -

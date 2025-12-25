@@ -46,22 +46,23 @@
 
 #define THIS_PROGNAME "ulc2class"
 #include "ult_utils.h"
+#include "ult_log.h"
 
 const char *progname;
-char home_dir[ULS_FILEPATH_MAX+1];
+char g_home_dir[ULS_FILEPATH_MAX+1];
 const char *opt_class_name;
 char *out_dirpath, *out_filepath, *out_filename, *out_filename0;
-char *ulc_filepath;
+char ulc_filepath_enc[ULS_FILEPATH_MAX + 1];
 const char *opt_enum_name;
 const char *opt_prefix;
 const char *opt_dump;
 
 int typ_fpath;
-char specname[ULS_LEXSTR_MAXSIZ+1];
+char g_specname[ULS_LEXSTR_MAXSIZ + 1];
+char ulc_config_buff[ULS_FILEPATH_MAX + 1];
 
 uls_flags_t g_prn_flags;
 int opt_uld_gen, opt_query;
-char *ulc_config;
 uls_lex_ptr_t sam_lex;
 
 #ifdef HAVE_GETOPT
@@ -94,59 +95,59 @@ static const struct option longopts[] = {
 
 static void usage_synopsis()
 {
-	err_log("Usage: %s [OPTIONS] <file.ulc|file.uld>", progname);
-	err_log("    %s generates the source files for lexical analysis from ulc file.", progname);
-	err_log("       %s <ulc-filepath|lang-name>", progname);
-	err_log("       %s -l {c|cpp|cppcli|cs|java} <ulc-file>", progname);
-	err_log("       %s -lc -e <enum-name> <ulc-file>", progname);
-	err_log("       %s -f <out-filename> -n <class-name> <ulc-file>", progname);
-	err_log("       %s -d <out-dirpath> -f <out-filename> <ulc-file>", progname);
-	err_log("       %s -S <lang-name>", progname);
-	err_log("       %s -q [lang-name]", progname);
-	err_log("       %s --dump=<category> <ulc-filepath>,", progname);
-	err_log("          where category = [keyw|names|rsvd|hash|ch_ctx|quote|1char|2char|utf]");
+	ult_log("Usage: %s [OPTIONS] <file.ulc|file.uld>", progname);
+	ult_log("    %s generates the source files for lexical analysis from ulc file.", progname);
+	ult_log("       %s <ulc-filepath|lang-name>", progname);
+	ult_log("       %s -l {c|cpp|cppcli|cs|java} <ulc-file>", progname);
+	ult_log("       %s -lc -e <enum-name> <ulc-file>", progname);
+	ult_log("       %s -f <out-filename> -n <class-name> <ulc-file>", progname);
+	ult_log("       %s -d <out-dirpath> -f <out-filename> <ulc-file>", progname);
+	ult_log("       %s -S <lang-name>", progname);
+	ult_log("       %s -q [lang-name]", progname);
+	ult_log("       %s --dump=<category> <ulc-filepath>,", progname);
+	ult_log("          where category = [keyw|names|rsvd|hash|ch_ctx|quote|1char|2char|utf]");
 }
 
 static void usage_desc()
 {
 #ifdef __ULS_WINDOWS__
-	err_log("  -d <dirpath>      specify the directory for output files.");
-	err_log("  -e <enum-name>    specify the enum-name if you want token-name list with enum style.");
-	err_log("  -f <filename>     specify the output file name without suffix.");
-	err_log("  -l <lang-name>    specify the language name when generating source files.");
-	err_log("  -n <name>         specifies the name of class(or enum-name).");
-	err_log("  -o <filepath>     specify the output file path.");
-	err_log("  -p <prefix>       prepend <prefix> at the front of token-name.");
-	err_log("  -q                query the list of ulc names.");
-	err_log("  -F <filepath>     specify the filepath encoded in the generated file in case 'file.ulc' is specified.");
-	err_log("  -S                generates a sample uld-file.");
-	err_log("  -v                verbose mode.");
-	err_log("  -V                prints the version information.");
-	err_log("  -h                displays the brief help.");
+	ult_log("  -d <dirpath>      specify the directory for output files.");
+	ult_log("  -e <enum-name>    specify the enum-name if you want token-name list with enum style.");
+	ult_log("  -f <filename>     specify the output file name without suffix.");
+	ult_log("  -l <lang-name>    specify the language name when generating source files.");
+	ult_log("  -n <name>         specifies the name of class(or enum-name).");
+	ult_log("  -o <filepath>     specify the output file path.");
+	ult_log("  -p <prefix>       prepend <prefix> at the front of token-name.");
+	ult_log("  -q                query the list of ulc names.");
+	ult_log("  -F <filepath>     specify the filepath encoded in the generated file in case 'file.ulc' is specified.");
+	ult_log("  -S                generates a sample uld-file.");
+	ult_log("  -v                verbose mode.");
+	ult_log("  -V                prints the version information.");
+	ult_log("  -h                displays the brief help.");
 #else
-	err_log("  -d, --dirpath <dirpath>    specify the directory for output files.");
-	err_log("  -e, --enum <enum-name>     specify the enum-name if you want token-name list with enum style.");
-	err_log("  -f, --filename <filename>  specify the output file name without suffix.");
-	err_log("  -l, --lang=<lang-name>     specify the target language name.");
-	err_log("  -n, --class-name=<name>    specify the name of the class(or enum-name).");
-	err_log("  -o, --output <filepath>    specify the output file path.");
-	err_log("  -p, --prefix <prefix>      prepend <prefix> at the front of token-name.");
-	err_log("  -q, --query [lang-name]    query the list of ulc names.");
-	err_log("  -F, --filepath <filepath>  specify the filepath encoded in the generated file in case 'file.ulc' is specified.");
-	err_log("  -S, --uld-sample           generates a sample uld-file.");
-	err_log("  -v, --verbose              verbose mode.");
-	err_log("  -V, --version              prints the version information.");
-	err_log("  -h, --help                 displays the brief help.");
+	ult_log("  -d, --dirpath <dirpath>    specify the directory for output files.");
+	ult_log("  -e, --enum <enum-name>     specify the enum-name if you want token-name list with enum style.");
+	ult_log("  -f, --filename <filename>  specify the output file name without suffix.");
+	ult_log("  -l, --lang=<lang-name>     specify the target language name.");
+	ult_log("  -n, --class-name=<name>    specify the name of the class(or enum-name).");
+	ult_log("  -o, --output <filepath>    specify the output file path.");
+	ult_log("  -p, --prefix <prefix>      prepend <prefix> at the front of token-name.");
+	ult_log("  -q, --query [lang-name]    query the list of ulc names.");
+	ult_log("  -F, --filepath <filepath>  specify the filepath encoded in the generated file in case 'file.ulc' is specified.");
+	ult_log("  -S, --uld-sample           generates a sample uld-file.");
+	ult_log("  -v, --verbose              verbose mode.");
+	ult_log("  -V, --version              prints the version information.");
+	ult_log("  -h, --help                 displays the brief help.");
 #endif
 }
 
 static void usage_brief()
 {
 	usage_synopsis();
-	err_log("");
+	ult_log("");
 
 	usage_desc();
-	err_log("");
+	ult_log("");
 }
 
 static void usage()
@@ -158,85 +159,85 @@ static void usage_long(void)
 {
 	usage_brief();
 
-	err_log("The tokens generated by %s consists of reserved and regular ones.", progname);
-	err_log("The regular tokens are defined by user.");
-	err_log("The reserved tokens are the basic tokens that the system initially defines.");
-	err_log("");
+	ult_log("The tokens generated by %s consists of reserved and regular ones.", progname);
+	ult_log("The regular tokens are defined by user.");
+	ult_log("The reserved tokens are the basic tokens that the system initially defines.");
+	ult_log("");
 
-	err_log("The below are the reserved tokens:");
-	err_log(" * EOI(End of Input): The last token of all input streams.");
-	err_log("       It returns EOI if the internal input stack is empty!");
-	err_log(" * EOF: The internal input structure contains a stack of input streams.");
-	err_log("       It returns EOF whenever top of the stacks is consumed.");
-	err_log(" * ERR: It returns this err token in case of error.");
-	err_log(" * ID: Identifer token, which should be defined by user in ulc-file.");
-	err_log(" * NUMBER: It represents the current token is number whichever it is integer or floating number.");
-	err_log(" * LINENUM: This informs users of the location of the input cursor.");
-	err_log(" * TMPL: This allows the template variables in uls-file, which must be replaced with strings.");
-	err_log(" * NONE: It returns NONE when the input stack is intial state.");
-	err_log("");
+	ult_log("The below are the reserved tokens:");
+	ult_log(" * EOI(End of Input): The last token of all input streams.");
+	ult_log("       It returns EOI if the internal input stack is empty!");
+	ult_log(" * EOF: The internal input structure contains a stack of input streams.");
+	ult_log("       It returns EOF whenever top of the stacks is consumed.");
+	ult_log(" * ERR: It returns this err token in case of error.");
+	ult_log(" * ID: Identifer token, which should be defined by user in ulc-file.");
+	ult_log(" * NUMBER: It represents the current token is number whichever it is integer or floating number.");
+	ult_log(" * LINENUM: This informs users of the location of the input cursor.");
+	ult_log(" * TMPL: This allows the template variables in uls-file, which must be replaced with strings.");
+	ult_log(" * NONE: It returns NONE when the input stack is intial state.");
+	ult_log("");
 
-	err_log("You can specify the qualified long class name with -n-option.");
-	err_log("For instance, the class name may be 'AAA.BBB.SampleLex', or just class name 'SampleLex'.");
-	err_log("");
+	ult_log("You can specify the qualified long class name with -n-option.");
+	ult_log("For instance, the class name may be 'AAA.BBB.SampleLex', or just class name 'SampleLex'.");
+	ult_log("");
 
-	err_log("To generate c++ headers,");
-	err_log("    %s sample.ulc", progname);
-	err_log("    %s -lcpp -n AAA.BBB.SampleLex sample.ulc", progname);
-	err_log("The default output of %s is a c++ header file.", progname);
-	err_log("");
+	ult_log("To generate c++ headers,");
+	ult_log("    %s sample.ulc", progname);
+	ult_log("    %s -lcpp -n AAA.BBB.SampleLex sample.ulc", progname);
+	ult_log("The default output of %s is a c++ header file.", progname);
+	ult_log("");
 
-	err_log("To generate header files of other languages, use -l-option.");
-	err_log("    %s -lc sample.ulc", progname);
-	err_log("    %s -ljava -n sample sample.ulc", progname);
-	err_log("");
+	ult_log("To generate header files of other languages, use -l-option.");
+	ult_log("    %s -lc sample.ulc", progname);
+	ult_log("    %s -ljava -n sample sample.ulc", progname);
+	ult_log("");
 
-	err_log("To generate C# wrapper class files,");
-	err_log("    %s -lcs -n AAA.BBB.SampleLex sample.ulc", progname);
-	err_log("    %s -d /topdir/AAA/BBB -f SampleLex -lcs -n AAA.BBB.SampleLex sample.ulc", progname);
-	err_log("    The above line specifies the output directory with -d-option.");
-	err_log("    The f-option is used for the common filename of output files.");
-	err_log("");
+	ult_log("To generate C# wrapper class files,");
+	ult_log("    %s -lcs -n AAA.BBB.SampleLex sample.ulc", progname);
+	ult_log("    %s -d /topdir/AAA/BBB -f SampleLex -lcs -n AAA.BBB.SampleLex sample.ulc", progname);
+	ult_log("    The above line specifies the output directory with -d-option.");
+	ult_log("    The f-option is used for the common filename of output files.");
+	ult_log("");
 
-	err_log("To generate java class files,");
-	err_log("    %s -ljava -n AAA.BBB.SampleLex sample.ulc", progname);
-	err_log("    %s -d /topdir/AAA/BBB -f SampleLex -l java -n AAA.BBB.SampleLex sample.ulc", progname);
-	err_log("");
+	ult_log("To generate java class files,");
+	ult_log("    %s -ljava -n AAA.BBB.SampleLex sample.ulc", progname);
+	ult_log("    %s -d /topdir/AAA/BBB -f SampleLex -l java -n AAA.BBB.SampleLex sample.ulc", progname);
+	ult_log("");
 
-	err_log("To query the available names for ulc in the uls repository,");
-	err_log("    %s -q", progname);
-	err_log("  .....");
-	err_log("  cpp c++ C++");
-	err_log("  c_sharp C# c# cs csharp c-sharp");
-	err_log("  go Go golang");
-	err_log("  visual_basic visual-basic VisualBasic 'visual basic' 'Visual basic'");
-	err_log("  .....");
-	err_log(" Each line represents the supported names of a language.");
-	err_log(" You may select the any name in same group for your preference.");
-	err_log(" The name must be used as the argument of uls-object creator,");
-	err_log("     such as uls_create(), subclasses of UlsLex(), for configuration name.");
-	err_log("");
+	ult_log("To query the available names for ulc in the uls repository,");
+	ult_log("    %s -q", progname);
+	ult_log("  .....");
+	ult_log("  cpp c++ C++");
+	ult_log("  c_sharp C# c# cs csharp c-sharp");
+	ult_log("  go Go golang");
+	ult_log("  visual_basic visual-basic VisualBasic 'visual basic' 'Visual basic'");
+	ult_log("  .....");
+	ult_log(" Each line represents the supported names of a language.");
+	ult_log(" You may select the any name in same group for your preference.");
+	ult_log(" The name must be used as the argument of uls-object creator,");
+	ult_log("     such as uls_create(), subclasses of UlsLex(), for configuration name.");
+	ult_log("");
 
-	err_log("If you want to know whether or not a language is supported by ULS,");
-	err_log("    %s -q golang", progname);
-	err_log("    %s -q c++", progname);
-	err_log("");
+	ult_log("If you want to know whether or not a language is supported by ULS,");
+	ult_log("    %s -q golang", progname);
+	ult_log("    %s -q c++", progname);
+	ult_log("");
 
-	err_log("To dump the mapping of token name to token number, use -s-option with -q-option.");
-	err_log("    %s -S golang", progname);
-	err_log("#@go");
-	err_log("");
-	err_log("#ERR              ERR               -8");
-	err_log("#NONE             NONE              -7");
-	err_log(".....");
-	err_log("");
-	err_log("You can modify the token name and number after saving the above output as uld-file");
-	err_log("  and specify the path of uld-file in the argument of uls-object creator for configuration name.");
-	err_log("");
+	ult_log("To dump the mapping of token name to token number, use -s-option with -q-option.");
+	ult_log("    %s -S golang", progname);
+	ult_log("#@go");
+	ult_log("");
+	ult_log("#ERR              ERR               -8");
+	ult_log("#NONE             NONE              -7");
+	ult_log(".....");
+	ult_log("");
+	ult_log("You can modify the token name and number after saving the above output as uld-file");
+	ult_log("  and specify the path of uld-file in the argument of uls-object creator for configuration name.");
+	ult_log("");
 
-	err_log("Refer to the examples in 'ulc_exam' in the package to see how to write ulc-file.");
-	err_log("Refer to the examples' or 'tests' to see how to use ulc-file.");
-	err_log("");
+	ult_log("Refer to the examples in 'ulc_exam' in the package to see how to write ulc-file.");
+	ult_log("Refer to the examples' or 'tests' to see how to use ulc-file.");
+	ult_log("");
 }
 
 static int
@@ -297,7 +298,7 @@ ulc2class_options(int opt, char *optarg)
 
 	case 'l':
 		if (set_lang_generated(optarg) < 0) {
-			err_log("%s: invalid lang-name!", optarg);
+			ult_log("%s: invalid lang-name!", optarg);
 			stat = -1;
 		}
 		break;
@@ -310,23 +311,19 @@ ulc2class_options(int opt, char *optarg)
 		} else if (ult_streql(optarg, "quote")) {
 			g_prn_flags |= ULS_FL_WANT_QUOTE_TOKS;
 		} else {
-			err_log("unknown group type '%s'", optarg);
+			ult_log("unknown group type '%s'", optarg);
 			stat = -1;
 		}
 		break;
 
 	case 'n':
-		if (optarg == NULL || *optarg=='\0') {
-			err_log("%s: Invalid (class) name", progname);
-			stat = -1; break;
-		}
 		opt_class_name = optarg;
 		break;
 
 	case 'p':
 		opt_prefix = optarg;
-		if (strlen(opt_prefix) > ULS_LEXSTR_MAXSIZ) {
-			err_log("%s: Too long token prefix %s selected", progname, opt_prefix);
+		if (uls_strlen(opt_prefix) > ULS_LEXSTR_MAXSIZ) {
+			ult_log("%s: Too long token prefix %s selected", progname, opt_prefix);
 			stat = -1;
 		}
 		break;
@@ -338,7 +335,7 @@ ulc2class_options(int opt, char *optarg)
 
 	case 'f':
 		if (out_filepath != NULL) {
-			err_log("%s: collided with -o-option!", progname);
+			ult_log("%s: collided with -o-option!", progname);
 			stat = -1; break;
 		}
 		g_prn_flags |= ULS_FL_WANT_WRAPPER;
@@ -348,7 +345,7 @@ ulc2class_options(int opt, char *optarg)
 
 	case 'o':
 		if (out_filename != NULL) {
-			err_log("%s: -f-option already used", progname);
+			ult_log("%s: -f-option already used", progname);
 			stat = -1; break;
 		}
 		out_filepath = ult_strdup(optarg);
@@ -360,9 +357,11 @@ ulc2class_options(int opt, char *optarg)
 		break;
 
 	case 'F':
-		if (ulc_filepath != NULL) uls_mfree(ulc_filepath);
-		ulc_filepath = ult_strdup(optarg);
-		uls_path_normalize(ulc_filepath, ulc_filepath);
+		if (uls_strlen(optarg) > ULS_FILEPATH_MAX) {
+			ult_log("%s: -F-option already used", progname);
+			stat = -1; break;
+		}
+		uls_strcpy(ulc_filepath_enc, optarg);
 		break;
 
 	case 'S':
@@ -400,7 +399,7 @@ ulc2class_options(int opt, char *optarg)
 		break;
 
 	default:
-		err_log("%s: undefined option -%c", progname, opt);
+		ult_log("%s: undefined option -%c", progname, opt);
 		stat = -1;
 		break;
 	}
@@ -414,13 +413,14 @@ parse_options(int argc, char *argv[])
 #ifdef HAVE_GETOPT
 	int  opt, longindex;
 #endif
+	uls_outparam_t parms;
 	int  rc, len, i0, mask, len_fname, len_filepath, len_dirpath2;
 	char the_rootdir[2] = { ULS_FILEPATH_DELIM, '\0' };
 	const char *fname;
 	char *ptr;
 
-	if (uls_getcwd(home_dir, ULS_FILEPATH_MAX) < 0) {
-		err_panic("%s: fail to getcwd()", __func__);
+	if (uls_getcwd(g_home_dir, ULS_FILEPATH_MAX) < 0) {
+		ult_panic("%s: fail to getcwd()", __func__);
 	}
 
 #ifdef HAVE_GETOPT
@@ -439,19 +439,27 @@ parse_options(int argc, char *argv[])
 
 	if (opt_query) {
 		if (i0 < argc) {
-			ulc_config = ult_strdup(argv[i0++]);
+			ptr = argv[i0++];
+			if (uls_strlen(ptr) > ULS_FILEPATH_MAX) {
+				ult_log("%s: arg1 too long!", progname);
+				return -1;
+			}
+			uls_strcpy(ulc_config_buff, ptr);
 		}
-
 		return i0;
 	}
 
 	if (i0 < argc) {
-		uls_outparam_t parms;
+		ptr = argv[i0++];
+		if (uls_strlen(ptr) > ULS_FILEPATH_MAX) {
+			ult_log("%s: arg1 too long!", progname);
+			return -1;
+		}
+		uls_strcpy(ulc_config_buff, ptr);
 
-		ulc_config = ult_strdup(argv[i0++]);
-		parms.line = specname;
-		if ((typ_fpath = uls_get_spectype(ulc_config, uls_ptr(parms))) < 0) {
-			err_log("%s: Invalid name for spec-name", ulc_config);
+		parms.line = g_specname;
+		if ((typ_fpath = uls_get_spectype(ulc_config_buff, uls_ptr(parms))) < 0) {
+			ult_log("%s: Invalid name for spec-name", ulc_config_buff);
 			return -1;
 		}
 
@@ -462,13 +470,13 @@ parse_options(int argc, char *argv[])
 	if (out_filepath != NULL) {
 		fname = uls_filename(out_filepath, &len_fname);
 		if (len_fname <= 0) {
-			err_log("%s: invalid filename '%s'", progname, out_filepath);
+			ult_log("%s: invalid filename '%s'", progname, out_filepath);
 			return -1;
 		}
 
 		if ((len_filepath = (int) (fname - out_filepath)) > 0) {
 			if (out_filepath[len_filepath-1] != ULS_FILEPATH_DELIM) {
-				err_log("%s: invalid filepath '%s'", progname, out_filepath);
+				ult_log("%s: invalid filepath '%s'", progname, out_filepath);
 				return -1;
 			}
 
@@ -487,13 +495,13 @@ parse_options(int argc, char *argv[])
 	} else if (out_filename != NULL) {
 		fname = uls_filename(out_filename, &len_fname);
 		if (len_fname <= 0) {
-			err_log("%s: invalid filename '%s'", out_filename, fname);
+			ult_log("%s: invalid filename '%s'", out_filename, fname);
 			return -1;
 		}
 
 		if ((len_dirpath2 = (int) (fname - out_filename)) > 0) {
 			if (out_filename[len_dirpath2-1] != ULS_FILEPATH_DELIM) {
-				err_log("%s: invalid filepath '%s'", progname, out_filename);
+				ult_log("%s: invalid filepath '%s'", progname, out_filename);
 				return -1;
 			}
 
@@ -521,8 +529,8 @@ parse_options(int argc, char *argv[])
 	}
 
 	if (out_dirpath != NULL) {
-		if ((rc=uls_chdir(out_dirpath)) < 0 || uls_chdir(home_dir) < 0) {
-			err_log("%s: invalid dirpath'%s'", progname, out_dirpath);
+		if ((rc=uls_chdir(out_dirpath)) < 0 || uls_chdir(g_home_dir) < 0) {
+			ult_log("%s: invalid dirpath'%s'", progname, out_dirpath);
 			return -1;
 		}
 	}
@@ -549,7 +557,7 @@ ulc_query_var(const char *varnam)
 	int stat = 0;
 
 	if ((strval = uls_get_system_property(varnam)) == NULL) {
-		err_log("%s: unknown variable %s.", progname, varnam);
+		ult_log("%s: unknown variable %s.", progname, varnam);
 		stat = -1;
 	} else {
 		uls_printf("%s\n", strval);
@@ -565,8 +573,15 @@ ulc_generate_files(uls_parms_emit_t *emit_parm)
 	char *tmp_buf;
 	int rc, stat = 0;
 
+	if (emit_parm->flags & ULS_FL_ULD_FILE) {
+		if (emit_parm->filepath_conf == NULL) {
+			ult_log("%s: uld-filepath NOT specified!", progname);
+			return -1;
+		}
+	}
+
 	if (uls_generate_tokdef_file(sam_lex, emit_parm) < 0) {
-		err_log("%s: fail to make the header files for %s", progname, ulc_config);
+		ult_log("%s: fail to make the header files for %s", progname, ulc_config_buff);
 		return -1;
 	}
 
@@ -577,7 +592,7 @@ ulc_generate_files(uls_parms_emit_t *emit_parm)
 	cptr_suff = get_standard_suffix();
 
 	rc = uls_strlen(emit_parm->out_fname);
-	tmp_buf= (char *) uls_malloc(rc + (int) strlen(cptr_suff) + 1);
+	tmp_buf= (char *) uls_malloc(rc + (int) uls_strlen(cptr_suff) + 1);
 	uls_strcpy(tmp_buf, emit_parm->out_fname);
 	uls_strcpy(tmp_buf + rc, cptr_suff);
 
@@ -586,12 +601,12 @@ ulc_generate_files(uls_parms_emit_t *emit_parm)
 	}
 
 	if (rename(tmp_buf, out_filename0) < 0) {
-		err_log("%s: fail to rename %s to %s", progname, tmp_buf, out_filename0);
+		ult_log("%s: fail to rename %s to %s", progname, tmp_buf, out_filename0);
 		stat = -1;
 	}
 
 	uls_mfree(tmp_buf);
-	uls_chdir(home_dir);
+	uls_chdir(g_home_dir);
 
 	return stat;
 }
@@ -623,8 +638,8 @@ dump_tok_info(uls_lex_ptr_t uls)
 int
 main_ustr(int argc, char *argv[])
 {
-	const char *conf_filepath;
-	int i0, rc, stat=0;
+	const char *ulc_config, *conffile_path;
+	int i0, j, rc, stat = 0;
 	uls_parms_emit_t emit_parm;
 
 	progname = THIS_PROGNAME;
@@ -634,7 +649,7 @@ main_ustr(int argc, char *argv[])
 	}
 
 	if ((i0 = parse_options(argc, argv)) <= 0) {
-		if (i0 < 0) err_log("%s: Incorrect use of command options.", progname);
+		if (i0 < 0) ult_log("%s: Incorrect use of command options.", progname);
 		return i0;
 	}
 
@@ -643,32 +658,56 @@ main_ustr(int argc, char *argv[])
 			return ulc_query_var(opt_class_name);
 		}
 
-		if (ulc_config == NULL) {
+		if (*(ulc_config = ulc_config_buff) == '\0') {
 			uls_list_langs();
 		} else {
 			if (uls_list_names_of_lang(ulc_config) < 0) {
-				err_log("%s: No information found!", ulc_config);
+				ult_log("%s: No information found!", ulc_config);
+				stat = -1;
 			}
 		}
 
-		return 0;
+		return stat;
 	}
 
-	if (ulc_config == NULL) {
-		err_log("%s: Need args!", progname);
+	if (*ulc_config_buff == '\0') {
+		ult_log("%s: Need args!", progname);
 		usage_brief();
 		return -1;
 	}
 
 	if (typ_fpath == ULS_NAME_FILEPATH_ULC) {
-		uls_path_normalize(ulc_config, ulc_config);
-		conf_filepath = ulc_config;
+		uls_path_normalize(ulc_config_buff, ulc_config_buff);
+		ulc_config = ulc_config_buff;
+
+		if (*ulc_filepath_enc == '\0') {
+			if (ult_is_absolute_path(ulc_config)) {
+				rc = 0;
+			} else {
+				rc = uls_strcpy(ulc_filepath_enc, g_home_dir);
+				ulc_filepath_enc[rc++] = ULS_FILEPATH_DELIM;
+			}
+			rc += uls_strcpy(ulc_filepath_enc + rc, ulc_config);
+			ulc_filepath_enc[rc] = '\0';
+		}
+
+		rc = uls_path_normalize(ulc_filepath_enc, ulc_filepath_enc);
+		if (g_prn_flags & ULS_FL_JAVA_GEN) {
+			for (j = 0; j < rc; j++) { // Windows::java
+				if (ulc_filepath_enc[j] == '\\') ulc_filepath_enc[j] = '/';
+			}
+		}
+
 	} else if (typ_fpath == ULS_NAME_FILEPATH_ULD) {
 		g_prn_flags |= ULS_FL_ULD_FILE;
-		uls_path_normalize(ulc_config, ulc_config);
-		conf_filepath = ulc_config;
+		uls_path_normalize(ulc_config_buff, ulc_config_buff);
+		ulc_config = ulc_config_buff;
+		ulc_filepath_enc[0] = '\0';
+
 	} else { // ULS_NAME_SPECNAME
-		conf_filepath = NULL;
+		ulc_config_buff[0] = '\0';
+		ulc_config = g_specname;
+		ulc_filepath_enc[0] = '\0';
 	}
 
 	if (g_prn_flags & ULS_FL_VERBOSE) {
@@ -678,7 +717,7 @@ main_ustr(int argc, char *argv[])
 	}
 
 	if ((sam_lex=uls_create(ulc_config)) == uls_nil) {
-		err_log("%s: Failed to process the configuration file %s", progname, ulc_config);
+		ult_log("%s: Failed to process the configuration file %s", progname, ulc_config);
 		return -1;
 	}
 
@@ -687,14 +726,20 @@ main_ustr(int argc, char *argv[])
 	} else if (opt_uld_gen) {
 		uld_dump_sample(sam_lex);
 	} else {
+		if (ulc_config_buff[0] == '\0') {
+			conffile_path = NULL; 
+		} else {
+			conffile_path = ulc_config_buff;
+		}
+		
 		rc = uls_init_parms_emit(&emit_parm,
 			out_dirpath, out_filename,
-			conf_filepath, specname,
+			conffile_path, g_specname,
 			opt_class_name, opt_enum_name,
-			opt_prefix, ulc_filepath,
+			opt_prefix, ulc_filepath_enc,
 			g_prn_flags | ULS_FL_WANT_RESERVED_TOKS);
 		if (rc < 0) {
-			err_log("%s: fail to create source files for %s", progname, ulc_config);
+			ult_log("%s: fail to create source files for %s", progname, ulc_config);
 			stat = -1;
 		} else {
 			stat = ulc_generate_files(&emit_parm);
@@ -704,12 +749,10 @@ main_ustr(int argc, char *argv[])
 
 	uls_destroy(sam_lex);
 
-	uls_mfree(ulc_config);
 	uls_mfree(out_dirpath);
 	uls_mfree(out_filepath);
 	uls_mfree(out_filename0);
 	uls_mfree(out_filename);
-	uls_mfree(ulc_filepath);
 
 	return stat;
 }

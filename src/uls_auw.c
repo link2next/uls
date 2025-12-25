@@ -42,163 +42,6 @@
 
 static int __auw_ansi_multibytes = 1;
 
-int
-ULS_QUALIFIED_METHOD(guess_ansi_multibytes_max)(int codepage)
-{
-	int i, cp, mbs;
-	static const int multibytes_codepages[] = {
-		932, 936, 949, 950,
-		10001, 10002, 10003, 10008,
-		20000, 20001, 20002, 20003, 20004, 20005,
-		20932, 20936, 20949,
-		50220, 50221, 50222, 50225, 50227,
-		51932, 51936, 51949, 51950,
-		52536, 54936,
-		0
-	};
-
-	if (codepage == 1200 || codepage == 1201) { // utf-16
-		mbs = 2;
-	} else if (codepage == 12000 || codepage == 12000) { // utf-32
-		mbs = 4;
-	} else {
-		mbs = 1;
-		for (i = 0; (cp = multibytes_codepages[i]) > 0; i++) {
-			if (cp == codepage) {
-				mbs = 2;
-				break;
-			}
-		}
-	}
-
-	return mbs;
-}
-
-void
-ULS_QUALIFIED_METHOD(set_ms_mbcs_codepage)(int codepage)
-{
-	int mbs;
-
-	mbs = guess_ansi_multibytes_max(codepage);
-	__auw_ansi_multibytes = mbs;
-}
-
-#ifdef __ULS_WINDOWS__
-ULS_DECL_STATIC char*
-ULS_QUALIFIED_METHOD(wstr2mbs)(const wchar_t *wstr, int wlen, int is_utf8, csz_str_ptr_t csz)
-{
-	UINT codepage = is_utf8 ? CP_UTF8 : CP_ACP;
-	DWORD  errnum;
-	int asiz, rc;
-	char *astr;
-
-	if (wlen == 0) {
-		csz_reset(csz);
-		astr = csz_text(csz);
-		return astr;
-	}
-
-	if ((rc = WideCharToMultiByte(codepage, 0, wstr, wlen, NULL, 0, NULL, NULL)) == 0 || (is_utf8 && rc == 0xFFFD)) {
-		if ((errnum=GetLastError()) == ERROR_INVALID_PARAMETER || errnum == ERROR_NO_UNICODE_TRANSLATION) {
-			return NULL;
-		}
-		_uls_log_primitive(err_log)("Error: WideCharToMultiByte!");
-		return NULL;
-	}
-
-	asiz = rc + 1;
-	csz_modify(csz, 0, NULL, asiz);
-	astr = csz_data_ptr(csz);
-
-	if ((rc = WideCharToMultiByte(codepage, 0, wstr, wlen, astr, asiz, NULL, NULL)) <= 0) {
-		_uls_log_primitive(err_log)("Error: WideCharToMultiByte!");
-		csz_reset(csz);
-		astr = NULL;
-	} else {
-		csz_truncate(csz, rc);
-		astr = csz_text(csz);
-	}
-
-	return astr;
-}
-
-ULS_DECL_STATIC wchar_t*
-ULS_QUALIFIED_METHOD(mbs2wstr)(const char *astr, int alen, int is_utf8, csz_str_ptr_t csz)
-{
-	UINT codepage = is_utf8 ? CP_UTF8 : CP_ACP;
-	DWORD  errnum;
-	int rc, wlen, wsiz;
-	wchar_t *wstr;
-
-	if (alen == 0) {
-		wchar_t nil_wstr[1] = { L'\0' };
-		csz_reset(csz);
-		csz_append(csz, (char *) nil_wstr, sizeof(wchar_t));
-		csz_truncate(csz, 0);
-		return (wchar_t *) csz_data_ptr(csz);
-	}
-
-	if ((rc = MultiByteToWideChar(codepage, 0, astr, alen, NULL, 0)) == 0 || (is_utf8 && rc == 0xFFFD)) {
-		if ((errnum=GetLastError()) == ERROR_INVALID_PARAMETER || errnum == ERROR_NO_UNICODE_TRANSLATION) {
-			return NULL;
-		}
-  		_uls_log_primitive(err_log)("Error: MultiByteToWideChar!");
-  		return NULL;
-	}
-
-  	wsiz = rc + 1;
-  	csz_modify(csz, 0, NULL, wsiz * sizeof(wchar_t));
-	wstr = (wchar_t *) csz_data_ptr(csz);
-
-	if ((rc = MultiByteToWideChar(codepage, 0, astr, alen, wstr, wsiz)) <= 0) {
-		_uls_log_primitive(err_log)("Error: MultiByteToWideChar!");
-		csz_reset(csz);
-		wstr = NULL;
-	} else {
-		wlen = rc;
-		wstr[wlen] = L'\0';
-		csz_truncate(csz, (int) (wlen * sizeof(wchar_t)));
-		csz_text(csz);
-	}
-
-	return wstr;
-}
-
-ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(is_string_ascii)(const char *austr, int aulen)
-{
-	int i, aulen2 = aulen;
-	char ch;
-
-	if (aulen < 0) {
-		for (i = 0; ; i++) {
-			if ((ch = austr[i]) == '\0') {
-				aulen2 = i;
-				break;
-			}
-			if (ch & 0x80) {
-				aulen2 = -1;
-				break;
-			}
-		}
-	} else {
-		for (i = 0; ; i++) {
-			if (i >= aulen) {
-				break;
-			}
-			ch = austr[i];
-			if (ch & 0x80) {
-				aulen2 = -1;
-				break;
-			}
-		}
-	}
-
-	return aulen2;
-}
-
-#endif // __ULS_WINDOWS__
-
 void
 ULS_QUALIFIED_METHOD(auw_init_outparam)(auw_outparam_ptr_t auw)
 {
@@ -242,13 +85,13 @@ ULS_QUALIFIED_METHOD(astr_num_wchars)(const char *str, int len, uls_outparam_ptr
 	}
 
 	if (len < 0) {
-		for (ptr=str; (rc=astr_lengthof_char(ptr)) > 0; ptr+=rc) {
+		for (ptr = str; (rc = astr_lengthof_char(ptr)) > 0; ptr += rc) {
 			++n;
 		}
 		len = (int) (ptr - str);
 
 	} else {
-		for (i=0,ptr=str; i<len; i+=rc,ptr+=rc) {
+		for (i = 0, ptr = str; i < len; i += rc, ptr += rc) {
 			if (ptr[0] == '\0') {
 				len = (int) (ptr - str);
 				break;
@@ -267,7 +110,245 @@ ULS_QUALIFIED_METHOD(astr_num_wchars)(const char *str, int len, uls_outparam_ptr
 	return n;
 }
 
+int
+ULS_QUALIFIED_METHOD(guess_ansi_multibytes_max)(int codepage)
+{
+	int i, cp, mbs;
+	static const int multibytes_codepages[] = {
+		932, 936, 949, 950,
+		10001, 10002, 10003, 10008,
+		20000, 20001, 20002, 20003, 20004, 20005,
+		20932, 20936, 20949,
+		50220, 50221, 50222, 50225, 50227,
+		51932, 51936, 51949, 51950,
+		52536, 54936,
+		0
+	};
+
+	if (codepage == 1200 || codepage == 1201) { // utf-16
+		mbs = 2;
+	} else if (codepage == 12000 || codepage == 12000) { // utf-32
+		mbs = 4;
+	} else {
+		mbs = 1;
+		for (i = 0; (cp = multibytes_codepages[i]) > 0; i++) {
+			if (cp == codepage) {
+				mbs = 2;
+				break;
+			}
+		}
+	}
+
+	return mbs;
+}
+
+void
+ULS_QUALIFIED_METHOD(set_ms_mbcs_codepage)(int codepage)
+{
+	int mbs;
+
+	mbs = guess_ansi_multibytes_max(codepage);
+	__auw_ansi_multibytes = mbs;
+}
+
 #ifdef __ULS_WINDOWS__
+ULS_DECL_STATIC wchar_t*
+ULS_QUALIFIED_METHOD(mbs2wstr)(const char *astr, int alen, int is_utf8, csz_str_ptr_t csz)
+{
+	UINT codepage = is_utf8 ? CP_UTF8 : CP_ACP;
+	DWORD  errnum;
+	int rc, wlen, wsiz;
+	wchar_t *wstr;
+
+	if (alen == 0) {
+		wchar_t nil_wstr[1] = { L'\0' };
+		csz_reset(csz);
+		csz_append(csz, (char *) nil_wstr, sizeof(wchar_t));
+		csz_truncate(csz, 0);
+		return (wchar_t *) csz_data_ptr(csz);
+	}
+
+	if ((rc = MultiByteToWideChar(codepage, 0, astr, alen, NULL, 0)) == 0 || (is_utf8 && rc == 0xFFFD)) {
+		if ((errnum=GetLastError()) == ERROR_INVALID_PARAMETER || errnum == ERROR_NO_UNICODE_TRANSLATION) {
+			return NULL;
+		}
+  		_uls_log_primitive(err_log)("Error: MultiByteToWideChar!");
+  		return NULL;
+	}
+
+  	wsiz = rc + 1;
+  	csz_modify(csz, 0, NULL, wsiz * sizeof(wchar_t));
+	wstr = (wchar_t *) csz_data_ptr(csz);
+
+	if ((rc = MultiByteToWideChar(codepage, 0, astr, alen, wstr, wsiz)) <= 0) {
+		_uls_log_primitive(err_log)("Error: MultiByteToWideChar!");
+		csz_reset(csz);
+		wstr = NULL;
+	} else {
+		wlen = rc;
+		wstr[wlen] = L'\0';
+		csz_truncate(csz, (int) (wlen * sizeof(wchar_t)));
+	}
+
+	return wstr;
+}
+
+ULS_DECL_STATIC char*
+ULS_QUALIFIED_METHOD(wstr2mbs)(const wchar_t *wstr, int wlen, int is_utf8, csz_str_ptr_t csz)
+{
+	UINT codepage = is_utf8 ? CP_UTF8 : CP_ACP;
+	DWORD  errnum;
+	int asiz, rc;
+	char *astr;
+
+	if (wlen == 0) {
+		csz_reset(csz);
+		astr = csz_text(csz);
+		return astr;
+	}
+
+	if ((rc = WideCharToMultiByte(codepage, 0, wstr, wlen, NULL, 0, NULL, NULL)) == 0 || (is_utf8 && rc == 0xFFFD)) {
+		if ((errnum=GetLastError()) == ERROR_INVALID_PARAMETER || errnum == ERROR_NO_UNICODE_TRANSLATION) {
+			return NULL;
+		}
+		_uls_log_primitive(err_log)("Error: WideCharToMultiByte!");
+		return NULL;
+	}
+
+	asiz = rc + 1;
+	csz_modify(csz, 0, NULL, asiz);
+	astr = csz_data_ptr(csz);
+
+	if ((rc = WideCharToMultiByte(codepage, 0, wstr, wlen, astr, asiz, NULL, NULL)) <= 0) {
+		_uls_log_primitive(err_log)("Error: WideCharToMultiByte!");
+		csz_reset(csz);
+		astr = NULL;
+	} else {
+		csz_truncate(csz, rc);
+		astr = csz_text(csz);
+	}
+
+	return astr;
+}
+
+char*
+ULS_QUALIFIED_METHOD(uls_astr2ustr)(const char *astr, int alen, csz_str_ptr_t csz)
+{
+	csz_str_t csz_wstr;
+	wchar_t *wstr;
+	int wlen;
+	char *ustr;
+
+	if (astr == NULL) {
+		return NULL;
+	}
+
+	if (alen < 0) {
+		alen = strlen(astr);
+	}
+
+	if (alen == 0) {
+		csz_reset(csz);
+		return csz_text(csz);
+	}
+
+	csz_init(uls_ptr(csz_wstr), (alen + 1) * sizeof(wchar_t));
+
+	if ((wstr = uls_astr2wstr(astr, alen, uls_ptr(csz_wstr))) == NULL) {
+		ustr = NULL;
+	} else {
+		wlen = auw_csz_wlen(uls_ptr(csz_wstr));
+		ustr = uls_wstr2ustr(wstr, wlen, csz);
+	}
+
+	csz_deinit(uls_ptr(csz_wstr));
+	return ustr;
+}
+
+char*
+ULS_QUALIFIED_METHOD(uls_ustr2astr)(const char *ustr, int ulen, csz_str_ptr_t csz)
+{
+	csz_str_t csz_wstr;
+	wchar_t *wstr;
+	char *astr;
+	int wlen;
+
+	if (ustr == NULL) {
+		return NULL;
+	}
+
+	if (ulen < 0) {
+		ulen = uls_strlen(ustr);
+	}
+
+	if (ulen == 0) {
+		csz_reset(csz);
+		return csz_text(csz);
+	}
+
+	csz_init(uls_ptr(csz_wstr), (ulen + 1) * sizeof(wchar_t));
+
+	if ((wstr = uls_ustr2wstr(ustr, ulen, uls_ptr(csz_wstr))) == NULL) {
+		astr = NULL;
+	} else {
+		wlen = auw_csz_wlen(uls_ptr(csz_wstr));
+		astr = uls_wstr2astr(wstr, wlen, csz);
+	}
+
+	csz_deinit(uls_ptr(csz_wstr));
+	return astr;
+}
+
+const char*
+ULS_QUALIFIED_METHOD(uls_astr2ustr_ptr)(const char *astr, int alen, auw_outparam_ptr_t auw)
+{
+	csz_str_ptr_t csz = uls_ptr(auw->csz);
+	const char *ustr;
+	int  ulen;
+
+	if (astr == NULL) {
+		return NULL;
+	}
+
+	if (alen < 0) {
+		alen = strlen(astr);
+	}
+
+	if ((ustr = uls_astr2ustr(astr, alen, csz)) == NULL) {
+		ulen = 0;
+	} else {
+		ulen = csz_length(csz);
+	}
+
+	auw->outlen = ulen;
+	return ustr;
+}
+
+const char*
+ULS_QUALIFIED_METHOD(uls_ustr2astr_ptr)(const char *ustr, int ulen, auw_outparam_ptr_t auw)
+{
+	csz_str_ptr_t csz = uls_ptr(auw->csz);
+	const char *astr;
+	int alen;
+
+	if (ustr == NULL) {
+		return NULL;
+	}
+
+	if (ulen < 0) {
+		ulen = uls_strlen(ustr);
+	}
+
+	if ((astr = uls_ustr2astr(ustr, ulen, csz)) == NULL) {
+		alen = 0;
+	} else {
+		alen = csz_length(csz);
+	}
+
+	auw->outlen = alen;
+	return astr;
+}
+
 wchar_t*
 ULS_QUALIFIED_METHOD(uls_astr2wstr)(const char *astr, int alen, csz_str_ptr_t csz_wstr)
 {
@@ -336,125 +417,35 @@ ULS_QUALIFIED_METHOD(uls_wstr2ustr)(const wchar_t *wstr, int wlen, csz_str_ptr_t
 	return ustr;
 }
 
-char*
-ULS_QUALIFIED_METHOD(uls_ustr2astr)(const char *ustr, int ulen, csz_str_ptr_t csz)
-{
-	csz_str_t csz_wstr;
-	wchar_t *wstr;
-	char *astr;
-	int wlen;
-
-	if (ustr == NULL) {
-		return NULL;
-	}
-
-	if (ulen < 0) {
-		ulen = uls_strlen(ustr);
-	}
-
-	if (ulen == 0) {
-		csz_reset(csz);
-		return csz_text(csz);
-	}
-
-	csz_init(uls_ptr(csz_wstr), (ulen+1) * sizeof(wchar_t));
-
-	if ((wstr = uls_ustr2wstr(ustr, ulen, uls_ptr(csz_wstr))) == NULL) {
-		astr = NULL;
-	} else {
-		wlen = auw_csz_wlen(uls_ptr(csz_wstr));
-		astr = uls_wstr2astr(wstr, wlen, csz);
-	}
-
-	csz_deinit(uls_ptr(csz_wstr));
-	return astr;
-}
+#else // ~__ULS_WINDOWS__
 
 char*
 ULS_QUALIFIED_METHOD(uls_astr2ustr)(const char *astr, int alen, csz_str_ptr_t csz)
 {
-	csz_str_t csz_wstr;
-	wchar_t *wstr;
-	int wlen;
-	char *ustr;
-
-	if (astr == NULL) {
-		return NULL;
-	}
-
-	if (alen < 0) {
-		alen = strlen(astr);
-	}
-
-	if (alen == 0) {
-		csz_reset(csz);
-		return csz_text(csz);
-	}
-
-	csz_init(uls_ptr(csz_wstr), (alen+1) * sizeof(wchar_t));
-
-	if ((wstr = uls_astr2wstr(astr, alen, uls_ptr(csz_wstr))) == NULL) {
-		ustr = NULL;
-	} else {
-		wlen = auw_csz_wlen(uls_ptr(csz_wstr));
-		ustr = uls_wstr2ustr(wstr, wlen, csz);
-	}
-
-	csz_deinit(uls_ptr(csz_wstr));
-	return ustr;
+	_uls_log(err_panic)("%s: Not Supported on the platform", __func__);
+	return NULL;
 }
 
-const char*
-ULS_QUALIFIED_METHOD(uls_ustr2astr_ptr)(const char *ustr, int ulen, auw_outparam_ptr_t auw)
+char*
+ULS_QUALIFIED_METHOD(uls_ustr2astr)(const char *ustr, int ulen, csz_str_ptr_t csz)
 {
-	csz_str_ptr_t csz = uls_ptr(auw->csz);
-	const char *astr;
-	int alen;
-
-	if (ustr == NULL) {
-		return NULL;
-	}
-
-	if (ulen < 0) {
-		ulen = uls_strlen(ustr);
-	}
-
-	if ((astr = uls_ustr2astr(ustr, ulen, csz)) == NULL) {
-		alen = 0;
-	} else {
-		alen = csz_length(csz);
-	}
-
-	auw->outlen = alen;
-	return astr;
+	_uls_log(err_panic)("%s: Not Supported on the platform", __func__);
+	return NULL;
 }
 
 const char*
 ULS_QUALIFIED_METHOD(uls_astr2ustr_ptr)(const char *astr, int alen, auw_outparam_ptr_t auw)
 {
-	csz_str_ptr_t csz = uls_ptr(auw->csz);
-	const char *ustr;
-	int ulen;
-
-	if (astr == NULL) {
-		return NULL;
-	}
-
-	if (alen < 0) {
-		alen = strlen(astr);
-	}
-
-	if ((ustr = uls_astr2ustr(astr, alen, csz)) == NULL) {
-		ulen = 0;
-	} else {
-		ulen = csz_length(csz);
-	}
-
-	auw->outlen = ulen;
-	return ustr;
+	_uls_log(err_panic)("%s: Not Supported on this platform", __func__);
+	return NULL;
 }
 
-#else // ~__ULS_WINDOWS__
+const char*
+ULS_QUALIFIED_METHOD(uls_ustr2astr_ptr)(const char *ustr, int ulen, auw_outparam_ptr_t auw)
+{
+	_uls_log(err_panic)("%s: Not Supported on this platform", __func__);
+	return NULL;
+}
 
 wchar_t*
 ULS_QUALIFIED_METHOD(uls_astr2wstr)(const char *astr, int alen, csz_str_ptr_t csz_wstr)
@@ -503,13 +494,13 @@ ULS_QUALIFIED_METHOD(uls_ustr2wstr)(const char *ustr, int ulen, csz_str_ptr_t cs
 		ustr1 = ustr1_buff;
 	}
 
- 	if ((siz = mbstowcs(NULL, ustr1, 0)) == (size_t) -1) {
+ 	if ((siz = mbstowcs(NULL, ustr1, ulen)) == (size_t) -1) {
  		uls_mfree(ustr1_buff);
  		csz_reset(csz_wstr);
 		return NULL;
   	}
 
-  	wsiz = ++siz;
+  	wsiz = (int) ++siz;
   	csz_modify(csz_wstr, 0, NULL, wsiz * sizeof(wchar_t));
 	wstr = (wchar_t *) csz_data_ptr(csz_wstr);
 
@@ -558,13 +549,13 @@ ULS_QUALIFIED_METHOD(uls_wstr2ustr)(const wchar_t *wstr, int wlen, csz_str_ptr_t
 		wstr1 = wstr1_buff;
 	}
 
-	if ((siz = wcstombs(NULL, wstr1, 0)) == (size_t) -1) {
+	if ((siz = wcstombs(NULL, wstr1, wlen)) == (size_t) -1) {
 		csz_reset(csz);
 		uls_mfree(wstr1_buff);
 		return NULL;
 	}
 
-	usiz = ++siz;
+	usiz = (int) ++siz;
 	csz_modify(csz, 0, NULL, usiz);
 	ustr = csz_data_ptr(csz);
 
@@ -580,34 +571,4 @@ ULS_QUALIFIED_METHOD(uls_wstr2ustr)(const wchar_t *wstr, int wlen, csz_str_ptr_t
 	uls_mfree(wstr1_buff);
 	return ustr;
 }
-
-char*
-ULS_QUALIFIED_METHOD(uls_ustr2astr)(const char *ustr, int ulen, csz_str_ptr_t csz)
-{
-	_uls_log(err_panic)("%s: Not Supported on the platform", __func__);
-	return NULL;
-}
-
-char*
-ULS_QUALIFIED_METHOD(uls_astr2ustr)(const char *astr, int alen, csz_str_ptr_t csz)
-{
-	_uls_log(err_panic)("%s: Not Supported on the platform", __func__);
-	return NULL;
-}
-
-
-const char*
-ULS_QUALIFIED_METHOD(uls_ustr2astr_ptr)(const char *ustr, int ulen, auw_outparam_ptr_t auw)
-{
-	_uls_log(err_panic)("%s: Not Supported on the platform", __func__);
-	return NULL;
-}
-
-const char*
-ULS_QUALIFIED_METHOD(uls_astr2ustr_ptr)(const char *astr, int alen, auw_outparam_ptr_t auw)
-{
-	_uls_log(err_panic)("%s: Not Supported on the platform", __func__);
-	return NULL;
-}
-
 #endif

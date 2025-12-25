@@ -353,18 +353,18 @@ ULS_QUALIFIED_METHOD(uls_add_tmpl)(uls_tmpl_list_ptr_t tmpl_list, const char *na
 
 	if (name == NULL) return -1;
 
-	if ((tmpl = uls_find_tmpl(tmpl_list, name)) != nilptr) {
-		return -1;
+	if ((tmpl = uls_find_tmpl(tmpl_list, name)) == nilptr) {
+		if ((k = tmpl_list->tmpls.n) >= tmpl_list->tmpls.n_alloc) {
+			_uls_log(err_log)("Full of tmpl array[%d]", tmpl_list->tmpls.n_alloc);
+			return -1;
+		}
+		uls_alloc_array_slot_type10(uls_ptr(tmpl_list->tmpls), tmpl, k);
+		tmpl = uls_get_array_slot_type10(uls_ptr(tmpl_list->tmpls), k);
+		tmpl->idx = k;
+		tmpl_list->tmpls.n = k + 1;
+	} else {
+		k = tmpl->idx;
 	}
-
-	if ((k = tmpl_list->tmpls.n) >= tmpl_list->tmpls.n_alloc) {
-		_uls_log(err_log)("Full of tmpl array[%d]", tmpl_list->tmpls.n_alloc);
-		return -1;
-	}
-
-	uls_alloc_array_slot_type10(uls_ptr(tmpl_list->tmpls), tmpl, k);
-	tmpl = uls_get_array_slot_type10(uls_ptr(tmpl_list->tmpls), k);
-	tmpl->idx = k;
 
 	if (tmpl_list->flags & ULS_TMPLS_DUP) {
 		tmpl->name = tmpl->name_buff = _uls_tool_(strdup)(name, -1);
@@ -378,7 +378,6 @@ ULS_QUALIFIED_METHOD(uls_add_tmpl)(uls_tmpl_list_ptr_t tmpl_list, const char *na
 		tmpl->sval = val;
 	}
 
-	tmpl_list->tmpls.n = k + 1;
 	return k;
 }
 

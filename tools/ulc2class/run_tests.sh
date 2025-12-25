@@ -28,8 +28,17 @@
 #   This file is part of ULS, Unified Lexical Scheme.
 #
 
+command_list_used="diff basename dirname"
+for cmd in $command_list_used; do
+	filepath=$(which $cmd)
+	if [ -z "$filepath" ]; then
+		echo "$cmd: not found!"
+		exit 1
+	fi
+done
+
 test_home="$PWD"
-progname=`basename $0`
+progname=$(basename $0)
 #opt_verbose=$ULS_VERBOSE
 opt_verbose=no
 
@@ -66,7 +75,7 @@ test_1case()
 	cmdline="$test_prog --lang=$ts -o $tmpfile1"
 
 	if [ $infile != "-" ]; then
-		cmdline="$cmdline $infile"
+		cmdline="$cmdline -F $infile $infile"
 	fi
 
 	if [ "$opt_verbose" = "yes" ]; then

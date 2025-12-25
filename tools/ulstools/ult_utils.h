@@ -45,8 +45,8 @@ int ult_is_inputfiles_raw(const char *filelist);
 
 int ult_guess_host_byteorder(void);
 
-int ult_fd_create_wronly(const char *fpath);
-int ult_fd_open_rdonly(const char *fpath);
+int ult_fd_create_wronly(const char *filepath);
+int ult_fd_open_rdonly(const char *filepath);
 void ult_fd_close(int fd);
 
 const char *ult_get_suffix(const char *filepath);

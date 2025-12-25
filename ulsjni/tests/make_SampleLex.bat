@@ -8,7 +8,7 @@ setlocal
 
 set ULC_FILE=%1
 
-if "%ULC_FILE%" == "" set ULC_FILE=.\sample.ulc
+if "%ULC_FILE%" == "" set ULC_FILE=..\sample.ulc
 
 if not exist "%ULC_FILE%" (
 	echo %ULC_FILE%: Not Exist!
@@ -24,7 +24,8 @@ if "%ULC2CLASS_FPATH%" == ""  (
 )
 
 echo making the java-file SampleLex.java from %ULC_FILE% ...
-ulc2class -o ..\src\uls\tests\Sample1Lex.java -ljava -n uls.tests.Sample1Lex %ULC_FILE%
+ulc2class -o ..\src\uls\tests\Sample1Lex.java -ljava -n uls.tests.Sample1Lex ..\sample.ulc
+ulc2class -o ..\src\uls\tests\Sample2Lex.java -ljava -n uls.tests.Sample2Lex ..\sample2.uld
 
 :end_0
 pause

@@ -28,6 +28,15 @@
 #   This file is part of ULS, Unified Lexical Scheme.
 #
 
+command_list_used="diff mkdir dd"
+for cmd in $command_list_used; do
+	filepath=$(which $cmd)
+	if [ -z "$filepath" ]; then
+		echo "$cmd: not found!"
+		exit 1
+	fi
+done
+
 if [ $# -lt 1 ]; then
 	etc_dir=/usr/local/etc/uls
 else
@@ -124,7 +133,6 @@ for f in $EXES; do
 	fi
 
 	in_pfx=`echo ${dir} | tr '[A-Z]' '[a-z]'`
-
 	in_file="${in_pfx}_sam.txt";
 	out_file="${in_pfx}_out.txt";
 
@@ -141,4 +149,3 @@ done
 
 cd $HOME_DIR
 echo "done."
-

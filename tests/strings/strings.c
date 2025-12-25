@@ -40,6 +40,9 @@
 
 #include <stdlib.h>
 #include <string.h>
+#ifndef __ULS_WINDOWS__
+#include <locale.h>
+#endif
 
 #include "sample_lex.h"
 
@@ -101,9 +104,8 @@ int
 test_escchar_map(uls_lex_ptr_t uls, LPCTSTR fpath)
 {
 	int i, rc, len, tok, stat = 0;
-	LPCTSTR qstr_type;
-	const unsigned char *lxm;
-	unsigned char ch;
+	unsigned char ch, ch1, ch2;
+	LPCTSTR lxm, qstr_type;
 	FILE *fp;
 
 	if ((fp = uls_fp_open(fpath, ULS_FIO_READ | ULS_FIO_NO_UTF8BOM)) == NULL) {
@@ -117,7 +119,7 @@ test_escchar_map(uls_lex_ptr_t uls, LPCTSTR fpath)
 	}
 
 	for ( ; (tok = uls_get_tok(uls)) != TOK_EOI; ) {
-		lxm = (const unsigned char *) uls_lexeme(uls);
+		lxm = uls_lexeme(uls);
 		if (tok == TOK_ERR) {
 			err_log(_T("%s: error-token detected in %s"), lxm, fpath);
 			stat = -1;
@@ -143,11 +145,14 @@ test_escchar_map(uls_lex_ptr_t uls, LPCTSTR fpath)
 			uls_printf(_T("#%-2d: %3s(%2d)"), uls_get_lineno(uls), qstr_type, len);
 
 			for (i = 0; i < len; i += rc) {
-				ch = lxm[i];
+				ch = (unsigned char) lxm[i];
+				ch1 = ch2 = '\0';
+				if (i + 1 < len) ch1 = (unsigned char) lxm[i + 1];
+				if (i + 2 < len) ch2 = (unsigned char) lxm[i + 2];
 
 				if (ch == '\\') {
 					rc = 1;
-				} else if (ch == 0xE2 && lxm[i+1] == 0x82 && lxm[i+2] == 0xAC) { // EuroSign
+				} else if (ch == 0xE2 && ch1 == 0x82 && ch2 == 0xAC) { // EuroSign
 					rc = 3;
 				} else {
 					rc = 0;
@@ -172,7 +177,7 @@ int
 test_escaped_eol_1(uls_lex_ptr_t uls, LPCTSTR fpath)
 {
 	int i, len, tok, stat = 0;
-	const unsigned char *lxm;
+	LPCTSTR lxm;
 	unsigned char ch;
 	FILE *fp;
 
@@ -187,7 +192,7 @@ test_escaped_eol_1(uls_lex_ptr_t uls, LPCTSTR fpath)
 	}
 
 	for ( ; (tok = uls_get_tok(uls)) != TOK_EOI; ) {
-		lxm = (const unsigned char *) uls_lexeme(uls);
+		lxm = uls_lexeme(uls);
 		len = uls_lexeme_len(uls);
 
 		if (tok == TOK_ERR) {
@@ -199,7 +204,7 @@ test_escaped_eol_1(uls_lex_ptr_t uls, LPCTSTR fpath)
 		if (tok == TOK_NQUOTE) {
 			uls_printf(_T(" #%-02d(NQ) : \""), uls_get_lineno(uls));
 			for (i = 0; i < len; i++) {
-				ch = lxm[i];
+				ch = (unsigned char) lxm[i];
 				if (uls_isprint(ch)) {
 					uls_printf(_T("%c"), ch);
 				} else {
@@ -218,7 +223,7 @@ int
 test_uls_2(uls_lex_ptr_t uls, LPTSTR fpath)
 {
 	int tok, stat = 0;
-	const char *lxm;
+	LPCTSTR lxm;
 	FILE *fp;
 
 	if ((fp = uls_fp_open(fpath, ULS_FIO_READ | ULS_FIO_NO_UTF8BOM)) == NULL) {
@@ -256,7 +261,7 @@ int
 test_uls_3(uls_lex_ptr_t uls, LPCTSTR fpath)
 {
 	int fd, tok, stat = 0;
-	const char *lxm;
+	LPCTSTR lxm;
 
 	if ((fd = uls_fd_open(fpath, ULS_FIO_READ)) < 0) {
 		err_log(_T("%s: file open error"), fpath);
@@ -327,11 +332,52 @@ _tmain(int n_targv, LPTSTR *targv)
 	return 0;
 }
 
-int main(int argc, char *argv[])
+#ifndef ULS_WINDOWS
+static int
+set_uls_locale(void)
+{
+	const char *cptr0, *cptr;
+	char lang_entry[16], lang_buff[16];
+	const char *locale_list[] = { "", "C", "en_US", NULL };
+	const char *encoding_suffs[] = { "UTF-8", "utf8", NULL };
+	int i, j, len, bReset = 0;
+
+	if ((cptr0 = getenv("LANG")) != NULL) {
+		if ((cptr = strchr(cptr0, '.')) != NULL &&
+			(len=(int)(cptr-cptr0)) > 0 && len < 8) {
+			for (j=0; j<len; j++) lang_entry[j] = cptr0[j];
+			lang_entry[len] = '\0';
+			locale_list[0] = lang_entry;
+		}
+	}
+
+	for (i = 0; (cptr0 = locale_list[i]) != NULL; i++) {
+		if ((len = strlen(cptr0)) <= 0) continue;
+		strcpy(lang_buff, cptr0);
+
+		for (j=0; (cptr = encoding_suffs[j]) != NULL; j++) {
+			lang_buff[len] = '.';
+			strcpy(lang_buff+len+1, cptr);
+			if (setlocale(LC_ALL, lang_buff) != NULL) {
+				bReset = 1;
+				break;
+			}
+		}
+		if (bReset > 0) break;
+	}
+
+	return bReset;
+}
+#endif
+
+int
+main(int argc, char *argv[])
 {
 	LPTSTR *targv;
 	int stat;
-
+#ifndef __ULS_WINDOWS__
+	set_uls_locale();
+#endif
 	ULS_GET_WARGS_LIST(argc, argv, targv);
 	stat = _tmain(argc, targv);
 	ULS_PUT_WARGS_LIST(argc, targv);

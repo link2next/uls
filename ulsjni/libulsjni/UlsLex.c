@@ -295,7 +295,7 @@ JNIEXPORT void JNICALL Java_uls_polaris_UlsLex_putNextchInfo(JNIEnv *env, jobjec
 JNIEXPORT jboolean JNICALL Java_uls_polaris_UlsLex_isQuoteTok(JNIEnv *env, jobject obj, jobject juls, jint jtokid)
 {
 	uls_lex_ptr_t uls = (uls_lex_ptr_t) (*env)->GetDirectBufferAddress(env, juls);
-	return uls_is_quote_tok(uls, jtokid) ? JNI_TRUE : JNI_FALSE;
+	return (uls_get_quote(uls, jtokid) != NULL) ? JNI_TRUE : JNI_FALSE;
 }
 
 JNIEXPORT jstring JNICALL Java_uls_polaris_UlsLex_getTag(JNIEnv *env, jobject obj, jobject juls)

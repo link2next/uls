@@ -277,7 +277,7 @@ uls_set_istream_wtag(uls_istream_ptr_t istr, const wchar_t *wtag)
 	csz_init(uls_ptr(csz), -1);
 
 	if ((ustr = uls_wstr2ustr(wtag, -1, uls_ptr(csz))) == NULL) {
-		err_wlog(L"encoding error!");
+		err_wlog(L"%hs: encoding error!", __func__);
 	} else {
 		uls_set_istream_tag(istr, ustr);
 	}
@@ -295,7 +295,7 @@ uls_open_istream_file_wstr(const wchar_t *filepath)
 	csz_init(uls_ptr(csz), -1);
 
 	if ((ustr = uls_wstr2ustr(filepath, -1, uls_ptr(csz))) == NULL) {
-		err_wlog(L"encoding error!");
+		err_wlog(L"%hs: encoding error!", __func__);
 		hdr = nilptr;
 	} else {
 		hdr = uls_open_istream_file(ustr);
@@ -316,7 +316,7 @@ uls_open_istream_filter_file_wstr(fdf_t* fdf, const wchar_t *wfilepath)
 	csz_init(uls_ptr(csz), -1);
 
 	if ((ustr = uls_wstr2ustr(wfilepath, -1, uls_ptr(csz))) == NULL) {
-		err_wlog(L"encoding error!");
+		err_wlog(L"%hs: encoding error!", __func__);
 		hdr = nilptr;
 	} else {
 		hdr = uls_open_istream_filter_file(fdf, ustr);

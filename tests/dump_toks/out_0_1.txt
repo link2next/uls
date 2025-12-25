@@ -36,8 +36,7 @@
   8	[       ] ;
  10	[     ID] _VERY_VERY_LONG_IDENTIFIER123456789_IS_OK
  10	[       ] =
- 10	[       ] -
- 10	[ NUMBER] 1
+ 10	[ NUMBER] -1
  10	[       ] ;
  12	[     IF] if
  12	[       ] (
@@ -59,13 +58,11 @@
  15	[    END] }
  17	[     ID] YYY
  17	[       ] =
- 17	[       ] -
- 17	[ NUMBER] 0.31415926E-7
+ 17	[ NUMBER] -0.31415926E-7
  17	[       ] ;
  18	[     ID] BBB
  18	[       ] =
- 18	[       ] -
- 18	[ NUMBER] 7094
+ 18	[ NUMBER] -7094
  18	[       ] ;
  19	[     ID] AAA
  19	[       ] =

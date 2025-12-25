@@ -28,7 +28,12 @@
 #   This file is part of ULS, Unified Lexical Scheme.
 #
 
-source ../ulsconfig/uls_common.sh
+source uls_common.sh
+
+command_list_used="mkdir"
+if ! check_commands_used $command_list_used; then
+	exit 1
+fi
 
 HOME_DIR="$PWD"
 

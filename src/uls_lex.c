@@ -241,7 +241,7 @@ ULS_QUALIFIED_METHOD(uls_push_istream)(uls_lex_ptr_t uls, uls_istream_ptr_t istr
 		stat = -4; goto end_1;
 	}
 
-	if (uls_bind_tmpls(istr, tmpl_list) < 0) {
+	if (tmpl_list != nilptr && uls_bind_tmpls(istr, tmpl_list) < 0) {
 		_uls_log(err_log)("can't put stream %s on the stack of %s.",
 			uls_get_namebuf_value(istr->filepath), uls_get_namebuf_value(uls->ulc_name));
 		stat = -5; goto end_1;

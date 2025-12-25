@@ -58,6 +58,9 @@ extern "C" {
 #define ULS_QSTR_ESC           0x200
 #define ULS_QSTR_ETC           0x400
 
+#define uls_is_quote_symmetric(qmt) (((qmt)->flags & ULS_QSTR_ASYMMETRIC) == 0)
+#define uls_is_quote_userdef(qmt) ((qmt)->flags & ULS_QSTR_USERPROC)
+
 ULS_DECLARE_STRUCT(litstr);
 ULS_DECLARE_STRUCT(litstr_context);
 

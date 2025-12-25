@@ -30,7 +30,10 @@
 
 #include "uls.h"
 
-int dump_uls_file(const char *fpath, FILE *fp_out);
+int dump_uls_file(const char *filepath, FILE *fp_out);
 int dump_uls_files(int n_fpaths, const char** fpaths, FILE *fp_out);
+
+int rawdump_uls_file(const char *filepath, FILE *fp_out);
+int rawdump_uls_files(int n_fpaths, const char** fpaths, FILE *fp_out);
 
 #endif

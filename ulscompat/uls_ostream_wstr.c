@@ -45,7 +45,7 @@ __uls_create_ostream_wstr(int fd_out, uls_lex_ptr_t uls, int stream_type, const 
 	csz_init(uls_ptr(csz), -1);
 
 	if ((ustr = uls_wstr2ustr(subname, -1, uls_ptr(csz))) == NULL) {
-		err_wlog(L"encoding error!");
+		err_wlog(L"%hs: encoding error!", __func__);
 		hdr = nilptr;
 	} else {
 		hdr = __uls_create_ostream(fd_out, uls, stream_type, ustr);
@@ -65,7 +65,7 @@ uls_create_ostream_wstr(int fd_out, uls_lex_ptr_t uls, const wchar_t *subname)
 	csz_init(uls_ptr(csz), -1);
 
 	if ((ustr = uls_wstr2ustr(subname, -1, uls_ptr(csz))) == NULL) {
-		err_wlog(L"encoding error!");
+		err_wlog(L"%hs: encoding error!", __func__);
 		hdr = nilptr;
 	} else {
 		hdr = uls_create_ostream(fd_out, uls, ustr);
@@ -96,7 +96,7 @@ uls_create_ostream_file_wstr(const wchar_t *filepath, uls_lex_ptr_t uls, const w
 			csz_init(csz + i, -1);
 
 			if ((ustr[i] = uls_wstr2ustr(wrdlst[i], -1, csz + i)) == NULL) {
-				err_wlog(L"encoding error!");
+				err_wlog(L"%hs: encoding error!", __func__);
 				csz_deinit(csz + i);
 				break;
 			}
@@ -122,7 +122,7 @@ __uls_print_tok_wstr(uls_ostream_ptr_t ostr, int tokid, const wchar_t *wtokstr, 
 	csz_init(uls_ptr(csz), -1);
 
 	if ((ustr = uls_wstr2ustr(wtokstr, l_wtokstr, uls_ptr(csz))) == NULL) {
-		err_wlog(L"encoding error!");
+		err_wlog(L"%hs: encoding error!", __func__);
 		rc = -1;
 	} else {
 		ulen = csz_length(uls_ptr(csz));
@@ -143,7 +143,7 @@ __uls_print_tok_linenum_wstr(uls_ostream_ptr_t ostr, int lno, const wchar_t *wta
 	csz_init(uls_ptr(csz), -1);
 
 	if ((ustr = uls_wstr2ustr(wtag, wtag_len, uls_ptr(csz))) == NULL) {
-		err_wlog(L"encoding error!");
+		err_wlog(L"%hs: encoding error!", __func__);
 		rc = -1;
 	} else {
 		ulen = csz_length(uls_ptr(csz));

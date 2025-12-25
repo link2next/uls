@@ -1,5 +1,9 @@
 empty string: ""
 
+legacy: 
+	"..\?..\'..'"
+	"\?\''"
+
 str1 = ".\".\\.!";
 str2 = "LF:\nTAB:\t...";
 

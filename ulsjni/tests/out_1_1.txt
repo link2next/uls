@@ -1,4 +1,4 @@
- ulc_path = sample.ulc
+ ulc_path = ../sample.ulc
  input_file = input1.txt
  -- Input: String -------------------------
 	[     ID] Hello
@@ -36,12 +36,10 @@
 ....[       ] }
 ....[     ID] ZZZ
 ....[       ] =
-....[       ] -
 ....[ NUMBER] 0.00031415926 ---(str2double)-->> 3.1415926E-4
 ....[       ] ;
 ....[     ID] BBB
 ....[       ] =
-....[       ] -
 ....[ NUMBER] 7094 ---(str2int)-->> 7094
 ....[       ] ;
 ....[     ID] AAA
@@ -93,12 +91,10 @@
 	[       ] }
 	[     ID] ZZZ
 	[       ] =
-	[       ] -
 	[ NUMBER] 0.00031415926
 	[       ] ;
 	[     ID] BBB
 	[       ] =
-	[       ] -
 	[ NUMBER] 7094
 	[       ] ;
 	[     ID] AAA
@@ -114,7 +110,7 @@
 	[ NUMBER] 0.3
 	[       ] ;
 	[       ] }
- ulc_path = sample2.uld
+ ulc_path = ../sample2.uld
  input_file = input1.txt
  -- Input: File -------------------------
 ....[     ID] main
@@ -147,12 +143,10 @@
 ....[       ] }
 ....[     ID] ZZZ
 ....[       ] =
-....[       ] -
 ....[ NUMBER] 0.00031415926
 ....[       ] ;
 ....[     ID] BBB
 ....[       ] =
-....[       ] -
 ....[ NUMBER] 7094
 ....[       ] ;
 ....[     ID] AAA

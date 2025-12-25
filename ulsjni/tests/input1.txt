@@ -8,8 +8,8 @@ main()
 		EEE = 0x00fffe;
 	}
 
-	ZZZ = -31415.926e-8;
-	BBB =  -7094;
+	ZZZ = 31415.926e-8;
+	BBB =  7094;
 	AAA =  0644;
 
 	/*comment 

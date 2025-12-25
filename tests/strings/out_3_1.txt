@@ -2,34 +2,40 @@
   1	[     ID] string
   1	[       ] :
   1	[ LITSTR] 
-  3	[     ID] str1
-  3	[       ] =
-  3	[ LITSTR] .".\.!
-  3	[       ] ;
-  4	[     ID] str2
-  4	[       ] =
-  4	[ LITSTR] LF:
+  3	[     ID] legacy
+  3	[       ] :
+  4	[    TAB]
+  4	[ LITSTR] ..?..'..'
+  5	[    TAB]
+  5	[ LITSTR] ?''
+  7	[     ID] str1
+  7	[       ] =
+  7	[ LITSTR] .".\.!
+  7	[       ] ;
+  8	[     ID] str2
+  8	[       ] =
+  8	[ LITSTR] LF:
 TAB:	...
-  4	[       ] ;
-  6	[     ID] hello
-  7	[ LITSTR] hello	world!
-  9	[ LITSTR] hello
+  8	[       ] ;
+ 10	[     ID] hello
+ 11	[ LITSTR] hello	world!
+ 13	[ LITSTR] hello
 \
 	world
- 12	[ LITSTR] hello\n\
+ 16	[ LITSTR] hello\n\
 \tworld
- 15	[ LITSTR] jointed
- 15	[ LITSTR] literal
- 15	[ LITSTR] strings
- 17	[     ID] SSS1
- 17	[       ] =
- 17	[ LITSTR] hello
+ 19	[ LITSTR] jointed
+ 19	[ LITSTR] literal
+ 19	[ LITSTR] strings
+ 21	[     ID] SSS1
+ 21	[       ] =
+ 21	[ LITSTR] hello
 \
 	world
- 18	[       ] ;
- 20	[     ID] SSS2
- 20	[       ] =
- 20	[ LITSTR] hello\n\
+ 22	[       ] ;
+ 24	[     ID] SSS2
+ 24	[       ] =
+ 24	[ LITSTR] hello\n\
 \tworld
- 21	[       ] ;
- 22	[       ] }
+ 25	[       ] ;
+ 26	[       ] }

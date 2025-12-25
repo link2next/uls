@@ -29,6 +29,11 @@
 
 source ../ulsconfig/uls_common.sh
 
+command_list_used="mkdir rmdir touch"
+if ! check_commands_used $command_list_used; then
+	exit 1
+fi
+
 HOME_DIR="$PWD"
 
 if [ $# -lt 3 ]; then
@@ -122,4 +127,3 @@ echo "#!/bin/bash" >> "$outfpath"
 echo >> "$outfpath"
 gen_namval_pair etc_dir $uls_etc_dir
 gen_namval_pair need_admin $uls_need_admin
-

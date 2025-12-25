@@ -47,6 +47,11 @@ fi
 
 source $progdir/uls_common.sh
 
+command_list_used="mkdir id"
+if ! check_commands_used $command_list_used; then
+	exit 1
+fi
+
 uninst_info_sh=uls_uninst_info.sh
 
 stage=$1
@@ -97,6 +102,75 @@ while : ; do
 	fi
 done
 
+dirempty_cmd_part1=
+dirempty_cmd_part2=
+
+check_dirempty_cmd()
+{
+	local dir_content dummy_file
+	local optstr1=
+	local optstr2=
+
+	dummy_file=/tmp/__dummy_$$_uninst_file
+	ls /tmp >> $dummy_file
+
+	dir_content=$(ls -A /tmp)
+	if [ -n "$dir_content" ]; then
+		optstr1="-A"
+	fi
+
+	dir_content=$(ls -1 /tmp)
+	if [ -n "$dir_content" ]; then
+		optstr1="$optstr1 -1"
+	fi
+
+	if [ -n "$optstr1" ]; then
+		dirempty_cmd_part1="ls $optstr1"
+	fi
+
+	dir_content=$(head -3 $dummy_file)
+	if [ -n "$dir_content" ]; then
+		dirempty_cmd_part2="| head -3"
+	else
+		dir_content=$(head $dummy_file)
+		dirempty_cmd_part2="| head"
+	fi
+
+	rm $dummy_file
+}
+
+check_dirempty_cmd
+if [ -z "$dirempty_cmd_part1" ]; then
+	echo "Failed to create dir-empty check routine!"
+	exit 1
+fi
+
+is_dir_empty()
+{
+	local dirpath=$1
+	local stat=0
+	local dirempty_cmd
+	local dir_content
+
+	if [ ! -d "$dirpath" ]; then
+		if [ -e "$dirpath" ]; then
+			echo "$dirpath: what's it?"
+			return 1 # false
+		else
+			echo "$dirpath: not a directory"
+			return 0 # empty
+		fi
+	fi
+
+	dirempty_cmd="$dirempty_cmd_part1 '"$dirpath"' $dirempty_cmd_part2"
+	dir_content=$(eval $dirempty_cmd)
+	if [ -n "$dir_content" ]; then
+		stat=1 # nonempty
+	fi
+
+	return $stat
+}
+
 del_files()
 {
 	local sym_list=
@@ -143,18 +217,24 @@ del_tree()
 import_vars_from_sysprops()
 {
 	local sysprops_file=$1
-	local tmp_sysprops_file=/tmp/uls_$$_sysprops
+	local tmp_sysprops_file=/tmp/_$$_sysprops_noBOM.txt
+	local import_vars_sh=/tmp/_$$_vars_from_sysprops.sh
 
 	# Cut the BOM at the start of the file
-	dd bs=1 skip=3 if="$sysprops_file" of=$tmp_sysprops_file 2> /dev/null
+	dd bs=3 skip=1 if=$sysprops_file of=$tmp_sysprops_file >/dev/null 2>&1
 
+	echo "#!/bin/bash" > $import_vars_sh
 	while read line; do
 		if [ -z "$line" ]; then
 			continue
 		fi
-		eval $line
+		varval=${line#*=}
+		varnam=${line%=${varval}}
+		echo "$varnam=$varval" >> $import_vars_sh
 	done  < $tmp_sysprops_file
-	rm $tmp_sysprops_file
+
+	source $import_vars_sh
+	rm -f $tmp_sysprops_file $import_vars_sh
 }
 
 # etc_dir is set from uninst_info.sh
@@ -171,6 +251,13 @@ if [ ! -d "$ULS_HOME" ]; then
 	exit 1
 fi
 ULS_INST_DIR=$ULS_HOME
+
+can_del_etcdir=
+if [ $(basename "$etc_dir") == uls ]; then
+	can_del_etcdir=yes
+else
+	can_del_etcdir=no
+fi
 
 sysdir_installed=no
 if [ "$ULS_INST_DIR" = "/usr/local" -o "$ULS_INST_DIR" = "/usr" -o "$ULS_INST_DIR" = "/" ]; then
@@ -201,26 +288,55 @@ lib_dir=$ULS_INST_DIR/lib
 man_dir=$ULS_INST_DIR/share/man/man1
 data_dir=$ULS_INST_DIR/share/uls
 
+instdir_empty=yes
+
 del_tree "$inc_uls_dir"
-del_files "$inc_dir"/{uls*.h,Uls*.h}
-
-del_files "$lib_dir"/libuls*
-del_files "$man_dir"/{ulc2class.1.gz,ulf_gen.1.gz,uls_stream.1.gz}
-
-del_tree "$data_dir"/ulcs
-del_files "$data_dir"/uls_examples.tar
-del_tree "$data_dir"
-
-del_files "$bin_dir"/{ulc2class,ulf_gen,uls_stream}
-del_files "$bin_dir"/uls_*.sh
-del_files "$bin_dir"/setup_uls_examples
-del_files "$bin_dir"/$progname
-
-del_files "$etc_dir"/{uls.langs,uls.id_ranges}
-del_files "$sysprops_fpath"
-del_tree "$etc_dir"
-
-if [ "$sysdir_installed" = "no" ]; then
-	del_tree $ULS_INST_DIR
+cd "$inc_dir"
+del_files {uls*.h,Uls*.h}
+if ! is_dir_empty "$inc_dir"; then
+	echo "$inc_dir: not empty!"
+	instdir_empty=no
 fi
 
+cd "$lib_dir"
+del_files libuls* uls*.jar
+if ! is_dir_empty "$lib_dir"; then
+	echo "$lib_dir: not empty!"
+	instdir_empty=no
+fi
+
+cd "$bin_dir"
+del_files {ulc2class,ulf_gen,uls_stream}
+del_files uls_*.sh
+del_files setup_uls_examples
+del_files $progname
+if ! is_dir_empty "$bin_dir"; then
+	echo "$bin_dir: not empty!"
+	instdir_empty=no
+fi
+
+cd "$man_dir"
+del_files {ulc2class.1.gz,ulf_gen.1.gz,uls_stream.1.gz}
+
+cd "$data_dir"
+del_tree ulcs
+del_files uls_examples.tar
+if ! is_dir_empty "$data_dir"; then
+	echo "$data_dir: not empty!"
+	instdir_empty=no
+fi
+
+cd "$etc_dir"
+del_files {uls.langs,uls.id_ranges,uls.sysprops}
+
+cd /tmp
+
+if is_dir_empty "$etc_dir"; then
+	if [ "$can_del_etcdir" = "yes" ]; then
+		del_tree "$etc_dir"
+	fi
+fi
+
+if [ "$sysdir_installed" = "no" ] && [ "$instdir_empty" = "yes" ]; then
+	del_tree "$ULS_INST_DIR"
+fi

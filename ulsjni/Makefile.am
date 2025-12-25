@@ -1,7 +1,6 @@
 
 include $(top_srcdir)/uls.config
 
-SUBDIRS = libulsjni src tests 
+SUBDIRS = src libulsjni tests
 
 ACLOCAL_AMFLAGS = -I m4
-

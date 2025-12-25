@@ -54,7 +54,7 @@ uls_wputstr(const wchar_t *wstr)
 #endif
 
 	if (austr == NULL) {
-		err_wlog(L"encoding error!");
+		err_wlog(L"%hs: encoding error!", __func__);
 	} else {
 		aulen = csz_length(uls_ptr(csz));
 		uls_put_binstr(austr, aulen, _uls_stdio_fd(1));
@@ -73,7 +73,7 @@ uls_dump_utf8str_wstr(const wchar_t *wstr)
 	csz_init(uls_ptr(csz), (wlen+1)*ULS_UTF8_CH_MAXLEN);
 
 	if ((ustr = uls_wstr2ustr(wstr, wlen, uls_ptr(csz))) == NULL) {
-		err_wlog(L"encoding error!");
+		err_wlog(L"%hs: encoding error!", __func__);
 	} else {
 		uls_dump_utf8str(ustr);
 	}
@@ -170,7 +170,7 @@ uls_path_normalize_wstr(const wchar_t *wfpath, wchar_t *wfpath2)
 	csz_init(uls_ptr(csz), -1);
 
 	if ((ustr = uls_wstr2ustr(wfpath, -1, uls_ptr(csz))) == NULL) {
-		err_wlog(L"encoding error!");
+		err_wlog(L"%hs: encoding error!", __func__);
 		csz_deinit(uls_ptr(csz));
 		return -1;
 	}
@@ -186,7 +186,7 @@ uls_path_normalize_wstr(const wchar_t *wfpath, wchar_t *wfpath2)
 	csz_deinit(uls_ptr(csz));
 
 	if (wbuf2 == NULL) {
-		err_wlog(L"encoding error!");
+		err_wlog(L"%hs: encoding error!", __func__);
 		csz_deinit(uls_ptr(csz_wstr2));
 		return -1;
 	}
@@ -216,6 +216,68 @@ uls_mkdir_wstr(const wchar_t *wfilepath)
 
 	csz_deinit(uls_ptr(csz));
 	return rval;
+}
+
+wchar_t*
+uls_str_skip_blanks_wstr(const wchar_t *lptr)
+{
+	wchar_t wch;
+
+	for ( ; (wch=*lptr) == L' ' || wch == L'\t'; lptr++)
+		/* nothing */;
+	return (wchar_t *) lptr;
+}
+
+wchar_t*
+uls_str_split_litstr_wstr(wchar_t *wstr, wchar_t qch)
+{
+	wchar_t   wch, *wptr, *wptr1;
+	int esc_ch = 0;
+
+	for (wptr1 = wptr = wstr; ; wptr++) {
+		wch = *wptr;
+		if (!uls_isprint(wch)) { // ctrl-ch or '\0'
+			if (wch != '\0') ++wptr;
+			break;
+		}
+
+		if (esc_ch) {
+			*wptr1++ = wch;
+			esc_ch = 0;
+		} else if (wch == L'\\') {
+			esc_ch = 1;
+		} else if (wch == qch) {
+			++wptr;
+			break;
+		} else {
+			*wptr1++ = wch;
+		}
+	}
+
+	*wptr1 = L'\0';
+	return wptr;
+}
+
+wchar_t*
+uls_str_splitstr_wstr(wchar_t **p_wstr, int *p_wlen)
+{
+	wchar_t   *wstr = *p_wstr;
+	wchar_t   wch, *ptr, *ptr0;
+	int wlen;
+
+	ptr0 = ptr = uls_str_skip_blanks_wstr(wstr);
+
+	for (wlen = 0; (wch=*ptr) != L'\0'; ptr++) {
+		if (wch == L' ' || wch == L'\t') {
+			wlen = (int) (ptr - ptr0);
+			*ptr++ = L'\0';
+			break;
+		}
+	}
+
+	if (p_wlen != NULL) *p_wlen = wlen;
+	*p_wstr = ptr;
+	return ptr0;
 }
 
 wchar_t*
@@ -329,6 +391,36 @@ uls_explode_wstr(wchar_t **ptr_wline, wchar_t delim_wch, wchar_t **args, int n_a
 	uls_deinit_arglst(uls_ptr(arglst));
 
 	return n_wrd;
+}
+
+const wchar_t*
+uls_filename_wstr(const wchar_t *wfilepath, int* len_wfname)
+{
+	const wchar_t *wfilename;
+	int i, wlen;
+
+	wlen = uls_wstrlen(wfilepath);
+	for (i = wlen - 1; i >= 0; i--) {
+		if (wfilepath[i] == ULS_FILEPATH_DELIM) {
+			break;
+		}
+	}
+
+	++i;
+	wfilename = wfilepath + i;
+
+	if (len_wfname != NULL) {
+		wlen -= i;
+		for (i = wlen - 1; i >= 0; i--) {
+			if (wfilename[i] == '.') {
+				wlen = i;
+				break;
+			}
+		}
+		*len_wfname = wlen;
+	}
+
+	return wfilename;
 }
 
 int

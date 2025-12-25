@@ -371,7 +371,6 @@ ULS_DLL_EXTERN int ustr_num_wchars(const char *str, int len, uls_outparam_ptr_t 
 int is_filepath_delim(char ch);
 int is_absolute_path(const char *path);
 int is_path_prefix(const char *filepath);
-ULS_DLL_EXTERN int uls_getenv(const char *name, char *buf, int buf_siz);
 
 void isp_init(uls_isp_ptr_t isp, int init_size);
 void isp_reset(uls_isp_ptr_t isp);
@@ -379,6 +378,8 @@ void isp_deinit(uls_isp_ptr_t isp);
 int isp_find(uls_isp_ptr_t isp, const char *str, int len);
 int isp_insert(uls_isp_ptr_t isp, const char *str, int len);
 const char *isp_get_str(uls_isp_ptr_t isp, int idx);
+
+ULS_DLL_EXTERN int uls_getenv(const char *name, char *buf, int buf_siz);
 
 ULS_DLL_EXTERN ULS_DECL_EXTERN_STATIC void uls_init_mutex(uls_mutex_t mtx);
 ULS_DLL_EXTERN ULS_DECL_EXTERN_STATIC void uls_deinit_mutex(uls_mutex_t mtx);

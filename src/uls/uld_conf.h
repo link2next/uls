@@ -81,14 +81,14 @@ int uld_proc_line(char *lptr, uls_lex_ptr_t uls, int n2_vx_namelist);
 uls_tokdef_vx_ptr_t uld_find_tokdef_vx(uls_lex_ptr_t uls, int n_vx_namelist, const char *name);
 int uld_add_aliases(uls_tokdef_vx_ptr_t e_vx, const char *line_aliases);
 int __uld_post_names(uld_names_map_ptr_t names_map);
-int uld_load_fp(uls_lex_ptr_t uls, FILE *fin_uld, int siz_uld_filebuff);
+int uld_load_fp(uls_lex_ptr_t uls, FILE *fin_uld);
 
 void uls_init_nam_tok(uls_nam_tok_ptr_t nam_tok);
 void uls_deinit_nam_tok(uls_nam_tok_ptr_t nam_tok);
 #endif
 
 #ifdef ULS_DECL_PUBLIC_PROC
-ULS_DLL_EXTERN uld_names_map_ptr_t uld_prepare_names(uls_lex_ptr_t uls, int siz_uldfile);
+ULS_DLL_EXTERN uld_names_map_ptr_t uld_prepare_names(uls_lex_ptr_t uls);
 ULS_DLL_EXTERN int uld_change_names(uld_names_map_ptr_t names_map, uld_line_ptr_t names);
 ULS_DLL_EXTERN int uld_post_names(uld_names_map_ptr_t names_map);
 

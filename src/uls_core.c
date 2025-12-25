@@ -83,24 +83,26 @@ ULS_QUALIFIED_METHOD(get_number)(uls_lex_ptr_t uls, uls_context_ptr_t ctx, uls_p
 	char *cnst_suffixes = uls->numcnst_suffixes;
 	uls_wch_t numsep = uls->numcnst_separator;
 	uls_ptrtype_tool(outbuf) tokbuf = uls_ptr(ctx->tokbuf);
-	const char *cnst_suffix, *srp, *lptr, *lptr0;
+	const char *cnst_suffix, *srp, *lptr = parm_ln->lptr, *lptr0;
 	uls_type_tool(outparam) parms1;
 	int k = 0, l_tokstr, l_cnst_suffix, n;
 	char ch;
 
-	lptr0 = lptr = parm_ln->lptr;
-	parms1.flags = 0;
-	parms1.wch = numsep;
+	lptr0 = lptr;
 
 	for (n = 0; *lptr == '0'; lptr++) ++n;
 	if (n > 0) --lptr;
 
+	parms1.flags = 0;
+	parms1.wch = numsep;
+
 	if (n > 0 && lptr[1] == '.') {
 		parms1.n1 = 0;
 		parms1.n2 = 10;
+		parms1.lptr_end = NULL;
 	} else {
 		lptr = lptr0;
-		 find_prefix_radix(uls_ptr(parms1), uls, lptr);
+		find_prefix_radix(uls_ptr(parms1), uls, lptr);
 		srp = parms1.lptr_end = _uls_tool_(get_standard_number_prefix)(parms1.n2);
 		if (parms1.n2 != 10 && srp == NULL) { // NERVER-REACHED
 			_uls_log(err_log)("ERROR: Unsupported radix = %d", parms1.n2);
@@ -413,7 +415,7 @@ ULS_QUALIFIED_METHOD(get_idtok_list)(uls_lex_ptr_t uls, uls_ptrtype_tool(outpara
 
 int
 ULS_QUALIFIED_METHOD(ulc_load)(ulc_header_ptr_t uls_config, FILE *fin_ulc,
-	FILE *fin_uld, int siz_uld_filebuff, FILE *fin_ulf)
+	FILE *fin_uld, FILE *fin_ulf)
 {
 	uls_lex_ptr_t uls = uls_config->uls;
 	ulc_fpitem_ptr_t  ulc_fp_stack;
@@ -503,7 +505,7 @@ ULS_QUALIFIED_METHOD(ulc_load)(ulc_header_ptr_t uls_config, FILE *fin_ulc,
 	}
 
 	if (fin_uld != NULL) {
-		rc = uld_load_fp(uls, fin_uld, siz_uld_filebuff);
+		rc = uld_load_fp(uls, fin_uld);
 		_uls_tool_(fp_close)(fin_uld);
 		if (rc < 0) {
 			_uls_log(err_log)("Failed to read uld-file!");
@@ -887,6 +889,13 @@ ULS_QUALIFIED_METHOD(uls_gettok_raw)(uls_lex_ptr_t uls)
 
 	if ((_uls_tool_(isdigit)(ch) || ch == '.') &&
 		(parm_ln.lptr=lptr, k=get_number(uls, ctx, uls_ptr(parm_ln)), lptr=parm_ln.lptr, k > 0)) {
+		/*
+			The lexeme of NUMBER token does not include the minus sign.
+				i.e., The token string represents non-negative number.
+				1) An input string "a-3.14" sholud be tokenized into the sequence { ID('a') '-' NUMBER('3.14') }
+				2) "a=-3.14" is tokenized into the sequence { ID('a') '=' -' NUMBER('3.14') }.
+		*/
+
 		e_vx = slots_rsv[NUM_TOK_IDX];
 		ctx->s_val = ctx->tokbuf.buf;
 		ctx->s_val_len = ctx->s_val_wchars = k;
@@ -1202,6 +1211,40 @@ ULS_QUALIFIED_METHOD(uls_tok2name_2)(uls_lex_ptr_t uls, int t, uls_ptrtype_tool(
 }
 
 int
+ULS_QUALIFIED_METHOD(uls_name2tok)(uls_lex_ptr_t uls, const char *name)
+{
+	uls_decl_parray_slots_init(slots_vx, tokdef_vx, uls_ptr(uls->tokdef_vx_array));
+	uls_tokdef_vx_ptr_t e_vx;
+	uls_tokdef_name_ptr_t e_nam;
+	int i, tok_ret = uls_toknum_err(uls);
+	const char *cptr;
+
+	if (name == NULL || *name == '\0') {
+		return tok_ret;
+	}
+
+	for (i = 0; i < uls->tokdef_vx_array.n; i++) {
+		e_vx = slots_vx[i];
+
+		cptr = uls_get_namebuf_value(e_vx->name);
+		if (*cptr == '\0') continue;
+
+		if (uls_streql(cptr, name)) {
+			return e_vx->tok_id;
+		}
+
+		for (e_nam = e_vx->tokdef_names; e_nam != nilptr; e_nam = e_nam->next) {
+			cptr = uls_get_namebuf_value(e_nam->name);
+			if (uls_streql(cptr, name)) {
+				return e_vx->tok_id;
+			}
+		}
+	}
+
+	return tok_ret;
+}
+
+int
 ULS_QUALIFIED_METHOD(_uls_get_tokid_list)(uls_lex_ptr_t uls, uls_ptrtype_tool(outparam) parms)
 {
 	uls_onechar_table_ptr_t tbl = uls_ptr(uls->onechar_table);
@@ -1430,7 +1473,6 @@ ULS_QUALIFIED_METHOD(__load_ulc_from_config_files)(ulc_header_ptr_t hdr, const c
 
 	FILE   *fin_ulc, *fin_ulf, *fin_uld = NULL;
 	int    rc, len_basedir, len_specname, typ_fpath;
-	int    siz_uld_filebuff = 0;
 	uls_type_tool(outparam) parms1;
 
 	parms1.line = specname;
@@ -1445,12 +1487,6 @@ ULS_QUALIFIED_METHOD(__load_ulc_from_config_files)(ulc_header_ptr_t hdr, const c
 			_uls_log(err_log)("can't open file %s", confname);
 			return -1;
 		}
-
-		if ((rc = _uls_tool_(fp_filesize)(fin_uld)) < 0) {
-			_uls_log(err_log)("invalid file: %s", confname);
-			return -1;
-		}
-		siz_uld_filebuff = uld_calc_filebuff_size(rc);
 
 		rc = _uls_tool_(fp_gets)(fin_uld, linebuff, sizeof(linebuff), 0);
 		if ( rc < 3 || !(linebuff[0] == '#' && linebuff[1] == '@')) {
@@ -1484,7 +1520,7 @@ ULS_QUALIFIED_METHOD(__load_ulc_from_config_files)(ulc_header_ptr_t hdr, const c
 	}
 	fin_ulf = (FILE *) parms1.native_data;
 
-	if ((rc = ulc_load(hdr, fin_ulc, fin_uld, siz_uld_filebuff, fin_ulf)) < 0) {
+	if ((rc = ulc_load(hdr, fin_ulc, fin_uld, fin_ulf)) < 0) {
 		return -1;
 	}
 	// fin_ulc, fin_ulf, fin_uld consumed
@@ -1587,12 +1623,12 @@ ULS_QUALIFIED_METHOD(uls_skip_blanks)(uls_lex_ptr_t uls)
 	return stat;
 }
 
-int
-ULS_QUALIFIED_METHOD(uls_is_quote_tok)(uls_lex_ptr_t uls, int tok_id)
+ULS_QUALIFIED_RETTYP(uls_quotetype_ptr_t)
+ULS_QUALIFIED_METHOD(uls_get_quote)(uls_lex_ptr_t uls, int tok_id)
 {
 	uls_quotetype_ptr_t qmt;
 	qmt = uls_find_quotetype_by_tokid(uls_ptr(uls->quotetypes), uls->quotetypes.n, tok_id);
-	return qmt != nilptr ? 1 : 0;
+	return qmt;
 }
 
 uls_voidptr_t
@@ -1922,27 +1958,6 @@ ULS_QUALIFIED_METHOD(uls_cardinal_toknam)(char *toknam, uls_lex_ptr_t uls, int t
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_get_number_prefix)(uls_ptrtype_tool(outparam) parms, char *prefix)
-{
-	const char *tok_str = parms->lptr;
-	int i = 0;
-
-	if (*tok_str == '-') {
-		prefix[i++] = '-';
-		++tok_str;
-	}
-
-	if (*tok_str == '.') {
-		prefix[i++] = '0';
-	}
-
-	prefix[i] = '\0';
-	parms->lptr = tok_str;
-
-	return i;
-}
-
-int
 ULS_QUALIFIED_METHOD(uls_cardinal_toknam_deco)(char *toknam_buff, const char *toknam)
 {
 	int len;
@@ -1951,56 +1966,64 @@ ULS_QUALIFIED_METHOD(uls_cardinal_toknam_deco)(char *toknam_buff, const char *to
 }
 
 int
-ULS_QUALIFIED_METHOD(uls_cardinal_toknam_deco_lxmpfx)(char *toknam_buff, char *lxmpfx, uls_lex_ptr_t uls,
-	int tok_id, uls_ptrtype_tool(outparam) parms)
+ULS_QUALIFIED_METHOD(uls_cardinal_toknam_deco_lxmpfx)(char *toknam_buff,
+	char *lxmpfx, uls_lex_ptr_t uls, int tok_id, const char *tokstr, int minus)
 {
 	uls_xcontext_ptr_t xctx = uls_ptr(uls->xcontext);
 	char toknam[ULS_CARDINAL_TOKNAM_SIZ+1];
-	int  has_lxm;
+	int  has_lxm, k = 0;
 
-	has_lxm = uls_cardinal_toknam(toknam, uls, tok_id, parms->lptr);
+	has_lxm = uls_cardinal_toknam(toknam, uls, tok_id, tokstr);
 	uls_cardinal_toknam_deco(toknam_buff, toknam);
 
 	if (tok_id == xctx->toknum_NUMBER) {
-		uls_get_number_prefix(parms, lxmpfx);
-	} else {
-		lxmpfx[0] = '\0';
+		if (minus) {
+			lxmpfx[k++] = '-';
+		}
+		if (*tokstr == '.') {
+			lxmpfx[k++] = '0';
+		}
 	}
 
+	lxmpfx[k] = '\0';
 	return has_lxm;
 }
 
 void
 ULS_QUALIFIED_METHOD(uls_dump_tok)(uls_lex_ptr_t uls, const char *pfx, const char *suff)
 {
+	uls_dump_tok_1(uls, 0, pfx, suff);
+}
+
+void
+ULS_QUALIFIED_METHOD(uls_dump_tok_1)(uls_lex_ptr_t uls, int minus, const char *pfx, const char *suff)
+{
 	int tok_id = __uls_tok(uls), has_lxm;
-	const char *numsuff, *tok_str = uls_tokstr(uls);
+	const char *numsuff, *tokstr = uls_tokstr(uls);
 	char toknam_buff[ULS_CARDINAL_TOKNAM_SIZ+1];
 	char lxmpfx[ULS_CARDINAL_LXMPFX_MAXSIZ+1];
-	uls_type_tool(outparam) parms;
 
 	if (pfx == NULL) pfx = "";
 	if (suff == NULL) suff = "";
 
-	parms.lptr = tok_str;
-	has_lxm = uls_cardinal_toknam_deco_lxmpfx(toknam_buff, lxmpfx, uls, tok_id, uls_ptr(parms));
-	tok_str = parms.lptr;
-
+	has_lxm = uls_cardinal_toknam_deco_lxmpfx(toknam_buff, lxmpfx, uls, tok_id, tokstr, minus);
 	_uls_log_(printf)("%s%s", pfx, toknam_buff);
+
 	if (has_lxm) {
-		_uls_log_(printf)(" %s%s", lxmpfx, tok_str);
+		_uls_log_(printf)(" %s%s", lxmpfx, tokstr);
 		if (tok_id == uls->xcontext.toknum_NUMBER) {
 			if ((numsuff = uls_number_suffix(uls)) != NULL && *numsuff != '\0') {
 				_uls_log_(printf)(" %s", numsuff);
 			}
 		}
 	}
+
 	_uls_log_(printf)("%s", suff);
 }
 
 void
 ULS_QUALIFIED_METHOD(_uls_dump_tok_2)(const char *pfx, const char *id_str,
-	const char *tok_str, const char *suff)
+	const char *tokstr, const char *suff)
 {
 	char toknam_buff[ULS_CARDINAL_TOKNAM_SIZ+1];
 
@@ -2009,7 +2032,34 @@ ULS_QUALIFIED_METHOD(_uls_dump_tok_2)(const char *pfx, const char *id_str,
 
 	uls_cardinal_toknam_deco(toknam_buff, id_str);
 	_uls_log_(printf)("%s%s", pfx, toknam_buff);
-	_uls_log_(printf)(" %s%s", tok_str, suff);
+	_uls_log_(printf)(" %s%s", tokstr, suff);
+}
+
+void
+ULS_QUALIFIED_METHOD(_uls_dump_tok_3)(uls_lex_ptr_t uls, int is_prev_minus, int is_minus_op)
+{
+	const char *pfx = "\t", *suff = "\n";
+	int lno = lno = uls_get_lineno(uls), tok_id = uls_tok(uls);
+	int is_minus = 0, is_zero;
+
+	is_zero = uls_is_zero(uls);
+	if (is_minus_op <= 0 && (is_prev_minus && uls_is_number(uls))) {
+		if (!is_zero) is_minus = 1;
+	}
+
+	if (is_prev_minus) {
+		_uls_log_(printf)("%3d", lno);
+		if (!is_minus && !is_zero) {
+			_uls_dump_tok_2(pfx, "", "-", suff);
+			_uls_log_(printf)("%3d", lno);
+		}
+		uls_dump_tok_1(uls, is_minus, pfx, suff);
+	} else {
+		if (tok_id != '-') {
+			_uls_log_(printf)("%3d", lno);
+			uls_dump_tok_1(uls, 0, pfx, suff);
+		}
+	}
 }
 
 void

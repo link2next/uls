@@ -159,7 +159,6 @@ Test-1: input_file = tmpl_ex.txt
 	[       ] }
 	[       ] ;
 Test-2: input_file = tmpl_ex.uls
-tnam = 'T' tval='unsigned long long'
 	[     ID] class
 	[     ID] TmplStack
 	[       ] {
@@ -486,8 +485,6 @@ Test-3: input_file = tmpl_ex.txt
 	[125] }
 	[59] ;
 Test-4: input_file = tmpl_ex.txt
-tnam = 'TVAR2' tval='long double'
-tnam = 'TVAR1' tval='unsigned long long'
 	[1] class
 	[1] TmplStack
 	[123] {

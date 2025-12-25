@@ -42,6 +42,9 @@
 #include <unistd.h>
 #include <string.h>
 #include <fcntl.h>
+#ifndef __ULS_WINDOWS__
+#include <locale.h>
+#endif
 
 #include "sample_lex.h"
 
@@ -155,11 +158,38 @@ test_initial_state(LPCTSTR fpath)
 	return 0;
 }
 
+static int
+set_minus_state(int state, int t)
+{
+	if (state < -1) {
+again_1:
+		if (t == TOK_NUMBER || t == TOK_ID || t == ')') {
+			state = -1;
+		} else {
+			state = -2;
+		}
+	} else if (state == -1) {
+		if (t == '-') {
+			state = 0;
+		} else {
+			goto again_1;
+		}
+	} else if (state == 0) {
+		if (t == TOK_ID) {
+			state = 1;
+		} else {
+			goto again_1;
+		}
+	}
+
+	return state;
+}
+
 int
 test_uls(LPCTSTR fpath)
 {
 	uls_lex_ptr_t uls = sample_lex;
-	int fd, t;
+	int fd, tok, is_minus_op = -2, is_prev_minus = 0;
 
 	if ((fd = uls_fd_open(fpath, ULS_FIO_READ)) < 0) {
 		err_log(_T("%s: file open error"), fpath);
@@ -174,15 +204,18 @@ test_uls(LPCTSTR fpath)
 	uls_set_tag(uls, fpath, 1);
 
 	for ( ; ; ) {
-		if ((t=uls_get_tok(uls)) == TOK_ERR) {
+		if ((tok = uls_get_tok(uls)) == TOK_ERR) {
 			err_log(_T("TOK_ERR!"));
 			break;
-		} else if (t == TOK_EOI) {
+		} else if (tok == TOK_EOI) {
 			break;
 		}
 
-		uls_printf(_T("%3d"), uls_get_lineno(uls));
-		uls_dump_tok(uls, _T("\t"), _T("\n"));
+		is_minus_op = set_minus_state(is_minus_op, tok);
+		_uls_dump_tok_3(uls, is_prev_minus, is_minus_op);
+
+		if (is_minus_op > 0) is_minus_op = -2;
+		is_prev_minus = (tok == '-') ? 1 : 0;
 	}
 
 	close(fd);
@@ -394,12 +427,52 @@ _tmain(int n_targv, LPTSTR *targv)
 	return 0;
 }
 
+#ifndef ULS_WINDOWS
+static int
+set_uls_locale(void)
+{
+	const char *cptr0, *cptr;
+	char lang_entry[16], lang_buff[16];
+	const char *locale_list[] = { "", "C", "en_US", NULL };
+	const char *encoding_suffs[] = { "UTF-8", "utf8", NULL };
+	int i, j, len, bReset = 0;
+
+	if ((cptr0 = getenv("LANG")) != NULL) {
+		if ((cptr = strchr(cptr0, '.')) != NULL &&
+			(len=(int)(cptr-cptr0)) > 0 && len < 8) {
+			for (j=0; j<len; j++) lang_entry[j] = cptr0[j];
+			lang_entry[len] = '\0';
+			locale_list[0] = lang_entry;
+		}
+	}
+
+	for (i = 0; (cptr0 = locale_list[i]) != NULL; i++) {
+		if ((len = strlen(cptr0)) <= 0) continue;
+		strcpy(lang_buff, cptr0);
+
+		for (j=0; (cptr = encoding_suffs[j]) != NULL; j++) {
+			lang_buff[len] = '.';
+			strcpy(lang_buff+len+1, cptr);
+			if (setlocale(LC_ALL, lang_buff) != NULL) {
+				bReset = 1;
+				break;
+			}
+		}
+		if (bReset > 0) break;
+	}
+
+	return bReset;
+}
+#endif
+
 int
 main(int argc, char *argv[])
 {
 	LPTSTR *targv;
 	int stat;
-
+#ifndef __ULS_WINDOWS__
+	set_uls_locale();
+#endif
 	ULS_GET_WARGS_LIST(argc, argv, targv);
 	stat = _tmain(argc, targv);
 	ULS_PUT_WARGS_LIST(argc, targv);

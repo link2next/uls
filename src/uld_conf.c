@@ -43,7 +43,7 @@
 int
 ULS_QUALIFIED_METHOD(uld_calc_filebuff_size)(int filesize)
 {
-	return uls_ceil_log2(filesize + 1, 3);
+	return uls_ceil_log2(filesize + 1, 2);
 }
 
 ULS_DECL_STATIC int
@@ -221,17 +221,16 @@ ULS_QUALIFIED_METHOD(uld_add_aliases)(uls_tokdef_vx_ptr_t e_vx, const char *line
 	return stat;
 }
 
-
 ULS_DECL_STATIC void
 ULS_QUALIFIED_METHOD(writeline_uld_backup)(uls_xcontext_ptr_t xctx, const char *line, int linelen)
 {
 	char *buf = xctx->uldfile_buf;
 	int k = xctx->uldfile_buflen;
-	int bufsiz = xctx->uldfile_bufsiz;
+	int siz1, bufsiz = xctx->uldfile_bufsiz;
 
-	if (k + linelen + 1 >= bufsiz) {
-		_uls_log(err_log)("%s: overflow occurred when backing up uld file content!", __func__);
-		return;
+	if ((siz1 = k + linelen + 1) >= bufsiz) { // +1 for '\n'
+		bufsiz = xctx->uldfile_bufsiz = uls_ceil_log2(siz1 + 1, 9);
+		buf = xctx->uldfile_buf = (char *) _uls_tool_(mrealloc)(buf, bufsiz);
 	}
 
 	_uls_tool_(memcopy)(buf + k, line, linelen);
@@ -243,14 +242,14 @@ ULS_QUALIFIED_METHOD(writeline_uld_backup)(uls_xcontext_ptr_t xctx, const char *
 }
 
 int
-ULS_QUALIFIED_METHOD(uld_load_fp)(uls_lex_ptr_t uls, FILE *fin_uld, int siz_uld_filebuff)
+ULS_QUALIFIED_METHOD(uld_load_fp)(uls_lex_ptr_t uls, FILE *fin_uld)
 {
 	uls_xcontext_ptr_t xctx = uls_ptr(uls->xcontext);
 	char linebuff[ULS_LINEBUFF_SIZ__ULD+1], *lptr;
 	int  n2_vx_namelist, linelen, lno = 1, stat = 0;
 	uld_names_map_ptr_t names_map;
 
-	names_map = uld_prepare_names(uls, siz_uld_filebuff);
+	names_map = uld_prepare_names(uls);
 	n2_vx_namelist = names_map->n_vx_namelist;
 
 	xctx->uldfile_buflen = xctx->uldfile_nlines = 0;
@@ -278,9 +277,9 @@ ULS_QUALIFIED_METHOD(uld_load_fp)(uls_lex_ptr_t uls, FILE *fin_uld, int siz_uld_
 		}
 	}
 
-	xctx->uldfile_buf[xctx->uldfile_buflen] = '\0';
 	xctx->uldfile_bufsiz = uld_calc_filebuff_size(xctx->uldfile_buflen + 1);
 	xctx->uldfile_buf = (char *) _uls_tool_(mrealloc)(xctx->uldfile_buf, xctx->uldfile_bufsiz);
+	xctx->uldfile_buf[xctx->uldfile_buflen] = '\0';
 
 	if (uld_post_names(names_map) < 0) {
 		_uls_log(err_log)("can't process uld-file");
@@ -301,7 +300,7 @@ ULS_QUALIFIED_METHOD(uls_deinit_nam_tok)(uls_nam_tok_ptr_t nam_tok)
 }
 
 ULS_QUALIFIED_RETTYP(uld_names_map_ptr_t)
-ULS_QUALIFIED_METHOD(uld_prepare_names)(uls_lex_ptr_t uls, int siz_uldfile)
+ULS_QUALIFIED_METHOD(uld_prepare_names)(uls_lex_ptr_t uls)
 {
 	uls_xcontext_ptr_t xctx = uls_ptr(uls->xcontext);
 	uls_decl_parray_slots_init(slots_vx, tokdef_vx, uls_ptr(uls->tokdef_vx_array));
@@ -329,8 +328,8 @@ ULS_QUALIFIED_METHOD(uld_prepare_names)(uls_lex_ptr_t uls, int siz_uldfile)
 	names_map->uls = uls;
 	names_map->n_vx_namelist = n;
 
-	xctx->uldfile_buf = (char *) _uls_tool_(malloc)(siz_uldfile);
-	xctx->uldfile_bufsiz = siz_uldfile;
+	xctx->uldfile_bufsiz = 0;
+	xctx->uldfile_buf = NULL;
 	xctx->uldfile_buflen = 0;
 
 	return names_map;
@@ -374,6 +373,9 @@ ULS_QUALIFIED_METHOD(uld_change_names)(uld_names_map_ptr_t names_map, uld_line_p
 
 	k = _uls_tool(str_trim_end)(linebuff, k);
 	linebuff[k++] = '\n';
+
+	xctx->uldfile_bufsiz = uls_ceil_log2(xctx->uldfile_bufsiz + k + 1, 9);
+	xctx->uldfile_buf = (char *) _uls_tool_(mrealloc)(xctx->uldfile_buf, xctx->uldfile_bufsiz);
 
 	_uls_tool_(memcopy)(xctx->uldfile_buf + xctx->uldfile_buflen, linebuff, k);
 	xctx->uldfile_buflen += k;
@@ -462,7 +464,7 @@ ULS_QUALIFIED_METHOD(uld_dump_sample)(uls_lex_ptr_t uls)
 	int i;
 
 	_uls_log_(printf)("#@%s\n\n", uls_get_namebuf_value(uls->ulc_name));
-	for (i=0; i < uls->tokdef_vx_array.n; i++) {
+	for (i = 0; i < uls->tokdef_vx_array.n; i++) {
 		e_vx = slots_vx[i];
 
 		if ((cptr = uls_get_namebuf_value(e_vx->name))[0] != '\0')

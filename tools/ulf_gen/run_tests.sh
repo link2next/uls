@@ -58,7 +58,7 @@ if [ ! -x $MAKE_ULF ]; then
 fi
 
 if [ ! -e $TEST_DIR ]; then
-	mkdir -p $TEST_DIR
+	mkdir $TEST_DIR
 fi
 
 cmdline="$MAKE_ULF -o  $OUTPUT_FILE_DFL -L $ULC_FILE -l $TEST_FILE_1 $TARGET_DIR_1"

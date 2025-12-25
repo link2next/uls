@@ -28,6 +28,15 @@
 #   This file is part of ULS, Unified Lexical Scheme.
 #
 
+command_list_used="diff mkdir"
+for cmd in $command_list_used; do
+	filepath=$(which $cmd)
+	if [ -z "$filepath" ]; then
+		echo "$cmd: not found!"
+		exit 1
+	fi
+done
+
 #opt_verbose=$ULS_VERBOSE
 opt_verbose=no
 opt_noexec=no
@@ -54,7 +63,7 @@ if [ $# -ge 2 ]; then
 fi
 
 if [ ! -e $TEST_DIR ]; then
-	mkdir -p $TEST_DIR
+	mkdir $TEST_DIR
 fi
 
 if [ ! -d $TEST_DIR ]; then
@@ -168,7 +177,6 @@ $cmdline
 if [ $? != 0 ]; then
 	echo "FAIL: $testfile";
 fi
-
 
 rm -f $DUMPFILE_TXT2
 rm -f $TMPL_ULSFILE

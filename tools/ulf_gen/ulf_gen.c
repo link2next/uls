@@ -38,6 +38,7 @@
 #include "uls/uls_freq.h"
 
 #include "ult_utils.h"
+#include "ult_log.h"
 #include <ctype.h>
 #include <time.h>
 
@@ -113,43 +114,43 @@ static const struct option longopts[] = {
 
 static void usage_synopsis(void)
 {
-	err_log("Usage: %s -L <ulc-file> [options] <file|dir>", progname);
-	err_log("  %s generates the frequencies of the keywords of a language.", progname);
-	err_log("       %s -L <ulc-file> <file1> <file2> ...", progname);
-	err_log("       %s -L <ulc-file> -o /usr/local/share/a.ulf <file1> <file2> ...", progname);
-	err_log("       %s -L <ulc-file> -l <list-file> <target-dir>", progname);
+	ult_log("Usage: %s -L <ulc-file> [options] <file|dir>", progname);
+	ult_log("  %s generates the frequencies of the keywords of a language.", progname);
+	ult_log("       %s -L <ulc-file> <file1> <file2> ...", progname);
+	ult_log("       %s -L <ulc-file> -o /usr/local/share/a.ulf <file1> <file2> ...", progname);
+	ult_log("       %s -L <ulc-file> -l <list-file> <target-dir>", progname);
 }
 
 static void usage_desc(void)
 {
 #ifdef __ULS_WINDOWS__
-	err_log("  -L <ulc-spec>      Specify the lexical-spec(*.ulc) of the language");
-	err_log("  -l <list-file>     Specify the list of data source files");
-	err_log("  -o <a-file>        Specify the the output filepath(*.ulf)");
-	err_log("  -O <level=1,2,3>   Specify the optimizing level for hashcode");
-	err_log("  -n <num>           Specify the number of random samples");
-	err_log("  -v, --verbose      verbose mode");
-	err_log("  -V, --version      Print the version information");
-	err_log("  -h, --help         Display the short help");
+	ult_log("  -L <ulc-spec>      Specify the lexical-spec(*.ulc) of the language");
+	ult_log("  -l <list-file>     Specify the list of data source files");
+	ult_log("  -o <a-file>        Specify the the output filepath(*.ulf)");
+	ult_log("  -O <level=1,2,3>   Specify the optimizing level for hashcode");
+	ult_log("  -n <num>           Specify the number of random samples");
+	ult_log("  -v, --verbose      verbose mode");
+	ult_log("  -V, --version      Print the version information");
+	ult_log("  -h, --help         Display the short help");
 #else
-	err_log("  -L, --lang=<ulc-spec>   Specify the lexical-spec(*.ulc) of the language");
-	err_log("  -l, --list=<list-file>  Specify the list of data source files");
-	err_log("  -o, --output=<a-file>   Specify the the output filepath(*.ulf)");
-	err_log("  -O, --optimize <1,2,3>  Specify the optimizing level for hashcode");
-	err_log("  -n <num>                Specify the number of random samples");
-	err_log("  -v, --verbose           verbose mode");
-	err_log("  -V, --version           Print the version information");
-	err_log("  -h, --help              Display the short help");
+	ult_log("  -L, --lang=<ulc-spec>   Specify the lexical-spec(*.ulc) of the language");
+	ult_log("  -l, --list=<list-file>  Specify the list of data source files");
+	ult_log("  -o, --output=<a-file>   Specify the the output filepath(*.ulf)");
+	ult_log("  -O, --optimize <1,2,3>  Specify the optimizing level for hashcode");
+	ult_log("  -n <num>                Specify the number of random samples");
+	ult_log("  -v, --verbose           verbose mode");
+	ult_log("  -V, --version           Print the version information");
+	ult_log("  -h, --help              Display the short help");
 #endif
 }
 
 static void usage_brief(void)
 {
 	usage_synopsis();
-	err_log("");
+	ult_log("");
 
 	usage_desc();
-	err_log("");
+	ult_log("");
 }
 
 static void usage(void)
@@ -161,27 +162,27 @@ static void usage_long(void)
 {
 	usage_brief();
 
-	err_log("%s collects the usage statistics of given language", progname);
-	err_log(" by sampling from source code files.");
-	err_log("It dumps the frequencies of keywords.");
-	err_log("After saving them in the file suffixed by '*.ulf', you can use it together with its ulc-file.");
-	err_log("For example, Let the output file of 'sample.ulc' be 'sample.ulf'.");
-	err_log("The file 'sample.ulf' is together read if only it exists in the same directory of sample.ulc.");
-	err_log("The ulf-file is optional but can accelerates the generated lexical tokenizer.");
-	err_log("");
+	ult_log("%s collects the usage statistics of given language", progname);
+	ult_log(" by sampling from source code files.");
+	ult_log("It dumps the frequencies of keywords.");
+	ult_log("After saving them in the file suffixed by '*.ulf', you can use it together with its ulc-file.");
+	ult_log("For example, Let the output file of 'sample.ulc' be 'sample.ulf'.");
+	ult_log("The file 'sample.ulf' is together read if only it exists in the same directory of sample.ulc.");
+	ult_log("The ulf-file is optional but can accelerates the generated lexical tokenizer.");
+	ult_log("");
 
-	err_log("To get the ulf-file of 'sample.ulc' from listed source code files,");
-	err_log("  %s -L sample.ulc a.c b.c src/d.c", progname);
-	err_log("");
+	ult_log("To get the ulf-file of 'sample.ulc' from listed source code files,");
+	ult_log("  %s -L sample.ulc a.c b.c src/d.c", progname);
+	ult_log("");
 
-	err_log("To save the output-file to other file path than default, use o-option.");
-	err_log("  %s -o /opt/share/b.ulf -L sample src/main.c src/main.h", progname);
-	err_log("");
+	ult_log("To save the output-file to other file path than default, use o-option.");
+	ult_log("  %s -o /opt/share/b.ulf -L sample src/main.c src/main.h", progname);
+	ult_log("");
 
-	err_log("To process all the file paths in the list file 'a.list'");
-	err_log("  %s -L sample -l a.list /package/home", progname);
-	err_log("This processes all the file paths joined by '/package/home'.");
-	err_log("");
+	ult_log("To process all the file paths in the list file 'a.list'");
+	ult_log("  %s -L sample -l a.list /package/home", progname);
+	ult_log("This processes all the file paths joined by '/package/home'.");
+	ult_log("");
 }
 
 static int ulfgen_options(int opt, char *optarg)
@@ -235,7 +236,7 @@ static int ulfgen_options(int opt, char *optarg)
 		break;
 
 	default:
-		err_log("undefined option -%c", opt);
+		ult_log("undefined option -%c", opt);
 		stat = -1;
 		break;
 	}
@@ -252,7 +253,7 @@ parse_options(int argc, char *argv[])
 	int   i0;
 
 	if (uls_getcwd(home_dir, sizeof(home_dir)) < 0)
-		err_panic("%s: fail to getcwd()", __func__);
+		ult_panic("%s: fail to getcwd()", __func__);
 
 	filelist = NULL;
 	out_file = NULL;
@@ -273,7 +274,7 @@ parse_options(int argc, char *argv[])
 #endif
 
 	if (config_file == NULL) {
-		err_log("specify the path of config-file(*.ulc)");
+		ult_log("specify the path of config-file(*.ulc)");
 		return -1;
 	}
 
@@ -349,15 +350,15 @@ dump_hash_freq(stat_of_round_ptr_t p_round)
 }
 
 int
-proc_file(uls_keyw_stat_list_t *ks_lst, const char *fpath)
+proc_file(uls_keyw_stat_list_t *ks_lst, const char *filepath)
 {
-	if (fpath == NULL) return 0;
+	if (filepath == NULL) return 0;
 
-	if (uls_push_file(sam_lex, fpath, 0) < 0) {
+	if (uls_push_file(sam_lex, filepath, 0) < 0) {
 		return -1;
 	}
 
-	err_log("processing %s, ...", fpath);
+	ult_log("processing %s, ...", filepath);
 	for ( ; ; ) {
 		uls_get_tok(sam_lex);
 		if (uls_is_eoi(sam_lex)) break;
@@ -377,7 +378,7 @@ proc_filelist(uls_keyw_stat_list_t *ks_lst, FILE *fp_list)
 	while (1) {
 		if ((len=uls_fp_gets(fp_list, linebuff, sizeof(linebuff), 0)) <= ULS_EOF) {
 			if (len < ULS_EOF) {
-				err_log("%s: io-error", __func__);
+				ult_log("%s: io-error", __func__);
 				stat = -1;
 			}
 			break;
@@ -395,7 +396,7 @@ proc_filelist(uls_keyw_stat_list_t *ks_lst, FILE *fp_list)
 		fpath[++i] = '\0';
 
 		if (proc_file(ks_lst, fpath) < 0) {
-			err_log("fail to process '%s'", fpath);
+			ult_log("fail to process '%s'", fpath);
 			stat = -1;
 			break;
 		}
@@ -560,7 +561,7 @@ __create_file_internal(uls_keyw_stat_list_t *ks_lst, const char *tgt_dir,
 	int i, rval;
 
 	if (ks_lst->lst.n <= 0) {
-		err_log("%s: No keywords!", __func__);
+		ult_log("%s: No keywords!", __func__);
 		init_stat_round(uls_ptr(best_round_stat));
 		hs = &best_round_stat.hcodes;
 		uls_hashfunc_set_params(uls_ptr(best_round_stat), 1, 1, 1);
@@ -572,17 +573,17 @@ __create_file_internal(uls_keyw_stat_list_t *ks_lst, const char *tgt_dir,
 	// 1. stastics of keyword frequencies
 	if (fp_list != NULL) {
 		if (uls_chdir(tgt_dir) < 0) {
-			err_log("can't change to %s", tgt_dir);
+			ult_log("can't change to %s", tgt_dir);
 			return -1;
 		}
 
 		if (proc_filelist(ks_lst, fp_list) < 0) {
-			err_log("Failed to process files in %s", tgt_dir);
+			ult_log("Failed to process files in %s", tgt_dir);
 			return -1;
 		}
 
 		if (uls_chdir(home_dir) < 0) {
-			err_log("fail to chdir(%s)", home_dir);
+			ult_log("fail to chdir(%s)", home_dir);
 			return -1;
 		}
 
@@ -632,19 +633,19 @@ main_proc(const char *tgt_dir, FILE *fp_list,
 	g_hash_buckets = (int *) uls_malloc(ULF_HASH_TABLE_SIZE * sizeof(int));
 
 	if ((fp_out = uls_fp_open(out_filepath, ULS_FIO_WRITE)) == NULL) {
-		err_log("%s: fail to create '%s'", __func__, out_filepath);
+		ult_log("%s: fail to create '%s'", __func__, out_filepath);
 		return -1;
 	}
 
-	err_log("Gathering the statistics of keywords usage, ...");
+	ult_log("Gathering the statistics of keywords usage, ...");
 
 	ks_lst = ulc_export_kwtable(uls_ptr(sam_lex->idkeyw_table));
 	if (ks_lst == uls_nil) {
-		err_log("No keyword information!");
+		ult_log("No keyword information!");
 		stat = -1;
 	} else {
 		// ks_lst is sorted by keyw, alphabetic order
-		err_log("Writing the frequencies of keywords to %s, ...", out_filepath);
+		ult_log("Writing the frequencies of keywords to %s, ...", out_filepath);
 		stat = __create_file_internal(ks_lst, tgt_dir, fp_list, fp_out, n_args, args);
 		ulc_free_kwstat_list(ks_lst);
 	}
@@ -672,18 +673,18 @@ main_ustr(int argc, char *argv[])
 	}
 
 	if (ulc_prepend_searchpath_pwd() < 0) {
-		err_log("InternalError: don't know about the program '%s'.", THIS_PROGNAME);
+		ult_log("InternalError: don't know about the program '%s'.", THIS_PROGNAME);
 		return -1;
 	}
 
 	if ((i0 = parse_options(argc, argv)) <= 0) {
-		if (i0 < 0) err_log("Incorrect use of command options.");
+		if (i0 < 0) ult_log("Incorrect use of command options.");
 		return i0;
 	}
 
 	if (filelist != NULL) {
 		if (i0 >= argc) {
-			err_log("Specify the target-directory to apply the paths in %s\n", filelist);
+			ult_log("Specify the target-directory to apply the paths in %s\n", filelist);
 			return -1;
 		}
 
@@ -691,7 +692,7 @@ main_ustr(int argc, char *argv[])
 		uls_path_normalize(target_dir, target_dir);
 
 		if ((fp_list = uls_fp_open(filelist, ULS_FIO_READ)) == NULL) {
-			err_log("%s: fail to read '%s'", __func__, filelist);
+			ult_log("%s: fail to read '%s'", __func__, filelist);
 			return -1;
 		}
 	}
@@ -709,7 +710,7 @@ main_ustr(int argc, char *argv[])
 		ulc_list_searchpath(config_file);
 
 	if ((sam_lex = uls_create(config_file)) == uls_nil) {
-		err_log("can't create a uls-object for %s.", config_file);
+		ult_log("can't create a uls-object for %s.", config_file);
 		return -1;
 	}
 
@@ -717,7 +718,7 @@ main_ustr(int argc, char *argv[])
 
 	ulf_hashfunc = uls_get_hashfunc(ULS_HASH_ALGORITHM, cse_insen);
 	if (ulf_hashfunc == uls_nil) {
-		err_log("%s: unkown hash algorithm", __func__, ULS_HASH_ALGORITHM);
+		ult_log("%s: unkown hash algorithm", __func__, ULS_HASH_ALGORITHM);
 		return -1;
 	}
 

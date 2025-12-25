@@ -25,6 +25,7 @@
 #define __ULS_STREAM_MAIN_H__
 
 #include "ult_utils.h"
+#include "ult_log.h"
 
 #ifndef  __ULS_WINDOWS__
 #include <sys/types.h>

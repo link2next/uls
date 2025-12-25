@@ -119,6 +119,68 @@ ULS_QUALIFIED_METHOD(uls_str_compare)(const char *str1, const char *str2)
 	return uls_strcmp(str1, str2);
 }
 
+char*
+ULS_QUALIFIED_METHOD(uls_str_skip_blanks)(const char *lptr)
+{
+	char ch;
+
+	for ( ; (ch=*lptr) == ' ' || ch == '\t'; lptr++)
+		/* nothing */;
+	return (char *) lptr;
+}
+
+#ifndef ULS_DOTNET
+char*
+ULS_QUALIFIED_METHOD(uls_str_split_litstr)(char *str, char qch)
+{
+	char   *ptr, *ptr1;
+	char   ch, esc_ch=0;
+
+	for (ptr1=ptr=str; ; ptr++) {
+		if (!uls_isprint(ch=*ptr)) { // ctrl-ch or '\0'
+			if (ch != '\0') ++ptr;
+			break;
+		}
+
+		if (esc_ch) {
+			*ptr1++ = ch;
+			esc_ch = 0;
+		} else if (ch == '\\') {
+			esc_ch = 1;
+		} else if (ch == qch) {
+			++ptr;
+			break;
+		} else {
+			*ptr1++ = ch;
+		}
+	}
+
+	*ptr1 = '\0';
+	return ptr;
+}
+
+char*
+ULS_QUALIFIED_METHOD(uls_str_splitstr)(char** p_str, int *p_len)
+{
+	char   *str = *p_str;
+	char   ch, *ptr, *ptr0;
+	int len;
+
+	ptr0 = ptr = uls_str_skip_blanks(str);
+
+	for (len = 0; (ch=*ptr) != '\0'; ptr++) {
+		if (ch == ' ' || ch == '\t') {
+			len = (int) (ptr - ptr0);
+			*ptr++ = '\0';
+			break;
+		}
+	}
+
+	if (p_len != NULL) *p_len = len;
+	*p_str = ptr;
+	return ptr0;
+}
+
 int
 ULS_QUALIFIED_METHOD(skip_c_comment_file)(FILE* fin)
 {
@@ -138,6 +200,7 @@ ULS_QUALIFIED_METHOD(skip_c_comment_file)(FILE* fin)
 
 	return -1;
 }
+#endif
 
 #ifdef __ULS_WINDOWS__
 int
@@ -457,7 +520,7 @@ ULS_QUALIFIED_METHOD(uls_win32_lookup_regval)(wchar_t *reg_dir, uls_ptrtype_tool
 {
 	wchar_t *reg_name = (wchar_t*) parms->line;
 	HKEY   hKeyRoot, hRegKey;
-	DWORD  value_type, bufsize;
+	DWORD  value_type, bufsize, buflen;
 	wchar_t  *lpKeyStr, keyRootBuff[8];
 	LONG   rval;
 
@@ -507,16 +570,18 @@ ULS_QUALIFIED_METHOD(uls_win32_lookup_regval)(wchar_t *reg_dir, uls_ptrtype_tool
 		return NULL;
 	}
 
-	if ((lpKeyStr = (wchar_t *) uls_malloc(bufsize)) == NULL ||
+	if ((lpKeyStr = (wchar_t *) uls_malloc(bufsize + sizeof(wchar_t))) == NULL ||
 		(rval = RegQueryValueExW(hRegKey, reg_name, 0,
-			&value_type, (LPBYTE) lpKeyStr, &bufsize)) != ERROR_SUCCESS) {
+			&value_type, (LPBYTE) lpKeyStr, &buflen)) != ERROR_SUCCESS) {
 		_uls_log(err_log)("RegQueryValueEx failed");
 		ustr = NULL;
 
 	} else {
-		n_wchars = bufsize/sizeof(wchar_t) - 1;
-		csz_init(uls_ptr(csz), (n_wchars+1) * 2);
+		if ((n_wchars = buflen / sizeof(wchar_t)) > 0 && lpKeyStr[n_wchars - 1] == L'\0') {
+			--n_wchars;
+		}
 
+		csz_init(uls_ptr(csz), (n_wchars + 1) * ULS_UTF8_CH_MAXLEN);
 		if ((ustr = uls_wstr2ustr(lpKeyStr, n_wchars, uls_ptr(csz))) == NULL) {
 			parms->n = -1;
 		} else {

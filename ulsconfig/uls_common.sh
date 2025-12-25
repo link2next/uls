@@ -27,6 +27,35 @@
 # DESCRIPTION:
 #
 
+check_commands_used()
+{
+	local cmd progpath line1
+	local mkdir_p='' stat=0
+
+	for cmd in $* basename dirname; do
+		if [ "$cmd" = "mkdir_p" ]; then
+			progpath=$(which mkdir)
+			mkdir_p="$progpath"
+		else
+			progpath=$(which $cmd)
+		fi
+
+		if [ -z "$progpath" ]; then
+			echo "$cmd: not found!"
+			stat=1
+		fi
+	done
+
+	if [ -n "$mkdir_p" ]; then
+		line1=$(mkdir --help | grep '\-p,')
+		if [ -z "$line1" ]; then
+			stat=1
+		fi
+	fi
+
+	return $stat
+}
+
 extract_existing_dirpath()
 {
 	local a_dir=$1

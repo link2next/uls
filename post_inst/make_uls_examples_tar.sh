@@ -30,6 +30,11 @@
 
 source ../ulsconfig/uls_common.sh
 
+command_list_used="mkdir_p rmdir tar"
+if ! check_commands_used $command_list_used; then
+	exit 1
+fi
+
 usage()
 {
 	echo "usage: $0  <tmpl-tar> <src-dir> <file-list.txt> <out-dir>"

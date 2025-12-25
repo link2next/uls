@@ -54,13 +54,10 @@ public class UlsTmplList implements AutoCloseable {
 		tmpl_list = createTmplList(8, UlsLex.TMPLS_DUP);
     }
 
-	// <brief>
-	// This clears the internal list of variables. The length of the list will be zero.
-	// </brief>
-	// <return>none</return>
-	public void clear()
-	{
-		hashtbl.clear();
+	@Override
+	public void close() {
+		destroyTmplList(tmpl_list);
+		tmpl_list = null;
 	}
 
 	// <brief>
@@ -141,6 +138,15 @@ public class UlsTmplList implements AutoCloseable {
 	}
 
 	// <brief>
+	// This clears the internal list of variables. The length of the list will be zero.
+	// </brief>
+	// <return>none</return>
+	public void clear()
+	{
+		hashtbl.clear();
+	}
+
+	// <brief>
 	// This exports the internal list to another UlsTmplList object.
 	// </brief>
 	// <return>Opaque Data</return>
@@ -150,31 +156,11 @@ public class UlsTmplList implements AutoCloseable {
 
 		for (String nam : hashtbl.keySet()) {
 			String val = hashtbl.get(nam);
-
 			addTmpl(tmpl_list, nam, val);
 		}
 
 		return tmpl_list;
 	}
-
-	// <brief>
-	// Export the internal list to another UlsTmplList object.
-	// </brief>
-	// <parm name="tmpl_list_exp">A new UlsTmplList object to which the current list is exported.</parm>
-	// <return>the length of the list</return>
-    public int exportTmpls(UlsTmplList tmpl_list_exp)
-    {
-		int n=0;
-
-		for (String tnam : hashtbl.keySet()) {
-			String tval = hashtbl.get(tnam);
-			System.out.println("tnam = '" + tnam + "' tval='" + tval + "'");
-			tmpl_list_exp.add(new String(tnam), new String(tval));
-			++n;
-		}
-
-        return n;
-    }
 
 	// <brief>
 	// Dumps the internal list of pairs <tnam,tval> to stdout.
@@ -190,12 +176,6 @@ public class UlsTmplList implements AutoCloseable {
 			System.out.println("[" + i + "] " + nam + " :: '" + val + "'");
 			i++;
 		}
-	}
-
-	@Override
-	public void close() {
-		destroyTmplList(tmpl_list);
-		tmpl_list = null;
 	}
 }
 

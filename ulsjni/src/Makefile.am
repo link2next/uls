@@ -1,5 +1,7 @@
 include $(top_srcdir)/uls.config
 
+.PHONY: ULSJNI_PREREQ
+
 ACLOCAL_AMFLAGS = -I m4
 
 ULSJNI_BINDIR=../classes
@@ -20,32 +22,35 @@ SRCS2 = $(SRCS1) \
 OBJS2 = $(patsubst %.java,$(ULSJNI_BINDIR)/%.class,$(SRCS2))
 
 JNI_HFILES_1 = $(patsubst %.java,%,$(SRCS1))
-JNI_HFILES_2 = $(patsubst %.java,%,$(SRCS2))
 JNI_HFILES_FNAME = $(subst /,_,$(JNI_HFILES_1))
 JNI_HFILES_FPATH = $(patsubst %,$(ULSJNI_INCDIR)/%.h,$(JNI_HFILES_FNAME))
 JNI_HFILES_DOTS = $(subst /,.,$(JNI_HFILES_1))
 
-all: $(JNI_HFILES_FPATH) $(OBJS2)
+all: ULSJNI_PREREQ $(JNI_HFILES_FPATH) $(OBJS2)
+
+ULSJNI_PREREQ:
+	@if [ ! -e "$(ULSJNI_BINDIR)" ]; then \
+		mkdir "$(ULSJNI_BINDIR)"; \
+	fi
+	@if [ ! -e "$(ULSJNI_INCDIR)" ]; then \
+		mkdir "$(ULSJNI_INCDIR)"; \
+	fi
+
+$(JNI_HFILES_FPATH): $(SRCS1)
+	@echo "Generating jni-header files..."
+	@for ii in $(SRCS1); do \
+		javac -h $(ULSJNI_INCDIR) $${ii}; \
+	done
+
+$(OBJS2): $(SRCS2)
+	@echo "Generating object files..."
+	@./make_SampleLex.sh ../../tools/ulc2class/ulc2class $(TMP_SYSPROPS) .
+	@for ii in $(SRCS2); do \
+		javac -d $(ULSJNI_BINDIR) $${ii}; \
+	done
 
 $(LIBPROG): $(OBJS2)
 	jar -cf $(LIBPROG) -C $(ULSJNI_BINDIR) uls
-
-# java --> jni-header
-define rule_java2hfile
-$(ULSJNI_INCDIR)/$1: $2
-	@javac -h $(ULSJNI_INCDIR) $2; \
-	if [ ! -f $@ ]; then \
-		javah -o $(ULSJNI_INCDIR)/$1 $3; \
-	fi
-endef
-$(foreach T,$(JNI_HFILES_DOTS),$(eval $(call rule_java2hfile,$(subst .,_,$(T)).h,$(subst .,/,$(T)).java,$(T))))
-
-# java --> class
-define rule_java2class
-$(ULSJNI_BINDIR)/$1: $2
-	javac -d $(ULSJNI_BINDIR) $2
-endef
-$(foreach T,$(JNI_HFILES_2),$(eval $(call rule_java2class,$(T).class,$(T).java)))
 
 install: $(LIBPROG)
 	install -m 644 $(LIBPROG) $(libdir)

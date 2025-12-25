@@ -32,5 +32,6 @@
 
 int print_tmpl_stream_file(uls_ostream_t *ostr, uls_lex_ptr_t uls);
 int write_uls_files(int n_fpaths, const char** fpaths);
+int write_gcc_preprocd_file(uls_lex_ptr_t gcc_lex, const char *filepath);
 
 #endif

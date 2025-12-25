@@ -28,7 +28,7 @@
 #   This file is part of ULS, Unified Lexical Scheme.
 #
 
-source ../ulsconfig/uls_common.sh
+source uls_common.sh
 
 mach_bits=0
 

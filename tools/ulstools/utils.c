@@ -223,15 +223,15 @@ ult_guess_host_byteorder(void)
 }
 
 int
-ult_fd_create_wronly(const char *fpath)
+ult_fd_create_wronly(const char *filepath)
 {
-	return uls_fd_open(fpath, ULS_FIO_WRITE);
+	return uls_fd_open(filepath, ULS_FIO_WRITE);
 }
 
 int
-ult_fd_open_rdonly(const char *fpath)
+ult_fd_open_rdonly(const char *filepath)
 {
-	return uls_fd_open(fpath, ULS_FIO_READ);
+	return uls_fd_open(filepath, ULS_FIO_READ);
 }
 
 void

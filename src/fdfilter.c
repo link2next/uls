@@ -168,7 +168,7 @@ fdf_open(fdf_t *fdf, int fd)
 		}
 
 		if (uls_execv_cmdline(cmdline) < 0) {
-			_uls_log(err_log)("execle error!");
+			_uls_log(err_log)("execle error! : %s", cmdline);
 			uls_appl_exit(1);
 		}
 		// NEVER REACHED
@@ -194,7 +194,6 @@ fdf_open(fdf_t *fdf, int fd)
 	uls_fd_close(w_pipe);
 
 	fdf->fd = r_pipe; // r_pipe instead of fd
-
 	return r_pipe;
 }
 
@@ -296,7 +295,6 @@ uls_pars_cmdline(const char *cmdline, char** p_line, int* p_args)
 	}
 
 	k = uls_strlen(cmdline);
-
 	*p_line = lptr = uls_malloc(k+1);
 	uls_strcpy(lptr, cmdline);
 
@@ -314,9 +312,8 @@ uls_pars_cmdline(const char *cmdline, char** p_line, int* p_args)
 		}
 		args[k] = wrd;
 	}
-	lptr = wrdx.lptr;
-
 	args[k] = NULL;
+	lptr = wrdx.lptr;
 
 	if (p_args != NULL) *p_args = k;
 	return args;
@@ -326,7 +323,6 @@ int
 uls_execv_cmdline(const char *cmdline)
 {
 	char *progpath, **args, *argsbuff;
-	const char *ptr;
 	int  n_args;
 	uls_outparam_t parms;
 
@@ -335,16 +331,17 @@ uls_execv_cmdline(const char *cmdline)
 	}
 
 	parms.lptr = progpath = args[0];
-	ptr = _uls_filename(uls_ptr(parms));
-	args[0] = progpath + (int) (ptr - progpath);
+	args[0] = _uls_filename(uls_ptr(parms));
 
-	if (uls_dirent_exist(progpath) <= 0 || execv(progpath, args) < 0) {
+	if (uls_dirent_exist(progpath) <= 0) {
 		uls_mfree(args);
 		uls_mfree(argsbuff);
 		return -1;
 	}
 
+	execv(progpath, args);
 	// NEVER REACHED
+
 	return 0;
 }
 

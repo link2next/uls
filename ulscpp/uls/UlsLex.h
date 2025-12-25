@@ -428,21 +428,6 @@ namespace uls {
 			void setFd(int fd, int flags = -1);
 
 			// <brief>
-			//   identify the char group of 'wch'.
-			//   the char group = { space, the first-char of id, the char of id, the first of quotation string,
-			//     the first char of punctuation, ...}
-			// </brief>
-			// <parm name="wch">The decoded (wide) char to be tested</parm>
-			// <return>true/false</return>
-			bool is_ch_space(uls_wch_t wch);
-			bool is_ch_idfirst(uls_wch_t wch);
-			bool is_ch_id(uls_wch_t wch);
-			bool is_ch_quote(uls_wch_t wch);
-			bool is_ch_1ch_token(uls_wch_t wch);
-			bool is_ch_2ch_token(uls_wch_t wch);
-			bool is_ch_comm(uls_wch_t wch);
-
-			// <brief>
 			//   Skips the white chars.
 			//   The white chars are to be defined by the spec. written by user
 			// </brief>

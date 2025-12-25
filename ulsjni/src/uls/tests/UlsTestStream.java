@@ -54,7 +54,7 @@ public class UlsTestStream {
 			}
 		} finally {
 			in_hdr.close();
-			tmpls.close();
+//			tmpls.close();
 		}
 	}
 
@@ -94,13 +94,13 @@ public class UlsTestStream {
 
 	public Boolean test_tokseq(Sample1Lex sam_lex, String input_file)
 	{
-		UlsTmplList  TmplLst = new UlsTmplList();
+		UlsTmplList  tmpls = new UlsTmplList();
 		String uls_file = data_dir + "/a3.uls";
 		String lxm;
 		int t;
 
-		TmplLst.add("TVAR1", "unsigned long long");
-		TmplLst.add("TVAR2", "long double");
+		tmpls.add("TVAR1", "unsigned long long");
+		tmpls.add("TVAR2", "long double");
 
 		// Write a output-stream
 		UlsOStream ofile = new UlsOStream(uls_file, sam_lex, "<<tag>>");
@@ -118,7 +118,7 @@ public class UlsTestStream {
 			    if (t == sam_lex.toknum_EOF || t == sam_lex.toknum_EOI) break;
 			    lxm = sam_lex.lexeme;
 
-			    if (t == sam_lex.toknum_ID && TmplLst.exist(lxm) == true) {
+			    if (t == sam_lex.toknum_ID && tmpls.exist(lxm) == true) {
 				    t = sam_lex.toknum_TMPL;
 			    }
 
@@ -126,10 +126,9 @@ public class UlsTestStream {
 		  	}
 		} finally {
 			ofile.close();
-			TmplLst.close();
 		}
 
-		UlsIStream ifile = new UlsIStream(uls_file, TmplLst);
+		UlsIStream ifile = new UlsIStream(uls_file, tmpls);
 
 		try {
 		    sam_lex.pushInput(ifile);
@@ -156,14 +155,9 @@ public class UlsTestStream {
 			System.err.println("usage: UlsTestStream [data_dir]");
 			return;
 		}
+		data_dir = args[0];
 
-		if (args.length >= 1) {
-			data_dir = args[0];
-		} else {
-			data_dir = ".";
-		}
-
-		ulc_path = data_dir + "/sample.ulc";
+		ulc_path = data_dir + "/../sample.ulc";
 //		System.out.println("ulc_path = " + ulc_path);
 
 		Sample1Lex sam_lex = new Sample1Lex(ulc_path);

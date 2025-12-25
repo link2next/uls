@@ -107,7 +107,7 @@ uls_fp_gets_wstr(FILE *fp, wchar_t *wbuf, int wbuf_siz, int flags)
 	}
 
 	if ((wstr = uls_ustr2wstr(ubuf, ulen, uls_ptr(csz_wstr))) == NULL) {
-		err_wlog(L"encoding error!");
+		err_wlog(L"%hs: encoding error!", __func__);
 		csz_deinit(uls_ptr(csz_wstr));
 		uls_mfree(ubuf);
 		return ULS_EOF - 4;
@@ -142,7 +142,7 @@ uls_close_tempfile_wstr(uls_tempfile_ptr_t tmpfile, const wchar_t *wfilepath)
 	csz_init(uls_ptr(csz), -1);
 
 	if ((ustr = uls_wstr2ustr(wfilepath, -1, uls_ptr(csz))) == NULL) {
-		err_wlog(L"encoding error!");
+		err_wlog(L"%hs: encoding error!", __func__);
 		rval = -1;
 	} else {
 		rval = uls_close_tempfile(tmpfile, ustr);

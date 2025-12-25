@@ -46,9 +46,10 @@ public class UlsIStream extends UlsStream {
 			return;
 		}
 
-		tmpl_vars = new UlsTmplList();
 		if (tmpls != null) {
-			tmpls.exportTmpls(tmpl_vars);
+			tmpl_vars = tmpls;
+		} else {
+			tmpl_vars = new UlsTmplList();
 		}
 	}
 

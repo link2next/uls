@@ -53,10 +53,15 @@ ULS_DLL_EXTERN int uls_astrcmp(const char *astr1, const char *astr2);
 ULS_DLL_EXTERN int uls_path_normalize_astr(const char *fpath, char *fpath2);
 ULS_DLL_EXTERN int uls_mkdir_astr(const char *filepath);
 
+ULS_DLL_EXTERN char* uls_str_skip_blanks_astr(const char *lptr);
+ULS_DLL_EXTERN char* uls_str_split_litstr_astr(char *str, char qch);
+ULS_DLL_EXTERN char* uls_str_splitstr_astr(char** p_str, int *p_len);
+
 ULS_DLL_EXTERN char *uls_astrdup(const char *astr, int alen);
 ULS_DLL_EXTERN char *uls_astrchr(const char *lptr, char ch0);
 ULS_DLL_EXTERN int _uls_explode_astr(uls_wrd_ptr_t uw, char delim_ch, uls_arglst_ptr_t arglst);
 ULS_DLL_EXTERN int uls_explode_astr(char **ptr_line, char delim_ch, char **args, int n_args);
+ULS_DLL_EXTERN const char* uls_filename_astr(const char *filepath, int* len_fname);
 
 ULS_DLL_EXTERN int uls_getopts_astr(int n_args, char *args[], const char *optfmt, uls_optproc_t proc);
 ULS_DLL_EXTERN FILE *cvt_ms_mbcs_filepath_astr(const char *filepath, uls_tempfile_ptr_t tmpfile_utf8, int flags);
@@ -78,9 +83,14 @@ ULS_DLL_EXTERN FILE *cvt_ms_mbcs_filepath_astr(const char *filepath, uls_tempfil
 #define uls_path_normalize uls_path_normalize_astr
 #define uls_mkdir uls_mkdir_astr
 
+#define uls_str_skip_blanks uls_str_skip_blanks_astr
+#define uls_str_split_litstr uls_str_split_litstr_astr
+#define uls_str_splitstr uls_str_splitstr_astr
+
 #define uls_strdup uls_astrdup
 #define uls_strchr uls_astrchr
 #define uls_explode_str uls_explode_astr
+#define uls_filename uls_filename_astr
 
 #define uls_getopts uls_getopts_astr
 #define cvt_ms_mbcs_filepath cvt_ms_mbcs_filepath_astr

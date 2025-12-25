@@ -90,12 +90,16 @@ ULS_DLL_EXTERN int uls_str_equal(const char *str1, const char *str2);
 ULS_DLL_EXTERN int uls_str_copy(char *bufptr, const char *str);
 ULS_DLL_EXTERN int uls_str_compare(const char *str1, const char *str2);
 
+ULS_DLL_EXTERN char *uls_str_skip_blanks(const char *lptr);
+
 ULS_DLL_EXTERN int uls_mkdir(const char *filepath);
 ULS_DLL_EXTERN int uls_path_normalize(const char *fpath, char *fpath2);
 
+#ifndef ULS_DOTNET
+ULS_DLL_EXTERN char *uls_str_split_litstr(char *str, char qch);
+ULS_DLL_EXTERN char *uls_str_splitstr(char** p_str, int *p_len);
 ULS_DLL_EXTERN int skip_c_comment_file(FILE* fin);
 
-#ifndef ULS_DOTNET
 typedef int (*uls_optproc_t)(int opt, char *optarg);
 ULS_DLL_EXTERN int uls_getopts(int n_args, char *args[], const char *optfmt, uls_optproc_t proc);
 #endif

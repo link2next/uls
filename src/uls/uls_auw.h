@@ -69,9 +69,8 @@ _ULS_DEFINE_STRUCT(auw_outparam)
 
 #if defined(__ULS_AUW__) || defined(ULS_DECL_PRIVATE_PROC)
 #ifdef __ULS_WINDOWS__
-ULS_DECL_STATIC char *wstr2mbs(const wchar_t *wstr, int wlen, int is_utf8, csz_str_ptr_t csz);
 ULS_DECL_STATIC wchar_t *mbs2wstr(const char *astr, int alen, int is_utf8, csz_str_ptr_t csz_wstr);
-ULS_DECL_STATIC int is_string_ascii(const char *austr, int aulen);
+ULS_DECL_STATIC char *wstr2mbs(const wchar_t *wstr, int wlen, int is_utf8, csz_str_ptr_t csz);
 #endif
 #endif
 
@@ -81,23 +80,22 @@ void set_ms_mbcs_codepage(int codepage);
 #endif
 
 #ifdef ULS_DECL_PUBLIC_PROC
+ULS_DLL_EXTERN void auw_init_outparam(auw_outparam_ptr_t auw);
+ULS_DLL_EXTERN void auw_deinit_outparam(auw_outparam_ptr_t auw);
+
 ULS_DLL_EXTERN int astr_lengthof_char(const char *str);
 ULS_DLL_EXTERN int astr_num_wchars(const char *str, int len, uls_outparam_ptr_t parms);
+
+ULS_DLL_EXTERN char *uls_astr2ustr(const char *astr, int alen, csz_str_ptr_t csz);
+ULS_DLL_EXTERN const char *uls_astr2ustr_ptr(const char *astr, int alen, auw_outparam_ptr_t auw);
+ULS_DLL_EXTERN char *uls_ustr2astr(const char *ubuf, int ulen, csz_str_ptr_t csz);
+ULS_DLL_EXTERN const char *uls_ustr2astr_ptr(const char *ustr, int ulen, auw_outparam_ptr_t auw);
 
 ULS_DLL_EXTERN wchar_t *uls_astr2wstr(const char *astr, int alen, csz_str_ptr_t csz_wstr);
 ULS_DLL_EXTERN char *uls_wstr2astr(const wchar_t *wstr, int wlen, csz_str_ptr_t csz);
 
 ULS_DLL_EXTERN wchar_t *uls_ustr2wstr(const char *ustr, int ulen, csz_str_ptr_t csz_wstr);
 ULS_DLL_EXTERN char *uls_wstr2ustr(const wchar_t *wstr, int wlen, csz_str_ptr_t csz);
-
-ULS_DLL_EXTERN char *uls_ustr2astr(const char *ubuf, int ulen, csz_str_ptr_t csz);
-ULS_DLL_EXTERN char *uls_astr2ustr(const char *astr, int alen, csz_str_ptr_t csz);
-
-ULS_DLL_EXTERN void auw_init_outparam(auw_outparam_ptr_t auw);
-ULS_DLL_EXTERN void auw_deinit_outparam(auw_outparam_ptr_t auw);
-
-ULS_DLL_EXTERN const char *uls_ustr2astr_ptr(const char *ustr, int ulen, auw_outparam_ptr_t auw);
-ULS_DLL_EXTERN const char *uls_astr2ustr_ptr(const char *astr, int alen, auw_outparam_ptr_t auw);
 #endif
 
 #ifdef _ULS_CPLUSPLUS

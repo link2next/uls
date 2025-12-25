@@ -55,10 +55,15 @@ ULS_DLL_EXTERN int uls_wstrcmp(const wchar_t *wstr1, const wchar_t *wstr2);
 ULS_DLL_EXTERN int uls_path_normalize_wstr(const wchar_t *wfpath, wchar_t *wfpath2);
 ULS_DLL_EXTERN int uls_mkdir_wstr(const wchar_t *wfilepath);
 
+ULS_DLL_EXTERN wchar_t* uls_str_skip_blanks_wstr(const wchar_t *lptr);
+ULS_DLL_EXTERN wchar_t* uls_str_split_litstr_wstr(wchar_t *wstr, wchar_t qch);
+ULS_DLL_EXTERN wchar_t* uls_str_splitstr_wstr(wchar_t **p_wstr, int *p_wlen);
+
 ULS_DLL_EXTERN wchar_t *uls_wstrdup(const wchar_t *wstr, int wlen);
 ULS_DLL_EXTERN wchar_t *uls_wstrchr(const wchar_t *wlptr, wchar_t wch0);
 ULS_DLL_EXTERN int _uls_explode_wstr(uls_wrd_ptr_t uw, wchar_t delim_wch, uls_arglst_ptr_t arglst);
 ULS_DLL_EXTERN int uls_explode_wstr(wchar_t **ptr_wline, wchar_t delim_wch, wchar_t **args, int n_args);
+ULS_DLL_EXTERN const wchar_t* uls_filename_wstr(const wchar_t *wfilepath, int* len_wfname);
 
 typedef int (*uls_woptproc_t)(int opt, wchar_t *optwarg);
 ULS_DLL_EXTERN int uls_getopts_wstr(int n_args, wchar_t *wargs[], const wchar_t *optwfmt, uls_woptproc_t wproc);
@@ -103,9 +108,14 @@ ULS_DLL_EXTERN void uls_putWargList(wchar_t **wargv, int n_wargv);
 #define uls_path_normalize uls_path_normalize_wstr
 #define uls_mkdir uls_mkdir_wstr
 
+#define uls_str_skip_blanks uls_str_skip_blanks_wstr
+#define uls_str_split_litstr uls_str_split_litstr_wstr
+#define uls_str_splitstr uls_str_splitstr_wstr
+
 #define uls_strdup uls_wstrdup
 #define uls_strchr uls_wstrchr
 #define uls_explode_str uls_explode_wstr
+#define uls_filename uls_filename_wstr
 
 #define uls_getopts uls_getopts_wstr
 #define cvt_ms_mbcs_filepath cvt_ms_mbcs_filepath_wstr

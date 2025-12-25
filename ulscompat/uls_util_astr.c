@@ -201,6 +201,24 @@ uls_mkdir_astr(const char *filepath)
 }
 
 char*
+uls_str_skip_blanks_astr(const char *lptr)
+{
+	return uls_str_skip_blanks(lptr);
+}
+
+char*
+uls_str_split_litstr_astr(char *str, char qch)
+{
+	return uls_str_split_litstr(str, qch);
+}
+
+char*
+uls_str_splitstr_astr(char** p_str, int *p_len)
+{
+	return uls_str_splitstr(p_str, p_len);
+}
+
+char*
 uls_astrdup(const char *astr, int alen)
 {
 	char *abuf;
@@ -314,6 +332,36 @@ uls_explode_astr(char **ptr_line, char delim_ch, char **args, int n_args)
 	uls_deinit_arglst(uls_ptr(arglst));
 
 	return n_wrd;
+}
+
+const char*
+uls_filename_astr(const char *filepath, int *len_fname)
+{
+	const char *filename;
+	int i, len;
+
+	len = strlen(filepath);
+	for (i = len - 1; i >= 0; i--) {
+		if (filepath[i] == ULS_FILEPATH_DELIM) {
+			break;
+		}
+	}
+
+	++i;
+	filename = filepath + i;
+
+	if (len_fname != NULL) {
+		len -= i;
+		for (i = len - 1; i >= 0; i--) {
+			if (filename[i] == '.') {
+				len = i;
+				break;
+			}
+		}
+		*len_fname = len;
+	}
+
+	return filename;
 }
 
 int

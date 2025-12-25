@@ -747,38 +747,38 @@ void
 uls_dump_tok_astr(uls_lex_ptr_t uls, const char *apfx, const char *asuff)
 {
 	int tok_id = uls_tok(uls), has_lxm;
-	const char *tok_astr = uls_lexeme_astr(uls);
+	const char *tok_ustr = uls_tokstr(uls);
+	const char *tok_astr = uls_tokstr_astr(uls);
 	char toknam_buff[ULS_CARDINAL_TOKNAM_SIZ+1];
 	char lxmpfx[ULS_CARDINAL_LXMPFX_MAXSIZ+1];
 
 	csz_str_t csz1;
 	char *astr1;
 	const char *numsuff;
-	uls_outparam_t parms;
 
 	if (apfx == NULL) apfx = "";
 	if (asuff == NULL) asuff = "";
 
 	csz_init(uls_ptr(csz1), -1);
-
-	parms.lptr = uls_tokstr(uls);
-	has_lxm = uls_cardinal_toknam_deco_lxmpfx(toknam_buff, lxmpfx, uls, tok_id, uls_ptr(parms));
+	has_lxm = uls_cardinal_toknam_deco_lxmpfx(toknam_buff, lxmpfx, uls, tok_id, tok_ustr, 0);
 
 	uls_aprintf("%s%s", apfx, toknam_buff);
 	if (has_lxm) {
-		if (tok_id == uls->xcontext.toknum_NUMBER && *(numsuff = uls_number_suffix(uls)) != '\0') {
-			if ((astr1 = uls_ustr2astr(numsuff, -1, uls_ptr(csz1))) == NULL) {
-				err_alog("encoding error!");
-				return;
+		if (tok_id == uls->xcontext.toknum_NUMBER) {
+			uls_aprintf(" %s%s", lxmpfx, tok_ustr);
+			if (*(numsuff = uls_number_suffix(uls)) != '\0') {
+				if ((astr1 = uls_ustr2astr(numsuff, -1, uls_ptr(csz1))) == NULL) {
+					err_alog("encoding error!");
+					return;
+				}
+				uls_aprintf(" %s", astr1);
 			}
-			uls_aprintf(" %s%s %s", lxmpfx, tok_astr, astr1);
 		} else {
 			uls_aprintf(" %s%s", lxmpfx, tok_astr);
 		}
 	}
 
 	uls_aprintf("%s", asuff);
-
 	csz_deinit(uls_ptr(csz1));
 }
 

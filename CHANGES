@@ -1,4 +1,12 @@
 ﻿
+  v1.11
+  -----------
+    o Used JDK-17 to build ulsjni
+      Check if the environment variable ULS_JDK_HOME is set on Windows
+      if not, set it. For example,
+            setx ULS_JDK_HOME "C:\Program Files\Java\jdk-17"
+    o Fixed the bug in uls_push_line in processing nil-string.
+
   v1.10.1
   -----------
     o Getting the correct value of ULS_MBCS in the configuration file

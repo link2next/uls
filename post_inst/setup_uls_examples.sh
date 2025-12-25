@@ -48,6 +48,11 @@ progdir=$(dirname "$progpath")
 source $progdir/uls_common.sh
 progdir=$(readlink_m "$progdir")
 
+command_list_used="ls cp mv rm mkdir tar"
+if ! check_commands_used $command_list_used; then
+	exit 1
+fi
+
 uninst_info_sh=uls_uninst_info.sh
 if [ ! -x $progdir/$uninst_info_sh ]; then
 	echo "$uninst_info_sh: not executable"
@@ -86,15 +91,6 @@ if [ ! -f "$examples_tar" ]; then
 	echo "$examples_tar: not found!"
 	exit 1
 fi
-
-cmd_list="ls cp mv rm mkdir tar"
-
-for cmd in $cmd_list; do
-	if ! which $cmd > /dev/null; then
-		echo "$cmd: not found!"
-		exit 1
-	fi 
-done
 
 gen_mkcfg_of_uls_examples()
 {

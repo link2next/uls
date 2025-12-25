@@ -13,6 +13,7 @@ simplest:
 
 ansi_c: ansi-c ansi\ c ANSI\ c iso_c iso-c ISO\ c c89 C89 c90 C90
 cpp: c++ C++
+gcc: gnu-cc
 c_sharp: C# c# cs csharp c-sharp
 tcl: Tcl
 lua:  Lua

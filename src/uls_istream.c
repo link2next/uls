@@ -338,8 +338,6 @@ ULS_QUALIFIED_METHOD(uls_bind_tmpls)(uls_istream_ptr_t istr, uls_tmpl_list_ptr_t
 		return -1;
 	}
 
-	ctx = uls->xcontext.context;
-
 	if (istr->header.filetype == ULS_STREAM_RAW || tmpl_list->tmpls.n <= 0) {
 		return 0;
 	}

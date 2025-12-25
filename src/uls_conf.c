@@ -91,7 +91,7 @@ ULS_QUALIFIED_METHOD(check_keyw_str)(int lno, const char *str, uls_ptrtype_tool(
 	int case_insensitive = uls->flags & ULS_FL_CASE_INSENSITIVE;
 	const char *ptr;
 	int  ulen, wlen, rc, j;
-	int  n_ch_quotes, n_ch_comms, n_ch_non_idkeyw;
+	int  n_ch_quotes, n_ch_comms, n_ch_non_idkeyw, n_ch_ascii_ctrls;
 	int  n_lfs, n_tabs;
 	uls_wch_t wch;
 	uls_litstr_t lit1;
@@ -103,8 +103,10 @@ ULS_QUALIFIED_METHOD(check_keyw_str)(int lno, const char *str, uls_ptrtype_tool(
 		return rc;
 	}
 
-	n_ch_quotes = n_ch_comms = n_ch_non_idkeyw = 0;
+	n_ch_non_idkeyw = n_ch_ascii_ctrls = 0;
+	n_ch_quotes = n_ch_comms = 0;
 	n_lfs = n_tabs = 0;
+
 	for (ulen = wlen = 0, ptr=str; (ch=*ptr)!='\0'; wlen++) {
 		if (ulen >= ULS_LEXSTR_MAXSIZ) {
 			_uls_log(err_log)("#%d: Too long keyword '%s'", lno, str);
@@ -119,8 +121,13 @@ ULS_QUALIFIED_METHOD(check_keyw_str)(int lno, const char *str, uls_ptrtype_tool(
 			}
 
 			wch = uls_get_escape_char(uls_ptr(lit1));
-			if (wch <= 0x7F && case_insensitive) {
-				wch = _uls_tool_(toupper)(wch);
+			if (wch <= 0x7F) {
+				if (!_uls_tool_(isgraph)(wch)) {
+					++n_ch_ascii_ctrls;
+				}
+				if (case_insensitive) {
+					wch = _uls_tool_(toupper)(wch);
+				}
 			}
 
 			if ((rc = _uls_tool_(encode_utf8)(wch, buf + ulen, ULS_LEXSTR_MAXSIZ - ulen)) <= 0) {
@@ -140,6 +147,7 @@ ULS_QUALIFIED_METHOD(check_keyw_str)(int lno, const char *str, uls_ptrtype_tool(
 			if (rc > 1) {
 				for (j=0; j < rc; j++) buf[ulen++] = *ptr++;
 			} else {
+				if (!_uls_tool_(isgraph)(ch)) ++n_ch_ascii_ctrls;
 				if (case_insensitive) ch = _uls_tool_(toupper)(ch);
 				buf[ulen++] = ch;
 				++ptr;
@@ -205,6 +213,10 @@ ULS_QUALIFIED_METHOD(check_keyw_str)(int lno, const char *str, uls_ptrtype_tool(
 	} else {
 		if (wlen > ULS_TWOPLUS_WMAXLEN) {
 			_uls_log(err_log)("<%d>: Too long punctuation token %s", lno, buf);
+			return -1;
+		}
+		if (n_ch_ascii_ctrls > 0) {
+			_uls_log(err_log)("<%d>: %s, non-graph char not allowed!", lno, buf);
 			return -1;
 		}
 		rc = ULS_KEYW_TYPE_TWOPLUS;
