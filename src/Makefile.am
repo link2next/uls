@@ -23,9 +23,9 @@ uls_prim.c: uls/uls_const_linux.h
 libuls_la_CPPFLAGS = -D_ULS_IMPLDLL -DULS_SRC_DIR=\"$(PWD)\" \
 	-DULS_ETC_DIR=\"$(ax_etc_dir)\" \
 	-include $(CONFIG_HEADER) -I$(top_srcdir)
-libuls_la_CFLAGS  = -funsigned-char \
-	-Wall -Wno-char-subscripts -Wno-unused-but-set-variable \
+libuls_la_CFLAGS  = -funsigned-char -Wall -Wno-char-subscripts \
 	-Wno-int-to-pointer-cast -Wno-pointer-to-int-cast
+# Notice: "-Wno-unused-but-set-variable" doesn't exist in gcc on macOS. 
 libuls_la_LDFLAGS = -version-info $(so_current):$(so_revision):$(so_age)
 libuls_la_LIBADD  = -lpthread
 

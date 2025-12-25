@@ -465,6 +465,7 @@ main_ustr(int argc, char *argv[])
 	int i0, ftype, stat = 0;
 	FILE *fp_out, *fp_list;
 	uls_outparam_t parms;
+	const char *cptr;
 
 	progname = THIS_PROGNAME;
 	if (argc <= 1) {
@@ -514,7 +515,12 @@ main_ustr(int argc, char *argv[])
 		}
 
 		if (ftype == ULS_STREAM_RAW) {
-			strcpy(config_pathbuff, "simple");
+			if (opt_mygcc) {
+				cptr = "gcc";
+			} else {
+				cptr = "simple";
+			}
+			strcpy(config_pathbuff, cptr);
 		} else if (ftype < 0) {
 			ult_log("Unknown spec-name:");
 			ult_log("Specify the ulc-config-name of input-file(s) using the -L-option.");

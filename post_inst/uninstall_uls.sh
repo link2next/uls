@@ -320,7 +320,7 @@ del_files {ulc2class.1.gz,ulf_gen.1.gz,uls_stream.1.gz}
 
 cd "$data_dir"
 del_tree ulcs
-del_files uls_examples.tar
+del_files uls_examples.tar uls_ug*.pdf
 if ! is_dir_empty "$data_dir"; then
 	echo "$data_dir: not empty!"
 	instdir_empty=no

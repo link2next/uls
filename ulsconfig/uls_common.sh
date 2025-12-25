@@ -35,7 +35,7 @@ check_commands_used()
 	for cmd in $* basename dirname; do
 		if [ "$cmd" = "mkdir_p" ]; then
 			progpath=$(which mkdir)
-			mkdir_p="$progpath"
+			mkdir_p='mkdir'
 		else
 			progpath=$(which $cmd)
 		fi
@@ -47,8 +47,10 @@ check_commands_used()
 	done
 
 	if [ -n "$mkdir_p" ]; then
-		line1=$(mkdir --help | grep '\-p,')
-		if [ -z "$line1" ]; then
+		tmpdir1="/tmp/$$/a1/b1"
+		mkdir -p "$tmpdir1"
+		if [ $? != 0 ] || [ ! -d "$tmpdir1" ]; then
+			echo " shhong, 10a... ok"
 			stat=1
 		fi
 	fi
