@@ -1,7 +1,0 @@
-#@ansi-c
-
-AND      128 A1 A2
-LEQ      LEQ2LEQ
-GEQ      GGEEQQ
-INCR     129 B1
-DECR     130

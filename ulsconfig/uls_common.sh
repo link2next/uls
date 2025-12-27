@@ -30,30 +30,15 @@
 check_commands_used()
 {
 	local cmd progpath line1
-	local mkdir_p='' stat=0
+	local stat=0
 
 	for cmd in $* basename dirname; do
-		if [ "$cmd" = "mkdir_p" ]; then
-			progpath=$(which mkdir)
-			mkdir_p='mkdir'
-		else
-			progpath=$(which $cmd)
-		fi
-
+		progpath=$(which $cmd)
 		if [ -z "$progpath" ]; then
 			echo "$cmd: not found!"
 			stat=1
 		fi
 	done
-
-	if [ -n "$mkdir_p" ]; then
-		tmpdir1="/tmp/$$/a1/b1"
-		mkdir -p "$tmpdir1"
-		if [ $? != 0 ] || [ ! -d "$tmpdir1" ]; then
-			echo " shhong, 10a... ok"
-			stat=1
-		fi
-	fi
 
 	return $stat
 }

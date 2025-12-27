@@ -30,7 +30,7 @@
 
 source ../ulsconfig/uls_common.sh
 
-command_list_used="mkdir_p rmdir tar"
+command_list_used="rmdir tar"
 if ! check_commands_used $command_list_used; then
 	exit 1
 fi
