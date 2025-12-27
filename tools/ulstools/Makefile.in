@@ -139,7 +139,8 @@ am__v_AR_0 = @echo "  AR      " $@;
 am__v_AR_1 = 
 libulstools_a_AR = $(AR) $(ARFLAGS)
 libulstools_a_LIBADD =
-am_libulstools_a_OBJECTS = libulstools_a-utils.$(OBJEXT)
+am_libulstools_a_OBJECTS = libulstools_a-ult_log.$(OBJEXT) \
+	libulstools_a-lineproc.$(OBJEXT) libulstools_a-utils.$(OBJEXT)
 libulstools_a_OBJECTS = $(am_libulstools_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -156,7 +157,9 @@ am__v_at_1 =
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
-am__depfiles_remade = ./$(DEPDIR)/libulstools_a-utils.Po
+am__depfiles_remade = ./$(DEPDIR)/libulstools_a-lineproc.Po \
+	./$(DEPDIR)/libulstools_a-ult_log.Po \
+	./$(DEPDIR)/libulstools_a-utils.Po
 am__mv = mv -f
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -342,8 +345,8 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 uls_ver_major = 1
-uls_ver_minor = 10
-uls_ver_debug = 1
+uls_ver_minor = 11
+uls_ver_debug = 0
 uls_ver = $(uls_ver_major).$(uls_ver_minor).$(uls_ver_debug)
 so_current = 1
 so_revision = 1
@@ -353,7 +356,7 @@ TMP_SYSPROPS = /tmp/uls_sysprops.txt
 ulc2class_exe = $(top_builddir)/tools/ulc2class/ulc2class
 tests_libpath = $(top_builddir)/src:$(top_builddir)/ulscpp
 lib_LIBRARIES = libulstools.a
-libulstools_a_SOURCES = utils.c
+libulstools_a_SOURCES = ult_log.c lineproc.c utils.c
 libulstools_a_CPPFLAGS = \
 	-include $(CONFIG_HEADER) -I$(top_srcdir) -I$(top_srcdir)/src
 
@@ -438,6 +441,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libulstools_a-lineproc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libulstools_a-ult_log.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libulstools_a-utils.Po@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
@@ -466,6 +471,34 @@ am--depfiles: $(am__depfiles_remade)
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
+
+libulstools_a-ult_log.o: ult_log.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libulstools_a_CPPFLAGS) $(CPPFLAGS) $(libulstools_a_CFLAGS) $(CFLAGS) -MT libulstools_a-ult_log.o -MD -MP -MF $(DEPDIR)/libulstools_a-ult_log.Tpo -c -o libulstools_a-ult_log.o `test -f 'ult_log.c' || echo '$(srcdir)/'`ult_log.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libulstools_a-ult_log.Tpo $(DEPDIR)/libulstools_a-ult_log.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ult_log.c' object='libulstools_a-ult_log.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libulstools_a_CPPFLAGS) $(CPPFLAGS) $(libulstools_a_CFLAGS) $(CFLAGS) -c -o libulstools_a-ult_log.o `test -f 'ult_log.c' || echo '$(srcdir)/'`ult_log.c
+
+libulstools_a-ult_log.obj: ult_log.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libulstools_a_CPPFLAGS) $(CPPFLAGS) $(libulstools_a_CFLAGS) $(CFLAGS) -MT libulstools_a-ult_log.obj -MD -MP -MF $(DEPDIR)/libulstools_a-ult_log.Tpo -c -o libulstools_a-ult_log.obj `if test -f 'ult_log.c'; then $(CYGPATH_W) 'ult_log.c'; else $(CYGPATH_W) '$(srcdir)/ult_log.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libulstools_a-ult_log.Tpo $(DEPDIR)/libulstools_a-ult_log.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ult_log.c' object='libulstools_a-ult_log.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libulstools_a_CPPFLAGS) $(CPPFLAGS) $(libulstools_a_CFLAGS) $(CFLAGS) -c -o libulstools_a-ult_log.obj `if test -f 'ult_log.c'; then $(CYGPATH_W) 'ult_log.c'; else $(CYGPATH_W) '$(srcdir)/ult_log.c'; fi`
+
+libulstools_a-lineproc.o: lineproc.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libulstools_a_CPPFLAGS) $(CPPFLAGS) $(libulstools_a_CFLAGS) $(CFLAGS) -MT libulstools_a-lineproc.o -MD -MP -MF $(DEPDIR)/libulstools_a-lineproc.Tpo -c -o libulstools_a-lineproc.o `test -f 'lineproc.c' || echo '$(srcdir)/'`lineproc.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libulstools_a-lineproc.Tpo $(DEPDIR)/libulstools_a-lineproc.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='lineproc.c' object='libulstools_a-lineproc.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libulstools_a_CPPFLAGS) $(CPPFLAGS) $(libulstools_a_CFLAGS) $(CFLAGS) -c -o libulstools_a-lineproc.o `test -f 'lineproc.c' || echo '$(srcdir)/'`lineproc.c
+
+libulstools_a-lineproc.obj: lineproc.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libulstools_a_CPPFLAGS) $(CPPFLAGS) $(libulstools_a_CFLAGS) $(CFLAGS) -MT libulstools_a-lineproc.obj -MD -MP -MF $(DEPDIR)/libulstools_a-lineproc.Tpo -c -o libulstools_a-lineproc.obj `if test -f 'lineproc.c'; then $(CYGPATH_W) 'lineproc.c'; else $(CYGPATH_W) '$(srcdir)/lineproc.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libulstools_a-lineproc.Tpo $(DEPDIR)/libulstools_a-lineproc.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='lineproc.c' object='libulstools_a-lineproc.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libulstools_a_CPPFLAGS) $(CPPFLAGS) $(libulstools_a_CFLAGS) $(CFLAGS) -c -o libulstools_a-lineproc.obj `if test -f 'lineproc.c'; then $(CYGPATH_W) 'lineproc.c'; else $(CYGPATH_W) '$(srcdir)/lineproc.c'; fi`
 
 libulstools_a-utils.o: utils.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libulstools_a_CPPFLAGS) $(CPPFLAGS) $(libulstools_a_CFLAGS) $(CFLAGS) -MT libulstools_a-utils.o -MD -MP -MF $(DEPDIR)/libulstools_a-utils.Tpo -c -o libulstools_a-utils.o `test -f 'utils.c' || echo '$(srcdir)/'`utils.c
@@ -636,7 +669,9 @@ clean-am: clean-generic clean-libLIBRARIES clean-libtool \
 	mostlyclean-am
 
 distclean: distclean-am
-		-rm -f ./$(DEPDIR)/libulstools_a-utils.Po
+		-rm -f ./$(DEPDIR)/libulstools_a-lineproc.Po
+	-rm -f ./$(DEPDIR)/libulstools_a-ult_log.Po
+	-rm -f ./$(DEPDIR)/libulstools_a-utils.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -682,7 +717,9 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-		-rm -f ./$(DEPDIR)/libulstools_a-utils.Po
+		-rm -f ./$(DEPDIR)/libulstools_a-lineproc.Po
+	-rm -f ./$(DEPDIR)/libulstools_a-ult_log.Po
+	-rm -f ./$(DEPDIR)/libulstools_a-utils.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
