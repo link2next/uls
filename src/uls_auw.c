@@ -494,7 +494,7 @@ ULS_QUALIFIED_METHOD(uls_ustr2wstr)(const char *ustr, int ulen, csz_str_ptr_t cs
 		ustr1 = ustr1_buff;
 	}
 
- 	if ((siz = mbstowcs(NULL, ustr1, ulen)) == (size_t) -1) {
+ 	if ((siz = mbstowcs(NULL, ustr1, 0)) == (size_t) -1) {
  		uls_mfree(ustr1_buff);
  		csz_reset(csz_wstr);
 		return NULL;
@@ -549,7 +549,7 @@ ULS_QUALIFIED_METHOD(uls_wstr2ustr)(const wchar_t *wstr, int wlen, csz_str_ptr_t
 		wstr1 = wstr1_buff;
 	}
 
-	if ((siz = wcstombs(NULL, wstr1, wlen)) == (size_t) -1) {
+	if ((siz = wcstombs(NULL, wstr1, 0)) == (size_t) -1) {
 		csz_reset(csz);
 		uls_mfree(wstr1_buff);
 		return NULL;

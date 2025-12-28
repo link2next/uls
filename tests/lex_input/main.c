@@ -98,18 +98,18 @@ options(int opt, LPTSTR optarg)
 int
 proc_file_coord(uls_lex_ptr_t uls, LPCTSTR buf)
 {
-	int lno, len, siz;
+	int lno, l_tokstr, siz;
 	LPTSTR lptr, wrd;
 
-	if ( (len = uls_str_length(buf))>= lbuff_siz) {
-		siz = len + 128;
+	if ( (l_tokstr = uls_str_length(buf))>= lbuff_siz) {
+		siz = l_tokstr + 128;
 		lbuff = (LPTSTR) uls_mrealloc(lbuff, siz * sizeof(TCHAR));
 		lbuff_siz = siz;
 	}
-	// len  < buff_siz
+	// l_tokstr  < buff_siz
 
-	uls_memcopy(lbuff, buf, len * sizeof(TCHAR));
-	lbuff[len] = _T('\0');
+	uls_memcopy(lbuff, buf, l_tokstr * sizeof(TCHAR));
+	lbuff[l_tokstr] = _T('\0');
 	lptr = lbuff;
 
 	// line
@@ -224,29 +224,6 @@ test_uls_isrc(uls_lex_ptr_t uls, LPCTSTR filepath)
 }
 
 int
-test_gnu_c(uls_lex_ptr_t uls, LPTSTR *args, int n_args)
-{
-	LPCTSTR filepath;
-	int i, stat=0;
-
-	if (n_args < 1) {
-		err_log(_T("%hs: invalid parameter!"), __func__);
-		return -1;
-	}
-
-	for (i=0; i<n_args; i++) {
-		filepath = args[i];
-
-		if (test_uls_isrc(uls, filepath) < 0) {
-			stat = -1;
-			break;
-		}
-	}
-
-	return stat;
-}
-
-int
 lex_input_file(uls_lex_ptr_t uls, LPCTSTR filepath)
 {
 	LPCTSTR tokstr;
@@ -285,6 +262,29 @@ lex_input_file(uls_lex_ptr_t uls, LPCTSTR filepath)
 }
 
 int
+test_gnu_c(uls_lex_ptr_t uls, LPTSTR *args, int n_args)
+{
+	LPCTSTR filepath;
+	int i, stat=0;
+
+	if (n_args < 1) {
+		err_log(_T("%hs: invalid parameter!"), __func__);
+		return -1;
+	}
+
+	for (i=0; i<n_args; i++) {
+		filepath = args[i];
+
+		if (test_uls_isrc(uls, filepath) < 0) {
+			stat = -1;
+			break;
+		}
+	}
+
+	return stat;
+}
+
+int
 lex_input_line(uls_lex_ptr_t uls)
 {
 	LPCTSTR line = _T("// comment here!\nTo parse\ngcc pre-processed files");
@@ -297,7 +297,7 @@ lex_input_line(uls_lex_ptr_t uls)
 	}
 
 	for ( ; ; ) {
-		if ((t = uls_get_tok(uls)) == TOK_EOF || t == TOK_EOI || t == TOK_ERR) {
+		if ((t = uls_get_tok(uls)) == TOK_EOF || t == TOK_ERR) {
 			if (t == TOK_ERR) {
 				err_log(_T("program abnormally terminated!"));
 			}

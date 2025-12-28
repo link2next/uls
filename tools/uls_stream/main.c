@@ -196,6 +196,7 @@ static void usage_long(void)
 	ult_log("You can use -C-option as below.");
 	ult_log("  %s -C a.list /package/home/target-dir", progname);
 	ult_log("The output file is specified with -o-option.");
+	ult_log("The default output-file in binary mode is 'a.uls'.");
 
 	ult_log("The -f-option can be used with -C-option to filter the files before the input to be passed to lexical analyzer.");
 	ult_log("The argument of -f-option should be a command line which inputs from stdin and outputs to stdout like 'gcc -E'.");
