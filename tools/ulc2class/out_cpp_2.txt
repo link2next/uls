@@ -68,6 +68,6 @@ class Sample2 : public uls::crux::UlsLex {
 
 	static const int            IDENT = 210;
 
-	Sample2(uls::tstring filepath = _T(R"(/home/stanley/www/uls_1_cs/tools/ulc2class/sample2.ulc)"))
+	Sample2(uls::tstring filepath = _T(R"(sample2.ulc)"))
 		 : uls::crux::UlsLex(filepath) {}
 };

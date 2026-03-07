@@ -1,4 +1,6 @@
  #1 (NQ) : "... cr-lf next-line"
  #4 (NQ) : "... lf-cr next-line"
  #7 (NQ) : " hello (E2)(98)(83) ..."
- #11(NQ) : "...line (0D) having CR"
+ #8 (NQ) : " hello (E2)(98)(83) C#"
+ #9 (NQ) : " hello 3i/atlas ..."
+ #13(NQ) : "...line (0D) having CR"

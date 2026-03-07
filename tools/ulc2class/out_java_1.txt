@@ -85,7 +85,7 @@ public class Sample1 extends uls.polaris.UlsLex {
 	public final int            WHILE = 194;
 
 	public Sample1() {
-		super("/home/stanley/www/uls_1_cs/tools/ulc2class/sample1.ulc");
+		super("sample1.ulc");
 	}
 
 	public Sample1(String filepath) {

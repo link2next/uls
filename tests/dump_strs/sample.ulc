@@ -11,8 +11,8 @@ NUMBER_PREFIXES: 0x:16 0:8
 
 QUOTE_TYPE: token=DQUOTE " legacy('?)
 QUOTE_TYPE: token=SQUOTE ' verbatim1
-QUOTE_TYPE: token=100,MQUOTE escsym=€ ☃ modern(u4,U8)
-QUOTE_TYPE: token=101,NQUOTE $ modern(eol,etc)
+QUOTE_TYPE: token=100,MQUOTE escsym=€ ☃ modern(U8)
+QUOTE_TYPE: token=101,NQUOTE $ modern(eol,etc) y:0x2603 z:"3i/atlas"
 QUOTE_TYPE: options=asymmetric,multiline token=CS_QUOTE @" " verbatim
 
 %%

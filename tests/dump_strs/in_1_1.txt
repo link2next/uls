@@ -5,6 +5,8 @@ next-line$
 next-line$
 
  $ hello \☃ ...$
+ $ hello \y C#$ 
+ $ hello \z ...$
 
     
 
