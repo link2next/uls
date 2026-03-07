@@ -45,29 +45,6 @@ extern "C" {
 #define ULS_ESCCH_END               0x7E
 #define ULS_ESCCH_MAPSIZE (ULS_ESCCH_END - ULS_ESCCH_START + 1)
 
-#define ULS_ESCMAP_MODERN_EOS       0x0001
-#define ULS_ESCMAP_MODERN_ESC       0x0002
-#define ULS_ESCMAP_MODERN_EOL       0x0004
-#define ULS_ESCMAP_MODERN_ETC       0x0008
-
-#define ULS_ESCMAP_MODERN_LF        0x0010
-#define ULS_ESCMAP_MODERN_TAB       0x0020
-#define ULS_ESCMAP_MODERN_U4        0x0040
-#define ULS_ESCMAP_MODERN_U8        0x0080
-
-#define ULS_ESCMAP_LEGACY_SQ        0x0100
-#define ULS_ESCMAP_LEGACY_DQ        0x0200
-#define ULS_ESCMAP_LEGACY_HEX       0x0400
-#define ULS_ESCMAP_LEGACY_OCT       0x0800
-
-#define ULS_ESCMAP_LEGACY_CR        0x1000
-#define ULS_ESCMAP_LEGACY_BS        0x2000
-#define ULS_ESCMAP_LEGACY_FF        0x4000
-#define ULS_ESCMAP_LEGACY_VF        0x8000
-
-#define ULS_ESCMAP_LEGACY_BELL      0x10000
-#define ULS_ESCMAP_LEGACY_QUES      0x20000
-
 // escstr
 #define ULS_ESCSTR_FL_MASK          0x000F
 #define ULS_ESCSTR_FL_HEXA          0x0010
@@ -135,7 +112,6 @@ ULS_DECL_STATIC uls_litesc_sysinfo_ptr_t uls_litesc;
 ULS_DECL_STATIC int get_escstr_bin_opts(uls_ptrtype_tool(outparam) parms);
 ULS_DECL_STATIC int extract_escstr_mapexpr(char *line, uls_ptrtype_tool(outparam) parms);
 ULS_DECL_STATIC int __parse_escmap_optgrp(char *line);
-ULS_DECL_STATIC int parse_escmap_optgrp(uls_ptrtype_tool(outparam) parms);
 ULS_DECL_STATIC void __uls_deinit_escmap_pool(uls_escmap_pool_ptr_t escmap_pool);
 ULS_DECL_STATIC void __uls_deinit_escmap(uls_escmap_ptr_t map);
 #endif // ULS_DECL_PRIVATE_PROC
@@ -167,22 +143,47 @@ void uls_grab_escmap_pool(uls_escmap_pool_ptr_t escmap_pool);
 void uls_ungrab_escmap_pool(uls_escmap_pool_ptr_t escmap_pool);
 
 uls_escstr_ptr_t uls_search_escmap_pool(uls_escmap_pool_ptr_t escmap_pool, char esc_ch, const char *str, int len);
-uls_escstr_ptr_t __uls_add_escmap_pool(uls_escmap_pool_ptr_t escmap_pool, int ind, char esc_ch, int idx, int len);
 
-void __uls_add_escstr(uls_escmap_pool_ptr_t escmap_pool,
-	uls_escmap_ptr_t map, int ind, char esc_ch, const char *str, int len);
+uls_escstr_ptr_t __uls_add_escmap_pool(uls_escmap_pool_ptr_t escmap_pool, int ind, char esc_ch, int idx, int len);
 int uls_del_escstr(uls_escmap_ptr_t map, char esc_ch);
 
-void __uls_register_escstr(uls_escmap_pool_ptr_t escmap_pool, uls_escmap_ptr_t map,
-	int ind, char esc_ch, const char *str, int len);
-void uls_register_escstr_nosafe(uls_escmap_pool_ptr_t escmap_pool,
+void __uls_register_escstr(uls_escmap_pool_ptr_t escmap_pool,
 	uls_escmap_ptr_t map, char esc_ch, const char *str, int len);
-int uls_add_escstr(uls_escmap_pool_ptr_t escmap_pool, uls_escmap_ptr_t map,
-	char esc_ch, const char *str, int len);
+void __uls_register_escflags(uls_escmap_pool_ptr_t escmap_pool,
+	uls_escmap_ptr_t map, char esc_ch, int escflags);
+void __uls_add_escstr(uls_escmap_pool_ptr_t escmap_pool,
+	uls_escmap_ptr_t map, char esc_ch, int ind, const char *str, int len);
+int uls_add_escstr(uls_escmap_ptr_t map, char esc_ch, const char *str, int len);
 
-void __uls_clone_escmap(uls_escmap_ptr_t src_map, uls_escmap_ptr_t dst_map, uls_escmap_pool_ptr_t dst_escmap_pool);
+void uls_clone_escmap(uls_escmap_ptr_t src_map, uls_escmap_ptr_t dst_map, uls_escmap_pool_ptr_t dst_escmap_pool);
+
+#define ULS_ESCMAP_MODERN_EOS       0x0001
+#define ULS_ESCMAP_MODERN_ESC       0x0002
+#define ULS_ESCMAP_MODERN_EOL       0x0004
+#define ULS_ESCMAP_MODERN_ETC       0x0008
+
+#define ULS_ESCMAP_MODERN_LF        0x0010
+#define ULS_ESCMAP_MODERN_TAB       0x0020
+
+#define ULS_ESCMAP_MODERN_U4        0x0100
+#define ULS_ESCMAP_MODERN_U8        0x0200
+#define ULS_ESCMAP_MODERN_U04       0x0400
+#define ULS_ESCMAP_MODERN_U08       0x0800
+
+#define ULS_ESCMAP_LEGACY_SQ        0x10000
+#define ULS_ESCMAP_LEGACY_DQ        0x20000
+#define ULS_ESCMAP_LEGACY_HEX       0x40000
+#define ULS_ESCMAP_LEGACY_OCT       0x80000
+
+#define ULS_ESCMAP_LEGACY_CR        0x100000
+#define ULS_ESCMAP_LEGACY_BS        0x200000
+#define ULS_ESCMAP_LEGACY_FF        0x400000
+#define ULS_ESCMAP_LEGACY_VF        0x800000
+
+#define ULS_ESCMAP_LEGACY_BELL      0x1000000
+#define ULS_ESCMAP_LEGACY_QUES      0x2000000
 void __uls_set_escmap(uls_escmap_ptr_t dst_map, int flags);
-uls_escmap_ptr_t uls_dup_escmap(uls_escmap_ptr_t src_map, uls_escmap_pool_ptr_t escmap_pool, int flags);
+void __set_initial_escmap(uls_escmap_ptr_t dst_map, int flags);
 
 uls_escmap_ptr_t uls_parse_escmap_feature(uls_ptrtype_tool(outparam) parms);
 int uls_parse_escmap_mapping(uls_escmap_ptr_t esc_map, char *line);

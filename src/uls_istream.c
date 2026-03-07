@@ -413,18 +413,6 @@ ULS_QUALIFIED_METHOD(uls_gettok_bin)(uls_lex_ptr_t uls)
 	pckptr += 2 * sizeof(uls_uint32);
 	lptr = *((char **) pckptr);
 
-	if (tok_id == uls->xcontext.toknum_LINENUM) {
-		parms.lptr = lptr;
-		rc = _uls_tool_(skip_atox)(uls_ptr(parms));
-		lptr = parms.lptr;
-
-		if (*lptr == '\0') lptr = NULL;
-		else ++lptr; // skip the ' '
-
-		uls_ctx_set_tag(ctx, lptr, rc);
-		goto next_loop;
-	}
-
 	if (tok_id == uls->xcontext.toknum_EOF) {
 		make_eoif_lexeme_bin(ctx, tok_id, lptr, txtlen);
 		uls->tokdef_vx = slots_rsv[EOF_TOK_IDX];
@@ -433,6 +421,19 @@ ULS_QUALIFIED_METHOD(uls_gettok_bin)(uls_lex_ptr_t uls)
 
 	if (tok_id == uls->xcontext.toknum_EOI) {
 		return 1;
+	}
+
+	if (tok_id == uls->xcontext.toknum_LINENUM) {
+		parms.lptr = lptr;
+		parms.lptr_end = NULL;
+		rc = _uls_tool_(skip_atox)(uls_ptr(parms));
+		lptr = parms.lptr;
+
+		if (*lptr == '\0') lptr = NULL;
+		else ++lptr; // skip the ' '
+
+		uls_ctx_set_tag(ctx, lptr, rc);
+		goto next_loop;
 	}
 
 	ctx->flags |= ULS_CTX_FL_EXTERN_TOKBUF;

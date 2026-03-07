@@ -111,7 +111,9 @@ ULS_QUALIFIED_METHOD(uls_version_pars_str)(const char *lptr, uls_version_ptr_t a
 		if (!uls_isdigit(*lptr)) break;
 
 		parms.lptr = lptr;
-		codstr[i++] = (char) uls_skip_atou(uls_ptr(parms));
+		parms.lptr_end = lptr + 2;
+		n = uls_skip_atou(uls_ptr(parms));
+		codstr[i++] = (char) (n & 0xff);
 		lptr = parms.lptr;
 
 		if (*lptr != '.' || !uls_isdigit(*++lptr))

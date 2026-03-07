@@ -286,7 +286,7 @@ int is_pure_integer(const char *lptr, uls_outparam_ptr_t parms);
 int is_pure_word(const char *lptr, int must_id);
 int uls_atoi(const char *str);
 
-void uls_get_xrange(const char *wrd, uls_uint32* ptr_x1, uls_uint32* ptr_x2);
+void uls_get_xrange(const char *wrd, uls_uint32 *ptr_x1, uls_uint32 *ptr_x2);
 int get_range_aton(uls_outparam_ptr_t parms);
 int uls_range_of_bits(uls_uint32 n);
 
@@ -297,8 +297,8 @@ int uls_strcmp(const char *str1, const char *str2);
 int uls_strncmp(const char *str1, const char *str2, int n);
 int uls_strcasecmp(const char *str1, const char *str2);
 
-char *uls_strchr(const char *lptr, char ch0);
-char *uls_strchr_r(const char *lptr, char ch);
+ULS_DLL_EXTERN char *uls_strchr(const char *lptr, char ch0);
+ULS_DLL_EXTERN char *uls_strchr_r(const char *lptr, char ch);
 const char *uls_strstr(const char *str, const char *substr);
 
 int uls_str_tolower(const char *src, char *dst, int len);
@@ -334,8 +334,8 @@ ULS_DLL_EXTERN void *uls_mrealloc(void *ptr, unsigned int n_bytes);
 ULS_DLL_EXTERN void *__uls_mfree(void *ptr);
 
 ULS_DLL_EXTERN char *uls_strdup(const char *str, int len);
-ULS_DLL_EXTERN void* uls_memcopy(void *dst, const void* src, int n);
-ULS_DLL_EXTERN void* uls_memmove(void *dst, const void* src, int n);
+ULS_DLL_EXTERN void* uls_memcopy(void *dst, const void *src, int n);
+ULS_DLL_EXTERN void* uls_memmove(void *dst, const void *src, int n);
 
 ULS_DLL_EXTERN int uls_strlen(const char *str);
 ULS_DLL_EXTERN int uls_strcpy(char *bufptr, const char *str);
@@ -375,8 +375,8 @@ int is_path_prefix(const char *filepath);
 void isp_init(uls_isp_ptr_t isp, int init_size);
 void isp_reset(uls_isp_ptr_t isp);
 void isp_deinit(uls_isp_ptr_t isp);
-int isp_find(uls_isp_ptr_t isp, const char *str, int len);
-int isp_insert(uls_isp_ptr_t isp, const char *str, int len);
+int isp_scan(uls_isp_ptr_t isp, const char *str, int len);
+int isp_add(uls_isp_ptr_t isp, const char *str, int len);
 const char *isp_get_str(uls_isp_ptr_t isp, int idx);
 
 ULS_DLL_EXTERN int uls_getenv(const char *name, char *buf, int buf_siz);

@@ -759,8 +759,7 @@ ULS_QUALIFIED_METHOD(parse_quotetype__token)(char *line, uls_ptrtype_tool(outpar
 	if ((len = _uls_tool_(strlen)(wrd)) > 0) {
 		if (_uls_tool_(isalpha)(wrd[0])) {
 			lptr = wrd;
-		}
-		if (_uls_tool_(isdigit)(wrd[0]) || wrd[0] == '-') {
+		} else if (_uls_tool_(isdigit)(wrd[0]) || wrd[0] == '-') {
 			if (len > 1 || wrd[0] != '-') {
 				parms->n = _uls_tool_(atoi)(wrd);
 				parms->flags = 1; // tok_id specified

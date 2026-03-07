@@ -53,5 +53,6 @@ const char *ult_get_suffix(const char *filepath);
 
 typedef int (*ult_sort_func_t)(uls_const_voidptr_t a, uls_const_voidptr_t b);
 void ult_simple_sort_vptr(uls_voidptr_t *list, int n_list, ult_sort_func_t cmp_func);
+const char* ult_get_dirpath(const char *fname, const char *dirpath_list, int *ptr_len);
 
 #endif // __ULT_UTILS_H__

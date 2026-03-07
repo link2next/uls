@@ -764,12 +764,14 @@ ULS_QUALIFIED_METHOD(uls_fillbuff_and_reset)(uls_lex_ptr_t uls, const char *str0
 
 
 const char*
-ULS_QUALIFIED_METHOD(__uls_eof_tag)(const char *ptr, uls_ptrtype_tool(outparam) parms)
+ULS_QUALIFIED_METHOD(__uls_eof_tag)(const char *lptr, uls_ptrtype_tool(outparam) parms)
 {
-	parms->lptr = ptr;
+	parms->lptr = lptr;
+	parms->lptr_end = NULL;
 	_uls_tool_(skip_atou)(parms); // linenum
 
 	++parms->lptr;
+	parms->lptr_end = NULL;
 	parms->len = _uls_tool_(skip_atou)(parms); // the length of eof-tag
 
 	return ++parms->lptr;

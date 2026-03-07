@@ -13,8 +13,8 @@ NUMBER_SUFFIXES: L l UL ul ULL ull LL f
 
 COMMENT_TYPE: /* */
 
-QUOTE_TYPE: token=DQUOTE " legacy(?)
-QUOTE_TYPE: token=SQUOTE ' verbatim1
+QUOTE_TYPE: token=DQUOTE " legacy(etc,?)
+QUOTE_TYPE: token=SQUOTE ' legacy(etc,?)
 
 NOT_CHAR_TOK: `@_
 

@@ -1,4 +1,11 @@
 ﻿
+  v1.12
+  -----------
+    o Can customize the format of literal strings of your programming language by
+        a) Specifying the category of literal string: verbatim, modern, or legacy
+        b) mapping indivisual (escaping) char to another, like \n, \t, \y, or \z
+      Refer to the user-guide(v0.11) for details.
+
   v1.11
   -----------
     o Used JDK-17 to build ulsjni

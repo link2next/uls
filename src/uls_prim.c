@@ -648,16 +648,18 @@ void
 ULS_QUALIFIED_METHOD(uls_get_xrange)(const char *wrd, uls_uint32* ptr_x1, uls_uint32* ptr_x2)
 {
 	uls_uint32 val1, val2;
-	uls_outparam_t parms;
+	uls_outparam_t parms1;
 
-	parms.lptr = wrd;
-	val1 = uls_skip_atox(uls_ptr(parms));
-	wrd = parms.lptr;
+	parms1.lptr = wrd;
+	parms1.lptr_end = NULL;
+	val1 = uls_skip_atox(uls_ptr(parms1));
+	wrd = parms1.lptr;
 
 	if (*wrd == '-') {
-		parms.lptr = ++wrd;
-		val2 = uls_skip_atox(uls_ptr(parms));
-		wrd = parms.lptr;
+		parms1.lptr = ++wrd;
+		parms1.lptr_end = NULL;
+		val2 = uls_skip_atox(uls_ptr(parms1));
+		wrd = parms1.lptr;
 	} else {
 		val2 = val1;
 	}
@@ -683,11 +685,13 @@ ULS_QUALIFIED_METHOD(get_range_aton)(uls_outparam_ptr_t parms)
 
 	} else if (lptr[0] == '0' && lptr[1] == 'x') {
 		parms1.lptr = lptr + 2;
+		parms1.lptr_end = NULL;
 		i1 = uls_skip_atox(uls_ptr(parms1));
 		lptr = parms1.lptr;
 
 		if (*lptr == '-') {
 			parms1.lptr = ++lptr;
+			parms1.lptr_end = NULL;
 			i2 = uls_skip_atox(uls_ptr(parms1));
 			lptr = parms1.lptr;
 		} else {
@@ -1124,36 +1128,58 @@ ULS_QUALIFIED_METHOD(uls_memcmp)(const void *src1, const void *src2, int n)
 unsigned int
 ULS_QUALIFIED_METHOD(uls_skip_atou)(uls_outparam_ptr_t parms)
 {
-	const char   *lptr = parms->lptr;
-	unsigned int n = 0;
+	const char *lptr = parms->lptr, *lptr_end;
+	unsigned int  n = 0;
 	char ch;
 
-	for ( ; uls_isdigit(ch=*lptr); lptr++) {
-		n = n*10 + (ch - '0');
+	if ((lptr_end = parms->lptr_end) == NULL) {
+		lptr_end = lptr + 10; // unsigned int
 	}
 
+	for ( ; lptr < lptr_end; lptr++) {
+		if ((ch=*lptr) >= '0' && ch <= '9') {
+			n = n * 10 + (ch - '0');
+		} else {
+			break;
+		}
+	}
+
+	parms->x1 = n;
+	parms->len = (int) (lptr - parms->lptr);
 	parms->lptr = lptr;
+
 	return n;
 }
 
 unsigned int
 ULS_QUALIFIED_METHOD(uls_skip_atox)(uls_outparam_ptr_t parms)
 {
-	const char   *lptr = parms->lptr;
+	const char *lptr = parms->lptr, *lptr_end;
 	unsigned int  n = 0;
 	char ch;
 
-	for ( ; ; lptr++) {
+	if ((lptr_end = parms->lptr_end) == NULL) {
+		lptr_end = lptr + sizeof(unsigned int) * 2;
+	}
+
+	for ( ; lptr < lptr_end; lptr++) {
 		if ((ch=*lptr) >= '0' && ch <= '9') {
-			n = (n << 4) + (ch - '0');
-		} else if (uls_isalpha(ch) && (ch=uls_toupper(ch)) >= 'A' && ch <= 'F') {
-			n = (n << 4) + 10 + (ch - 'A');
+			ch = ch - '0';
+		} else if (ch >= 'a' && ch <= 'f') {
+			ch = 10 + (ch - 'a');
+		} else if (ch >= 'A' && ch <= 'F') {
+			ch = 10 + (ch - 'A');
 		} else {
 			break;
 		}
+
+		n = (n << 4) + ch;
 	}
 
+	parms->x1 = n;
+	parms->len = (int) (lptr - parms->lptr);
 	parms->lptr = lptr;
+
 	return n;
 }
 
@@ -2130,10 +2156,16 @@ ULS_QUALIFIED_METHOD(is_path_prefix)(const char *filepath)
 void
 ULS_QUALIFIED_METHOD(isp_init)(uls_isp_ptr_t isp, int init_size)
 {
-	if (init_size < 1) init_size = 256;
+	int siz;
 
-	isp->buff = (char *) uls_malloc(init_size);
-	isp->siz_strpool = init_size;
+	if (init_size <= 0) {
+		siz = 256;
+	} else {
+		siz = ((init_size + 7) >> 3) << 3;
+	}
+
+	isp->buff = (char *) uls_malloc(siz);
+	isp->siz_strpool = siz;
 
 	isp->buff[0] = '\0'; // nil-string
 	isp->len_strpool = 1;
@@ -2157,7 +2189,7 @@ ULS_QUALIFIED_METHOD(isp_deinit)(uls_isp_ptr_t isp)
 }
 
 int
-ULS_QUALIFIED_METHOD(isp_find)(uls_isp_ptr_t isp, const char *str, int len)
+ULS_QUALIFIED_METHOD(isp_scan)(uls_isp_ptr_t isp, const char *str, int len)
 {
 	char *ptr;
 	int i, l;
@@ -2176,15 +2208,16 @@ ULS_QUALIFIED_METHOD(isp_find)(uls_isp_ptr_t isp, const char *str, int len)
 }
 
 int
-ULS_QUALIFIED_METHOD(isp_insert)(uls_isp_ptr_t isp, const char *str, int len)
+ULS_QUALIFIED_METHOD(isp_add)(uls_isp_ptr_t isp, const char *str, int len)
 {
 	char *ptr;
 	int i, k;
 
 	if (len < 0) len = uls_strlen(str);
+	if (len <= 0) return 0;
 
 	k = isp->siz_strpool - isp->len_strpool;
-	if (len + 1 > k) {
+	if (k < len + 1) {
 		k = uls_ceil_log2(isp->len_strpool + len + 1, 6);
 		isp->buff = (char *) uls_mrealloc(isp->buff, k);
 		isp->siz_strpool = k;

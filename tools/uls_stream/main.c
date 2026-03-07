@@ -236,15 +236,59 @@ static void usage_long(void)
 	ult_log("");
 }
 
+#ifdef ULS_FDF_SUPPORT
+static int
+check_fdf_progname(const char *arg)
+{
+	int j, siz, len_dirpath, stat = 0;
+	char *cmdl, *lptr1, *arg0;
+	const char *cptr, *dirpath_list;
+
+	siz = ULS_FILEPATH_MAX + strlen(arg) + 1;
+	cmdline_filter = uls_malloc(siz);
+	strcpy(cmdline_filter, arg);
+
+	lptr1 = cmdline_filter;
+	arg0 = uls_splitstr(&lptr1);
+
+	arg0 = ult_strdup(arg0);
+	uls_path_normalize(arg0, arg0);
+
+	if (uls_strchr(arg0, ULS_FILEPATH_DELIM) != NULL) {
+		if (uls_dirent_exist(arg0) == ST_MODE_REG) {
+			strcpy(cmdline_filter, arg);
+		} else {
+			ult_log("%s: not found", arg0);
+			stat = -1;
+		}
+	} else {
+		if ((dirpath_list = getenv("PATH")) == NULL) {
+			fprintf(stderr, "PATH not found!");
+			stat = -1;
+		} else {
+			cptr = ult_get_dirpath(arg0, dirpath_list, &len_dirpath);
+			siz = len_dirpath + 1 + strlen(arg0) + 1 + ULS_FILEPATH_MAX + 1;
+			cmdl = uls_malloc(siz);
+
+			uls_strncpy(cmdl, cptr, len_dirpath);
+			j = len_dirpath;
+			j += uls_snprintf(cmdl + j, siz - j, "/%s %s", arg0, lptr1);
+
+			uls_mfree(cmdline_filter);
+			cmdline_filter = cmdl;
+		}
+	}
+
+	uls_mfree(arg0);
+	return stat;
+}
+
+#endif
+
 static int
 ulsstream_options(int opt, char *optarg)
 {
 	int stat = 0;
-#ifdef ULS_FDF_SUPPORT
-	char fpath_buff[ULS_FILEPATH_MAX+1];
-	char *lptr, *cmdl, *argv0;
-	int siz;
-#endif
 
 	switch (opt) {
 	case 'b':
@@ -263,33 +307,15 @@ ulsstream_options(int opt, char *optarg)
 
 	case 'f':
 #ifdef ULS_FDF_SUPPORT
-		uls_mfree(cmdline_filter);
-		cmdl = skip_blanks(optarg);
-
-		siz = strlen(cmdl) + ULS_FILEPATH_MAX + 4;
-		cmdline_filter = uls_malloc(siz);
-		strcpy(cmdline_filter, cmdl);
-
-		if (ult_streql(cmdline_filter, "pass")) {
+		if (ult_streql(optarg, "pass")) {
 			break;
 		}
 
-		lptr = cmdline_filter;
-		argv0 = uls_splitstr(&lptr);
-
-		argv0 = ult_strdup(argv0);
-		uls_path_normalize(argv0, argv0);
-
-		if (!ult_is_absolute_path(argv0) && uls_dirent_exist(argv0) == ST_MODE_REG) {
-			if (uls_getcwd(fpath_buff, ULS_FILEPATH_MAX) < 0) {
-				ult_panic("%s: fail to getcwd()", __func__);
-			}
-			uls_snprintf(cmdline_filter, siz, "%s/%s", fpath_buff, cmdl);
-		} else {
-			uls_mfree(cmdline_filter);
-			cmdline_filter = cmdl;
+		uls_mfree(cmdline_filter);
+		if (check_fdf_progname(optarg) < 0) {
+			stat = -1;
+			break;
 		}
-		uls_mfree(argv0);
 #else
 		ult_log("%s: fdf not supported!", __func__);
 		stat = -1;
@@ -414,7 +440,7 @@ parse_options(int argc, char *argv[])
 	}
 
 	for ( ; i0 < argc; ) {
-		if ((ptr=strchr(argv[i0], '=')) != NULL) {
+		if ((ptr=uls_strchr(argv[i0], '=')) != NULL) {
 			*ptr++ = '\0';
 			name = argv[i0++];
 			if (!add_name_val_ent(name, (void *) ptr)) {
@@ -580,6 +606,7 @@ main_ustr(int argc, char *argv[])
 	uls_destroy(sam_lex);
 
 end_1:
+	uls_mfree(cmdline_filter);
 	uls_mfree(filelist);
 	uls_mfree(target_dir);
 	uls_mfree(output_file);

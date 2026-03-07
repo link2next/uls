@@ -314,7 +314,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 uls_ver_major = 1
-uls_ver_minor = 11
+uls_ver_minor = 12
 uls_ver_debug = 0
 uls_ver = $(uls_ver_major).$(uls_ver_minor).$(uls_ver_debug)
 so_current = 1
@@ -326,7 +326,7 @@ ulc2class_exe = $(top_builddir)/tools/ulc2class/ulc2class
 tests_libpath = $(top_builddir)/src:$(top_builddir)/ulscpp
 SUBDIRS = \
 	dump_toks id_stat getch line log \
-	many_kwrds nest strings tok_remap \
+	many_kwrds nest dump_strs tok_remap \
 	two_lex lex_input cpp_hello file_enc
 
 ACLOCAL_AMFLAGS = -I m4

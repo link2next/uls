@@ -107,11 +107,12 @@ ULS_DEFINE_STRUCT_BEGIN(litstr_context)
 
 ULS_DEFINE_STRUCT_BEGIN(litstr)
 {
+	int flags;
+
 	char *line;
 	const char *lptr, *lptr_end;
 	int len;
 
-	int map_flags;
 	uls_wch_t ch_escape;
 	int  maxlen_esc_oxudigits;
 	uls_wch_t wch;

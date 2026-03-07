@@ -63,6 +63,7 @@ ULS_QUALIFIED_METHOD(ulf_read_config_var)(int lno, char *lptr, ulf_header_ptr_t 
 				hdr->weights[i] = 1;
 			} else if (wrd[0] == '0' && wrd[1] == 'x') {
 				parms.lptr = wrd + 2;
+				parms.lptr_end = NULL;
 				hdr->weights[i] = _uls_tool_(skip_atox)(uls_ptr(parms));
 			} else {
 				_uls_tool(is_pure_integer)(wrd, uls_ptr(parms));

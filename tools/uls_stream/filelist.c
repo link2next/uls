@@ -133,6 +133,7 @@ conglomerate_files(FILE *fp_list, uls_ostream_t* ostr)
 		}
 	}
 
+	if (!stat) ult_log("\nDone!");
 	return stat;
 }
 

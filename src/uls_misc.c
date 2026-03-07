@@ -388,8 +388,8 @@ ULS_QUALIFIED_METHOD(uls_get_simple_escape_str)(char quote_ch, uls_ptrtype_tool(
 	const char *lptr = parms->lptr;
 	char *outbuf = parms->line;
 	uls_type_tool(outparam) parms1;
-	int escape = 0, j, k = 0;
-	char ch, ch2;
+	int escape = 0, k = 0;
+	char ch;
 
 	for ( ; ; lptr++) {
 		if ((ch = *lptr) == '\0') {
@@ -406,20 +406,12 @@ ULS_QUALIFIED_METHOD(uls_get_simple_escape_str)(char quote_ch, uls_ptrtype_tool(
 
 		if (escape) {
 			if (ch == 'x') {
-				for (ch2=0,j=0; j<2; j++) {
-					ch = lptr[j+1];
-					if (!_uls_tool_(isxdigit)(ch)) {
-						if (j == 0) {
-							_uls_log(err_log)("%s: No hexa-string format!", __func__);
-							parms->lptr = lptr;
-							return -1;
-						}
-						break;
-					}
-					ch2 |= _uls_tool_(isdigit)(ch) ? ch - '0' : 10 + (_uls_tool_(toupper)(ch) - 'A');
-				}
-				outbuf[k++] = ch2;
-				lptr += j;
+				parms1.lptr = lptr + 1;
+				parms1.lptr_end = lptr + 3;
+				_uls_tool_(skip_atox)(uls_ptr(parms1));
+				outbuf[k++] = (char) (parms1.x1 & 0xff);
+				lptr = parms1.lptr;
+
 			} else {
 				parms1.x1 = ch;
 				if (uls_get_simple_escape_char(uls_ptr(parms1))) {
@@ -558,30 +550,30 @@ ULS_QUALIFIED_METHOD(uls_get_dirpath)(const char *fname, uls_ptrtype_tool(outpar
 {
 	const char *dirpath_list = parms->lptr;
 	char fpath_buff[ULS_FILEPATH_MAX+1];
-	const char *fptr, *lptr0, *lptr, *dirpath_ret=NULL;
-	int   len, len_fptr;
+	const char *fptr, *lptr1, *lptr, *dirpath_ret=NULL;
+	int len, len_fptr;
 
 	if (dirpath_list == NULL) {
 		return NULL;
 	}
 
-	for (lptr0=dirpath_list; lptr0 != NULL; ) {
-		if ((lptr = _uls_tool_(strchr)(lptr0, ULS_DIRLIST_DELIM)) != NULL) {
-			len_fptr = (int) (lptr - lptr0);
-			fptr = lptr0;
-			lptr0 = ++lptr;
+	for (lptr1 = dirpath_list; lptr1 != NULL; ) {
+		if ((lptr = _uls_tool_(strchr)(lptr1, ULS_DIRLIST_DELIM)) != NULL) {
+			len_fptr = (int) (lptr - lptr1);
+			fptr = lptr1;
+			lptr1 = ++lptr;
 		} else {
-			len_fptr = _uls_tool_(strlen)(lptr0);
-			fptr = lptr0;
-			lptr0 = NULL;
+			len_fptr = _uls_tool_(strlen)(lptr1);
+			fptr = lptr1;
+			lptr1 = NULL;
 		}
 
-		if (len_fptr==0) continue;
+		if (len_fptr <= 0) continue;
 
 		_uls_tool_(strncpy)(fpath_buff, fptr, len_fptr);
 		len = len_fptr;
 		fpath_buff[len++] = ULS_FILEPATH_DELIM;
-		_uls_tool_(strcpy)(fpath_buff+len, fname);
+		_uls_tool_(strcpy)(fpath_buff + len, fname);
 
 		if (_uls_tool_(dirent_exist)(fpath_buff) == ST_MODE_FILE) {
 			dirpath_ret = fptr;

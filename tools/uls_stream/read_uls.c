@@ -226,7 +226,6 @@ rawdump_stream_file(uls_lex_ptr_t uls, FILE* fp_out)
 	csz_str_t lxm_buf;
 	int lno = -1, lineno, l_tagstr, wcoord_changed, stat=0;
 	const char *lxm, *lxm2, *tagstr;
-	static const char *escchars = "ntrabfv";
 
 	char ch, *buff2 = NULL;
 	int buff2_siz = 0;
@@ -234,7 +233,7 @@ rawdump_stream_file(uls_lex_ptr_t uls, FILE* fp_out)
 	int len1, len2, l_lxm, l_lxm2;
 	unsigned char ch2;
 	uls_quotetype_ptr_t qmt;
-	const char *smark, *emark, *cptr;
+	const char *smark, *emark;
 
 	csz_init(uls_ptr(tag_buf), 128);
 	csz_init(uls_ptr(lxm_buf), 1024);
@@ -292,11 +291,10 @@ rawdump_stream_file(uls_lex_ptr_t uls, FILE* fp_out)
 			}
 			k = len1;
 
-			for (i = 0; lxm[i] != '\0'; i++) {
+			for (i = 0; i < l_lxm; i++) {
 				ch = lxm[i];
-				if (isprint(ch)) {
-					buff2[k++] = ch;
-				} else if (ch == '\n') {
+
+				if (ch == '\n') {
 					buff2[k++] = '\\';
 					buff2[k++] = 'n';
 				} else if (ch == '\t') {
@@ -305,9 +303,28 @@ rawdump_stream_file(uls_lex_ptr_t uls, FILE* fp_out)
 				} else if (ch == '\r') {
 					buff2[k++] = '\\';
 					buff2[k++] = 'r';
-				} else if ((cptr = strchr(escchars, ch)) != NULL) {
+				} else if (ch == '\a') {
 					buff2[k++] = '\\';
-					buff2[k++] = *cptr;
+					buff2[k++] = 'a';
+				} else if (ch == '\b') {
+					buff2[k++] = '\\';
+					buff2[k++] = 'b';
+				} else if (ch == '\f') {
+					buff2[k++] = '\\';
+					buff2[k++] = 'f';
+				} else if (ch == '\v') {
+					buff2[k++] = '\\';
+					buff2[k++] = 'v';
+				} else if (len1 == 1 && (ch == smark[0] || ch == '\\')) {
+					buff2[k++] = '\\';
+					buff2[k++] = ch;
+				} else if (isprint(ch)) {
+					buff2[k++] = ch;
+
+				} else if (ch == '\0') {
+					buff2[k++] = '\\';
+					buff2[k++] = '0';
+
 				} else {
 					ch2 = (unsigned char) ch;
 					buff2[k++] = '\\';
@@ -365,6 +382,7 @@ rawdump_stream_file(uls_lex_ptr_t uls, FILE* fp_out)
 			if (!bLineFeed) {
 				__flushline_lxmbuff(uls_ptr(lxm_buf), fp_out);
 			}
+
 //			uls_fprintf(fp_out, "# %d \"%s\"\n", lineno, tagstr);
 //			bLineFeed = 1;
 		}

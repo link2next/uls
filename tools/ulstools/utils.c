@@ -290,3 +290,44 @@ ult_simple_sort_vptr(uls_voidptr_t *list, int n_list, ult_sort_func_t cmp_func)
 		}
 	}
 }
+
+const char*
+ult_get_dirpath(const char *fname, const char *dirpath_list, int *ptr_len)
+{
+	char fpath_buf[ULS_FILEPATH_MAX + 1];
+	const char *fptr, *lptr1, *lptr, *dirpath_ret=NULL;
+	int len, len_fptr;
+
+	if (dirpath_list == NULL) {
+		return NULL;
+	}
+
+	for (lptr1 = dirpath_list; lptr1 != NULL; ) {
+		if ((lptr = uls_strchr(lptr1, ULS_DIRLIST_DELIM)) != NULL) {
+			len_fptr = (int) (lptr - lptr1);
+			fptr = lptr1;
+			lptr1 = ++lptr;
+		} else {
+			len_fptr = uls_strlen(lptr1);
+			fptr = lptr1;
+			lptr1 = NULL;
+		}
+
+		if (len_fptr <= 0) continue;
+
+		uls_strncpy(fpath_buf, fptr, len_fptr);
+		len = len_fptr;
+		fpath_buf[len++] = ULS_FILEPATH_DELIM;
+		uls_strcpy(fpath_buf + len, fname);
+
+		if (uls_dirent_exist(fpath_buf) == ST_MODE_FILE) {
+			dirpath_ret = fptr;
+			if (ptr_len != NULL) {
+				*ptr_len = len_fptr;
+			}
+			break;
+		}
+	}
+
+	return dirpath_ret;
+}

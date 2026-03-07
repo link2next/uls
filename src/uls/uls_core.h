@@ -267,7 +267,7 @@ int uls_spec_compatible(uls_lex_ptr_t uls, const char *specname, uls_ptrtype_too
 
 uls_tokdef_vx_ptr_t set_err_tok(uls_lex_ptr_t uls, const char *errmsg);
 
-const char *__uls_eof_tag(const char *ptr, uls_ptrtype_tool(outparam) parms);
+const char *__uls_eof_tag(const char *lptr, uls_ptrtype_tool(outparam) parms);
 int __uls_make_eoftok_lexeme(uls_ptrtype_tool(outbuf) outbuf, int lno, const char *tagstr);
 
 int uls_fillbuff(uls_lex_ptr_t uls);

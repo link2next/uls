@@ -465,10 +465,10 @@ wchar_t*
 ULS_QUALIFIED_METHOD(uls_ustr2wstr)(const char *ustr, int ulen, csz_str_ptr_t csz_wstr)
 {
 	wchar_t *wstr;
-	int wsiz, wlen, has_nil=0;
-	size_t siz, siz2;
+	int wlen, has_nil = 0;
 	char *ustr1_buff = NULL;
 	const char *ustr1;
+	size_t siz1, siz2;
 
 	if (ustr == NULL) {
 		return NULL;
@@ -479,7 +479,7 @@ ULS_QUALIFIED_METHOD(uls_ustr2wstr)(const char *ustr, int ulen, csz_str_ptr_t cs
 		ulen = uls_strlen(ustr);
 	}
 
-	if (ulen == 0) {
+	if (ulen <= 0) {
 		wchar_t nil_wstr[1] = { L'\0' };
 		csz_reset(csz_wstr);
 		csz_append(csz_wstr, (char *) nil_wstr, sizeof(wchar_t));
@@ -494,17 +494,16 @@ ULS_QUALIFIED_METHOD(uls_ustr2wstr)(const char *ustr, int ulen, csz_str_ptr_t cs
 		ustr1 = ustr1_buff;
 	}
 
- 	if ((siz = mbstowcs(NULL, ustr1, 0)) == (size_t) -1) {
+ 	if ((siz1 = mbstowcs(NULL, ustr1, 0)) == (size_t) -1) {
  		uls_mfree(ustr1_buff);
  		csz_reset(csz_wstr);
 		return NULL;
   	}
 
-  	wsiz = (int) ++siz;
-  	csz_modify(csz_wstr, 0, NULL, wsiz * sizeof(wchar_t));
+  	csz_modify(csz_wstr, 0, NULL, (siz1 + 1) * sizeof(wchar_t));
 	wstr = (wchar_t *) csz_data_ptr(csz_wstr);
 
-	if ((siz2 = mbstowcs(wstr, ustr1, wsiz)) != (size_t) -1) {
+	if ((siz2 = mbstowcs(wstr, ustr1, siz1)) != (size_t) -1) {
 		wlen = (int) siz2;
 		wstr[wlen] = L'\0';
 		csz_truncate(csz_wstr, wlen * sizeof(wchar_t));
@@ -521,10 +520,10 @@ char*
 ULS_QUALIFIED_METHOD(uls_wstr2ustr)(const wchar_t *wstr, int wlen, csz_str_ptr_t csz)
 {
 	char *ustr;
-	int usiz, ulen, has_nil=0;
-	size_t siz, siz2;
+	int ulen, has_nil = 0;
 	wchar_t *wstr1_buff = NULL;
 	const wchar_t *wstr1;
+	size_t siz1, siz2;
 
 	if (wstr == NULL) {
 		return NULL;
@@ -535,7 +534,7 @@ ULS_QUALIFIED_METHOD(uls_wstr2ustr)(const wchar_t *wstr, int wlen, csz_str_ptr_t
 		wlen = uls_wcslen(wstr);
 	}
 
-	if (wlen == 0) {
+	if (wlen <= 0) {
 		csz_reset(csz);
 		return csz_text(csz);
 	}
@@ -543,23 +542,22 @@ ULS_QUALIFIED_METHOD(uls_wstr2ustr)(const wchar_t *wstr, int wlen, csz_str_ptr_t
 	if (has_nil) {
 		wstr1 = wstr;
 	} else {
-		wstr1_buff = (wchar_t *) uls_malloc((wlen+1)*sizeof(wchar_t));
-		uls_memcopy(wstr1_buff, wstr, wlen*sizeof(wchar_t));
+		wstr1_buff = (wchar_t *) uls_malloc((wlen + 1) * sizeof(wchar_t));
+		uls_memcopy(wstr1_buff, wstr, wlen * sizeof(wchar_t));
 		wstr1_buff[wlen] = L'\0';
 		wstr1 = wstr1_buff;
 	}
 
-	if ((siz = wcstombs(NULL, wstr1, 0)) == (size_t) -1) {
+	if ((siz1 = wcstombs(NULL, wstr1, 0)) == (size_t) -1) {
 		csz_reset(csz);
 		uls_mfree(wstr1_buff);
 		return NULL;
 	}
 
-	usiz = (int) ++siz;
-	csz_modify(csz, 0, NULL, usiz);
+	csz_modify(csz, 0, NULL, siz1 + 1);
 	ustr = csz_data_ptr(csz);
 
-	if ((siz2 = wcstombs(ustr, wstr1, usiz)) != (size_t) -1) {
+	if ((siz2 = wcstombs(ustr, wstr1, siz1)) != (size_t) -1) {
 		ulen = (int) siz2;
 		csz_truncate(csz, ulen);
 		ustr = csz_text(csz);

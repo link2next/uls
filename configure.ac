@@ -132,7 +132,7 @@ AC_CONFIG_FILES([Makefile
 	tests/log/Makefile
 	tests/many_kwrds/Makefile
 	tests/nest/Makefile
-	tests/strings/Makefile
+	tests/dump_strs/Makefile
 	tests/tok_remap/Makefile
 	tests/two_lex/Makefile
 	tests/lex_input/Makefile
