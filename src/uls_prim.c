@@ -1376,22 +1376,24 @@ ULS_QUALIFIED_METHOD(uls_malloc_clear)(unsigned int n_bytes)
 void*
 ULS_QUALIFIED_METHOD(uls_mrealloc)(void *ptr, unsigned int n_bytes)
 {
+	void *ptr2;
+
 	if (n_bytes == 0) {
 		if (ptr!=NULL) free(ptr);
 		return NULL;
 	}
 
 	if (ptr == NULL) {
-		ptr = malloc(n_bytes);
+		ptr2 = malloc(n_bytes);
 	} else {
-		ptr = realloc(ptr, n_bytes);
+		ptr2 = realloc(ptr, n_bytes);
 	}
 
-	if (ptr == NULL) {
+	if (ptr2 == NULL) {
 		_uls_log_primitive(err_panic)("malloc error");
 	}
 
-	return ptr;
+	return ptr2;
 }
 
 void*

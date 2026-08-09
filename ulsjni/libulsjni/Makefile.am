@@ -9,7 +9,8 @@ include_HEADERS =
 
 libulsjni_la_CPPFLAGS = \
 	-include $(CONFIG_HEADER) -I$(top_srcdir)/src \
-	-I../include $(ax_jdk_cppflags)
+	-I../include $(ax_jdk_cppflags) \
+	-I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux
 libulsjni_la_CFLAGS  = -funsigned-char \
 	-Wall -Wno-char-subscripts -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast
 

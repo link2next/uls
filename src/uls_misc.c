@@ -417,7 +417,8 @@ ULS_QUALIFIED_METHOD(uls_get_simple_escape_str)(char quote_ch, uls_ptrtype_tool(
 				if (uls_get_simple_escape_char(uls_ptr(parms1))) {
 					outbuf[k++] = (char) parms1.x2;
 				} else {
-					outbuf[k++] = '\\'; outbuf[k++] = ch; // copy it verbatim
+					outbuf[k++] = '\\';
+					outbuf[k++] = ch; // copy it verbatim
 				}
 			}
 
