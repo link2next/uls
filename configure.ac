@@ -1,8 +1,8 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.69])
-AC_INIT([ULS], [1.8], [link2next@gmail.com])
+AC_PREREQ([2.72])
+AC_INIT([ULS],[1.8],[link2next@gmail.com])
 AC_CONFIG_SRCDIR([ulscpp/UlsLex.cpp])
 AC_CONFIG_HEADERS([config.h])
 AC_CHECK_SIZEOF([int])
@@ -20,7 +20,7 @@ AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
-AC_PROG_LIBTOOL
+LT_INIT
 AC_PROG_YACC
 
 AC_CHECK_PROG([HAVE_JAVA],[java],[yes],[no])
