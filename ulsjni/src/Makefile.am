@@ -56,6 +56,4 @@ install: $(LIBPROG)
 	install -m 644 $(LIBPROG) $(libdir)
 
 clean-local:
-	@find $(ULSJNI_BINDIR) -name '*.class' -exec rm {} \;
-	@find . -name '*.class' -exec rm {} \;
 	rm -f $(LIBPROG)

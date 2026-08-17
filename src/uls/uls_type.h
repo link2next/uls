@@ -541,7 +541,7 @@ ULS_DECLARE_STRUCT(lex);
 
 #define uls_resize_parray_ns(a,ns,typnam,typmac,nn) do { \
 		uls_resize_ptrarray_ns((a)->slots,ns,typnam,typmac,nn); \
-		if ((nn) < (a)->n) (a)->n = (nn); (a)->n_alloc = (nn); \
+		if ((nn) < (a)->n) { (a)->n = (nn); } (a)->n_alloc = (nn); \
 	} while (0)
 
 #define uls_decl_parray_slots_ns(a,ns,typnam,typmac) uls_ref_ptrarray_ns(a,ns,typnam,typmac)
@@ -754,7 +754,7 @@ ULS_DECLARE_STRUCT(lex);
 #define uls_resize_array_ns_type10(ary,ns,typnam,typmac,nn_alloc) do { \
 		int ii; for (ii=(nn_alloc); ii<(ary)->n; ii++) { _uls_dealloc_iary_slot((ary)->slots,ii,ns,typnam,typmac); } \
 		(ary)->slots=(typmac(ns,typnam)*)uls_mrealloc((ary)->slots,(nn_alloc)*sizeof(typmac(ns,typnam))); \
-		if ((nn_alloc) < (ary)->n) (ary)->n = (nn_alloc); (ary)->n_alloc = (nn_alloc); \
+		if ((nn_alloc) < (ary)->n) { (ary)->n = (nn_alloc); } (ary)->n_alloc = (nn_alloc); \
 	} while (0)
 
 #define uls_decl_array_slots_ns_type10(a,ns,typnam,typmac) typmac(ns,typnam) uls_def_ptrvar(a)

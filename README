@@ -209,6 +209,7 @@
      o bison
      o autoconf
      o bash
+     o OpenJDK v17
 
   The above packages is needed to build ULS from code sources.
   The package is dependant on libc6(glibc) to run.

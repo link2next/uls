@@ -398,6 +398,7 @@ ULS_QUALIFIED_METHOD(dfl_lit_analyzer_escape0)(uls_litstr_ptr_t lit)
 
 	if ((rc = len) > ULS_UTF8_CH_MAXLEN) rc = ULS_UTF8_CH_MAXLEN;
 	for (j = 0; j < rc; j++) buff[j] = lptr[j];
+	for ( ; j < ULS_UTF8_CH_MAXLEN; j++) buff[j] = '\0';
 
 	if ((rc = _uls_tool_(decode_utf8)(buff, rc, NULL)) > len) {
 		_uls_tool(csz_putc)(lit_ctx->ss_dst, *lptr++);
