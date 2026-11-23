@@ -336,7 +336,8 @@ ULS_QUALIFIED_METHOD(uld_prepare_names)(uls_lex_ptr_t uls)
 }
 
 int
-ULS_QUALIFIED_METHOD(uld_change_names)(uld_names_map_ptr_t names_map, uld_line_ptr_t tnd)
+ULS_QUALIFIED_METHOD(uld_change_names_raw)(uld_names_map_ptr_t names_map,
+	const char *name, const char *name2, int tokid_changed, int tokid, const char *aliases)
 {
 	uls_lex_ptr_t uls = names_map->uls;
 	uls_xcontext_ptr_t xctx = uls_ptr(uls->xcontext);
@@ -344,31 +345,39 @@ ULS_QUALIFIED_METHOD(uld_change_names)(uld_names_map_ptr_t names_map, uld_line_p
 	char linebuff[ULS_LINEBUFF_SIZ__ULD + 1];
 	int k;
 
-	if ((e_vx = uld_find_tokdef_vx(uls, names_map->n_vx_namelist, tnd->name)) == nilptr) {
+	if (name2 != NULL && *name2 == '\0') {
+		name2 = NULL;
+	}
+
+	if (aliases != NULL && *aliases == '\0') {
+		aliases = NULL;
+	}
+
+	if ((e_vx = uld_find_tokdef_vx(uls, names_map->n_vx_namelist, name)) == nilptr) {
 		return -1;
 	}
 
-	if (uld_change_tok_names(e_vx, tnd->name2, tnd->aliases) < 0) {
+	if (uld_change_tok_names(e_vx, name2, aliases) < 0) {
 		return -1;
 	}
 
-	if (tnd->tokid_changed) {
-		uld_change_tok_id(e_vx, tnd->tokid);
+	if (tokid_changed) {
+		uld_change_tok_id(e_vx, tokid);
 	}
 
-	k = _uls_tool_(strcpy)(linebuff, tnd->name);
+	k = _uls_tool_(strcpy)(linebuff, name);
 
-	if (tnd->name2 != NULL) {
+	if (name2 != NULL) {
 		linebuff[k++] = ' ';
-		k += _uls_tool_(strcpy)(linebuff + k, tnd->name2);
+		k += _uls_tool_(strcpy)(linebuff + k, name2);
 	}
 
-	if (tnd->tokid_changed) {
-		k += _uls_log_(snprintf)(linebuff + k, 128 - k, " %d", tnd->tokid);
+	if (tokid_changed) {
+		k += _uls_log_(snprintf)(linebuff + k, 128 - k, " %d", tokid);
 	}
 
-	if (*tnd->aliases != '\0') {
-		k += _uls_log_(snprintf)(linebuff + k, 128 - k, " %s", tnd->aliases);
+	if (aliases != NULL) {
+		k += _uls_log_(snprintf)(linebuff + k, 128 - k, " %s", aliases);
 	}
 
 	k = _uls_tool(str_trim_end)(linebuff, k);
@@ -381,6 +390,16 @@ ULS_QUALIFIED_METHOD(uld_change_names)(uld_names_map_ptr_t names_map, uld_line_p
 	xctx->uldfile_buflen += k;
 
 	return 0;
+}
+
+int
+ULS_QUALIFIED_METHOD(uld_change_names)(uld_names_map_ptr_t names_map, uld_line_ptr_t tnd)
+{
+	int stat;
+
+	stat = uld_change_names_raw(names_map,
+		tnd->name, tnd->name2, tnd->tokid_changed, tnd->tokid, tnd->aliases);
+	return stat;
 }
 
 int
@@ -448,7 +467,7 @@ ULS_QUALIFIED_METHOD(uld_change_tok_names)(uls_tokdef_vx_ptr_t e_vx, const char 
 		return -1;
 	}
 
-	if (uld_add_aliases(e_vx, line_aliases) < 0) {
+	if (line_aliases != NULL && uld_add_aliases(e_vx, line_aliases) < 0) {
 		return -1;
 	}
 

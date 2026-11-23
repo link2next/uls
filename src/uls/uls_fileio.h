@@ -47,17 +47,17 @@ extern "C" {
 #ifdef ULS_DECL_GLOBAL_TYPES
 #define ULS_EOF  -1
 
-#define ULS_FIO_READ       0x01
-#define ULS_FIO_WRITE      0x02
-#define ULS_FIO_EXCL       0x04
-#define ULS_FIO_NO_UTF8BOM 0x08
+#define ULS_FIO_READ      0x01
+#define ULS_FIO_WRITE     0x02
+#define ULS_FIO_EXCL      0x04
+#define ULS_FIO_MS_MBCS   0x08
 
-#define ULS_FIO_MULTLINE 0x0100
-#define ULS_FIO_KEEP_LF  0x0200
-#define ULS_FIO_DEL_CR   0x0400
+#define ULS_FIO_UTF8BOM   0x10
+#define ULS_FIO_NO_BOM    0x20
 
-#define ULS_FIO_MS_MBCS  0x4000
-#define ULS_FIO_UTF8     0x8000
+#define ULS_FIO_MULTLINE  0x0100
+#define ULS_FIO_KEEP_LF   0x0200
+#define ULS_FIO_DEL_CR    0x0400
 
 #define uls_export_tempfile(tmp) uls_close_tempfile(tmp, (tmp)->filepath)
 #define uls_tempfile_fp(tmp) ((tmp)->fp)

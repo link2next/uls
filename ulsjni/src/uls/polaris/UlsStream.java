@@ -42,13 +42,13 @@ public class UlsStream implements AutoCloseable {
 	private static native void destroyOFile(Object ostr);
 
 	protected Object uls_hdr;
-	protected Boolean read_only;
+	protected boolean read_only;
 
 	// <brief>
 	// A Constructor of 'UlsStream'
 	// </brief>
 	// <parm name="lex">The analyzer associated with this 'UlsStream'</parm>
-	public UlsStream(Boolean rdonly) {
+	public UlsStream(boolean rdonly) {
 		uls_hdr = null;
 		read_only = rdonly;
 	}

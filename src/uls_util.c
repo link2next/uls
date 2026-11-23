@@ -603,7 +603,7 @@ int
 ULS_QUALIFIED_METHOD(initialize_uls_util)(void)
 {
 	char pathbuff[ULS_FILEPATH_MAX+1];
-	const char *fpath;
+	const char *fpath, *cptr;
 
 	int rc, len;
 	unsigned int a;
@@ -632,25 +632,35 @@ ULS_QUALIFIED_METHOD(initialize_uls_util)(void)
 	fpath = pathbuff;
 	if (_uls_tool_(getenv)("ULS_SYSPROPS", pathbuff, ULS_FILEPATH_MAX + 1) <= 0 ||
 		_uls_tool_(dirent_exist)(pathbuff) != ST_MODE_REG) {
-		fpath = ULS_SYSPROPS_FPATH;
-		if ((rc = _uls_tool_(dirent_exist)(fpath)) <= 0 || rc != ST_MODE_REG) {
 #ifdef __ULS_WINDOWS__
-			len = _uls_tool_(strcpy)(pathbuff, ULS_SHARE_DFLDIR);
+		cptr = "USERPROFILE";
+		fpath = "AppData\\Local\\Programs\\Common\\UlsWin";
 #else
-			len = uls_strcpy(pathbuff, ULS_OS_TEMP_DIR);
+		cptr = "HOME";
+		fpath = ".local/etc/uls";
 #endif
-			pathbuff[len++] = ULS_FILEPATH_DELIM;
-			len += _uls_tool_(strcpy)(pathbuff + len, TMP_SYSPROPS_FNAME);
+		if ((len = uls_getenv(cptr, pathbuff, ULS_FILEPATH_MAX + 1)) <= 0) {
+			_uls_log(err_log)("ULS: Can't find the value of %s.", cptr);
+			return -1;
+		}
 
-			fpath = pathbuff;
-			if ((rc = _uls_tool_(dirent_exist)(fpath)) <= 0 || rc != ST_MODE_REG) {
-				_uls_log(err_log)("ULS: can't find the system property file in %s.", ULS_SYSPROPS_FPATH);
+		pathbuff[len++] = ULS_FILEPATH_DELIM;
+		len += _uls_tool_(strcpy)(pathbuff + len, fpath);
+
+		pathbuff[len++] = ULS_FILEPATH_DELIM;
+		len += _uls_tool_(strcpy)(pathbuff + len, ULS_SYSPROPS_FNAME);
+		fpath = pathbuff;
+
+		if (_uls_tool_(dirent_exist)(pathbuff) != ST_MODE_REG) { // search local-directory
+			fpath = ULS_SYSPROPS_FPATH;
+			if (_uls_tool_(dirent_exist)(fpath) != ST_MODE_REG) { // search os-directory
+				_uls_log(err_log)("ULS: can't find the system property file %s!", fpath);
 				return -1;
 			}
 		}
 	}
 
-	if ((rc=initialize_sysprops(fpath)) < 0) {
+	if ((rc = initialize_sysprops(fpath)) < 0) {
 		_uls_log(err_log)("ULS: can't load the system property file in %s(err=%d).", fpath, rc);
 		return -1;
 	}

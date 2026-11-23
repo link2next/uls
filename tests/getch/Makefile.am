@@ -9,12 +9,10 @@ getch_CFLAGS = -Wall
 getch_CPPFLAGS = -I$(top_srcdir)/src
 getch_LDADD = $(top_builddir)/src/libuls.la
 
-ACLOCAL_AMFLAGS = -I m4
-
 check: all
-	@bash ../run_tests.sh $(noinst_PROGRAMS) $(tests_libpath) $(TMP_SYSPROPS)
+	@../run_tests.sh $(noinst_PROGRAMS) $(tests_libpath) $(TMP_SYSPROPS)
 
 $(getch_OBJECTS) : sample_lex.h
 
 %_lex.h : %.ulc
-	ULS_SYSPROPS=$(TMP_SYSPROPS) $(ulc2class_exe) -lc -ptok $<
+	@$(ax_ulc2class_exe) -lc -ptok $<

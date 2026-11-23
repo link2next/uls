@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
 # files (the "Software"), to deal in the Software without
@@ -28,39 +28,22 @@
 #   This file is part of ULS, Unified Lexical Scheme.
 #
 
-source uls_common.sh
-
-command_list_used="mkdir"
-if ! check_commands_used $command_list_used; then
-	exit 1
-fi
+. ./common.sh
 
 HOME_DIR="$PWD"
 
 if [ $# -lt 5 ]; then
-	echo "usage: $0 <uls_inst_dir> <etc_dir> <uls_version> <B|I> <out_file>"
+	echo "usage: $0 <B|I> <out_file> <uls_version> <etc_dir> <uls_inst_dir> [uls_lib_dir]"
 	exit 1
 fi
 
-uls_inst_dir=$(readlink_m "$1")
-uls_etc_dir=$(readlink_m "$2")
+# stage = B(build) or I(install)
+stage=$1
 
-uls_version=$3
-
-debug_num=${uls_version}
-major_num=${debug_num%%.*}
-debug_num=${debug_num#${major_num}.}
-
-minor_num=${debug_num%%.*}
-debug_num=${debug_num#${minor_num}.}
-
-# stage = B or I
-stage=$4
-
-outfile=$5
-fname=$(basename "$outfile")
-out_dir=$(dirname "$outfile")
-out_dir=$(readlink_m "$out_dir")
+outfile=$2
+fname=`basename "$outfile"`
+out_dir=`dirname "$outfile"`
+out_dir=`readpath_abs "$out_dir"`
 
 if [ ! -d "$out_dir" ]; then
 	echo "can't find '$out_dir'!"
@@ -72,7 +55,21 @@ if [ -e "$outfpath" ]; then
 	rm -f "$outfpath"
 fi
 
-ARCH_INFO_SH=./check_arch.sh
+uls_version=$3
+debug_num=${uls_version}
+major_num=${debug_num%%.*}
+debug_num=${debug_num#${major_num}.}
+minor_num=${debug_num%%.*}
+debug_num=${debug_num#${minor_num}.}
+
+uls_etc_dir=`readpath_abs "$4"`
+uls_inst_dir=`readpath_abs "$5"`
+
+if [ "$stage" = "I" ]; then
+	uls_lib_dir=`readpath_abs "$6"`
+else
+	uls_lib_dir=
+fi
 
 gen_namval_pair()
 {
@@ -107,11 +104,10 @@ gen_build_sysprops()
 
 gen_inst_sysprops()
 {
-	local dname_lib=$1
-	local dname_share=$2
+	local libdir dname_share
 	local dirpath
 
-	dname_lib=$1
+	libdir=$1
 	dname_share=$2
 
 	dirpath=$uls_inst_dir
@@ -123,23 +119,20 @@ gen_inst_sysprops()
 	gen_namval_pair ULS_HOME    "$uls_inst_dir"
 	gen_namval_pair ULS_ULCS    "$dirpath/$dname_share/ulcs"
 	gen_namval_pair ULS_SHARE   "$dirpath/$dname_share"
-	gen_namval_pair ULS_DLLPATH "$dirpath/$dname_lib"
+	gen_namval_pair ULS_DLLPATH "$libdir"
 }
 
 # start with utf8-BOM
-echo -n -e \\xEF\\xBB\\xBF > "$outfpath"
+#echo -n -e \\xEF\\xBB\\xBF > "$outfpath"
+# The e-option may fail if its interpreter isn't bash.
+cat ./utf8bom.txt > "$outfpath"
 
-arch_os="$(uname -s)"
+arch_os="`uname -s`"
 if [ "$arch_os" = "Darwin" ]; then
 	arch_os=macOS
 fi 
 gen_namval_pair OS $arch_os 
-
-arch_bits=$($ARCH_INFO_SH)
-gen_namval_pair ULS_ARCH_BITS $arch_bits
-
 gen_namval_pair ULS_MBCS utf-8
-
 gen_namval_pair ULS_VERSION_MAJOR $major_num
 gen_namval_pair ULS_VERSION_MINOR $minor_num
 gen_namval_pair ULS_VERSION_DEBUG $debug_num
@@ -147,5 +140,6 @@ gen_namval_pair ULS_VERSION_DEBUG $debug_num
 if [ "$stage" = "B" ]; then
 	gen_build_sysprops src ulc_exam
 else
-	gen_inst_sysprops lib share/uls
+	gen_inst_sysprops "$uls_lib_dir" share/uls
 fi
+

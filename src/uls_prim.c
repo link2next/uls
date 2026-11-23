@@ -1376,24 +1376,22 @@ ULS_QUALIFIED_METHOD(uls_malloc_clear)(unsigned int n_bytes)
 void*
 ULS_QUALIFIED_METHOD(uls_mrealloc)(void *ptr, unsigned int n_bytes)
 {
-	void *ptr2;
-
 	if (n_bytes == 0) {
 		if (ptr!=NULL) free(ptr);
 		return NULL;
 	}
 
 	if (ptr == NULL) {
-		ptr2 = malloc(n_bytes);
+		ptr = malloc(n_bytes);
 	} else {
-		ptr2 = realloc(ptr, n_bytes);
+		ptr = realloc(ptr, n_bytes);
 	}
 
-	if (ptr2 == NULL) {
+	if (ptr == NULL) {
 		_uls_log_primitive(err_panic)("malloc error");
 	}
 
-	return ptr2;
+	return ptr;
 }
 
 void*
@@ -2158,16 +2156,10 @@ ULS_QUALIFIED_METHOD(is_path_prefix)(const char *filepath)
 void
 ULS_QUALIFIED_METHOD(isp_init)(uls_isp_ptr_t isp, int init_size)
 {
-	int siz;
+	if (init_size < 1) init_size = 256;
 
-	if (init_size <= 0) {
-		siz = 256;
-	} else {
-		siz = ((init_size + 7) >> 3) << 3;
-	}
-
-	isp->buff = (char *) uls_malloc(siz);
-	isp->siz_strpool = siz;
+	isp->buff = (char *) uls_malloc(init_size);
+	isp->siz_strpool = init_size;
 
 	isp->buff[0] = '\0'; // nil-string
 	isp->len_strpool = 1;
@@ -2219,7 +2211,7 @@ ULS_QUALIFIED_METHOD(isp_add)(uls_isp_ptr_t isp, const char *str, int len)
 	if (len <= 0) return 0;
 
 	k = isp->siz_strpool - isp->len_strpool;
-	if (k < len + 1) {
+	if (len + 1 > k) {
 		k = uls_ceil_log2(isp->len_strpool + len + 1, 6);
 		isp->buff = (char *) uls_mrealloc(isp->buff, k);
 		isp->siz_strpool = k;

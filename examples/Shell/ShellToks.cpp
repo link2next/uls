@@ -51,7 +51,7 @@ namespace
 	{
 		otstringstream oss;
 
-		oss << _T("Dumping the tokens in bash shell script.") << _tendl;
+		oss << _T("Dumping the tokens in a shell script.") << _tendl;
 		oss << _T("Usage:") << PACKAGE_NAME << _T(" <shell-script>") << _tendl;
 
 		_tcerr << oss.str() << _tendl;

@@ -8,14 +8,11 @@ libulscompat_la_SOURCES = ulscompat.c \
 noinst_HEADERS = 
 include_HEADERS =
 
-libulscompat_la_CPPFLAGS = -D_ULS_IMPLDLL -DULS_ETC_DIR=\"$(ax_etc_dir)\" \
+libulscompat_la_CPPFLAGS = -D_ULS_IMPLDLL \
 	-include $(CONFIG_HEADER) -I$(top_srcdir) -I$(top_srcdir)/src
 libulscompat_la_CFLAGS  = -funsigned-char -Wall -Wno-char-subscripts -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast
 libulscompat_la_LIBADD  = $(top_builddir)/src/libuls.la
 libulscompat_la_LDFLAGS = -version-info $(so_current):$(so_revision):$(so_age)
 
-ACLOCAL_AMFLAGS = -I m4
-
 install: install-libLTLIBRARIES install-includeHEADERS
-	install -m755 -d $(includedir)/uls
-	cp -f uls/*.h $(includedir)/uls/
+	cp -f uls/*.h "$(ax_inc_dir)"/uls/

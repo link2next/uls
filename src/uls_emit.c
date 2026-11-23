@@ -300,7 +300,7 @@ ULS_QUALIFIED_METHOD(print_uld_lineproc__cpp)(uld_line_ptr_t tok_names, int n_ta
 
 	uls_sysprn_tabs(n_tabs, "changeUldNames(_T(\"%s\"), %s", tok_names->name, qmark1a);
 	_uls_log_(sysprn)("%s%s", cptr1, qmark1b);
-	_uls_log_(sysprn)(", %d, %d", tok_names->tokid_changed, tok_names->tokid);
+	_uls_log_(sysprn)(", %s, %d", tok_names->tokid_changed ? "true" : "false", tok_names->tokid);
 	_uls_log_(sysprn)(", %s%s", qmark2a, cptr2);
 	_uls_log_(sysprn)("%s);\n", qmark2b);
 
@@ -308,11 +308,17 @@ ULS_QUALIFIED_METHOD(print_uld_lineproc__cpp)(uld_line_ptr_t tok_names, int n_ta
 }
 
 ULS_DECL_STATIC int
-ULS_QUALIFIED_METHOD(print_uld_lineproc__cs)(uld_line_ptr_t tok_names, int n_tabs, const char *lptr)
+ULS_QUALIFIED_METHOD(print_uld_lineproc__cli_or_cs)(uld_line_ptr_t tok_names, int n_tabs, int is_cppcli)
 {
-	const char *nilmark = "null";
+	const char *nilmark;
 	const char *cptr1, *cptr2;
 	const char *qmark1, *qmark2;
+
+	if (is_cppcli) {
+		nilmark = "nullptr";
+	} else {
+		nilmark = "null";
+	}
 
 	if ((cptr1 = tok_names->name2) == NULL) {
 		qmark1 = "";
@@ -331,11 +337,23 @@ ULS_QUALIFIED_METHOD(print_uld_lineproc__cs)(uld_line_ptr_t tok_names, int n_tab
 
 	uls_sysprn_tabs(n_tabs, "changeUldNames(\"%s\", %s", tok_names->name, qmark1);
 	_uls_log_(sysprn)("%s%s", cptr1, qmark1);
-	_uls_log_(sysprn)(", %d, %d", tok_names->tokid_changed, tok_names->tokid);
+	_uls_log_(sysprn)(", %s, %d", tok_names->tokid_changed ? "true" : "false", tok_names->tokid);
 	_uls_log_(sysprn)(", %s%s", qmark2, cptr2);
 	_uls_log_(sysprn)("%s);\n", qmark2);
 
 	return 0;
+}
+
+ULS_DECL_STATIC int
+ULS_QUALIFIED_METHOD(print_uld_lineproc__cppcli)(uld_line_ptr_t tok_names, int n_tabs, const char *lptr)
+{
+	return print_uld_lineproc__cli_or_cs(tok_names, n_tabs, 1);
+}
+
+ULS_DECL_STATIC int
+ULS_QUALIFIED_METHOD(print_uld_lineproc__cs)(uld_line_ptr_t tok_names, int n_tabs, const char *lptr)
+{
+	return print_uld_lineproc__cli_or_cs(tok_names, n_tabs, 0);
 }
 
 ULS_DECL_STATIC int
@@ -362,7 +380,7 @@ ULS_QUALIFIED_METHOD(print_uld_lineproc__java)(uld_line_ptr_t tok_names, int n_t
 
 	uls_sysprn_tabs(n_tabs, "changeUldNames(\"%s\", %s", tok_names->name, qmark1);
 	_uls_log_(sysprn)("%s%s", cptr1, qmark1);
-	_uls_log_(sysprn)(", %d, %d", tok_names->tokid_changed, tok_names->tokid);
+	_uls_log_(sysprn)(", %s, %d", tok_names->tokid_changed ? "true" : "false", tok_names->tokid);
 	_uls_log_(sysprn)(", %s%s", qmark2, cptr2);
 	_uls_log_(sysprn)("%s);\n", qmark2);
 
@@ -600,7 +618,7 @@ ULS_QUALIFIED_METHOD(print_tokdef_cpp_header)(
 	uls_decl_parray_slots_tool(al, argstr);
 
 	const char *cptr1, *cptr2, *ns_uls;
-	const char *rqs, *rqe;
+	const char *nqs, *nqe;
 	char ch_lbrace = '{';
 	int  n_tabs;
 
@@ -611,12 +629,11 @@ ULS_QUALIFIED_METHOD(print_tokdef_cpp_header)(
 	_uls_log_(sysprn)("#pragma once\n\n");
 
 	if (flags & ULS_FL_CPPCLI_GEN) {
-		rqs = "R\"(";
-		rqe = ")\"";
+		nqs = nqe = "\"";
 		ns_uls="uls::polaris";
 	} else {
-		rqs = "_T(R\"(";
-		rqe = ")\")";
+		nqs = "_T(\"";
+		nqe = "\")";
 		ns_uls="uls::crux";
 		_uls_log_(sysprn)("#include <uls/UlsLex.h>\n");
 		_uls_log_(sysprn)("#include <uls/uls_auw.h>\n");
@@ -664,7 +681,7 @@ ULS_QUALIFIED_METHOD(print_tokdef_cpp_header)(
 				uls_sysprn_tabs(n_tabs, "%s(%s filepath);\n", emit_parm->class_name, cptr2);
 			} else {
 				uls_sysprn_tabs(n_tabs, "%s(%s", emit_parm->class_name, cptr2);
-				_uls_log_(sysprn)(" filepath = %s%s%s);\n", rqs, emit_parm->ulc_filepath_enc, rqe);
+				_uls_log_(sysprn)(" filepath = %s%s%s);\n", nqs, emit_parm->ulc_filepath_enc, nqe);
 			}
 		} else {
 			uls_sysprn_tabs(n_tabs, "%s();\n", emit_parm->class_name);
@@ -675,14 +692,14 @@ ULS_QUALIFIED_METHOD(print_tokdef_cpp_header)(
 				uls_sysprn_tabs(n_tabs, "%s()\n", emit_parm->class_name);
 
 				uls_sysprn_tabs(n_tabs+1, ": %s", ns_uls);
-				_uls_log_(sysprn)("::UlsLex(%s%s%s)", rqs, emit_parm->ulc_filepath_enc, rqe);
+				_uls_log_(sysprn)("::UlsLex(%s%s%s)", nqs, emit_parm->ulc_filepath_enc, nqe);
 				_uls_log_(sysprn)(" %c}\n\n", ch_lbrace);
 
 				uls_sysprn_tabs(n_tabs, "%s(%s filepath)\n", emit_parm->class_name, cptr2);
 				uls_sysprn_tabs(n_tabs+1, " : %s::UlsLex(filepath) %c}\n", ns_uls, ch_lbrace);
 			} else {
 				uls_sysprn_tabs(n_tabs, "%s(%s", emit_parm->class_name, cptr2);
-				_uls_log_(sysprn)(" filepath = %s%s%s)\n", rqs, emit_parm->ulc_filepath_enc, rqe);
+				_uls_log_(sysprn)(" filepath = %s%s%s)\n", nqs, emit_parm->ulc_filepath_enc, nqe);
 
 				uls_sysprn_tabs(n_tabs+1, " : %s::UlsLex(filepath) %c}\n", ns_uls, ch_lbrace);
 			}
@@ -708,9 +725,11 @@ ULS_QUALIFIED_METHOD(print_tokdef_cpp_source)(
 {
 	uls_flags_t flags = emit_parm->flags;
 	uls_decl_parray_slots_tool(al, argstr);
+	uls_proc_uld_line_t prn_line;
+
 	FILE *fin_uld;
 	const char *cptr, *cptr2, *ns_uls;
-	const char *nqs, *nqe, *rqs, *rqe;
+	const char *nqs, *nqe;
 	char ch_lbrace='{';
 	int  i, n_tabs=0;
 
@@ -719,19 +738,18 @@ ULS_QUALIFIED_METHOD(print_tokdef_cpp_source)(
 	if (flags & ULS_FL_CPPCLI_GEN) {
 		nqs = "\"";
 		nqe = "\"";
-		rqs = "R\"(";
-		rqe = ")\"";
+
 		ns_uls = "uls::polaris";
 		cptr2 = "System::String^";
 		_uls_log_(sysprn)("using namespace %s;\n\n", ns_uls);
+		prn_line = uls_ref_callback_this(print_uld_lineproc__cppcli);
 	} else {
 		nqs = "_T(\"";
 		nqe = "\")";
-		rqs = "_T(R\"(";
-		rqe = ")\")";
 		ns_uls = "uls::crux";
 		cptr2 = "tstring";
 		_uls_log_(sysprn)("using tstring = uls::tstring;\n\n");
+		prn_line = uls_ref_callback_this(print_uld_lineproc__cpp);
 	}
 
 	al = uls_parray_slots(uls_ptr(emit_parm->name_components.args));
@@ -747,7 +765,7 @@ ULS_QUALIFIED_METHOD(print_tokdef_cpp_source)(
 			uls_sysprn_tabs(n_tabs, "%s::%s()\n", emit_parm->class_name, emit_parm->class_name);
 
 			uls_sysprn_tabs(n_tabs + 1, ": %s", ns_uls);
-			_uls_log_(sysprn)("::UlsLex(%s%s%s)", rqs, emit_parm->ulc_filepath_enc, rqe);
+			_uls_log_(sysprn)("::UlsLex(%s%s%s)", nqs, emit_parm->ulc_filepath_enc, nqe);
 			_uls_log_(sysprn)(" %c}\n\n", ch_lbrace);
 		}
 
@@ -768,15 +786,14 @@ ULS_QUALIFIED_METHOD(print_tokdef_cpp_source)(
 				return -1;
 			}
 
-			uls_sysprn_tabs(n_tabs, "prepareUldMap(0);\n");
+			uls_sysprn_tabs(n_tabs, "prepareUldMap();\n");
 			_uls_log_(sysprn)("\n");
 
-			print_uld_source(fin_uld, n_tabs, uls_ref_callback_this(print_uld_lineproc__cpp));
+			print_uld_source(fin_uld, n_tabs, prn_line);
 			_uls_tool_(fp_close)(fin_uld);
 
 			_uls_log_(sysprn)("\n");
 			uls_sysprn_tabs(n_tabs, "finishUldMap();\n");
-			uls_sysprn_tabs(n_tabs, "update_rsvdtoks();\n");
 		}
 		--n_tabs;
 
@@ -831,7 +848,7 @@ ULS_QUALIFIED_METHOD(print_tokdef_cs)(
 	uls_sysprn_tabs(0, "\n");
 
 	if (emit_parm->filepath_conf != NULL && !(emit_parm->flags & ULS_FL_ULD_FILE)) {
-		uls_sysprn_tabs(n_tabs, "public %s(String filepath = @\"%s\")\n",
+		uls_sysprn_tabs(n_tabs, "public %s(String filepath = \"%s\")\n",
 			emit_parm->class_name, emit_parm->ulc_filepath_enc);
 		uls_sysprn_tabs(n_tabs+1, ": base(filepath) %c\n", ch_lbrace);
 		uls_sysprn_tabs(n_tabs, "}\n");
@@ -847,7 +864,7 @@ ULS_QUALIFIED_METHOD(print_tokdef_cs)(
 				return -1;
 			}
 
-			uls_sysprn_tabs(n_tabs, "prepareUldMap(0);\n");
+			uls_sysprn_tabs(n_tabs, "prepareUldMap();\n");
 			_uls_log_(sysprn)("\n");
 
 			print_uld_source(fin_uld, n_tabs, uls_ref_callback_this(print_uld_lineproc__cs));
@@ -855,7 +872,6 @@ ULS_QUALIFIED_METHOD(print_tokdef_cs)(
 
 			_uls_log_(sysprn)("\n");
 			uls_sysprn_tabs(n_tabs, "finishUldMap();\n");
-			uls_sysprn_tabs(n_tabs, "update_rsvdtoks();\n");
 		}
 		--n_tabs;
 		uls_sysprn_tabs(n_tabs, "}\n");
@@ -933,7 +949,7 @@ ULS_QUALIFIED_METHOD(print_tokdef_java)(
 				return -1;
 			}
 
-			uls_sysprn_tabs(n_tabs, "prepareUldMap(0);\n");
+			uls_sysprn_tabs(n_tabs, "prepareUldMap();\n");
 			_uls_log_(sysprn)("\n");
 
 			print_uld_source(fin_uld, n_tabs, uls_ref_callback_this(print_uld_lineproc__java));
@@ -941,7 +957,6 @@ ULS_QUALIFIED_METHOD(print_tokdef_java)(
 
 			_uls_log_(sysprn)("\n");
 			uls_sysprn_tabs(n_tabs, "finishUldMap();\n");
-			uls_sysprn_tabs(n_tabs, "update_rsvdtoks();\n");
 		}
 		--n_tabs;
 		uls_sysprn_tabs(n_tabs, "}\n");
@@ -1173,7 +1188,7 @@ ULS_QUALIFIED_METHOD(uls_generate_tokdef_file)(uls_lex_ptr_t uls, uls_parms_emit
 	slots_prn = uls_parray_slots(uls_ptr(tokdef_ary_prn));
 	_uls_quicksort_vptr(slots_prn, tokdef_ary_prn.n, comp_by_tokid_vx);
 
-	if ((fout = _uls_tool_(fp_open)(emit_parm->out_filepath, ULS_FIO_WRITE | ULS_FIO_NO_UTF8BOM)) == NULL) {
+	if ((fout = _uls_tool_(fp_open)(emit_parm->out_filepath, ULS_FIO_WRITE | ULS_FIO_NO_BOM)) == NULL) {
 		_uls_log(err_log)("%s: fail to create file '%s'", __func__, emit_parm->out_filepath);
 		uls_deinit_parray(uls_ptr(tokdef_ary_prn));
 		stat = -1;
@@ -1223,7 +1238,7 @@ ULS_QUALIFIED_METHOD(uls_generate_tokdef_file)(uls_lex_ptr_t uls, uls_parms_emit
 		_uls_tool_(strcpy)(emit_parm->out_filepath + emit_parm->len_out_filepath, ".cpp");
 	}
 
-	if ((fout = _uls_tool_(fp_open)(emit_parm->out_filepath, ULS_FIO_WRITE | ULS_FIO_NO_UTF8BOM)) == NULL) {
+	if ((fout = _uls_tool_(fp_open)(emit_parm->out_filepath, ULS_FIO_WRITE | ULS_FIO_NO_BOM)) == NULL) {
 		_uls_log(err_log)("%s: fail to create file '%s'", __func__, emit_parm->out_filepath);
 		stat = -1;
 

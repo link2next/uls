@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
 # files (the "Software"), to deal in the Software without
@@ -28,9 +28,8 @@
 #   This file is part of ULS, Unified Lexical Scheme.
 #
 
-command_list_used="diff basename dirname"
-for cmd in $command_list_used; do
-	filepath=$(which $cmd)
+for cmd in diff basename dirname; do
+	filepath=`which $cmd`
 	if [ -z "$filepath" ]; then
 		echo "$cmd: not found!"
 		exit 1
@@ -38,7 +37,7 @@ for cmd in $command_list_used; do
 done
 
 test_home="$PWD"
-progname=$(basename $0)
+progname=`basename $0`
 #opt_verbose=$ULS_VERBOSE
 opt_verbose=no
 
@@ -54,8 +53,6 @@ fi
 
 MAX_N_CASES=16
 test_prog=
-
-MODE_LIST="c cpp java cs"
 temp_dir="/tmp"
 
 test_1case()
@@ -92,7 +89,7 @@ test_1case()
 	if [ $outfile_res != "-"  ]; then
 		diff -q $outfile_res $tmpfile1 
 		if [ $? != 0 ]; then
-			echo "fail(stdout): diff for '$tmpfile1'"
+			echo "fail(stdout): diff ... '$tmpfile1'"
 			return 1
 		fi
 	fi
@@ -100,7 +97,7 @@ test_1case()
 	if [ $errfile_res != "-" ]; then
 		diff -q $errfile_res $tmpfile2 
 		if [ $? != 0 ]; then
-			echo "fail(stderr): diff for '$tmpfile2'"
+			echo "fail(stderr): diff ... '$tmpfile2'"
 			return 1
 		fi
 	fi
@@ -124,7 +121,7 @@ while [ $i -le $MAX_N_CASES ]; do
 	fi
 	echo "checking $in_file ..."
 
-	for m in $MODE_LIST; do
+	for m in c cpp java cs; do
 		n_files=0
 
 		out_file="out_${m}_${i}.txt";

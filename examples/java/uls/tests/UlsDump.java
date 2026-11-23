@@ -23,7 +23,13 @@
 
 package uls.tests;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.Files;
+
 public class UlsDump {
+	static String data_dir = ".";
+	static String input_dir = ".";
 	static sample_xdef[] xdefs;
 	int tok_id;
 
@@ -119,14 +125,21 @@ public class UlsDump {
         }
 	}
 
-	static void test_sample1_lex(String data_dir, String input_file) {
-		String ulc_filename = "../sample.ulc";
+	static void test_sample1_lex(String input_file) {
+		String ulc_filename = "sample1.ulc";
+		Path path1;
 
 		System.out.println(" ulc_path = " + ulc_filename);
 		System.out.println(" input_file = " + input_file);
 
 		String ulc_path = data_dir + "/" + ulc_filename;
-		input_file = data_dir + "/" + input_file;
+		input_file = input_dir + "/" + input_file;
+
+		path1 = Paths.get(input_file);
+		if (!Files.isRegularFile(path1)) {
+			System.err.println(input_file + ": not found!");
+			return;
+		}
 
 		try (
 			Sample1Lex sam_lex = new Sample1Lex(ulc_path);
@@ -147,19 +160,26 @@ public class UlsDump {
 		}
 	}
 
-	static void test_sample2_lex(String data_dir, String input_file) {
-		String uld_filename = "../sample2.uld";
+	static void test_sample2_lex(String input_file) {
+		String uld_filename = "sample2.uld";
+		String uld_path = data_dir + "/" + uld_filename;
+		Path path1;
 
-		System.out.println(" ulc_path = " + uld_filename);
-		String ulc_path = data_dir + "/" + uld_filename;
+		System.out.println(" uld_path = " + uld_filename);
+
+		path1 = Paths.get(uld_path);
+		if (!Files.isRegularFile(path1)) {
+			System.err.println(uld_path + ": not found!");
+			return;
+		}
 
 		try (
-			Sample1Lex sam_lex = new Sample1Lex(ulc_path);
+			Sample1Lex sam_lex = new Sample1Lex(uld_path);
 		) {
 			UlsDump  tst_obj = new UlsDump();
 
 			System.out.println(" input_file = " + input_file);
-			input_file = data_dir + "/" + input_file;
+			input_file = input_dir + "/" + input_file;
 
 			System.out.println(" -- Input: File -------------------------");
 			tst_obj.test_input_file(sam_lex, input_file);
@@ -169,23 +189,17 @@ public class UlsDump {
 	}
 
 	public static void main(String args[]) {
-		String data_dir, input_file;
-
-		if (args.length < 1) {
-			System.err.println("usage: UlsDump <input_file> [data_dir]");
+		if (args.length < 2) {
+			System.err.println("usage: UlsDump <data_dir> <input_dir>");
 			return;
 		}
 	
-		input_file = args[0];
+		data_dir = args[0];
+		input_dir = args[1];
 
-		if (args.length >= 2) {
-			data_dir = args[1];
-		} else {
-			data_dir = ".";
-		}
-
-		test_sample1_lex(data_dir, input_file);
-		test_sample2_lex(data_dir, input_file);
+		String input_file = "input1.txt";
+		test_sample1_lex(input_file);
+		test_sample2_lex(input_file);
 	}
 }
 

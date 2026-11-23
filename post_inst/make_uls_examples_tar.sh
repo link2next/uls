@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
 # files (the "Software"), to deal in the Software without
@@ -28,12 +28,7 @@
 #   This file is part of ULS, Unified Lexical Scheme.
 #
 
-source ../ulsconfig/uls_common.sh
-
-command_list_used="rmdir tar"
-if ! check_commands_used $command_list_used; then
-	exit 1
-fi
+. ../ulsconfig/common.sh
 
 usage()
 {
@@ -45,13 +40,13 @@ if [ $# -lt 4 ]; then
 	usage
 fi
 
-tmpl_tar=$(readlink_m "$1")
-src_dir=$(readlink_m "$2")
-list_file=$(readlink_m "$3")
-out_dir=$(readlink_m "$4")
+tmpl_tar=`readpath_abs "$1"`
+src_dir=`readpath_abs "$2"`
+list_file=`readpath_abs "$3"`
+out_dir=`readpath_abs "$4"`
 
 if [ ! -f "$tmpl_tar" ]; then
-	filename=$(basename "$tmpl_tar")
+	filename=`basename "$tmpl_tar"`
 	echo "$filename: not found, skipping..."
 	exit 0
 fi
@@ -70,35 +65,51 @@ work_dir=$temp_dir/$pkg_fname
 
 export_uls_examples()
 {
-	local flist fpath line dpath
+	local flist line
+	local dpath fpath src_fpath
 
 	flist=$1
 
-	while read fpath; do 
-		[ -n "$fpath" ] || continue
-		line=${fpath##'#'*}
-		if [ -z "$line" ]; then
+	while read line; do 
+		fpath=${line#'#'*}
+		if [ "$fpath" != "$line" ]; then
+			# comment line 
 			continue
 		fi
-	
-		dpath=$(dirname "$fpath")
-	
+
+		fpath=${line%% *}
+		if [ -z "$fpath" ]; then
+			# empty line
+			continue
+		fi
+
+		src_fpath=${line#* }
+		if [ "$src_fpath" = "$fpath" ]; then
+			src_fpath="$src_dir/$fpath"
+		else
+			src_fpath="$src_dir/$src_fpath"
+		fi
+
+		if [ ! -f "$src_fpath" ]; then
+			echo "$src_fpath: not found"
+			continue
+		fi
+
+		dpath=`dirname "$fpath"`
 		if [ ! -d "$dpath" ]; then
-			mkdir -p "$dpath"
-			if [ $? != 0 ]; then
+			if ! mkdir -p "$dpath"; then
 				echo "fail to make '$dpath'"
-				exit 1
+				return 1
 			fi
 		fi
 
-		if [ ! -f "$src_dir/$fpath" ]; then
-			echo "$src_dir/$fpath: not found"
-			exit 1
+		if ! cp -f "$src_fpath" "$dpath"/; then
+			echo "error to copy $src_fpath!"
+			return 1
 		fi
-
-		cp -f "$src_dir/$fpath" "$dpath"/
 	
 	done < "$flist"
+	return 0
 }
 
 tar -C "$temp_dir" -xf "$tmpl_tar"
@@ -109,7 +120,10 @@ if [ ! -d "$pkg_fname" ]; then
 fi
 
 cd "$work_dir"
-export_uls_examples "$list_file"
+if ! export_uls_examples "$list_file"; then
+	echo "Can't create the tar file!"
+	exit 1
+fi
 
 cd "$temp_dir"
 tar -cf "$out_dir/$pkg_fname.tar" "$pkg_fname"

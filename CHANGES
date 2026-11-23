@@ -1,4 +1,42 @@
 ﻿
+  v1.13
+  -----------
+    o The build-system for Linux is enhanced:
+      The build-system for Linux/Windows is now much flexible and portable.
+      You can choose the value with '--libdir' option in the followings:
+         <prefix>/{lib, lib/uls, lib64, lib64/uls}
+         The default value is '<prefix>/lib' if not specified.
+       i.e., the value of the option '--libdir' is restricted to the one of 4 types.
+
+      The default (installation) directory is '~/.local'
+            $ configure
+
+      To install it /usr/local directory, use instead
+            $ configure --prefix=/usr/local
+
+      You can specify the system directory as the value of '--prefix':
+            $ configure --prefix=/usr/local
+            $ configure --prefix=/usr --libdir=/usr/lib/uls
+
+    o On Windows, you can choose installation type of the followings:
+         a) For current user only:
+             The installation folder is under your home-directory.
+             %USERPROFILE%\AppData\Local\Programs\UlsWin
+         b) Per computer:
+             The installation folder is 'C:\Program Files\UlsWin
+
+    o The script files in uls are compatible with dash, zsh, as well as bash.
+
+    o Java examples are more easily tested after the installation in the following directories:
+         a) On Linux: Read the file 'README.txt' in the directory 'examples/java'
+         b) On Windows,
+              ** 'Examples' in the installed folder
+              ** 'UlsExamples', the sub-folder in the source file tree.
+
+    o Visual Studio 2026 is supported.
+         Open the file 'UlsWin.sln' in the folder 'vs2026' with Visual Studio 2026.
+         For more details, read the updated file 'INSTALL'.
+
   v1.12
   -----------
     o Can customize the format of literal strings of your programming language by

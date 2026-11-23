@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
 # files (the "Software"), to deal in the Software without
@@ -28,8 +28,8 @@
 #   This file is part of ULS, Unified Lexical Scheme.
 #
 
-MAKE_ULF=./ulf_gen
-ULC_FILE=./sample.ulc
+MAKE_ULF=ulf_gen
+ULC_FILE=sample.ulc
 temp_dir=/tmp
 #opt_verbose=$ULS_VERBOSE
 opt_verbose=no
@@ -37,7 +37,7 @@ opt_verbose=no
 test_tree_dir=$1
 TEST_FILE_1=$test_tree_dir/a.list
 TARGET_DIR_1=$test_tree_dir
-OUTPUT_FILE_1=./sample.ulf
+OUTPUT_FILE_1=sample.ulf
 
 TEST_DIR=$temp_dir/uls_test
 OUTPUT_FILE_DFL="$TEST_DIR/uls_res3.txt"
@@ -52,7 +52,7 @@ if [ $# -ge 3 ]; then
 	export ULS_SYSPROPS=$3
 fi
 
-if [ ! -x $MAKE_ULF ]; then
+if [ ! -x ./$MAKE_ULF ]; then
 	echo "$MAKE_ULF : not found"
 	exit 1
 fi
@@ -61,7 +61,7 @@ if [ ! -e $TEST_DIR ]; then
 	mkdir $TEST_DIR
 fi
 
-cmdline="$MAKE_ULF -o  $OUTPUT_FILE_DFL -L $ULC_FILE -l $TEST_FILE_1 $TARGET_DIR_1"
+cmdline="./$MAKE_ULF -o  $OUTPUT_FILE_DFL -L $ULC_FILE -l $TEST_FILE_1 $TARGET_DIR_1"
 if [ "$opt_verbose" = "yes" ]; then
 	echo "$cmdline"
 fi

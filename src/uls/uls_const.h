@@ -56,7 +56,7 @@
 #define TMP_LANGS_FNAME      "uls_langs.txt"
 #define ULS_ULCNAME_DELIM    '/'
 
-#define ULS_VERSION_STR      _T("1.12.0")
+#define ULS_VERSION_STR      _T("1.13.0")
 #define ULC2CLASS_PROGVER    _T("v2.8.1")
 #define ULF_GEN_PROGVER      _T("v1.7.1")
 #define ULS_STREAM_PROGVER   _T("v2.10.0")
@@ -91,11 +91,8 @@
 #define ULS_DIRLIST_DELIM    _T(':')
 #define ULS_OS_TEMP_DIR      "/tmp"
 #define ULS_SHARE_DFLDIR     "/usr/share/uls"
-#define ULS_ETC_DFLDIR       "/usr/local/etc/uls"
+#define ULS_ETC_DIR          "/usr/local/etc/uls"
 #ifdef _ULS_IMPLDLL
-#ifndef ULS_ETC_DIR
-#error "ULS_ETC_DIR: not defined!"
-#endif
 #define ULS_SYSPROPS_FPATH  ULS_ETC_DIR "/" ULS_SYSPROPS_FNAME
 #endif // _ULS_IMPLDLL
 #define ULS_OS_SHARE_DFLDIR "/usr/local/share:/usr/share"

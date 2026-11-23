@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
 # files (the "Software"), to deal in the Software without
@@ -28,9 +28,8 @@
 #   This file is part of ULS, Unified Lexical Scheme.
 #
 
-command_list_used="uname diff java"
-for cmd in $command_list_used; do
-	filepath=$(which $cmd)
+for cmd in uname diff java; do
+	filepath=`which $cmd`
 	if [ -z "$filepath" ]; then
 		echo "$cmd: not found!"
 		exit 1
@@ -38,98 +37,76 @@ for cmd in $command_list_used; do
 done
 
 HOME_DIR=$PWD
+work_dir=$HOME_DIR
+
 opt_debug=no
-arch_os=$(uname -s)
+arch_os=`uname -s`
 #arch_os = { 'Darwin', 'Linux', ... }
+#echo "arch-os is '$arch_os'"
 
-if [ $# -ge 1 ]; then
-	if [ "$1" = "debug" ]; then
-		opt_debug=yes
-	fi
+if [ $# -lt 3 ]; then
+	echo "usage: $0 <input_dir> <lib_dir> <uls_jar>"
+	exit 1
 fi
 
+input_dir="$1"
+if [ ! -d "$input_dir" ]; then
+	echo "$input_dir: not found!"
+	exit 1
+fi
 
+lib_dir="$2"
+if [ ! -d "$lib_dir" ]; then
+	echo "$lib_dir: not found!"
+	exit 1
+fi
+
+filepath_jar="$lib_dir/$3"
+if [ ! -f "$filepath_jar" ]; then
+	echo "$filepath_jar: not found!"
+	exit 1
+fi
+
+OPT_CP="-cp ./classes:$filepath_jar"
+
+LIB_PATH="$lib_dir"
+export LD_LIBRARY_PATH=$lib_dir
 if [ "$arch_os" = "Darwin" ]; then
-	uls_sysprops_fpath=/tmp/uls_sysprops.txt
-	if [ -f "$uls_sysprops_fpath" ]; then
-		echo "Please run it after 'make install'"
-		exit 0
-	fi
-	uls_sysprops_fpath=/usr/local/etc/uls/uls.sysprops
-else
-	uls_sysprops_fpath=/tmp/uls_sysprops.txt
+	export DYLD_LIBRARY_PATH=$lib_dir
 fi
 
-if [ ! -f "$uls_sysprops_fpath" ]; then
-	echo "$uls_sysprops_fpath: not found!"
-	exit 1
-fi
+echo "Testing ulsjni at $work_dir..."
+cd "$work_dir"
 
-ULSJNI_HOME=".."
-if [ ! -d "$ULSJNI_HOME" ]; then
-	echo "$ULSJNI_HOME: not found!"
-	exit 1
-fi
-cd "$ULSJNI_HOME"
-ULSJNI_HOME=$PWD
-cd "$HOME_DIR"
-
-TESTS_DIR=$ULSJNI_HOME/tests
-
-ULS_SRCDIR="$ULSJNI_HOME/.."
-if [ ! -d "$ULS_SRCDIR" ]; then
-	echo "$ULS_SRCDIR: not found!"
-	exit 1
-fi
-cd "$ULS_SRCDIR"
-ULS_SRCDIR=$PWD
-cd "$ULS_SRCDIR"
-
-if [ ! -d "$ULS_SRCDIR/src/.libs" ]; then
-	echo "libuls not yet built!"
-	exit 1
-fi
-
-ULS_CLASSPATH=.:$ULSJNI_HOME/classes/
-
-if [ -n "$ULS_CLASSPATH" ]; then
-	OPT_CP="-cp $ULS_CLASSPATH"
-else
-	OPT_CP=""
-fi
-
-LIB_PATH=$ULSJNI_HOME/libulsjni/.libs:$ULS_SRCDIR/src/.libs
-LIB_PATH1=$ULSJNI_HOME/libulsjni:$ULS_SRCDIR/src
-export LD_LIBRARY_PATH=$LIB_PATH
-#export DYLD_LIBRARY_PATH=$LIB_PATH
-
-cd "$ULSJNI_HOME/src"
-
+echo "  ulsjni(1.1)"
 test_outfile1="/tmp/$$_ulsjni_out_1_1.txt"
-java -Djava.library.path="$LIB_PATH" $OPT_CP uls.tests.UlsDump input1.txt $TESTS_DIR > $test_outfile1
+
+java -Djava.library.path="$LIB_PATH" $OPT_CP uls.tests.UlsDump . . > $test_outfile1
 if [ $? != 0 ]; then
 	echo "Failed to execute 'java uls.tests.UlsDump'!"
-	cat $test_outfile1
+	echo "java -Djava.library.path=$LIB_PATH $OPT_CP uls.tests.UlsDump . $input_dir"
 	exit 1
 fi
 
+diff -q $work_dir/out_1_1.txt $test_outfile1
+if [ $? != 0 ]; then
+	echo "fail(stdout): diff ... '$test_outfile1'"
+	exit 1
+fi
+
+echo "  ulsjni(2.1)"
 test_outfile2="/tmp/$$_ulsjni_out_2_1.txt"
-java -Djava.library.path="$LIB_PATH" $OPT_CP uls.tests.UlsTestStream $TESTS_DIR > $test_outfile2
+
+java -Djava.library.path="$LIB_PATH" $OPT_CP uls.tests.UlsTestStream . $input_dir > $test_outfile2
 if [ $? != 0 ]; then
 	echo "Failed to execute 'java uls.tests.UlsTestStream'!"
-	cat $test_outfile2
+	echo "java -Djava.library.path=$LIB_PATH $OPT_CP uls.tests.UlsTestStream . $input_dir"
 	exit 1
 fi
 
-diff -q $TESTS_DIR/out_1_1.txt $test_outfile1
+diff -q $work_dir/out_2_1.txt $test_outfile2
 if [ $? != 0 ]; then
-	echo "fail(stdout): diff for '$test_outfile1'"
-	exit 1
-fi
-
-diff -q $TESTS_DIR/out_2_1.txt $test_outfile2
-if [ $? != 0 ]; then
-	echo "fail(stdout): diff for '$test_outfile2'"
+	echo "fail(stdout): diff ... '$test_outfile2'"
 	exit 1
 fi
 
@@ -142,4 +119,3 @@ else
 fi
 
 cd "$HOME_DIR"
-exit 0

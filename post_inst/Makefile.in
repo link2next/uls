@@ -158,10 +158,13 @@ EXEEXT = @EXEEXT@
 FGREP = @FGREP@
 FILECMD = @FILECMD@
 GREP = @GREP@
+HAVE_CMD_FIND = @HAVE_CMD_FIND@
+HAVE_CMD_GREP = @HAVE_CMD_GREP@
+HAVE_CMD_READLINK = @HAVE_CMD_READLINK@
+HAVE_CMD_TAR = @HAVE_CMD_TAR@
+HAVE_CMD_WHOAMI = @HAVE_CMD_WHOAMI@
 HAVE_JAVA = @HAVE_JAVA@
 HAVE_JAVAC = @HAVE_JAVAC@
-HAVE_JAVAH = @HAVE_JAVAH@
-HELP2MAN = @HELP2MAN@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -216,9 +219,16 @@ am__rm_f_notfound = @am__rm_f_notfound@
 am__tar = @am__tar@
 am__untar = @am__untar@
 am__xargs_n = @am__xargs_n@
+ax_bin_dir = @ax_bin_dir@
 ax_etc_dir = @ax_etc_dir@
-ax_jdk_cppflags = @ax_jdk_cppflags@
-ax_jdk_ldflags = @ax_jdk_ldflags@
+ax_help2man_exe = @ax_help2man_exe@
+ax_inc_dir = @ax_inc_dir@
+ax_inst_dir = @ax_inst_dir@
+ax_java_home = @ax_java_home@
+ax_lib_dir = @ax_lib_dir@
+ax_share_dir = @ax_share_dir@
+ax_user_home = @ax_user_home@
+ax_user_name = @ax_user_name@
 bindir = @bindir@
 build = @build@
 build_alias = @build_alias@
@@ -261,17 +271,19 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 uls_ver_major = 1
-uls_ver_minor = 12
+uls_ver_minor = 13
 uls_ver_debug = 0
 uls_ver = $(uls_ver_major).$(uls_ver_minor).$(uls_ver_debug)
 so_current = 1
 so_revision = 1
 so_age = 0
-ULS_SYSPROPS = /usr/local/etc/uls/uls.sysprops
-TMP_SYSPROPS = /tmp/uls_sysprops.txt
-ulc2class_exe = $(top_builddir)/tools/ulc2class/ulc2class
-tests_libpath = $(top_builddir)/src:$(top_builddir)/ulscpp
-ACLOCAL_AMFLAGS = -I m4
+TMP_SYSPROPS := $(top_builddir)/ulsconfig/uls_sysprops.txt
+ulc2class_exe := $(top_builddir)/tools/ulc2class/ulc2class
+ax_ulc2class_exe := ULS_SYSPROPS=$(TMP_SYSPROPS) $(ulc2class_exe)
+ax_shell_exe := $(SHELL)
+tests_libpath := $(top_builddir)/src/.libs:$(top_builddir)/ulscpp/.libs
+CLEANFILES = uninst_info.txt
+cfgmk_for_examples = ../examples/cfg.mk
 all: all-am
 
 .SUFFIXES:
@@ -376,6 +388,7 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
+	-$(am__rm_f) $(CLEANFILES)
 
 distclean-generic:
 	-$(am__rm_f) $(CONFIG_CLEAN_FILES)
@@ -384,6 +397,8 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
+clean: clean-am
+
 clean-am: clean-generic clean-libtool mostlyclean-am
 
 distclean: distclean-am
@@ -464,26 +479,26 @@ uninstall-am:
 
 .PRECIOUS: Makefile
 
-
 all: uninst_info.txt
 
 uninst_info.txt:
-	@./gen_uninst_info.sh "$(prefix)" "$(ax_etc_dir)" $@
+	@./gen_uninst_info.sh "$(ax_inst_dir)" "$(ax_lib_dir)" "$(ax_etc_dir)" \
+		$(ax_user_name) $(ax_user_home) $@
 
-install: uninst_info.txt
-	install -m755 -d "$(bindir)" "$(datadir)" $(ax_etc_dir)
-#	@./strip_libs.sh "$(libdir)" 
-	@./make_uls_examples_tar.sh ./uls_examples.tar $(top_srcdir)/examples ./list_uls_examples.txt "$(datadir)/uls/"
-	install -m755 uninstall_uls.sh $(bindir)/uninstall_uls
-	install -m755 uninst_info.txt $(bindir)/uls_uninst_info.sh
-	install -m755 setup_uls_examples.sh $(bindir)/setup_uls_examples
-	@bash ./notice.sh "$(prefix)" "$(bindir)" "$(includedir)" "$(libdir)"
+$(cfgmk_for_examples): ../uls.config
+	@./gen_examples_cfgmk.sh $(uls_ver) $(cfgmk_for_examples)
+
+install: uninst_info.txt $(cfgmk_for_examples)
+#	@./strip_libs.sh "$(ax_lib_dir)"
+	@./make_uls_examples_tar.sh ./uls_examples.tar \
+		$(top_srcdir)/examples ./list_uls_examples.txt "$(ax_share_dir)"/uls
+	install -m755 uninstall_uls.sh "$(ax_bin_dir)"/uninstall_uls
+	install -m755 uninst_info.txt "$(ax_bin_dir)"/uls_uninst_info.sh
+	install -m755 setup_uls_examples.sh "$(ax_bin_dir)"/setup_uls_examples
+	./notice.sh "$(ax_inst_dir)" "$(ax_bin_dir)" "$(ax_inc_dir)" "$(ax_lib_dir)"
 	@if [ -f $(TMP_SYSPROPS) ]; then \
 		rm -f $(TMP_SYSPROPS); \
 	fi
-
-clean:
-	rm -f uninst_info.txt
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -1,9 +1,9 @@
-1. How to run batch.
+1. How to run.
 	1) install ULS
 	2) make
-	3) run_examples.sh
+	3) make check
 
-2. Testing programs individually.
+2. Testing the programs individually.
 	It's probably needed to set the environment variable 
           'LD_LIBRARY_PATH' to <uls-install-dir>/lib. 
 
@@ -42,3 +42,4 @@
 	9) Natural
 		a) cd Natual
 		b) EngToks natural_sam.txt
+

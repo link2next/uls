@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
 # files (the "Software"), to deal in the Software without
@@ -28,9 +28,8 @@
 #   This file is part of ULS, Unified Lexical Scheme.
 #
 
-command_list_used="diff mkdir"
-for cmd in $command_list_used; do
-	filepath=$(which $cmd)
+for cmd in diff mkdir; do
+	filepath=`which $cmd`
 	if [ -z "$filepath" ]; then
 		echo "$cmd: not found!"
 		exit 1
@@ -41,7 +40,7 @@ done
 opt_verbose=no
 opt_noexec=no
 
-ULC_FILE="sample.ulc"
+ULC_FILE="sample1.ulc"
 test_progname=uls_stream
 PROG="./$test_progname -s -L $ULC_FILE"
 
@@ -71,7 +70,11 @@ if [ ! -d $TEST_DIR ]; then
 	exit 1;
 fi
 
-for fmt in $BIN_FORMATS; do
+list2="$BIN_FORMATS "
+while [ -n "$list2" ]; do
+	fmt=${list2%% *}
+	list2=${list2#${fmt} }
+
 	cmdline="$PROG -o $TEST_DIR/${fmt}.txt ${fmt}.uls"
 	if [ "$opt_verbose" = "yes" ]; then
 		echo "$cmdline"
@@ -79,11 +82,19 @@ for fmt in $BIN_FORMATS; do
 	$cmdline
 done
 
-for testfname in $TARGET_FILES; do
+list1="$TARGET_FILES "
+while [ -n "$list1" ]; do
+	testfname=${list1%% *}
+	list1=${list1#${testfname} }
+
 	testfile="$testfname.uls"
 	echo "checking $testfile, ..."
 
-	for fmt in $BIN_FORMATS; do
+	list2="$BIN_FORMATS "
+	while [ -n "$list2" ]; do
+		fmt=${list2%% *}
+		list2=${list2#${fmt} }
+
 		echo "   ${fmt}-formatting, ..."
 
 		cmdline="$PROG -t $fmt $testfile"
@@ -135,11 +146,10 @@ fi
 
 TMPL_ULSFILE=tmpl_ex.uls
 echo "checking tmpl_ex.txt ..."
-cmdline="$PROG -b -o $TMPL_ULSFILE -TT tmpl_ex.txt"
-if [ "$opt_verbose" = "yes" ]; then
-	echo "  $cmdline"
+if [ ! -f $TMPL_ULSFILE ]; then
+	echo "$TMPL_ULSFILE: not found!"
+	exit 1
 fi
-$cmdline
 
 # tmpl_ex(int)
 ANSWER_FILE_TXT1=tmpl_ex_int.txt
@@ -179,7 +189,7 @@ if [ $? != 0 ]; then
 fi
 
 rm -f $DUMPFILE_TXT2
-rm -f $TMPL_ULSFILE
+#rm -f $TMPL_ULSFILE
 if [ -f $DFL_OUTPUT_FILE ]; then
 	rm -f $DFL_OUTPUT_FILE
 fi

@@ -583,7 +583,7 @@ UlsLexUStr::~UlsLexUStr()
 	uls_lf_destroy(str_nlf);
 }
 
-int UlsLexUStr::prepareUldMap(int bufsiz_uldfile)
+int UlsLexUStr::prepareUldMap()
 {
 	names_map = uld_prepare_names(&lex);
 	return 0;
@@ -597,19 +597,20 @@ bool UlsLexUStr::finishUldMap()
 		stat = false;
 	}
 	names_map = NULL;
+	update_rsvdtoks();
 
 	return stat;
 }
 
 void UlsLexUStr::changeUldNames(const char *name, const char*name2,
-	int tokid_valid, int tokid, const char *aliases)
+	bool tokid_valid, int tokid, const char *aliases)
 {
 	uld_line_t tok_names;
 	char *buff;
 
  	tok_names.name = name;
 	tok_names.name2 = name2;
-	tok_names.tokid_changed = tokid_valid;
+	tok_names.tokid_changed = tokid_valid ? 1 : 0;
 	tok_names.tokid = tokid;
 
 	if (aliases == NULL) aliases = "";
@@ -621,7 +622,7 @@ void UlsLexUStr::changeUldNames(const char *name, const char*name2,
 }
 
 void UlsLexUStr::changeUldNames(const string& name, const string& name2,
-	int tokid_valid, int tokid, const string& aliases)
+	bool tokid_valid, int tokid, const string& aliases)
 {
 	changeUldNames(name.c_str(), name2.c_str(),
 		tokid_valid, tokid, aliases.c_str());
@@ -1873,7 +1874,7 @@ UlsLexAWStr::deleteLiteralAnalyzer(const char *apfx)
 
 void
 UlsLexAWStr::changeUldNames(const char *name, const char *name2,
-	int tokid_valid, int tokid, const char *aliases)
+	bool tokid_valid, int tokid, const char *aliases)
 {
 	const char *ustr0, *ustr1, *ustr2;
 
@@ -2386,7 +2387,7 @@ UlsLexAWStr::deleteLiteralAnalyzer(wstring& pfx)
 
 void
 UlsLexAWStr::changeUldNames(const wchar_t *name, const wchar_t *name2,
-	int tokid_valid, int tokid, const wchar_t *aliases)
+	bool tokid_valid, int tokid, const wchar_t *aliases)
 {
 	const char *ustr0, *ustr1, *ustr2;
 
@@ -2409,9 +2410,9 @@ UlsLexAWStr::changeUldNames(const wchar_t *name, const wchar_t *name2,
 
 void
 UlsLexAWStr::changeUldNames(wstring& name, wstring& name2,
-	int tokid_valid, int tokid, wstring& aliases)
+	bool tokid_valid, int tokid, wstring& aliases)
 {
-	changeUldNames(name.c_str(), name2.c_str(),tokid_valid, tokid, aliases.c_str());
+	changeUldNames(name.c_str(), name2.c_str(), tokid_valid, tokid, aliases.c_str());
 }
 
 int

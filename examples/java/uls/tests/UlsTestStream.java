@@ -24,9 +24,14 @@
 package uls.tests;
 
 import uls.polaris.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.Files;
 
 public class UlsTestStream {
 	static String data_dir = ".";
+	static String input_dir = ".";
+	static String output_dir = ".";
 	int tok_id;
 
 	public void dump_input_file(Sample1Lex sam_lex, String infile) {
@@ -58,9 +63,9 @@ public class UlsTestStream {
 		}
 	}
 
-	public Boolean test_streaming(Sample1Lex sam_lex, String input_file)
+	public boolean test_streaming(Sample1Lex sam_lex, String input_file)
 	{
-		String uls_file = data_dir + "/a2.uls";
+		String uls_file = output_dir + "/a2.uls";
 		String lxm;
 		int t;
 
@@ -68,7 +73,6 @@ public class UlsTestStream {
 		UlsIStream ifile = new UlsIStream(input_file);
 
 		try {
-
 			ofile.startStream(ifile);
 		} finally {
 			ofile.close();
@@ -92,10 +96,10 @@ public class UlsTestStream {
 	    return true;
 	}
 
-	public Boolean test_tokseq(Sample1Lex sam_lex, String input_file)
+	public boolean test_tokseq(Sample1Lex sam_lex, String input_file)
 	{
 		UlsTmplList  tmpls = new UlsTmplList();
-		String uls_file = data_dir + "/a3.uls";
+		String uls_file = output_dir + "/a3.uls";
 		String lxm;
 		int t;
 
@@ -150,15 +154,22 @@ public class UlsTestStream {
 	public static void main(String args[]) {
 		String ulc_path, input_file;
 		UlsTestStream  tst_obj = new UlsTestStream();
+		Path path1;
 
-		if (args.length < 1) {
-			System.err.println("usage: UlsTestStream [data_dir]");
+		if (args.length < 2) {
+			System.err.println("usage: UlsTestStream <data_dir> <input_dir");
 			return;
 		}
 		data_dir = args[0];
+		input_dir = args[1];
 
-		ulc_path = data_dir + "/../sample.ulc";
+		ulc_path = data_dir + "/sample1.ulc";
 //		System.out.println("ulc_path = " + ulc_path);
+		path1 = Paths.get(ulc_path);
+		if (!Files.isRegularFile(path1)) {
+			System.err.println(ulc_path + ": not found!");
+			return;
+		}
 
 		Sample1Lex sam_lex = new Sample1Lex(ulc_path);
 		System.out.println("** Test Start");
@@ -167,26 +178,37 @@ public class UlsTestStream {
 			// Test-1: read the input file.
 			input_file = "tmpl_ex.txt";
 			System.out.println("Test-1: input_file = " + input_file);
-			input_file = data_dir + "/" + input_file;
+			input_file = input_dir + "/" + input_file;
+			path1 = Paths.get(input_file);
+			if (!Files.isRegularFile(path1)) {
+				System.err.println(input_file + ": not found!");
+				return;
+			}
 			tst_obj.dump_input_file(sam_lex, input_file);
 
 			// Test-2: read the input file replacing the template var.
 			input_file = "tmpl_ex.uls";
 			System.out.println("Test-2: input_file = " + input_file);
-			input_file = data_dir + "/" + input_file;
+			input_file = input_dir + "/" + input_file;
+			path1 = Paths.get(input_file);
+			if (!Files.isRegularFile(path1)) {
+				System.err.println(input_file + ": not found!");
+				return;
+			}
+
 			String tmpl_val = "unsigned long long";
 			tst_obj.read_stream_file(sam_lex, tmpl_val, input_file);
 
 			// Test-3:
 			input_file = "tmpl_ex.txt";
 			System.out.println("Test-3: input_file = " + input_file);
-			input_file = data_dir + "/" + input_file;
+			input_file = input_dir + "/" + input_file;
 			tst_obj.test_streaming(sam_lex, input_file);
 
 			// Test-4:
 			input_file = "tmpl_ex.txt";
 			System.out.println("Test-4: input_file = " + input_file);
-			input_file = data_dir + "/" + input_file;
+			input_file = input_dir + "/" + input_file;
 			tst_obj.test_tokseq(sam_lex, input_file);
 
 		} finally {

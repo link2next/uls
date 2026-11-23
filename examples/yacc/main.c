@@ -113,7 +113,7 @@ parse_options(int argc, char *argv[])
 
 	if (outfile_xml == NULL) {
 		fout_xml = stdout;
-	} else if ((fout_xml=uls_fp_open(outfile_xml, ULS_FIO_WRITE | ULS_FIO_NO_UTF8BOM)) == NULL) {
+	} else if ((fout_xml=uls_fp_open(outfile_xml, ULS_FIO_WRITE | ULS_FIO_NO_BOM)) == NULL) {
 		err_log("can't open output file '%s' for writing", outfile_xml);
 		return -1;
 	}

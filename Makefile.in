@@ -162,8 +162,8 @@ am__define_uniq_tagged_files = \
 DIST_SUBDIRS = ulsconfig ulc_exam src ulscompat ulscpp tools tests \
 	ulsjni doc post_inst
 am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/config.h.in INSTALL \
-	README compile config.guess config.sub depcomp install-sh \
-	ltmain.sh missing ylwrap
+	README compile config.guess config.sub install-sh ltmain.sh \
+	missing
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -244,10 +244,13 @@ EXEEXT = @EXEEXT@
 FGREP = @FGREP@
 FILECMD = @FILECMD@
 GREP = @GREP@
+HAVE_CMD_FIND = @HAVE_CMD_FIND@
+HAVE_CMD_GREP = @HAVE_CMD_GREP@
+HAVE_CMD_READLINK = @HAVE_CMD_READLINK@
+HAVE_CMD_TAR = @HAVE_CMD_TAR@
+HAVE_CMD_WHOAMI = @HAVE_CMD_WHOAMI@
 HAVE_JAVA = @HAVE_JAVA@
 HAVE_JAVAC = @HAVE_JAVAC@
-HAVE_JAVAH = @HAVE_JAVAH@
-HELP2MAN = @HELP2MAN@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -302,9 +305,16 @@ am__rm_f_notfound = @am__rm_f_notfound@
 am__tar = @am__tar@
 am__untar = @am__untar@
 am__xargs_n = @am__xargs_n@
+ax_bin_dir = @ax_bin_dir@
 ax_etc_dir = @ax_etc_dir@
-ax_jdk_cppflags = @ax_jdk_cppflags@
-ax_jdk_ldflags = @ax_jdk_ldflags@
+ax_help2man_exe = @ax_help2man_exe@
+ax_inc_dir = @ax_inc_dir@
+ax_inst_dir = @ax_inst_dir@
+ax_java_home = @ax_java_home@
+ax_lib_dir = @ax_lib_dir@
+ax_share_dir = @ax_share_dir@
+ax_user_home = @ax_user_home@
+ax_user_name = @ax_user_name@
 bindir = @bindir@
 build = @build@
 build_alias = @build_alias@
@@ -763,7 +773,7 @@ distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -f Makefile
 distclean-am: clean-am distclean-generic distclean-hdr \
-	distclean-libtool distclean-tags
+	distclean-libtool distclean-local distclean-tags
 
 dvi: dvi-recursive
 
@@ -833,25 +843,30 @@ uninstall-am:
 	dist dist-all dist-bzip2 dist-bzip3 dist-gzip dist-lzip \
 	dist-shar dist-tarZ dist-xz dist-zip dist-zstd distcheck \
 	distclean distclean-generic distclean-hdr distclean-libtool \
-	distclean-tags distcleancheck distdir distuninstallcheck dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-data install-data-am install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs installdirs-am \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags tags-am uninstall uninstall-am
+	distclean-local distclean-tags distcleancheck distdir \
+	distuninstallcheck dvi dvi-am html html-am info info-am \
+	install install-am install-data install-data-am install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am install-man \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	installdirs-am maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
+	ps ps-am tags tags-am uninstall uninstall-am
 
 .PRECIOUS: Makefile
 
 
 libtool: $(LIBTOOL_DEPS)
-	bash ./config.status --recheck
+	$(SHELL) ./config.status --recheck
 
 clean-local:
 	@make -C examples clean
+	@find . \( -name 'a?.uls' -or -name '*.res' -or -name 'res_*.txt' \) -delete
+	./ulsconfig/cleanup_uls.sh $(PWD) clean
+
+distclean-local:
+	./ulsconfig/cleanup_uls.sh $(PWD) distclean
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

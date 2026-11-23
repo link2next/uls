@@ -238,13 +238,13 @@ namespace uls {
 			// <brief>
 			//   changeUldNames
 			// </brief>
-			int prepareUldMap(int bufsiz_uldfile);
+			int prepareUldMap();
 			bool finishUldMap();
 
 			virtual void changeUldNames(const char *name, const char *name2,
-				int tokid_valid, int tokid, const char *aliases) override;
+				bool tokid_valid, int tokid, const char *aliases) override;
 			void changeUldNames(const std::string& name, const std::string& name2,
-				int tokid_valid, int tokid, const std::string& aliases);
+				bool tokid_valid, int tokid, const std::string& aliases);
 
 			bool initUlsLex_ustr(const char *ulc_file);
 			void update_rsvdtoks(void);
@@ -834,7 +834,7 @@ __attribute__((noreturn))
 				uls_litstr_analyzer_t proc, void *data) override;
 			virtual void deleteLiteralAnalyzer(const char *pfx) override;
 			virtual void changeUldNames(const char *name, const char *name2,
-				int tokid_valid, int tokid, const char *aliases) override;
+				bool tokid_valid, int tokid, const char *aliases) override;
 
 			virtual int vsnprintf(char *buf, int bufsiz, const char *fmt, va_list args) override;
 			virtual int vfprintf(FILE* fp, const char *fmt, va_list args) override;
@@ -886,9 +886,9 @@ __attribute__((noreturn))
 			void deleteLiteralAnalyzer(std::wstring& pfx);
 
 			virtual void changeUldNames(const wchar_t *name, const wchar_t *name2,
-				int tokid_valid, int tokid, const wchar_t *aliases) override;
+				bool tokid_valid, int tokid, const wchar_t *aliases) override;
 			void changeUldNames(std::wstring& name, std::wstring& name2,
-				int tokid_valid, int tokid, std::wstring& aliases);
+				bool tokid_valid, int tokid, std::wstring& aliases);
 
 			virtual int vsnprintf(wchar_t *wbuf, int bufsiz, const wchar_t *wfmt, va_list args) override;
 			int snprintf(wchar_t *wbuf, int bufsiz, const wchar_t *wfmt, ...);

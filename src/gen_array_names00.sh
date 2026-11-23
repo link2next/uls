@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 set -e
 
 if [ $# -lt 1 ]; then
@@ -12,7 +12,6 @@ if [ ! -f "$in_filepath" ]; then
 	exit 1
 fi
 
-
 gen_array_name00()
 {
 	local typnam="$1" typnam_big
@@ -20,11 +19,16 @@ gen_array_name00()
 	local m_nam  m_val 
 	local line line2
 
-	typnam_big=$(echo $typnam | tr 'a-z' 'A-Z')
+	typnam_big=`echo $typnam | tr 'a-z' 'A-Z'`
 
-	line=$(grep define uls/uls_const.h | grep $arrsiz_nam)
+	if ! grep -q $arrsiz_nam uls/uls_const.h; then
+		echo "$arrsiz_nam: not found in uls/uls_const.h"
+		exit 1 
+	fi
+
+	line=`grep define uls/uls_const.h | grep $arrsiz_nam`
 	line2=${line#*define}
-	arrsiz_val=$(echo $line2 | awk '{print $2}')
+	arrsiz_val=`echo $line2 | awk '{print $2}'`
 
 	m_nam=${typnam_big}_TYPE00_${arrsiz_nam}
 	m_val=${typnam}_s00array${arrsiz_val}

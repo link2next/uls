@@ -1,4 +1,4 @@
- ulc_path = ../sample.ulc
+ ulc_path = sample1.ulc
  input_file = input1.txt
  -- Input: String -------------------------
 	[     ID] Hello
@@ -17,8 +17,19 @@
 ....[       ] ,
 ....[     ID] EEE
 ....[       ] ;
+....[ DOUBLE] double
+....[     ID] ZZZ
+....[       ] ;
 ....[  FLOAT] float
 ....[     ID] YYY
+....[       ] ;
+....[     ID] AAA
+....[       ] =
+....[ NUMBER] 1 ---(str2int)-->> 1
+....[       ] ;
+....[     ID] BBB
+....[       ] =
+....[ NUMBER] 0 ---(str2int)-->> 0
 ....[       ] ;
 ....[     IF] if
 ....[       ] (
@@ -29,6 +40,10 @@
 ....[     ID] EEE
 ....[       ] )
 ....[       ] {
+....[     ID] AAA
+....[       ] =
+....[ NUMBER] 0 ---(str2int)-->> 0
+....[       ] ;
 ....[     ID] EEE
 ....[       ] =
 ....[ NUMBER] 0xFFFE ---(str2int)-->> 65534
@@ -36,10 +51,12 @@
 ....[       ] }
 ....[     ID] ZZZ
 ....[       ] =
+....[       ] -
 ....[ NUMBER] 0.00031415926 ---(str2double)-->> 3.1415926E-4
 ....[       ] ;
 ....[     ID] BBB
 ....[       ] =
+....[       ] -
 ....[ NUMBER] 7094 ---(str2int)-->> 7094
 ....[       ] ;
 ....[     ID] AAA
@@ -54,6 +71,18 @@
 ....[       ] =
 ....[ NUMBER] 0.3 ---(str2double)-->> 0.3
 ....[       ] ;
+....[  WHILE] while
+....[       ] (
+....[     ID] __DDD
+....[    LEQ] <=
+....[     ID] EEE
+....[       ] )
+....[       ] {
+....[     ID] YYY
+....[       ] =
+....[ NUMBER] 31.4 ---(str2double)-->> 31.4
+....[       ] ;
+....[       ] }
 ....[       ] }
  -- Testing Extra Tokdefs -------------------------
  ** xdefs[ 0] = 42
@@ -72,8 +101,19 @@
 	[       ] ,
 	[     ID] EEE
 	[       ] ;
+	[ DOUBLE] double
+	[     ID] ZZZ
+	[       ] ;
 	[  FLOAT] float
 	[     ID] YYY
+	[       ] ;
+	[     ID] AAA
+	[       ] =
+	[ NUMBER] 1
+	[       ] ;
+	[     ID] BBB
+	[       ] =
+	[ NUMBER] 0
 	[       ] ;
 	[     IF] if
 	[       ] (
@@ -84,6 +124,10 @@
 	[     ID] EEE
 	[       ] )
 	[       ] {
+	[     ID] AAA
+	[       ] =
+	[ NUMBER] 0
+	[       ] ;
 	[     ID] EEE
 	[       ] =
 	[ NUMBER] 0xFFFE
@@ -91,10 +135,12 @@
 	[       ] }
 	[     ID] ZZZ
 	[       ] =
+	[       ] -
 	[ NUMBER] 0.00031415926
 	[       ] ;
 	[     ID] BBB
 	[       ] =
+	[       ] -
 	[ NUMBER] 7094
 	[       ] ;
 	[     ID] AAA
@@ -109,8 +155,20 @@
 	[       ] =
 	[ NUMBER] 0.3
 	[       ] ;
+	[  WHILE] while
+	[       ] (
+	[     ID] __DDD
+	[    LEQ] <=
+	[     ID] EEE
+	[       ] )
+	[       ] {
+	[     ID] YYY
+	[       ] =
+	[ NUMBER] 31.4
+	[       ] ;
 	[       ] }
- ulc_path = ../sample2.uld
+	[       ] }
+ uld_path = sample2.uld
  input_file = input1.txt
  -- Input: File -------------------------
 ....[     ID] main
@@ -124,8 +182,19 @@
 ....[       ] ,
 ....[     ID] EEE
 ....[       ] ;
+....[ DOUBLE] double
+....[     ID] ZZZ
+....[       ] ;
 ....[  FLOAT] float
 ....[     ID] YYY
+....[       ] ;
+....[     ID] AAA
+....[       ] =
+....[ NUMBER] 1
+....[       ] ;
+....[     ID] BBB
+....[       ] =
+....[ NUMBER] 0
 ....[       ] ;
 ....[     IF] if
 ....[       ] (
@@ -136,6 +205,10 @@
 ....[     ID] EEE
 ....[       ] )
 ....[       ] {
+....[     ID] AAA
+....[       ] =
+....[ NUMBER] 0
+....[       ] ;
 ....[     ID] EEE
 ....[       ] =
 ....[ NUMBER] 0xFFFE
@@ -143,10 +216,12 @@
 ....[       ] }
 ....[     ID] ZZZ
 ....[       ] =
+....[       ] -
 ....[ NUMBER] 0.00031415926
 ....[       ] ;
 ....[     ID] BBB
 ....[       ] =
+....[       ] -
 ....[ NUMBER] 7094
 ....[       ] ;
 ....[     ID] AAA
@@ -157,12 +232,24 @@
 ....[       ] =
 ....[ NUMBER] 0.
 ....[       ] ;
+....[     ID] YYY
+....[       ] =
+....[ NUMBER] 0.3
+....[       ] ;
+....[  WHILE] while
+....[       ] (
+....[     ID] __DDD
+....[LEQ2LEQ] <=
+....[     ID] EEE
+....[       ] )
+....[       ] {
 ....[       ] /
 ....[       ] /
 ....[     ID] LINE
 ....[     ID] COMMENT
 ....[     ID] YYY
 ....[       ] =
-....[ NUMBER] 0.3
+....[ NUMBER] 31.4
 ....[       ] ;
+....[       ] }
 ....[       ] }

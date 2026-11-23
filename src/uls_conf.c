@@ -1983,7 +1983,7 @@ ULS_QUALIFIED_METHOD(uls_get_ulc_path)(int typ_fpath, const char *fpath, int len
 
 		if (parms != nilptr) {
 			get_ulf_filepath(dirpath, len_dirpath, specname, ulf_filepath);
-			parms->native_data = _uls_tool_(fp_open)(ulf_filepath, ULS_FIO_READ | ULS_FIO_NO_UTF8BOM);
+			parms->native_data = _uls_tool_(fp_open)(ulf_filepath, ULS_FIO_READ | ULS_FIO_NO_BOM);
 		}
 		uls_mfree(dirpath);
 	}

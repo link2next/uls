@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
 # files (the "Software"), to deal in the Software without
@@ -28,9 +28,8 @@
 #   This file is part of ULS, Unified Lexical Scheme.
 #
 
-command_list_used="diff basename dirname"
-for cmd in $command_list_used; do
-	filepath=$(which $cmd)
+for cmd in diff basename dirname; do
+	filepath=`which $cmd`
 	if [ -z "$filepath" ]; then
 		echo "$cmd: not found!"
 		exit 1
@@ -38,8 +37,8 @@ for cmd in $command_list_used; do
 done
 
 home_dir="$PWD"
-progname=$(basename $0)
-test_dname=$(basename "$home_dir")
+progname=`basename $0`
+test_dname=`basename "$home_dir"`
 
 MAX_N_CASES=16
 MAX_N_MODES=8
@@ -83,8 +82,8 @@ test_1case()
 	local infile=$3
 	local outfile_res=$4
 	local errfile_res=$5
-	local tmpfile1="./lex1_res.txt"
-	local tmpfile2="./lex2_res.txt"
+	local tmpfile1="lex1_res.txt"
+	local tmpfile2="lex2_res.txt"
 	local cmdline
 
 	cmdline="./$test_prog -m${ts}"
@@ -102,7 +101,7 @@ test_1case()
 	if [ $outfile_res != "-"  ]; then
 		diff -q $outfile_res $tmpfile1 
 		if [ $? != 0 ]; then
-			echo "fail(stdout): diff for '$test_prog'"
+			echo "fail(stdout): diff ... '$test_prog'"
 			return 1
 		fi
 	fi
@@ -110,7 +109,7 @@ test_1case()
 	if [ $errfile_res != "-" ]; then
 		diff -q $errfile_res $tmpfile2 
 		if [ $? != 0 ]; then
-			echo "fail(stderr): diff for '$test_prog'"
+			echo "fail(stderr): diff ... '$test_prog'"
 			return 1
 		fi
 	fi

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
 # files (the "Software"), to deal in the Software without
@@ -22,15 +22,14 @@
 
 #
 # FILE: run_examples.sh
-# DATE: September 2018
+# DATE: Oct. 2026
 # AUTHOR: Stanley Hong
 # DESCRIPTION: Testing all the programs in examples.
 #   This file is part of ULS, Unified Lexical Scheme.
 #
 
-command_list_used="diff mkdir dd"
-for cmd in $command_list_used; do
-	filepath=$(which $cmd)
+for cmd in diff mkdir dd; do
+	filepath=`which $cmd`
 	if [ -z "$filepath" ]; then
 		echo "$cmd: not found!"
 		exit 1
@@ -38,7 +37,10 @@ for cmd in $command_list_used; do
 done
 
 if [ $# -lt 1 ]; then
-	etc_dir=/usr/local/etc/uls
+	etc_dir=$HOME/.local/etc/uls
+	if [ ! -d "$etc_dir" ]; then
+		etc_dir=/usr/local/etc/uls
+	fi
 else
 	etc_dir=$1
 fi
@@ -53,6 +55,7 @@ BASE_DIR=$PWD
 
 EXES="test_1st/test_1st tokseq/tokseq yacc/ulc2xml DumpToks/DumpToks \
 	Css3/Css3Toks Html5/Html5Toks Shell/ShellToks Mkf/MkfToks Natural/EngToks"
+devnull=/tmp/_uls_run_exams_$$_devnull.txt
 
 sysprops_fpath=$etc_dir/uls.sysprops
 if [ ! -f "$sysprops_fpath" ]; then
@@ -62,9 +65,9 @@ fi
 
 # strip the utf-8 bom at the first 
 tmp_sysprops_fpath=/tmp/uls_$$_sysprops
-dd bs=1 skip=3 if="$sysprops_fpath" of=$tmp_sysprops_fpath 2> /dev/null
+dd bs=1 skip=3 if="$sysprops_fpath" of=$tmp_sysprops_fpath 2> $devnull
 
-get_uls_homedir()
+read_sysprops()
 {
 	local fpath=$1
 
@@ -76,14 +79,19 @@ get_uls_homedir()
 	done  < "$fpath"
 }
 
-get_uls_homedir $tmp_sysprops_fpath
+read_sysprops $tmp_sysprops_fpath
 rm -f $tmp_sysprops_fpath
 
-LD_LIBRARY_PATH=/usr/lib/uls:/usr/local/lib:/usr/local/lib64
-LD_LIBRARY_PATH=$ULS_DLLPATH:$LD_LIBRARY_PATH
+if [ -n "$LD_LIBRARY_PATH" ]; then
+	LD_LIBRARY_PATH=$ULS_DLLPATH:$LD_LIBRARY_PATH
+else
+	LD_LIBRARY_PATH=$ULS_DLLPATH
+fi
+
 if [ $# -ge 2 ]; then
 	LD_LIBRARY_PATH=$2:$LD_LIBRARY_PATH
 fi
+
 export LD_LIBRARY_PATH
 
 test_prog=
@@ -109,10 +117,8 @@ test_1case()
 		return 1
 	fi
 
-	diff -q $outfile_res $tmpfile1 
-	# assert: $outfile_res exists
-	if [ $? != 0 ]; then
-		echo "fail(stdout): diff for '$test_prog'"
+	if ! diff -q $outfile_res $tmpfile1; then
+		echo "fail(stdout): diff ... '$test_prog'"
 	else
 		rm $tmpfile1
 	fi
@@ -120,9 +126,12 @@ test_1case()
 	return 0
 }
 
-for f in $EXES; do
-	cd $BASE_DIR
+list2="$EXES "
+while [ -n "$list2" ]; do
+	f=${list2%% *}
+	list2=${list2#${f} }
 
+	cd $BASE_DIR
 	test_prog=`basename $f`
 	dir=${f%/${test_prog}}
 	cd $dir
@@ -148,4 +157,7 @@ for f in $EXES; do
 done
 
 cd $HOME_DIR
-echo "done."
+
+if [ -e $devnull ]; then
+	rm -f $devnull 
+fi

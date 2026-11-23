@@ -196,26 +196,29 @@ ULS_QUALIFIED_METHOD(uls_destroy_sysinfo)(uls_sysinfo_ptr_t sysinfo)
 int
 ULS_QUALIFIED_METHOD(uls_load_system_properties)(const char *fpath, uls_sysinfo_ptr_t sysinfo)
 {
-	FILE *fp;
 	char linebuff[ULS_LINEBUFF_SIZ+1];
 	char *line, *name;
-	int len, stat=0;
+	int len, stat = 0;
 	uls_parm_line_t parm_ln;
+	FILE *fp;
 
 	if (__init_system_info(sysinfo, ULS_PROPPOOL_DFLSIZ) < 0) {
 		return -1;
 	}
 
-	if ((fp = uls_fp_open(fpath, ULS_FIO_READ)) == NULL) {
+	if ((fp = uls_fp_open(fpath, ULS_FIO_READ | ULS_FIO_UTF8BOM)) == NULL) {
 		return -1;
 	}
 
 	while (1) {
-		if ((len = uls_fp_getline(fp, linebuff, sizeof(linebuff))) < 0) {
-			if (len < -1) {
-				stat = -2;
+		if ((len = uls_fp_getline(fp, linebuff, sizeof(linebuff))) <= 0) {
+			if (len < 0) {
+				if (len < -1) {
+					stat = -2;
+				}
+				break;
 			}
-			break;
+			continue; // skipping an empty line
 		}
 
 		if (*(line = skip_blanks(linebuff)) == '\0') {

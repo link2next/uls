@@ -11,12 +11,10 @@ dump_toks_CPPFLAGS = -I$(top_srcdir)/src
 dump_toks_LDADD = $(top_builddir)/src/libuls.la
 enc_mode=ustr
 
-ACLOCAL_AMFLAGS = -I m4
-
 check: all
-	@bash ../run_tests.sh $(noinst_PROGRAMS) $(tests_libpath) $(TMP_SYSPROPS) $(enc_mode)
+	@../run_tests.sh $(noinst_PROGRAMS) $(tests_libpath) $(TMP_SYSPROPS) $(enc_mode)
 
 $(dump_toks_OBJECTS) : sample_lex.h
 
 %_lex.h : %.ulc
-	ULS_SYSPROPS=$(TMP_SYSPROPS) $(ulc2class_exe) -lc -pTOK_ $<
+	@$(ax_ulc2class_exe) -lc -pTOK_ $<

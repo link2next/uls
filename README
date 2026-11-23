@@ -92,7 +92,7 @@
 
   Documentation
   -------------
-   There are an user-guide uls_ug-0.8.x.pdf and manuals on tools, ulc2class.txt, ulf_gen.txt, uls_stream in 'doc'.
+   There are an user-guide uls_ug-0.x.pdf and manuals on tools, ulc2class.txt, ulf_gen.txt, uls_stream in 'doc'.
 
    You can see the manuals on 'ulc2class', 'uls_stream', 'ulf_gen' on linux after installing the package.
    To see the man-pages, type
@@ -107,60 +107,20 @@
   Installation
   ------------
    On Debian platforms like Debian, Ubuntu, Mint, two deb-files is provided.
-      uls-1.8.x-amd64.deb: for 64-bit mach(x86_64, amd64)
+      uls-1.x.0-amd64.deb: for 64-bit mach(x86_64, amd64)
 
    To install the deb-file, download the proper file on the site(http://www.sourceforge.net/projects/uls).
 
    Enter the command as follows.
-      $ sudo gdebi uls-1.8.x-amd64.deb
+      $ sudo gdebi uls-1.x.0-amd64.deb
 
    To test the ULS, setup the examples of ULS by entering the command 'setup_uls_examples'.
       $ setup_uls_examples <dest-dir>
    There'll be a directory called 'uls_examples' in the <dest-dir>.
 
-   To build the examples, do the followings
+   To build it, do the followings
       $ ./configure
       $ make
-
-   Refer to the section 'Demos' below to see how to examine the executions of uls demoes.
-
-   The installation process of ULS from code sources conforms
-      the GNU conventional process on Linux platform.
-
-      1 To configure the package,
-         $ ./configure
-
-        The default installation directory is '/usr/local', which is arranged by 'configure' script.
-
-        If you want to install ULS to directory other than '/usr/local',
-             add the 'prefix' option to it:
-           $ configure --prefix=<install_dir>
-
-        If you build without java support, specify the option as follows:
-           $ configure --disable-java
-
-      2. To build the package,
-         $ make
-
-      3. To test it,
-         $ make check
-
-      4. To install it,
-         $ sudo make install
-
-      5. To test the installed package,
-         $ cd examples
-         $ make
-         $ make check
-
-      6. To uninstall the package, run the following command:
-         $ sudo <install_dir>/bin/uninstall_uls
-
-   For Windows users who want build it from source files,
-     the another zip-file package uls-windows-1.8.x.zip is distributed.
-     Unzip the zip-file and there's a directory called 'vs2022' in the source tree.
-     Run the Visual Studio and open the solution 'UlsWin.sln' in the directory.
-
 
   Demos
   ------------
@@ -186,10 +146,52 @@
       LD_LIBRARY_PATH=/usr/local/lib ./test_1st input1.txt or simply
       ./test_1st input1.txt
 
-   Please see the file called INSTALL.txt to see how to use ULS in Windows or Eclipse.
+
+  Build from source files
+  ------------
+   The installation process of ULS from code sources conforms
+      the GNU conventional process on Linux platform.
+
+      1 To configure the package,
+         $ ./configure
+
+        The default installation directory is '~/.local'.
+
+        If you want to install ULS to '/usr/local',
+             add the 'prefix' option to it:
+           $ configure --prefix=/usr/local
+
+        If you build with java support, specify the option as follows:
+           $ configure --enable-java
+
+      2. To build the package,
+         $ make
+
+      3. To test it,
+         $ make check
+
+      4. To install it,
+         $ make install
+           If <prefix> isn't under your home directory, use the 'sudo' command.
+
+      5. To test the installed package,
+         $ cd examples
+         $ make
+         $ make check
+
+      6. To uninstall the package, run the following command:
+         $ sudo <prefix>/bin/uninstall_uls
+         If <prefix> is under your home directory, the 'sudo' command isn't needed.
+
+   For Windows users who want to build it from source files,
+     the another zip-file package uls-windows-1.x.0.zip is distributed.
+     Unzip the zip-file and there's a directory called 'vs2026' in the source tree.
+     Run the Visual Studio and open the solution 'UlsWin.sln' in the directory.
+
+   See the file called INSTALL.txt to see how to use ULS in Windows or Eclipse.
 
 
-  Tested Platforms
+  Platforms
   ------------
    ULS is tested on following platforms.
      o Ubuntu 26.04 
@@ -208,11 +210,11 @@
      o help2man
      o bison
      o autoconf
-     o bash
-     o OpenJDK v17
+     o dash, bash, or zsh
+     o openjds-17: by using the option '--with-java=<java-home>' of configure.
 
-  The above packages is needed to build ULS from code sources.
-  The package is dependant on libc6(glibc) to run.
+  The above packages are needed to build ULS from code sources.
+  The package is dependent on libc6(glibc) to run.
 
 
   The Latest Version

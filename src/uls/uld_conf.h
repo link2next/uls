@@ -89,6 +89,8 @@ void uls_deinit_nam_tok(uls_nam_tok_ptr_t nam_tok);
 
 #ifdef ULS_DECL_PUBLIC_PROC
 ULS_DLL_EXTERN uld_names_map_ptr_t uld_prepare_names(uls_lex_ptr_t uls);
+ULS_DLL_EXTERN int uld_change_names_raw(uld_names_map_ptr_t names_map,
+	const char *name, const char *name2, int tokid_changed, int tokid, const char *aliases);
 ULS_DLL_EXTERN int uld_change_names(uld_names_map_ptr_t names_map, uld_line_ptr_t names);
 ULS_DLL_EXTERN int uld_post_names(uld_names_map_ptr_t names_map);
 

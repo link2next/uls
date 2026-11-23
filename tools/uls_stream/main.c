@@ -585,7 +585,7 @@ main_ustr(int argc, char *argv[])
 			fp_out = _uls_stdio_fp(1);
 
 			if (output_file != NULL && (fp_out = uls_fp_open(output_file,
-				ULS_FIO_WRITE | ULS_FIO_NO_UTF8BOM)) == NULL) {
+				ULS_FIO_WRITE | ULS_FIO_NO_BOM)) == NULL) {
 				ult_log("can't create %s", output_file);
 				stat = -1;
 			} else {

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
 # files (the "Software"), to deal in the Software without
@@ -41,26 +41,40 @@ usage()
 	exit 0
 }
 
+get_abs_dirpath()
+{
+	local dpath=$1
+	local olddir="$PWD"
+	local abs_dirpath=
+
+	if [ -d "$dpath" ]; then
+		cd "$dpath"
+		abs_dirpath="$PWD"
+		cd "$olddir"
+	fi
+
+	echo $abs_dirpath
+}
+
 progpath=$0
-progname=$(basename "$progpath")
-progdir=$(dirname "$progpath")
-
-source $progdir/uls_common.sh
-progdir=$(readlink_m "$progdir")
-
-command_list_used="ls cp mv rm mkdir tar"
-if ! check_commands_used $command_list_used; then
-	exit 1
-fi
+progname=`basename "$progpath"`
+progdir=`dirname "$progpath"`
+progdir=`get_abs_dirpath "$progdir"`
+devnull=/tmp/_uls_exams_$$_devnull.txt
 
 uninst_info_sh=uls_uninst_info.sh
 if [ ! -x $progdir/$uninst_info_sh ]; then
 	echo "$uninst_info_sh: not executable"
 	exit 1
 fi
-source $progdir/$uninst_info_sh
+. $progdir/$uninst_info_sh
 
-sysprops_fpath=$etc_dir/uls.sysprops
+if [ ! -d "$uls_inst_dir" ] || [ ! -d "$uls_lib_dir" ]; then
+	echo "$uls_inst_dir|$uls_lib_dir: not a directory!"
+	exit 1
+fi
+
+sysprops_fpath=$uls_etc_dir/uls.sysprops
 if [ ! -f "$sysprops_fpath" ]; then
 	echo "$sysprops_fpath: not found!"
 	exit 1
@@ -68,7 +82,7 @@ fi
 
 # strip the utf-8 bom at the first 
 tmp_sysprops_fpath=/tmp/uls_$$_sysprops
-dd bs=1 skip=3 if="$sysprops_fpath" of=$tmp_sysprops_fpath 2> /dev/null
+dd bs=1 skip=3 if="$sysprops_fpath" of=$tmp_sysprops_fpath 2> $devnull
 
 get_uls_homedir()
 {
@@ -92,41 +106,41 @@ if [ ! -f "$examples_tar" ]; then
 	exit 1
 fi
 
-gen_mkcfg_of_uls_examples()
+gen_cfgmk_of_uls_examples()
 {
-	local inst_dir
-	local out_fpath
-	local dpath_out_fpath
+	local instdir libdir
+	local dpath_out_fpath out_fpath
 
-	inst_dir="$1"
-	out_fpath="$2"
+	instdir="$1"
+	libdir="$2"
+	out_fpath="$3"
 
-	if [ ! -d "$inst_dir" ]; then
-		echo "$inst_dir: not a directory!"
-		exit 1
-	fi
-
-	dpath_out_fpath=$(dirname "$out_fpath")
+	dpath_out_fpath=`dirname "$out_fpath"`
 	if [ ! -d "$dpath_out_fpath" ]; then
 		echo "$dpath_out_fpath: not a directory!"
-		exit 1
+		return 1
 	fi
 
 	cat > $out_fpath <<TXT
-uls_inst_dir = $inst_dir
-uls_etc_dir = $ULS_ETC 
-uls_bin_dir = \$(uls_inst_dir)/bin
-uls_inc_dir = \$(uls_inst_dir)/include
-uls_lib_dir = \$(uls_inst_dir)/lib
-ulc2class_exe = \$(uls_bin_dir)/ulc2class
+uls_inst_dir := $instdir
+uls_etc_dir := $ULS_ETC
+uls_bin_dir := \$(uls_inst_dir)/bin
+uls_lib_dir := $libdir
+uls_inc_dir := \$(uls_inst_dir)/include
+
+ulc2class_exe := \$(uls_bin_dir)/ulc2class
+uls_ver := ${ULS_VERSION_MAJOR}.${ULS_VERSION_MINOR}.${ULS_VERSION_DEBUG}
+uls_jar := uls-\$(uls_ver).jar
 TXT
+
+	return 0
 }
 
 if [ $# -lt 1 ]; then
 	usage
 fi
 
-dest_dir=$(readlink_m "$1")
+dest_dir=`get_abs_dirpath "$1"`
 if [ ! -d "$dest_dir" ]; then
 	mkdir -p "$dest_dir"
 fi
@@ -140,14 +154,23 @@ if [ $? != 0 ] || [ ! -d "$doc_dir" ]; then
 	exit 1
 fi
 
-if ls -1 "$ULS_SHARE"/*.pdf 1> /dev/null 2>&1; then
+if ls "$ULS_SHARE"/*.pdf 1> $devnull 2>&1; then
 	cp -f "$ULS_SHARE"/*.pdf "$doc_dir"/
 fi
 
-gen_mkcfg_of_uls_examples "$ULS_HOME" "$dest_dir/$pkg_fname/cfg.mk"
+gen_cfgmk_of_uls_examples "$ULS_HOME" "$uls_lib_dir" "$dest_dir/$pkg_fname/cfg.mk"
+if [ $? != 0 ]; then
+	echo "Failed to generate the config-file for Makefile!"
+	exit 1
+fi
+
+if [ -e $devnull ]; then
+	rm -f $devnull
+fi
+
 cd "$dest_dir/$pkg_fname"
 if [ ! -f "configure" ]; then
-	if which autoreconf > /dev/null; then
+	if which autoreconf > $devnull; then
 		autoreconf -i
 		rc=$?
 	else
@@ -159,9 +182,7 @@ if [ ! -f "configure" ]; then
 		exit 1
 	fi
 fi
-./configure
 
-echo "done!"
 cd "$home_dir"
 
 echo '=============================================================================='

@@ -156,36 +156,29 @@ ULS_DECL_STATIC wchar_t*
 ULS_QUALIFIED_METHOD(mbs2wstr)(const char *astr, int alen, int is_utf8, csz_str_ptr_t csz)
 {
 	UINT codepage = is_utf8 ? CP_UTF8 : CP_ACP;
-	DWORD  errnum;
-	int rc, wlen, wsiz;
+	int rc, wlen;
 	wchar_t *wstr;
 
-	if (alen == 0) {
-		wchar_t nil_wstr[1] = { L'\0' };
-		csz_reset(csz);
-		csz_append(csz, (char *) nil_wstr, sizeof(wchar_t));
+	if (alen <= 0) {
+		wstr = (wchar_t *) csz_modify(csz, 0, NULL, sizeof(wchar_t));
+		wstr[0] = L'\0';
+//		wlen = 0;
 		csz_truncate(csz, 0);
-		return (wchar_t *) csz_data_ptr(csz);
+		return wstr;
 	}
 
-	if ((rc = MultiByteToWideChar(codepage, 0, astr, alen, NULL, 0)) == 0 || (is_utf8 && rc == 0xFFFD)) {
-		if ((errnum=GetLastError()) == ERROR_INVALID_PARAMETER || errnum == ERROR_NO_UNICODE_TRANSLATION) {
-			return NULL;
-		}
+	if ((rc = MultiByteToWideChar(codepage, 0, astr, alen, NULL, 0)) <= 0) {
   		_uls_log_primitive(err_log)("Error: MultiByteToWideChar!");
   		return NULL;
 	}
 
-  	wsiz = rc + 1;
-  	csz_modify(csz, 0, NULL, wsiz * sizeof(wchar_t));
-	wstr = (wchar_t *) csz_data_ptr(csz);
+  	wstr = (wchar_t *) csz_modify(csz, 0, NULL, (rc + 1) * sizeof(wchar_t));
 
-	if ((rc = MultiByteToWideChar(codepage, 0, astr, alen, wstr, wsiz)) <= 0) {
+	if ((wlen = MultiByteToWideChar(codepage, 0, astr, alen, wstr, rc)) != rc) {
 		_uls_log_primitive(err_log)("Error: MultiByteToWideChar!");
 		csz_reset(csz);
 		wstr = NULL;
 	} else {
-		wlen = rc;
 		wstr[wlen] = L'\0';
 		csz_truncate(csz, (int) (wlen * sizeof(wchar_t)));
 	}
@@ -197,34 +190,28 @@ ULS_DECL_STATIC char*
 ULS_QUALIFIED_METHOD(wstr2mbs)(const wchar_t *wstr, int wlen, int is_utf8, csz_str_ptr_t csz)
 {
 	UINT codepage = is_utf8 ? CP_UTF8 : CP_ACP;
-	DWORD  errnum;
-	int asiz, rc;
+	int rc, alen;
 	char *astr;
 
-	if (wlen == 0) {
+	if (wlen <= 0) {
 		csz_reset(csz);
 		astr = csz_text(csz);
 		return astr;
 	}
 
-	if ((rc = WideCharToMultiByte(codepage, 0, wstr, wlen, NULL, 0, NULL, NULL)) == 0 || (is_utf8 && rc == 0xFFFD)) {
-		if ((errnum=GetLastError()) == ERROR_INVALID_PARAMETER || errnum == ERROR_NO_UNICODE_TRANSLATION) {
-			return NULL;
-		}
+	if ((rc = WideCharToMultiByte(codepage, 0, wstr, wlen, NULL, 0, NULL, NULL)) <= 0) {
 		_uls_log_primitive(err_log)("Error: WideCharToMultiByte!");
 		return NULL;
 	}
 
-	asiz = rc + 1;
-	csz_modify(csz, 0, NULL, asiz);
-	astr = csz_data_ptr(csz);
+	astr = csz_modify(csz, 0, NULL, rc + 1);
 
-	if ((rc = WideCharToMultiByte(codepage, 0, wstr, wlen, astr, asiz, NULL, NULL)) <= 0) {
+	if ((alen = WideCharToMultiByte(codepage, 0, wstr, wlen, astr, rc, NULL, NULL)) != rc) {
 		_uls_log_primitive(err_log)("Error: WideCharToMultiByte!");
 		csz_reset(csz);
 		astr = NULL;
 	} else {
-		csz_truncate(csz, rc);
+		csz_truncate(csz, alen);
 		astr = csz_text(csz);
 	}
 

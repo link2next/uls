@@ -417,8 +417,7 @@ ULS_QUALIFIED_METHOD(uls_get_simple_escape_str)(char quote_ch, uls_ptrtype_tool(
 				if (uls_get_simple_escape_char(uls_ptr(parms1))) {
 					outbuf[k++] = (char) parms1.x2;
 				} else {
-					outbuf[k++] = '\\';
-					outbuf[k++] = ch; // copy it verbatim
+					outbuf[k++] = '\\'; outbuf[k++] = ch; // copy it verbatim
 				}
 			}
 
@@ -501,7 +500,7 @@ ULS_QUALIFIED_METHOD(uls_get_spec_fp)(const char *dirpath_list, const char *fpat
 	if (fpath == NULL) return NULL;
 
 	if (dirpath_list == NULL || _uls_tool(is_absolute_path)(fpath) > 0) {
-		fp_in = _uls_tool_(fp_open)(fpath, ULS_FIO_READ | ULS_FIO_NO_UTF8BOM);
+		fp_in = _uls_tool_(fp_open)(fpath, ULS_FIO_READ | ULS_FIO_NO_BOM);
 
 		parms1.lptr = fpath;
 		lptr = __uls_tool_(filename)(uls_ptr(parms1));
@@ -534,7 +533,7 @@ ULS_QUALIFIED_METHOD(uls_get_spec_fp)(const char *dirpath_list, const char *fpat
 			_uls_tool_(strcpy)(filepath_buff, fpath);
 		}
 
-		if ((fp_in=_uls_tool_(fp_open)(filepath_buff, ULS_FIO_READ | ULS_FIO_NO_UTF8BOM)) != NULL) {
+		if ((fp_in=_uls_tool_(fp_open)(filepath_buff, ULS_FIO_READ | ULS_FIO_NO_BOM)) != NULL) {
 			if (parms != nilptr) {
 				parms->lptr = fptr;
 				parms->len = len_fptr;
@@ -569,7 +568,7 @@ ULS_QUALIFIED_METHOD(uls_get_dirpath)(const char *fname, uls_ptrtype_tool(outpar
 			lptr1 = NULL;
 		}
 
-		if (len_fptr <= 0) continue;
+		if (len_fptr==0) continue;
 
 		_uls_tool_(strncpy)(fpath_buff, fptr, len_fptr);
 		len = len_fptr;

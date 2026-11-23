@@ -113,5 +113,5 @@ public:
 	// <parm name="name">find the token information named 'name'</parm>
 	// <parm name="name2">replace the name with new one</parm>
 	virtual void changeUldNames(LP_CTSTR name, LP_CTSTR name2,
-		int tokid_valid, int tokid, LP_CTSTR aliases) = 0;
+		bool tokid_valid, int tokid, LP_CTSTR aliases) = 0;
 };

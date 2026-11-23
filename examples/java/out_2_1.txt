@@ -185,11 +185,11 @@ Test-2: input_file = tmpl_ex.uls
 	[       ] (
 	[     ID] stack_size
 	[    LEQ] <=
-	[ NUMBER] 0
+	[ NUMBER] 0    41     1 )
 	[       ] )
 	[     ID] stack_size
 	[       ] =
-	[ NUMBER] 1
+	[ NUMBER] 1    59     1 ;
 	[       ] ;
 	[     ID] stk_array
 	[       ] =
@@ -207,7 +207,7 @@ Test-2: input_file = tmpl_ex.uls
 	[       ] ;
 	[     ID] top
 	[       ] =
-	[ NUMBER] 0
+	[ NUMBER] 0    59     1 ;
 	[       ] ;
 	[       ] }
 	[       ] ~
@@ -229,7 +229,7 @@ Test-2: input_file = tmpl_ex.uls
 	[ RETURN] return
 	[     ID] top
 	[     EQ] ==
-	[ NUMBER] 0
+	[ NUMBER] 0    63     1 ?
 	[       ] ?
 	[     ID] true
 	[       ] :

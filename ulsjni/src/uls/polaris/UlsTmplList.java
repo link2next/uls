@@ -64,9 +64,9 @@ public class UlsTmplList implements AutoCloseable {
 	// Checks if the variable 'tnam' exists in the list.
 	// </brief>
 	// <return>true/false</return>
-	public Boolean exist(String nam)
+	public boolean exist(String nam)
     {
-		Boolean rval;
+		boolean rval;
 
 		if (hashtbl.containsKey(nam)) {
 			rval = true;
@@ -123,9 +123,9 @@ public class UlsTmplList implements AutoCloseable {
 	// <parm name="tnam">the name of template variable</parm>
 	// <parm name="tval">the value of the 'tnam'</parm>
 	// <return>true/false</return>
-	public Boolean setValue(String nam, String val)
+	public boolean setValue(String nam, String val)
 	{
-		Boolean rval;
+		boolean rval;
 
 		if (hashtbl.containsKey(nam)) {
 			hashtbl.put(nam, val);

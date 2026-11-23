@@ -39,7 +39,7 @@
 #include "uls/uls_type.h"
 #include <stdio.h>
 
-#if !defined(ULS_DOTNET) && !defined(USE_ULSNETJAVA)
+#ifndef ULS_DOTNET
 #ifdef __ULS_WINDOWS__
 #include <tchar.h>
 #include <io.h>
@@ -50,7 +50,7 @@
 #include <winnls.h>
 #endif
 #endif // __ULS_WINDOWS__
-#endif // !defined(ULS_DOTNET) && !defined(USE_ULSNETJAVA)
+#endif
 
 #ifdef HAVE_PTHREAD
 #include <pthread.h>

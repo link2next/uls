@@ -48,4 +48,14 @@ Natural/EngToks.cpp
 Natural/eng.ulc
 Natural/natural_out.txt
 Natural/natural_sam.txt
-
+java/uls/tests/UlsDump.java
+java/uls/tests/sample_xdef.java
+java/uls/tests/UlsTestStream.java
+java/run_java_tests.sh
+java/input1.txt
+java/out_1_1.txt
+java/out_2_1.txt
+java/sample1.ulc
+java/sample2.uld
+java/tmpl_ex.txt ../tools/uls_stream/tmpl_ex.txt
+java/tmpl_ex.uls ../tools/uls_stream/tmpl_ex.uls

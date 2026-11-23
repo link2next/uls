@@ -271,7 +271,6 @@ ULS_QUALIFIED_METHOD(__open_tempfile)(uls_tempfile_ptr_t tmpfile)
 	} else {
 		basedir = pathbuff;
 	}
-
 #else
 	basedir = ULS_OS_TEMP_DIR;
 #endif
@@ -997,9 +996,11 @@ ULS_QUALIFIED_METHOD(uls_filp_gets)(uls_file_ptr_t filp, char *buf, int buf_siz)
 FILE*
 ULS_QUALIFIED_METHOD(uls_fp_open)(const char *filepath, int mode)
 {
-	FILE* fp;
-	char modestr[8];
+	const char utf8_bom[3] = { 0xEF, 0xBB, 0xBF };
+	char modestr[8], firstbytes[4];
 	int j, rc, bOverwrite = 0;
+	FILE* fp;
+
 #ifdef __ULS_WINDOWS__
 	const char *astr;
 	auw_outparam_t buf_csz;
@@ -1008,6 +1009,10 @@ ULS_QUALIFIED_METHOD(uls_fp_open)(const char *filepath, int mode)
 
 	if (filepath == NULL) return NULL;
 
+	if (mode & ULS_FIO_MS_MBCS) {
+		mode &= ~ULS_FIO_UTF8BOM;
+		mode |= ULS_FIO_NO_BOM;
+	}
 	if ((mode & (ULS_FIO_READ|ULS_FIO_WRITE)) == (ULS_FIO_READ|ULS_FIO_WRITE)) {
 		_uls_log(err_log)("%s: RD, WR exclusive!", __func__);
 		return NULL;
@@ -1051,8 +1056,7 @@ ULS_QUALIFIED_METHOD(uls_fp_open)(const char *filepath, int mode)
 #else
 	fp = fopen(filepath, modestr);
 #endif
-
-	if (fp == NULL || (mode & ULS_FIO_NO_UTF8BOM)) return fp;
+	if (fp == NULL || (mode & ULS_FIO_NO_BOM)) return fp;
 
 	if (bOverwrite) {
 		_uls_tool_(fp_putc)(fp, (char) 0xEF);
@@ -1060,12 +1064,13 @@ ULS_QUALIFIED_METHOD(uls_fp_open)(const char *filepath, int mode)
 		_uls_tool_(fp_putc)(fp, (char) 0xBF);
 
 	} else if (mode & ULS_FIO_READ) {
-		const char utf8_bom[3] = { 0xEF, 0xBB, 0xBF };
-		char firstbytes[4];
-
 		rc = (int) fread(firstbytes, sizeof(char), 3, fp);
 		if (rc < 3 || uls_memcmp(firstbytes, utf8_bom, 3) != 0) {
-			if (fseek(fp, 0, SEEK_SET) != 0) {
+			if (mode & ULS_FIO_UTF8BOM) {
+				_uls_log(err_log)("%s: utf8bom must exists in %s!", __func__, filepath);
+				fclose(fp);
+				fp = NULL;
+			} else if (fseek(fp, 0, SEEK_SET) != 0) {
 				_uls_log(err_log)("%s: fp-rewind error!", __func__);
 				fclose(fp);
 				fp = NULL;

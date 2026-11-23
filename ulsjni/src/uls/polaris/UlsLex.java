@@ -33,6 +33,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.lang.Integer;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.Files;
+
 public class UlsLex implements AutoCloseable {
 	public static String PathOfDll="";
 	public static String NameOfDll="";
@@ -110,44 +114,69 @@ public class UlsLex implements AutoCloseable {
 	public static native int getFlagNextChNone();
 	public static native int getFlagTmplsDup();
 
+	private static native Object prepareUldMapInternal(Object juls);
+	private static native boolean changeUldNamesInternal(Object jnames_map,
+		String jname, String jname2,
+		boolean jtokid_changed, int jtokid, String jaliases);
+	private static native boolean finishUldMapInternal(Object jnames_map);
+
 	// <brief>
 	// Sets class variables 'NameOfDll', PathOfDll called by class initializer.
 	// </brief>
 	static void get_dll_path() {
-		String sysprops_fpath1, sysprops_fpath, os_name;
-		String sysprops_fname = "uls_sysprops.txt";
+		String sysprops_dpath, sysprops_fpath;
+		String sysprops_dpath1, sysprops_fpath1;
+		String user_home, os_name;
+		String sysprops_fname;
+		boolean isWindows = false;
+		String dirs_delim = ":";
+		Path path1;
 		int ind;
 
+		user_home = System.getenv("HOME");
 		os_name = System.getProperty("os.name");
-		if (os_name.indexOf("indow")>=0) {
-			NameOfDll = "libulsjni";
 
-			sysprops_fpath = System.getenv("CommonProgramFiles");
-			sysprops_fpath += "\\UlsWin\\";
+		if (os_name.indexOf("indow")>=0) {
+			isWindows = true;
+			dirs_delim = ";";
+			NameOfDll = "libulsjni";
+			sysprops_fname = "uls_sysprops.txt";
+			sysprops_dpath = System.getenv("CommonProgramFiles");
+			sysprops_dpath += File.separator + "UlsWin";
 
 		} else if (os_name.indexOf("inux")>=0 || os_name.indexOf("Mac")>=0 || os_name.indexOf("nix")>=0) {
 			NameOfDll = "ulsjni";
-			sysprops_fpath = "/usr/local/etc/uls/";
-			sysprops_fname = "uls.sysprops";
+			sysprops_fpath1 = System.getenv("ULS_SYSPROPS");
+			if (sysprops_fpath1 != null) {
+				path1 = Paths.get(sysprops_fpath1);
+				sysprops_dpath = path1.getParent().toString();
+				sysprops_fname = path1.getFileName().toString(); 
+			} else {
+				sysprops_fname = "uls.sysprops";
+				sysprops_dpath1 = user_home + File.separator + ".local" + 
+					File.separator + "etc" + File.separator + "uls";
+				sysprops_fpath1 = sysprops_dpath1 + File.separator + sysprops_fname;
+				path1 = Paths.get(sysprops_fpath1);
 
-			sysprops_fpath1 = sysprops_fpath + sysprops_fname;
-			File file1 = new File(sysprops_fpath1);
-			if (file1.exists() == false || file1.isFile() == false) {
-				sysprops_fpath = "/tmp/";
-				sysprops_fname = "uls_sysprops.txt";
+				if (Files.isRegularFile(path1)) {
+					sysprops_dpath = sysprops_dpath1;
+				} else {
+					sysprops_dpath = "/usr/local/etc/uls";
+				}
 			}
-
 		} else {
 			NameOfDll = "ulsjni";
-			sysprops_fpath = "/tmp/";
+			sysprops_dpath = "/tmp";
+			sysprops_fname = "uls.sysprops";
 		}
 
-		sysprops_fpath += sysprops_fname;
+		sysprops_fpath = sysprops_dpath + File.separator + sysprops_fname;
 		BufferedReader infile = null;
 
 		try {
 			infile = new BufferedReader(new FileReader(sysprops_fpath));
-			String line, name, val;
+			String line, name, val, val2;
+			String[] dirs_list;
 
 			while ((line=infile.readLine()) != null) {
 				line = line.trim();
@@ -161,7 +190,13 @@ public class UlsLex implements AutoCloseable {
 				val = line.substring(ind+1);
 
 				if (name.equals("ULS_DLLPATH")) {
-					PathOfDll = val;
+					if (isWindows) {
+						dirs_list = val.split(":");
+						val2 = String.join(";", dirs_list);
+					} else {
+						val2 = val;
+					}
+					PathOfDll = val2;
 					break;
 				}
 			}
@@ -206,7 +241,9 @@ public class UlsLex implements AutoCloseable {
 
 	static {
 		get_dll_path();
-		System.setProperty("java.library.path", PathOfDll);
+// Use -Djava.library.path=... in the java command line
+//		System.setProperty("java.library.path", PathOfDll);
+//		System.err.println("  java.library.path = " + System.getProperty("java.library.path"));
 		FileEnc = System.getProperty("file.encoding");
 
 		try {
@@ -257,12 +294,12 @@ public class UlsLex implements AutoCloseable {
 	// <brief>
 	// Informs user that the current token is toknum_EOI
 	// </brief>
-	public Boolean isEOI; // read-only
+	public boolean isEOI; // read-only
 
 	// <brief>
 	// Informs user that the current token is toknum_EOF.
 	// </brief>
-	public Boolean isEOF; // read-only
+	public boolean isEOF; // read-only
 
 	// <brief>
 	// These flags is passed to pushInput()
@@ -440,7 +477,7 @@ public class UlsLex implements AutoCloseable {
 	// </brief>
 	// <parm name="tok_id">The number to examine</parm>
 	// <return>true if the 'tok_id' belongs to the gourp of literal-string tokens.</return>
-	public Boolean isQuoteTok(int tok_id) {
+	public boolean isQuoteTok(int tok_id) {
 		return isQuoteTok(uls, tok_id);
 	}
 
@@ -449,7 +486,7 @@ public class UlsLex implements AutoCloseable {
 	// </brief>
 	// <parm name="ch">The character to examine</parm>
 	// <return>true/false</return>
-	public Boolean isSpace(char ch) {
+	public boolean isSpace(char ch) {
 		return isCharSpace(uls, ch);
 	}
 
@@ -459,7 +496,7 @@ public class UlsLex implements AutoCloseable {
 	// </brief>
 	// <parm name="ch">The character to examine</parm>
 	// <return>true/false</return>
-	public Boolean isIdfirst(char ch) {
+	public boolean isIdfirst(char ch) {
 		return isCharIdFirst(uls, ch);
 	}
 
@@ -469,7 +506,7 @@ public class UlsLex implements AutoCloseable {
 	// </brief>
 	// <parm name="ch">The character to examine</parm>
 	// <return>true/false</return>
-	public Boolean isId(char ch) {
+	public boolean isId(char ch) {
 		return isCharId(uls, ch);
 	}
 
@@ -478,7 +515,7 @@ public class UlsLex implements AutoCloseable {
 	// </brief>
 	// <parm name="ch">The character to examine</parm>
 	// <return>true/false</return>
-	public Boolean isQuote(char ch) {
+	public boolean isQuote(char ch) {
 		return isCharQuote(uls, ch);
 	}
 
@@ -488,7 +525,7 @@ public class UlsLex implements AutoCloseable {
 	// </brief>
 	// <parm name="ch">The character to examine</parm>
 	// <return>true/false</return>
-	public Boolean is1CharTok(char ch) {
+	public boolean is1CharTok(char ch) {
 		return isCharTokCh1(uls, ch);
 	}
 
@@ -498,7 +535,7 @@ public class UlsLex implements AutoCloseable {
 	// </brief>
 	// <parm name="ch">The character to examine</parm>
 	// <return>true/false</return>
-	public Boolean is2CharTok(char ch) {
+	public boolean is2CharTok(char ch) {
 		return isCharTokCh2(uls, ch);
 	}
 
@@ -544,7 +581,7 @@ public class UlsLex implements AutoCloseable {
 	// <brief>
 	// This method checks if the lexeme of the current token is a floating-point number.
 	// </brief>
-	public Boolean isLexemeReal()
+	public boolean isLexemeReal()
 	{
 		return isLexemeReal(uls);
 	}
@@ -552,7 +589,7 @@ public class UlsLex implements AutoCloseable {
 	// <brief>
 	// This method checks if the lexeme of the current token is an integer.
 	// </brief>
-	public Boolean isLexemeInt()
+	public boolean isLexemeInt()
 	{
 		return isLexemeInt(uls);
 	}
@@ -560,7 +597,7 @@ public class UlsLex implements AutoCloseable {
 	// <brief>
 	// This method checks if the lexeme of the current token is zero.
 	// </brief>
-	public Boolean isLexemeZero()
+	public boolean isLexemeZero()
 	{
 		return isLexemeZero(uls);
 	}
@@ -751,7 +788,7 @@ public class UlsLex implements AutoCloseable {
 		}
 	}
 
-	public void pushLine(String line, Boolean want_eof) {
+	public void pushLine(String line, boolean want_eof) {
 		int flags = 0;
 
 		if (want_eof) {
@@ -761,7 +798,7 @@ public class UlsLex implements AutoCloseable {
 		pushLine(uls, line, flags);
 	}
 
-	public void setLine(String line, Boolean want_eof) {
+	public void setLine(String line, boolean want_eof) {
 		int flags = 0;
 
 		if (want_eof) {
@@ -777,7 +814,7 @@ public class UlsLex implements AutoCloseable {
 	//    the input buffer of the stack will be poped.
 	// </brief>
 	// <parm name="filepath">A new input that you want to tokenize</parm>
-	public Boolean pushFile(String filepath) {
+	public boolean pushFile(String filepath) {
 		int flags = getInputOpts();
 		boolean rval;
 
@@ -785,7 +822,7 @@ public class UlsLex implements AutoCloseable {
 		return rval;
 	}
 
-	public void pushFile(String filepath, Boolean want_eof) {
+	public void pushFile(String filepath, boolean want_eof) {
 		int flags = 0;
 
 		if (want_eof) {
@@ -800,7 +837,7 @@ public class UlsLex implements AutoCloseable {
 		}
 	}
 
-	public void setFile(String filepath, Boolean want_eof) {
+	public void setFile(String filepath, boolean want_eof) {
 		int flags = 0;
 
 		if (want_eof) {
@@ -821,7 +858,7 @@ public class UlsLex implements AutoCloseable {
 	// You can also create the input object from text file, uls-file, or literal-string.
 	// </brief>
 	// <parm name="ifile">input stream object!</parm>
-	public Boolean pushInput(UlsIStream ifile) {
+	public boolean pushInput(UlsIStream ifile) {
 		int flags = getInputOpts();
 		Object tmpl_list;
 		boolean rval;
@@ -906,6 +943,26 @@ public class UlsLex implements AutoCloseable {
 	@Override
 	public void close() {
 		destroyUls(uls);
+	}
+
+	private Object names_map;
+
+	public void prepareUldMap() {
+		names_map = prepareUldMapInternal(uls);
+	}
+
+	public void changeUldNames(String name, String name2,
+		boolean tokid_changed, int tokid, String aliases) {
+		if (names_map != null) {
+			changeUldNamesInternal(names_map, name, name2,
+				tokid_changed, tokid, aliases);
+		}
+	}
+
+	public void finishUldMap() {
+		finishUldMapInternal(names_map);
+		names_map = null;
+		update_rsvdtoks();
 	}
 }
 

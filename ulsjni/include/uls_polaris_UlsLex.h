@@ -463,6 +463,30 @@ JNIEXPORT jint JNICALL Java_uls_polaris_UlsLex_getFlagNextChNone
 JNIEXPORT jint JNICALL Java_uls_polaris_UlsLex_getFlagTmplsDup
   (JNIEnv *, jclass);
 
+/*
+ * Class:     uls_polaris_UlsLex
+ * Method:    prepareUldMapInternal
+ * Signature: (Ljava/lang/Object;)Ljava/lang/Object;
+ */
+JNIEXPORT jobject JNICALL Java_uls_polaris_UlsLex_prepareUldMapInternal
+  (JNIEnv *, jclass, jobject);
+
+/*
+ * Class:     uls_polaris_UlsLex
+ * Method:    changeUldNamesInternal
+ * Signature: (Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;ZILjava/lang/String;)Z
+ */
+JNIEXPORT jboolean JNICALL Java_uls_polaris_UlsLex_changeUldNamesInternal
+  (JNIEnv *, jclass, jobject, jstring, jstring, jboolean, jint, jstring);
+
+/*
+ * Class:     uls_polaris_UlsLex
+ * Method:    finishUldMapInternal
+ * Signature: (Ljava/lang/Object;)Z
+ */
+JNIEXPORT jboolean JNICALL Java_uls_polaris_UlsLex_finishUldMapInternal
+  (JNIEnv *, jclass, jobject);
+
 #ifdef __cplusplus
 }
 #endif

@@ -37,7 +37,7 @@
 
 #ifndef ULS_EXCLUDE_HFILES
 #include "uls/uls_const.h"
-#if !defined(ULS_DOTNET) && !defined(USE_ULSNETJAVA)
+#ifndef ULS_DOTNET
 #ifdef __ULS_WINDOWS__
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -170,16 +170,17 @@ typedef void *uls_native_vptr_t;
 #define uls_deinit_bytespool(nam)
 #endif // ULS_CLASSIFY_SOURCE
 
+#define _uls_type_this(ns,typnam) typnam##_t
+#define _uls_ptrtype_this(ns,typnam) typnam##_ptr_t
+#define uls_type_this(ns,typnam) uls_##typnam##_t
+#define uls_ptrtype_this(ns,typnam) uls_##typnam##_ptr_t
+
 #ifdef ULS_DOTNET
 #define uls_ptr(a) %(a)
 #define uls_nil  nullptr
 #define uls_ref_typ(typ) typ^
 #define uls_def_ptrvar(avar) ^avar
 
-#define _uls_type_this(ns,typnam) typnam##_t
-#define _uls_ptrtype_this(ns,typnam) typnam##_ptr_t
-#define uls_type_this(ns,typnam) uls_##typnam##_t
-#define uls_ptrtype_this(ns,typnam) uls_##typnam##_ptr_t
 #define uls_cast_ptrtype_this(ns,typnam,var1,var2) uls_ptrtype_this(ns,typnam) var1 = (uls_ptrtype_this(ns,typnam))(var2)
 
 #define _uls_type_ns(ns,typnam) ns::typnam##_t
@@ -267,10 +268,6 @@ typedef void *uls_native_vptr_t;
 #define uls_ref_typ(typ) typ*
 #define uls_def_ptrvar(avar) *avar
 
-#define _uls_type_this(ns,typnam) typnam##_t
-#define _uls_ptrtype_this(ns,typnam) typnam##_ptr_t
-#define uls_type_this(ns,typnam) uls_##typnam##_t
-#define uls_ptrtype_this(ns,typnam) uls_##typnam##_ptr_t
 #define uls_cast_ptrtype_this(ns,typnam,var1,var2) uls_ptrtype_this(ns,typnam) var1 = (uls_ptrtype_this(ns,typnam))(var2)
 
 #define _uls_type_ns(ns,typnam) _uls_type_this(ns,typnam)

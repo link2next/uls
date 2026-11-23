@@ -227,6 +227,13 @@ ULS_DEFINE_STRUCT_BEGIN(lex)
 
 	uls_voidptr_t shell;
 };
+
+ULS_DEFINE_STRUCT(jniobj)
+{
+	uls_uint32 timestamp;
+	void *vptr;
+};
+
 #endif // ULS_DEF_PUBLIC_TYPE
 
 #if defined(__ULS_CORE__) || defined(ULS_DECL_PRIVATE_PROC)

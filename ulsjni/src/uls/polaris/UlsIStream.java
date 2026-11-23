@@ -92,7 +92,7 @@ public class UlsIStream extends UlsStream {
 		return tmpl_vars.getValue(tnam);
 	}
 
-	public Boolean setTmplValue(String tnam, String tval)
+	public boolean setTmplValue(String tnam, String tval)
 	{
 		return tmpl_vars.setValue(tnam, tval);
 	}

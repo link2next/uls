@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
 # files (the "Software"), to deal in the Software without
@@ -27,28 +27,26 @@
 # DESCRIPTION:
 #
 
-source ../ulsconfig/uls_common.sh
-
-command_list_used="mkdir rmdir touch"
-if ! check_commands_used $command_list_used; then
-	exit 1
-fi
+. ../ulsconfig/common.sh
 
 HOME_DIR="$PWD"
 
 if [ $# -lt 3 ]; then
-	echo "usage: $0 <uls_inst_dir> <etc_dir> <out_file>"
+	echo "usage: $0 <inst_dir> <lib_dir> <etc_dir> <user_name> <user_home> <out_file>"
 	exit 1
 fi
 
-uls_inst_dir=$(readlink_m "$1")
-uls_etc_dir=$(readlink_m "$2")
-uls_need_admin=n
+inst_dir=`readpath_abs "$1"`
+lib_dir=`readpath_abs "$2"`
+etc_dir=`readpath_abs "$3"`
 
-outfile=$3
-fname=$(basename "$outfile")
-out_dir=$(dirname "$outfile")
-out_dir=$(readlink_m "$out_dir")
+user_name="$4"
+user_home="$5"
+
+outfile="$6"
+fname=`basename "$outfile"`
+out_dir=`dirname "$outfile"`
+out_dir=`readpath_abs "$out_dir"`
 
 if [ ! -d "$out_dir" ]; then
 	echo "can't find '$out_dir'!"
@@ -63,39 +61,6 @@ fi
 touch "$outfpath"
 #chmod u+x "$outfpath"
 
-check_admin_privilege()
-{
-	local a_dir=$1
-	local b_dir
-	local stat=0
-
-	while : ; do
- 		if [ "$a_dir" = "/" ]; then
-			uls_need_admin=y
-			return 1
-		fi
-
-		if [ -d "$a_dir" ]; then
-			break;
-		fi
-
-		b_dir=$(dirname $a_dir)
-		a_dir=$b_dir
-	done
-
-	b_dir=$a_dir/test__touch__dir
-
-	mkdir "$b_dir" > /dev/null 2>&1
-	if [ $? != 0 ]; then
-		uls_need_admin=y
-		stat=1
-	else
-		rmdir "$b_dir"
-	fi
-
-	return $stat 
-}
-
 gen_namval_pair()
 {
 	local nam
@@ -105,7 +70,7 @@ gen_namval_pair()
 	val=$2
 
 	if [ -z "$val" ]; then
-		echo "$nam='$val'" >> "$outfpath"
+		echo "$nam=''" >> "$outfpath"
 	else
 		if echo "$val" | grep  -q ' '; then
 			echo "$nam='$val'" >> "$outfpath"
@@ -115,15 +80,12 @@ gen_namval_pair()
 	fi
 }
 
-if check_dir_admin_privilege "$uls_inst_dir"; then
-	uls_need_admin=y
-fi
-
-if check_dir_admin_privilege "$uls_etc_dir"; then
-	uls_need_admin=y
-fi
-
-echo "#!/bin/bash" >> "$outfpath"
+echo "#!/bin/sh" >> "$outfpath"
 echo >> "$outfpath"
-gen_namval_pair etc_dir $uls_etc_dir
-gen_namval_pair need_admin $uls_need_admin
+
+gen_namval_pair uls_user_name $user_name
+gen_namval_pair uls_user_home $user_home
+gen_namval_pair uls_inst_dir $inst_dir
+gen_namval_pair uls_lib_dir $lib_dir
+gen_namval_pair uls_etc_dir $etc_dir
+

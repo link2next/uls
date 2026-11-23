@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
 # files (the "Software"), to deal in the Software without
@@ -46,7 +46,7 @@ if [ -z "$lib_dir" ]; then
 fi
 
 echo '=== NOTICE ==================================================================='
-echo "Append the following lines at the end of ~/.bashrc to run the uls utilities."
+echo "Append the following lines to your shell-rc in order to run the uls."
 echo "   export PATH=\$PATH:${bin_dir}"
 echo "   export LD_LIBRARY_PATH=${lib_dir}"
 echo

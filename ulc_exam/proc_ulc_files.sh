@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
 # files (the "Software"), to deal in the Software without
@@ -28,34 +28,37 @@
 #   This file is part of ULS, Unified Lexical Scheme.
 #
 
-source ../ulsconfig/uls_common.sh
+. ../ulsconfig/common.sh
 
 HOME_DIR=$PWD
 PACKAGE_DOMAIN=ULS.Collection
 
 ULSLANGS=$1
+if [ ! -f "$ULSLANGS" ]; then
+	echo "$ULSLANGS: not found!"
+	exit 1
+fi
 
 TARGET_DIR=$2
 if [ ! -d "$TARGET_DIR" ]; then
 	echo "$TARGET_DIR: not found!"
 	exit 1
 fi
+TARGET_DIR=`readpath_abs "$TARGET_DIR"`
 
 TOP_BIN_DIR=$3
 if [ ! -d "$TOP_BIN_DIR" ]; then
 	echo "$TOP_BIN_DIR: not found!"
 	exit 1
 fi
+TOP_BIN_DIR=`readpath_abs "$TOP_BIN_DIR"`
 
 TMP_SYSPROPS_FILE=$4
 if [ ! -f "$TMP_SYSPROPS_FILE" ]; then
 	echo "$TMP_SYSPROPS_FILE: not found!"
 	exit 1
 fi
-
-TARGET_DIR=$(readlink_m "$TARGET_DIR")
-TOP_BIN_DIR=$(readlink_m "$TOP_BIN_DIR")
-TMP_SYSPROPS_FILE=$(readlink_m "$TMP_SYSPROPS_FILE")
+TMP_SYSPROPS_FILE=`readpath_abs "$TMP_SYSPROPS_FILE"`
 
 ULC2CLASS=$TOP_BIN_DIR/tools/ulc2class/ulc2class
 if [ ! -x "$ULC2CLASS" ]; then
@@ -64,41 +67,34 @@ if [ ! -x "$ULC2CLASS" ]; then
 fi
 
 LD_LIBPATH=$TOP_BIN_DIR/src
-export LD_LIBRARY_PATH="$LD_LIBPATH:$LD_LIBRARY_PATH"
 
-ULSLANGS=$(readlink_m "$ULSLANGS")
-if [ ! -f "$ULSLANGS" ]; then
-	echo "$ULSLANGS: not found!"
-	exit 1
+if [ -n "$LD_LIBRARY_PATH" ]; then
+	export LD_LIBRARY_PATH="$LD_LIBPATH:$LD_LIBRARY_PATH"
+else
+	export LD_LIBRARY_PATH="$LD_LIBPATH:"
 fi
 
 WORK_DIR=$PWD
-cd "$WORK_DIR"
 
 ALIGN_COL=23
 
 draw_progress()
 {
-	local col
-	local n_cols
-	local line_type
-
-	line_type=$1
-	n_cols=$2
+	local line_type=$1 dash_line=
+	local n_cols=$2 col
 
 	if [ $n_cols -lt 2 ]; then
 		return;
 	fi
 	n_cols=$(($n_cols-2))
 
-	echo -n " "
 	col=0
 	while [ $col -lt $n_cols ]; do
-		echo -n "$line_type"
+		dash_line=${dash_line}${line_type}
 		col=$(($col+1))
 	done
 
-	echo -n " "
+	echo $dash_line
 }
 
 export ULC_PATH=$WORK_DIR
@@ -121,23 +117,24 @@ while read name enum_name ClassName tok_pfx; do
 	fi
 
 	in_fname="${name}.ulc"
-	echo -n " $in_fname"
+	line=" $in_fname"
 	curcol=${#in_fname}
 	curcol=$(($curcol+1))
-	draw_progress '_' $(($ALIGN_COL-$curcol))
+	dashes=`draw_progress '_' $(($ALIGN_COL-$curcol))`
+	line="$line $dashes "
 
 	out_fpath1=
 	if [ "$enum_name" != "-" ]; then
 		out_fname="${enum_name}_lex.h"
 		out_fpath1="${TARGET_DIR}/$out_fname"
-		echo -n " $out_fname"
+		line="$line $out_fname"
 	fi
 
 	out_fpath2=
 	if [ "$ClassName" != "-" ]; then
 		out_fname="${ClassName}.h"
 		out_fpath2="${TARGET_DIR}/$out_fname"
-		echo -n " $out_fname"
+		line="$line $out_fname"
 	fi
 
 	if [ -n "$out_fpath1" ]; then
@@ -148,7 +145,5 @@ while read name enum_name ClassName tok_pfx; do
 		$ULC2CLASS -o "$out_fpath2" -y -n ${PACKAGE_DOMAIN}.${ClassName} $pfx_optstr $in_fname
 	fi
 
-	echo
+	echo "$line"
 done  < "$ULSLANGS"
-
-cd "$HOME_DIR"

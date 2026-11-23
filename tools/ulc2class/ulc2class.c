@@ -692,10 +692,8 @@ main_ustr(int argc, char *argv[])
 		}
 
 		rc = uls_path_normalize(ulc_filepath_enc, ulc_filepath_enc);
-		if (g_prn_flags & ULS_FL_JAVA_GEN) {
-			for (j = 0; j < rc; j++) { // Windows::java
-				if (ulc_filepath_enc[j] == '\\') ulc_filepath_enc[j] = '/';
-			}
+		for (j = 0; j < rc; j++) {
+			if (ulc_filepath_enc[j] == '\\') ulc_filepath_enc[j] = '/';
 		}
 
 	} else if (typ_fpath == ULS_NAME_FILEPATH_ULD) {

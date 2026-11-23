@@ -9,12 +9,10 @@ tok_remap_CFLAGS = -Wall
 tok_remap_CPPFLAGS = -I$(top_srcdir)/src
 tok_remap_LDADD = $(top_builddir)/src/libuls.la
 
-ACLOCAL_AMFLAGS = -I m4
-
 check: all
-	@bash ../run_tests.sh $(noinst_PROGRAMS) $(tests_libpath) $(TMP_SYSPROPS)
+	@../run_tests.sh $(noinst_PROGRAMS) $(tests_libpath) $(TMP_SYSPROPS)
 
 $(tok_remap_OBJECTS) : sample_lex.h
 
 %_lex.h : %.ulc
-	ULS_SYSPROPS=$(TMP_SYSPROPS) $(ulc2class_exe) -lc -pTOK_ $<
+	@$(ax_ulc2class_exe) -lc -pTOK_ $<

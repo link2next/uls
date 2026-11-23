@@ -10,5 +10,3 @@ libulstools_a_CFLAGS = -funsigned-char -Wall -Wno-char-subscripts
 
 noinst_HEADERS =
 include_HEADERS =
-
-ACLOCAL_AMFLAGS = -I m4s

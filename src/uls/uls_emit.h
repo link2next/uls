@@ -99,6 +99,8 @@ ULS_DECL_STATIC void print_tokdef_enum_constants(
 ULS_DECL_STATIC int print_uld_lineproc__c(uld_line_ptr_t tok_names, int n_tabs, const char *lptr);
 
 ULS_DECL_STATIC int print_uld_lineproc__cpp(uld_line_ptr_t tok_names, int n_tabs, const char *lptr);
+ULS_DECL_STATIC int print_uld_lineproc__cli_or_cs(uld_line_ptr_t tok_names, int n_tabs, int is_cppcli);
+ULS_DECL_STATIC int print_uld_lineproc__cppcli(uld_line_ptr_t tok_names, int n_tabs, const char *lptr);
 ULS_DECL_STATIC int print_uld_lineproc__cs(uld_line_ptr_t tok_names, int n_tabs, const char *lptr);
 ULS_DECL_STATIC int print_uld_lineproc__java(uld_line_ptr_t tok_names, int n_tabs, const char *lptr);
 

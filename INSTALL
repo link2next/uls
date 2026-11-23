@@ -5,12 +5,12 @@
   Quick Start - Linux
   ------------------
    On Debian platforms like Debian, Ubuntu, Mint, two deb-files is provided.
-      uls-x.y.z-amd64.deb: for 64-bit mach(x86_64, amd64)
+      uls-1.y.z-amd64.deb: for 64-bit mach(x86_64, amd64)
 
    To install the deb-file, download the proper file on the site(http://www.sourceforge.net/projects/uls).
 
    Enter the command as follows.
-      sudo gdebi uls-x.y.z-amd64.deb
+      sudo gdebi uls-1.y.z-amd64.deb
 
    To test the ULS, setup the examples of ULS by entering the command 'setup_uls_examples'.
       setup_uls_examples <dest-dir>
@@ -23,32 +23,38 @@
       $ cd test_1st
       $ test_1st test_1st_sam.txt
 
+   To uninstall it,
+      $ sudo dpkg -P uls
+
 
   Building from the source files on Linux/macOS
   ------------------
-     $ configure [--prefix=<INST_DIR>] [--with-etc-dir=<ADMIN_DIR>]
-         To exclude java api, enter
-         $ configure --disable-java
+     $ configure [--prefix=<INST_DIR>] [--libdir=<LIB_DIR>] [--enable-java]
+         To include java api, set the environment variable 'JAVA_HOME' and enter:
+           $ configure --enable-java
+         To specify your java-home, run, for example,
+           $ configure --with-java=/Library/Java/JavaVirtualMachines/jdk-15.0.1.jdk/Contents/Home
      $ make
      $ make check
-     $ sudo make install // install it using admin privilege.
+     $ make install
+     If <prefix> isn't under your home directory, use the 'sudo' command.
 
   1) Install openjdk-15.0.1 
   2) Replace <INST_DIR> with the file path on which ULS is installed.
-    Unless it's specified, <INST_DIR> will be '/usr/local'.
+    Unless specified, <INST_DIR> will be '~/.local'.
 
-  3) If you want not to install the java-api of uls, specify the option '--disable-java'
-       $ ./configure --disable-java
+  3) If you want to install the java-api of uls, specify the option '--enable-java'
+       $ ./configure --enable-java
 
   4) After installation, There'll be directories named 'bin', 'lib', include', and 'share'
        below the directory <INST_DIR>.
     The 'bin' contains uls a few of utilities doing the following function.
        o ulc2class  : converts ulc-file into header file,
-                   The generated file can be used in c, c++, java, or c#.
+                      The generated file can be used in c, c++, java, or c#.
 
        o ulfgen     : gives users the statistic information on uses of keywords of language.
 
-       o uls_stream : makes binary formatted stream file from input files.
+       o uls_stream : makes binary-formatted stream file from (plain) input files.
 
        o uninstall_uls: will remove the package from your system.
 
@@ -66,7 +72,8 @@
     The 'share' contains sample ulc-files, such as java.ulc, sql.ulc python3.ulc, and man pages.
 
   4) To uninstall the package, run 'uninstall_uls' in the 'bin' directory:
-     $ sudo uninstall_uls
+     $ uninstall_uls
+     If <prefix> isn't under your home directory, use the 'sudo' command.
 
 
   Quick Start - Windows
@@ -74,14 +81,15 @@
    How to install ULS-libraries into your system
 
    On Windows platforms,
-     There is a self-extracting install program, uls-windows-1.8.x-x64.exe
+     There is a self-extracting install program, uls-windows-1.x.0-x64.exe
          in the home-site(http://www.sourceforge.net/projects/uls).
-     It contains the binaries which are targeted on x86_64.
-     Download and run it.
+     It contains the binaries files which are targeted on x86_64.
 
     After installation, the path for uls utilities should be appened to the environment variable 'PATH'.
     The value of 'PATH' is identified in 'Advanced' tab -- 'Environment Variables' -- 'User variables for...'
         in 'My Computer' -- 'Properties'.
+
+    Check if the variable 'ULS_HOME' is set to the install folder!
 
     Try to run the followings commands to see the usages of uls-tools in dos-prompt.
        o Ulc2Class -h
@@ -95,15 +103,18 @@
     The ULS-windows version is distributed with solution-files(*.sln) and
        project-files(*.vcproj) in directory 'UlsWin'.
 
-     a) After unpacking the source distribution (uls-windows-x.y.z.tar.xz),
+     a) After unpacking the source distribution (uls-windows-1.y.z.tar.xz),
            run VisualStudio by clicking UlsWin\UlsWin.sln.
-     b) Choose 'Release/x64' configuration
-     c) Build it
+     b) Choose 'Release/x64' configuration and build it
+     d) If you want to the java api, goto vs2022/UlsJava and
+         run 'build_ulsjni.bat' with reading README.txt in the folder.
 
    2) Install binaries
-     a) Run setupBinaries.bat
-     b) Run installUlsWinStep1.bat
-     c) Run installUlsWinStep2.bat with admin privilege.
+     a) Edit the file 'set_build_config.bat'
+        Change the value of 'ULS_TARGET_VS' to 'vs2022' or 'vs2026'.
+     b) Run setupBinaries.bat
+     c) Double-click installUlsWinStep1.bat
+     d) Run installUlsWinStep2.bat with admin privilege.
 
    3) To build C++ examples,
      a) To see how the installed version works well, open 'UlsExamples.sln' in the UlsExamples directory.
@@ -116,6 +127,9 @@
 
      c) The solution produces the executables, DumpToks.exe, Css3Toks.exe,
            Html5Toks.exe, ShellToks.exe, MkfToks.exe, and TokSeq.exe in UlsExamples\x64\Release
+
+    4) To return the initial state of the source tree,
+       Run 'cleanUlsWin.bat'.
 
 
   Demos - Windows
@@ -145,27 +159,30 @@
        After installing, it's necessary to set the environment variables:
           Set the environment variable JAVA_HOME
           Prepend the path '$JAVA_HOME/bin' in the environment PATH.
-     b) Install openjdk on Linux(Mint)
+     b) Install openjdk
         openjdk-15.0.1_linux-x64_bin.tar.gz 
-     c) oracle-jdk-11 on Windows 10
-       Read README in the subdirectory vs2022/UlsJava for Windows users
 
   To build & test on Linux/MacOS:
   	$ configure
 
-  	To exclude java api, enter instead
-  	$ configure --disable-java
+  	To include java api, enter instead
+  	$ configure --enable-java
 
      Compile the source files:
   	$ make
+  	$ make install
 
      Try to test the programs:
-  	$ make check
+     $ cd examples
+     $ make
+     $ make check
 
 
  Uninstall
   ---------------------
-    In order to uninstall ULS on Windows, go to the folder UlsWin in the desktop.
-    Run the batch file named 'uninstall_uls.bat'.
-    In Ubuntu, run the dpkg: dpkg -P uls
-
+    1) In case it was installed by the package installer,
+         a) On Windows: Use the 'Control panel'.
+         b) On Linux: run the dpkg: dpkg -P uls
+    2) In case it was installed from source files,
+         a) On Windows: Double-click 'uninstallUlsWin.bat' with admin privilege.
+         b) On Linux: run 'uninstall_uls' in the installation directory.

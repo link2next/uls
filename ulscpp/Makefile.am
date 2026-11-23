@@ -13,8 +13,5 @@ libulscpp_la_CPPFLAGS = -D_ULSCPP_IMPLDLL -include $(CONFIG_HEADER) -I$(top_srcd
 libulscpp_la_LIBADD  = $(top_builddir)/src/libuls.la
 libulscpp_la_LDFLAGS = -version-info $(so_current):$(so_revision):$(so_age)
 
-ACLOCAL_AMFLAGS = -I m4
-
 install: install-libLTLIBRARIES install-includeHEADERS
-	install -m755 -d "$(includedir)"/uls
-	cp -f uls/*.h "$(includedir)"/uls/
+	cp -f uls/*.h "$(ax_inc_dir)"/uls/

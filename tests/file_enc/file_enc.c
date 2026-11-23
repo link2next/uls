@@ -107,7 +107,7 @@ test_escchar_map(uls_lex_ptr_t uls, LPCTSTR fpath)
 	unsigned char ch;
 	int i, len;
 
-	if ((fp = uls_fp_open(fpath, ULS_FIO_READ | ULS_FIO_NO_UTF8BOM)) == NULL) {
+	if ((fp = uls_fp_open(fpath, ULS_FIO_READ | ULS_FIO_NO_BOM)) == NULL) {
 		err_log(_T("can't open the file '%s'"), fpath);
 		return;
 	}
@@ -154,7 +154,7 @@ test_dump_1(uls_lex_ptr_t uls, LPTSTR fpath)
 	FILE   *fp;
 	int t;
 
-	if ((fp = uls_fp_open(fpath, ULS_FIO_READ | ULS_FIO_NO_UTF8BOM)) == NULL) {
+	if ((fp = uls_fp_open(fpath, ULS_FIO_READ | ULS_FIO_NO_BOM)) == NULL) {
 		err_log(_T(" file open error"));
 		return;
 	}
@@ -191,7 +191,7 @@ test_uls_strings_2(uls_lex_ptr_t uls, LPTSTR fpath)
 	int tok;
 	FILE *fp;
 
-	if ((fp = uls_fp_open(fpath, ULS_FIO_READ | ULS_FIO_NO_UTF8BOM)) == NULL) {
+	if ((fp = uls_fp_open(fpath, ULS_FIO_READ | ULS_FIO_NO_BOM)) == NULL) {
 		err_log(_T("can't open the file '%s'"), fpath);
 		return;
 	}

@@ -46,19 +46,23 @@ public class UlsOStream extends UlsStream {
 	}
 
 	protected UlsLex uls_lex;
-	private Boolean do_numbering;
+	private boolean do_numbering;
 
-	private Boolean makeOStream(String filepath, UlsLex lex, String subtag, Boolean numbering) {
+	private boolean makeOStream(String filepath, UlsLex lex, String subtag, boolean numbering) {
+		boolean stat;
+
 		uls_lex = lex;
 		uls_hdr = createOFile(filepath, uls_lex.getCore(), subtag);
 
-		if (uls_hdr == null) {
+		if (uls_hdr != null) {
+			stat = true;
+			do_numbering = numbering;
+		} else {
+			stat = false;
 			System.err.println("fail to create output stream object!");
-			return false;
 		}
 
-		do_numbering = numbering;
-		return true;
+		return stat;
 	}
 
 	// <brief>
@@ -79,7 +83,7 @@ public class UlsOStream extends UlsStream {
 	// Specify whether the line number information is inserted or not.
 	// The information is automatically inserted whenever the line of source code is changed.
 	// </parm>
-	public UlsOStream(String filepath, UlsLex lex, String subtag, Boolean numbering) {
+	public UlsOStream(String filepath, UlsLex lex, String subtag, boolean numbering) {
 		super(false);
 		makeOStream(filepath, lex, subtag, numbering);
 	}
@@ -141,7 +145,7 @@ public class UlsOStream extends UlsStream {
 	// <parm name="ifile">
 	// This input uls-stream will be written to the 'UlsOStream' object.
 	// </parm>
-	public Boolean startStream(UlsIStream ifile) {
+	public boolean startStream(UlsIStream ifile) {
 		int flags=0;
 		if (uls_hdr == null || read_only == true) return false;
 

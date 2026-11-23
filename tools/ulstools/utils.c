@@ -294,7 +294,7 @@ ult_simple_sort_vptr(uls_voidptr_t *list, int n_list, ult_sort_func_t cmp_func)
 const char*
 ult_get_dirpath(const char *fname, const char *dirpath_list, int *ptr_len)
 {
-	char fpath_buf[ULS_FILEPATH_MAX + 1];
+	char fpath_buff[ULS_FILEPATH_MAX + 1];
 	const char *fptr, *lptr1, *lptr, *dirpath_ret=NULL;
 	int len, len_fptr;
 
@@ -313,14 +313,14 @@ ult_get_dirpath(const char *fname, const char *dirpath_list, int *ptr_len)
 			lptr1 = NULL;
 		}
 
-		if (len_fptr <= 0) continue;
+		if (len_fptr==0) continue;
 
-		uls_strncpy(fpath_buf, fptr, len_fptr);
+		uls_strncpy(fpath_buff, fptr, len_fptr);
 		len = len_fptr;
-		fpath_buf[len++] = ULS_FILEPATH_DELIM;
-		uls_strcpy(fpath_buf + len, fname);
+		fpath_buff[len++] = ULS_FILEPATH_DELIM;
+		uls_strcpy(fpath_buff+len, fname);
 
-		if (uls_dirent_exist(fpath_buf) == ST_MODE_FILE) {
+		if (uls_dirent_exist(fpath_buff) == ST_MODE_FILE) {
 			dirpath_ret = fptr;
 			if (ptr_len != NULL) {
 				*ptr_len = len_fptr;

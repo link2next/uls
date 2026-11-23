@@ -306,7 +306,7 @@ ULS_QUALIFIED_METHOD(uls_load_langdb)(const char *fpath)
 	uls_init_lang_list(tbl);
 
 	if ((filp = _uls_tool_(open_filp)(fpath, 
-		ULS_FIO_NO_UTF8BOM | ULS_FIO_READ | ULS_FIO_MULTLINE)) == nilptr) {
+		ULS_FIO_NO_BOM | ULS_FIO_READ | ULS_FIO_MULTLINE)) == nilptr) {
 		uls_deinit_lang_list(tbl);
 		uls_dealloc_object(tbl);
 		return nilptr;
